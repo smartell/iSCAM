@@ -1,0 +1,155 @@
+\documentclass[12pt,letterpaper]{article}
+
+%% -packages-
+\usepackage{graphics}
+\usepackage{psfrag}
+\usepackage[round]{natbib}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{rotate}
+\usepackage{lscape}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[colorlinks,citecolor=black,bookmarks]{hyperref}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{alltt}
+\usepackage{setspace}
+\usepackage{lineno}
+
+
+%\usepackage[latin1]{inputenc} % To use characters such as é without typing \'e
+%\usepackage[cyr]{aeguill} % To display characters such as é
+%\usepackage{xspace} % To get the right spacings in front of : and so on
+\usepackage[french,english]{babel}
+
+%% ---------------------------------------------------------------------
+%%Page Layout Properties-------------------------------------------------
+
+%\voffset 0in \textwidth 7.0in  \oddsidemargin 0in
+%\evensidemargin 0in \headheight 0.in \textheight 9in  %%Look at Box13.1 for text scale
+\voffset -0.75in
+\hoffset -0.75in
+\textwidth 6.5in%
+\textheight 9.0in%
+%\evensidemargin 0.in%
+
+%\textwidth 6in%
+%\topmargin 0in%
+\setlength{\LTcapwidth}{\textwidth} %caption width for longtables
+
+%Arial font
+\renewcommand{\rmdefault}{phv} % Arial
+\renewcommand{\sfdefault}{phv} % Arial
+
+%Logo
+%\usepackage{fancyhdr}
+%\renewcommand{\headheight}{0.6in}
+%\setlength{\headwidth}{\textwidth}
+%\fancyhead[L]{}% empty left
+%\fancyhead[R]{ % right
+%   \includegraphics[height=0.53in]{iscamlogo.eps}
+%}
+%\pagestyle{fancy}
+
+
+%-------------------------------------------------------------------------
+%Water mark
+%%\usepackage{eso-pic}
+%%\usepackage{graphicx}
+%%\usepackage{color}
+%%\usepackage{type1cm}
+%%\usepackage{float} 
+%%
+%%\makeatletter
+%%  \AddToShipoutPicture{%
+%%    \setlength{\@tempdimb}{.5\paperwidth}%
+%%    \setlength{\@tempdimc}{.5\paperheight}%
+%%    \setlength{\unitlength}{1pt}%
+%%    \put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){%
+%%      \makebox(0,0){\rotatebox{45}{\textcolor[gray]{0.85}{\fontsize{1.75cm}{1.75cm}\selectfont{DRAFT  \today}}}}
+%%    }
+%%} \makeatother
+
+
+%% -math-
+\newcounter{saveEq}
+  \def\putEq{\setcounter{saveEq}{\value{equation}}}
+  \def\getEq{\setcounter{equation}{\value{saveEq}}}
+  \def\tableEq{ % equations in tables
+    \putEq \setcounter{equation}{0}
+    \renewcommand{\theequation}{T\arabic{table}.\arabic{equation}}
+    \vspace{-5mm}
+    }
+  \def\normalEq{ % renew normal equations
+    \getEq
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}}
+
+  \def\puthrule{ %thick rule lines for equation tables
+    \hrule \hrule \hrule \hrule \hrule}
+
+
+%%\newcommand{\msy}{$C^*$}
+%%\newcommand{\fmsy}{$F^*$}
+%%\newcommand{\sbmsy}{$\rm{SB_{MSY}}$}
+%%\newcommand{\sbfour}{$\rm{SB_{40}}$}
+%%\newcommand{\é}{\'e}
+%%\newcommand{\è}{\`e}
+%%\newcommand{\à}{\`a}
+%%\newcommand{\ê}{\^e}
+\newcommand{\iscam}{
+{$^i$}\textcolor{red}{S}\textcolor{green}{\small{}C}{\textcolor{blue}{\footnotesize{}A}}\textcolor{black}{$_\textnormal{M}$}}%{\raisebox{-0.7ex}{M}}%
+
+\newcommand{\fmsy}{F$_{\textnormal{MSY}}$}
+\newcommand{\bmsy}{B$_{\textnormal{MSY}}$}
+
+%% ---------------------------------------------------------------------
+
+\title{
+Use of natural cubic spline interpolation for estimating selectivity parameters in statistical catch-age models.
+\vfill}
+
+\author{Steven J. D. Martell$^1$\\ and\\ James N. Ianelli$^2$\\
+\\
+$^1$University of British Columbia, Fisheries Centre,\\ 
+2202 Main Mall, Vancouver, BC V6T 1Z4, Canada. \\
+\texttt{s.martell@fisheries.ubc.ca}\\
+\\
+$^2$National Marine Fisheries Service, NOAA, \\
+7600 Sand Point Way NE Seattle WA 98115, USA\\
+\texttt{Jim.Ianelli@noaa.gov}\\
+}
+
+
+\begin{document}
+\doublespace
+
+    \maketitle \thispagestyle{empty} \clearpage
+
+%%
+ \selectlanguage{english}
+
+    %\input{ToDoList}
+%% -Executive summary material------------------------------------------
+\linenumbers
+\begin{abstract}
+The estimation of selectivity, or the fraction of an age or size class of fish that are vulnerable to fisheries exploitation, is critical in statistical catch age models.  Selectivity defines what ages or sizes of fish are removed from the population and also defines, for example, MSY-based reference points. Assumptions about selectivity have ranged from simple, two parameter time-invariant asymptotic functions, to random walks,  to an extremely complex array of time-varying age-specific selectivity coefficients for nearly every age-class in each year.  There is little doubt that selectivity can change over time with refinements in fishing gears, range expansions/collapse of areas fished and even the impacts of regulation on fishing behaviour.  We present an alternative method that attempts to estimate a reduced number of distinct knots and interpolate age-specific selectivities using cubic splines and bicubic splines.  We apply the method to simulated data to demonstrate that it is in fact possible to estimate time-varying changes in age-specific selectivity. We also apply the method to the Pacific hake data from the Northeast Pacific.
+\end{abstract}
+\clearpage
+
+%% -Main body of the document-------------------------------------------
+\input{CubicIntroduction}
+
+
+\bibliographystyle{apalike}
+\bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+%% -Appendix material Model Description --------------------------------
+%\newpage
+%\appendix
+%	\input{Stats}
+
+
+
+
+\end{document}

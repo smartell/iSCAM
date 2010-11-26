@@ -1,0 +1,32 @@
+\BOOKMARK [2][-]{section*.1}{Preface}{}
+\BOOKMARK [2][-]{section*.2}{Contents}{}
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [2][-]{subsection.1.1}{Overview of \040iSCAM}{section.1}
+\BOOKMARK [2][-]{subsection.1.2}{Obtaining \040iSCAM}{section.1}
+\BOOKMARK [1][-]{section.2}{Running \040iSCAM; input files \046 command line options}{}
+\BOOKMARK [2][-]{subsection.2.1}{The iscam.dat file}{section.2}
+\BOOKMARK [2][-]{subsection.2.2}{The data file}{section.2}
+\BOOKMARK [2][-]{subsection.2.3}{The control file}{section.2}
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Prior type distributions}{subsection.2.3}
+\BOOKMARK [2][-]{subsection.2.4}{Command line options}{section.2}
+\BOOKMARK [1][-]{section.3}{Model Documentation}{}
+\BOOKMARK [2][-]{subsection.3.1}{Age-structured population model: equilibrium considerations}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.1.1}{MSY based reference points}{subsection.3.1}
+\BOOKMARK [2][-]{subsection.3.2}{Age-structured population model: state-dynamics}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Options for selectivity \(vk,t,a\)}{subsection.3.2}
+\BOOKMARK [2][-]{subsection.3.3}{Residuals, likelihoods \046 objective function value components}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Catch data}{subsection.3.3}
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Relative abundance data}{subsection.3.3}
+\BOOKMARK [3][-]{subsubsection.3.3.3}{Age composition data}{subsection.3.3}
+\BOOKMARK [3][-]{subsubsection.3.3.4}{Stock-recruitment}{subsection.3.3}
+\BOOKMARK [1][-]{section.4}{Example Assessment: the Namibian hake case study}{}
+\BOOKMARK [2][-]{subsection.4.1}{Maximum likelihood estimates of the model parameters}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Bayesian analysis of model parameters \046 policy parameters}{section.4}
+\BOOKMARK [1][-]{section.5}{Example Assessment: the Pacific hake fishery}{}
+\BOOKMARK [2][-]{subsection.5.1}{Data \046 assumptions}{section.5}
+\BOOKMARK [2][-]{subsection.5.2}{Maximum likelihood estimates}{section.5}
+\BOOKMARK [2][-]{subsection.5.3}{Time-varying selectivity}{section.5}
+\BOOKMARK [2][-]{subsection.5.4}{Bayesian implementation}{section.5}
+\BOOKMARK [1][-]{table.6}{References}{}
+\BOOKMARK [1][-]{appendix.A}{Statistical functions \046 probability distributions}{}
+\BOOKMARK [1][-]{appendix.B}{R-code for figures and Tables}{}

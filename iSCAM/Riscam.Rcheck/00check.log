@@ -1,0 +1,61 @@
+* using log directory ‘/Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM/Riscam.Rcheck’
+* using R version 2.12.0 (2010-10-15)
+* using platform: x86_64-apple-darwin9.8.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘Riscam/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘Riscam’ version ‘1.0’
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking for executable files ... OK
+* checking whether package ‘Riscam’ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM/Riscam/man/Riscam-package.Rd:38: All text must be in a section
+  Warning: /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM/Riscam/man/Riscam-package.Rd:39: All text must be in a section
+See ‘/Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM/Riscam.Rcheck/00install.out’ for details.
+* checking package directory ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking DESCRIPTION meta-information ... WARNING
+Non-standard license specification:
+  What license is it under?
+Standardizable: FALSE
+* checking top-level files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking for unstated dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... OK
+* checking Rd files ... WARNING
+prepare_Rd: A.Rd:96-98: Dropping empty section \details
+prepare_Rd: A.Rd:99-101: Dropping empty section \source
+prepare_Rd: A.Rd:102-104: Dropping empty section \references
+prepare_Rd: Riscam-package.Rd:38: All text must be in a section
+prepare_Rd: Riscam-package.Rd:39: All text must be in a section
+prepare_Rd: Riscam-package.Rd:35-37: Dropping empty section \references
+prepare_Rd: Riscam-package.Rd:45-47: Dropping empty section \examples
+prepare_Rd: read.admb.Rd:41-47: Dropping empty section \value
+prepare_Rd: read.admb.Rd:56-58: Dropping empty section \note
+prepare_Rd: read.admb.Rd:48-50: Dropping empty section \references
+prepare_Rd: read.admb.Rd:62-64: Dropping empty section \seealso
+* checking Rd metadata ... OK
+* checking Rd cross-references ... WARNING
+Unknown package(s) ‘<pkg>’ in Rd xrefs
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking data for non-ASCII characters ... OK
+* checking examples ... OK
+* checking PDF version of manual ... OK
+WARNING: There were 4 warnings, see
+  ‘/Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM/Riscam.Rcheck/00check.log’
+for details

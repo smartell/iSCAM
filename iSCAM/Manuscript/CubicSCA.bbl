@@ -1,0 +1,41 @@
+\begin{thebibliography}{}
+
+\bibitem[Aanes et~al., 2007]{aanes2007estimation}
+Aanes, S., Engen, S., Saether, B., and Aanes, R. (2007).
+\newblock {Estimation of the parameters of fish stock dynamics from
+  catch-at-age data and indices of abundance: can natural and fishing mortality
+  be separated?}
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  64(8):1130--1142.
+
+\bibitem[Butterworth et~al., 2003]{butterworth2003statistical}
+Butterworth, D., Ianelli, J., and Hilborn, R. (2003).
+\newblock {A statistical model for stock assessment of southern bluefin tuna
+  with temporal changes in selectivity}.
+\newblock {\em African Journal of Marine Science}, 25(1):331--361.
+
+\bibitem[Gavaris and Ianelli, 2002]{gavaris2002sif}
+Gavaris, S. and Ianelli, J. (2002).
+\newblock {Statistical Issues in Fisheries' Stock Assessments*}.
+\newblock {\em Scandinavian Journal of Statistics}, 29(2):245--267.
+
+\bibitem[Radomski et~al., 2005]{radomski2005comparison}
+Radomski, P., Bence, J., and Quinn~Ii, T. (2005).
+\newblock {Comparison of virtual population analysis and statistical
+  kill-at-age analysis for a recreational, kill-dominated fishery}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  62(2):436--452.
+
+\bibitem[Thompson, 1994]{thompson1994confounding}
+Thompson, G. (1994).
+\newblock {Confounding of gear selectivity and the natural mortality rate in
+  cases where the former is a nonmonotone function of age}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  51(12):2654--2664.
+
+\bibitem[Walters and Martell, 2004]{WalMart2004}
+Walters, C. and Martell, S. (2004).
+\newblock {\em {Fisheries Ecology and Management}}.
+\newblock Princeton University Press.
+
+\end{thebibliography}
