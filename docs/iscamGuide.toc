@@ -1,0 +1,43 @@
+\select@language {english}
+\select@language {english}
+\contentsline {subsection}{Preface}{i}{section*.1}
+\contentsline {subsection}{Contents}{ii}{section*.2}
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Overview of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Obtaining {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{1}{subsection.1.2}
+\contentsline {section}{\numberline {2}Running {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}; input files \& command line options}{1}{section.2}
+\contentsline {subsection}{\numberline {2.1}The \texttt {iscam.dat} file}{1}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}The data file}{1}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}The control file}{5}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Prior type distributions}{5}{subsubsection.2.3.1}
+\contentsline {subsection}{\numberline {2.4}Command line options}{5}{subsection.2.4}
+\contentsline {section}{\numberline {3}Model Documentation}{5}{section.3}
+\contentsline {subsection}{\numberline {3.1}Age-structured population model: equilibrium considerations}{6}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}MSY based reference points}{7}{subsubsection.3.1.1}
+\contentsline {subsection}{\numberline {3.2}Age-structured population model: state-dynamics}{8}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Options for selectivity ($v_{k,t,a}$)}{8}{subsubsection.3.2.1}
+\contentsline {paragraph}{Logistic selectivity}{9}{section*.3}
+\contentsline {paragraph}{Age-specific selectivity coefficients}{9}{section*.4}
+\contentsline {paragraph}{Cubic spline interpolation}{9}{section*.5}
+\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{9}{section*.6}
+\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{10}{section*.7}
+\contentsline {subsection}{\numberline {3.3}Residuals, likelihoods \& objective function value components}{10}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Catch data}{10}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}Relative abundance data}{10}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Age composition data}{11}{subsubsection.3.3.3}
+\contentsline {subsubsection}{\numberline {3.3.4}Stock-recruitment}{12}{subsubsection.3.3.4}
+\contentsline {section}{\numberline {4}Example Assessment: the Namibian hake case study}{12}{section.4}
+\contentsline {subsection}{\numberline {4.1}Maximum likelihood estimates of the model parameters}{13}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Bayesian analysis of model parameters \& policy parameters}{14}{subsection.4.2}
+\contentsline {section}{\numberline {5}Example Assessment: the Pacific hake fishery}{15}{section.5}
+\contentsline {subsection}{\numberline {5.1}Data \& assumptions}{15}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Maximum likelihood estimates}{16}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Time-varying selectivity}{17}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Bayesian implementation}{19}{subsection.5.4}
+\contentsline {section}{References}{22}{table.6}
+\contentsline {section}{\numberline {A}Statistical functions \& probability distributions}{23}{appendix.A}
+\contentsline {paragraph}{dbeta}{23}{section*.9}
+\contentsline {paragraph}{dgamma}{23}{section*.10}
+\contentsline {paragraph}{dnorm}{23}{section*.11}
+\contentsline {paragraph}{dlnorm}{23}{section*.12}
+\contentsline {section}{\numberline {B}R-code for figures and Tables}{24}{appendix.B}
