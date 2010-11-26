@@ -13,7 +13,8 @@
 //   Set up retrospective command line option (DONE).
 	//   Create a routine for doing projections for a given catch stream.
 	//   Set up MSY and Fmsy as leading parameters.
-		
+	//   Set up SVN on googlecode for iscam-project
+	
 //	BUGS:
 //	issue with bicubic spline. Seems the # nodes is transposed.  FIXED
 //	fix REPORT_SECTION to accomodate retrospective results (eg. obs_ct, A & Ahat,fixed)
