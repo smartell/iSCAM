@@ -1,0 +1,27 @@
+window name=hcamView title="iSCAM Viewer"
+
+menu nitems=1 label="File" font="Helvetica 10"
+  menuitem label="Exit" font="Helvetica 10"             function=closeWin
+#menu nitems=2 label="View"
+#  menu nitems=1 label="R Code"
+#    menuitem label="GUI Functions"   function=.viewFile action=hcamViewFuns.r
+#  menuitem label="Window"            function=.viewFile action=hcamViewWin.txt
+#menu nitems=1 label="Help"
+#  menuitem label="About HCAM"        function=.viewFile action=hcamAbout.txt
+
+#----------------------------------------------------------------------------------#
+image file="iscamlogo.gif" sticky="NW"
+null
+
+
+grid 1 2 toptitle="Plots" topfont="Helvetica bold 12" sticky=W relief="sunken"
+	
+	grid 1 1 toptitle="Observed data" topfont="Helvetica bold 10" sticky=N
+	radio name=plotType value=catch         text="Catch"             function=.mpdView mode=character sticky=W
+	
+	
+	grid 2 1 toptitle="MPD Estimates" topfont="Helvetica bold 10" sticky=N
+	radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
+	radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
+
+null
