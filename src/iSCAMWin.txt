@@ -14,14 +14,16 @@ image file="iscamlogo.gif" sticky="NW"
 null
 
 
-grid 1 2 toptitle="Plots" topfont="Helvetica bold 12" sticky=W relief="sunken"
+grid 1 2 toptitle="Plots" topfont="Helvetica bold 12" sticky=W relief="sunken" padx=10
 	
-	grid 1 1 toptitle="Observed data" topfont="Helvetica bold 10" sticky=N
+	grid 3 1 toptitle="Observed data" topfont="Helvetica bold 10" relief="raised" sticky=N padx=5 pady=5
 	radio name=plotType value=catch         text="Catch"             function=.mpdView mode=character sticky=W
+	radio name=plotType value=survey		text="Survey index"      function=.mpdView mode=character sticky=W
+	radio name=plotType value=agecomps		text="Age composition"   function=.mpdView mode=character sticky=W
 	
-	
-	grid 2 1 toptitle="MPD Estimates" topfont="Helvetica bold 10" sticky=N
+	grid 3 1 toptitle="MPD Estimates" topfont="Helvetica bold 10" relief="raised" sticky=N padx=5 pady=5
 	radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
 	radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
+	radio name=plotType value=mortality     text="Mortality"         function=.mpdView mode=character sticky=W
 
 null
