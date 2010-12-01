@@ -35,7 +35,7 @@ require(Riscam)	#custom library built specifically for iscam.
 
 
 
-repObj	<- read.rep("iscam.rep")
+
 
 
 
@@ -63,8 +63,10 @@ repObj	<- read.rep("iscam.rep")
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
+	# Read the report file
+	repObj	<- read.rep("iscam.rep")
 	
-	#Conditional statements for radio button selections of plots
+	# Conditional statements for radio button selections of plots
 	if ( plotType=="catch" )
 	{
 		.plotCatch( repObj, legend.txt=NULL )
@@ -84,7 +86,12 @@ repObj	<- read.rep("iscam.rep")
 	{
 		.plotDepletion( repObj, annotate=TRUE )
 	}
-
+	
+	if ( plotType=="surveyfit" )
+	{
+		.plotSurveyfit( repObj, annotate=TRUE )
+	}
+	
 	if ( plotType=="mortality" )
 	{
 		.plotMortality( repObj, annotate=TRUE )
@@ -94,12 +101,75 @@ repObj	<- read.rep("iscam.rep")
 	{
 		.plotAgecomps( repObj )
 	}
+	
+	if ( plotType=="surveyresid" )
+	{
+		.plotSurveyResiduals( repObj, annotate=TRUE )
+	}
+	
+	if ( plotType=="agecompsresid" )
+	{
+		.plotAgecompresiduals( repObj )
+	}
+	
+	if ( plotType=="recruitment" )
+	{
+		.plotRecruitment( repObj )
+	}
+}
+
+.plotRecruitment	<- function( repObj )
+{
+	#plot age-a recruits.
+	with(repObj, {
+		xx = yr
+		yy = exp(ln_rt)
+		scl=c(1,10,100,1000,10000,100000,1000000)
+		yscl =min(which(yy/scl<=100))
+		yy=yy/scl[yscl]
+		yrange=c(0, max(yy, na.rm=T))
+		
+		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+			xlab="Year", 
+			ylab=paste("Age-", min(age), " recruits (", scl[yscl],")", sep=""))
+		
+		lines(xx, yy, type="h")
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+	})
 }
 
 
-
-
-
+.plotSurveyResiduals	<- function( repObj, annotate=FALSE )
+{
+	#Plot residuals between observed and predicted relative abundance
+	#indicies (epsilon)
+	with(repObj, {
+		xx = t(iyr)
+		yy = t(epsilon)
+		absmax = abs(max(yy, na.rm=TRUE))
+		yrange=c(-absmax, absmax)
+		
+		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+			xlab="Year", ylab="Residual")
+		
+		matlines(xx, yy, type="h", col="black")
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+		if ( annotate )
+		{
+			n=dim(xx)[2]
+			txt=paste("Survey",1:n)
+			
+			mfg <- par( "mfg" )
+			if ( mfg[1]==1 && mfg[2]==1 )
+			legend( "top",legend=txt,
+				bty='n',lty=1:n,lwd=1,pch=-1,ncol=1 )
+		}
+	})
+}
 
 .plotIndex	<- function( repObj, annotate=FALSE )
 {
@@ -194,6 +264,38 @@ repObj	<- read.rep("iscam.rep")
 	})	
 }
 
+.plotSurveyfit	<- function( repObj, annotate=FALSE)
+{
+	with(repObj, {
+		xx = t(iyr)
+		yy = t(pit)
+		y2 = t(it)
+		yrange=c(0, max(yy, y2, na.rm=TRUE))
+		
+		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
+			xlab="Year", ylab="Relative abundance")
+		
+		matlines(xx, yy, col="black")
+		matpoints(xx, y2, col="black")
+		
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+		
+		if ( annotate )
+		{
+			n=dim(xx)[2]
+			txt=rep(c( "Predicted","Observed"),1)
+			
+			mfg <- par( "mfg" )
+			if ( mfg[1]==1 && mfg[2]==1 )
+			legend( "top",legend=txt,
+				bty='n',lty=c(1,-1),lwd=1,pch=c(-1,"1"),ncol=1 )
+		}
+	})
+}
+
+
 .plotMortality	<- function( repObj, annotate=FALSE )
 {
 	#plot average total mortality,  fishing mortality & natural mortality
@@ -229,6 +331,7 @@ repObj	<- read.rep("iscam.rep")
 	#Ahat is the predicted age-comps (proportions)
 	with( repObj, {
 		nagear = unique(A[, 2])
+		#par(mfcol=c(length(nagear), 1))
 		for(i in nagear)
 		{
 			ac = subset(A, A[, 2]==i)
@@ -236,8 +339,29 @@ repObj	<- read.rep("iscam.rep")
 			zz = t(ac[, -1:-2])
 			
 			# plot proportions-at-age (cpro=TRUE)
-			.plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-				las=.VIEWLAS, xlab="Year", ylab="Age")
+			plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
+				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
+		}
+	})
+}
+
+.plotAgecompresiduals	<- function(repObj)
+{
+	#Bubble plot of age-composition data
+	#A is the observed age-comps
+	#Ahat is the predicted age-comps (proportions)
+	with( repObj, {
+		nagear = unique(A[, 2])
+		#par(mfcol=c(length(nagear), 1))
+		for(i in nagear)
+		{
+			ac = subset(A_nu, A_nu[, 2]==i)
+			xx = ac[, 1]
+			zz = t(ac[, -1:-2])
+			
+			# plot residuals
+			plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
+				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
 		}
 	})
 }
