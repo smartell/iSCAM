@@ -9,16 +9,16 @@
 //           Copyright (c) 2010. All rights reserved.                  //
 //                                                                     //
 // AUTHORS: SJDM Steven Martell                                        //
-//                                                                     //
+// TO DO: -add option for using empiracle weight-at-age data           //
 //                                                                     //
 //                                                                     //
 // ------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                     --//
-//--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
+//--  Nov 30, 2010 -modified survey biomass by the fraction of total --//
+//--                mortality that occurred during the time of the   --//
+//--                survey. User specifies this fraction (0-1) in the--//
+//--                data file as the last column of the relative     --//
+//--                abundance index.                                 --//
 //--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
@@ -155,12 +155,13 @@ DATA_SECTION
 	
 	init_int nit;
 	init_ivector nit_nobs(1,nit);
-	init_3darray survey_data(1,nit,1,nit_nobs,1,4);
+	init_3darray survey_data(1,nit,1,nit_nobs,1,5);
 	//init_matrix survey_data(1,nit,1,4);
 	imatrix iyr(1,nit,1,nit_nobs);
 	imatrix igr(1,nit,1,nit_nobs);
 	matrix it(1,nit,1,nit_nobs);
 	matrix it_wt(1,nit,1,nit_nobs);		//relative weight
+	matrix it_timing(1,nit,1,nit_nobs);	//timing of the survey (0-1)
 	LOC_CALCS
 		for(i=1;i<=nit;i++)
 		{
@@ -168,6 +169,7 @@ DATA_SECTION
 			igr(i)=ivector(column(survey_data(i),3));
 			it(i)=column(survey_data(i),2);
 			it_wt(i)=column(survey_data(i),4)+1.e-10;//add a small constant to allow 0 weight
+			it_timing(i)=column(survey_data(i),5);
 		}
 		cout<<"OK after relative abundance index"<<endl;
 	END_CALCS
@@ -372,6 +374,7 @@ PARAMETER_SECTION
 	
 	vector log_rt(syr-nage+sage,nyr);
 	vector vax(sage,nage);		//survey selectivity coefficients
+	vector q(1,nit);			//survey catchability coefficients
 	
 	vector sbt(syr,nyr+1);		//spawning stock biomass
 	vector rt(syr+sage,nyr); 	//predicted sage recruits from S-R curve
@@ -395,6 +398,7 @@ PARAMETER_SECTION
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
+	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
 	3darray log_sel(1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
 	3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
@@ -684,6 +688,8 @@ FUNCTION calc_age_proportions
 			ig=A(k,i,a_sage(k)-1);	//index for gear
 			if(iyr>nyr)break;		//trap for retrospective analysis
 			
+			A_nu(k,i,a_sage(k)-2)=iyr;
+			A_nu(k,i,a_sage(k)-1)=ig;
 			Ahat(k,i,a_sage(k)-2)=iyr;
 			Ahat(k,i,a_sage(k)-1)=ig;
 			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
@@ -723,7 +729,11 @@ FUNCTION calc_survey_observations
 	
 	Oct 31, 2010, added retrospective counter.
 	
-	Nov 22, 2010, adding multiple surveys. Still need to check with retrospective optio
+	Nov 22, 2010, adding multiple surveys. Still need to check with retrospective option
+	
+	Nov 30, 2010, adjust the suvery biomass by the fraction of Z that has occurred 
+	when the survey was conducted. For herring spawning biomass this would be after the 
+	fishery has taken place.
 	*/
 	
 	int i,j,ii,k;
@@ -735,21 +745,26 @@ FUNCTION calc_survey_observations
 	for(i=1;i<=nit;i++)
 	{	
 		int nx=0;		//counter for retrospective analysis
-		dvar_matrix V(1,nit_nobs(i),sage,nage);   
+		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable numbers 
 		for(j=1;j<=nit_nobs(i);j++)
 		{
 			ii=iyr(i,j);
 			k=igr(i,j);
 			if(ii>nyr) break;	//trap for retrospective analysis.
 			dvar_vector log_va=log_sel(k)(ii);
-			V(j)=elem_prod(N(ii),mfexp(log_va));
+			//Adjust survey biomass by the fraction of the mortality that 
+			//occurred during the time of the survey.
+			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
+			//V(j)=elem_prod(N(ii),mfexp(log_va));
+			V(j)=elem_prod(Np,mfexp(log_va));
 		
 			if(iyr(i,j)<=nyr) nx++;
 		}
 		dvar_vector t1 = V*wa;
 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
 		epsilon(i).sub(1,nx) = zt-mean(zt);
-		pit(i).sub(1,nx)=(V*wa)*exp(mean(zt));	//predicted index
+		q(i) = exp(mean(zt));
+		pit(i).sub(1,nx)=(V*wa)*q(i);	//predicted index
 		
 	}
 	
@@ -842,18 +857,27 @@ FUNCTION calc_objective_function
 	for(k=1;k<=na_gears;k++)
 	{	
 		if(na_nobs(k)>0){
-		int naa=0;
-		int iyr;
-		//retrospective counter
-		for(i=1;i<=na_nobs(k);i++)
-		{
-			iyr=A(k,i,a_sage(k)-2);	//index for year
-			if(iyr<=nyr)naa++;
-		}
-		dmatrix O=trans(trans(A(k)).sub(a_sage(k),a_nage(k))).sub(1,naa);
-		dvar_matrix P=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa);
+			int naa=0;
+			int iyr;
+			//retrospective counter
+			for(i=1;i<=na_nobs(k);i++)
+			{
+				iyr=A(k,i,a_sage(k)-2);	//index for year
+				if(iyr<=nyr)naa++;
+			}
+			dmatrix O=trans(trans(A(k)).sub(a_sage(k),a_nage(k))).sub(1,naa);
+			dvar_matrix P=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa);
+			//dvar_matrix nu=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa); //residuals
+			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
+			nu.initialize();
 		
-		nlvec(3,k)=dmvlogistic(O,P,age_tau2(k));
+			nlvec(3,k)=dmvlogistic(O,P,nu,age_tau2(k),0.02);
+		
+			for(i=1;i<=na_nobs(k);i++)
+			{
+				iyr=A(k,i,a_sage(k)-2);	//index for year
+				A_nu(k)(i)(a_sage(k),a_nage(k))=nu(i);
+			}
 		}
 	}
 	
@@ -1399,25 +1423,17 @@ REPORT_SECTION
 	REPORT(vax);
 	REPORT(obs_ct);
 	REPORT(ct);
-	//dmatrix ft(1,ngear,f_syr,f_nyr);
-	//ft.initialize();
-	//for(k=1;k<=ngear;k++)
-	/*	for(i=f_syr(k);i<=f_nyr(k);i++)
-			{
-				if(active(log_avg_f(k)))
-					ft(k,i)=value(mfexp(log_avg_f(k)+log_ft_devs(k,i)));
-			}*/
-		
 	REPORT(ft);
 	report<<"bt\n"<<N*wa<<endl;
 	report<<"sbt\n"<<sbt<<endl;
 	int rectype=int(cntrl(2));
 	REPORT(rectype);
 	REPORT(rt);
-	REPORT(log_rt(syr,nyr));
+	dvector ln_rt=value(log_rt(syr,nyr));
+	REPORT(ln_rt);
 	REPORT(delta);
+	REPORT(q);
 	REPORT(it);
-	//dvector pit=value(N.sub(syr,nyr)*elem_prod(vax,wa));
 	REPORT(pit);
 	REPORT(epsilon);
 	REPORT(F);
@@ -1426,6 +1442,7 @@ REPORT_SECTION
 	REPORT(a_nage);
 	REPORT(A); 
 	REPORT(Ahat);
+	REPORT(A_nu);
 	REPORT(N);
 	
 	if(last_phase())

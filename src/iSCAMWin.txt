@@ -21,9 +21,16 @@ grid 1 2 toptitle="Plots" topfont="Helvetica bold 12" sticky=W relief="sunken" p
 	radio name=plotType value=survey		text="Survey index"      function=.mpdView mode=character sticky=W
 	radio name=plotType value=agecomps		text="Age composition"   function=.mpdView mode=character sticky=W
 	
-	grid 3 1 toptitle="MPD Estimates" topfont="Helvetica bold 10" relief="raised" sticky=N padx=5 pady=5
+	grid 8 1 toptitle="MPD Estimates" topfont="Helvetica bold 10" relief="raised" sticky=N padx=5 pady=5
 	radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
 	radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
+	radio name=plotType value=recruitment   text="Recruitment"       function=.mpdView mode=character sticky=W
 	radio name=plotType value=mortality     text="Mortality"         function=.mpdView mode=character sticky=W
+	radio name=plotType value=surveyfit     text="Survey(s)"         function=.mpdView mode=character sticky=W
+	
+	#radio buttons for residuals
+	label text="Residuals" font="Helvetica bold 10" sticky=W
+	radio name=plotType value=surveyresid   text="Survey(s)"         function=.mpdView mode=character sticky=W
+	radio name=plotType value=agecompsresid text="Age composition"   function=.mpdView mode=character sticky=W
 
 null
