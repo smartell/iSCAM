@@ -27,7 +27,7 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 2
 
-
+.REPFILES <- list.files(pattern=".rep|.r0")
 
 
 
@@ -49,6 +49,9 @@ require(Riscam)	#custom library built specifically for iscam.
 	graphics.off()
 	closeWin()
 	
+	#Create a file list object for selection
+	ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
+	
 	#Create new window based on iscamWin.txt
 	createWin("iscamWin.txt")
 	
@@ -63,7 +66,12 @@ require(Riscam)	#custom library built specifically for iscam.
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
+	# Determine which files have been selected
+	hdr	<- ifiles[ ifiles$Select, ]
+	#hdr$Report.Files contains the vector of report files to examine.
+	
 	# Read the report file
+	#repObj	<- read.rep(hdr$Report.Files)
 	repObj	<- read.rep("iscam.rep")
 	
 	# Conditional statements for radio button selections of plots
@@ -340,7 +348,7 @@ require(Riscam)	#custom library built specifically for iscam.
 			
 			# plot proportions-at-age (cpro=TRUE)
 			plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
+				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="honeydew")
 		}
 	})
 }

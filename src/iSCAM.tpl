@@ -29,28 +29,7 @@
 //--                                                                 --//
 // ------------------------------------------------------------------- //
 
-//  ******************************************************************
-//  
-//
-//  Created by Steve Martell on 2010-04-09.
-//  Copyright (c) 2010. All rights reserved.
-//  Comments: 
-//
-//	TO DO: Add penalty to likelihood for ngear sel_coff  DONE
-//   Add bicubic spline  DONE
-//   New function for predicted age comps by gear (Ahat) DONE
-//   Fix ploting routings for age comps in Scam.R  DONE
-//   set up ragged array for estimated fishing mortality coeffs DONE
-//   Set up retrospective command line option (DONE).
-	//   Create a routine for doing projections for a given catch stream.
-	//   Set up MSY and Fmsy as leading parameters.
-	//   Set up SVN on googlecode for iscam-project
-	
-//	BUGS:
-//	issue with bicubic spline. Seems the # nodes is transposed.  FIXED
-//	fix REPORT_SECTION to accomodate retrospective results (eg. obs_ct, A & Ahat,fixed)
-	//	fix MSY & Fmsy reference points calculations for muliple fleets.
-//  ******************************************************************
+
 DATA_SECTION
 	init_adstring data_file;
 	init_adstring control_file;
