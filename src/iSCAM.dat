@@ -1,8 +1,8 @@
 #Examples/PacificHake/PHake2010.dat		#Data file name
 #Examples/PacificHake/PHake2010.ctl		#Control file name
 
-#Examples/NamibianHake/NamibianHake.dat
-#Examples/NamibianHake/NamibianHake.ctl
+Examples/NamibianHake/NamibianHake.dat
+Examples/NamibianHake/NamibianHake.ctl
 
-Examples/sogHerring/SOGHerring2010.dat
-Examples/sogHerring/SOGHerring2010.ctl
+#Examples/sogHerring/SOGHerring2010.dat
+#Examples/sogHerring/SOGHerring2010.ctl

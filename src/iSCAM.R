@@ -124,6 +124,43 @@ require(Riscam)	#custom library built specifically for iscam.
 	{
 		.plotRecruitment( repObj )
 	}
+	
+	if ( plotType=="meanwt" )
+	{
+		.plotMeanwt( repObj )
+	}
+}
+
+
+.plotMeanwt	<- function( repObj )
+{
+	#plot mean weight-at-age by cohort
+	with(repObj, {
+		xx = yr		## xaxis labels
+		yy = age	## yaxis labels
+		nage=length(age)
+		
+		plot(range(xx), range(wt_obs), type="n", axes=FALSE,
+		xlab="Cohort year", ylab="Weight-at-age (kg)")
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		
+		for(i in 1:dim(wt_obs)[1])
+		{
+			#ir = (age-min(age))+i
+			#xx = yr[i]+(age-min(age))
+			#yy = (diag(as.matrix(wt_obs[ir, ])))
+			yy = (diag(as.matrix(wt_obs[0:-i, ]))) 
+			xx = 1:length(yy)+yr[i]-min(age)+1
+			
+			yy[yy==0]=NA;xx[yy==NA]=NA
+			lines(xx,yy)
+
+			points(xx[1],yy[1],pch=20,col="steelblue",cex=0.5)
+			points(xx[nage],yy[nage],pch=20,col="salmon",cex=0.5)
+			
+		}
+	})
 }
 
 .plotRecruitment	<- function( repObj )

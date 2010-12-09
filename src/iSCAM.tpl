@@ -9,6 +9,8 @@
 //           Copyright (c) 2010. All rights reserved.                  //
 //                                                                     //
 // AUTHORS: SJDM Steven Martell                                        //
+//                                                                     //
+//                                                                     //
 // TO DO: -add option for using empiracle weight-at-age data           //
 //                                                                     //
 //                                                                     //
@@ -20,9 +22,10 @@
 //--                data file as the last column of the relative     --//
 //--                abundance index.                                 --//
 //--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
+//--  Dec 6, 2010 -modified the code to allow for empiracle weight-  --//
+//--               at-age data to be used.                           --//
+//--              -rescaled catch and relative abundance /1000, this --//
+//--               should be done in the data file and not here.     --//
 //--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
@@ -51,11 +54,6 @@ DATA_SECTION
 		{
 			sim=1;
 			rseed=atoi(ad_comm::argv[on+1]);
-			cout<<"______________________________________________________\n"<<endl;
-			cout<<"    **Implementing Simulation--Estimation trial** "<<endl;
-			cout<<"______________________________________________________"<<endl;
-			cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
-			cout<<"______________________________________________________\n"<<endl;
 			//if(sim)exit(1);
 		}
 		
@@ -101,17 +99,15 @@ DATA_SECTION
 	init_number b;
 	init_number ah;
 	init_number gh;
-	vector fa(sage,nage);		//fecundity-at-age
+	
 	vector la(sage,nage);		//length-at-age
 	vector wa(sage,nage);		//weight-at-age
 	LOC_CALCS
 	  la=linf*(1.-exp(-vonbk*(age-to)));
 	  wa=a*pow(la,b);
-	  fa=elem_prod(plogis(age,ah,gh),wa);
 	  cout<<setprecision(2);		//2 decimal places for output
 	  cout<<"la\n"<<la<<endl;
 	  cout<<"wa\n"<<wa<<endl;
-	  cout<<"fa\n"<<fa<<endl;
 	  cout<<setprecision(5);
 	END_CALCS
 	
@@ -161,7 +157,28 @@ DATA_SECTION
 	init_ivector a_nage(1,na_gears);	//oldest age in the ageing matrix
 
 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
-		
+	
+	//Mean weight-at-age data (units are kg) (if exists)
+	init_int n_wt_nobs;
+	init_matrix tmp_wt_obs(1,n_wt_nobs,sage-1,nage);
+	
+	matrix wt_obs(syr,nyr+1,sage,nage);
+	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
+	LOC_CALCS
+		int iyr;
+		for(i=syr;i<=nyr+1;i++)
+		{
+			wt_obs(i)=wa;			
+			fec(i)=elem_prod(plogis(age,ah,gh),wt_obs(i));
+		}
+		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
+		for(i=1;i<=n_wt_nobs;i++)
+		{
+			iyr=tmp_wt_obs(i,sage-1);  //index for year
+			wt_obs(iyr)=tmp_wt_obs(i)(sage,nage);
+			fec(iyr)=elem_prod(plogis(age,ah,gh),wt_obs(iyr));
+		}
+	END_CALCS
 	
 	//End of data file
 	init_int eof;	
@@ -443,9 +460,6 @@ FUNCTION initialize_parameters
 	rho=theta(5);
 	varphi=theta(6);
 	
-	//I'm not sure about the following.
-	//dvariable tau = (1.-rho)/varphi;
-	//ro *= exp(-0.5*tau*tau);
 	if(verbose)cout<<"**** Ok after initialize_parameters ****"<<endl;
 	
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
@@ -631,6 +645,8 @@ FUNCTION calc_numbers_at_age
 		log_rt(i)=log_avgrec+log_rec_devs(i);
 		N(i,sage)=mfexp(log_rt(i));
 	}
+	N(nyr+1,sage)=mfexp(log_avgrec);
+	
 	
 	for(j=sage;j<=nage;j++) 
 	{
@@ -678,6 +694,10 @@ FUNCTION calc_age_proportions
 	if(verbose)cout<<"**** Ok after calc_age_proportions ****"<<endl;
 	
 FUNCTION calc_fishery_observations
+	/*
+	Dec 6, 2010.  Modified ct calculations to include
+				  empirical weight at age data (wt_obs);
+	*/
 	int i,k;
 	for(i=syr;i<=nyr;i++)
 	{
@@ -696,7 +716,8 @@ FUNCTION calc_fishery_observations
 			Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 			
 			//Catch weight by gear
-			ct(k,i)=Chat(k,i)*wa;  
+			//ct(k,i)=Chat(k,i)*wa;  
+			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010
 		}
 	}
 	if(verbose)cout<<"**** Ok after calc_fishery_observations ****"<<endl;
@@ -713,6 +734,9 @@ FUNCTION calc_survey_observations
 	Nov 30, 2010, adjust the suvery biomass by the fraction of Z that has occurred 
 	when the survey was conducted. For herring spawning biomass this would be after the 
 	fishery has taken place.
+	
+	Dec 6, 2010, modified predicted survey biomass to accomodate empirical weight-at-age 
+	data (wt_obs).
 	*/
 	
 	int i,j,ii,k;
@@ -720,11 +744,13 @@ FUNCTION calc_survey_observations
 	
 	//survey abudance index residuals
 	epsilon.initialize();
+	pit.initialize();
 	
 	for(i=1;i<=nit;i++)
 	{	
 		int nx=0;		//counter for retrospective analysis
-		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable numbers 
+		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable numbers
+		dvar_matrix VB(1,nit_nobs(i),sage,nage); //vulnerable biomass
 		for(j=1;j<=nit_nobs(i);j++)
 		{
 			ii=iyr(i,j);
@@ -736,14 +762,16 @@ FUNCTION calc_survey_observations
 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
 			//V(j)=elem_prod(N(ii),mfexp(log_va));
 			V(j)=elem_prod(Np,mfexp(log_va));
+			VB(j)=elem_prod(V(j),wt_obs(ii));		//SM Dec 6, 2010
 		
 			if(iyr(i,j)<=nyr) nx++;
 		}
-		dvar_vector t1 = V*wa;
+		dvar_vector t1 = rowsum(VB);//V*wa;
 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
 		epsilon(i).sub(1,nx) = zt-mean(zt);
 		q(i) = exp(mean(zt));
-		pit(i).sub(1,nx)=(V*wa)*q(i);	//predicted index
+		//pit(i).sub(1,nx)=(V*wa)*q(i);	//predicted index
+		pit(i).sub(1,nx)=t1(1,nx)*q(i);	//predicted index
 		
 	}
 	
@@ -761,6 +789,10 @@ FUNCTION calc_stock_recruitment
 		-Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
 	Ricker Model
 		-Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
+		
+	Dec 6, 2010.  Modified code to allow empirical weight-at-age data
+				This required a fecundity-at-age matrix.  Need to 
+				project spawning biomass into the future.
 	*/ 
 	int i;
 	dvariable tau = (1.-rho)/varphi;
@@ -768,11 +800,13 @@ FUNCTION calc_stock_recruitment
 	dvar_vector lx(sage,nage); lx=1;
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m);
 	lx(nage)/=(1.-exp(-m));
-	dvariable phib = lx * fa;
+	dvariable phib = lx * fec(syr);		//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
-	bo = ro*phib;  
-	sbt=(N*fa);
+	bo = ro*phib;  					//unfished spawniong biomass
+	
+	sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
+	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
 	switch(int(cntrl(2)))
@@ -1151,7 +1185,7 @@ FUNCTION void calc_reference_points()
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-		equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		equilibrium(fe,value(ro),value(kappa),value(m),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
 		ddye_df = phiq*dre_df + re*dphiq_df;
 		fe = fe - dye_df/ddye_df;
@@ -1159,7 +1193,7 @@ FUNCTION void calc_reference_points()
 		if(sfabs(dye_df)<1.e-5)break;
 	}
 	fmsy=fe;
-	equilibrium(fmsy,value(ro),value(kappa),value(m),age,wa,fa,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	equilibrium(fmsy,value(ro),value(kappa),value(m),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 	msy=ye;
 	bmsy=be;
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
@@ -1183,125 +1217,172 @@ FUNCTION void simulation_model(const long& seed)
 	random number vectors epsilon (observation error) or 
 	recruitment devs wt (process error).
 	*/
+	
+	
+	cout<<"___________________________________________________\n"<<endl;
+	cout<<"  **Implementing Simulation--Estimation trial**    "<<endl;
+	cout<<"___________________________________________________"<<endl;
+	cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
+	cout<<"___________________________________________________\n"<<endl;
+	
+	
+	//Indexes:
 	int i,j,k,ii;
 
 	//3darray Chat(1,ngear,syr,nyr,sage,nage);
 	//C.initialize();
 	
-	//Random number generator
+	
+	
+	/*----------------------------------*/
+	/*	-- Generate random numbers --	*/
+	/*----------------------------------*/
 	random_number_generator rng(seed);
-	dvector wt(syr-nage-1,nyr);		//recruitment anomalies
-	dvector epsilon(1,nit);			//observation errors in survey
+	dvector wt(syr-nage-1,nyr);			//recruitment anomalies
+	dmatrix epsilon(1,nit,1,nit_nobs);  //observation errors in survey
+	
 	double sig = value(rho/varphi);
 	double tau = value((1.-rho)/varphi);
+	
 	if(seed==000)
 	{
 		sig=0;
 		tau=0;
 	}
 	wt.fill_randn(rng); wt *= tau;
-	epsilon.fill_randn(rng); epsilon *= sig;
+	epsilon.fill_randn(rng); 
 	
-
-    //Initialize model
-	dvector lx=pow(exp(-value(m)),age-1.);
+	//now loop over surveys and scale the observation errors
+	for(k=1;k<=nit;k++)
+	{
+		for(j=1;j<=nit_nobs(k);j++)
+			epsilon(k,j) *= sig/it_wt(k,j);
+	}
+	
+	cout<<"	OK after random numbers\n";
+	/*----------------------------------*/
+	
+	
+	
+	
+	
+	/*----------------------------------*/
+    /*		--Initialize model--		*/
+	/*----------------------------------*/
+	dvector lx=pow(exp(-value(m)),age-min(age));
 	lx(nage)/=(1.-exp(-value(m)));
-	double phie=lx*fa;		//this is the sum of products for two vectors
+	double phie=lx*fec(syr);
 	so=kappa/phie;
 	if(cntrl(2)==1) beta=(kappa-1.)/(ro*phie);
 	if(cntrl(2)==2) beta=log(kappa)/(ro*phie);
 	
 	//Initial numbers-at-age with recruitment devs
-	N(syr,1)=exp(log_avgrec+wt(syr));
-	for(j=2;j<=nage;j++)N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
+	for(i=syr;i < syr+sage;i++)
+		N(i,sage)=exp(log_avgrec+wt(i));
+		
+	for(j=sage+1;j<=nage;j++)
+		N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
+	
+	cout<<"	Ok after initialize model\n";
+	/*----------------------------------*/
 	
 	
-	dmatrix va(1,ngear,sage,nage);				//fishery selectivity
-	d3_array vai(1,ngear,syr,nyr,sage,nage);	//time-varying selectivity
+	
+	/*----------------------------------*/
+    /*		--    Selectivity   --		*/
+	/*----------------------------------*/
+	/*
+		-Based on values in the control file.
+		-Add autocorrelated random numbers
+		for time varying or something to that
+		effect.
+		
+		-If seed==99 then set up a special case
+		for the cubic spline manunscript using
+		the eplogistic function where g goes from
+		strongly domed to asymptotic, e.g.,
+		g = 0.2 * (nyr-i)/(nyr-syr);
+		
+	*/
+	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
+	d3_array sel(1,ngear,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
-	{
-		va(k)=plogis(age,0.33*(nage-sage),1.5);
 		for(i=syr;i<=nyr;i++)
-			vai(k)(i)=va(k);
-	}
-
-	//Special case for manunscript
-	if(seed==99)
-	{
-		double g=0.3;
-		for(k=1;k<=ngear;k++)
 		{
-			va(k)=plogis(age,5-k,0.5);
-			for(i=syr;i<=nyr;i++)
-			{
-				g = 0.2 * (nyr-i)/(nyr-syr);  //goes from strongly domed to asymptotic.
-				if(fsh_flag(k))
-					vai(k)(i)=eplogis(age,1.5,5-k,g);
-				else
-					vai(k)(i)=va(k);
-			}
-				
+			sel(k)(i)=plogis(age,ahat(k),ghat(k));
 		}
-	}
-	//dvector va=plogis(age,4,1.5);				//fishery selectivity
-	//dmatrix vat(syr,nyr,sage,nage);				//matrix for time-varying selectivity 
-	//dvector va=eplogis(age,1/1.5,4,0.1);		//fishery selectivity domed
-	//dvector vax=plogis(age,4.5,1.8);			//survey selectivity
+		
+	cout<<"	Ok after selectivity\n";
+	/*----------------------------------*/
 	
 	
+	/*----------------------------------*/
+    /*	--  Population dynamics  --		*/
+	/*----------------------------------*/
+	
+	dmatrix zt(syr,nyr,sage,nage);			//total mortality
+	zt.initialize();
 	for(i=syr;i<=nyr;i++)
 	{   
-		//Approximate fishing mortality with Popes approximation
-		//double btmp = value(N(i))*exp(-m/2.)*elem_prod(va,wa);
-		//double ftmp = obs_ct(i)/btmp;
-		//dvector va_dev = cis(value(N(i)));
-		//va = elem_prod(plogis(age,4,1.5),exp(0.0*va_dev));
-		//vat(i) = va;
-		//va = va/max(va);
-		//cout<<setprecision(3)<<"va\t"<<va<<endl;
 		
-		
+		//total biomass
 		dvector bt = elem_prod(value(N(i)),wa);
-		//double ft = get_ft(obs_ct(1,i),value(m),va,bt);
+
+		/*calculate instantaneous fishing mortalities
+		based on Baranov's catch equation and the 
+		observed catch from each fleet.*/
 		dvector oct = trans(obs_ct)(i);
 		for(k=1;k<=ngear;k++)
-			va(k)=vai(k)(i);
+			va(k)=sel(k)(i);
 		dvector ft = get_ft(oct,value(m),va,bt);
 		// overwrite observed catch incase it was modified by get_ft
 		for(k=1;k<=ngear;k++)
 			obs_ct(k,i)=oct(k);
 		
-		dvector zt(sage,nage);
-		zt=value(m);
+		//total age-specific mortality
+		//dvector zt(sage,nage);
+		zt(i)=value(m);
 		for(k=1;k<=ngear;k++){
-			zt+= ft(k)*va(k);
+			zt(i)+= ft(k)*sel(k)(i);
 		}
-		 
+		
 		
 		//Update numbers at age
-		double et=value(N(i))*fa;
-		double rt;
-		if(cntrl(2)==1)rt=value(so*et/(1.+beta*et));
-		if(cntrl(2)==2)rt=value(so*et*exp(-beta*et));
-		N(i+1,1)=rt*exp(wt(i)-0.5*tau*tau);
-		N(i+1)(2,nage)=++elem_prod(N(i)(1,nage-1),exp(-zt(1,nage-1)));
-		N(i+1,nage)+=N(i,nage)*exp(-zt(nage));
+		if(i>=syr+sage-1)
+		{
+			double rt;
+			double et=value(N(i-sage+1))*fec(i-sage+1);
+			if(cntrl(2)==1)rt=value(so*et/(1.+beta*et));
+			if(cntrl(2)==2)rt=value(so*et*exp(-beta*et));
+			N(i+1,sage)=rt*exp(wt(i)-0.5*tau*tau);
+		}
+
+
+		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),exp(-zt(i)(sage,nage-1)));
+		N(i+1,nage)+=N(i,nage)*exp(-zt(i,nage));
 		
 		//Catch & Catch-at-age
 		for(k=1;k<=ngear;k++)
 		{
 			if(ft(k)>0)
 			{
-				d3C(k)(i)=elem_prod(elem_div(ft(k)*va(k),zt),elem_prod(1.-exp(-zt),value(N(i))));
-				obs_ct(k,i)=d3C(k)(i)*wa;
+				d3C(k)(i)=elem_prod(elem_div(ft(k)*sel(k)(i),zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
+				obs_ct(k,i)=d3C(k)(i)*wt_obs(i);
 			}
 			else	//if this is a survey
 			{
-				d3C(k)(i)=elem_prod(elem_div(va(k),zt),elem_prod(1.-exp(-zt),value(N(i))));
+				d3C(k)(i)=elem_prod(elem_div(sel(k)(i),zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
 			}
 		}
 		
 	}
+	
+	cout<<"	Ok after population dynamics\n";
+	/*----------------------------------*/
+	
+	/*----------------------------------*/
+    /*	--  Observation models  --		*/
+	/*----------------------------------*/
 	
 	//Simulated Age-compositions
 	int ig;
@@ -1314,8 +1395,7 @@ FUNCTION void simulation_model(const long& seed)
 			dvector pa = d3C(ig)(ii);	//
 			pa/=sum(pa);
 			
-			//Ahat(k,i,a_sage(k)-2)=ii;
-			//Ahat(k,i,a_sage(k)-1)=ig;
+			
 			dvector t1=pa(a_sage(k),a_nage(k));
 			t1/=sum(t1);
 			A(k)(i)(a_sage(k),a_nage(k))=rmvlogistic(t1,0.3,i+seed);
@@ -1324,30 +1404,36 @@ FUNCTION void simulation_model(const long& seed)
 			//cout<<iyr<<"\t"<<k<<endl;
 		}
 	}
+
 	//cout<<Ahat<<endl;
 	
-	/*
-		Calculations for survey time series
-	*/
-	for(i=1;i<=nit;i++)
+	//Relative abundance indices
+	for(k=1;k<=nit;k++)
 	{   
-		//ii=iyr(i);
-		//it(i) = (value(N(ii))*elem_prod(wa,va(igr(i))))*exp(epsilon(i));
-		
+		for(i=1;i<=nit_nobs(k);i++)
+		{
+			ii=iyr(k,i);
+			ig=igr(k,i);
+			dvector V = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
+			it(k,i) = V * elem_prod(sel(ig)(ii),wt_obs(ii)) * exp(epsilon(k,i));
+		}
 	}
-	//cout<<"Simulated exploitation rate\n"<<elem_div(ct,(N.sub(syr,nyr)*elem_prod(wa,va)))<<endl;
+
+	cout<<"	OK after observation models\n";
+	/*----------------------------------*/
 	
-	cout<<"_________________________________"<<endl;
+	cout<<"___________________________________________________"<<endl;
 	ofstream ofs("iscam.sim");
 	ofs<<"va\n"<<va<<endl;
-	ofs<<"sbt\n"<<N*fa<<endl;
+	ofs<<"sbt\n"<<rowsum(elem_prod(N,fec))<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
 	ofs<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
 	ofs<<"iyr\n"<<iyr<<endl;
 	ofs<<"it\n"<<it<<endl;
 	ofs<<"N\n"<<N<<endl;
 	ofs<<"A\n"<<A<<endl;
-	
+	cout<<"  -- Simuation results written to iscam.sim --\n";
+	cout<<"___________________________________________________"<<endl;
 	
 	
 FUNCTION dvector cis(const dvector& na)
@@ -1392,7 +1478,7 @@ REPORT_SECTION
 	REPORT(age);
 	REPORT(la);
 	REPORT(wa);
-	REPORT(fa);
+	REPORT(fec);
 	//Selectivity
 	report<<"log_sel"<<endl;
 	for(k=1;k<=ngear;k++)
@@ -1403,7 +1489,7 @@ REPORT_SECTION
 	REPORT(obs_ct);
 	REPORT(ct);
 	REPORT(ft);
-	report<<"bt\n"<<N*wa<<endl;
+	report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
 	report<<"sbt\n"<<sbt<<endl;
 	int rectype=int(cntrl(2));
 	REPORT(rectype);
@@ -1423,6 +1509,7 @@ REPORT_SECTION
 	REPORT(Ahat);
 	REPORT(A_nu);
 	REPORT(N);
+	REPORT(wt_obs);
 	
 	if(last_phase())
 	{	calc_reference_points();
