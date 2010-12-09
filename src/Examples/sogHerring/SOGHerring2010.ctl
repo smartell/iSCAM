@@ -11,12 +11,12 @@
 6   ## npar
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
-    6.0         -5.0    15       4       0       -5.0    15      #log_ro/msy 
-    0.50        0.2     1.0      4       3       5       5       #steepness/fmsy
+    7.6         -5.0    15       4       0       -5.0    15      #log_ro/msy 
+    0.70        0.2     1.0      4       3       5       5       #steepness/fmsy
     -1.096614   -5.0    0.0      2       1       -1.0966 0.05    #log.m
-    6.0         -5.0    15       1       0       -5.0    15      #log_avgrec
-    0.1         0.001   0.999    3       3       25.0    100     #rho
-    1.25        0.01    500      3       4       1.01    1.01    #kappa (precision)
+    7.35        -5.0    15       1       0       -5.0    15      #log_avgrec
+    0.1         0.001   0.999    -3       3       25.0    100     #rho
+    1.25        0.01    500      -3       4       1.01    1.01    #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 
@@ -32,9 +32,9 @@
 ## isel_type
     1        1			1		1	1
 ## Age at 50% selectivity (logistic)
-    1.5      2.5		2.5		2.05	2.05
+    1.5      2.0		2.5		2.05	2.05
 ## STD at 50% selectivity (logistic)
-    1.0      0.5		0.2		0.05	0.05
+    0.75      0.5		0.2		0.05	0.05
 ## No. of age nodes for each gear (0 to ignore).
     5        5			5		0		0
 ## No. of year nodes for each gear (0 to ignore).
@@ -50,8 +50,8 @@
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
 0			## verbose ADMB output (0=off, 1=on)
 1			## recruitment model (1=beverton-holt, 2=ricker)
-0.05		## std in observed catches in first phase.
-0.025		## std in observed catches in last phase.
+0.025		## std in observed catches in first phase.
+0.005		## std in observed catches in last phase.
 0			## Assume unfished in first year (0=FALSE, 1=TRUE)
 ## ____________________________________________________________________________ ##
 
