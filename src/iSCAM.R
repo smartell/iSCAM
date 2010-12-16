@@ -1,3 +1,4 @@
+##                                       ##
 #-------------------------------------------------------------------------------#
 #   iSCAM Viewer: A gui based viewer for iscam inputs and outputs               #
 #                                                                               #
@@ -27,7 +28,7 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 2
 
-.REPFILES <- list.files(pattern=".rep|.r0")
+.REPFILES <- list.files(pattern=".rep")
 
 
 
@@ -129,8 +130,56 @@ require(Riscam)	#custom library built specifically for iscam.
 	{
 		.plotMeanwt( repObj )
 	}
+	
+	if ( plotType=="selectivity" )
+	{
+		.plotSelectivity( repObj )
+	}
 }
 
+.plotSelectivity	<- function( repObj )
+{
+	#plot the selectivity curves (3d plots)
+	with(repObj, {
+		#par(mgp=c(3, 3, 5))
+		plot.sel<-function(x, y, z)
+		{
+			#z=exp(A$log_sel)*3
+			#x=A$yr
+			#y=A$age
+			z0 <- 0#min(z) - 20
+			z <- rbind(z0, cbind(z0, z, z0), z0)
+			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
+			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
+			clr=colorRampPalette(c("honeydew", "lawngreen"))
+			nbcol=50
+			iclr=clr(nbcol)
+			nrz <- nrow(z)
+			ncz <- ncol(z)
+			zfacet <- z[-1, -1]+z[-1, -ncz]+z[-nrz, -1]+z[-nrz, -ncz]
+			facetcol <- cut(zfacet, nbcol)
+			fill <- matrix(iclr[facetcol],nr=nrow(z)-1,nc=ncol(z)-1)
+			fill[ , i2 <- c(1,ncol(fill))] <- "white"
+			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
+
+			par(bg = "transparent")
+			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=3, 
+				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
+				xlab="Year",ylab="Age",zlab="Selectivity",
+				ticktype="detailed")
+			
+			#require(lattice)
+			#wireframe(z, drap=TRUE, col=fill)
+		}
+		ix=1:length(yr)
+		for(k in 1:ngear){
+			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]))
+			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
+			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
+		}
+		
+	})
+}
 
 .plotMeanwt	<- function( repObj )
 {
@@ -191,8 +240,13 @@ require(Riscam)	#custom library built specifically for iscam.
 	#Plot residuals between observed and predicted relative abundance
 	#indicies (epsilon)
 	with(repObj, {
-		xx = t(iyr)
-		yy = t(epsilon)
+		if(is.matrix(epsilon)){
+			xx = t(iyr)
+			yy = t(epsilon)
+		}else{
+			xx = iyr
+			yy = epsilon
+		}
 		absmax = abs(max(yy, na.rm=TRUE))
 		yrange=c(-absmax, absmax)
 		
@@ -220,9 +274,14 @@ require(Riscam)	#custom library built specifically for iscam.
 {
 	#line plot for relative abundance indices
 	with(repObj, {
-		xx=t(iyr)
-		yy=t(it)
-		yrange=c(0, max(yy, na.rm=TRUE))
+		if(is.matrix(it)){
+			xx=t(iyr)
+			yy=t(it)
+		}else{
+			xx=iyr
+			yy=it
+		}
+				yrange=c(0, max(yy, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n", axes=FALSE,
 			xlab="Year", ylab="Relative abundance", 
@@ -312,9 +371,15 @@ require(Riscam)	#custom library built specifically for iscam.
 .plotSurveyfit	<- function( repObj, annotate=FALSE)
 {
 	with(repObj, {
-		xx = t(iyr)
-		yy = t(pit)
-		y2 = t(it)
+		if(is.matrix(it)){
+			xx = t(iyr)
+			yy = t(pit)
+			y2 = t(it)
+		}else{
+			xx = iyr
+			yy = pit
+			y2 = it
+		}
 		yrange=c(0, max(yy, y2, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
@@ -375,18 +440,21 @@ require(Riscam)	#custom library built specifically for iscam.
 	#A is the observed age-comps
 	#Ahat is the predicted age-comps (proportions)
 	with( repObj, {
-		nagear = unique(A[, 2])
-		#par(mfcol=c(length(nagear), 1))
-		for(i in nagear)
-		{
-			ac = subset(A, A[, 2]==i)
-			xx = ac[, 1]
-			zz = t(ac[, -1:-2])
+		if(!is.null(repObj$A)){
+			nagear = unique(A[, 2])
+			#par(mfcol=c(length(nagear), 1))
+			for(i in nagear)
+			{
+				ac = subset(A, A[, 2]==i)
+				xx = ac[, 1]
+				zz = t(ac[, -1:-2])
 			
-			# plot proportions-at-age (cpro=TRUE)
-			plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="honeydew")
+				# plot proportions-at-age (cpro=TRUE)
+				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="honeydew")
+			}
 		}
+		else{print("There is no age-composition data")}
 	})
 }
 
@@ -396,18 +464,21 @@ require(Riscam)	#custom library built specifically for iscam.
 	#A is the observed age-comps
 	#Ahat is the predicted age-comps (proportions)
 	with( repObj, {
-		nagear = unique(A[, 2])
-		#par(mfcol=c(length(nagear), 1))
-		for(i in nagear)
-		{
-			ac = subset(A_nu, A_nu[, 2]==i)
-			xx = ac[, 1]
-			zz = t(ac[, -1:-2])
+		if(!is.null(repObj$A)){
+			nagear = unique(A[, 2])
+			#par(mfcol=c(length(nagear), 1))
+			for(i in nagear)
+			{
+				ac = subset(A_nu, A_nu[, 2]==i)
+				xx = ac[, 1]
+				zz = t(ac[, -1:-2])
 			
-			# plot residuals
-			plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-				las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
+				# plot residuals
+				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
+			}
 		}
+		else{print("There is no age-composition data")}
 	})
 }
 
