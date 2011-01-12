@@ -28,7 +28,7 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 2
 
-.REPFILES <- list.files(pattern=".rep")
+.REPFILES <- list.files(pattern="\\.rep")
 
 
 
@@ -72,8 +72,8 @@ require(Riscam)	#custom library built specifically for iscam.
 	#hdr$Report.Files contains the vector of report files to examine.
 	
 	# Read the report file
-	#repObj	<- read.rep(hdr$Report.Files)
-	repObj	<- read.rep("iscam.rep")
+	repObj	<- read.rep(hdr$Report.Files)
+	#repObj	<- read.rep("iscam.rep")
 	
 	# Conditional statements for radio button selections of plots
 	if ( plotType=="catch" )
@@ -135,6 +135,40 @@ require(Riscam)	#custom library built specifically for iscam.
 	{
 		.plotSelectivity( repObj )
 	}
+	
+	if ( plotType=="stockrecruit" )
+	{
+		.plotStockRecruit( repObj )
+	}
+}
+
+.plotStockRecruit	<- function( repObj )
+{
+	with(repObj, {
+		xx = sbt[1:(length(yr)-min(age))]
+		yy = rt
+		
+		plot(xx, yy, type="n",ylim=c(0, max(yy)),xlim=c(0, max(xx)), 
+			xlab="Spawning biomass", ylab=paste("Age-",min(age)," recruits", sep=""))
+			
+		points(xx, yy)
+		
+		st=seq(0, max(sbt, bo), length=100)
+		if(rectype==1)
+		{
+			#Beverton-Holt
+			rrt=kappa*ro*st/(bo+(kappa-1)*st)*exp(-0.5*tau^2)  
+		}
+		if(rectype==2)
+		{
+			#Ricker
+			rrt=kappa*ro*st*exp(-log(kappa)*st/bo)/bo *exp(-0.5*tau^2) 
+		}
+		lines(st, rrt)
+		ro=ro*exp(-0.5*tau^2)
+		points(bo, ro, pch="O", col=2)
+		points(bo, ro, pch="+", col=2)
+	})
 }
 
 .plotSelectivity	<- function( repObj )
@@ -218,14 +252,12 @@ require(Riscam)	#custom library built specifically for iscam.
 	with(repObj, {
 		xx = yr
 		yy = exp(ln_rt)
-		scl=c(1,10,100,1000,10000,100000,1000000)
-		yscl =min(which(yy/scl<=100))
-		yy=yy/scl[yscl]
+		yy=yy
 		yrange=c(0, max(yy, na.rm=T))
 		
 		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
 			xlab="Year", 
-			ylab=paste("Age-", min(age), " recruits (", scl[yscl],")", sep=""))
+			ylab=paste("Age-", min(age), " recruits", sep=""))
 		
 		lines(xx, yy, type="h")
 		axis( side=1 )
@@ -411,7 +443,12 @@ require(Riscam)	#custom library built specifically for iscam.
 	#plot average total mortality,  fishing mortality & natural mortality
 	with(repObj, {
 		xx=yr
-		yy=t(as.matrix(ft))
+		if(is.matrix(ft))
+			yy=t(as.matrix(ft))
+		else
+			yy=ft
+		
+		yy = cbind( rowMeans(M_tot), yy )	
 		yrange=c(0, max(yy, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
