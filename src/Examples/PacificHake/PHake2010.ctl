@@ -38,7 +38,7 @@
 ## No. of age nodes for each gear (0 to ignore).
     5        5
 ## No. of year nodes for each gear (0 to ignore).
-    17       3
+    11       3
 ## Estimation phase
     2        2
 ## Penalty weight for 2nd differences w=1/(2*sig^2)
@@ -47,12 +47,31 @@
     3.125    200.0
 ## ____________________________________________________________________________ ##
 
+## ____________________________________________________________________________ ##
+##                             Priors for Survey q                              ##
+## ____________________________________________________________________________ ##
+## nits  #number of surveys
+    1
+## priors 0=uniform density     1=normal density
+    0
+## prior log(mean);
+    0
+## prior sd
+    1
+## ____________________________________________________________________________ ##
+
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
-0			## verbose ADMB output (0=off, 1=on)
-1			## recruitment model (1=beverton-holt, 2=ricker)
-0.05		## std in observed catches in first phase.
-0.01		## std in observed catches in last phase.
-0			## Assume unfished in first year (0=FALSE, 1=TRUE)
+0           ## verbose ADMB output (0=off, 1=on)
+1           ## recruitment model (1=beverton-holt, 2=ricker)
+0.05        ## std in observed catches in first phase.
+0.01        ## std in observed catches in last phase.
+0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
+0.01        ## Minimum proportion to consider in age-proportions for dmvlogistic
+0.20        ## Mean fishing mortality for regularizing the estimates of Ft
+0.01        ## std in mean fishing mortality in first phase
+5.00        ## std in mean fishing mortality in last phase
+-1          ## phase for estimating m_deviations (use -1 to turn off mdevs)
+0.1         ## std in deviations for natural mortality
 ## ____________________________________________________________________________ ##
 
 
