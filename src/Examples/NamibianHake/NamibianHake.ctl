@@ -14,9 +14,9 @@
     7.1         -5.0    15       4     0         -5.0    15     #log_ro/msy
     0.95        0.2     1.0      4     3         1.01    1.01   #steepness/fmsy
     -1.06421   -5.0    0.0      -2     2         -1.469  0.05   #log.m
-    7.1         -5.0    15      -1     0         -5.0    15     #log_avgrec
+    7.1         -5.0    15       1     0         -5.0    15     #log_avgrec
     0.50        0.001   0.999   -3     3         3.75    12     #rho
-    500.        0.01    500     -3     4         1.01    1.01   #kappa (precision)
+    5.00        0.01    500      3     4         1.01    1.01   #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## _________________________SELECTIVITY PARAMETERS_____________________________ ##
@@ -46,12 +46,31 @@
     3.125
 ## ____________________________________________________________________________ ##
 
+## ____________________________________________________________________________ ##
+##                             Priors for Survey q                              ##
+## ____________________________________________________________________________ ##
+## nits  #number of surveys
+	1
+## priors 0=uniform density		1=normal density
+	0		
+## prior log(mean)
+	0		
+## prior sd
+	1		
+## ____________________________________________________________________________ ##
+
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
 0           ## verbose ADMB output (0=off, 1=on)
 1           ## recruitment model (1=beverton-holt, 2=ricker)
 0.05        ## std in observed catches in first phase.
 0.025       ## std in observed catches in last phase.
-1           ## Assume unfished in first year (0=FALSE, 1=TRUE)
+0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
+0.01		## Minimum proportion to consider in age-proportions for dmvlogistic
+0.20		## Mean fishing mortality for regularizing the estimates of Ft
+0.01		## std in mean fishing mortality in first phase
+5.00		## std in mean fishing mortality in last phase
+-1			## phase for estimating m_deviations (use -1 to turn off mdevs)
+0.1			## std in deviations for natural mortality
 ## ____________________________________________________________________________ ##
 ## eofc
 999
