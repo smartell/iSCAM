@@ -27,7 +27,7 @@ notebook tabs="Results System" name=nb width=500 height=350 font="Courier" padx=
 	
 	
 	#-- widget 3
-	grid 1 2 toptitle="Graphical outputs" topfont="Courier 10" sticky=W relief="sunken" padx=5
+	grid 1 3 toptitle="Graphical outputs" topfont="Courier 10" sticky=W relief="sunken" padx=5
 	
 		#-- widget 3a
 		grid 4 1 toptitle="Observed data" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
@@ -37,7 +37,7 @@ notebook tabs="Results System" name=nb width=500 height=350 font="Courier" padx=
 		radio name=plotType value=meanwt		text="Weight-at-age"     function=.mpdView mode=character sticky=W
 	
 		#-- widget 3b
-		grid 10 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
+		grid 11 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
 		radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
 		radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=recruitment   text="Recruitment"       function=.mpdView mode=character sticky=W
@@ -47,8 +47,15 @@ notebook tabs="Results System" name=nb width=500 height=350 font="Courier" padx=
 		radio name=plotType value=selectivity   text="Selectivities(s)"  function=.mpdView mode=character sticky=W
 		#radio buttons for residuals
 		label text="Residuals" font="Courier bold 10" sticky=W
+		radio name=plotType value=catchresid    text="Catch(es)"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=surveyresid   text="Survey(s)"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=agecompsresid text="Age composition"   function=.mpdView mode=character sticky=W
+		
+		#-- widget 3c
+		grid 3 1 toptitle="Posteriors" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
+		radio name=plotType value=parameters    text="Leading parameters"	function=.mpdView mode=character sticky=W
+		radio name=plotType value=refpoints     text="Reference points" 	function=.mpdView mode=character sticky=W
+		radio name=plotType value=kobeplot      text="Stock status (KOBE)" 	function=.mpdView mode=character sticky=W
 
 	##--------------------------------------------------------------------------------##	
 	##-- SYSTEM TAB                                                                 --##

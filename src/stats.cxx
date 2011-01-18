@@ -54,6 +54,8 @@ dvariable dinvgamma(const dvariable& x, const double a, const double b)
 //gamma
 dvariable dgamma(const dvariable &x, const double a, const double b)
 {
+	//E(x)=a/b;
+	//V(x)=a/b^2
 	return -a*log(b)+gammln(a)-(a-1)*log(x)+b*x;
 }
 

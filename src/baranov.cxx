@@ -110,7 +110,7 @@ dvector get_ft(dvector& ct,const double& m, const dmatrix& V,const dvector& ba)
 		}
 		//cout<<iter<<"\t"<<ft<<"\t"<<ct_hat-ct<<endl;
 	}
-	//cout<<ft<<"\t"<<ct_hat-ct<<"\t\t"<<ctmp<<"\t\t"<<fpen<<endl;
+	//cout<<ft<<"\t\t"<<ct<<"\t\t"<<ctmp<<endl;
 	
 	return(ft);
 }  
