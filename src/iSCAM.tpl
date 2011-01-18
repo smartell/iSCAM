@@ -770,8 +770,12 @@ FUNCTION calc_fishery_observations
 	/*
 	Dec 6, 2010.  Modified ct calculations to include
 				  empirical weight at age data (wt_obs);
+				
+	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
+					computing the age-comps in calc_fisheries_observations
 	*/
 	int i,k;
+	ct.initialize();
 	for(i=syr;i<=nyr;i++)
 	{
 		for(k=1;k<=ngear;k++)
@@ -781,16 +785,38 @@ FUNCTION calc_fishery_observations
 			//dvar_vector fa=mfexp(log_ft(k,i)+log_va);
 			
 			
-			/*need to add a tiny constant to deal with catch-age data 
-			for non-extractive survey age comps*/
+			//SJDM Jan 16, 2011 Modification as noted above.
+			dvar_vector fa=ft(k,i)*mfexp(log_va);
+			if(obs_ct(k,i)>0)
+			{/*If there is a commercial fishery, then calculate the
+			   catch-at-age (in numbers) and total catch (in weight)*/
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+				ct(k,i) = Chat(k,i)*wt_obs(i);
+			}
+			else
+			{/*If there is no commercial fishery the set Chat equal to 
+			   the expected proportions at age.*/
+				fa = mfexp(log_va);
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+			}
+			
+			
+			/*
+			Changed this on Jan 16, 2011 as it was preventing
+			convergence for simuation with zero error due to the tiny
+			constant added to F.
+			
+			need to add a tiny constant to deal with catch-age data 
+			for non-extractive survey age comps
 			dvar_vector fa=ft(k,i)*mfexp(log_va)+1.e-30;
 			
-			//Catch-at-age by gear
-			Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+			//Catch-at-age by commercial gear
+			if(fsh_flag(k))
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 			
 			//Catch weight by gear
 			//ct(k,i)=Chat(k,i)*wa;  
-			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010
+			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010*/
 		}
 	}
 	if(verbose)cout<<"**** Ok after calc_fishery_observations ****"<<endl;
@@ -816,7 +842,7 @@ FUNCTION calc_survey_observations
 	/*
 		TODO :
 		add capability to accomodate priors for survey q's.
-		
+		DONE
 	*/
 	
 	int i,j,ii,k;
@@ -935,9 +961,15 @@ FUNCTION calc_objective_function
 	//1) likelihood of the catch data (retro)
 	double sig_c =cntrl(3);
 	if(last_phase())sig_c=cntrl(4);
+	if(active(log_ft_pars))
 	for(k=1;k<=ngear;k++){
-		if(active(log_ft_pars))
-			nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
+		for(i=syr;i<=nyr;i++)
+		{
+			if(obs_ct(k,i)!=0)
+				nlvec(1,k)+=dnorm(log(ct(k,i)),log(obs_ct(k,i)),sig_c);
+		}
+		//if(active(log_ft_pars))
+		//	nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
 	}
 	
 	
@@ -1329,6 +1361,7 @@ FUNCTION void simulation_model(const long& seed)
 	
 	if(seed==000)
 	{
+		cout<<"No Error\n";
 		sig=0;
 		tau=0;
 	}
@@ -1387,12 +1420,15 @@ FUNCTION void simulation_model(const long& seed)
 		g = 0.2 * (nyr-i)/(nyr-syr);
 		
 	*/
+
 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
-	d3_array sel(1,ngear,syr,nyr,sage,nage);
+	d3_array log_sel(1,ngear,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
 		for(i=syr;i<=nyr;i++)
 		{
-			sel(k)(i)=plogis(age,ahat(k),ghat(k));
+			//sel(k)(i)=plogis(age,ahat(k),ghat(k));
+			log_sel(k)(i)=log(plogis(age,ahat(k),ghat(k)));
+			log_sel(k)(i) -= mean(log_sel(k)(i));
 		}
 		
 	cout<<"	Ok after selectivity\n";
@@ -1405,19 +1441,26 @@ FUNCTION void simulation_model(const long& seed)
 	
 	dmatrix zt(syr,nyr,sage,nage);			//total mortality
 	zt.initialize();
+	dmatrix ft(syr,nyr,1,ngear);
+	ft.initialize();
+	
 	for(i=syr;i<=nyr;i++)
 	{   
 		
-		//total biomass
-		dvector bt = elem_prod(value(N(i)),wa);
+		//total biomass at age
+		//dvector bt = elem_prod(value(N(i)),wa);
+		dvector bt = elem_prod(value(N(i)),wt_obs(i));
 
 		/*calculate instantaneous fishing mortalities
 		based on Baranov's catch equation and the 
 		observed catch from each fleet.*/
 		dvector oct = trans(obs_ct)(i);
+		
 		for(k=1;k<=ngear;k++)
-			va(k)=sel(k)(i);
-		dvector ft = get_ft(oct,value(m),va,bt);
+			va(k)=exp(log_sel(k)(i));
+		
+		ft(i) = get_ft(oct,value(m),va,bt);
+		
 		// overwrite observed catch incase it was modified by get_ft
 		for(k=1;k<=ngear;k++)
 			obs_ct(k,i)=oct(k);
@@ -1426,7 +1469,7 @@ FUNCTION void simulation_model(const long& seed)
 		//dvector zt(sage,nage);
 		zt(i)=value(m);
 		for(k=1;k<=ngear;k++){
-			zt(i)+= ft(k)*sel(k)(i);
+			zt(i)+= ft(i,k)*exp(log_sel(k)(i));
 		}
 		
 		
@@ -1447,14 +1490,16 @@ FUNCTION void simulation_model(const long& seed)
 		//Catch & Catch-at-age
 		for(k=1;k<=ngear;k++)
 		{
-			if(ft(k)>0)
+			if(ft(i,k)>0)
 			{
-				d3C(k)(i)=elem_prod(elem_div(ft(k)*sel(k)(i),zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
+				dvector sel = exp(log_sel(k)(i));
+				d3C(k)(i)=elem_prod(elem_div(ft(i,k)*sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
 				obs_ct(k,i)=d3C(k)(i)*wt_obs(i);
 			}
 			else	//if this is a survey
 			{
-				d3C(k)(i)=elem_prod(elem_div(sel(k)(i),zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
+				dvector sel = exp(log_sel(k)(i));
+				d3C(k)(i)=elem_prod(elem_div(sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
 			}
 		}
 		
@@ -1497,8 +1542,9 @@ FUNCTION void simulation_model(const long& seed)
 		{
 			ii=iyr(k,i);
 			ig=igr(k,i);
+			dvector sel = exp(log_sel(ig)(ii));
 			dvector V = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
-			it(k,i) = V * elem_prod(sel(ig)(ii),wt_obs(ii)) * exp(epsilon(k,i));
+			it(k,i) = V * elem_prod(sel,wt_obs(ii)) * exp(epsilon(k,i));
 		}
 	}
 
@@ -1510,6 +1556,7 @@ FUNCTION void simulation_model(const long& seed)
 	ofs<<"va\n"<<va<<endl;
 	ofs<<"sbt\n"<<rowsum(elem_prod(N,fec))<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
+	ofs<<"ft\n"<<trans(ft)<<endl;
 	ofs<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
 	ofs<<"iyr\n"<<iyr<<endl;
 	ofs<<"it\n"<<it<<endl;
