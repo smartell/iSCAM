@@ -111,6 +111,11 @@ require(Riscam)	#custom library built specifically for iscam.
 		.plotAgecomps( repObj )
 	}
 	
+	if ( plotType=="catchresid" )
+	{
+		.plotCatchResiduals( repObj, annotate=TRUE )
+	}
+	
 	if ( plotType=="surveyresid" )
 	{
 		.plotSurveyResiduals( repObj, annotate=TRUE )
@@ -140,6 +145,150 @@ require(Riscam)	#custom library built specifically for iscam.
 	{
 		.plotStockRecruit( repObj )
 	}
+	
+	if ( plotType=="parameters" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.plotMarginalPosteriors( admbObj )
+	}
+	
+	if ( plotType=="refpoints" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.plotReferencePoints( admbObj )
+	}
+	
+	if ( plotType=="kobeplot" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.plotStockStatus( admbObj )
+	}
+	
+}
+
+.plotStockStatus	<- function( admbObj )
+{
+	print("	.plotStockStatus")
+	
+	require(MASS)
+	require( KernSmooth)
+	fried.egg=function(xx,yy,...)
+	{
+		bw=25
+		bwx=diff(extendrange(xx))/bw; bwy=diff(extendrange(yy))/bw
+		#bwx=(max(xx)-min(xx))/bw
+		#bwy=(max(yy)-min(yy))/bw
+		est <- bkde2D(cbind(xx,yy),bandwidth=c(bwx,bwy),gridsize=c(81, 81))
+		est$fhat=est$fhat/max(est$fhat)
+		#plot(xx,yy,pch=".",col="dark grey",xlab=NA,ylab=NA,type="n")
+		#text(max(xx),max(yy),labels="D",adj=c(1,1))
+		lvs=c(0.05,0.25,0.75,0.95)
+		maxct=max(lvs)
+		nlvs=length(lvs)
+		thelines=contourLines(est$x1,est$x2,est$fhat,levels=lvs)
+		polygon(thelines[[nlvs-3]]$x,thelines[[nlvs-3]]$y,col="khaki",border="khaki",lwd=1)
+		polygon(thelines[[nlvs-2]]$x,thelines[[nlvs-2]]$y,col="snow",border="snow1",lwd=2)
+		polygon(thelines[[nlvs-1]]$x,thelines[[nlvs-1]]$y,col="yellow",border="yellow2",lwd=3)
+		polygon(thelines[[nlvs]]$x,thelines[[nlvs]]$y,col="lightyellow",border="yellow",lwd=1)
+		#contour(est$x1,est$x2,est$fhat,drawlabels=T,add=T,levels=lvs,lty=1,lwd=1,labcex= 0.7)
+		#Add salt and pepper
+		#xi=sample(1:length(xx),300)
+		#points(xx[xi],yy[xi],pch=".",col=grey(0:10/10))
+	}
+	
+	#KOBE plots
+	## This routine needs some work to accomodate multiple
+	## fleets. Also need to address the Fmsy calculation in iscam.
+	with(admbObj, {
+		xx = sbt[1:length(yr)]/bmsy
+		yy = ft/fmsy  #yy can be a matrix
+		yy[yy==0]=NA; ii=!is.na(yy)
+
+		matplot(xx, (yy[ii]), type="l", xlim=c(0,max(2,xx)), 
+		ylim=c(0,max(2,yy[ii])),xlab="bstatus", ylab="fstatus")
+		rect(0, 0, 1, 1, col="yellow", border=NA)
+		rect(1, 1, max(2, xx),max(2, yy),col="yellow",border=NA)
+		rect(1, 0, max(2, xx), 1, col="green", border=NA)
+		rect(0, 1, 1, max(2, yy), col="red", border=NA)
+		## add bayesian fried egg 
+		## need to get marginal samples for ft and sbt
+		## to correctly plot the fried egg uncertainty
+		xxx=sbt[length(yr)]/mcmc$bmsy
+		yyy=ft[length(yr)]/mcmc$fmsy
+		fried.egg(xxx, yyy)
+		lines(xx, yy[ii], type="l")
+		text(xx, yy[ii], yr, cex=0.75)
+	})
+}
+
+
+.plotReferencePoints	<- function( admbObj )
+{
+	print("	.plotReferencePoints")
+	op=par(no.readonly=T)
+	with(admbObj, {
+		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 0, 0))
+		par(mfcol=c(2, 2))
+		for(i in 7:10)
+		{
+			ps=mcmc[, i]
+			xl=range(ps)
+			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+				main="", ylab="",
+				xlim=xl)#, ...)
+		}
+		mtext(c("MSY reference points", "Probability density"), 
+		c(1, 2),outer=T, line=-1, las=0)
+	})
+	
+	par(op)
+	
+}
+
+.plotMarginalPosteriors	<- function( admbObj )
+{
+	print("	.plotMarginalPosteriors")
+	#Marginal distributions & priors for theta
+	op=par(no.readonly=T)
+	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 0, 0))
+
+	## Read control file to get bounds and priors for theta
+	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
+
+	with(admbObj, {
+		std=apply(mcmc[,1:6],2,sd)
+		nr=length(std[std!=0])/2
+		par(mfcol=c(nr, 2))
+		for(i in 1:6){
+			if(std[i]!=0){
+				ps = mcmc[, i]  #posterior samples
+				xl=range(ps)
+
+				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+					main="", ylab="", col="lightgrey",breaks=30, 
+					xlim=xl)#, ...)
+
+				## Add priors
+				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
+				pt = ctrl[i, 5]+1
+				fn=match.fun(nfn[pt])
+				p1=ctrl[i, 6]; p2=ctrl[i, 7]
+				if(pt!=4)
+					curve(unlist(lapply(x,fn,p1,p2)),
+						xl[1],xl[2],add=T, col=4, lty=2)
+				else
+					curve(unlist(lapply((x-ctrl[i,2])/
+						 (ctrl[i,3]-ctrl[i,2])
+						,fn,p1,p2)),xl[1],xl[2],add=T, col=4, lty=2)
+			}
+		}
+		mtext(c("Parameter", "Probability density"), c(1, 2), 
+			outer=T, line=-1, las=0)
+	})
+	par(op)
 }
 
 .plotStockRecruit	<- function( repObj )
@@ -266,6 +415,42 @@ require(Riscam)	#custom library built specifically for iscam.
 	})
 }
 
+.plotCatchResiduals		<- function( repObj, annotate=FALSE )
+{
+	#Plot residuals between observed and predicted catches
+	#residuals (epsilon=log(obs_ct)-log(ct))
+	with(repObj, {
+		epsilon=log(obs_ct)-log(ct)
+		if(is.matrix(epsilon)){
+			xx = yr
+			yy = t(epsilon)
+		}else{
+			xx = yr
+			yy = epsilon
+		}
+		
+		absmax = abs(max(yy, na.rm=TRUE))
+		yrange=c(-absmax, absmax)
+		
+		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+			xlab="Year", ylab="Residual")
+		
+		matlines(xx, yy, type="h", col="black")
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+		if ( annotate )
+		{
+			n=dim(xx)[2]
+			txt=paste("Gear",1:n)
+			
+			mfg <- par( "mfg" )
+			if ( mfg[1]==1 && mfg[2]==1 )
+			legend( "top",legend=txt,
+				bty='n',lty=1:n,lwd=1,pch=-1,ncol=1 )
+		}
+	})
+}
 
 .plotSurveyResiduals	<- function( repObj, annotate=FALSE )
 {
@@ -448,13 +633,14 @@ require(Riscam)	#custom library built specifically for iscam.
 		else
 			yy=ft
 		
-		yy = cbind( rowMeans(M_tot), yy )	
+		yy = cbind( yy, rowMeans(M_tot) )	
 		yrange=c(0, max(yy, na.rm=TRUE))
+		lw = c(rep(1,ngear),2)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
 			xlab="Year", ylab="Mortality rate")
 			
-		matlines(xx, yy, col="black")
+		matlines(xx, yy, col="black", lwd=lw)
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
@@ -462,11 +648,11 @@ require(Riscam)	#custom library built specifically for iscam.
 		
 		if ( annotate )
 		{
-			txt = paste("Gear",1:ngear)
+			txt = c(paste("Gear",1:ngear),"Natural mortality")
 			mfg <- par( "mfg" )
 			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=1:ngear,lwd=1,pch=-1,ncol=1)
+			legend( "right",legend=txt,
+				bty='n',lty=c(1:ngear,1),lwd=lw,pch=-1,ncol=1)
 		}
 	})
 }
