@@ -1,3 +1,50 @@
+\section{Example: Simulation based on Strait of Georgia Pacific herring}
+\begin{multicols}{2}
+The purpose of this example is to demonstrate how to use \iscam\ to simulate data with known parameter values and then demonstrate the ability of the model to estimate the unknown parameters with and without observation and process errors.  This example is based on data from the Strait of Georgia Pacific herring fishery.
+
+There are three distinct commercial fishing fleets for Pacific herring in the Strait of Georgia that have operated, and continue to operate, between 1951 and 2010 (Figure \ref{pHerringFig1}).  The first of these fleets is a purse seine fishery that generally operates in the winter months and historically used to catch herring for a reduction fishery and since the 1970s is now a much smaller bait fishery operation.  Since the early 1970s a much more valuable seine fishery for sac roe has been in operation along with a gill net fishery that also targets spawning female herring for its roe.
+
+\begin{figurehere}
+	% Requires \usepackage{graphicx}
+	\psfrag{Catch (t)}[][c]{Catch (1000 mt)}
+	\psfrag{Year}[][c]{Year}
+	\includegraphics[width=\columnwidth]{iscamfigs/pHerringFig1.eps}\\
+	\caption{Total landings of Pacific herring in the Strait of Georgia stock assessment region by purse-seine (dark bars), Sn-roe (medium) and gill net (light bars).}\label{pHerringFig1}
+\end{figurehere}
+
+The available data for the herring fishery consist of commercial landings for each of the three fisheries, age-composition data from each of these fisheries, average weight-at-age of the catch, and a fisheries independent spawning biomass index (based on spawn deposition).  The spawn survey index is split into two separate series that correspond to a change in methods for estimating spawning deposition between 1987 and 1988.  The model is fit to all of these data and uses the empirical weight-at-age data to convert numbers-at-age to biomass.
+
+
+
+
+In this example, the command line option \texttt{-sim 000} is invoked to simulate fake data based on parameter values specified in the control file.  Recall the command line option \texttt{-sim} is used to tell \iscam\ to overwrite the existing observations in memory with simulated values (in this case with zero error because the random number seed is set to 000), and then attempt to estimate these model parameters.  If all is working correctly, the \texttt{iscam.par} file should have nearly identical estimates for the model parameters as the initial values that are specified in the control file.
+
+The control file used in this example is shown here, and there are a couple of things that should be highlighted with simulating data with no error.  First off, the phase for the variance and variance partitioning parameters ($\vartheta$ and $\rho$, respectively) should be set to a negative value and not be estimated.  Second ensure that the upper bound for $\vartheta$ (vartheta or the total precision) is set to a very high value (say 5000) and the initial value is set close to the upper bound (4999 in this case).  The reason for fixing the parameters should be obvious, there is no error in the data to begin and thus its not necessary to estimate the total variance.  The reason to set the initial value of $\vartheta$ to a large value is to minimize the a slight bias due to the lognormal bias correction in the stock-recruitment relationship (i.e., the $-0.5\tau^2$ in \ref{T4.12} or \ref{T4.13}) during the parameter estimation phase.  If you do not specify a large value of $\vartheta$ then it is unlikely that you will obtain nearly exact estimates of the unfished recruitment $R_o$.
+
+
+\noindent \hrulefill\\
+\small
+Control file for the SOG herring example
+\tiny
+\begin{alltt}
+\input{../srcWorkingCopy/Examples/sogHerring/SOGHerring2010sim.ctl}
+\end{alltt}
+\hrulefill
+\normalsize
+
+
+
+\end{multicols}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \section{Example Assessment: the Namibian hake case study}
 \begin{multicols}{2}
 As a simple example of fitting \iscam\ to CPUE data only, we use the Namibian hake case study from chapter 10 in the Ecological Detective \citep{hilborn1997ecological}.  In this example the available data consist of catch (thousands of tons) and CPUE (tons per standardized trawl hour).  \cite{hilborn1997ecological} provide three alternative models to the data that range from simple 4 parameter Schaefer production models (observation \& process error only) and a 5 parameter lagged recruitment, growth/survival model.  In this example they assume the stock is at an unfished state in 1967.
@@ -10,7 +57,7 @@ For the estimated leading parameters, two of the six parameters are not estimate
 \noindent \hrulefill
 \begin{alltt}
 Control file for the Namibian hake data.
-\input{../NamibianHake.ctl}
+\input{../srcWorkingCopy/Examples/NamibianHake/NamibianHake.ctl}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -24,8 +71,8 @@ There is no age-composition data to speak of, but \verb"#na_gears" must have a v
 \tiny
 \noindent \hrulefill
 \begin{alltt}
-Control file for the Namibian hake data.
-\input{../NamibianHake.dat}
+Data file for the Namibian hake data.
+\input{../srcWorkingCopy/Examples/NamibianHake/NamibianHake.dat}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -98,7 +145,7 @@ Here is the \iscam\ control file for the Pacific hake data, and the data file is
 \tiny
 \noindent \hrulefill
 \begin{alltt}
-\input{../PHake2010.ctl}
+\input{../srcWorkingCopy/Examples/PacificHake/PHake2010.ctl}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -220,7 +267,7 @@ Relative to the spawning stock depletion reference points, the median estimate o
 Here is the data file for \iscam.
 \tiny
 \begin{alltt}
-  \input{../PHake2010.dat}\label{HakeDataFile}
+  \input{../srcWorkingCopy/Examples/PacificHake/PHake2010.dat}\label{HakeDataFile}
 \end{alltt}
 \normalsize
 

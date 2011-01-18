@@ -3,7 +3,7 @@
 \begin{multicols}{2}
 
 
-There are three required input files for \iscam: the \verb"iscam.dat" file, the \verb"datafile", and the \verb"controlfile".  By default when \iscam runs, the first file it looks for is the \verb"iscam.dat" file, unless otherwise specified by using the command line option \verb"-ind".
+There are three required input files for \iscam: the \verb"iscam.dat" file, the \verb"datafile", and the \verb"controlfile".  By default when \iscam runs, the first file it looks for is the \verb"iscam.dat" file, unless otherwise specified by using the command line option \verb"-ind".  The following subsections explains the details of each of the data files.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -13,11 +13,11 @@ What is required in the \verb"iscam.dat" file is just the name of the data file 
 PHake2010.dat		#Data file name
 PHake2010.ctl		#Control file name
 \end{verbatim}
-Note that it is not necessary to have the \verb"*.dat", and \verb"*.ctl" extensions, as \iscam\ will read in the entire filename including the extension.  Also note that the \verb"#" symbol acts as a comment line, and \iscam\ will ignore the contents of the remaining line when reading in data.
+Note that it is necessary to have the \verb"*.dat", and \verb"*.ctl" extensions, as \iscam\ will read in the entire filename including the extension.  Also note that the \verb"#" symbol acts as a comment line, and \iscam\ will ignore the contents of the remaining line when reading in data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The data file}
-The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears (including gear that samples fish in surveys is two, and last line is an integer vector that specifies if the gear is a fishery, or a survey (using 1 or 0, respectively).  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.
+The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears (including gear that samples fish in surveys is two, and last line is an integer vector that specifies if the gear is a fishery, or a survey (using 1 or 0, respectively).  For each gear you must specify 1 (a commercial fishery) or 0 (a fisheries independent survey).  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.  The following is an example of the model dimensions section:
 \begin{verbatim}
 ##________________________
 ##____Model Dimensions____
@@ -49,7 +49,7 @@ The next required section is the age-schedule information pertaining to natural 
 ## ________________________
 \end{verbatim}
 
-Next is the time series data for the historical catch by year and fishery.  Note that it is assumed that catch exists for each year that is specified in the model dimensions section (e.g., 1977-2009).  The first column is the year of the catch, and the subsequent columns are catch (in weight) for each fishery.  Years where there are no catches (or no fishery) should be replaced by a 0.
+Next is the time series data for the historical catch by year, fishery(ies) and survey(s).  Note that it is assumed that catch exists for each year that is specified in the model dimensions section (e.g., 1977-2009).  The first column is the year of the catch, and the subsequent columns are catch (in weight) for each fishery or survey.  Years where there are no catches (or no fishery) should be replaced by a 0.  In cases where surveys did not exist, or there were no removals (e.g., an acoustic survey), specify a zero catch for each year (row).  
 \begin{verbatim}
 ## ________________________
 #Time series data
@@ -65,20 +65,23 @@ Next is the time series data for the historical catch by year and fishery.  Note
 ## ________________________
 \end{verbatim}
 
-The next section pertains to the relative abundance index, where first the number (\texttt{nit}) of observations (or rows of data must be specified).  The first column is an integer vector that is used to index the survey year, the second column is the actual survey abundance index, and the third column is the gear index associated with this gear.  The last column is the relative weight that should be used for the index.  For example, setting wt=0 for a given year will result in omitting the data, or setting wt=2 would imply that the CV is one half of the other values.
+The next section pertains to the relative abundance index, where first the number (\texttt{nit}) specified the number of independent surveys, and the next row specifies the number of observations (\texttt{nit\_nobs} ,or rows of data for each survey).  The first column is an integer vector that is used to index the survey year, the second column is the actual survey abundance index, and the third column is the gear index associated with this gear.  The fourth column is the relative weight that should be used for the index.  For example, setting wt=0 for a given year will result in omitting the data, or setting wt=2 would imply that the CV is one half of the other values.  The last column specifies the fraction of total mortality that has occurred when the survey was conducted (e.g., if the survey is conducted half way through the year then 0.5 implies that 1/2 of $Z_{t,a}$ has occurred when the survey was conducted).
 \begin{verbatim}
 ## ________________________
 #Relative Abundance index from 
 #independent survey (it) 1970-2008
-#nit, iyr, it
+#nit
+1
+#nit_nobs
 13
-#iyr    it gear wt
-1977 1.915  2  1
-1980 2.115  2  1
-1983 1.647  2  1
-... omitted data for space
-2007 0.879  2  1
-2009 1.460  2  1
+#iyr    it gear wt survey timing
+1977 1.915  2  1   0.5
+1980 2.115  2  1   0.5
+1983 1.647  2  1   0.5
+1986 2.857  2  1   0.5
+...omitted data for space
+2007 0.879  2  2   0.5
+2009 1.460  2  0   0.5
 ## ________________________
 \end{verbatim}
 
@@ -161,33 +164,61 @@ The last component of the data file is an end of file ``eof'' marker, which is s
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{multicols}{2}
-\subsection{The control file}
+\subsection{The control file (still under development)}
 The first section of the control file pertains to the leading parameter vector which is summarized in Table \ref{Table.parameter.controls}.  For now, there are 6 leading parameters for which the initial values (ival) lower (lb) and upper bounds (ub) and estimation phase must be specified.  Each of these parameters also have parameters for the corresponding prior distributions defined by the prior\_type, and parameters p1 and p2.
 
-
-\end{multicols}
-
-\begin{table*}[h]
-\caption{Controls for estimated parameters in the control file.}
-\begin{center}
-\begin{tabular}{llllclll}
-6 & \#npar \\
-\hline
-\#ival & lb & ub & phz & prior\_type & p1 & p2 & parameter name\\
-\hline
-1.2 & -5.0 & 15.0 & 3 & 0 & 0 & 0 & \#log\_ro or log\_msy\\
-0.75 & 0.2 & 1.0 & 3 & 3 & 1.01 & 1.01 & \#steepness or log\_fmsy\\
--1.5 & -5.0 & 2.0 & -1 & 0 & 0 & 0 & \#log\_m\\
-1.0 & -5.0 & 15.0 & 1 & 0 & 0 & 0 & \#log\_avg\_rec\\
-0.2 & 0.001 & 0.999 & -1 & 3 & 30 & 30 & \#rho\\
-1.25 & 0.01 & 500.0 & -1 & 4 & 1.01 & 1.01 & \#kappa (total precision)\\
-\hline
-\end{tabular}
-\end{center}
-\label{Table.parameter.controls}
-\end{table*}
-
-\begin{multicols}{2}
+\begin{tablehere}\caption{Controls for estimated parameters in the control file.}\label{Table.parameter.controls}
+\begin{tiny}
+\begin{verbatim}
+## ____________________________________________________________________________ ##
+##                            PACIFIC HAKE CONTROLS
+## ___________________CONTROLS FOR ESTIMATED PARAMETERS________________________ ##
+##  Prior descriptions:
+##                      -0 uniform (0,0)
+##                      -1 normal (p1=mu,p2=sig)
+##                      -2 lognormal (p1=log(mu),p2=sig)
+##                      -3 beta (p1=alpha,p2=beta)
+##                      -4 gamma(p1=alpha,p2=beta)
+## ____________________________________________________________________________ ##
+6   ## npar
+##  ival        lb      ub      phz     prior    p1      p2      parameter name
+## ____________________________________________________________________________ ##
+    1.6         -5.0    15       4       1       0.9     0.5     #log_ro/msy 
+    0.65        0.2     1.0      4       3       3       2       #steepness/fmsy
+    -1.469      -5.0    0.0      2       1       -1.469  0.05    #log.m
+    1.6         -5.0    15       1       0       -5.0    15      #log_avgrec
+    0.2         0.001   0.999    3       3       3.75    12      #rho
+    1.25        0.01    500      3       4       1.01    1.01    #kappa (precision)
+## ____________________________________________________________________________ ##
+\end{verbatim}
+\end{tiny}
+\end{tablehere}
+%	%\end{multicols}
+%	
+%	%\begin{table*}[h]
+%	\begin{tablehere}
+%	\caption{Controls for estimated parameters in the control file.}
+%	\begin{center}
+%	\begin{tiny}
+%	\begin{tabular}{llllclll}
+%	6 & \#npar \\
+%	\hline
+%	\#ival & lb & ub & phz & prior\_type & p1 & p2 & parameter name\\
+%	\hline
+%	1.2 & -5.0 & 15.0 & 3 & 0 & 0 & 0 & \#log\_ro or log\_msy\\
+%	0.75 & 0.2 & 1.0 & 3 & 3 & 1.01 & 1.01 & \#steepness or log\_fmsy\\
+%	-1.5 & -5.0 & 2.0 & -1 & 0 & 0 & 0 & \#log\_m\\
+%	1.0 & -5.0 & 15.0 & 1 & 0 & 0 & 0 & \#log\_avg\_rec\\
+%	0.2 & 0.001 & 0.999 & -1 & 3 & 30 & 30 & \#rho\\
+%	1.25 & 0.01 & 500.0 & -1 & 4 & 1.01 & 1.01 & \#kappa (total precision)\\
+%	\hline
+%	\end{tabular}
+%	\end{tiny}
+%	\end{center}
+%	\label{Table.parameter.controls}
+%	\end{tablehere}
+%	
+%	%\begin{multicols}{2}
 \subsubsection{Prior type distributions}
 As of now there are 5 different prior types that can be specified and these are given by the integer values 0--4.  The following list describes the prior types and the parameter values for the distributions:
 \begin{description}
@@ -197,6 +228,116 @@ As of now there are 5 different prior types that can be specified and these are 
 \item[3] A beta prior p1 = alpha, and p2 = beta with lb and ub transformed to a 0-1 scale.
 \item[4] A gamma prior with p1=alpha and p2=beta
 \end{description}
+
+
+\subsubsection{Selectivity controls}
+The next table of numbers in the control file contains the options for selectivities for each of the gear types (both fisheries and surveys).  Currently there are 6 options implemented for selectivities in \iscam\, and the details of each are explained further in the model documentation section (see page \pageref{ModelDocSelectivity}).  The following is an excerpt from the Pacific hake control file with selectivities defined for two gears:
+
+\begin{tiny}
+\begin{verbatim}
+## _________________________SELECTIVITY PARAMETERS_____________________________ ##
+## OPTIONS FOR SELECTIVITY:
+##      1) logistic selectivity parameters
+##      2) selectivity coefficients
+##      3) a constant cubic spline with age-nodes
+##      4) a time varying cubic spline with age-nodes
+##      5) a time varying bicubic spline with age & year nodes.
+##      6) fixed logistic (set isel_type=1, and estimation phase to -1)
+## Gear 1 fishery:  Gear 2 survey
+## isel_type
+    5        1
+## Age at 50% selectivity (logistic)
+    3.5      4.0
+## STD at 50% selectivity (logistic)
+    1.0      0.5
+## No. of age nodes for each gear (0 to ignore).
+    5        5
+## No. of year nodes for each gear (0 to ignore).
+    11       3
+## Estimation phase
+    2        2
+## Penalty weight for 2nd differences w=1/(2*sig^2)
+    12.5     12.5
+## Penalty weight for dome-shaped selectivity 1=1/(2*sig^2)
+    3.125    200.0
+## ____________________________________________________________________________ ##
+\end{verbatim}
+\end{tiny}
+There are two gears specified in this case, the first gear uses the time varying bicubic spline option with 5 age nodes and 11 year nodes and is estimated in phase 2 of the parameter search routine.  The second fishery (second column) is a survey with a logistic selectivity function with initial values of 4.0 and 0.5 as the mean and standard deviation that is assumed in the first phase; in the second phase these values are then treated as estimated parameters.  The last two rows of the selectivity controls defines the penalty weights used for the selectivity ogives where the 2nd differences controls the smoothness of the curve and the dome-shaped penalty limits how much the selectivity decline with older ages (dome-shaped).  Note that these two penalties are ignored for the logistic (option 1 and option 6) forms of the selectivity curve.
+
+
+\subsubsection{Priors for survey catchability}
+Although the scaling parameters for surveys or relative abundance indices are not directly estimated, it is possible to specify prior distributions for the conditional maximum likelihood estimates of these parameters. Priors are specified by the following four lines in the control file, there \verb"nits" is simply the number of relative abundance indices.  In the following rows, you must specify a `0' or `1' for a uniform prior or an informative prior distribution.  Note that if there is more than 1 survey, then you'll have to specify a 0 or 1 for each of the surveys (i.e., columns for each survey).  The final two rows specify the log mean of the normal prior and the standard deviation (if they prior type is uniform you must still specify these values, however they are ignored in the objective function calculation; future versions may specify lower and upper bounds of a true uniform density).  Again, in the case of multiple surveys, you must have a mean and standard deviation specified (in columns) for each of the surveys.
+
+\begin{tiny}
+\begin{verbatim}
+## ____________________________________________________________________________ ##
+##                             Priors for Survey q                              ##
+## ____________________________________________________________________________ ##
+## nits  #number of surveys
+    1
+## priors 0=uniform density     1=normal density
+    0
+## prior log(mean);
+    0
+## prior sd
+    1
+## ____________________________________________________________________________ ##
+\end{verbatim}
+\end{tiny}
+
+
+\subsubsection{Other miscellaneous controls}
+The following is an ordered list of controls that turn various switches on and off or set up alternative structural assumptions such as Ricker recruitment or time varying natural mortality rates in \iscam.  It's also a place holder to add additional features to \iscam\ as the model continues to evolve over time. The following is an ordered list describing in more detail each of the miscellaneous controls.
+
+\begin{enumerate}
+
+	\item The first row of the miscellaneous controls is a flag that turns on and off the verbose output of \iscam.
+
+	\item Switch between Beverton-Holt  recruitment \eqref{T4.12} and Ricker recruitment \eqref{T4.13}.
+	
+	\item The assumed standard deviation (in log space) in the observed catch in all phases except the last phase of the parameter estimation scheme.  Note that this value must be greater than 0.  Slightly larger values (say 0.05) will speed up convergence in earlier phases.
+	
+	\item The assumed standard deviation (in log space) in the observed catch in the last phase of the parameter estimation scheme.  Note that this value must be greater than 0.  Slightly smaller values (say 0.01) will increase precision in the estimates of F but generally slow down convergence.
+		
+	\item The next item is a flag to initialize the model at an unfished state in the initial year, otherwise, \iscam\ estimates the numbers at age in the first year.
+	
+	\item Age-composition data are pooled into plus groups if the observed proportions-at-age are less than the specified percentage (e.g., $<$1\% in the example control file below).  See description of age-cmposition data, specifically the last paragraph in section \ref{agecomps} on page \pageref{agecomps}.
+	
+	\item During the initial phases of the parameter estimation, a large penalty is used to regularize the estimates of the annual fishing mortality rates and then in the last phase this penalty is relaxed.  The penalty is on deviations from the average fishing mortality rate (0.20 in the example below) for all fishing fleets.  
+	
+	\item The assumed standard deviation (in log space) in the fishing mortality rate penalty in the initial phases.
+	
+	\item The assumed standard deviation (in log space) in the fishing mortality rate in the last phase, (should be a large value (e.g., 5 or greater), otherwise the penalty could reduce the true variation in the estimated $F_t$'s.
+	
+	\item The option to estimate changes in natural mortality rates via a random walk process is implemented by selecting a positive phase (negative values imply a constant $M$) and annual deviations in $M$ are not estimated.
+	
+	\item  If annual deviations in natural mortality are estimated, then the standard deviation for the normal prior for deviations in $M_t$ are specified here.
+\end{enumerate}
+
+
+
+
+\begin{tiny}
+\begin{verbatim}
+## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
+0           ## verbose ISCAM output (0=off, 1=on).
+1           ## recruitment model (1=beverton-holt, 2=ricker).
+0.05        ## std in observed catches in initial phases.
+0.01        ## std in observed catches in last phase.
+0           ## Assume unfished in first year (0=FALSE, 1=TRUE).
+0.01        ## Minimum proportion to consider in age-proportions for dmvlogistic.
+0.20        ## Mean fishing mortality for regularizing the estimates of Ft.
+0.01        ## std in mean fishing mortality in initial phases.
+5.00        ## std in mean fishing mortality in last phase.
+-1          ## phase for estimating m_deviations (use -1 to turn off mdevs).
+0.1         ## std in deviations for natural mortality.
+## ____________________________________________________________________________ ##
+
+\end{verbatim}
+\end{tiny}
+
+
 \end{multicols}
 
 %\begin{figure*}[b]
@@ -221,6 +362,14 @@ The custom command line options are:
 
 There two random number seeds for the simulation model that the user should be aware of.  The first is if the random number seed is set to 000, then \iscam\ will actually simulate data with no errors whatsoever.  That is, the values of $\sigma$ and $\tau$ (observation error and process errors, respectively) will be set equal to 0 and the simulation model will run as a deterministic model with no observation errors in the relative abundance index or age composition data.  This option allows the user to check to ensure that the model parameters are in fact estimable with perfect information.
 
+
 The second unique random seed number is 99, and this seed number is used for the simulation example in this manuscript.  It specifies a unique time-varying selectivity curve for the commercial fishery that goes from dome-shaped to asymptotic.
+
+\subsubsection{Running the simulation model}
+
+Again, one of the first steps in conducting any assessment should be to first run the model on simulated data with no error to be certain that the model is capable of estimating the specified model parameters.  To do so in \iscam\, the user simply needs to specify the command line option of \texttt{-sim 000}, where the `000' argument specifically instructs \iscam\ not to add any random variation to the observation or process errors.  Invoking this command line option will run \iscam\ as normal, where the data from the data file is first read into memory, then the information from the control file is then read in.  However, before proceeding straight into the non-linear parameter estimation procedure, \iscam\ first runs a simulation model based on the specified parameters listed in the control file.  This simulation model will then replace the existing data in memory with simulated data, then perform the non-linear parameter estimation procedure and attempt to estimate the model parameters.  If all is working well the estimated parameters listed in the parameter file should be very close, if not exactly, to the initial values specified in the control file.
+
+
+
 
 \end{multicols}

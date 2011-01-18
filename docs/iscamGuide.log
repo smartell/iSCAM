@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=latex 2008.12.28)  18 NOV 2010 08:49
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=latex 2008.12.28)  17 JAN 2011 23:21
 entering extended mode
  %&-line parsing enabled.
 **iscamGuide.tex
@@ -576,140 +576,167 @@ File: iscamlogo.eps Graphic file (type eps)
  <iscamlogo.eps>
 [4
 
-]) (./ModelDocumentation.tex
+]
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [5
+
+]
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [6]) (./ModelDocumentation.tex
 Underfull \hbox (badness 10000) in paragraph at lines 3--4
 []\OT1/ppl/m/n/10 The sec-tion con-tains the doc-u-men-ta-tion
  []
 
 File: iscamlogo.eps Graphic file (type eps)
-<iscamlogo.eps> [5
-
-]
+<iscamlogo.eps> [7]
 Overfull \hbox (17.70345pt too wide) in paragraph at lines 81--81
 [] 
  []
 
-File: iscamlogo.eps Graphic file (type eps)
-<iscamlogo.eps> [6]
 File: iscamFigs/Fig1.Quadplot.eps Graphic file (type eps)
- <iscamFigs/Fig1.Quadplot.eps>
+<iscamFigs/Fig1.Quadplot.eps>
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [7]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 263.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 263.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 263.
-
+ <iscamlogo.eps> [8]
 File: iscamlogo.eps Graphic file (type eps)
-<iscamlogo.eps> [8]
-Underfull \hbox (badness 5217) in paragraph at lines 275--276
+ <iscamlogo.eps> [9]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 272.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 272.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 272.
+
+
+Underfull \hbox (badness 5217) in paragraph at lines 284--285
 \OT1/ppl/m/n/10 op-tion also as-sumes that se-lec-tiv-ity is time-
  []
 
-File: iscamFigs/SplineEg.eps Graphic file (type eps)
-<iscamFigs/SplineEg.eps>
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [9]
+<iscamlogo.eps> [10]
+File: iscamFigs/SplineEg.eps Graphic file (type eps)
+ <iscamFigs/SplineEg.eps>
 File: iscamFigs/BicubicEg.eps Graphic file (type eps)
  <iscamFigs/BicubicEg.eps>
-Underfull \hbox (badness 5711) in paragraph at lines 360--361
+File: iscamlogo.eps Graphic file (type eps)
+
+<iscamlogo.eps> [11]
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [12]
+Underfull \hbox (badness 5711) in paragraph at lines 369--370
 \OT1/ppl/m/n/10 data are de-rived from a multi-no-mial dis-tri-
  []
 
 
-Underfull \hbox (badness 6675) in paragraph at lines 360--361
+Underfull \hbox (badness 6675) in paragraph at lines 369--370
 []$[]\OT1/ppl/m/n/10 S[][]\OT1/ppl/m/n/9 C[][]\OT1/ppl/m/n/8 A[][]$[]$[] \OT1/p
 pl/m/n/10 as-sumes that age-proportions are ob-
  []
 
 File: iscamlogo.eps Graphic file (type eps)
-<iscamlogo.eps> [10]
-File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [11]) (./Example.tex (../NamibianHake.ctl
-File: iscamlogo.eps Graphic file (type eps)
+<iscamlogo.eps> [13]) (./Example.tex
+File: iscamfigs/pHerringFig1.eps Graphic file (type eps)
+ <iscamfigs/pHerringFig1.eps>
+Overfull \hbox (15.0pt too wide) in paragraph at lines 11--12
+[][] 
+ []
 
-<iscamlogo.eps> [12]) (../NamibianHake.dat)
-File: iscamFigs/NhakeFigs.eps Graphic file (type eps)
- <iscamFigs/NhakeFigs.eps>
-File: iscamlogo.eps Graphic file (type eps)
 
-<iscamlogo.eps> [13]
-File: iscamFigs/fig5.eps Graphic file (type eps)
- <iscamFigs/fig5.eps>
-File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [14]
-File: iscamFigs/fig6.eps Graphic file (type eps)
-
-<iscamFigs/fig6.eps>
-File: iscamFigs/fig7.eps Graphic file (type eps)
- <iscamFigs/fig7.eps>
-Underfull \hbox (badness 10000) in paragraph at lines 97--100
+Underfull \hbox (badness 10000) in paragraph at lines 11--12
 
  []
 
-(../PHake2010.ctl
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [15])
-File: iscamFigs/phakefig15.eps Graphic file (type eps)
- <iscamFigs/phakefig15.eps>
-File: iscamFigs/phakefig2.eps Graphic file (type eps)
-
-<iscamFigs/phakefig2.eps>
-File: iscamFigs/phakefig14.eps Graphic file (type eps)
- <iscamFigs/phakefig14.eps>
-File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [16]
-File: iscamFigs/phakefig8.eps Graphic file (type eps)
-
-<iscamFigs/phakefig8.eps>
-File: iscamFigs/phakefig11.eps Graphic file (type eps)
- <iscamFigs/phakefig11.eps>
-File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [17]
-File: iscamFigs/phakefig9a.eps Graphic file (type eps)
-
-<iscamFigs/phakefig9a.eps>
-File: iscamFigs/phakefig13a.eps Graphic file (type eps)
- <iscamFigs/phakefig13a.eps>
-File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [18]
-File: iscamFigs/phakefig5.eps Graphic file (type eps)
-
-<iscamFigs/phakefig5.eps> (./iscamTables/iscam.Table1.tex)
-File: iscamFigs/phakefig12.eps Graphic file (type eps)
-
-<iscamFigs/phakefig12.eps> (./iscamTables/iscam.Table2.tex
+<iscamlogo.eps> [14]
+(../srcWorkingCopy/Examples/sogHerring/SOGHerring2010sim.ctl)
+(../srcWorkingCopy/Examples/NamibianHake/NamibianHake.ctl
 File: iscamlogo.eps Graphic file (type eps)
  <iscamlogo.eps>
-[19]) (../PHake2010.dat
+[15]) (../srcWorkingCopy/Examples/NamibianHake/NamibianHake.dat)
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [20]))
+
+<iscamlogo.eps> [16]
+File: iscamFigs/NhakeFigs.eps Graphic file (type eps)
+ <iscamFigs/NhakeFigs.eps>
+File: iscamFigs/fig5.eps Graphic file (type eps)
+ <iscamFigs/fig5.eps>
+File: iscamlogo.eps Graphic file (type eps)
+
+<iscamlogo.eps> [17]
+File: iscamFigs/fig6.eps Graphic file (type eps)
+ <iscamFigs/fig6.eps>
+File: iscamFigs/fig7.eps Graphic file (type eps)
+ <iscamFigs/fig7.eps>
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps>
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 144--147
+
+ []
+
+(../srcWorkingCopy/Examples/PacificHake/PHake2010.ctl)
+File: iscamFigs/phakefig15.eps Graphic file (type eps)
+
+<iscamFigs/phakefig15.eps>
+File: iscamFigs/phakefig2.eps Graphic file (type eps)
+ <iscamFigs/phakefig2.eps>
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [19]
+File: iscamFigs/phakefig14.eps Graphic file (type eps)
+
+<iscamFigs/phakefig14.eps>
+File: iscamFigs/phakefig8.eps Graphic file (type eps)
+ <iscamFigs/phakefig8.eps>
+File: iscamFigs/phakefig11.eps Graphic file (type eps)
+
+<iscamFigs/phakefig11.eps>
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [20]
+File: iscamFigs/phakefig9a.eps Graphic file (type eps)
+ <iscamFigs/phakefig9a.eps>
+File: iscamFigs/phakefig13a.eps Graphic file (type eps)
+
+<iscamFigs/phakefig13a.eps>
 File: iscamlogo.eps Graphic file (type eps)
  <iscamlogo.eps> [21]
-(./iscamGuide.bbl)
+File: iscamFigs/phakefig5.eps Graphic file (type eps)
+ <iscamFigs/phakefig5.eps>
+(./iscamTables/iscam.Table1.tex
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [22
+ <iscamlogo.eps> [22])
+File: iscamFigs/phakefig12.eps Graphic file (type eps)
+
+<iscamFigs/phakefig12.eps> (./iscamTables/iscam.Table2.tex)
+(../srcWorkingCopy/Examples/PacificHake/PHake2010.dat
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [23]))
+File: iscamlogo.eps Graphic file (type eps)
+
+<iscamlogo.eps> [24] (./iscamGuide.bbl)
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [25
 
 ] (./Stats.tex
 File: iscamlogo.eps Graphic file (type eps)
- <iscamlogo.eps> [23])
-File: iscamlogo.eps Graphic file (type eps)
 
-<iscamlogo.eps> [24] (./iscamGuide.aux) ) 
+<iscamlogo.eps> [26])
+File: iscamlogo.eps Graphic file (type eps)
+ <iscamlogo.eps> [27] (./iscamGuide.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 6622 strings out of 493877
- 92639 string characters out of 1150590
- 208326 words of memory out of 3000000
- 9700 multiletter control sequences out of 10000+50000
+ 6644 strings out of 493877
+ 93505 string characters out of 1150590
+ 212426 words of memory out of 3000000
+ 9715 multiletter control sequences out of 10000+50000
  22603 words of font info for 80 fonts, out of 3000000 for 5000
  714 hyphenation exceptions out of 8191
- 36i,18n,43p,1377b,679s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,18n,43p,1378b,679s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on iscamGuide.dvi (27 pages, 209752 bytes).
+Output written on iscamGuide.dvi (30 pages, 251180 bytes).

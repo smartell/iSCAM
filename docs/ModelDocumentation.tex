@@ -189,7 +189,9 @@ The estimated parameter vector in \iscam\ is defined in \eqref{T4.1}, where $R_0
 
 The unobserved state variables \eqref{T4.3} include the numbers-at-age year year $t$ ($N_{t,a}$), the spawning stock biomass ($B_t$) and the total age-specific total mortality rate ($Z_{t,a}$).
 
-The initial numbers-at-age in the first year \eqref{T4.4} and the annual recruits \eqref{T4.5} are treated as estimated parameters and used to initialize the numbers-at-age matrix.  Age-specific selectivity for gear type $k$ is a function of the selectivity parameters $\gamma_k$ \eqref{T4.6}, and the annual fishing mortality for each gear is the product of the average fishing mortality ($\bar{F}_k$) and the annual fishing mortality deviation that has the additional constraint of summing to zero for each gear type ($\delta_{k,t}$, where $\sum_t \delta_{k,t}=0$).
+The initial numbers-at-age in the first year \eqref{T4.4} and the annual recruits \eqref{T4.5} are treated as estimated parameters and used to initialize the numbers-at-age matrix.  Age-specific selectivity for gear type $k$ is a function of the selectivity parameters $\gamma_k$ \eqref{T4.6}, and the annual fishing mortality for each gear is the product of the average fishing mortality ($\bar{F}_k$) and the annual fishing mortality deviation.($\delta_{k,t}$). 
+
+There is an option to treat natural mortality as a random walk process \eqref{T4.6b}, where the natural mortality rate in the first year is the estimated leading parameter \eqref{T4.1} and in subsequent years the mortality rate deviates from the previous year based on the estimated deviation parameter $\varphi_t$.  If the mortality deviation parameters are not estimated, then $M$ is assumed to be time invariant.
 
 State variables in each year are updated using equations \ref{T4.8}--\ref{T4.11}, where the spawning biomass is the product of the numbers-at-age and the mature biomass-at-age \eqref{T4.8}.  The total mortality rate is given by \eqref{T4.9}, and the total catch (in weight) for each gear is given by \eqref{T4.10} assuming that both natural and fishing mortality occur simultaneously throughout the year.  The numbers-at-age are propagated over time using \eqref{T4.11}, where members of the plus group (age $A$) are all assumed to have the same total mortality rate.  
 
@@ -212,7 +214,13 @@ equation and $C^*$ and $F^*$ as leading parameters.}\label{Table4}
     \begin{align}
         \hline \nonumber \\
         &\mbox{Estimated parameters} \nonumber\\
-        \Theta &= (R_0,\kappa,\bar{R},\rho,\vartheta^2,\gamma_{k},\bar{F}_k,\delta_{k,t},\{\omega_t\}_{t=1-A}^{t=T}) \label{T4.1}\\
+        \begin{split}
+        \Theta&= 
+        		(R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},\bar{F}_k,
+        		\delta_{k,t},\\
+		&\quad \{\omega_t\}_{t=1-A}^{t=T},
+        		\{\varphi_t \}_{t=2}^T)
+	\end{split} \label{T4.1}\\
         \sigma^2&=\rho /\vartheta^2, \quad
         \tau^2=(1-\rho)/\vartheta^2\label{T4.2}\\[1ex]
         %\vartheta^2=\sigma^2+\tau^2, \quad
@@ -225,15 +233,16 @@ equation and $C^*$ and $F^*$ as leading parameters.}\label{Table4}
 	%%	        
         &\mbox{Initial states} \nonumber\\
         %v_a=\left[1+e^{-(\hat{a}-a)/\hat{\gamma}}\right]^{-1}\label{T4.7}\\
-        N_{t,a}&=\bar{R}e^{\omega_{t-a}} \exp(-M)^{(a-1)};\quad t=1;  2\leq a\leq A\label{T4.4}\\
-        N_{t,a}&=\bar{R}e^{\omega_{t}} ;\quad 1\leq t\leq T;  a=1\label{T4.5}\\
+        N_{t,a}&=\bar{R}e^{\omega_{t-a}} \exp(-M_t)^{(a-1)};\quad t=1;  2\leq a\leq A \label{T4.4}\\
+        N_{t,a}&=\bar{R}e^{\omega_{t}} ;\quad 1\leq t\leq T;  a=1 \label{T4.5}\\
         v_{k,a}&=f(\gamma_k) \label{T4.6}\\
+        M_t &= M_{t-1} \exp(\varphi_t), \quad t>1 \label{T4.6b}\\
         F_{k,t}&=\bar{F}_k \exp(\delta_{k,t}) \label{T4.7}\\[1ex]
         %%
         %%
         &\mbox{State dynamics (t$>$1)} \nonumber\\
         B_t&=\sum_a N_{t,a}f_a \label{T4.8}\\
-        Z_{t,a}&=M+\sum_k F_{k,t} v_{k,t,a}\label{T4.9}\\
+        Z_{t,a}&=M_t+\sum_k F_{k,t} v_{k,t,a}\label{T4.9}\\
         \hat{C}_{k,t}&=\sum _ a\frac {N_{{t,a}}w_{{a}}F_{k,t} v_{{k,t,a}}
         \left( 1-{e^{-Z_{t,a}}} \right) }{Z_{t,a}}^{\eta_t} \label{T4.10}\\
         %F_{t_{i+1}}= \ F_{t_{i}} -\frac{\hat{C}_t-C_t}{\hat{C}_t'} \label{T4.12}\\
@@ -260,9 +269,9 @@ equation and $C^*$ and $F^*$ as leading parameters.}\label{Table4}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsubsection{Options for selectivity ($v_{k,t,a}$)}
+\subsubsection{Options for selectivity ($v_{k,t,a}$)} \label{ModelDocSelectivity}
 
-At present, there are five alternative age-specific selectivity options in \iscam.  The simplest of the selectivity options is a simple logistic function with two parameters where it is assumed that selectivity is time-invariant.  The more complex selectivity options assume that selectivity may vary over time a may have as many as A$\cdot$T parameters.  For time-varying selectivity \iscam\ implemented the uses of cubic and bicubic splines to reduce the number of estimated parameters.  Prior to parameter estimation, \iscam\ will determine the exact number of selectivity parameters that need to be estimated based on which selectivity option was chosen for each gear type.  It is not necessary for all gear types to have the same selectivity option.  For example it is possible to have a simple two parameter selectivity curve for say a survey gear, and a much more complicated selectivity option for a commercial fishery.
+At present, there are six alternative age-specific selectivity options in \iscam.  The simplest of the selectivity options is a simple logistic function with two parameters where it is assumed that selectivity is time-invariant.  The more complex selectivity options assume that selectivity may vary over time a may have as many as A$\cdot$T parameters.  For time-varying selectivity \iscam\ implemented the uses of cubic and bicubic splines to reduce the number of estimated parameters.  Prior to parameter estimation, \iscam\ will determine the exact number of selectivity parameters that need to be estimated based on which selectivity option was chosen for each gear type.  It is not necessary for all gear types to have the same selectivity option.  For example it is possible to have a simple two parameter selectivity curve for say a survey gear, and a much more complicated selectivity option for a commercial fishery.
 
 \paragraph{Logistic selectivity} 
 The logistic selectivity option is a two parameter model of the form
@@ -338,9 +347,9 @@ where $T_k$ is the total number of catch observations for gear type $k$.
 \subsubsection{Relative abundance data}
 The relative abundance data are assumed to be proportional to biomass that is vulnerable to the sampling gear:
 \begin{equation}\label{eq4}
- V_{k,t} = \sum_a N_{t,a} v_{k,a} w_a,
+ V_{k,t} = \sum_a N_{t,a} e^{-\lambda_{k,t} Z_{t,a}} v_{k,a} w_a,
 \end{equation}
-where $v_{k,a}$ is the age-specific selectivity of gear $k$, and $w_a$ is the mean-weight-at-age.  For now, \iscam\ assumes that the index is measured at the start of each year before any significant mortality takes place.  The residuals between the observed and predicted relative abundance index is given by:
+where $v_{k,a}$ is the age-specific selectivity of gear $k$, and $w_a$ is the mean-weight-at-age. A user specified fraction of the total mortality $\lambda_{k,t}$ adjusts the numbers-at-age to correct for survey timing.  For now, \iscam\ assumes that the index is measured at the start of each year before any significant mortality takes place.  The residuals between the observed and predicted relative abundance index is given by:
 \begin{equation}\label{eq5}
 \epsilon_{k,t} = \ln(I_{k,t}) - \ln(q_k)+\ln(V_{k,t}),
 \end{equation}
@@ -354,10 +363,10 @@ where $N_k$ is the number of relative abundance observations for index $k$ \cite
 &\mbox{where}\nonumber\\
 \sigma_{k,t} &= \frac{\rho \varphi^2}{ \omega_{k,t}},  \nonumber
 \end{align}
-where $\rho \varphi^2$ is the proportion of the total error that is associated with observation errors, and $\omega_{k,t}$ is a user specified relative weight for observation $t$ from gear $k$.  The $ \omega_{k,t}$ terms allow each observation to be weighted relative to the total error $\rho \varphi^2$; for example, to omit a particular observation, set $\omega_{k,t}=0$, or to give 2 times the weight, then set  $\omega_{k,t}=2.0$. To assume all observations have the same variance then simply set  $\omega_{k,t}=1$.  Note that if  $\omega_{k,t}=0$ then equation \eqref{eq6} is undefined; therefore, \iscam adds a small constant to  $\omega_{k,t}$ (1.e-10, which is equivalent to assuming an extremely large variance)  to ensure the likelihood can be evaluated.
+where $\rho \varphi^2$ is the proportion of the total error that is associated with observation errors, and $\omega_{k,t}$ is a user specified relative weight for observation $t$ from gear $k$.  The $ \omega_{k,t}$ terms allow each observation to be weighted relative to the total error $\rho \varphi^2$; for example, to omit a particular observation, set $\omega_{k,t}=0$, or to give 2 times the weight, then set  $\omega_{k,t}=2.0$. To assume all observations have the same variance then simply set  $\omega_{k,t}=1$.  Note that if  $\omega_{k,t}=0$ then equation \eqref{eq6} is undefined; therefore, \iscam\ adds a small constant to  $\omega_{k,t}$ (1.e-10, which is equivalent to assuming an extremely large variance)  to ensure the likelihood can be evaluated.
 
-\subsubsection{Age composition data}
-Sampling theory suggest that age composition data are derived from a multinomial distribution \citep{fournier1982general}; however, \iscam\ assumes that age-proportions are obtained from a multivariate logistic distribution \citep{schnute1995influence}.  The main reason \iscam\ departs from the traditional multinomial model has to do with how the age-composition data are weighted in the objective function.  First, the multinomial distribution requires the specification of an effective sample size; this may be done arbitrarily or through iterative re-weighting \citep{MCALLISTER1997,gavaris2002sif}, and in the case of multiple and potentially conflicting age-proportions this procedure may fail to converge properly.  The assumed effective sample size can have a large impact on the overall model results.  
+\subsubsection{Age composition data}\label{agecomps}
+Sampling theory suggest that age composition data are derived from a multinomial distribution \citep{fournier1982general}; however, \iscam\ assumes that age-proportions are obtained from a multivariate logistic distribution \citep{schnute1995influence,richards1997visualizing}.  The main reason \iscam\ departs from the traditional multinomial model has to do with how the age-composition data are weighted in the objective function.  First, the multinomial distribution requires the specification of an effective sample size; this may be done arbitrarily or through iterative re-weighting \citep{MCALLISTER1997,gavaris2002sif}, and in the case of multiple and potentially conflicting age-proportions this procedure may fail to converge properly.  The assumed effective sample size can have a large impact on the overall model results.  
 
 A nice feature of the multivariate logistic distribution is that the age-proportion data can be weighted based on the conditional maximum likelihood estimate of the variance in the age-proportions.  Therefore, the contribution of the age-composition data to the overall objective function is ``self-weighting'' and is conditional on other components in the model.
 
@@ -378,6 +387,9 @@ and the negative loglikelihood evaluated at the conditional maximum likelihood e
 	\ell_A = (A-1)T \ln(\widehat{\tau}^2).
 \end{equation}
 In short, the multivariate logistic likelihood for age-composition data is just the log of the residual variance weighted by the number observations over years and ages.
+
+%Add technical details about requiring the minimum p_{t,a} to be greater than 2% "Grouping".
+There is also a technical detail in \eqref{eq7}, where observed and predicted proportions-at-age must be greater than 0.  It is not uncommon in catch-age data sets to observed 0 proportions for older, or young, age classes.  \iscam\ adopts the same approach described by \cite{richards1997visualizing} where the definition of age-classes is altered to require that $p_{t,a}\geq 0.02$ for every age in each year.  This is accomplished by grouping consecutive ages, where $p_{t,a} <0.02$, into a single age-class and reducing the effective number of age-classes in the variance calculation ($\widehat{\tau}^2$) by the number of groups created.
 
 \subsubsection{Stock-recruitment}
 There are two alternative stock-recruitment models available in \iscam: the Beverton-Holt model and the Ricker model.  Annual recruitment and the initial age-composition are treated as latent variables in \iscam, and residuals between estimated recruits and the deterministic stock-recruitment models are used to estimate unfished spawning stock biomass and recruitment compensation.  The residuals between the estimated and predicted recruits is given by

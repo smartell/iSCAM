@@ -20,7 +20,7 @@ dvariable dbeta(const dvariable& x, const double a, const double b)
 \[
  p(x|a,b) = -a \ln(b)+\ln(\Gamma(a))-(a-1)\ln(x)+bx
 \]
-where the mean and variance are given by $E(x) = ab$ and $Var(x) = ab^2$. The following code is implemented in \texttt{stats.cxx} library:
+where the mean and variance are given by $E(x) = a/b$ and $Var(x) = a/b^2$. The following code is implemented in \texttt{stats.cxx} library:
 \begin{verbatim}
 //gamma
 dvariable dgamma(const dvariable &x, const double a, const double b)
