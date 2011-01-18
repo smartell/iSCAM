@@ -64,7 +64,7 @@
 1           ## recruitment model (1=beverton-holt, 2=ricker)
 0.05        ## std in observed catches in first phase.
 0.025       ## std in observed catches in last phase.
-0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
+1           ## Assume unfished in first year (0=FALSE, 1=TRUE)
 0.01		## Minimum proportion to consider in age-proportions for dmvlogistic
 0.20		## Mean fishing mortality for regularizing the estimates of Ft
 0.01		## std in mean fishing mortality in first phase

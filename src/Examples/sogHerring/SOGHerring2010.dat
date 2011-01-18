@@ -23,7 +23,7 @@
 ## ________________________
 
 #Time series data
-#Observed catch (1951-2010, metric t)
+#Observed catch (1951-2010, 1000s metric t)
 #yr		p1	p2	p3	 survey
 1951 43.798  0.000  0.000  0  0
 1952 45.846  0.000  0.000  0  0
