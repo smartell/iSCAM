@@ -707,6 +707,13 @@ FUNCTION calc_mortality
 	if(verbose) cout<<"**** OK after calc_mortality ****"<<endl;
 	
 FUNCTION calc_numbers_at_age
+	/*
+		**** Need to check the difference between the initialization 
+		of the numbers at age here at the margins in comparison to the
+		simulation model.
+	*/
+	
+	
 	int i,j;
 	N.initialize();
 	
