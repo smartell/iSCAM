@@ -17,6 +17,7 @@
 #                                                                               #
 #-------------------------------------------------------------------------------#
 
+require(hacks)	#transparent colors using the function colr("color",tranparency)
 require(Riscam)	#custom library built specifically for iscam.
 
 
@@ -674,7 +675,8 @@ require(Riscam)	#custom library built specifically for iscam.
 			
 				# plot proportions-at-age (cpro=TRUE)
 				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="honeydew")
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, 
+					bg=colr("steelblue", 0.5))
 			}
 		}
 		else{print("There is no age-composition data")}
@@ -698,7 +700,8 @@ require(Riscam)	#custom library built specifically for iscam.
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, bg="white")
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2,
+					bg=colr("white", 0.5))A
 			}
 		}
 		else{print("There is no age-composition data")}
