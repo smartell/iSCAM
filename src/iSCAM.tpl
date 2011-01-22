@@ -49,8 +49,12 @@
 DATA_SECTION
 	init_adstring data_file;
 	init_adstring control_file;
-
-
+	
+	
+	!! baseFileName=stripExtension(data_file);
+	!! cout<<baseFileName<<endl;
+	!! reportFileName = baseFileName + adstring(".rep");
+	
 	!! ad_comm::change_datafile_name(data_file);
 	
 	int sim;
@@ -197,6 +201,11 @@ DATA_SECTION
 			wt_obs(iyr)=tmp_wt_obs(i)(sage,nage);
 			fec(iyr)=elem_prod(plogis(age,ah,gh),wt_obs(iyr));
 		}
+		
+		//from Jake Schweigert: use mean-weight-at-age data
+		//from the last 5 years for the projected mean wt.
+		dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/5;
+		wt_obs(nyr+1) = tmp;
 		cout<<"Ok after empiracle weight-at-age data"<<endl;
 	END_CALCS
 	
@@ -1662,13 +1671,23 @@ REPORT_SECTION
 	
 	if(verbose)cout<<"END of Report Section..."<<endl;
 	
+	//Make copies of the report file using the reportFileName
+	//to ensure the results are saved to the same directory 
+	//that the data file is in.
+	if(last_phase())
+	{
+		adstring copyrep = "cp iscam.rep " +reportFileName;
+		system(copyrep);
+	}
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
 	if(retro_yrs && last_phase())
 	{
-		adstring rep="iscam.ret"+str(retro_yrs);
-		rename("iscam.rep",rep);
+		//adstring rep="iscam.ret"+str(retro_yrs);
+		//rename("iscam.rep",rep);
+		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
+		system(copyrep);
 	}
 
 FUNCTION mcmc_output
@@ -1697,7 +1716,8 @@ TOP_OF_MAIN_SECTION
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
- 
+
+	
 
 GLOBALS_SECTION
 	/**
@@ -1712,11 +1732,34 @@ GLOBALS_SECTION
 
 	#include <admodel.h>
 	#include <time.h>
+	#include <string.h>
 	#include <stats.cxx>
 	#include <baranov.cxx>
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
+	
+	adstring baseFileName;
+	adstring reportFileName;
+	
+	adstring stripExtension(adstring fileName)
+	{
+		/*
+		This function strips the file extension
+		from the fileName argument and returns
+		the file name without the extension.
+		*/
+		const int length = fileName.size();
+		for (int i=length; i>=0; --i)
+		{
+			if (fileName(i)=='.')
+			{
+				return fileName(1,i-1);
+			}
+		}
+		return fileName;
+	}
+	
 	
 FINAL_SECTION
 	time(&finish);
@@ -1730,5 +1773,6 @@ FINAL_SECTION
 	cout<<"--Runtime: ";
 	cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
 	cout<<"--Number of function evaluations: "<<nf<<endl;
+	cout<<"--Results are saved with the base name:\n"<<"\t"<<baseFileName<<endl;
 	cout<<"*******************************************"<<endl;
 
