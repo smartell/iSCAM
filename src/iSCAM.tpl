@@ -10,13 +10,21 @@
 //                                                                     //
 // AUTHORS: SJDM Steven Martell                                        //
 //                                                                     //
+// CONVENTIONS: Formatting conventions are based on the The            //
+//               Elements of C++ Style (Misfeldt et al. 2004)          //
 //                                                                     //
-// TO DO: add option for using empiracle weight-at-age data           //
+// NAMING CONVENTIONS:                                                 //
+//             Macros       -> UPPERCASE                               //
+//             Constants    -> UpperCamelCase                          //
+//             Functions    -> lowerCamelCase                          //
+//             Variables    -> lowercase                               //
+//                                                                     //
+// TO DO: add option for using empirical weight-at-age data           //
 //        add gtg options for length based fisheries                  //
 //        add time varying natural mortality rate with splines        //
 //                                                                     //
 //                                                                     //
-//                                                                     //
+//          Showing Josh Some Stuff                                    //
 //                                                                     //
 //                                                                     //
 // ------------------------------------------------------------------- //
@@ -36,9 +44,9 @@
 //--                                                                 --//
 //--  Dec 24, 2010-added random walk for natural mortality.          --//
 //--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
+//--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting--//
+//--               the naming conventions in The Elements of C++     --//
+//--               style to keep my mind busy.                       --//
 //--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
@@ -47,31 +55,31 @@
 
 
 DATA_SECTION
-	init_adstring data_file;
-	init_adstring control_file;
+	init_adstring DataFile;
+	init_adstring ControlFile;
 	
 	
-	!! baseFileName=stripExtension(data_file);
-	!! cout<<baseFileName<<endl;
-	!! reportFileName = baseFileName + adstring(".rep");
+	!! BaseFileName=stripExtension(DataFile);
+	!! cout<<BaseFileName<<endl;
+	!! ReportFileName = BaseFileName + adstring(".rep");
 	
-	!! ad_comm::change_datafile_name(data_file);
+	!! ad_comm::change_datafile_name(DataFile);
 	
-	int sim;
+	int SimFlag;
 	int rseed;
 	int retro_yrs;
 	LOC_CALCS
-		sim=0;
+		SimFlag=0;
 		rseed=999;
 		int on,opt;
-		//the following line checks for the "-sim" command line option
+		//the following line checks for the "-SimFlag" command line option
 		//if it exists the if statement retreives the random number seed
 		//that is required for the simulation model
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-sim",opt))>-1)
 		{
-			sim=1;
+			SimFlag=1;
 			rseed=atoi(ad_comm::argv[on+1]);
-			//if(sim)exit(1);
+			//if(SimFlag)exit(1);
 		}
 		
 		// command line option for retrospective analysis. "-retro retro_yrs"
@@ -238,9 +246,9 @@ DATA_SECTION
 	
 	
 	// ***************************************************
-	// ** Read parameter controls from control_file
+	// ** Read parameter controls from ControlFile
 	// ***************************************************
-	!! ad_comm::change_datafile_name(control_file);
+	!! ad_comm::change_datafile_name(ControlFile);
 	
 	init_int npar;
 	init_matrix theta_control(1,npar,1,7);
@@ -266,6 +274,9 @@ DATA_SECTION
 	// type 1 = logistic (2pars)
 	// type 2 = selcoffs (A-1 pars)
 	// type 3 = cubic spline (age_nodes)
+	// type 4 = time varying cubic spline (age_nodes for each year)
+	// type 5 = bicubic spline with age_nodes adn yr_nodes
+	// type 6 = fixed logistic by turning sel_phz to (-ve)
 	init_ivector isel_type(1,ngear);  	//Switch for selectivity
 	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
 	ivector jsel_npar(1,ngear);			//ivector for the number of rows for time-varying selectivity.
@@ -287,19 +298,40 @@ DATA_SECTION
 			jsel_npar(i)=1;
 			switch(isel_type(i))
 			{
-				case 1: isel_npar(i)=2; break;
-				case 2: isel_npar(i)=(nage-sage); break;
-				case 3: 
-					isel_npar(i)=age_nodes(i);
+				case 1:
+					// logistic selectivity
+					isel_npar(i) = 2; 
 					break;
-				case 4:	 //annual cubic splines
-					isel_npar(i)=age_nodes(i);
-					jsel_npar(i)=(nyr-syr-retro_yrs)+1;
+					
+				case 2:
+					// age-specific coefficients
+					isel_npar(i) = (nage-sage); 
 					break;
-				case 5:  //bicubic spline
-					jsel_npar(i)=age_nodes(i);
-					isel_npar(i)=yr_nodes(i);
+					
+				case 3:
+				 	// cubic spline 
+					isel_npar(i) = age_nodes(i);
 					break;
+					
+				case 4:	 
+					// annual cubic splines
+					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = (nyr-syr-retro_yrs)+1;
+					break;
+					
+				case 5:  
+					// bicubic spline
+					jsel_npar(i) = age_nodes(i);
+					isel_npar(i) = yr_nodes(i);
+					break;
+				
+				case 6:
+					// fixed logistic (no parameters estimated)
+					// ensure sel_phz is set to negative value.
+					isel_npar(i) = 2;
+					if(sel_phz(i)>0) sel_phz(i) = -1;
+					break;
+					
 				default: break;
 			}
 		}
@@ -363,6 +395,7 @@ PARAMETER_SECTION
 	//theta[3]		log_m
 	//theta[4]		log_avgrec
 	//theta[5]		log_avg_f
+	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
@@ -451,10 +484,11 @@ PARAMETER_SECTION
 PRELIMINARY_CALCS_SECTION
   //Run the model with input parameters to simulate real data.
   nf=0;
-  if(sim) {
-	initialize_parameters();
-	simulation_model(rseed);
-	}
+  if(SimFlag) 
+  {
+    initParameters();
+    simulation_model(rseed);
+  }
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,100,500,5000,5000
@@ -462,17 +496,17 @@ RUNTIME_SECTION
 
 
 PROCEDURE_SECTION
-	initialize_parameters();
+	initParameters();
 
-	calc_selectivities();
+	calcSelectivities();
 	
-	calc_mortality();
+	calcTotalMortality();
 	
-	calc_numbers_at_age();
+	calcNumbersAtAge();
 	
-	calc_fishery_observations();
+	calcFisheryObservations();
 	
-	calc_age_proportions();
+	calcAgeProportions();
 	
 	calc_survey_observations();
 	
@@ -484,7 +518,7 @@ PROCEDURE_SECTION
 	
 	if(mceval_phase()) mcmc_output();
 	
-FUNCTION initialize_parameters
+FUNCTION initParameters
 	/*
 	This function is used to extract the specific parameter values
 	from the init_bounded_number_vector to the specific variables
@@ -518,7 +552,7 @@ FUNCTION initialize_parameters
 	rho=theta(5);
 	varphi=theta(6);
 	
-	if(verbose)cout<<"**** Ok after initialize_parameters ****"<<endl;
+	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 	RETURN_ARRAYS_INCREMENT();
@@ -556,7 +590,7 @@ FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
 	
 
 
-FUNCTION calc_selectivities
+FUNCTION calcSelectivities
 	/*
 		This function loops over each ngear and calculates the corresponding
 		selectivity for that gear type. It first uses a switch statement 
@@ -590,31 +624,46 @@ FUNCTION calc_selectivities
 		
 		switch(isel_type(j))
 		{
-			case 1:		//logistic selectivity
+			case 1 || 6:
+				// logistic selectivity for case 1 or 6
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
-				jlog_sel(j)=log(plogis(age,p1,p2));
+				jlog_sel(j) = log( plogis(age,p1,p2) );
 				break;
-			case 2:		//age-specific selectivity coefficients
-				jlog_sel(j)(sage,nage-1)=sel_par(j)(sage);
-				jlog_sel(j,nage)=jlog_sel(j,nage-1);
+				
+			case 2:		
+				// age-specific selectivity coefficients
+				jlog_sel(j)(sage,nage-1) = sel_par(j)(sage);
+				jlog_sel(j,nage) = jlog_sel(j,nage-1);
 				break;
-			case 3:		//cubic spline
-				jlog_sel(j)=cubic_spline(sel_par(j)(1));
+				
+			case 3:		
+				// cubic spline
+				jlog_sel(j)=cubic_spline( sel_par(j)(1) );
 				break;
-			case 4:		//time-varying cubic spline every year
+				
+			case 4:		
+				// time-varying cubic spline every year
 				jlog_sel(j) = cubic_spline(sel_par(j)(1));
 				t1 = cubic_spline_matrix(sel_par(j).sub(2,jsel_npar(j)));
-				for(i=t1.indexmin();i<=t1.indexmax();i++) tmp(syr+(i-t1.indexmin()))=t1(i);
+				for(i = t1.indexmin(); i <= t1.indexmax(); i++)
+				{
+					tmp( syr+(i-t1.indexmin()) ) = t1(i);
+				}
 				break;
-			case 5:		//time-varying bicubic spline
-				ia.fill_seqadd(0,1./(age_nodes(j)-1));
-				iy.fill_seqadd(0,1./(yr_nodes(j)-1));
-				bicubic_spline(iy,ia,sel_par(j),tmp2);  //function located in stats.cxx
+				
+			case 5:		
+				// time-varying bicubic spline
+				ia.fill_seqadd( 0,1./(age_nodes(j)-1) );
+				iy.fill_seqadd( 0,1./(yr_nodes(j)-1) );
+				// bicubic_spline function is located in stats.cxx library
+				bicubic_spline( iy,ia,sel_par(j),tmp2 );  
 				break;
+				
 			default:
 				jlog_sel(j)=0;
-		}
+				
+		}  // switch
 		
 
 		log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
@@ -644,12 +693,12 @@ FUNCTION calc_selectivities
 	
 	}
 	
-	if(verbose)cout<<"**** Ok after calc_selectivities ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
 	
 	
 
-FUNCTION calc_mortality
+FUNCTION calcTotalMortality
 	/*
 	This routine calculates fishing mortality, total mortality
 	and annaul survival rates (exp(-Z)) for each age in each
@@ -658,6 +707,7 @@ FUNCTION calc_mortality
 	There is a complication in that if there is a survey gear
 	then the fishing mortality rate is set to an extremely small
 	value: exp(-70.)~3.975e-31, which is effectively 0.
+	
 	
 	The above issue is no longer an issue b/c now estimating Fs
 	for years where there is non-zero catch.
@@ -713,9 +763,9 @@ FUNCTION calc_mortality
 	
 	Z=M_tot+F;
 	S=mfexp(-Z);
-	if(verbose) cout<<"**** OK after calc_mortality ****"<<endl;
+	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
-FUNCTION calc_numbers_at_age
+FUNCTION calcNumbersAtAge
 	/*
 		**** Need to check the difference between the initialization 
 		of the numbers at age here at the margins in comparison to the
@@ -755,9 +805,9 @@ FUNCTION calc_numbers_at_age
 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1));
 		N(i+1,nage)+=N(i,nage)*S(i,nage);
 	}
-	if(verbose)cout<<"**** Ok after calc_numbers_at_age ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
 
-FUNCTION calc_age_proportions
+FUNCTION calcAgeProportions
 	/*This function loops over each gear and year
 	and calculates the predicted proportions at age
 	sampled based on the selectivity of that gear and
@@ -780,9 +830,9 @@ FUNCTION calc_age_proportions
 										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
 		}
 	}
-	if(verbose)cout<<"**** Ok after calc_age_proportions ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 	
-FUNCTION calc_fishery_observations
+FUNCTION calcFisheryObservations
 	/*
 	Dec 6, 2010.  Modified ct calculations to include
 				  empirical weight at age data (wt_obs);
@@ -835,7 +885,7 @@ FUNCTION calc_fishery_observations
 			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010*/
 		}
 	}
-	if(verbose)cout<<"**** Ok after calc_fishery_observations ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
 	
 	
 FUNCTION calc_survey_observations
@@ -1200,7 +1250,7 @@ FUNCTION calc_objective_function
 	}
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 	nf++;
-	if(verbose)cout<<"**** Ok after initialize_parameters ****"<<endl;
+	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 
 
 
@@ -1336,11 +1386,11 @@ FUNCTION void simulation_model(const long& seed)
 	The random number seed can be used to repeat the same 
 	sequence of random number for simulation testing.
 	
-	Implemented using the "-sim 99" command line option where
+	Implemented using the "-SimFlag 99" command line option where
 	99 is the random number seed.
 	
-	-sim 99 is a special case used for the manuscript for case 1.
-	-sim 000 is a special case with 0 error (exact data)
+	-SimFlag 99 is a special case used for the manuscript for case 1.
+	-SimFlag 000 is a special case with 0 error (exact data)
 	
 	-This routine will over-write the observations in memory
 	with simulated data, where the true parameter values are
@@ -1598,7 +1648,7 @@ FUNCTION dvector cis(const dvector& na)
 REPORT_SECTION
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	int i,j,k;
-	REPORT(control_file);
+	REPORT(ControlFile);
 	REPORT(f);
 	REPORT(nlvec);
 	REPORT(ro);
@@ -1671,12 +1721,12 @@ REPORT_SECTION
 	
 	if(verbose)cout<<"END of Report Section..."<<endl;
 	
-	//Make copies of the report file using the reportFileName
+	//Make copies of the report file using the ReportFileName
 	//to ensure the results are saved to the same directory 
 	//that the data file is in.
 	if(last_phase())
 	{
-		adstring copyrep = "cp iscam.rep " +reportFileName;
+		adstring copyrep = "cp iscam.rep " +ReportFileName;
 		system(copyrep);
 	}
 	
@@ -1733,14 +1783,14 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include <stats.cxx>
-	#include <baranov.cxx>
+	#include "stats.cxx"
+	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
 	
-	adstring baseFileName;
-	adstring reportFileName;
+	adstring BaseFileName;
+	adstring ReportFileName;
 	
 	adstring stripExtension(adstring fileName)
 	{
@@ -1773,6 +1823,6 @@ FINAL_SECTION
 	cout<<"--Runtime: ";
 	cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
 	cout<<"--Number of function evaluations: "<<nf<<endl;
-	cout<<"--Results are saved with the base name:\n"<<"\t"<<baseFileName<<endl;
+	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
 
