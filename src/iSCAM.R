@@ -27,7 +27,7 @@ require(Riscam)	#custom library built specifically for iscam.
 
 .VIEWMAR  <- c(2, 2, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
-.VIEWLAS  <- 2
+.VIEWLAS  <- 1
 
 .REPFILES <- list.files(pattern="\\.rep")
 
@@ -61,6 +61,27 @@ require(Riscam)	#custom library built specifically for iscam.
 
 .iscamViewSetup("test")
 
+.subView	<- function()
+{
+	guiInfo <- getWinVal(scope="L")
+	
+	##Graphics options
+	# Check graphics options
+	if( autolayout )
+	{
+		print("AUTOLAYOUT IS ON")
+	} 
+	
+	if( plotbyrow )
+	{
+		winCols <- ncols
+		winRows <- nrows
+		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(winRows, winCols))
+	}
+	
+}
+
+
 .mpdView	<- function()
 {
 	print(".mpdView")
@@ -75,6 +96,12 @@ require(Riscam)	#custom library built specifically for iscam.
 	# Read the report file
 	repObj	<- read.rep(hdr$Report.Files)
 	#repObj	<- read.rep("iscam.rep")
+	
+	
+	
+	
+	
+	
 	
 	# Conditional statements for radio button selections of plots
 	if ( plotType=="catch" )
@@ -120,6 +147,11 @@ require(Riscam)	#custom library built specifically for iscam.
 	if ( plotType=="surveyresid" )
 	{
 		.plotSurveyResiduals( repObj, annotate=TRUE )
+	}
+	
+	if ( plotType=="recresid" )
+	{
+		.plotRecruitmentResiduals( repObj )
 	}
 	
 	if ( plotType=="agecompsresid" )
@@ -298,7 +330,7 @@ require(Riscam)	#custom library built specifically for iscam.
 		xx = sbt[1:(length(yr)-min(age))]
 		yy = rt
 		
-		plot(xx, yy, type="n",ylim=c(0, max(yy)),xlim=c(0, max(xx)), 
+		plot(xx, yy, type="n",ylim=c(0, max(yy)),xlim=c(0, max(xx,bo)), 
 			xlab="Spawning biomass", ylab=paste("Age-",min(age)," recruits", sep=""))
 			
 		points(xx, yy)
@@ -488,6 +520,27 @@ require(Riscam)	#custom library built specifically for iscam.
 	})
 }
 
+.plotRecruitmentResiduals	<- function( repObj )
+{
+	#Plot the log residuals between the estimated recruits and
+	#those obtained from the recruitment model (delta)
+	with(repObj, {
+		ii = 1:min(age)
+		xx = yr[-ii]
+		yy = delta
+		yrange = c(-max(abs(yy)), max(abs(yy)))
+		
+		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
+			xlab="Year", ylab="Recruitment residuals")
+			
+		lines(xx, yy, type="h", col="black")
+		axis( side=1 )
+		axis( side=2,  las=.VIEWLAS )
+		box()
+	})
+}
+
+
 .plotIndex	<- function( repObj, annotate=FALSE )
 {
 	#line plot for relative abundance indices
@@ -637,11 +690,12 @@ require(Riscam)	#custom library built specifically for iscam.
 		yy = cbind( yy, rowMeans(M_tot) )	
 		yrange=c(0, max(yy, na.rm=TRUE))
 		lw = c(rep(1,ngear),2)
+		lt = c(rep(1,ngear),1)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
 			xlab="Year", ylab="Mortality rate")
 			
-		matlines(xx, yy, col="black", lwd=lw)
+		matlines(xx, yy, col="black", lwd=lw, lty=lt)
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
@@ -701,7 +755,7 @@ require(Riscam)	#custom library built specifically for iscam.
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
 					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2,
-					bg=colr("white", 0.5))A
+					bg=colr("white", 0.5))
 			}
 		}
 		else{print("There is no age-composition data")}
@@ -815,4 +869,20 @@ require(Riscam)	#custom library built specifically for iscam.
             fg = fg.clrs[1], bg = bg.clrs[1], lwd = lwd, add = TRUE, ...)
     }
     invisible(z0)
+}
+
+
+.saveGraphic	<- function()
+{
+	#This function saves the current graphic
+	#with the specified file name as a pdf file.
+	print(".saveGraphic")
+	
+	# Get the guiPerf parameters so that plot controls available.
+	guiInfo <- getWinVal(scope="L")
+	
+	
+	fileName = paste(graphicFileName,".pdf", sep="")
+	dev.copy2pdf(file=fileName)
+	cat("Graphic saved as:", fileName, "\n")
 }
