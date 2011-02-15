@@ -113,8 +113,18 @@ dvariable dlnorm(const dvariable& x, const double& mu, const double& std)
 }
 
 // log multinomial distribution
+/**
+	Mulitnomial distribution.
+*/
 dvariable dmultinom(const dvector& x, const dvar_vector& p)
 {
+	if(x.indexmin() != p.indexmin() || x.indexmax() != p.indexmax())
+	{
+		cerr << "Index bounds do not macth in"
+		" dmultinom(const dvector& x, const dvar_vector& p)\n";
+		ad_exit(1);
+	}
+	
 	double n=sum(x);
 	return -gammln(n+1.)+sum(gammln(x+1.))-x*log(p/sum(p));
 }
@@ -132,9 +142,12 @@ dvariable dpois(const double& x, const dvariable& lambda)
 	return -x*log(lambda)+lambda+gammln(x+1);
 }
 
+//The following function has been depricated.
 // multivariate logistic negative log likelihood
 dvariable dmvlogistic(const dmatrix o, const dvar_matrix& p, double& tau2)
-{	//returns the negative loglikelihood using the MLE for the variance
+{	
+	
+	//returns the negative loglikelihood using the MLE for the variance
 	RETURN_ARRAYS_INCREMENT();
 	
 	int a = o.colmin();
@@ -180,6 +193,10 @@ dvariable dmvlogistic(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu, dou
 				 bin k if k is currently less than the number of bins.
 		-4) do the same grouping for the predicted proportions.
 		-5) use ivector iiage to correctly assign residuals into nu
+		
+		FEB 8, 2011.  Fixed a bug in the variance calculation & 
+		likelihood scaling that was discovered at the 2011 Hake
+		assessment STAR panel in Seattle.
 	*/
 	RETURN_ARRAYS_INCREMENT();
 	int i,j,k,n;
@@ -231,8 +248,13 @@ dvariable dmvlogistic(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu, dou
 		
 		age_counts += n-1;
 	}
-	tau_hat2 = 1./(age_counts*(T-t+1))*norm2(nu);
-	dvariable nloglike =(age_counts*(T-t+1))*log(tau_hat2);
+	//Depricated  Wrong Variance & likelihood calculation.
+	//tau_hat2 = 1./(age_counts*(T-t+1))*norm2(nu);
+	//dvariable nloglike =(age_counts*(T-t+1))*log(tau_hat2);
+	
+	//Feb 8, 2011  Fixed variance & likelihood
+	tau_hat2 = 1./(age_counts)*norm2(nu);
+	dvariable nloglike =(age_counts)*log(tau_hat2);
 	tau2=value(tau_hat2); //mle of the variance 
 	RETURN_ARRAYS_DECREMENT();
 	return(nloglike);
