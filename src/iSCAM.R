@@ -15,6 +15,12 @@
 # 1. requires PBSmodelling                                                      #
 #                                                                               #
 #                                                                               #
+# TO DO:                                                                        #
+# 1. add a test priors widget so user can quickly examine priors for parameters #
+#                                                                               #
+#                                                                               #
+#                                                                               #
+#                                                                               #
 #-------------------------------------------------------------------------------#
 
 require(hacks)	#transparent colors using the function colr("color",tranparency)
@@ -25,7 +31,7 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
 .VIEWPANCEX <- 1            # Default cex for panLab.
 
-.VIEWMAR  <- c(2, 2, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
+.VIEWMAR  <- c(3, 3, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 1
 
@@ -53,13 +59,30 @@ require(Riscam)	#custom library built specifically for iscam.
 	
 	#Create a file list object for selection
 	ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
+		
+	#Read iscam report file and get controls for priors tab
+	A=read.rep("iscam.rep")
+	#Build data frame
+	colhdr=c("ival", "lb", "ub", "phz", "prior", "mu\nshape","SD\nrate")
+	rownme=c("log(Ro)","steepness","log(M)","log(Rbar)","rho","precision")
+	ctrlDF<<-as.data.frame(A$ctrl)
+	rownames(ctrlDF)<<-rownme
+	colnames(ctrlDF)<<-colhdr
+	ctrlDF<<-cbind(ctrlDF,View=TRUE)
 	
 	#Create new window based on iscamWin.txt
 	createWin("iscamWin.txt")
 	
+	#Default Graphic directory
+	wdir = paste(getwd(), sep="")
+	setWinVal(list(graphicDirectory=wdir))
+	
 }
 
-.iscamViewSetup("test")
+guiView	<- function()
+{
+	.iscamViewSetup("iscam")
+}
 
 .subView	<- function()
 {
@@ -67,9 +90,9 @@ require(Riscam)	#custom library built specifically for iscam.
 	
 	##Graphics options
 	# Check graphics options
-	if( autolayout )
+	if( autolayout && ! plotbyrow )
 	{
-		print("AUTOLAYOUT IS ON")
+		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(1, 1))
 	} 
 	
 	if( plotbyrow )
@@ -79,6 +102,8 @@ require(Riscam)	#custom library built specifically for iscam.
 		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(winRows, winCols))
 	}
 	
+	#call the plotting function again if user change plotting options.
+	.mpdView()
 }
 
 
@@ -111,7 +136,7 @@ require(Riscam)	#custom library built specifically for iscam.
 	
 	if ( plotType=="survey" )
 	{
-		.plotIndex( repObj, annotate=FALSE )
+		.plotIndex( repObj, annotate=annotate )
 	}
 	
 	if ( plotType=="biomass" )
@@ -200,7 +225,40 @@ require(Riscam)	#custom library built specifically for iscam.
 		.plotStockStatus( admbObj )
 	}
 	
+	if ( plotType=="sbmcmc" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcsbt = read.table( "sbt.mcmc" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.plotSbtPosterior( admbObj )
+	}
+	
+	if ( plotType=="depletionmcmc" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcsbt = read.table( "sbt.mcmc" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.plotSbtPosterior( admbObj, TRUE )
+	}
+	
+	if ( plotType=="traceplot" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+		.mcmcTrace( admbObj )
+	}
+	
+	## Saving PDF of figure in current device
+	if(savePDF)
+	{
+		if(graphicFileName=="Graphics File Name or File Prefix")
+			graphicFileName = "iSCAM"
+		filePrefix=graphicFileName
+		dev.copy2pdf( file=paste( filePrefix,"fig",plotType,".pdf",sep="" ) )
+	}
 }
+
+
 
 .plotStockStatus	<- function( admbObj )
 {
@@ -222,9 +280,12 @@ require(Riscam)	#custom library built specifically for iscam.
 		maxct=max(lvs)
 		nlvs=length(lvs)
 		thelines=contourLines(est$x1,est$x2,est$fhat,levels=lvs)
-		polygon(thelines[[nlvs-3]]$x,thelines[[nlvs-3]]$y,col="khaki",border="khaki",lwd=1)
-		polygon(thelines[[nlvs-2]]$x,thelines[[nlvs-2]]$y,col="snow",border="snow1",lwd=2)
-		polygon(thelines[[nlvs-1]]$x,thelines[[nlvs-1]]$y,col="yellow",border="yellow2",lwd=3)
+		iclr=colr("khaki", 0.9)
+		polygon(thelines[[nlvs-3]]$x,thelines[[nlvs-3]]$y,col=iclr,border=iclr,lwd=1)
+		iclr=colr("snow", 0.9)
+		polygon(thelines[[nlvs-2]]$x,thelines[[nlvs-2]]$y,col=iclr,border=iclr,lwd=2)
+		iclr=colr("yellow", 0.9)
+		polygon(thelines[[nlvs-1]]$x,thelines[[nlvs-1]]$y,col=iclr,border=iclr,lwd=3)
 		polygon(thelines[[nlvs]]$x,thelines[[nlvs]]$y,col="lightyellow",border="yellow",lwd=1)
 		#contour(est$x1,est$x2,est$fhat,drawlabels=T,add=T,levels=lvs,lty=1,lwd=1,labcex= 0.7)
 		#Add salt and pepper
@@ -241,19 +302,19 @@ require(Riscam)	#custom library built specifically for iscam.
 		yy[yy==0]=NA; ii=!is.na(yy)
 
 		matplot(xx, (yy[ii]), type="l", xlim=c(0,max(2,xx)), 
-		ylim=c(0,max(2,yy[ii])),xlab="bstatus", ylab="fstatus")
-		rect(0, 0, 1, 1, col="yellow", border=NA)
-		rect(1, 1, max(2, xx),max(2, yy),col="yellow",border=NA)
-		rect(1, 0, max(2, xx), 1, col="green", border=NA)
-		rect(0, 1, 1, max(2, yy), col="red", border=NA)
+		ylim=c(0,max(2,yy[ii])),xlab="Spawning biomass/SBmsy", ylab="Ft/Fmsy")
+		rect(0, 0, 1, 1, col=colr("yellow", 0.5), border=NA)
+		rect(1, 1, max(2, xx),max(2, yy),col=colr("yellow", 0.5),border=NA)
+		rect(1, 0, max(2, xx), 1, col=colr("green", 0.5), border=NA)
+		rect(0, 1, 1, max(2, yy), col=colr("red", 0.5), border=NA)
 		## add bayesian fried egg 
 		## need to get marginal samples for ft and sbt
 		## to correctly plot the fried egg uncertainty
 		xxx=sbt[length(yr)]/mcmc$bmsy
 		yyy=ft[length(yr)]/mcmc$fmsy
 		fried.egg(xxx, yyy)
-		lines(xx, yy[ii], type="l")
-		text(xx, yy[ii], yr, cex=0.75)
+		lines(xx, yy[ii], type="l", col=colr(1, 1))
+		text(xx, yy[ii], yr, cex=0.75, col=colr(1, 1))
 	})
 }
 
@@ -280,6 +341,97 @@ require(Riscam)	#custom library built specifically for iscam.
 	par(op)
 	
 }
+
+.plotSbtPosterior	<- function( admbObj, depletion=FALSE )
+{
+	#To do.  Add Sbo and posterior at syr-1
+	#for reference.
+	print("	.plotSbtPosterior")
+	with( admbObj, {
+		xx <- yrs
+		yy <- t(apply( mcsbt, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
+		
+		bo <- quantile( mcmc$bo, probs=c(0.5, 0.025, 0.975) )
+		
+		if(depletion) yy <- t(t(yy)/bo)
+
+		matplot(yrs, yy, type="n", xlab="Year", 
+			ylab="Spawning biomass (t)", axes=FALSE, 
+			ylim=c(0, max(yy)) )
+		
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+		
+		polygon(c(xx, rev(xx)), 
+			c(yy[,2],rev(yy[,3])), 
+			col=colr("red",0.5), border=NA)
+		
+		lines(xx, yy[,1], lwd=1.5)
+		#matlines(xx, yy)
+		
+		if(!depletion)
+		{
+			points(min(xx)-0.4,bo[1])
+			arrows(min(xx)-0.4,bo[2], min(xx)-0.4, bo[3], length=0)
+		}
+		
+		
+		
+	})
+}
+
+.mcmcTrace	<- function( admbObj, label=NULL )
+{
+	## this function examines the trace plots for the
+	## estimated leading parameters
+	print("	.mcmcTrace")
+	plotTrace <- function( obj )
+	{
+	  # Input "obj" is a VECTOR of MCMC samples.
+	  # Produces one panel trace plot.
+
+	  nSample <- length( obj )
+	  plot( c(1:nSample), obj, type="n", axes=FALSE, xlab="", ylab="" )
+	  points( c(1:nSample),obj, cex=0.5, pch=20, col="darkgray" )
+
+	  lines( lowess( c(1:nSample),obj,f=1/4), lty=1, lwd=1 )
+	  abline( h=mean(obj), lty=2 )
+
+	  # Plot MPD point (1st element).
+	  points( 1,obj[1], cex=1.0, pch=16, col="green" )
+	  points( 1,obj[1], cex=1.0, pch=1 )    
+
+	  axis( side=1 )
+	  axis( side=2 )
+	  box()
+	}
+  
+	with(admbObj, {
+	  # Find the active parameters.  If the chain is all equal, then the parameter
+	  # was fixed in the model configuration.  This gets a Boolean vector that
+	  # indicates which columns have fixed values.
+	  mcmcObj=mcmc
+	  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
+	  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
+
+	  tmp <- mcmcObj[ ,iPars ]
+	  tmpNames <- names( tmp )
+	
+	  for ( i in 1:ncol(tmp) )
+	  {
+	    plotTrace( tmp[,i] )
+	    #panLab( 0.5, 0.9, cex=1.0, tmpNames[i] )  
+	  }
+
+	  if ( !is.null(label) )
+	    mtext( side=3, line=-0.5, cex=1.0, outer=T, label )
+	  mtext( side=1, line=0.5, cex=1.0, outer=T, "Sample" )
+	  
+	})
+}
+
+
 
 .plotMarginalPosteriors	<- function( admbObj )
 {
@@ -558,11 +710,18 @@ require(Riscam)	#custom library built specifically for iscam.
 			xlab="Year", ylab="Relative abundance", 
 			ylim=yrange )
 		
-		matlines(xx, yy, col="black",type="o")
+		matlines(xx, yy, col="black",type="o", pch=1:ncol(yy))
 		
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
+		
+		if( annotate )
+		{
+			n=nrow(t(as.matrix(yy)))
+			txt=paste("Survey",1:n)
+			legend("top", txt, lty=1:n, pch=1:n, bty="n")
+		}
 	})
 }
 
@@ -712,6 +871,7 @@ require(Riscam)	#custom library built specifically for iscam.
 	})
 }
 
+
 .plotAgecomps	<- function(repObj)
 {
 	#Bubble plot of age-composition data
@@ -761,6 +921,64 @@ require(Riscam)	#custom library built specifically for iscam.
 		else{print("There is no age-composition data")}
 	})
 }
+
+.plotPriors	<-function()
+{
+	## This function plots the prior distributions for the parameters
+	## specified in the control file (actually read from the report file)
+	## after the model has been run.  The user can also change the mean, 
+	## SD, shape or rate parameters,  and overlay alternative priors.
+	guiInfo <- getWinVal(scope="L")
+	print(".plotPriors")
+	op <- par(no.readonly=TRUE)
+	par(las=1, mfcol=c(3, 2))
+	df <- guiInfo$ctrlDF			#Control data frame
+	np <- dim(df)[1]		#number of parameters
+	
+	## loop over each parameter, set x-limits
+	for(i in 1:np)
+	{
+		x	<- seq(df[i,2], df[i, 3], length=200)
+		p1	<- df[i, 6]
+		p2	<- df[i, 7]
+		view<- df[i, 8]
+		pt	<- df[i, 5]+1	#prior type
+		xl	<- range(x)
+		if(view)
+		{
+			## Add priors
+			nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
+			fn=match.fun(nfn[pt])
+			y = unlist(lapply(x,fn,p1,p2))
+			
+			if(i==2 && pt==4)  #steepness parameter BH model
+				y= unlist(lapply((x-0.2)/0.8,fn,p1,p2))
+			
+			plot(x,y,type="n",
+				xlab=rownames(df[i,]),ylab="Density")
+			
+			polygon(c(x,rev(x)),c(y,rep(0,length=length(x))),
+					col=colr(df[i,4], 0.25))
+			
+			title(main=nfn[pt])
+			#if(pt!=4)
+			#	curve(unlist(lapply(x,fn,p1,p2)),
+			#		xl[1],xl[2],add=T, col=4, lty=2)
+			#else
+			#	curve(unlist(lapply((x-ctrl[i,2])/
+			#		 (ctrl[i,3]-ctrl[i,2])
+			#		,fn,p1,p2)),xl[1],xl[2],add=T, col=4, lty=2)
+			
+		}
+	}
+	par(op)
+	#browser()
+}
+
+#-------------------------------------------------------------------------------#
+#   Miscellaneous functions called by above routines                            #
+#                                                                               #
+#-------------------------------------------------------------------------------#
 
 .plotBubbles <- function (z, xval = FALSE, yval = FALSE, dnam = FALSE, rpro = FALSE, 
     cpro = FALSE, rres = FALSE, cres = FALSE, powr = 1, size = 0.2, 
@@ -876,13 +1094,27 @@ require(Riscam)	#custom library built specifically for iscam.
 {
 	#This function saves the current graphic
 	#with the specified file name as a pdf file.
-	print(".saveGraphic")
+	print("MSG (.saveGraphic)")
 	
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
+	if(graphicDirectory=="Working Directory")
+		graphicDirectory = getwd()
 	
-	fileName = paste(graphicFileName,".pdf", sep="")
+	fileName = paste(graphicDirectory, "/", plotType,".pdf", sep="")
 	dev.copy2pdf(file=fileName)
 	cat("Graphic saved as:", fileName, "\n")
 }
+
+.selectDirectory <- function()
+{
+	#This function selects the working directory for saving 
+	#graphical images.
+	print("MSG (.selectDirctory)")
+	selectDir(usewidget="graphicDirectory")
+}
+#######################
+#Type: guiView()
+#to start gui
+#######################
