@@ -19,7 +19,7 @@
 //             Functions    -> lowerCamelCase                          //
 //             Variables    -> lowercase                               //
 //                                                                     //
-// TO DO: add option for using empirical weight-at-age data           //
+// TODO:  add option for using empirical weight-at-age data           //
 //        add gtg options for length based fisheries                  //
 //        add time varying natural mortality rate with splines        //
 //                                                                     //
@@ -912,8 +912,7 @@ FUNCTION calc_survey_observations
 	
 	*/
 	/*
-		TODO :
-		add capability to accomodate priors for survey q's.
+		CHANGED add capability to accomodate priors for survey q's.
 		DONE
 	*/
 	
