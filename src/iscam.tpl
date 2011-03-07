@@ -520,6 +520,11 @@ PROCEDURE_SECTION
 	
 	if(mceval_phase()) mcmc_output();
 	
+	//The following causes a linker error
+	//duplicate symbol in libdf1b2o.a
+	//dvariable a=3.0;
+	//cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
+	
 FUNCTION initParameters
 	/*
 	This function is used to extract the specific parameter values
@@ -605,8 +610,7 @@ FUNCTION calcSelectivities
 		Following the initializatoin of the selectivity curves, time-varying 
 		considerations are implemented.
 		
-		Having trouble getting a positive definate hessian with the cubic
-		spline and bicubic spline interpolations.  May have to revisit these options.
+		
 	
 	*/
 	int i,j;
@@ -1741,6 +1745,8 @@ REPORT_SECTION
 		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
 		system(copyrep);
 	}
+	
+	
 
 FUNCTION mcmc_output
 	if(nf==1){
