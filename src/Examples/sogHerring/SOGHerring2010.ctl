@@ -15,8 +15,8 @@
     0.70        0.2     1.0      4       3       1.01    1.01    #steepness
     -1.0966     -5.0    5.0      3       1       -1.0966 0.05    #log.m
     7.40        -5.0    15       1       0       -5.0    15      #log_avgrec
-    0.15        0.001   0.999   -3       3       1.01    1.01    #rho
-    1.25        0.01    500     -3       4       156.25  125.0   #kappa (precision)
+    0.20        0.001   0.999    3       3       15.0    60.0    #rho
+    1.25        0.01    500      3       4       156.25  125.0   #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## ____________________________________________________________________________ ##
@@ -32,9 +32,9 @@
 ##		wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
-    3        3          5       6       6
+    1        1          1       1       1
 ## Age at 50% selectivity (logistic)
-    1.5      2.0        2.5     2.05    2.05
+    1.5      2.0        2.5     2.055   2.055
 ## STD at 50% selectivity (logistic)
     0.75      0.5       0.2     0.05    0.05
 ## No. of age nodes for each gear (0 to ignore).
@@ -46,7 +46,7 @@
 ## Penalty weight for 2nd differences w=1/(2*sig^2)
     125.     125.       12.5    12.5    12.5
 ## Penalty weight for dome-shaped selectivity 1=1/(2*sig^2)
-    50.0    200.0      200.0   200.0   200.0
+    50.0     50.0      200.0   200.0   200.0
 ## ____________________________________________________________________________ ##
 
 ## ____________________________________________________________________________ ##
@@ -55,11 +55,11 @@
 ## nits  #number of surveys
     2
 ## priors 0=uniform density     1=normal density
-    0       1
+    1       1
 ## prior log(mean)
     0       0
 ## prior sd
-    1       0.1
+    0.1       0.05
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
@@ -73,7 +73,7 @@
 0.01        ## std in mean fishing mortality in first phase
 5.00        ## std in mean fishing mortality in last phase
 -3          ## phase for estimating m_deviations (use -1 to turn off mdevs)
-0.01        ## std in deviations for natural mortality
+0.1         ## std in deviations for natural mortality
 ## ____________________________________________________________________________ ##
 
 
