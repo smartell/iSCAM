@@ -15,8 +15,8 @@
 # 1. requires PBSmodelling                                                      #
 #                                                                               #
 #                                                                               #
-# TO DO:                                                                        #
-# 1. add a test priors widget so user can quickly examine priors for parameters #
+# TODO: Finish  test priors widget to examine priors for parameters             #
+# TODO: Save input List as an .rda file (dput & dget) for saving scenarios      #
 #                                                                               #
 #                                                                               #
 #                                                                               #
@@ -161,7 +161,7 @@ guiView	<- function()
 	
 	if ( plotType=="agecomps" )
 	{
-		.plotAgecomps( repObj )
+		.plotAgecomps( repObj, meanAge=TRUE )
 	}
 	
 	if ( plotType=="catchresid" )
@@ -248,6 +248,13 @@ guiView	<- function()
 		.mcmcTrace( admbObj )
 	}
 	
+	if ( plotType=="simplot" )
+	{
+		admbObj = read.admb( "iscam" )
+		admbObj$sim = read.rep( "iscam.sim" )
+		.plotSimulationSummary( admbObj )
+	}
+	
 	## Saving PDF of figure in current device
 	if(savePDF)
 	{
@@ -258,7 +265,33 @@ guiView	<- function()
 	}
 }
 
-
+.plotSimulationSummary	<- function( admbObj )
+{
+	print("	.plotSimulationSummary")
+	op=par(no.readonly=T)
+	with( admbObj, {
+		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 0, 0), mfcol=c(2, 2))
+		
+		#Spawing biomass
+		plot(yrs, sim$sbt, type="l", xlab="Year", ylab="Spawning biomass (t)")
+		lines(yrs, sbt, lwd=5, col=colr(1, 0.25))
+		gletter(1)
+		
+		#Fishing mortality rates
+		matplot(yr,t(sim$ft[1:3,]),type="l",lty=1,ylab="Fishing mortality",xlab="Year")
+		matlines(yr,t(ft[1:3,]),lwd=5,col=colr(1:3,0.25),lty=1)
+		gletter(2)
+		
+		#Survey abundance
+		.plotSurveyfit( admbObj )
+		gletter(3)
+		
+		#Survey residuals
+		.plotSurveyResiduals( admbObj )
+		gletter(4)
+	})
+	par(op)
+}
 
 .plotStockStatus	<- function( admbObj )
 {
@@ -615,6 +648,7 @@ guiView	<- function()
 		}
 		
 		absmax = abs(max(yy, na.rm=TRUE))
+		if(absmax<=1e-3)absmax=1
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
@@ -650,6 +684,7 @@ guiView	<- function()
 			yy = epsilon
 		}
 		absmax = abs(max(yy, na.rm=TRUE))
+		if(absmax< 1e-3) absmax=1
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
@@ -680,7 +715,9 @@ guiView	<- function()
 		ii = 1:min(age)
 		xx = yr[-ii]
 		yy = delta
-		yrange = c(-max(abs(yy)), max(abs(yy)))
+		absmax = abs(max(yy, na.rm=TRUE))
+		if(absmax< 1e-3) absmax=1
+		yrange=c(-absmax, absmax)
 		
 		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
 			xlab="Year", ylab="Recruitment residuals")
@@ -730,7 +767,7 @@ guiView	<- function()
 	#barplot of the observed catch
 	with(repObj, {
 		barplot(obs_ct, names.arg=yr,axes=FALSE, 
-			xlab="Year", ylab="Catch (t)", 
+			xlab="Year", ylab="Catch (1000 t)", 
 			legend.text = legend.txt)
 		axis( side=2, las=.VIEWLAS )
 	})
@@ -872,7 +909,7 @@ guiView	<- function()
 }
 
 
-.plotAgecomps	<- function(repObj)
+.plotAgecomps	<- function(repObj, meanAge = FALSE )
 {
 	#Bubble plot of age-composition data
 	#A is the observed age-comps
@@ -886,11 +923,26 @@ guiView	<- function()
 				ac = subset(A, A[, 2]==i)
 				xx = ac[, 1]
 				zz = t(ac[, -1:-2])
-			
+				
+				
 				# plot proportions-at-age (cpro=TRUE)
 				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2, 
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1, 
 					bg=colr("steelblue", 0.5))
+				
+				if( meanAge )
+				{
+					tz = t(zz)
+					p = t(tz/rowSums(tz))
+					abar = colSums(t(tz/rowSums(tz))*age)
+					sbar = sqrt(colSums(p*(1-p)*age))
+					sbar = 1.96*colSums(sqrt(p*(1-p))/sqrt(age))
+				
+					lines( xx, abar, col=colr("steelblue", 0.75), lwd=2 )
+				
+					yy = c(exp(log(abar)+log(sbar)), rev(exp(log(abar)-log(sbar))))
+					polygon(c(xx, rev(xx)),yy,border=NA,col=colr("steelblue",0.25))
+				}
 			}
 		}
 		else{print("There is no age-composition data")}
@@ -914,7 +966,7 @@ guiView	<- function()
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.2,
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1,
 					bg=colr("white", 0.5))
 			}
 		}
