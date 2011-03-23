@@ -652,7 +652,7 @@ guiView	<- function()
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Residual")
+			xlab="Year", ylab="Catch residual")
 		
 		matlines(xx, yy, type="h", col="black")
 		axis( side=1 )
@@ -688,7 +688,7 @@ guiView	<- function()
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Residual")
+			xlab="Year", ylab="Survey residual")
 		
 		matlines(xx, yy, type="h", col="black")
 		axis( side=1 )
