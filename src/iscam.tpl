@@ -19,12 +19,12 @@
 //             Functions    -> lowerCamelCase                          //
 //             Variables    -> lowercase                               //
 //                                                                     //
-// TODO:  add option for using empirical weight-at-age data           //
-//        add gtg options for length based fisheries                  //
-//        add time varying natural mortality rate with splines        //
-//                                                                     //
-//                                                                     //
-//                                                                     //
+// CHANGED add option for using empirical weight-at-age data           //
+// TODO:    add gtg options for length based fisheries                //
+// CHANGED add time varying natural mortality rate with splines        //
+// TODO:    add cubic spline interpolation for time varying M         //
+// FIXME  Fix the type 6 selectivity implementation. not working.      //
+// TODO:  fix cubic spline selectivity for only years when data avail  //
 //                                                                     //
 //                                                                     //
 // ------------------------------------------------------------------- //
@@ -396,7 +396,8 @@ PARAMETER_SECTION
 	//theta[2]		steepness(h), or log_fmsy
 	//theta[3]		log_m
 	//theta[4]		log_avgrec
-	//theta[5]		log_avg_f
+	//theta[5]		rho
+	//theta[6]		kappa
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
@@ -409,7 +410,7 @@ PARAMETER_SECTION
 		//set phase to -1 for fixed selectivity.
 		for(int k=1;k<=ngear;k++)
 		{
-			if(isel_type(k)==1)
+			if( isel_type(k)==1 || isel_type(k)==6 )
 			{
 				sel_par(k,1,1) = log(ahat(k));
 				sel_par(k,1,2) = log(ghat(k));
@@ -421,7 +422,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
-		log_ft_pars = log(0.1);
+		if(!SimFlag) log_ft_pars = log(0.1);
 	END_CALCS
 	
 	
@@ -434,7 +435,7 @@ PARAMETER_SECTION
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
 	!! m_dev_phz = cntrl(10);
-	init_bounded_vector log_m_devs(syr,nyr,-2.,2.0,m_dev_phz);
+	init_bounded_vector log_m_devs(syr,nyr,-2.0,2.0,m_dev_phz);
 	
 	objective_function_value f;
     
@@ -443,7 +444,7 @@ PARAMETER_SECTION
 	number kappa;
 	number m;
 	number log_avgrec;			//log of average recruitment.
-	//number log_avg_f;			//log of average fishing mortality
+	//number log_avg_f;			//log of average fishing mortality DEPRICATED
 	number rho;					//proportion of the observation error
 	number varphi				//total precision in the CPUE & Rec anomalies.
 	number so;
@@ -493,7 +494,7 @@ PRELIMINARY_CALCS_SECTION
   }
 
 RUNTIME_SECTION
-    maximum_function_evaluations 100,100,500,5000,5000
+    maximum_function_evaluations 5000,100,500,25000,25000
     convergence_criteria 0.01,0.01,1.e-4,1.e-4
 
 
@@ -550,7 +551,7 @@ FUNCTION initParameters
 	}
 	
 	
-	//Alternative parameterization using MSY and FMSY as leading parameters
+	//TODO Alternative parameterization using MSY and FMSY as leading parameters
 	
 	
 	m = mfexp(theta(3));
@@ -845,6 +846,10 @@ FUNCTION calcFisheryObservations
 				
 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
 					computing the age-comps in calc_fisheries_observations
+	*/
+	
+	/*
+		FIXME Reconcile the difference between the predicted catch here and in the simulation model.
 	*/
 	int i,k;
 	ct.initialize();
@@ -1413,7 +1418,7 @@ FUNCTION void simulation_model(const long& seed)
 	
 	
 	//Indexes:
-	int i,j,k,ii;
+	int i,j,k,ii,ki;
 
 	//3darray Chat(1,ngear,syr,nyr,sage,nage);
 	//C.initialize();
@@ -1460,6 +1465,7 @@ FUNCTION void simulation_model(const long& seed)
 	lx(nage)/=(1.-exp(-value(m)));
 	double phie=lx*fec(syr);
 	so=kappa/phie;
+	
 	if(cntrl(2)==1) beta=(kappa-1.)/(ro*phie);
 	if(cntrl(2)==2) beta=log(kappa)/(ro*phie);
 	
@@ -1499,9 +1505,9 @@ FUNCTION void simulation_model(const long& seed)
 		{
 			//sel(k)(i)=plogis(age,ahat(k),ghat(k));
 			log_sel(k)(i)=log(plogis(age,ahat(k),ghat(k)));
-			log_sel(k)(i) -= mean(log_sel(k)(i));
+			log_sel(k)(i) -= log(mean(exp(log_sel(k)(i))));
 		}
-		
+		//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
 	cout<<"	Ok after selectivity\n";
 	/*----------------------------------*/
 	
@@ -1530,7 +1536,10 @@ FUNCTION void simulation_model(const long& seed)
 		for(k=1;k<=ngear;k++)
 			va(k)=exp(log_sel(k)(i));
 		
-		ft(i) = get_ft(oct,value(m),va,bt);
+		//get_ft is defined in the Baranov.cxx file
+		//CHANGED these ft are based on biomass at age, should be numbers at age
+		//ft(i) = get_ft(oct,value(m),va,bt);
+		ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_obs(i));
 		
 		// overwrite observed catch incase it was modified by get_ft
 		for(k=1;k<=ngear;k++)
@@ -1552,6 +1561,9 @@ FUNCTION void simulation_model(const long& seed)
 			if(cntrl(2)==1)rt=value(so*et/(1.+beta*et));
 			if(cntrl(2)==2)rt=value(so*et*exp(-beta*et));
 			N(i+1,sage)=rt*exp(wt(i)-0.5*tau*tau);
+			
+			//testing
+			//N(i+1,sage)=exp(log_avgrec+wt(i));
 		}
 
 
@@ -1575,6 +1587,15 @@ FUNCTION void simulation_model(const long& seed)
 		}
 		
 	}
+	
+	
+	//initial values of log_ft_pars set to true values
+	ki=1;
+	for(k=1;k<=ngear;k++)
+		for(i=syr;i<=nyr;i++)
+			if(obs_ct(k,i)>0)
+				log_ft_pars(ki++)=log(ft(i,k));
+	
 	
 	cout<<"	Ok after population dynamics\n";
 	/*----------------------------------*/
@@ -1626,6 +1647,7 @@ FUNCTION void simulation_model(const long& seed)
 	ofstream ofs("iscam.sim");
 	ofs<<"va\n"<<va<<endl;
 	ofs<<"sbt\n"<<rowsum(elem_prod(N,fec))<<endl;
+	ofs<<"rt\n"<<rt<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
 	ofs<<"ft\n"<<trans(ft)<<endl;
 	ofs<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
@@ -1690,6 +1712,7 @@ REPORT_SECTION
 	REPORT(obs_ct);
 	REPORT(ct);
 	REPORT(ft);
+	report<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
 	report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
 	report<<"sbt\n"<<sbt<<endl;
 	int rectype=int(cntrl(2));
