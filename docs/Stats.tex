@@ -20,7 +20,11 @@ dvariable dbeta(const dvariable& x, const double a, const double b)
 \[
  p(x|a,b) = -a \ln(b)+\ln(\Gamma(a))-(a-1)\ln(x)+bx
 \]
-where the mean and variance are given by $E(x) = a/b$ and $Var(x) = a/b^2$. The following code is implemented in \texttt{stats.cxx} library:
+where the mean and variance are given by $E(x) = a/b$ and $V(x) = a/b^2$.   Note that you can also compute $a$ and $b$ from $E(x)$ and $V(x)$ using the following relationships:
+\[
+ a=\frac{E(x)^2}{V(x)}, \quad b=\frac{E(x)}{V(x)}
+\]
+\noindent The following code is implemented in \texttt{stats.cxx} library:
 \begin{verbatim}
 //gamma
 dvariable dgamma(const dvariable &x, const double a, const double b)
@@ -59,13 +63,44 @@ dvariable dlnorm(const dvariable& x, const double& mu, const double& std)
 \end{verbatim}
 
 
+\section{Scripts}
+\subsection{Bash script for creating the iscamArchive.zip \& .tar.gz files}
+The following is a bash script that is used for archiving the source code files for \iscam\ and the scripts for the R code that is hosted on the Goole site.
+
+%\begin{verbatim}
+\begin{lstlisting}
+#
+#  bash script for creating the iscam archive
+#
+clear
+echo "Archiving iscam files"
+
+# script for creating the Tape Archive file
+tar -czvf iscamArchive.$(date +%Y.%m.%d).tgz.gz Examples baranov.cxx\
+ iscam.tpl iscam.dat iscam.r\
+ stats.cxx iSCAMwin.txt Riscam_1.0.tar.gz
+
+# script for creating a windoz zip file
+zip -r iscamArchive.$(date +%Y.%m.%d).zip Examples baranov.cxx\
+ iscam.tpl iscam.dat iscam.r\
+ stats.cxx iSCAMwin.txt Riscam_1.0.tar.gz
+
+exit 0
+\end{lstlisting}
+%\end{verbatim}
+
 \section{R-code for figures and Tables}
-\begin{multicols}{2}
+%\begin{multicols}{2}
 
 %		\tiny
 %	\begin{alltt}
 %	  \input{../iscam.R}\label{HakeDataFile}
 %	\end{alltt}
 %	\normalsize
+%\lstset{language=R}
 
-\end{multicols}
+Here is the R-script that is used for reading in report files from ADMB.  Currently this is also compiled as an R-package.
+\begin{scriptsize}
+\lstinputlisting[language=R]{../Riscam/R/read.admb.R}
+\end{scriptsize}
+%\end{multicols}

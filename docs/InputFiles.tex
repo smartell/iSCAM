@@ -17,7 +17,10 @@ Note that it is necessary to have the \verb"*.dat", and \verb"*.ctl" extensions,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The data file}
-The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears (including gear that samples fish in surveys is two, and last line is an integer vector that specifies if the gear is a fishery, or a survey (using 1 or 0, respectively).  For each gear you must specify 1 (a commercial fishery) or 0 (a fisheries independent survey).  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.  The following is an example of the model dimensions section:
+\emph{The data file and how it is set up is very important in ensuring that \iscam\ works correctly.}  In this section I have broken down the description of the data file into several blocks that deal with model dimensions, age-schedule information, removal data from each commercial and sampling gears, relative abundance information that may come from one or all of the gears,  a description of the age composition, and finally empirical weight-at-age data.  There are some data elements that are \emph{mandatory} (e.g., dimensions, age-schedule information, removals for each gear) and some optional data.  For example it is not necessary to have relative abundance information for each of the gear-type each year, or even any information on relative abundance.  Nor is it necessary to have age-composition each and every year for every gear type; in fact, it's not necessary to have any age-composition data, but in such cases selectivity parameters will have to be fixed.
+
+
+The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these required sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears (including gear that samples fish in surveys is two, and last line is an integer vector that specifies if the gear is a fishery, or a survey (using 1 or 0, respectively).  For each gear you must specify 1 (a commercial fishery) or 0 (a fisheries independent survey).  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.  The following is an example of the model dimensions section:
 \begin{verbatim}
 ##________________________
 ##____Model Dimensions____
@@ -85,11 +88,29 @@ The next section pertains to the relative abundance index, where first the numbe
 ## ________________________
 \end{verbatim}
 
-For age-composition information, a 3 dimensional array is used to store the information by gear-type (matrix), by year (rows of each matrix) and by age (columns of each matrix).  An example of the age composition data is shown on the following page.  
+For age-composition information, a 3 dimensional ragged array is used to store the information by gear-type (matrix), by year (rows of each matrix) and by age (columns of each matrix).  An example of the age composition data is shown in Table \ref{T1} on page \pageref{T1}.  
 
-First you must specify the number of gears for which age-composition data exists.  If there are no data, then set this to 0. On  the next line you must specify the number of years of age-composition data there are for each gear type.  Next, for each gear, you must specify the first age-class of the data, and on the next row specify the oldest age-class of the data.  On the example in the next page, there are two gears, the first gear has 33 years of observations, and the second gear has 13 years of observations.  Each gear has the youngest age-class at 2 years and the oldest age-class at 15 years.  This means there are 14 columns of age-compositions for each gear type.  
+First you must specify the number of gears for which age-composition data exists.  If there are no data, then set this to 0. On  the next line you must specify the number of years of age-composition data there are for each gear type.  Next, for each gear type for which age-composition data is available, you must specify the first age-class of the data, and on the next row specify the oldest age-class of the data.  In the example on page \pageref{T1}, there are two gears, the first gear has 33 years of observations, and the second gear has 13 years of observations.  Each gear has the youngest age-class at 2 years and the oldest age-class at 15 years.  This means there are 14 columns of age-compositions for each gear type. 
 
-The first two columns of the age-composition data refer to the year and gear type from which the data were obtained.  So in the example on the next page, the first 33 rows of the matrix (some of which is missing so it could fit on the page) corresponds to the years 1977-2009 for gear type 1, and from 1977 to 2009 every 2-3 years for gear type 2.  
+\iscam\ treats the age-composition data as a ragged object to avoid having to read in years of missing age-composition data.  The year and gear indexes in the first two columns are used to extract predicted age-proportions to be used in the statistical comparison (negative loglikelihoods).
+
+The first two columns of the age-composition data refer to the year and gear type from which the data were obtained.  So in the example on the next page, the first 33 rows of the matrix (some of which is missing so it could fit on the page) corresponds to the years 1977-2009 for gear type 1, and from 1977 to 2009 every 2-3 years for gear type 2.  At present \iscam\ weights each row for each gear type equally, future versions of \iscam\ will probably have a third column here where relative weights based on effective samples sizes can be specified for each observed age-composition data.
+
+\emph{Empirical weight-at-age} data can be optionally specified immediately following the age-composition data.  By default, \iscam\ first constructs the observed weight-at-age data based on the age-schedule information specified earlier in the data file.  If there is a partial or complete set of empirical weight-at-age data available, then the default weights-at-age are overwritten for the years in which empirical data are available.    First you must specify the number of years of observed weight-at-age data as this dimensions the matrix to read in the data.  Following is a matrix where the first column specifies the corresponding year the data were collected, and for each age class defined in the model dimensions (youngest age class to plus group age class), the observed mean weights at age must be specified.  Note that the units must be in kilograms so that unit consistency in the conversion from numbers-at-age to weight-at-age can be maintained.
+\begin{footnotesize}
+\begin{verbatim}
+#n_wt_obs
+5
+#Empirical mean weight-at-age in kilograms 
+#A$yr  V1   V2   V3   V4   V5   V6   V7   V8   V9
+1951 0.04 0.08 0.11 0.13 0.15 0.17 0.20 0.18 0.18
+1952 0.04 0.08 0.11 0.13 0.15 0.17 0.16 0.17 0.18
+1953 0.03 0.07 0.09 0.12 0.14 0.15 0.13 0.17 0.18
+1954 0.04 0.08 0.10 0.12 0.15 0.17 0.17 0.18 0.18
+1955 0.04 0.08 0.10 0.12 0.14 0.17 0.17 0.17 0.18
+\end{verbatim}
+\end{footnotesize}
+
 
 The last component of the data file is an end of file ``eof'' marker, which is set to 999.  This is the last number read in from the datafile and \iscam\ checks to ensure it is 999.  If there is an error reading the datafile, \iscam\ will break and report that there was an error reading the data.
 
@@ -105,6 +126,8 @@ The last component of the data file is an end of file ``eof'' marker, which is s
 %\begin{minipage}[b]{\linewidth}
 %\centering
 \begin{landscape}
+\begin{table}
+\caption{Example of age composition data in the data file.}\label{T1}
 \begin{footnotesize}
 \begin{verbatim}
 #Age composition data by year, gear (ages 2-15+)
@@ -157,6 +180,7 @@ The last component of the data file is an end of file ``eof'' marker, which is s
 2009    2 0.001881 0.229516 0.423131 0.024861 0.091878 0.007856 0.018074 0.024434 0.128613 0.029027 0.009417 0.005566 0.005402 0.000343
 \end{verbatim}
 \end{footnotesize}
+\end{table}
 \end{landscape}
 
 
@@ -229,6 +253,12 @@ As of now there are 5 different prior types that can be specified and these are 
 \item[4] A gamma prior with p1=alpha and p2=beta
 \end{description}
 
+\begin{figurehere}
+	% Requires \usepackage{graphicx}\
+	\centering
+	\includegraphics[width=\columnwidth]{iscamFigs/betaPriors.pdf}\\
+	\caption{Three alternative beta prior distributions with corresponding values of p1 and p2 specified on the distribution.  Note that specifying values of 1.01 results in a more or less uniform prior distribution for steepness in the Beverton-Holt stock recruitment model.}\label{label}
+\end{figurehere}
 
 \subsubsection{Selectivity controls}
 The next table of numbers in the control file contains the options for selectivities for each of the gear types (both fisheries and surveys).  Currently there are 6 options implemented for selectivities in \iscam\, and the details of each are explained further in the model documentation section (see page \pageref{ModelDocSelectivity}).  The following is an excerpt from the Pacific hake control file with selectivities defined for two gears:

@@ -1,7 +1,8 @@
 \documentclass[10pt,letterpaper]{article}
 
 %% -packages-
-\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{epstopdf}
 \usepackage{psfrag}
 \usepackage[round]{natbib}
 \usepackage{longtable}
@@ -14,6 +15,32 @@
 \usepackage{color}
 \usepackage{multicol}
 \usepackage{alltt}
+\usepackage{listings}
+
+
+\lstset{ %
+language=R,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=2,                   % the step between two line-numbers. If it's 1 each line 
+                                % will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,                   % adds a frame around the code
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting;
+                                % also try caption instead of title
+escapeinside={\%*}{*)},         % if you want to add a comment within your code
+morekeywords={*,...}            % if you want to add more keywords to the set
+}
+
 
 
 %\usepackage[latin1]{inputenc} % To use characters such as Ž without typing \'e
@@ -174,6 +201,12 @@ Canada\\
 \section*{Preface}
 \addcontentsline{toc}{subsection}{Preface}
 This document is the users guide for the fisheries stock assessment model \iscam, or Integrated Statistical Catch Age model.  This assessment package was written by Steven Martell and may be freely used by others, but in no way am I responsible for the mess that may or may not happen if you use this software to do your job.  Although I try hard, I cannot guarantee that this application is 100\% free of bugs/coding errors so double check your own work and see if it makes sense.  If you find a bug, fix it, recompile the code and continue on.  Or let me know about the bug and I'll happily  fix it for you,  if I have time.
+
+
+\section*{Acknowledgements}
+\addcontentsline{toc}{subsection}{Preface}
+I greatly appreciate the early feedback I received from Jake Schweigert (DFO Pacific Biological Satiation, Nanaimo, BC) while developing this software and the users guide.  Also feedback, error checking, and code from Vivian Haist, Jim Ianelli, Robyn Forrest and Chris Grandin.  Much of the linkage between ADMB and R was inspired by my DFO colleagues and friends, Rob Kronlund, Jon Schnute, and Jaclyn Cleary.
+
 
 %%\input{ExecutiveSummary}
 
