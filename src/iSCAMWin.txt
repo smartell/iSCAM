@@ -97,13 +97,26 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 	##--------------------------------------------------------------------------------##	
 	##-- SYSTEM TAB                                                                 --##
 	##--------------------------------------------------------------------------------##
-	grid 2 1 #grid for the widgets on the systems tab
+	grid 3 1 #grid for the widgets on the systems tab
 	
 	#-- widget 1
 	label text="Systems controls for running iSCAM" font="Courier bold 12" sticky=W
 	
 	#-- widget 2
 	image file="iscamlogo.gif" sticky="SE" subsample=2
+	
+	#-- widget 3
+	grid 3 2 toptitle="Simulation controls" topfont="Courier underline 10" \
+		relief="sunken" padx=5 pady=5
+		
+		label text="Random seed " font="Courier 10" sticky=W
+		entry name=randomSeed width=5 font="Courier 10" value=123 mode="numeric" sticky=W
+	
+		label text="Number of trials " font="Courier 10" sticky=W
+		entry name=nTrials width=5 font="Courier 10" value=3 mode="numeric" sticky=W
+		
+		null
+		button text="Run trials" font="Courier 10"	function=.runSimulationTrials
 	
 	##--------------------------------------------------------------------------------##	
 	##-- PRIORS TAB                                                                 --##

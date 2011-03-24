@@ -1166,6 +1166,27 @@ guiView	<- function()
 	print("MSG (.selectDirctory)")
 	selectDir(usewidget="graphicDirectory")
 }
+
+.runSimulationTrials <- function()
+{
+	#This function runs the simulation trials 
+	#given nTrials and randomSeed from the gui.
+	
+	# Get the guiPerf parameters so that plot controls available.
+	guiInfo <- getWinVal(scope="L")
+	
+	for(i in 1:nTrials)
+	{
+		seed = randomSeed + 2*(i-1)
+		arg = paste("./iscam -sim", seed)
+		system(arg)
+		
+		admbObj <- read.admb("iscam")
+		admbObj$sim = read.rep( "iscam.sim" )
+		.plotSimulationSummary( admbObj )
+	}
+}
+
 #######################
 #Type: guiView()
 #to start gui
