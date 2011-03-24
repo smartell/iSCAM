@@ -19,7 +19,7 @@
 # TODO: Save input List as an .rda file (dput & dget) for saving scenarios      #
 #                                                                               #
 #                                                                               #
-#                                                                               #
+# March 23rd,  added some simulation features.                                  #
 #                                                                               #
 #-------------------------------------------------------------------------------#
 
