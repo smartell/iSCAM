@@ -490,6 +490,7 @@ PRELIMINARY_CALCS_SECTION
   if(SimFlag) 
   {
     initParameters();
+    calcSelectivities();
     simulation_model(rseed);
   }
 
@@ -1264,7 +1265,7 @@ FUNCTION calc_objective_function
 
 
 
-FUNCTION void A(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
 	/*
 	This is the equilibrium age-structured model that is 
 	conditioned on fe (the steady state fishing mortality rate).
@@ -1366,6 +1367,9 @@ FUNCTION void calc_reference_points()
 	va_bar.initialize();
 	dvector allocation(1,ngear);
 	allocation = dvector(fsh_flag/sum(fsh_flag));
+	
+	
+	
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
@@ -1509,6 +1513,7 @@ FUNCTION void simulation_model(const long& seed)
 		}
 		//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
 	cout<<"	Ok after selectivity\n";
+
 	/*----------------------------------*/
 	
 	
