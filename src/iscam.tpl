@@ -1264,7 +1264,7 @@ FUNCTION calc_objective_function
 
 
 
-FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+FUNCTION void A(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
 	/*
 	This is the equilibrium age-structured model that is 
 	conditioned on fe (the steady state fishing mortality rate).
@@ -1644,8 +1644,18 @@ FUNCTION void simulation_model(const long& seed)
 	cout<<"	OK after observation models\n";
 	/*----------------------------------*/
 	
+
+	calc_reference_points();
+	//	REPORT(fmsy);
+	//	REPORT(msy);
+	//	REPORT(bmsy);
+	
+	
 	cout<<"___________________________________________________"<<endl;
 	ofstream ofs("iscam.sim");
+	ofs<<"fmsy\n"<<fmsy<<endl;
+	ofs<<"msy\n"<<msy<<endl;
+	ofs<<"bmsy\n"<<bmsy<<endl;
 	ofs<<"va\n"<<va<<endl;
 	ofs<<"sbt\n"<<rowsum(elem_prod(N,fec))<<endl;
 	ofs<<"rt\n"<<rt<<endl;
