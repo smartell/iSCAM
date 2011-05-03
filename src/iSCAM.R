@@ -20,6 +20,11 @@
 #                                                                               #
 #                                                                               #
 # March 23rd,  added some simulation features.                                  #
+# April 25,  .runSimulationTrials now has a box plot of log2 ratios for         #
+#            estimated values of theta (grep parameters for theta)              #
+#                                                                               #
+#                                                                               #
+#                                                                               #
 #                                                                               #
 #-------------------------------------------------------------------------------#
 
@@ -1172,9 +1177,16 @@ guiView	<- function()
 	#This function runs the simulation trials 
 	#given nTrials and randomSeed from the gui.
 	
+	#Output contains log2 ratios for estimated theta values
+	#Also compares bias ratios in estimated msy-based reference points.
+	
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
-	
+	admbObj <- read.admb("iscam")
+	itheta  <- grep("theta", admbObj$fit$names)
+	theta <- admbObj$ctrl[itheta, 1]
+	theta_p <- NULL
+	rPoints	<- NULL
 	for(i in 1:nTrials)
 	{
 		seed = randomSeed + 2*(i-1)
@@ -1183,8 +1195,27 @@ guiView	<- function()
 		
 		admbObj <- read.admb("iscam")
 		admbObj$sim = read.rep( "iscam.sim" )
+		theta_p = rbind( theta_p, admbObj$fit$est[itheta] )
+		rp = c(admbObj$fmsy/admbObj$sim$fmsy, admbObj$msy/admbObj$sim$msy, admbObj$bmsy/admbObj$sim$bmsy)
+		rPoints = rbind( rPoints, log2(rp) )
+		
 		.plotSimulationSummary( admbObj )
 	}
+	
+	pn	<- c("log(Ro)","h","log(m)","log(Rbar)","rho","vartheta")
+	theta_dev<-log2(t(t(theta_p)/theta))
+	#theta_dev<-cbind(theta_dev, rPoints)
+	
+	colnames(theta_dev)= (pn[itheta])
+	colnames(rPoints) = c("Fmsy","MSY","Bmsy")
+	par(mfcol=c(2, 1), las=1)
+	boxplot(theta_dev,
+			ylim=c(-max(abs(theta_dev)),max(abs(theta_dev))) )
+	abline(h=0, col="grey")
+	
+	boxplot(rPoints,
+			ylim=c(-max(abs(rPoints)), max(abs(rPoints))))
+	abline(h=0, col="grey")	
 }
 
 #######################
