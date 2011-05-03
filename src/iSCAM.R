@@ -1182,23 +1182,30 @@ guiView	<- function()
 	
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
+	
+	## Run the model once to determine # of estimated parameters
+	arg = paste("./iscam -nox -sim", 111)
+	system(arg)
 	admbObj <- read.admb("iscam")
+	
 	itheta  <- grep("theta", admbObj$fit$names)
-	theta <- admbObj$ctrl[itheta, 1]
+	ix		<- as.numeric(substr(admbObj$fit$names[itheta],7,7))
+	theta <- admbObj$ctrl[ix, 1]
 	theta_p <- NULL
 	rPoints	<- NULL
 	for(i in 1:nTrials)
 	{
 		seed = randomSeed + 2*(i-1)
-		arg = paste("./iscam -sim", seed)
+		arg = paste("./iscam -nox -sim", seed)
 		system(arg)
 		
 		admbObj <- read.admb("iscam")
 		admbObj$sim = read.rep( "iscam.sim" )
 		theta_p = rbind( theta_p, admbObj$fit$est[itheta] )
-		rp = c(admbObj$fmsy/admbObj$sim$fmsy, admbObj$msy/admbObj$sim$msy, admbObj$bmsy/admbObj$sim$bmsy)
+		rp = c(admbObj$fmsy/admbObj$sim$fmsy, 
+			admbObj$msy/admbObj$sim$msy, 
+			admbObj$bmsy/admbObj$sim$bmsy)
 		rPoints = rbind( rPoints, log2(rp) )
-		
 		.plotSimulationSummary( admbObj )
 	}
 	
@@ -1206,16 +1213,20 @@ guiView	<- function()
 	theta_dev<-log2(t(t(theta_p)/theta))
 	#theta_dev<-cbind(theta_dev, rPoints)
 	
-	colnames(theta_dev)= (pn[itheta])
+	colnames(theta_dev)= (pn[ix])#(pn[itheta])
 	colnames(rPoints) = c("Fmsy","MSY","Bmsy")
+	op = par(no.readonly=T)
 	par(mfcol=c(2, 1), las=1)
-	boxplot(theta_dev,
-			ylim=c(-max(abs(theta_dev)),max(abs(theta_dev))) )
+	boxplot(theta_dev, ylab="log2(theta/theta')", 
+			ylim=c(-2, 2) )
+			#ylim=c(-max(c(1, abs(theta_dev))),max(c(1, abs(theta_dev)))) )
 	abline(h=0, col="grey")
 	
-	boxplot(rPoints,
-			ylim=c(-max(abs(rPoints)), max(abs(rPoints))))
+	boxplot(rPoints,ylab="log2 bias", 
+			ylim=c(-2, 2) )
+			#ylim=c(-max(c(1, abs(rPoints))), max(c(1, abs(rPoints)))) )
 	abline(h=0, col="grey")	
+	par(op)
 }
 
 #######################
