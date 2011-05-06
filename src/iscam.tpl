@@ -472,7 +472,7 @@ PARAMETER_SECTION
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
 	!! m_dev_phz = cntrl(10);
-	init_bounded_vector log_m_devs(syr+1,nyr,-2.0,2.0,m_dev_phz);
+	init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	objective_function_value f;
     
