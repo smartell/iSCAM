@@ -23,7 +23,7 @@
 // TODO:    add gtg options for length based fisheries                //
 // CHANGED add time varying natural mortality rate with splines        //
 // TODO:    add cubic spline interpolation for time varying M         //
-// FIXME  Fix the type 6 selectivity implementation. not working.      //
+// CHANGED  Fix the type 6 selectivity implementation. not working.    //
 // TODO:  fix cubic spline selectivity for only years when data avail  //
 //                                                                     //
 //                                                                     //
@@ -47,6 +47,12 @@
 //--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting--//
 //--               the naming conventions in The Elements of C++     --//
 //--               style to keep my mind busy.                       --//
+//--                                                                 --//
+//-- May 5, 2011- added logistic selectcitivty as a fucntion of      --//
+//--              mean body weight.  3 parameter logistic.           --//
+//--              NOT WORKING YET                                    --//
+//--                                                                 --//
+//--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
@@ -193,7 +199,8 @@ DATA_SECTION
 	init_int n_wt_nobs;
 	init_matrix tmp_wt_obs(1,n_wt_nobs,sage-1,nage);
 	
-	matrix wt_obs(syr,nyr+1,sage,nage);
+	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
+	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
 	LOC_CALCS
 		int iyr;
@@ -216,6 +223,28 @@ DATA_SECTION
 		wt_obs(nyr+1) = tmp;
 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
 		cout<<"Ok after empiracle weight-at-age data"<<endl;
+		
+		//May 5, 2011 SJDM: Calculating standardized deviates
+		//in mean weights-at-age from empiracle data to use
+		//with selectivity as a function of mean weight at age.
+		//Idea borrowed from Vivian Haist in HCAM model.
+		/*
+			FIXME: selectivity function based on average weight.
+			Based on the logistic function;
+			1) calculate a matrix of standardized deviates
+			wt_dev = (wt_obs-mean(wt_obs))/sd(wt_obs);
+		*/
+		wt_dev.initialize();
+		dmatrix mtmp = trans(wt_obs);
+		for(i=sage;i<=nage;i++)
+		{
+			mtmp(i) = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
+		}
+		wt_dev = trans(mtmp);
+		//cout<<colsum(wt_dev)<<endl;
+		//exit(1);
+		
+		
 	END_CALCS
 	
 	//End of data file
@@ -279,6 +308,7 @@ DATA_SECTION
 	// type 4 = time varying cubic spline (age_nodes for each year)
 	// type 5 = bicubic spline with age_nodes adn yr_nodes
 	// type 6 = fixed logistic by turning sel_phz to (-ve)
+	// type 7 = logistic (3pars) as a function of body weight.
 	init_ivector isel_type(1,ngear);  	//Switch for selectivity
 	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
 	ivector jsel_npar(1,ngear);			//ivector for the number of rows for time-varying selectivity.
@@ -332,6 +362,13 @@ DATA_SECTION
 					// ensure sel_phz is set to negative value.
 					isel_npar(i) = 2;
 					if(sel_phz(i)>0) sel_phz(i) = -1;
+					break;
+					
+				case 7:
+					// FIXME: This is not working. Need to figure this out.
+					// logistic (3 parameters) with mean body 
+					// weight deviations. 
+					isel_npar(i) = 2;
 					break;
 					
 				default: break;
@@ -410,7 +447,7 @@ PARAMETER_SECTION
 		//set phase to -1 for fixed selectivity.
 		for(int k=1;k<=ngear;k++)
 		{
-			if( isel_type(k)==1 || isel_type(k)==6 )
+			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)==7 )
 			{
 				sel_par(k,1,1) = log(ahat(k));
 				sel_par(k,1,2) = log(ghat(k));
@@ -435,7 +472,7 @@ PARAMETER_SECTION
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
 	!! m_dev_phz = cntrl(10);
-	init_bounded_vector log_m_devs(syr,nyr,-2.0,2.0,m_dev_phz);
+	init_bounded_vector log_m_devs(syr+1,nyr,-2.0,2.0,m_dev_phz);
 	
 	objective_function_value f;
     
@@ -608,6 +645,11 @@ FUNCTION calcSelectivities
 		2) age-specific selectivity coefficients with (nage-sage) parameters
 		   and the last two age-classes are assumed to have the same selectivity.
 		3) a reduced age-specific parameter set based on a bicubic spline.
+		4) Time varying cubic spline.
+		5) Time varying bicubic spline (2d version)
+		6) Fixed logistic
+		7) logistic selectivity with 3 parameters. 3rd parameter incorporates
+		the age-specific deviations in mean weight at age; if 0 then no effect.
 		
 		Following the initializatoin of the selectivity curves, time-varying 
 		considerations are implemented.
@@ -616,7 +658,8 @@ FUNCTION calcSelectivities
 	
 	*/
 	int i,j;
-	dvariable p1,p2;
+	dvariable p1,p2;//,p3;
+	dvar_vector age_dev=age;
 	dvar_matrix t1;
 	dvar_matrix tmp(syr,nyr-1,sage,nage);
 	dvar_matrix tmp2(syr,nyr,sage,nage);
@@ -632,7 +675,14 @@ FUNCTION calcSelectivities
 		
 		switch(isel_type(j))
 		{
-			case 1 || 6:
+			case 1:
+				// logistic selectivity for case 1 or 6
+				p1 = mfexp(sel_par(j,1,1));
+				p2 = mfexp(sel_par(j,1,2));
+				jlog_sel(j) = log( plogis(age,p1,p2) );
+				break;
+			
+			case 6:
 				// logistic selectivity for case 1 or 6
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
@@ -667,6 +717,23 @@ FUNCTION calcSelectivities
 				// bicubic_spline function is located in stats.cxx library
 				bicubic_spline( iy,ia,sel_par(j),tmp2 );  
 				break;
+				
+			case 7:
+				// time-varying selectivity based on deviations in weight-at-age
+				// FIXME This is not working and should not be used. (May 5, 2011)
+				// SJDM:  I was not able to get this to run very well.
+				p1 = mfexp(sel_par(j,1,1));
+				p2 = mfexp(sel_par(j,1,2));
+				//p3 = sel_par(j,1,3);
+				
+				jlog_sel(j) = 0;
+				for(i = syr; i<=nyr; i++)
+				{
+					//age_dev = age + p3 * wt_dev(i);
+					tmp2(i) = log( plogis(wt_obs(i),p1,p2) );
+					//tmp2(i) = log(1./(1.+exp(p1-p2*wt_obs(i))));
+				}
+					 
 				
 			default:
 				jlog_sel(j)=0;
@@ -1099,7 +1166,8 @@ FUNCTION calc_objective_function
 	for(k=1;k<=ngear;k++)
 	{
 		if(active(sel_par(k))){
-			if(isel_type(k)!=1)  //if not using logistic selectivity then
+			//if not using logistic selectivity then
+			if( isel_type(k)!=1 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1121,7 +1189,7 @@ FUNCTION calc_objective_function
 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k))&&isel_type(k)!=1)
+		if(active(sel_par(k)) && isel_type(k)!=1)
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1177,27 +1245,35 @@ FUNCTION calc_objective_function
 	dvariable ptmp; priors.initialize();
 	for(i=1;i<=npar;i++)
 	{
-		switch(theta_prior(i))
+		if(active(theta(i)))
 		{
-		case 1:		//normal
-			ptmp=dnorm(theta(i),theta_control(i,6),theta_control(i,7));
-			break;
-		case 2:		//lognormal
-			ptmp=dlnorm(mfexp(theta(i)),theta_control(i,6),theta_control(i,7));
-			break;
-		case 3:		//beta distribution (0-1 scale)
-			double lb,ub;
-			lb=theta_lb(i);
-			ub=theta_ub(i);
-			ptmp=dbeta((theta(i)-lb)/(ub-lb),theta_control(i,6),theta_control(i,7));
-			break;
-		case 4:		//gamma distribution
-			ptmp=dgamma(theta(i),theta_control(i,6),theta_control(i,7));
-		default:	//uniform density
-			ptmp=1./(theta_control(i,3)-theta_control(i,2));
-			break;
+			switch(theta_prior(i))
+			{
+			case 1:		//normal
+				ptmp=dnorm(theta(i),theta_control(i,6),theta_control(i,7));
+				break;
+				
+			case 2:		//lognormal
+				ptmp=dlnorm(mfexp(theta(i)),theta_control(i,6),theta_control(i,7));
+				break;
+				
+			case 3:		//beta distribution (0-1 scale)
+				double lb,ub;
+				lb=theta_lb(i);
+				ub=theta_ub(i);
+				ptmp=dbeta((theta(i)-lb)/(ub-lb),theta_control(i,6),theta_control(i,7));
+				break;
+				
+			case 4:		//gamma distribution
+				ptmp=dgamma(theta(i),theta_control(i,6),theta_control(i,7));
+				break;
+				
+			default:	//uniform density
+				ptmp=1./(theta_control(i,3)-theta_control(i,2));
+				break;
+			}
+			priors(i)=ptmp;	
 		}
-		priors(i)=ptmp;
 	}
 	
 	//Priors for suvey q based on control file.
