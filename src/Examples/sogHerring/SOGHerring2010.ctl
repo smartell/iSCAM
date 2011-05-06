@@ -12,11 +12,11 @@
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
     7.60        -5.0    15       4       0       -5.0    15      #log_ro 
-    0.70        0.2     1.0      4       3       1.01    1.01    #steepness
-    -1.0966     -5.0    5.0      3       1       -1.0966 0.05    #log.m
+    0.67        0.2     1.0      4       3       10.0    4.925373    #steepness
+    -0.7985077  -5.0    5.0      3       1       -0.7985077 0.4    #log.m
     7.40        -5.0    15       1       0       -5.0    15      #log_avgrec
-    0.20        0.001   0.999    3       3       15.0    60.0    #rho
-    1.25        0.01    500      3       4       156.25  125.0   #kappa (precision)
+    0.3043478   0.001   0.999   -3       3       15.0    60.0    #rho
+    0.8695652   0.01    5.0     -3       4       156.25  125.0   #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## ____________________________________________________________________________ ##
@@ -55,18 +55,18 @@
 ## nits  #number of surveys
     2
 ## priors 0=uniform density     1=normal density
-    1       1
+    0       1
 ## prior log(mean)
     0       0
 ## prior sd
-    0.1       0.05
+    1.0       0.1
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
 0           ## verbose ADMB output (0=off, 1=on)
 1           ## recruitment model (1=beverton-holt, 2=ricker)
-0.025       ## std in observed catches in first phase.
-0.010       ## std in observed catches in last phase.
+0.100       ## std in observed catches in first phase.
+0.0707      ## std in observed catches in last phase.
 0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
 0.01        ## Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        ## Mean fishing mortality for regularizing the estimates of Ft
