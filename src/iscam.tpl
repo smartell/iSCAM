@@ -52,8 +52,8 @@
 //--              mean body weight.  3 parameter logistic.           --//
 //--              NOT WORKING YET                                    --//
 //--                                                                 --//
-//--                                                                 --//
-//--                                                                 --//
+//-- May 6, 2011- added pre-processor commands to determin PLATFORM  --//
+//--              either "Windows" or "Linux"                        --//
 //--                                                                 --//
 //--                                                                 --//
 //--                                                                 --//
@@ -61,6 +61,9 @@
 
 
 DATA_SECTION
+	!! cout<<"iSCAM has detected that you are on a "<<PLATFORM<<" box"<<endl;
+	
+
 	init_adstring DataFile;
 	init_adstring ControlFile;
 	
@@ -1844,7 +1847,7 @@ REPORT_SECTION
 	//Make copies of the report file using the ReportFileName
 	//to ensure the results are saved to the same directory 
 	//that the data file is in.
-	if(last_phase())
+	if(last_phase() && PLATFORM =="Linux")
 	{
 		adstring copyrep = "cp iscam.rep " +ReportFileName;
 		system(copyrep);
@@ -1852,7 +1855,7 @@ REPORT_SECTION
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
-	if(retro_yrs && last_phase())
+	if(retro_yrs && last_phase() && PLATFORM =="Linux")
 	{
 		//adstring rep="iscam.ret"+str(retro_yrs);
 		//rename("iscam.rep",rep);
@@ -1906,6 +1909,12 @@ GLOBALS_SECTION
     
 	#undef COUT
 	#define COUT(object) cout << #object "\n" << object <<endl;
+
+	#if defined(WIN32) && !defined(__linux__)
+		const char* PLATFORM = "Windows";
+	#else
+		const char* PLATFORM = "Linux";
+	#endif
 
 	#include <admodel.h>
 	#include <time.h>
