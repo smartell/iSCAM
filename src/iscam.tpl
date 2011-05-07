@@ -482,7 +482,8 @@ PARAMETER_SECTION
 	number ro;					//unfished age-1 recruits
 	number bo;					//unfished spawning stock biomass
 	number kappa;
-	number m;
+	number m;					//initial natural mortality rate
+	number m_bar;				//average natural mortality rate
 	number log_avgrec;			//log of average recruitment.
 	//number log_avg_f;			//log of average fishing mortality DEPRICATED
 	number rho;					//proportion of the observation error
@@ -836,7 +837,7 @@ FUNCTION calcTotalMortality
 		}
 		
 	}
-	
+	m_bar = mean(M_tot);
 	
 	
 	Z=M_tot+F;
@@ -920,7 +921,7 @@ FUNCTION calcFisheryObservations
 	*/
 	
 	/*
-		FIXME Reconcile the difference between the predicted catch here and in the simulation model.
+		FIXED Reconcile the difference between the predicted catch here and in the simulation model.
 	*/
 	int i,k;
 	ct.initialize();
@@ -1046,13 +1047,20 @@ FUNCTION calc_stock_recruitment
 	Dec 6, 2010.  Modified code to allow empirical weight-at-age data
 				This required a fecundity-at-age matrix.  Need to 
 				project spawning biomass into the future.
+	FIXME bo should be a function of the average natural mortality
+	TODO update phib calculation if age-specific M's are used.
+	
+	May 6, 2010.  Changed phib calculation based on average M 
+	in cases where M varies over time. Otherwise bo is biased based
+	on the initial value of M.
+	
 	*/ 
 	int i;
 	dvariable tau = (1.-rho)/varphi;
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector lx(sage,nage); lx=1;
-	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m);
-	lx(nage)/=(1.-exp(-m));
+	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
+	lx(nage)/=(1.-exp(-m_bar));
 	dvariable phib = lx * fec(syr);		//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
