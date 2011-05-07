@@ -401,8 +401,9 @@ DATA_SECTION
 	// 9 -> standard deviation of mean F penalty in last phase.
 	// 10-> phase for estimating deviations in natural mortality.
 	// 11-> std in natural mortality deviations.
+	// 12-> fraction of total mortality that takes place prior to spawning
 	
-	init_vector cntrl(1,11);
+	init_vector cntrl(1,12);
 	int verbose;
 	
 	init_int eofc;
@@ -1047,12 +1048,14 @@ FUNCTION calc_stock_recruitment
 	Dec 6, 2010.  Modified code to allow empirical weight-at-age data
 				This required a fecundity-at-age matrix.  Need to 
 				project spawning biomass into the future.
-	FIXME bo should be a function of the average natural mortality
+	CHANGED bo should be a function of the average natural mortality
 	TODO update phib calculation if age-specific M's are used.
 	
 	May 6, 2010.  Changed phib calculation based on average M 
 	in cases where M varies over time. Otherwise bo is biased based
 	on the initial value of M.
+	
+	FIXME Need to adjust spawning biomass to post fishery numbers.
 	
 	*/ 
 	int i;
@@ -1066,7 +1069,13 @@ FUNCTION calc_stock_recruitment
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass
 	
-	sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
+	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
+	//CHANGED adjusted spawning biomass downward by ctrl(12)
+	for(i=syr;i<=nyr;i++)
+	{
+		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(12)))*fec(i);
+	}
+	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
