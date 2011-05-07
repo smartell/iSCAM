@@ -36,8 +36,8 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
 .VIEWPANCEX <- 1            # Default cex for panLab.
 
-.VIEWMAR  <- c(3, 3, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
-.VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
+.VIEWMAR  <- c(4, 4, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
+.VIEWOMA  <- c(0, 0, 0, 0)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 1
 
 .REPFILES <- list.files(pattern="\\.rep")
@@ -107,6 +107,12 @@ guiView	<- function()
 		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(winRows, winCols))
 	}
 	
+	if( !plotbyrow )
+	{
+		winCols <- ncols
+		winRows <- nrows
+		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfcol=c(winRows, winCols))
+	}
 	#call the plotting function again if user change plotting options.
 	.mpdView()
 }
@@ -394,7 +400,7 @@ guiView	<- function()
 		if(depletion) yy <- t(t(yy)/bo)
 
 		matplot(yrs, yy, type="n", xlab="Year", 
-			ylab="Spawning biomass (t)", axes=FALSE, 
+			ylab="Spawning biomass (1000 t)", axes=FALSE, 
 			ylim=c(0, max(yy)) )
 		
 		axis( side=1 )
@@ -784,14 +790,14 @@ guiView	<- function()
 	with(repObj, {
 		xx=yrs
 		yy=sbt/bo
-		yrange=c(0,1.1*max(yy, na.rm=TRUE))
+		yrange=c(0,1.1*max(c(1, yy), na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
-			xlab="Year", ylab="Depletion", 
+			xlab="Year", ylab="Spawning depletion", 
 			ylim=yrange)
 		lines(xx, yy)
 		rlvl=c(1.0, 0.8, 0.4)
-		abline(h=rlvl*bmsy/bo,lty=2,lwd=rlvl)
+		abline(h=rlvl*bmsy/bo,lty=2,lwd=0.5)
 		
 		
 		axis( side=1 )
@@ -801,11 +807,16 @@ guiView	<- function()
 		
 		if ( annotate )
 		{
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=c( "Spawning biomass","MSY depletion level",
-				"Upper stock reference","Limit reference point"),
-				bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
+			#mfg <- par( "mfg" )
+			#if ( mfg[1]==1 && mfg[2]==1 )
+			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
+			#	"Upper stock reference","Limit reference point"),
+			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
+			
+			#Delinate critical zone,  cautious zone, healthy zone.
+			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/bo,col=colr("red",0.1), border=NA)
+			rect(min(xx)-5,0.4*bmsy/bo,max(xx)+5,0.8*bmsy/bo,col=colr("yellow",0.1),border=NA)
+			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,1.5,col=colr("green",0.1), border=NA)
 		}
 	})
 }
@@ -820,7 +831,7 @@ guiView	<- function()
 		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,
-				xlab="Year", ylab="Biomass (t)", 
+				xlab="Year", ylab="Biomass (1000 t)", 
 				ylim=yrange)
 		
 		matlines(xx,yy,
@@ -905,8 +916,8 @@ guiView	<- function()
 		if ( annotate )
 		{
 			txt = c(paste("Gear",1:ngear),"Natural mortality")
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
+			#mfg <- par( "mfg" )
+			#if ( mfg[1]==1 && mfg[2]==1 )
 			legend( "right",legend=txt,
 				bty='n',lty=c(1:ngear,1),lwd=lw,pch=-1,ncol=1)
 		}
