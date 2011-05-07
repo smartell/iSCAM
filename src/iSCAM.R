@@ -790,7 +790,7 @@ guiView	<- function()
 	with(repObj, {
 		xx=yrs
 		yy=sbt/bo
-		yrange=c(0,1.1*max(c(1, yy), na.rm=TRUE))
+		yrange=c(0,1.1*max(yy, na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
 			xlab="Year", ylab="Spawning depletion", 
