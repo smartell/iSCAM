@@ -1,0 +1,1075 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<PMML version="4.0">
+  <Header> iscam - Strait of Georgia Herring Model <!-- XML created by Chris Grandin May 2011 --></Header>
+  <Model>
+    <ModelControls>
+      <ParameterValues>
+        <logR0-MSY>
+					<!-- If this is to be MSY parameter, you must set the EstimateManagementParameters variable to True -->
+          <initialValue>7.6</initialValue>
+          <lowerBound>-5.0</lowerBound>
+          <upperBound>15.0</upperBound>
+          <phase>4</phase>
+				  <!-- priorType = Uniform, Normal, Lognormal, Beta, Gamma -->
+          <priorType>Uniform</priorType>
+          <priorParameter1>-5.0</priorParameter1>
+          <priorParameter2>15.0</priorParameter2>
+        </logR0-MSY>
+        <Steepness-FMSY>
+					<!-- If this is to be FMSY parameter, you must set the EstimateManagementParameters variable to True -->
+          <initialValue>0.7</initialValue>
+          <lowerBound>0.2</lowerBound>
+          <upperBound>1.0</upperBound>
+          <phase>4</phase>
+				  <!-- priorType = Uniform, Normal, Lognormal, Beta, Gamma -->
+          <priorType>Beta</priorType>
+          <priorParameter1>1.01</priorParameter1>
+          <priorParameter2>1.01</priorParameter2>
+        </Steepness-FMSY>
+        <logM>
+          <initialValue>-1.0966</initialValue>
+          <lowerBound>-5.0</lowerBound>
+          <upperBound>5.0</upperBound>
+          <phase>3</phase>
+				  <!-- priorType = Uniform, Normal, Lognormal, Beta, Gamma -->
+          <priorType>Normal</priorType>
+          <priorParameter1>-1.0966</priorParameter1>
+          <priorParameter2>0.05</priorParameter2>
+        </logM>
+        <logAvgRec>
+          <initialValue>7.4</initialValue>
+          <lowerBound>-5.0</lowerBound>
+          <upperBound>15</upperBound>
+          <phase>1</phase>
+				  <!-- priorType = Uniform, Normal, Lognormal, Beta, Gamma -->
+          <priorType>Uniform</priorType>
+          <priorParameter1>-5.0</priorParameter1>
+          <priorParameter2>15.0</priorParameter2>
+        </logAvgRec>
+        <Rho>
+          <initialValue>0.2</initialValue>
+          <lowerBound>0.001</lowerBound>
+          <upperBound>0.999</upperBound>
+          <phase>3</phase>
+          <priorType>Beta</priorType>
+          <priorParameter1>15.0</priorParameter1>
+          <priorParameter2>60.0</priorParameter2>
+        </Rho>
+        <Kappa>
+          <initialValue>1.25</initialValue>
+          <lowerBound>0.01</lowerBound>
+          <upperBound>500.0</upperBound>
+          <phase>3</phase>
+				  <!-- priorType = Uniform, Normal, Lognormal, Beta, Gamma -->
+          <priorType>Gamma</priorType>
+          <priorParameter1>156.25</priorParameter1>
+          <priorParameter2>125.0</priorParameter2>
+        </Kappa>
+      </ParameterValues>
+      <SelectivityParameters>
+        <Fishery1>
+          <!-- SelectivityType, 1 = logistic selectivity parameters--><!-- 2 = selectivity coefficients --><!-- 3 = a constant cubic spline with age-nodes --><!-- 4 = a time-varying cubic spline with age-nodes --><!-- 5 = a time-varying bicubic spline with age & year nodes --><!-- 6 = fixed logistic (set isel_type=1, and estimation phase to -1) -->
+					<SelectivityType>1</SelectivityType>
+          <AgeAt50PercentSelectivity>1.5</AgeAt50PercentSelectivity>
+          <StdevAt50PercentSelectivity>0.75</StdevAt50PercentSelectivity>
+          <NumAgeNodes>5</NumAgeNodes>
+          <NumYearNodes>12</NumYearNodes>
+          <EstimationPhase>2</EstimationPhase>
+					<!-- PenaltyWeights, w=1/(2*sig^2) -->
+          <PenaltyWeightForSecondDifference>125.0</PenaltyWeightForSecondDifference>
+          <PenaltyWeightForDomeSelectivity>50.0</PenaltyWeightForDomeSelectivity>
+        </Fishery1>
+        <Fishery2>
+          <!-- SelectivityType, 1 = logistic selectivity parameters--><!-- 2 = selectivity coefficients --><!-- 3 = a constant cubic spline with age-nodes --><!-- 4 = a time-varying cubic spline with age-nodes --><!-- 5 = a time-varying bicubic spline with age & year nodes --><!-- 6 = fixed logistic (set isel_type=1, and estimation phase to -1) -->
+					<SelectivityType>1</SelectivityType>
+          <AgeAt50PercentSelectivity>2.0</AgeAt50PercentSelectivity>
+          <StdevAt50PercentSelectivity>0.5</StdevAt50PercentSelectivity>
+          <NumAgeNodes>5</NumAgeNodes>
+          <NumYearNodes>3</NumYearNodes>
+          <EstimationPhase>2</EstimationPhase>
+					<!-- PenaltyWeights, w=1/(2*sig^2) -->
+          <PenaltyWeightForSecondDifference>125.0</PenaltyWeightForSecondDifference>
+          <PenaltyWeightForDomeSelectivity>50.0</PenaltyWeightForDomeSelectivity>
+        </Fishery2>
+        <Fishery3>
+          <!-- SelectivityType, 1 = logistic selectivity parameters--><!-- 2 = selectivity coefficients --><!-- 3 = a constant cubic spline with age-nodes --><!-- 4 = a time-varying cubic spline with age-nodes --><!-- 5 = a time-varying bicubic spline with age & year nodes --><!-- 6 = fixed logistic (set isel_type=1, and estimation phase to -1) -->
+					<SelectivityType>1</SelectivityType>
+          <AgeAt50PercentSelectivity>2.5</AgeAt50PercentSelectivity>
+          <StdevAt50PercentSelectivity>0.2</StdevAt50PercentSelectivity>
+          <NumAgeNodes>5</NumAgeNodes>
+          <NumYearNodes>10</NumYearNodes>
+          <EstimationPhase>2</EstimationPhase>
+					<!-- PenaltyWeights, w=1/(2*sig^2) -->
+          <PenaltyWeightForSecondDifference>12.50</PenaltyWeightForSecondDifference>
+          <PenaltyWeightForDomeSelectivity>200.0</PenaltyWeightForDomeSelectivity>
+        </Fishery3>
+        <Survey1>
+          <!-- SelectivityType, 1 = logistic selectivity parameters--><!-- 2 = selectivity coefficients --><!-- 3 = a constant cubic spline with age-nodes --><!-- 4 = a time-varying cubic spline with age-nodes --><!-- 5 = a time-varying bicubic spline with age & year nodes --><!-- 6 = fixed logistic (set isel_type=1, and estimation phase to -1) -->
+					<SelectivityType>1</SelectivityType>
+          <AgeAt50PercentSelectivity>2.055</AgeAt50PercentSelectivity>
+          <StdevAt50PercentSelectivity>0.05</StdevAt50PercentSelectivity>
+          <NumAgeNodes>0</NumAgeNodes>
+          <NumYearNodes>0</NumYearNodes>
+          <EstimationPhase>-1</EstimationPhase>
+					<!-- PenaltyWeights, w=1/(2*sig^2) -->
+          <PenaltyWeightForSecondDifference>12.5</PenaltyWeightForSecondDifference>
+          <PenaltyWeightForDomeSelectivity>200.0</PenaltyWeightForDomeSelectivity>
+        </Survey1>
+        <Survey2>
+          <!-- SelectivityType, 1 = logistic selectivity parameters--><!-- 2 = selectivity coefficients --><!-- 3 = a constant cubic spline with age-nodes --><!-- 4 = a time-varying cubic spline with age-nodes --><!-- 5 = a time-varying bicubic spline with age & year nodes --><!-- 6 = fixed logistic (set isel_type=1, and estimation phase to -1) -->
+					<SelectivityType>1</SelectivityType>
+          <AgeAt50PercentSelectivity>2.055</AgeAt50PercentSelectivity>
+          <StdevAt50PercentSelectivity>0.05</StdevAt50PercentSelectivity>
+          <NumAgeNodes>0</NumAgeNodes>
+          <NumYearNodes>0</NumYearNodes>
+          <EstimationPhase>-1</EstimationPhase>
+					<!-- PenaltyWeights, w=1/(2*sig^2) -->
+          <PenaltyWeightForSecondDifference>12.5</PenaltyWeightForSecondDifference>
+          <PenaltyWeightForDomeSelectivity>200.0</PenaltyWeightForDomeSelectivity>
+        </Survey2>
+      </SelectivityParameters>
+      <SurveyQPriors>
+				<!-- One entry here per survey -->
+        <Survey1>
+				  <!-- priorType = Uniform, Normal -->
+          <PriorType>Normal</PriorType>
+          <PriorLogMean>0</PriorLogMean>
+          <PriorSd>0.1</PriorSd>
+        </Survey1>
+        <Survey2>
+				  <!-- priorType = Uniform, Normal -->
+          <PriorType>Normal</PriorType>
+          <PriorLogMean>0</PriorLogMean>
+          <PriorSd>0.05</PriorSd>
+        </Survey2>
+      </SurveyQPriors>
+      <VerboseADMB>False</VerboseADMB>
+			<!-- Beverton-Holt or Ricker -->
+      <RecruitmentModel>Beverton-Holt</RecruitmentModel>
+      <StdevObsCatchFirstPhase>0.025</StdevObsCatchFirstPhase>
+      <StdevObsCatchLastPhase>0.01</StdevObsCatchLastPhase>
+      <UnfishedInFirstYear>False</UnfishedInFirstYear>
+			<!-- MinPropForDMVLogistic, Bins age classes in the function DMVLogistic if smaller than this -->
+      <MinPropForDMVLogistic>0.01</MinPropForDMVLogistic>
+			<!-- MeanFishingMortality, For regularizing the estimates of Ft -->
+      <MeanFishingMortality>0.2</MeanFishingMortality>
+      <StdevFishingMortalityFirstPhase>0.01</StdevFishingMortalityFirstPhase>
+      <StdevFishingMortalityLastPhase>5.0</StdevFishingMortalityLastPhase>
+      <PhaseForEstimatingMDevs>-3</PhaseForEstimatingMDevs>
+      <StdevForNaturalMortality>0.1</StdevForNaturalMortality>
+      <EstimateManagementParameters>False</EstimateManagementParameters>
+    </ModelControls>
+    <ModelData>
+      <FirstYearOfData>1951</FirstYearOfData>
+      <LastYearOfData>2010</LastYearOfData>
+      <AgeYoungest>2</AgeYoungest>
+      <AgePlus>10</AgePlus>
+      <FisherySurveyMap>
+				<!-- These must be in the same order as in the AgeComps and ObservedCatchData.  Use Fishery or Survey to denote type. -->
+				<Fishery1>Fishery</Fishery1>
+				<Fishery2>Fishery</Fishery2>
+				<Fishery3>Fishery</Fishery3>
+        <Survey1>Survey</Survey1>
+        <Survey2>Survey</Survey2>
+      </FisherySurveyMap>
+      <NaturalMortality>0.334</NaturalMortality>
+      <GrowthParameters>
+        <Linf>27.0</Linf>
+        <k>0.48</k>
+        <t0>0.0</t0>
+      </GrowthParameters>
+      <LengthWeightAllometry>
+        <Alpha>4.5e-6</Alpha>
+        <Beta>3.127</Beta>
+      </LengthWeightAllometry>
+      <Maturity><!-- (am=log(3)/k) & gm=std for logistic -->
+				<Alpha>2.055</Alpha>
+        <Beta>0.05</Beta>
+      </Maturity>
+      <ObservedCatchData>
+        <Fishery1>
+          <_1951>43.798</_1951>
+          <_1952>45.846</_1952>
+          <_1953> 8.412</_1953>
+          <_1954>65.767</_1954>
+          <_1955>68.641</_1955>
+          <_1956>72.062</_1956>
+          <_1957>59.608</_1957>
+          <_1958>20.628</_1958>
+          <_1959>49.644</_1959>
+          <_1960>68.037</_1960>
+          <_1961>46.215</_1961>
+          <_1962>65.303</_1962>
+          <_1963>68.847</_1963>
+          <_1964>76.881</_1964>
+          <_1965>47.819</_1965>
+          <_1966>33.333</_1966>
+          <_1967>31.043</_1967>
+          <_1968> 1.891</_1968>
+          <_1969> 0.194</_1969>
+          <_1970> 0.221</_1970>
+          <_1971> 1.610</_1971>
+          <_1972> 2.434</_1972>
+          <_1973> 3.980</_1973>
+          <_1974> 0.479</_1974>
+          <_1975> 0.378</_1975>
+          <_1976> 5.061</_1976>
+          <_1977> 5.676</_1977>
+          <_1978>12.963</_1978>
+          <_1979>13.513</_1979>
+          <_1980> 2.470</_1980>
+          <_1981> 4.904</_1981>
+          <_1982> 3.937</_1982>
+          <_1983> 0.824</_1983>
+          <_1984> 0.087</_1984>
+          <_1985> 0.772</_1985>
+          <_1986> 0.432</_1986>
+          <_1987> 0.244</_1987>
+          <_1988> 0.756</_1988>
+          <_1989> 1.033</_1989>
+          <_1990> 0.233</_1990>
+          <_1991> 0.562</_1991>
+          <_1992> 0.939</_1992>
+          <_1993> 0.617</_1993>
+          <_1994> 0.942</_1994>
+          <_1995> 0.641</_1995>
+          <_1996> 0.541</_1996>
+          <_1997> 0.402</_1997>
+          <_1998> 0.954</_1998>
+          <_1999> 1.471</_1999>
+          <_2000> 1.156</_2000>
+          <_2001> 1.424</_2001>
+          <_2002> 1.328</_2002>
+          <_2003> 1.696</_2003>
+          <_2004> 1.356</_2004>
+          <_2005> 1.332</_2005>
+          <_2006> 1.371</_2006>
+          <_2007> 0.672</_2007>
+          <_2008> 1.139</_2008>
+          <_2009> 0.709</_2009>
+          <_2010> 0.595</_2010>
+        </Fishery1>
+        <Fishery2>
+          <_1951> 0.000</_1951>
+          <_1952> 0.000</_1952>
+          <_1953> 0.000</_1953>
+          <_1954> 0.000</_1954>
+          <_1955> 0.000</_1955>
+          <_1956> 0.000</_1956>
+          <_1957> 0.000</_1957>
+          <_1958> 0.000</_1958>
+          <_1959> 0.000</_1959>
+          <_1960> 0.000</_1960>
+          <_1961> 0.000</_1961>
+          <_1962> 0.000</_1962>
+          <_1963> 0.000</_1963>
+          <_1964> 0.000</_1964>
+          <_1965> 0.000</_1965>
+          <_1966> 0.000</_1966>
+          <_1967> 0.000</_1967>
+          <_1968> 0.000</_1968>
+          <_1969> 0.000</_1969>
+          <_1970> 0.000</_1970>
+          <_1971> 0.000</_1971>
+          <_1972> 5.921</_1972>
+          <_1973> 1.604</_1973>
+          <_1974> 0.425</_1974>
+          <_1975> 0.469</_1975>
+          <_1976> 0.202</_1976>
+          <_1977> 4.098</_1977>
+          <_1978> 3.723</_1978>
+          <_1979> 0.000</_1979>
+          <_1980> 0.169</_1980>
+          <_1981> 2.081</_1981>
+          <_1982> 3.312</_1982>
+          <_1983> 7.780</_1983>
+          <_1984> 4.126</_1984>
+          <_1985> 2.726</_1985>
+          <_1986> 0.162</_1986>
+          <_1987> 3.111</_1987>
+          <_1988> 1.471</_1988>
+          <_1989> 1.417</_1989>
+          <_1990> 0.000</_1990>
+          <_1991> 1.131</_1991>
+          <_1992> 3.610</_1992>
+          <_1993> 4.391</_1993>
+          <_1994> 5.134</_1994>
+          <_1995> 4.359</_1995>
+          <_1996> 7.338</_1996>
+          <_1997> 9.274</_1997>
+          <_1998> 5.755</_1998>
+          <_1999> 4.976</_1999>
+          <_2000> 6.455</_2000>
+          <_2001> 7.274</_2001>
+          <_2002> 9.299</_2002>
+          <_2003>10.670</_2003>
+          <_2004> 7.019</_2004>
+          <_2005> 7.928</_2005>
+          <_2006> 9.308</_2006>
+          <_2007> 3.865</_2007>
+          <_2008> 2.752</_2008>
+          <_2009> 5.685</_2009>
+          <_2010> 4.540</_2010>
+        </Fishery2>
+        <Fishery3>
+          <_1951> 0.000</_1951>
+          <_1952> 0.000</_1952>
+          <_1953> 0.000</_1953>
+          <_1954> 0.000</_1954>
+          <_1955> 0.000</_1955>
+          <_1956> 0.000</_1956>
+          <_1957> 0.000</_1957>
+          <_1958> 0.000</_1958>
+          <_1959> 0.381</_1959>
+          <_1960> 0.000</_1960>
+          <_1961> 0.000</_1961>
+          <_1962> 0.000</_1962>
+          <_1963> 0.000</_1963>
+          <_1964> 0.000</_1964>
+          <_1965> 0.000</_1965>
+          <_1966> 0.000</_1966>
+          <_1967> 0.000</_1967>
+          <_1968> 0.000</_1968>
+          <_1969> 0.000</_1969>
+          <_1970> 0.022</_1970>
+          <_1971> 0.084</_1971>
+          <_1972> 0.456</_1972>
+          <_1973> 2.064</_1973>
+          <_1974> 3.095</_1974>
+          <_1975> 5.331</_1975>
+          <_1976> 6.975</_1976>
+          <_1977> 7.736</_1977>
+          <_1978> 7.316</_1978>
+          <_1979> 6.825</_1979>
+          <_1980> 3.180</_1980>
+          <_1981> 5.067</_1981>
+          <_1982> 5.583</_1982>
+          <_1983> 8.613</_1983>
+          <_1984> 6.039</_1984>
+          <_1985> 3.495</_1985>
+          <_1986> 0.000</_1986>
+          <_1987> 5.998</_1987>
+          <_1988> 5.988</_1988>
+          <_1989> 5.919</_1989>
+          <_1990> 7.886</_1990>
+          <_1991> 9.410</_1991>
+          <_1992> 8.870</_1992>
+          <_1993> 8.733</_1993>
+          <_1994>11.572</_1994>
+          <_1995> 8.190</_1995>
+          <_1996> 6.233</_1996>
+          <_1997> 6.148</_1997>
+          <_1998> 6.895</_1998>
+          <_1999> 6.837</_1999>
+          <_2000> 7.593</_2000>
+          <_2001> 7.682</_2001>
+          <_2002> 7.986</_2002>
+          <_2003> 8.010</_2003>
+          <_2004> 5.226</_2004>
+          <_2005> 8.954</_2005>
+          <_2006> 7.277</_2006>
+          <_2007> 5.285</_2007>
+          <_2008> 6.046</_2008>
+          <_2009> 3.937</_2009>
+          <_2010> 3.244</_2010>
+        </Fishery3>
+        <Survey1>
+          <_1951>0.0</_1951>
+          <_1952>0.0</_1952>
+          <_1953>0.0</_1953>
+          <_1954>0.0</_1954>
+          <_1955>0.0</_1955>
+          <_1956>0.0</_1956>
+          <_1957>0.0</_1957>
+          <_1958>0.0</_1958>
+          <_1959>0.0</_1959>
+          <_1960>0.0</_1960>
+          <_1961>0.0</_1961>
+          <_1962>0.0</_1962>
+          <_1963>0.0</_1963>
+          <_1964>0.0</_1964>
+          <_1965>0.0</_1965>
+          <_1966>0.0</_1966>
+          <_1967>0.0</_1967>
+          <_1968>0.0</_1968>
+          <_1969>0.0</_1969>
+          <_1970>0.0</_1970>
+          <_1971>0.0</_1971>
+          <_1972>0.0</_1972>
+          <_1973>0.0</_1973>
+          <_1974>0.0</_1974>
+          <_1975>0.0</_1975>
+          <_1976>0.0</_1976>
+          <_1977>0.0</_1977>
+          <_1978>0.0</_1978>
+          <_1979>0.0</_1979>
+          <_1980>0.0</_1980>
+          <_1981>0.0</_1981>
+          <_1982>0.0</_1982>
+          <_1983>0.0</_1983>
+          <_1984>0.0</_1984>
+          <_1985>0.0</_1985>
+          <_1986>0.0</_1986>
+          <_1987>0.0</_1987>
+          <_1988>0.0</_1988>
+          <_1989>0.0</_1989>
+          <_1990>0.0</_1990>
+          <_1991>0.0</_1991>
+          <_1992>0.0</_1992>
+          <_1993>0.0</_1993>
+          <_1994>0.0</_1994>
+          <_1995>0.0</_1995>
+          <_1996>0.0</_1996>
+          <_1997>0.0</_1997>
+          <_1998>0.0</_1998>
+          <_1999>0.0</_1999>
+          <_2000>0.0</_2000>
+          <_2001>0.0</_2001>
+          <_2002>0.0</_2002>
+          <_2003>0.0</_2003>
+          <_2004>0.0</_2004>
+          <_2005>0.0</_2005>
+          <_2006>0.0</_2006>
+          <_2007>0.0</_2007>
+          <_2008>0.0</_2008>
+          <_2009>0.0</_2009>
+          <_2010>0.0</_2010>
+        </Survey1>
+        <Survey2>
+          <_1951>0.0</_1951>
+          <_1952>0.0</_1952>
+          <_1953>0.0</_1953>
+          <_1954>0.0</_1954>
+          <_1955>0.0</_1955>
+          <_1956>0.0</_1956>
+          <_1957>0.0</_1957>
+          <_1958>0.0</_1958>
+          <_1959>0.0</_1959>
+          <_1960>0.0</_1960>
+          <_1961>0.0</_1961>
+          <_1962>0.0</_1962>
+          <_1963>0.0</_1963>
+          <_1964>0.0</_1964>
+          <_1965>0.0</_1965>
+          <_1966>0.0</_1966>
+          <_1967>0.0</_1967>
+          <_1968>0.0</_1968>
+          <_1969>0.0</_1969>
+          <_1970>0.0</_1970>
+          <_1971>0.0</_1971>
+          <_1972>0.0</_1972>
+          <_1973>0.0</_1973>
+          <_1974>0.0</_1974>
+          <_1975>0.0</_1975>
+          <_1976>0.0</_1976>
+          <_1977>0.0</_1977>
+          <_1978>0.0</_1978>
+          <_1979>0.0</_1979>
+          <_1980>0.0</_1980>
+          <_1981>0.0</_1981>
+          <_1982>0.0</_1982>
+          <_1983>0.0</_1983>
+          <_1984>0.0</_1984>
+          <_1985>0.0</_1985>
+          <_1986>0.0</_1986>
+          <_1987>0.0</_1987>
+          <_1988>0.0</_1988>
+          <_1989>0.0</_1989>
+          <_1990>0.0</_1990>
+          <_1991>0.0</_1991>
+          <_1992>0.0</_1992>
+          <_1993>0.0</_1993>
+          <_1994>0.0</_1994>
+          <_1995>0.0</_1995>
+          <_1996>0.0</_1996>
+          <_1997>0.0</_1997>
+          <_1998>0.0</_1998>
+          <_1999>0.0</_1999>
+          <_2000>0.0</_2000>
+          <_2001>0.0</_2001>
+          <_2002>0.0</_2002>
+          <_2003>0.0</_2003>
+          <_2004>0.0</_2004>
+          <_2005>0.0</_2005>
+          <_2006>0.0</_2006>
+          <_2007>0.0</_2007>
+          <_2008>0.0</_2008>
+          <_2009>0.0</_2009>
+          <_2010>0.0</_2010>
+        </Survey2>
+      </ObservedCatchData>
+      <SurveyEstimates>
+				<SurveyData>
+          <_1951>
+            <BiomassEstimate>66.143</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1951>
+          <_1952>
+            <BiomassEstimate>72.376</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1952>
+          <_1953>
+            <BiomassEstimate>111.307</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1953>
+          <_1954>
+            <BiomassEstimate>82.141</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1954>
+          <_1955>
+            <BiomassEstimate>69.854</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1955>
+          <_1956>
+            <BiomassEstimate>25.667</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1956>
+          <_1957>
+            <BiomassEstimate>24.126</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1957>
+          <_1958>
+            <BiomassEstimate>16.911</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1958>
+          <_1959>
+            <BiomassEstimate>47.864</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1959>
+          <_1960>
+            <BiomassEstimate>55.709</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1960>
+          <_1961>
+            <BiomassEstimate>44.326</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1961>
+          <_1962>
+            <BiomassEstimate>35.574</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1962>
+          <_1963>
+            <BiomassEstimate>37.381</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1963>
+          <_1964>
+            <BiomassEstimate>35.954</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1964>
+          <_1965>
+            <BiomassEstimate>38.39</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1965>
+          <_1966>
+            <BiomassEstimate>7.211</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1966>
+          <_1967>
+            <BiomassEstimate>9.647</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1967>
+          <_1968>
+            <BiomassEstimate>9.442</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1968>
+          <_1969>
+            <BiomassEstimate>14.039</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1969>
+          <_1970>
+            <BiomassEstimate>34.163</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1970>
+          <_1971>
+            <BiomassEstimate>38.921</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1971>
+          <_1972>
+            <BiomassEstimate>25.139</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1972>
+          <_1973>
+            <BiomassEstimate>16.191</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1973>
+          <_1974>
+            <BiomassEstimate>40.571</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1974>
+          <_1975>
+            <BiomassEstimate>70.211</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1975>
+          <_1976>
+            <BiomassEstimate>60.642</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1976>
+          <_1977>
+            <BiomassEstimate>78.562</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1977>
+          <_1978>
+            <BiomassEstimate>102.115</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1978>
+          <_1979>
+            <BiomassEstimate>64.266</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1979>
+          <_1980>
+            <BiomassEstimate>85.991</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1980>
+          <_1981>
+            <BiomassEstimate>55.121</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1981>
+          <_1982>
+            <BiomassEstimate>100.987</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1982>
+          <_1983>
+            <BiomassEstimate>64.575</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1983>
+          <_1984>
+            <BiomassEstimate>26.227</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1984>
+          <_1985>
+            <BiomassEstimate>25.247</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1985>
+          <_1986>
+            <BiomassEstimate>41.575</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1986>
+          <_1987>
+            <BiomassEstimate>41.737</BiomassEstimate>
+            <Gear>4</Gear>
+            <wt>1</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1987>
+          <_1988>
+            <BiomassEstimate>24.976</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1988>
+          <_1989>
+            <BiomassEstimate>66.052</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1989>
+          <_1990>
+            <BiomassEstimate>67.152</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1990>
+          <_1991>
+            <BiomassEstimate>45.83</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1991>
+          <_1992>
+            <BiomassEstimate>82.714</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1992>
+          <_1993>
+            <BiomassEstimate>90.198</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1993>
+          <_1994>
+            <BiomassEstimate>67.144</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1994>
+          <_1995>
+            <BiomassEstimate>64.899</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1995>
+          <_1996>
+            <BiomassEstimate>71.326</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1996>
+          <_1997>
+            <BiomassEstimate>58.232</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1997>
+          <_1998>
+            <BiomassEstimate>74.616</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1998>
+          <_1999>
+            <BiomassEstimate>85.095</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_1999>
+          <_2000>
+            <BiomassEstimate>72.688</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2000>
+          <_2001>
+            <BiomassEstimate>100.248</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2001>
+          <_2002>
+            <BiomassEstimate>117.864</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2002>
+          <_2003>
+            <BiomassEstimate>141.651</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2003>
+          <_2004>
+            <BiomassEstimate>114.352</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2004>
+          <_2005>
+            <BiomassEstimate>95.643</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2005>
+          <_2006>
+            <BiomassEstimate>46.752</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2006>
+          <_2007>
+            <BiomassEstimate>35.865</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2007>
+          <_2008>
+            <BiomassEstimate>32.103</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2008>
+          <_2009>
+            <BiomassEstimate>49.909</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2009>
+          <_2010>
+            <BiomassEstimate>47.48</BiomassEstimate>
+            <Gear>5</Gear>
+            <wt>2</wt>
+            <SurveyTiming>1.0</SurveyTiming>
+          </_2010>
+        </SurveyData>
+      </SurveyEstimates>
+      <AgeCompData>
+				<!-- One entry for each gear -->
+        <Fishery1>
+          <YoungestAge>2</YoungestAge>
+          <AgePlus>10</AgePlus>
+          <_1951> 326 4413 2371  556  110  27   8   2  0</_1951>
+          <_1952>1008 4997 2262  608  119  24   6   1  0</_1952>
+          <_1953> 900 6177 3380  447  119  18   6   0  0</_1953>
+          <_1954> 200 6011 4845 1520  432 124  27   3  0</_1954>
+          <_1955> 233 2562 2065  355   57   6   0   0  0</_1955>
+          <_1956> 704 3798 3502 2801  627 106  28   6  3</_1956>
+          <_1957>  98 4344 1639  782  374  44   5   1  2</_1957>
+          <_1958> 564 3278 1171  278  244 177  25   4  0</_1958>
+          <_1959>1533 5878 1460  223   48  21  11   2  0</_1959>
+          <_1960> 398 2049 1391  127   15   4   3   0  0</_1960>
+          <_1961>1425 1395 1153  607  166  16   2   0  0</_1961>
+          <_1962> 270 2019  363  116   45  10   1   0  0</_1962>
+          <_1963> 364 1290  660   94   24   9   2   0  0</_1963>
+          <_1964> 190 2173 1157  110   26   4   3   0  0</_1964>
+          <_1965> 500 1703  775   73   22   3   1   0  0</_1965>
+          <_1966> 168  256  166  100   16   7   0   0  0</_1966>
+          <_1971> 175  568  516  101   40  13   1   0  0</_1971>
+          <_1972> 245  740  770  448   96  33   6   1  0</_1972>
+          <_1973>  58  520  253  176   48  10   4   1  0</_1973>
+          <_1976> 248  770 1463  788  225 112  37  17  2</_1976>
+          <_1977>  89  947  383  274   76  26  12   4  1</_1977>
+          <_1978> 110  919  958  236  166  62   9   8  3</_1978>
+          <_1979>  58  665 1545 1093  323 159  47   7  3</_1979>
+          <_1980>  84 1627  874  716  363  93  57  15  3</_1980>
+          <_1981> 340 2634 2479 1091  636 242  54  21  1</_1981>
+          <_1982> 223 1824 1378  625  201 131  36   2  4</_1982>
+          <_1983> 392 2093 1603  833  429 146 149  77 10</_1983>
+          <_1984> 639 1398  798  443  203 103  22  10  6</_1984>
+          <_1985> 749 1063  491  193   79  26   9   2  0</_1985>
+          <_1986> 230  832  245   60   18   4   1   0  0</_1986>
+          <_1987> 295  406  328   93   18   4   2   0  0</_1987>
+          <_1988>  77 1051  248  202   37   9   2   1  0</_1988>
+          <_1989> 331  219  532   85   73  10   2   0  0</_1989>
+          <_1990>  62  544  118  164   21  19   0   0  0</_1990>
+          <_1991> 101  223  265   51   50   7   1   0  0</_1991>
+          <_1992>  37  645  125   69    8   3   3   0  0</_1992>
+          <_1993> 252  302  316   67   26   3   6   1  0</_1993>
+          <_1994>  42  287  134   81    9   5   0   0  0</_1994>
+          <_1995> 222  311  409  123   54   8   2   0  1</_1995>
+          <_1996> 419  821  199  157   41  18   3   0  0</_1996>
+          <_1997>  52  201   50   10    3   1   2   1  0</_1997>
+          <_1998>  60  758  626   99   13   7   1   1  0</_1998>
+          <_1999> 151  361  564  176   36   5   2   0  0</_1999>
+          <_2000> 250  536  169   90   24   8   0   0  0</_2000>
+          <_2001>  77  414  223   44   28  10   0   1  0</_2001>
+          <_2002>  46  570  243   55    9   3   1   0  1</_2002>
+          <_2003>  12  189  181   36    9   1   0   0  0</_2003>
+          <_2004>  57  156  203   71   18   2   0   0  0</_2004>
+          <_2005>  22   72   36   28    9   2   0   0  0</_2005>
+          <_2006>  29   39   47   26   29   6   2   1  0</_2006>
+          <_2007>  39   17    3    1    2   0   0   0  0</_2007>
+          <_2008> 231   94  458  118   24   5   1   1  0</_2008>
+          <_2009>   4  172   49    5    3   0   0   0  0</_2009>
+          <_2010>  34   19  249   20   18   7   1   2  0</_2010>
+        </Fishery1>
+        <Fishery2>
+          <YoungestAge>2</YoungestAge>
+          <AgePlus>10</AgePlus>
+          <_1972> 564 2514 2354 1282  260  77  10   1  0</_1972>
+          <_1973>  51 1306 1510 1157  588  77  11   1  0</_1973>
+          <_1974> 144  533  155   37   13   1   1   0  0</_1974>
+          <_1975> 288 3117 1506  417  180  85  25  10  0</_1975>
+          <_1976> 183  505 1002  395   97  41  23   6  2</_1976>
+          <_1977> 100 1717  675  506  133  37  19   6  5</_1977>
+          <_1978>  30 1253 1545  423  277  53  11   1  2</_1978>
+          <_1979>  92  765 1121  898  270 126  38  15  5</_1979>
+          <_1980> 350 3800 1344 1341  694 174  93  22  7</_1980>
+          <_1981>1230 4902 3605 1200 1002 398  87  31  6</_1981>
+          <_1982> 337 1852 1334 1124  254 273 125  29  2</_1982>
+          <_1983> 434 4122 3745 2285 1428 411 385 161 28</_1983>
+          <_1984> 604 2784 2099  936  522 244  82  35 10</_1984>
+          <_1985>2024 3592 1519  628  268 104  46   5  1</_1985>
+          <_1986> 889 3799 1477  409  128  53   9   5  0</_1986>
+          <_1987> 781 2623 2945 1201  276  86  29  10  4</_1987>
+          <_1988> 301 3848  924  935  250  63  13   4  0</_1988>
+          <_1989> 651 1177 3491  610  460 104  20   2  1</_1989>
+          <_1990> 452 3337  652 1159  182 105  23   4  1</_1990>
+          <_1991> 542 1173 2123  476  775 116  75  10  1</_1991>
+          <_1992> 257 2762  691  843  176 260  30  16  0</_1992>
+          <_1993> 832 2096 1737  379  326  76  84   8  2</_1993>
+          <_1994> 279 2518 1594 1120  238 168  42   9  0</_1994>
+          <_1995> 580 1251 2048 1005  627 155  62  20  6</_1995>
+          <_1996>1059 3984 1160 1192  481 280  57  19  6</_1996>
+          <_1997> 618 3806 1671  433  464 184 107   9  3</_1997>
+          <_1998> 383 4176 2784 1049  228 171  64  17  2</_1998>
+          <_1999> 268 1054 1716  792  274  75  28   7  2</_1999>
+          <_2000> 859 2759 1385 1591  627 149  21  15  1</_2000>
+          <_2001> 458 2981 1939  603  559 181  45   7  2</_2001>
+          <_2002> 490 3042 1535  673  140 116  22   4  0</_2002>
+          <_2003> 330 3994 3368 1099  322  81  35   9  0</_2003>
+          <_2004> 251 1353 1982  972  237  74  14   9  1</_2004>
+          <_2005> 353 1420 1468 1183  387  98  32  11  4</_2005>
+          <_2006> 968 1257 1134  754  448 103  33   8  1</_2006>
+          <_2007> 107 2951 1666  749  346 188  42  10  1</_2007>
+          <_2008> 160  582 3191  717  259 105  41   8  1</_2008>
+          <_2009>  20 3164  665  606  180  60  25  10  1</_2009>
+          <_2010> 583  228 3843  297  311  73  26   8  4</_2010>
+        </Fishery2>
+        <Fishery3>
+          <YoungestAge>2</YoungestAge>
+          <AgePlus>10</AgePlus>
+          <_1972>  46  118  468  286   68  15   2   1  0</_1972>
+          <_1973>   0   39   68   84   25   7   1   0  0</_1973>
+          <_1974>   0   45  390  283  158  39   9   0  0</_1974>
+          <_1975>   0    8   76   53   21   5   1   0  0</_1975>
+          <_1976>   0    5  322  342   89  22   5   1  0</_1976>
+          <_1977>   0   56  480  779  270  62   9   2  0</_1977>
+          <_1978>   0    2  110  165  195  59   8   2  0</_1978>
+          <_1979>   0    6  121  286   72  29   8   0  1</_1979>
+          <_1980>   0    4   26  117   90  23   2   1  0</_1980>
+          <_1981>   1   25  207  262  426 183  32   3  1</_1981>
+          <_1982>   0   27   94  180   89 123  69   5  2</_1982>
+          <_1983>   0    2  113  120   96  38  30   7  0</_1983>
+          <_1984>   0   54  229  234  144  71  12   5  7</_1984>
+          <_1985>   1   34  286  356  259 101  41   9  9</_1985>
+          <_1987>   0   48  684  642  317 163  50  11  5</_1987>
+          <_1988>   0   82  132  426  179  47  20   3  2</_1988>
+          <_1989>   0   13  331  181  213  64  18   3  0</_1989>
+          <_1990>   0  115  160  771  167 133  20   4  1</_1990>
+          <_1991>   0   14  306  187  436  79  51  13  1</_1991>
+          <_1992>   0   74  174  510  137 221  31  17  5</_1992>
+          <_1993>   0  104  363  154  196  37  49   2  2</_1993>
+          <_1994>   1   45  300  537  183  95  30   8  2</_1994>
+          <_1995>   0   21  243  341  242  52  22   4  2</_1995>
+          <_1996>   0   21   86  247  119  56  10   4  0</_1996>
+          <_1997>   0   30  113  104  202 108  54  16  6</_1997>
+          <_1998>   0   45  450  438  185 191  57  26  5</_1998>
+          <_1999>   0   18  245  307  176  56  28   5  1</_1999>
+          <_2000>   0   13  170  530  330 107  25   4  0</_2000>
+          <_2001>   0   31  190  263  345 154  34   7  2</_2001>
+          <_2002>   0   45  206  285  149 178  45   5  2</_2002>
+          <_2003>   0   30  283  439  305 137  83  28  3</_2003>
+          <_2004>   0   25  278  451  276 116  25  13  1</_2004>
+          <_2005>   0    5   91  352  207  80  28   9  1</_2005>
+          <_2006>   0    6  108  265  268 124  30   8  0</_2006>
+          <_2007>   0  140  384  760  744 512 134  36  6</_2007>
+          <_2008>   1   32  841  458  309 153  54  17  1</_2008>
+          <_2009>   0   42   63  466  166  99  29  11  1</_2009>
+          <_2010>   0    1  222   67  428 114  60  23  7</_2010>
+        </Fishery3>
+      </AgeCompData>
+      <WeightAtAge>
+        <_1951>0.0417 0.0897 0.1126 0.1376 0.1586 0.1706 0.2001 0.1865 0.1865</_1951>
+        <_1952>0.0432 0.0896 0.1133 0.1385 0.1599 0.1756 0.1677 0.1780 0.1865</_1952>
+        <_1953>0.0329 0.0763 0.0958 0.1255 0.1498 0.1599 0.1335 0.1784 0.1865</_1953>
+        <_1954>0.0447 0.0847 0.1036 0.1278 0.1571 0.1721 0.1751 0.1860 0.1865</_1954>
+        <_1955>0.0499 0.0893 0.1043 0.1262 0.1448 0.1738 0.1720 0.1784 0.1865</_1955>
+        <_1956>0.0471 0.0845 0.1060 0.1205 0.1410 0.1587 0.1785 0.1733 0.1865</_1956>
+        <_1957>0.0481 0.0828 0.1089 0.1371 0.1506 0.1640 0.2100 0.1784 0.1865</_1957>
+        <_1958>0.0438 0.0763 0.1081 0.1421 0.1535 0.1647 0.1762 0.1885 0.1865</_1958>
+        <_1959>0.0502 0.0836 0.0993 0.1314 0.1596 0.1677 0.1523 0.1580 0.1865</_1959>
+        <_1960>0.0530 0.0902 0.1125 0.1279 0.1597 0.1290 0.1770 0.1784 0.1865</_1960>
+        <_1961>0.0576 0.0786 0.1111 0.1170 0.1372 0.1650 0.1720 0.1784 0.1865</_1961>
+        <_1962>0.0501 0.0880 0.0993 0.1366 0.1449 0.1530 0.2020 0.1784 0.1865</_1962>
+        <_1963>0.0477 0.0832 0.1049 0.1116 0.1494 0.1778 0.1790 0.1784 0.1865</_1963>
+        <_1964>0.0576 0.0993 0.1159 0.1378 0.1586 0.1850 0.1400 0.1784 0.1865</_1964>
+        <_1965>0.0611 0.1051 0.1224 0.1451 0.1452 0.1770 0.1440 0.1784 0.1865</_1965>
+        <_1966>0.0520 0.1067 0.1487 0.1681 0.1783 0.1888 0.1720 0.1784 0.1865</_1966>
+        <_1967>0.0488 0.0880 0.1104 0.1332 0.1530 0.1677 0.1720 0.1784 0.1865</_1967>
+        <_1968>0.0488 0.0880 0.1104 0.1332 0.1530 0.1677 0.1720 0.1784 0.1865</_1968>
+        <_1969>0.0488 0.0880 0.1104 0.1332 0.1530 0.1677 0.1720 0.1784 0.1865</_1969>
+        <_1970>0.0578 0.0888 0.1175 0.1399 0.1608 0.1733 0.1871 0.1927 0.2096</_1970>
+        <_1971>0.0553 0.1056 0.1319 0.1537 0.1742 0.1895 0.1690 0.1927 0.2096</_1971>
+        <_1972>0.0586 0.0897 0.1290 0.1478 0.1671 0.1778 0.1973 0.1850 0.2096</_1972>
+        <_1973>0.0525 0.0993 0.1274 0.1588 0.1749 0.1928 0.1977 0.2010 0.2096</_1973>
+        <_1974>0.0630 0.0877 0.1392 0.1653 0.2093 0.1733 0.2420 0.1927 0.2096</_1974>
+        <_1975>0.0421 0.0828 0.1115 0.1423 0.1694 0.1934 0.1995 0.2122 0.2096</_1975>
+        <_1976>0.0498 0.0849 0.1234 0.1455 0.1743 0.1914 0.2033 0.2248 0.2133</_1976>
+        <_1977>0.0571 0.0888 0.1173 0.1389 0.1616 0.1910 0.2010 0.2027 0.2418</_1977>
+        <_1978>0.0501 0.0853 0.1099 0.1321 0.1513 0.1672 0.1683 0.1999 0.2095</_1978>
+        <_1979>0.0597 0.0848 0.1178 0.1405 0.1604 0.1754 0.1990 0.2051 0.2174</_1979>
+        <_1980>0.0522 0.0780 0.1083 0.1352 0.1584 0.1718 0.1831 0.1984 0.2172</_1980>
+        <_1981>0.0602 0.0857 0.1085 0.1348 0.1561 0.1706 0.1873 0.1802 0.2022</_1981>
+        <_1982>0.0635 0.0945 0.1153 0.1292 0.1531 0.1618 0.1696 0.1688 0.1950</_1982>
+        <_1983>0.0576 0.0898 0.1174 0.1349 0.1431 0.1580 0.1707 0.1851 0.1941</_1983>
+        <_1984>0.0624 0.0881 0.1146 0.1388 0.1569 0.1590 0.1666 0.1762 0.2010</_1984>
+        <_1985>0.0647 0.0867 0.1141 0.1345 0.1564 0.1703 0.1869 0.1926 0.2320</_1985>
+        <_1986>0.0670 0.0895 0.1108 0.1324 0.1495 0.1700 0.1971 0.1954 0.2096</_1986>
+        <_1987>0.0628 0.0874 0.1056 0.1226 0.1366 0.1522 0.1660 0.1550 0.1823</_1987>
+        <_1988>0.0609 0.0900 0.1138 0.1302 0.1423 0.1547 0.1642 0.2006 0.2096</_1988>
+        <_1989>0.0644 0.0841 0.1068 0.1273 0.1390 0.1474 0.1561 0.1580 0.1820</_1989>
+        <_1990>0.0604 0.0851 0.1060 0.1283 0.1468 0.1572 0.1609 0.1453 0.2260</_1990>
+        <_1991>0.0642 0.0894 0.1101 0.1280 0.1426 0.1553 0.1634 0.1508 0.1850</_1991>
+        <_1992>0.0598 0.0905 0.1118 0.1319 0.1494 0.1592 0.1738 0.1739 0.1563</_1992>
+        <_1993>0.0579 0.0922 0.1118 0.1286 0.1411 0.1529 0.1565 0.1600 0.1475</_1993>
+        <_1994>0.0522 0.0809 0.1047 0.1207 0.1350 0.1405 0.1512 0.1609 0.1563</_1994>
+        <_1995>0.0612 0.0856 0.1106 0.1314 0.1446 0.1617 0.1631 0.1791 0.1753</_1995>
+        <_1996>0.0619 0.0829 0.1061 0.1264 0.1457 0.1557 0.1719 0.1694 0.1830</_1996>
+        <_1997>0.0497 0.0826 0.1017 0.1197 0.1368 0.1463 0.1541 0.1670 0.1817</_1997>
+        <_1998>0.0504 0.0725 0.0939 0.1086 0.1194 0.1331 0.1438 0.1559 0.1485</_1998>
+        <_1999>0.0460 0.0795 0.0991 0.1134 0.1255 0.1341 0.1434 0.1508 0.1390</_1999>
+        <_2000>0.0523 0.0724 0.0948 0.1110 0.1291 0.1387 0.1530 0.1599 0.1630</_2000>
+        <_2001>0.0622 0.0853 0.0990 0.1197 0.1332 0.1483 0.1552 0.1454 0.1440</_2001>
+        <_2002>0.0494 0.0793 0.0959 0.1076 0.1254 0.1324 0.1413 0.1640 0.0590</_2002>
+        <_2003>0.0518 0.0772 0.0930 0.1050 0.1113 0.1282 0.1401 0.1280 0.1563</_2003>
+        <_2004>0.0498 0.0729 0.0888 0.0993 0.1091 0.1125 0.1241 0.1219 0.1320</_2004>
+        <_2005>0.0476 0.0741 0.0910 0.1064 0.1175 0.1257 0.1305 0.1215 0.1373</_2005>
+        <_2006>0.0483 0.0714 0.0882 0.1023 0.1113 0.1208 0.1279 0.1394 0.1780</_2006>
+        <_2007>0.0620 0.0753 0.0831 0.0994 0.1154 0.1230 0.1301 0.1432 0.1340</_2007>
+        <_2008>0.0257 0.0658 0.0858 0.0936 0.1030 0.1105 0.1155 0.1331 0.1350</_2008>
+        <_2009>0.0453 0.0644 0.0688 0.1033 0.1156 0.1251 0.1347 0.1542 0.1780</_2009>
+        <_2010>0.0435 0.0580 0.0790 0.0850 0.1118 0.1189 0.1158 0.1119 0.1413</_2010>
+      </WeightAtAge>
+    </ModelData>
+  </Model>
+</PMML>
