@@ -266,13 +266,25 @@ guiView	<- function()
 		.plotSimulationSummary( admbObj )
 	}
 	
+	if(gLetter)
+	{
+		mfg=par("mfg")
+		if(mfg[1]==1 && mfg[2]==1) ix=1
+		if(mfg[1]==2 && mfg[2]==1) ix=2
+		if(mfg[1]==1 && mfg[2]==2) ix=3
+		if(mfg[1]==2 && mfg[2]==2) ix=4
+		gletter(ix)
+	}
+	
 	## Saving PDF of figure in current device
 	if(savePDF)
 	{
-		if(graphicFileName=="Graphics File Name or File Prefix")
-			graphicFileName = "iSCAM"
-		filePrefix=graphicFileName
-		dev.copy2pdf( file=paste( filePrefix,"fig",plotType,".pdf",sep="" ) )
+		#if(graphicFileName=="Graphics File Name or File Prefix")
+		#	graphicFileName = "iSCAM"
+		#filePrefix=graphicFileName
+		#dev.copy2pdf( file=paste( filePrefix,"fig",plotType,".pdf",sep="" ) )
+		setWinVal(c(figFileName=plotType))
+		.saveGraphic()
 	}
 }
 
@@ -902,7 +914,7 @@ guiView	<- function()
 		yy = cbind( yy, rowMeans(M_tot) )	
 		yrange=c(0, max(yy, na.rm=TRUE))
 		lw = c(rep(1,ngear),2)
-		lt = c(rep(1,ngear),1)
+		lt = c(1:ngear,1)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
 			xlab="Year", ylab="Mortality rate")
@@ -1169,8 +1181,14 @@ guiView	<- function()
 	
 	if(graphicDirectory=="Working Directory")
 		graphicDirectory = getwd()
+	if(figFileName=="Figure File Name")
+	{
+		figFileName = plotType
+		setWinVal(c(figFileName=plotType))
+	}
+	figFile = figFileName
 	
-	fileName = paste(graphicDirectory, "/", plotType,".pdf", sep="")
+	fileName = paste(graphicDirectory, "/", figFile,".pdf", sep="")
 	dev.copy2pdf(file=fileName)
 	cat("Graphic saved as:", fileName, "\n")
 }

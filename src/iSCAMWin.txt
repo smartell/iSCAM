@@ -67,7 +67,7 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 		radio name=plotType value=traceplot     text="Trace plots" 				function=.mpdView mode=character sticky=W
 		
 	#-- widget 3
-	grid 3 1 toptitle="Graphics options" topfont="Courier underline 10" relief="sunken" padx=5 pady=5
+	grid 4 1 toptitle="Graphics options" topfont="Courier underline 10" relief="sunken" padx=5 pady=5
 		
 		#-- widget 3a
 		grid 1 2 padx=2
@@ -83,14 +83,20 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 		#-- widget 3b
 		grid 1 2 padx=2
 			label text="Device options " font="Courier 10" sticky=W
-			grid 1 2 relief="sunken"
+			grid 1 3 relief="sunken"
 				check name=annotate   function=.subView checked=T text="Annotate"    sticky=W
 				check name=savePDF    function=.subView checked=F text="Save PDF"    sticky=W
+				check name=gLetter    function=.subView checked=F text="Label graph" sticky=W
 		
 		#-- widget 3c
-		grid 1 3 padx=2
+		grid 1 2 padx=2
 			button text=".."	font="Courier 10"	function=.selectDirectory sticky=W
-			entry name=graphicDirectory width=30 font="Courier 10" value="getwd()" mode="character" sticky=W
+			entry name=graphicDirectory width=50 font="Courier 10" value="getwd()" mode="character" sticky=W
+			
+		#-- widget 3d
+		grid 1 3 padx=2
+			label text="File name " font="Courier 10" sticky=W
+			entry name=figFileName width=30 font="Courier 10" value="Figure File Name" mode="character" sticky=W
 			button text="Save graphic" font="Courier 10"	function=.saveGraphic sticky=W
 			
 	
