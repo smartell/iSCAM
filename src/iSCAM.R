@@ -863,7 +863,7 @@ guiView	<- function()
 	})	
 }
 
-.plotSurveyfit	<- function( repObj, annotate=FALSE)
+.	<- function( repObj, annotate=FALSE)
 {
 	with(repObj, {
 		if(is.matrix(it)){
