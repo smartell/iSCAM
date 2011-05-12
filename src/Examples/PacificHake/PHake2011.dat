@@ -77,6 +77,11 @@
 1
 #nit_nobs
 7
+#survey type 
+## 1 = survey is proportional to vulnerable numbers
+## 2 = survey is proportional to vulnerable biomass
+## 3 = survey is proportional to spawning biomass (e.g., herring spawn survey)
+2
 #iyr    it 	gear wt survey timing
 1995	1.518 2	  0.7374631   0.5
 1998	1.343 2	  1.0000000   0.5
