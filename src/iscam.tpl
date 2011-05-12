@@ -205,8 +205,10 @@ DATA_SECTION
 	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
 	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
+	vector avg_fec(sage,nage);				//average fecundity-at-age
 	LOC_CALCS
 		int iyr;
+		avg_fec.initialize();
 		for(i=syr;i<=nyr+1;i++)
 		{
 			wt_obs(i)=wa;			
@@ -219,6 +221,10 @@ DATA_SECTION
 			wt_obs(iyr)=tmp_wt_obs(i)(sage,nage);
 			fec(iyr)=elem_prod(plogis(age,ah,gh),wt_obs(iyr));
 		}
+		//CHANGED average fecundity
+		int nfec = fec.rowmax()-fec.rowmin()+1;
+		avg_fec=colsum(fec)/nfec;
+		
 		
 		//from Jake Schweigert: use mean-weight-at-age data
 		//from the last 5 years for the projected mean wt.
@@ -445,7 +451,7 @@ PARAMETER_SECTION
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Selectivity parameters (A very complicated ragged array)
-	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-5.,5.,sel_phz);
+	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-15.,15.,sel_phz);
 	LOC_CALCS
 		//initial values for logistic selectivity parameters
 		//set phase to -1 for fixed selectivity.
@@ -467,11 +473,14 @@ PARAMETER_SECTION
 	END_CALCS
 	
 	
+	//FIXME Vivian Haist: possible bias in Bo due to dev_vector for log_rec_devs
+	//		Try and compare estimates using init_bounded_vector version.
 	//Annual recruitment deviations
 	!! int ii;
 	!! ii=syr-nage+sage;
 	!! if(cntrl(5)) ii = syr;  //if initializing with ro
-	init_bounded_dev_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	//init_bounded_dev_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
 	
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
@@ -500,7 +509,7 @@ PARAMETER_SECTION
 	vector rt(syr+sage,nyr); 	//predicted sage recruits from S-R curve
 	
 	vector delta(syr+sage,nyr);	//residuals for stock recruitment
-	
+	vector avg_log_sel(1,ngear);//conditional penalty for objective function
 	
 	matrix nlvec(1,6,1,ilvec);	//matrix for negative loglikelihoods
 	
@@ -626,7 +635,7 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 
 FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
 	RETURN_ARRAYS_INCREMENT();
-	int nodes=spline_coffs.colmax()-spline_coffs.colmin()+1;
+	int nodes= spline_coffs.colmax()-spline_coffs.colmin()+1;
 	int rmin = spline_coffs.rowmin();
 	int rmax = spline_coffs.rowmax();
 	
@@ -659,6 +668,8 @@ FUNCTION calcSelectivities
 		Following the initializatoin of the selectivity curves, time-varying 
 		considerations are implemented.
 		
+		TODO: Add penality (10.*square(avg_log_sel)) to objective function 
+		in cases where estimating sel_coffs to mimic an init_bounded_dev vector.
 		
 	
 	*/
@@ -671,6 +682,7 @@ FUNCTION calcSelectivities
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
 	jlog_sel.initialize();
 	log_sel.initialize();
+	avg_log_sel.initialize();
 	
 	for(j=1;j<=ngear;j++)
 	{
@@ -729,16 +741,13 @@ FUNCTION calcSelectivities
 				// SJDM:  I was not able to get this to run very well.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
-				//p3 = sel_par(j,1,3);
 				
 				jlog_sel(j) = 0;
 				for(i = syr; i<=nyr; i++)
 				{
-					//age_dev = age + p3 * wt_dev(i);
 					tmp2(i) = log( plogis(wt_obs(i),p1,p2) );
 					//tmp2(i) = log(1./(1.+exp(p1-p2*wt_obs(i))));
-				}
-					 
+				}	 
 				
 			default:
 				jlog_sel(j)=0;
@@ -1055,8 +1064,8 @@ FUNCTION calc_stock_recruitment
 	in cases where M varies over time. Otherwise bo is biased based
 	on the initial value of M.
 	
-	FIXME Need to adjust spawning biomass to post fishery numbers.
-	
+	CHANGED Need to adjust spawning biomass to post fishery numbers.
+	FIXME  Need to adjust spawners per recruit (phib) to average fecundity.
 	*/ 
 	int i;
 	dvariable tau = (1.-rho)/varphi;
@@ -1064,7 +1073,8 @@ FUNCTION calc_stock_recruitment
 	dvar_vector lx(sage,nage); lx=1;
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
 	lx(nage)/=(1.-exp(-m_bar));
-	dvariable phib = lx * fec(syr);		//SM Dec 6, 2010
+	
+	dvariable phib = lx * avg_fec;  //fec(syr);		//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass
@@ -1187,7 +1197,7 @@ FUNCTION calc_objective_function
 	{
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
-			if( isel_type(k)!=1 )  
+			if( isel_type(k)!=1 || isel_type(k)!=7 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1207,6 +1217,7 @@ FUNCTION calc_objective_function
 	
 	// CONSTRAINT FOR SELECTIVITY DEV VECTORS
 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
+	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
 	for(k=1;k<=ngear;k++)
 	{
 		if(active(sel_par(k)) && isel_type(k)!=1)
@@ -1461,6 +1472,7 @@ FUNCTION void calc_reference_points()
 	/*Calculate average vulnerability*/
 	dvector va_bar(sage,nage);
 	va_bar.initialize();
+	/*TODO user should specify allocation for MSY based reference points*/
 	dvector allocation(1,ngear);
 	allocation = dvector(fsh_flag/sum(fsh_flag));
 	
@@ -1472,11 +1484,11 @@ FUNCTION void calc_reference_points()
 		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
 	}
 
-
+	/*CHANGED Changed equilibrium calculations based on average m */
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-		equilibrium(fe,value(ro),value(kappa),value(m),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
 		ddye_df = phiq*dre_df + re*dphiq_df;
 		fe = fe - dye_df/ddye_df;
@@ -1484,7 +1496,7 @@ FUNCTION void calc_reference_points()
 		if(sfabs(dye_df)<1.e-5)break;
 	}
 	fmsy=fe;
-	equilibrium(fmsy,value(ro),value(kappa),value(m),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 	msy=ye;
 	bmsy=be;
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
@@ -1560,6 +1572,7 @@ FUNCTION void simulation_model(const long& seed)
 	
 	/*----------------------------------*/
     /*		--Initialize model--		*/
+	/*FIXME need to calculate phie based on m_bar and avg_fec*/
 	/*----------------------------------*/
 	dvector lx=pow(exp(-value(m)),age-min(age));
 	lx(nage)/=(1.-exp(-value(m)));
