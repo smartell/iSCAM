@@ -170,6 +170,11 @@ DATA_SECTION
 	
 	init_int nit;
 	init_ivector nit_nobs(1,nit);
+	//#survey type 
+	//## 1 = survey is proportional to vulnerable numbers
+	//## 2 = survey is proportional to vulnerable biomass
+	//## 3 = survey is proportional to spawning biomass (e.g., herring spawn survey)
+	init_ivector survey_type(1,nit);
 	init_3darray survey_data(1,nit,1,nit_nobs,1,5);
 	//init_matrix survey_data(1,nit,1,4);
 	imatrix iyr(1,nit,1,nit_nobs);
@@ -996,6 +1001,10 @@ FUNCTION calc_survey_observations
 	Dec 6, 2010, modified predicted survey biomass to accomodate empirical weight-at-age 
 	data (wt_obs).
 	
+	May 11, 2011.  FIXME Vivian Haist pointed out an error in survey biomass comparison.
+	The spawning biomass is not properly calculated in this routine. I.e. its different 
+	than the spawning biomass in the stock-recruitment routine. (Based on fecundity which
+	changes with time when given empirical weight-at-age data.)
 	
 	*/
 	/*
@@ -1013,8 +1022,8 @@ FUNCTION calc_survey_observations
 	for(i=1;i<=nit;i++)
 	{	
 		int nx=0;		//counter for retrospective analysis
-		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable numbers
-		dvar_matrix VB(1,nit_nobs(i),sage,nage); //vulnerable biomass
+		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable units for survey comparison
+		//dvar_matrix VB(1,nit_nobs(i),sage,nage); //vulnerable biomass
 		for(j=1;j<=nit_nobs(i);j++)
 		{
 			ii=iyr(i,j);
@@ -1025,12 +1034,29 @@ FUNCTION calc_survey_observations
 			//occurred during the time of the survey.
 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
 			//V(j)=elem_prod(N(ii),mfexp(log_va));
-			V(j)=elem_prod(Np,mfexp(log_va));
-			VB(j)=elem_prod(V(j),wt_obs(ii));		//SM Dec 6, 2010
-		
+			switch(survey_type(i))
+			{
+				case 1:
+					V(j)=elem_prod(Np,mfexp(log_va));
+				break;
+				case 2:
+					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
+				break;
+				case 3:
+					V(j)=elem_prod(Np,fec(ii));
+				break;
+			}
+			
+			//VB(j)=elem_prod(V(j),wt_obs(ii));		//SM Dec 6, 2010
+			
+			//If the survey is a spawn index, then need to account
+			//for changes in fecundity.
+			
 			if(iyr(i,j)<=nyr) nx++;
 		}
-		dvar_vector t1 = rowsum(VB);//V*wa;
+		dvar_vector t1 = rowsum(V);//V*wa;
+		//cout<<"V\n"<<t1<<endl;
+		
 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
 		epsilon(i).sub(1,nx) = zt-mean(zt);
 		q(i) = exp(mean(zt));
@@ -1086,6 +1112,8 @@ FUNCTION calc_stock_recruitment
 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(12)))*fec(i);
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
+	//cout<<"sbt\n"<<sbt<<endl;
+	//exit(1);
 	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
