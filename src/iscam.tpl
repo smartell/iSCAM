@@ -25,6 +25,9 @@
 // TODO:    add cubic spline interpolation for time varying M         //
 // CHANGED  Fix the type 6 selectivity implementation. not working.    //
 // TODO:  fix cubic spline selectivity for only years when data avail  //
+// CHANGED: fixed a bug in the simulation model log_ft_pars goes out   //
+//        of bounds.                                                   //
+//                                                                     //
 //                                                                     //
 //                                                                     //
 // ------------------------------------------------------------------- //
@@ -484,8 +487,8 @@ PARAMETER_SECTION
 	!! int ii;
 	!! ii=syr-nage+sage;
 	!! if(cntrl(5)) ii = syr;  //if initializing with ro
-	//init_bounded_dev_vector log_rec_devs(ii,nyr,-15.,15.,2);
-	init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	init_bounded_dev_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	//init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
 	
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
@@ -547,6 +550,7 @@ PRELIMINARY_CALCS_SECTION
   {
     initParameters();
     calcSelectivities();
+    calcTotalMortality();
     simulation_model(rseed);
   }
 
@@ -747,15 +751,19 @@ FUNCTION calcSelectivities
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
 				
-				jlog_sel(j) = 0;
+				jlog_sel(j) = 0.;
 				for(i = syr; i<=nyr; i++)
 				{
-					tmp2(i) = log( plogis(wt_obs(i),p1,p2) );
+					dvar_vector tmpwt=log(wt_obs(i)*1000)/mean(log(wt_obs*1000.));
+					tmp2(i) = log( plogis(tmpwt,p1,p2) );
+					
 					//tmp2(i) = log(1./(1.+exp(p1-p2*wt_obs(i))));
 				}	 
+				break;
 				
 			default:
 				jlog_sel(j)=0;
+				break;
 				
 		}  // switch
 		
@@ -861,7 +869,7 @@ FUNCTION calcTotalMortality
 	
 FUNCTION calcNumbersAtAge
 	/*
-		**** Need to check the difference between the initialization 
+		TODO Need to check the difference between the initialization 
 		of the numbers at age here at the margins in comparison to the
 		simulation model.
 	*/
@@ -884,14 +892,15 @@ FUNCTION calcNumbersAtAge
 	{
 		if(cntrl(5))  //if starting at unfished state
 		{
-			N(syr,j)=ro*exp(-m*(j-1));
+			N(syr,j)=ro*exp(-m_bar*(j-1));
 		}
 		else{
 			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
-			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m*(j-sage));
+			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
 		}
 	}
-	N(syr,nage)/=(1.-exp(-m));
+	
+	N(syr,nage)/=(1.-exp(-m_bar));
 	
 	
 	for(i=syr;i<=nyr;i++)
@@ -1001,8 +1010,8 @@ FUNCTION calc_survey_observations
 	Dec 6, 2010, modified predicted survey biomass to accomodate empirical weight-at-age 
 	data (wt_obs).
 	
-	May 11, 2011.  FIXME Vivian Haist pointed out an error in survey biomass comparison.
-	The spawning biomass is not properly calculated in this routine. I.e. its different 
+	May 11, 2011.  CHANGED Vivian Haist pointed out an error in survey biomass comparison.
+	The spawning biomass was not properly calculated in this routine. I.e. its different 
 	than the spawning biomass in the stock-recruitment routine. (Based on fecundity which
 	changes with time when given empirical weight-at-age data.)
 	
@@ -1091,7 +1100,7 @@ FUNCTION calc_stock_recruitment
 	on the initial value of M.
 	
 	CHANGED Need to adjust spawning biomass to post fishery numbers.
-	FIXME  Need to adjust spawners per recruit (phib) to average fecundity.
+	CHANGED Need to adjust spawners per recruit (phib) to average fecundity.
 	*/ 
 	int i;
 	dvariable tau = (1.-rho)/varphi;
@@ -1100,7 +1109,7 @@ FUNCTION calc_stock_recruitment
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
 	lx(nage)/=(1.-exp(-m_bar));
 	
-	dvariable phib = lx * avg_fec;  //fec(syr);		//SM Dec 6, 2010
+	dvariable phib = (lx*exp(-m_bar*cntrl(12))) * avg_fec;  //fec(syr);		//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass
@@ -1139,6 +1148,7 @@ FUNCTION calc_stock_recruitment
 	if(verbose)cout<<"**** Ok after calc_stock_recruitment ****"<<endl;
 	
 FUNCTION calc_objective_function
+	{
 	//Dec 20, 2010.  SJDM added prior to survey qs.
 	/*q_prior is an ivector with current options of 0 & 1.
 	0 is a uniform density (ignored) and 1 is a normal
@@ -1248,7 +1258,7 @@ FUNCTION calc_objective_function
 	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k)) && isel_type(k)!=1)
+		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 )
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1397,7 +1407,7 @@ FUNCTION calc_objective_function
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 	nf++;
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
-
+	}
 
 
 FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
@@ -1471,6 +1481,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	
 
 FUNCTION void calc_reference_points()
+	{
 	/*
 	Uses Newton_Raphson method to determine Fmsy and MSY 
 	based reference points.  
@@ -1495,7 +1506,7 @@ FUNCTION void calc_reference_points()
 	int i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
 	double dye_df,ddye_df;
-	fe = 1.5*value(m);
+	fe = 1.5*value(m_bar);
 	
 	/*Calculate average vulnerability*/
 	dvector va_bar(sage,nage);
@@ -1505,13 +1516,13 @@ FUNCTION void calc_reference_points()
 	allocation = dvector(fsh_flag/sum(fsh_flag));
 	
 	
-	
+	/*FIXME Allow for user to specify allocation among gear types.*/
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
 		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
 	}
-
+	
 	/*CHANGED Changed equilibrium calculations based on average m */
 	for(i=1;i<=20;i++)
 	{
@@ -1528,7 +1539,7 @@ FUNCTION void calc_reference_points()
 	msy=ye;
 	bmsy=be;
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
-	
+	}
 
 FUNCTION void simulation_model(const long& seed)
 	/*
@@ -1600,23 +1611,50 @@ FUNCTION void simulation_model(const long& seed)
 	
 	/*----------------------------------*/
     /*		--Initialize model--		*/
-	/*FIXME need to calculate phie based on m_bar and avg_fec*/
+	/*CHANGED now calculating phie based on m_bar and avg_fec*/
 	/*----------------------------------*/
-	dvector lx=pow(exp(-value(m)),age-min(age));
-	lx(nage)/=(1.-exp(-value(m)));
-	double phie=lx*fec(syr);
+	dvector lx=pow(exp(-value(m_bar)),age-min(age));
+	lx(nage)/=(1.-exp(-value(m_bar)));
+	double phie=(lx*exp(-value(m_bar)*cntrl(12)))*avg_fec;//fec(syr);
 	so=kappa/phie;
+	
 	
 	if(cntrl(2)==1) beta=(kappa-1.)/(ro*phie);
 	if(cntrl(2)==2) beta=log(kappa)/(ro*phie);
 	
 	//Initial numbers-at-age with recruitment devs
-	for(i=syr;i < syr+sage;i++)
-		N(i,sage)=exp(log_avgrec+wt(i));
-		
-	for(j=sage+1;j<=nage;j++)
-		N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
+	/*for(i=syr;i < syr+sage;i++)
+			N(i,sage)=exp(log_avgrec+wt(i));
+			
+		for(j=sage+1;j<=nage;j++)
+			N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
+		*/
 	
+	N.initialize();
+
+	//log_rt=log_avgrec+log_rec_devs;
+	log_rt(syr) = log(ro);
+
+	for(i=syr+1;i<=nyr;i++){
+		log_rt(i)=log_avgrec+log_rec_devs(i);
+		N(i,sage)=mfexp(log_rt(i));
+	}
+	N(nyr+1,sage)=mfexp(log_avgrec);
+
+
+	for(j=sage;j<=nage;j++) 
+	{
+		if(cntrl(5))  //if starting at unfished state
+		{
+			N(syr,j)=ro*exp(-m_bar*(j-1));
+		}
+		else{
+			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
+			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
+		}
+	}
+
+	N(syr,nage)/=(1.-exp(-m_bar));
 	cout<<"	Ok after initialize model\n";
 	/*----------------------------------*/
 	
@@ -1639,8 +1677,11 @@ FUNCTION void simulation_model(const long& seed)
 		
 	*/
 
+	/*CHANGED May 15, 2011 calcSelectivities gets called from PRELIMINARY_CALCS*/
 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
-	d3_array log_sel(1,ngear,syr,nyr,sage,nage);
+	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
+	dlog_sel=value(log_sel);
+	/*
 	for(k=1;k<=ngear;k++)
 		for(i=syr;i<=nyr;i++)
 		{
@@ -1649,6 +1690,7 @@ FUNCTION void simulation_model(const long& seed)
 			log_sel(k)(i) -= log(mean(exp(log_sel(k)(i))));
 		}
 		//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
+	*/
 	cout<<"	Ok after selectivity\n";
 
 	/*----------------------------------*/
@@ -1662,6 +1704,8 @@ FUNCTION void simulation_model(const long& seed)
 	zt.initialize();
 	dmatrix ft(syr,nyr,1,ngear);
 	ft.initialize();
+	dvector sbt(syr,nyr+1);
+	sbt.initialize();
 	
 	
 	for(i=syr;i<=nyr;i++)
@@ -1676,13 +1720,15 @@ FUNCTION void simulation_model(const long& seed)
 		observed catch from each fleet.*/
 		dvector oct = trans(obs_ct)(i);
 		
+		
 		for(k=1;k<=ngear;k++)
-			va(k)=exp(log_sel(k)(i));
+			va(k)=exp(dlog_sel(k)(i));
 		
 		//get_ft is defined in the Baranov.cxx file
 		//CHANGED these ft are based on biomass at age, should be numbers at age
 		//ft(i) = get_ft(oct,value(m),va,bt);
 		ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_obs(i));
+		//cout<<trans(obs_ct)(i)<<"\t"<<oct<<endl;
 		
 		// overwrite observed catch incase it was modified by get_ft
 		for(k=1;k<=ngear;k++)
@@ -1692,39 +1738,49 @@ FUNCTION void simulation_model(const long& seed)
 		//dvector zt(sage,nage);
 		zt(i)=value(m);
 		for(k=1;k<=ngear;k++){
-			zt(i)+= ft(i,k)*exp(log_sel(k)(i));
+			zt(i)+= ft(i,k)*exp(dlog_sel(k)(i));
 		}
 		
+		
+		//CHANGED definition of spawning biomass based on ctrl(12)
+		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(12)))*fec(i));
 		
 		//Update numbers at age
 		if(i>=syr+sage-1)
 		{
 			double rt;
-			double et=value(N(i-sage+1))*fec(i-sage+1);
+			//double et=value(N(i-sage+1))*fec(i-sage+1);
+			double et=sbt(i-sage+1);
 			if(cntrl(2)==1)rt=value(so*et/(1.+beta*et));
 			if(cntrl(2)==2)rt=value(so*et*exp(-beta*et));
 			N(i+1,sage)=rt*exp(wt(i)-0.5*tau*tau);
 			
-			//testing
+			/*CHANGED The recruitment calculation above is incosistent
+			  with the assessment model.  Below recruitment is based on
+			  rt=exp(log_avgrec + wt + rt_dev), where the rt_dev calculation
+			is based on the BH or Ricker model.*/
+			//double rt_dev = log(rt)-value(log_avgrec);
 			//N(i+1,sage)=exp(log_avgrec+wt(i));
+			
 		}
 
 
 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),exp(-zt(i)(sage,nage-1)));
 		N(i+1,nage)+=N(i,nage)*exp(-zt(i,nage));
 		
+		
 		//Catch & Catch-at-age
 		for(k=1;k<=ngear;k++)
 		{
 			if(ft(i,k)>0)
 			{
-				dvector sel = exp(log_sel(k)(i));
+				dvector sel = exp(dlog_sel(k)(i));
 				d3C(k)(i)=elem_prod(elem_div(ft(i,k)*sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
 				obs_ct(k,i)=d3C(k)(i)*wt_obs(i);
 			}
 			else	//if this is a survey
 			{
-				dvector sel = exp(log_sel(k)(i));
+				dvector sel = exp(dlog_sel(k)(i));
 				d3C(k)(i)=elem_prod(elem_div(sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
 			}
 		}
@@ -1736,10 +1792,27 @@ FUNCTION void simulation_model(const long& seed)
 	ki=1;
 	for(k=1;k<=ngear;k++)
 		for(i=syr;i<=nyr;i++)
-			if(obs_ct(k,i)>0)
+			if(obs_ct(k,i)>0){
 				log_ft_pars(ki++)=log(ft(i,k));
+			}
+	
+	// Error handler to inform user population went extinct.
+	if(min(sbt(syr,nyr))<=1.e-5)
+	{
+		cout<<"---------------------------------------\n";
+		cout<<"Simulated population went extinct, try\n";
+		cout<<"increasing steepness, Ro and Rbar\n";
+		cout<<sbt<<endl;
+		cout<<"Minimum spawning biomass="<<min(sbt(syr,nyr))<<endl;
+		cout<<"---------------------------------------\n";
+		exit(1);
+	}
+	
+	//Average recruitment calculation
 	
 	
+	cout<<"	log(mean(column(N,sage))) = "<<mean(log(column(N,sage)))<<endl;
+	cout<<"	log_avgrec = "<<log_avgrec<<endl;
 	cout<<"	Ok after population dynamics\n";
 	/*----------------------------------*/
 	
@@ -1763,7 +1836,9 @@ FUNCTION void simulation_model(const long& seed)
 			t1/=sum(t1);
 			A(k)(i)(a_sage(k),a_nage(k))=rmvlogistic(t1,0.3,i+seed);
 			if(seed==000)
+			{
 				A(k)(i)(a_sage(k),a_nage(k))=t1;
+			}
 			//cout<<iyr<<"\t"<<k<<endl;
 		}
 	}
@@ -1771,23 +1846,42 @@ FUNCTION void simulation_model(const long& seed)
 	//cout<<Ahat<<endl;
 	
 	//Relative abundance indices
+	//CHANGED fixed this to reflect survey timing etc & survey_type
 	for(k=1;k<=nit;k++)
 	{   
 		for(i=1;i<=nit_nobs(k);i++)
 		{
 			ii=iyr(k,i);
 			ig=igr(k,i);
-			dvector sel = exp(log_sel(ig)(ii));
-			dvector V = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
-			it(k,i) = V * elem_prod(sel,wt_obs(ii)) * exp(epsilon(k,i));
+			dvector sel = exp(dlog_sel(ig)(ii));
+			dvector Np = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
+			switch(survey_type(k))
+			{
+				case 1: //survey based on numbers
+					Np = elem_prod(Np,sel);
+				break;
+				case 2: //survey based on biomass
+					Np = elem_prod(elem_prod(Np,sel),wt_obs(ii));
+				break;
+				case 3: //survey based on spawning biomass
+					Np = elem_prod(Np,fec(ii));
+				break;
+			}
+			it(k,i) = sum(Np) * exp(epsilon(k,i));
 		}
 	}
+	
+	
 
 	cout<<"	OK after observation models\n";
 	/*----------------------------------*/
 	
-
+	//CHANGED Fixed bug in reference points calc call from simulation model,
+	//had to calculate m_bar before running this routine.
+	
 	calc_reference_points();
+	//cout<<"	OK after reference points\n"<<fmsy<<endl;
+	//exit(1);
 	//	REPORT(fmsy);
 	//	REPORT(msy);
 	//	REPORT(bmsy);
@@ -1799,7 +1893,7 @@ FUNCTION void simulation_model(const long& seed)
 	ofs<<"msy\n"<<msy<<endl;
 	ofs<<"bmsy\n"<<bmsy<<endl;
 	ofs<<"va\n"<<va<<endl;
-	ofs<<"sbt\n"<<rowsum(elem_prod(N,fec))<<endl;
+	ofs<<"sbt\n"<<sbt<<endl;//<<rowsum(elem_prod(N,fec))<<endl;
 	ofs<<"rt\n"<<rt<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
 	ofs<<"ft\n"<<trans(ft)<<endl;
@@ -1808,9 +1902,12 @@ FUNCTION void simulation_model(const long& seed)
 	ofs<<"it\n"<<it<<endl;
 	ofs<<"N\n"<<N<<endl;
 	ofs<<"A\n"<<A<<endl;
+	ofs<<"dlog_sel\n"<<dlog_sel<<endl;
 	cout<<"  -- Simuation results written to iscam.sim --\n";
 	cout<<"___________________________________________________"<<endl;
 	
+	//cout<<N<<endl;
+	//exit(1);
 	
 FUNCTION dvector cis(const dvector& na)
 	//Cohort Influenced Selectivity
