@@ -483,12 +483,21 @@ PARAMETER_SECTION
 	
 	//FIXME Vivian Haist: possible bias in Bo due to dev_vector for log_rec_devs
 	//		Try and compare estimates using init_bounded_vector version.
+	
+	// May 16, Just looked at Ianelli's code, he used bounded_vector, and 
+	// separates the problem into init_log_rec_devs and log_rec_devs
+	
+	
 	//Annual recruitment deviations
-	!! int ii;
-	!! ii=syr-nage+sage;
-	!! if(cntrl(5)) ii = syr;  //if initializing with ro
-	init_bounded_dev_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	//!! int ii;
+	//!! ii=syr-nage+sage;
+	//!! if(cntrl(5)) ii = syr;  //if initializing with ro
 	//init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	
+	!! int init_dev_phz = 2;
+	!! if(cntrl(5)) init_dev_phz = -1;
+	init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
+	init_bounded_vector log_rec_devs(syr,nyr,-15.,15.,2);
 	
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
@@ -503,6 +512,7 @@ PARAMETER_SECTION
 	number m;					//initial natural mortality rate
 	number m_bar;				//average natural mortality rate
 	number log_avgrec;			//log of average recruitment.
+	number log_recinit;			//log of initial recruitment in syr.
 	//number log_avg_f;			//log of average fishing mortality DEPRICATED
 	number rho;					//proportion of the observation error
 	number varphi				//total precision in the CPUE & Rec anomalies.
@@ -617,9 +627,10 @@ FUNCTION initParameters
 	
 	m = mfexp(theta(3));
 	log_avgrec = theta(4);
+	log_recinit = theta(5);
 	
-	rho=theta(5);
-	varphi=theta(6);
+	rho=theta(6);
+	varphi=theta(7);
 	
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
@@ -874,20 +885,36 @@ FUNCTION calcNumbersAtAge
 		simulation model.
 	*/
 	
-	
 	int i,j;
 	N.initialize();
 	
-	//log_rt=log_avgrec+log_rec_devs;
-	log_rt(syr) = log(ro);
 	
+	if(cntrl(5)){	//If initializing in at unfished conditions
+		log_rt(syr) = log(ro);
+		for(j=sage;j<=nage;j++)
+		{
+			N(syr,j)=ro*exp(-m_bar*(j-1.));
+		}
+	}
+	else{			//If starting at unfished conditions
+		log_rt(syr) = log_avgrec+log_rec_devs(syr);
+		N(syr,sage)=mfexp(log_rt(syr));
+		for(j=sage+1;j<=nage;j++)
+		{
+			N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
+		}
+	}
+	N(syr,nage)/=(1.-exp(-m_bar));
+	
+	
+	//initial number of sage recruits from year syr+1, nyr;
 	for(i=syr+1;i<=nyr;i++){
 		log_rt(i)=log_avgrec+log_rec_devs(i);
 		N(i,sage)=mfexp(log_rt(i));
 	}
 	N(nyr+1,sage)=mfexp(log_avgrec);
 	
-	
+	/*
 	for(j=sage;j<=nage;j++) 
 	{
 		if(cntrl(5))  //if starting at unfished state
@@ -898,10 +925,7 @@ FUNCTION calcNumbersAtAge
 			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
 			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
 		}
-	}
-	
-	N(syr,nage)/=(1.-exp(-m_bar));
-	
+	}*/
 	
 	for(i=syr;i<=nyr;i++)
 	{
@@ -1214,7 +1238,7 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 		
-			nlvec(3,k)=dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
+			nlvec(3,k)=2*dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
 		
 			for(i=1;i<=naa/*na_nobs(k)*/;i++)
 			{
@@ -1378,13 +1402,15 @@ FUNCTION calc_objective_function
 	{
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(9));
 		//Penalty for log_rec_devs (large variance here)
-		pvec(4) = dnorm(log_rec_devs,5.);
+		pvec(4) = dnorm(log_rec_devs,2.0);
+		pvec(5) = dnorm(init_log_rec_devs,2.0);
 	}
 	else
 	{
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(8));
 		//Penalty for log_rec_devs (CV ~ 0.0707) in early phases
 		pvec(4)=100.*norm2(log_rec_devs);
+		pvec(5)=100.*norm2(init_log_rec_devs);
 	}
 	
 	//Priors for deviations in natural mortality rates
@@ -1631,9 +1657,25 @@ FUNCTION void simulation_model(const long& seed)
 		*/
 	
 	N.initialize();
-
+	if(cntrl(5)){	//If initializing in at unfished conditions
+		log_rt(syr) = log(ro);
+		for(j=sage;j<=nage;j++)
+		{
+			N(syr,j)=ro*exp(-m_bar*(j-1.));
+		}
+	}
+	else{			//If starting at unfished conditions
+		log_rt(syr) = log_avgrec;
+		N(syr,sage)=mfexp(log_rt(syr));
+		for(j=sage+1;j<=nage;j++)
+		{
+			N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
+		}
+	}
+	N(syr,nage)/=(1.-exp(-m_bar));
+	
 	//log_rt=log_avgrec+log_rec_devs;
-	log_rt(syr) = log(ro);
+	//log_rt(syr) = log(ro);
 
 	for(i=syr+1;i<=nyr;i++){
 		log_rt(i)=log_avgrec+log_rec_devs(i);
@@ -1641,7 +1683,7 @@ FUNCTION void simulation_model(const long& seed)
 	}
 	N(nyr+1,sage)=mfexp(log_avgrec);
 
-
+	/*
 	for(j=sage;j<=nage;j++) 
 	{
 		if(cntrl(5))  //if starting at unfished state
@@ -1655,6 +1697,7 @@ FUNCTION void simulation_model(const long& seed)
 	}
 
 	N(syr,nage)/=(1.-exp(-m_bar));
+	*/
 	cout<<"	Ok after initialize model\n";
 	/*----------------------------------*/
 	
