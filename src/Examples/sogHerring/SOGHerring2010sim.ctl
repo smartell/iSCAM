@@ -8,13 +8,14 @@
 ##                      -3 beta (p1=alpha,p2=beta)
 ##                      -4 gamma(p1=alpha,p2=beta)
 ## ____________________________________________________________________________ ##
-6   ## npar
+7   ## npar
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
     7.60        -5.0    15       4       0       -5.0    15     #log_ro/msy 
-    0.60        0.2     1.0      4       0       1.1     1.1    #steepness/fmsy
-    -0.7985     -5.0    0.0      3       0       -0.7985 0.2    #log.m
-    7.60        -5.0    15       1       0       -5.0    15     #log_avgrec
+    0.80        0.2     1.0      4       0       1.1     1.1    #steepness/fmsy
+    -0.7985077  -5.0    0.0     -3       0       -0.7985 0.2    #log.m
+    7.60        -5.0    15       3       0       -5.0    15     #log_avgrec
+    7.60        -5.0    15       3       0       -5.0    15     #log_recinit
     0.05        0.001   0.999   -3       3       1.01    1.01   #rho
     4999        0.01    5000    -3       4       1.01    1.01   #vartheta
 ## ____________________________________________________________________________ ##
@@ -40,7 +41,7 @@
 ## No. of year nodes for each gear (0 to ignore).
     12       3          10      0       0
 ## Estimation phase
-     2        2           2      -2      -2
+    -2      -2         -2      -2      -2
 ## Penalty weight for 2nd differences w=1/(2*sig^2)
     12.5     12.5       12.5    12.5    12.5
 ## Penalty weight for dome-shaped selectivity 1=1/(2*sig^2)
@@ -61,17 +62,18 @@
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
-0           ## verbose ADMB output (0=off, 1=on)
-1           ## recruitment model (1=beverton-holt, 2=ricker)
-0.015       ## std in observed catches in first phase.
-0.0001      ## std in observed catches in last phase.
-0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
-0.00        ## Minimum proportion to consider in age-proportions for dmvlogistic
-0.05        ## Mean fishing mortality for regularizing the estimates of Ft
-0.01        ## std in mean fishing mortality in first phase
-5.00        ## std in mean fishing mortality in last phase
--3          ## phase for estimating m_deviations (use -1 to turn off mdevs)
-0.01        ## std in deviations for natural mortality
+0           ##   1 verbose ADMB output (0=off, 1=on)
+1           ##   2 recruitment model (1=beverton-holt, 2=ricker)
+0.015       ##   3 std in observed catches in first phase.
+0.00001     ##   4 std in observed catches in last phase.
+0           ##   5 Assume unfished in first year (0=FALSE, 1=TRUE)
+0.00        ##   6 Minimum proportion to consider in age-proportions for dmvlogistic
+0.05        ##   7 Mean fishing mortality for regularizing the estimates of Ft
+0.01        ##   8 std in mean fishing mortality in first phase
+5.00        ##   9 std in mean fishing mortality in last phase
+-3          ##   10 phase for estimating m_deviations (use -1 to turn off mdevs)
+0.01        ##   11 std in deviations for natural mortality
+0.99        ##   12 fraction of total mortality that takes place prior to spawning
 ## ____________________________________________________________________________ ##
 
 

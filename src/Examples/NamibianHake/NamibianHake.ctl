@@ -60,18 +60,18 @@
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
-0           ## verbose ADMB output (0=off, 1=on)
-1           ## recruitment model (1=beverton-holt, 2=ricker)
-0.05        ## std in observed catches in first phase.
-0.025       ## std in observed catches in last phase.
-1           ## Assume unfished in first year (0=FALSE, 1=TRUE)
-0.01		## Minimum proportion to consider in age-proportions for dmvlogistic
-0.20		## Mean fishing mortality for regularizing the estimates of Ft
-0.01		## std in mean fishing mortality in first phase
-5.00		## std in mean fishing mortality in last phase
--1			## phase for estimating m_deviations (use -1 to turn off mdevs)
-0.1			## std in deviations for natural mortality
-0.99        ## fraction of total mortality that takes place prior to spawning
+0           ## 1  verbose ADMB output (0=off, 1=on)
+1           ## 2  recruitment model (1=beverton-holt, 2=ricker)
+0.05        ## 3  std in observed catches in first phase.
+0.025       ## 4  std in observed catches in last phase.
+1           ## 5  Assume unfished in first year (0=FALSE, 1=TRUE)
+0.01		## 6  Minimum proportion to consider in age-proportions for dmvlogistic
+0.20		## 7  Mean fishing mortality for regularizing the estimates of Ft
+0.01		## 8  std in mean fishing mortality in first phase
+5.00		## 9  std in mean fishing mortality in last phase
+-1			## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
+0.1			## 11 std in deviations for natural mortality
+0.99        ## 12 fraction of total mortality that takes place prior to spawning
 ## ____________________________________________________________________________ ##
 ## eofc
 999

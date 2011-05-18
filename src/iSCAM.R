@@ -69,7 +69,7 @@ require(Riscam)	#custom library built specifically for iscam.
 	A=read.rep("iscam.rep")
 	#Build data frame
 	colhdr=c("ival", "lb", "ub", "phz", "prior", "mu\nshape","SD\nrate")
-	rownme=c("log(Ro)","steepness","log(M)","log(Rbar)","rho","precision")
+	rownme=c("log(Ro)","steepness","log(M)","log(Rbar)","log(Rinit)","rho","precision")
 	ctrlDF<<-as.data.frame(A$ctrl)
 	rownames(ctrlDF)<<-rownme
 	colnames(ctrlDF)<<-colhdr
@@ -296,13 +296,21 @@ guiView	<- function()
 		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 0, 0), mfcol=c(2, 2))
 		
 		#Spawing biomass
-		plot(yrs, sim$sbt, type="l", xlab="Year", ylab="Spawning biomass (t)")
-		lines(yrs, sbt, lwd=5, col=colr(1, 0.25))
+		plot(yr, sim$sbt[1:length(yr)], type="l", xlab="Year", ylab="Spawning biomass (t)")
+		lines(yr, sbt[1:length(yr)], lwd=5, col=colr(1, 0.25))
 		gletter(1)
 		
 		#Fishing mortality rates
-		matplot(yr,t(sim$ft[1:3,]),type="l",lty=1,ylab="Fishing mortality",xlab="Year")
-		matlines(yr,t(ft[1:3,]),lwd=5,col=colr(1:3,0.25),lty=1)
+		if(is.matrix(ft)){
+			yy=t(as.matrix(ft))
+			y2=t(as.matrix(sim$ft))
+		}
+		else{
+			yy=ft
+			y2=sim$ft
+		}
+		matplot(yr,y2,type="l",lty=1,ylab="Fishing mortality",xlab="Year")
+		matlines(yr,yy,lwd=5,col=colr(1:3,0.25),lty=1)
 		gletter(2)
 		
 		#Survey abundance
@@ -517,6 +525,7 @@ guiView	<- function()
 				pt = ctrl[i, 5]+1
 				fn=match.fun(nfn[pt])
 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
+				browser()
 				if(pt!=4)
 					curve(unlist(lapply(x,fn,p1,p2)),
 						xl[1],xl[2],add=T, col=4, lty=2)
@@ -538,10 +547,12 @@ guiView	<- function()
 		xx = sbt[1:(length(yr)-min(age))]
 		yy = rt
 		
-		plot(xx, yy, type="n",ylim=c(0, max(yy)),xlim=c(0, max(xx,bo)), 
+		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
 			xlab="Spawning biomass", ylab=paste("Age-",min(age)," recruits", sep=""))
 			
 		points(xx, yy)
+		points(xx[1],yy[1], pch=20, col="green")
+		points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
 		
 		st=seq(0, max(sbt, bo), length=100)
 		if(rectype==1)
@@ -863,7 +874,7 @@ guiView	<- function()
 	})	
 }
 
-.	<- function( repObj, annotate=FALSE)
+.plotSurveyfit	<- function( repObj, annotate=FALSE)
 {
 	with(repObj, {
 		if(is.matrix(it)){
@@ -1236,23 +1247,25 @@ guiView	<- function()
 			admbObj$bmsy/admbObj$sim$bmsy)
 		rPoints = rbind( rPoints, log2(rp) )
 		.plotSimulationSummary( admbObj )
+		print(paste("Trial ", i))
 	}
 	
 	pn	<- c("log(Ro)","h","log(m)","log(Rbar)","rho","vartheta")
 	theta_dev<-log2(t(t(theta_p)/theta))
 	#theta_dev<-cbind(theta_dev, rPoints)
+	browser()
 	
 	colnames(theta_dev)= (pn[ix])#(pn[itheta])
 	colnames(rPoints) = c("Fmsy","MSY","Bmsy")
 	op = par(no.readonly=T)
 	par(mfcol=c(2, 1), las=1)
 	boxplot(theta_dev, ylab="log2(theta/theta')", 
-			ylim=c(-2, 2) )
+			ylim=c(-1, 1) )
 			#ylim=c(-max(c(1, abs(theta_dev))),max(c(1, abs(theta_dev)))) )
 	abline(h=0, col="grey")
 	
 	boxplot(rPoints,ylab="log2 bias", 
-			ylim=c(-2, 2) )
+			ylim=c(-1, 1) )
 			#ylim=c(-max(c(1, abs(rPoints))), max(c(1, abs(rPoints)))) )
 	abline(h=0, col="grey")	
 	par(op)

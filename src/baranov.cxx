@@ -130,7 +130,7 @@ dvector get_ft(dvector& ct,const double& m, const dmatrix& V,const dvector& na, 
 	   na is the start of year numbers at age
 	   wa is the mean weight-at-age
 	*/
-	
+
 	int i,a,A;
 	double minsurv = 0.05;
 	int ng=size_count(ct);	//number of gears
@@ -156,7 +156,7 @@ dvector get_ft(dvector& ct,const double& m, const dmatrix& V,const dvector& na, 
 		if(1.-ft(i)<minsurv)
 		{
 			ft(i)=1.-minsurv;
-			ctmp=ft(i)*ba*V(i)*exp(-0.5*m);
+			ctmp(i)=ft(i)*ba*V(i)*exp(-0.5*m);
 		}
 	}
 	ct=ctmp;	//don't do this for the differentiable version.
@@ -196,7 +196,7 @@ dvector get_ft(dvector& ct,const double& m, const dmatrix& V,const dvector& na, 
 		//SJDM, this algorithm does converge niceley for multiple fleets
 	}
 	//cout<<ft<<"\t\t"<<ct<<"\t\t"<<ctmp<<endl;
-	
+	//cout<<ct<<endl;
 	return(ft);
 }  
 

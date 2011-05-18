@@ -789,6 +789,7 @@ FUNCTION calcSelectivities
 		for(int i=syr;i<=nyr;i++)
 			log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
 			
+		//TODO 
 			
 		
 		//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
