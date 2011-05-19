@@ -682,8 +682,7 @@ FUNCTION calcSelectivities
 		4) Time varying cubic spline.
 		5) Time varying bicubic spline (2d version)
 		6) Fixed logistic
-		7) logistic selectivity with 3 parameters. 3rd parameter incorporates
-		the age-specific deviations in mean weight at age; if 0 then no effect.
+		7) logistic selectivity based on relative changes in mean weight at age
 		
 		Following the initializatoin of the selectivity curves, time-varying 
 		considerations are implemented.
@@ -786,8 +785,10 @@ FUNCTION calcSelectivities
 		}
 		
 		//subtract mean to ensure sum(log_sel)==0
+		//substract max to ensure exp(log_sel) ranges from 0-1
 		for(int i=syr;i<=nyr;i++)
 			log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
+			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
 			
 		//TODO 
 			
@@ -828,6 +829,7 @@ FUNCTION calcTotalMortality
 	
 	SJDM.  Dec 24, 2010.  Adding time-varying natural mortality
 	
+	TODO  Add cubic spline to the time-varying natural mortality
 	*/
 	int i,k,ki;
 	dvariable ftmp;
@@ -1238,9 +1240,13 @@ FUNCTION calc_objective_function
 			//dvar_matrix nu=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa); //residuals
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
-		
-			nlvec(3,k)=2*dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
-		
+			
+			
+			//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
+			nlvec(3,k) = multinomial(O,P,nu,age_tau2(k),cntrl(6));
+			
+			cout<<"Ok after here"<<endl;
+			
 			for(i=1;i<=naa/*na_nobs(k)*/;i++)
 			{
 				iyr=A(k,i,a_sage(k)-2);	//index for year
@@ -1260,7 +1266,8 @@ FUNCTION calc_objective_function
 	{
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
-			if( isel_type(k)!=1 || isel_type(k)!=7 )  
+			//CHANGED from || to &&  May 18, 2011 Vivian
+			if( isel_type(k)!=1 && isel_type(k)!=7 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1347,8 +1354,8 @@ FUNCTION calc_objective_function
 				ptmp=dnorm(theta(i),theta_control(i,6),theta_control(i,7));
 				break;
 				
-			case 2:		//lognormal
-				ptmp=dlnorm(mfexp(theta(i)),theta_control(i,6),theta_control(i,7));
+			case 2:		//lognormal CHANGED RF found an error in dlnorm prior. rev 116
+				ptmp=dlnorm(theta(i),theta_control(i,6),theta_control(i,7));
 				break;
 				
 			case 3:		//beta distribution (0-1 scale)
