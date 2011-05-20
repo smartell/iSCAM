@@ -273,7 +273,7 @@ dvector rmvlogistic(const dvector& p, const double& tau2, const int& seed)
 	return exp(x)/sum(exp(x));
 }
 
-dvariable multinomial(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double& tau2,const double minp)
+dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double& tau2,const double minp)
 {	// returns the negative loglikelihood 
 	/*
      uses Martell dmvlogistic code for grouping age classes 
@@ -325,6 +325,7 @@ dvariable multinomial(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,doub
 				if(k<n) k++;
 			}
 		}
+		/*
 		//assign residuals to nu based on iiage index
 		dvar_vector t1 = elem_div(o1-p1,sqrt(elem_prod(p1,1.-p1)/Nsamp));
 		for(j=1;j<=n;j++)
@@ -332,9 +333,9 @@ dvariable multinomial(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,doub
 			nu(i)(iiage(j))=t1(j);
 			tmptau(Ncount++)=sqrt(square(value(t1(j))));
 		}
+		*/
 		
-		/* FIXME  array out of bounds error with this code.
-		//Later addition from Viv to prevent crashes if
+		//CHANGED Later addition from Viv to prevent crashes if
 		//min(p1) is very small.
 		if(min(p1)>1e-4)
 		{
@@ -346,7 +347,14 @@ dvariable multinomial(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,doub
 			}
 		}
 		//end of addition.
+		// negative log Mulitinomial with constant is:
+		// r = -1.*(gammln(Nsamp+1)+sum(Nsamp*o1(log(p1))-gammln(Nsamp+1)));
+		// TODO add calculation for effective sample size.
+		/*
+			TODO Neff = sum(elem_prod(p1,1.-p1))/sum(square(o1-p1));
+			for each year.  Plot the Nsamp vs Neff and look for a 1:1 slope.
 		*/
+		
 		nloglike+=sum(-1.*elem_prod(Nsamp*o1,log(p1))+
 					elem_prod(Nsamp*o1,log(o1)));
 	}
