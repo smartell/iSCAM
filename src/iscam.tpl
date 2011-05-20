@@ -416,8 +416,9 @@ DATA_SECTION
 	// 10-> phase for estimating deviations in natural mortality.
 	// 11-> std in natural mortality deviations.
 	// 12-> fraction of total mortality that takes place prior to spawning
+	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	
-	init_vector cntrl(1,12);
+	init_vector cntrl(1,13);
 	int verbose;
 	
 	init_int eofc;
@@ -1241,11 +1242,16 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 			
-			
-			//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
-			nlvec(3,k) = multinomial(O,P,nu,age_tau2(k),cntrl(6));
-			
-			cout<<"Ok after here"<<endl;
+			//TODO add a switch statement here to choose form of the likelihood
+			switch(int(cntrl(13)))
+			{
+				case 1:
+					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
+				break;
+				case 2:
+					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
+				break;
+			}
 			
 			for(i=1;i<=naa/*na_nobs(k)*/;i++)
 			{
