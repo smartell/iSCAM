@@ -74,6 +74,7 @@
 -3          ##   10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.01        ##   11 std in deviations for natural mortality
 0.99        ##   12 fraction of total mortality that takes place prior to spawning
+1           ##   13 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 
 

@@ -71,7 +71,8 @@
 5.00		## 9  std in mean fishing mortality in last phase
 -1			## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1			## 11 std in deviations for natural mortality
-0.99        ## 12 fraction of total mortality that takes place prior to spawning
+0.5	        ## 12 fraction of total mortality that takes place prior to spawning
+1           ## 13 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 ## eofc
 999
