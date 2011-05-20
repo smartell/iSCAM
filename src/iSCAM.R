@@ -598,7 +598,7 @@ guiView	<- function()
 			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
 
 			par(bg = "transparent")
-			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=3, 
+			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=15, 
 				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
 				xlab="Year",ylab="Age",zlab="Selectivity",
 				ticktype="detailed")
