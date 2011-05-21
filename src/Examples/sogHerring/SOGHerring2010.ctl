@@ -11,13 +11,13 @@
 7   ## npar
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
-    7.60        -5.0    15       4       0       -5.0    15      #log_ro 
-    0.67        0.2     1.0      4       3       10.0    4.925373    #steepness
+    7.60        -5.0    15       4       0       -5.0    15        #log_ro 
+    0.67        0.2     1.0      4       3       10.0    4.925373  #steepness
     -0.7985077  -5.0    5.0      3       1       -0.7985077 0.4    #log.m
-    7.40        -5.0    15       1       0       -5.0    15      #log_avgrec
-    7.20        -5.0    15       1       0       -5.0    15      #log_recinit
-    0.3043478   0.001   0.999   -3       3       15.0    60.0    #rho
-    0.8695652   0.01    5.0     -3       4       156.25  125.0   #kappa (precision)
+    7.40        -5.0    15       1       0       -5.0    15        #log_avgrec
+    7.20        -5.0    15       1       0       -5.0    15        #log_recinit
+    0.3043478   0.001   0.999   -3       3       15.0    60.0      #rho
+    0.8695652   0.01    5.0     -3       4       156.25  125.0     #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## ____________________________________________________________________________ ##
@@ -33,11 +33,11 @@
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
-    1        1          7       1       1
+    1        1          7       6       6
 ## Age at 50% selectivity (logistic)
-    1.5      2.0        0.2     2.055   2.055
+    1.5      2.0        0.6     2.055   2.055
 ## STD at 50% selectivity (logistic)
-    0.75      0.5       0.2     0.05    0.05
+    0.25      0.25      0.15    0.05    0.05
 ## No. of age nodes for each gear (0 to ignore).
     5        5          5       0       0
 ## No. of year nodes for each gear (0 to ignore).
@@ -69,14 +69,15 @@
 0.100       ## 3  std in observed catches in first phase.
 0.0707      ## 4  std in observed catches in last phase.
 0           ## 5  Assume unfished in first year (0=FALSE, 1=TRUE)
-0.01        ## 6  Minimum proportion to consider in age-proportions for dmvlogistic
-0.30        ## 7  Mean fishing mortality for regularizing the estimates of Ft
+0.02        ## 6  Minimum proportion to consider in age-proportions for dmvlogistic
+0.20        ## 7  Mean fishing mortality for regularizing the estimates of Ft
 0.01        ## 8  std in mean fishing mortality in first phase
 2.00        ## 9  std in mean fishing mortality in last phase
 -3          ## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## 11 std in deviations for natural mortality
-0.99        ## 12 fraction of total mortality that takes place prior to spawning
-1           ## 13 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+12			## 12 number of estimated nodes for deviations in natural mortality
+0.99        ## 13 fraction of total mortality that takes place prior to spawning
+1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 
 

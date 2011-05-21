@@ -17,7 +17,7 @@
     7.40        -5.0    15       1       0       -5.0    15      #log_avgrec
     7.20        -5.0    15       1       0       -5.0    15      #log_recinit
     0.3043478   0.001   0.999   -3       3       15.0    60.0    #rho
-    0.8695652   0.01    500     -3       4       156.25  125.0   #kappa (precision)
+    0.8695652   0.01    5.0     -3       4       156.25  125.0   #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## ____________________________________________________________________________ ##
@@ -29,15 +29,16 @@
 ##      4) a time varying cubic spline with age-nodes
 ##      5) a time varying bicubic spline with age & year nodes.
 ##      6) fixed logistic (set isel_type=6, and estimation phase to -1)
-##		sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50
-##		wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
+##      7) logistic function of body weight.
+##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50
+##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
-    1        1          1       6       6
+    1        1          7       6       6
 ## Age at 50% selectivity (logistic)
-    1.5      2.0        3.95     2.055   2.055
+    1.5      2.0        0.6     2.055   2.055
 ## STD at 50% selectivity (logistic)
-    0.25      0.25       0.21     0.05    0.05
+    0.25      0.25      0.15    0.05    0.05
 ## No. of age nodes for each gear (0 to ignore).
     5        5          5       0       0
 ## No. of year nodes for each gear (0 to ignore).
@@ -66,17 +67,18 @@
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
 0           ## verbose ADMB output (0=off, 1=on)
 1           ## recruitment model (1=beverton-holt, 2=ricker)
-0.200       ## std in observed catches in first phase.
+0.100       ## std in observed catches in first phase.
 0.0707      ## std in observed catches in last phase.
 0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
 0.02        ## Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        ## Mean fishing mortality for regularizing the estimates of Ft
-0.05        ## std in mean fishing mortality in first phase
-5.00        ## std in mean fishing mortality in last phase
-3           ## phase for estimating m_deviations (use -1 to turn off mdevs)
+0.01        ## std in mean fishing mortality in first phase
+2.00        ## std in mean fishing mortality in last phase
+1           ## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## std in deviations for natural mortality
-1.00        ## fraction of total mortality that takes place prior to spawning
-1           ## 13 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+9			## number of estimated nodes for deviations in natural mortality
+0.99        ## fraction of total mortality that takes place prior to spawning
+1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 
 
