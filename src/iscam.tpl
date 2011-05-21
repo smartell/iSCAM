@@ -58,7 +58,7 @@
 //-- May 6, 2011- added pre-processor commands to determin PLATFORM  --//
 //--              either "Windows" or "Linux"                        --//
 //--                                                                 --//
-//--                                                                 --//
+//-- FIXME -cannot do MCMC when estimating log_m_nodes with SOG her. --//
 //--                                                                 --//
 // ------------------------------------------------------------------- //
 
@@ -246,10 +246,12 @@ DATA_SECTION
 		//with selectivity as a function of mean weight at age.
 		//Idea borrowed from Vivian Haist in HCAM model.
 		/*
-			FIXME: selectivity function based on average weight.
+			CHANGED: selectivity function based on average weight.
 			Based on the logistic function;
 			1) calculate a matrix of standardized deviates
 			wt_dev = (wt_obs-mean(wt_obs))/sd(wt_obs);
+			
+			Not implemented, using the version provided by Vivian.
 		*/
 		wt_dev.initialize();
 		dmatrix mtmp = trans(wt_obs);
@@ -382,7 +384,7 @@ DATA_SECTION
 					break;
 					
 				case 7:
-					// FIXME: This is not working. Need to figure this out.
+					// CHANGED: Now working, Vivian Haist fixed it.
 					// logistic (3 parameters) with mean body 
 					// weight deviations. 
 					isel_npar(i) = 2;
@@ -418,7 +420,7 @@ DATA_SECTION
 	// 12-> fraction of total mortality that takes place prior to spawning
 	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	
-	init_vector cntrl(1,13);
+	init_vector cntrl(1,14);
 	int verbose;
 	
 	init_int eofc;
@@ -482,8 +484,9 @@ PARAMETER_SECTION
 	END_CALCS
 	
 	
-	//FIXME Vivian Haist: possible bias in Bo due to dev_vector for log_rec_devs
-	//		Try and compare estimates using init_bounded_vector version.
+	//CHANGED Vivian Haist: possible bias in Bo due to dev_vector for log_rec_devs
+	//	-Try and compare estimates using init_bounded_vector version.
+	//	-Now estimating Rinit, Rbar and Ro.
 	
 	// May 16, Just looked at Ianelli's code, he used bounded_vector, and 
 	// separates the problem into init_log_rec_devs and log_rec_devs
@@ -503,7 +506,9 @@ PARAMETER_SECTION
 	//Deviations for natural mortality
 	!! int m_dev_phz = -1;
 	!! m_dev_phz = cntrl(10);
-	init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
+	!! int n_m_devs = cntrl(12);
+	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
+	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	objective_function_value f;
     
@@ -529,6 +534,7 @@ PARAMETER_SECTION
 	
 	vector delta(syr+sage,nyr);	//residuals for stock recruitment
 	vector avg_log_sel(1,ngear);//conditional penalty for objective function
+	vector log_m_devs(syr+1,nyr);// log deviations in natural mortality
 	
 	matrix nlvec(1,6,1,ilvec);	//matrix for negative loglikelihoods
 	
@@ -566,8 +572,8 @@ PRELIMINARY_CALCS_SECTION
   }
 
 RUNTIME_SECTION
-    maximum_function_evaluations 100,100,500,25000,25000
-    convergence_criteria 0.01,0.01,1.e-4,1.e-4
+    maximum_function_evaluations 100,200,500,25000,25000
+    convergence_criteria 0.01,0.01,1.e-5,1.e-5
 
 
 PROCEDURE_SECTION
@@ -757,7 +763,7 @@ FUNCTION calcSelectivities
 				
 			case 7:
 				// time-varying selectivity based on deviations in weight-at-age
-				// FIXME This is not working and should not be used. (May 5, 2011)
+				// CHANGED This is not working and should not be used. (May 5, 2011)
 				// SJDM:  I was not able to get this to run very well.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
@@ -830,7 +836,7 @@ FUNCTION calcTotalMortality
 	
 	SJDM.  Dec 24, 2010.  Adding time-varying natural mortality
 	
-	TODO  Add cubic spline to the time-varying natural mortality
+	CHANGED May 20, 2011  Add cubic spline to the time-varying natural mortality
 	*/
 	int i,k,ki;
 	dvariable ftmp;
@@ -865,18 +871,33 @@ FUNCTION calcTotalMortality
 	//Natural mortality (year and age specific)
 	//M_tot(syr,nyr,sage,nage);
 	M_tot = m;
+
+
+	// Cubic spline to interpolate log_m_devs (log_m_nodes)
+	log_m_devs = 0.;
+	if(active(log_m_nodes))
+	{
+		int nodes = size_count(log_m_nodes);
+		dvector im(1,nodes);
+		dvector fm(syr+1,nyr);
+		im.fill_seqadd(0,1./(nodes-1));
+		fm.fill_seqadd(0,1./(nyr-syr));
+		vcubic_spline_function m_spline(im,log_m_nodes);
+		//m_spline(fm);
+		log_m_devs = m_spline(fm);
+	}
 	
 	//Random walk in natural mortality.
 	for(i=syr;i<=nyr;i++)
 	{
-		if(active(log_m_devs)&&i>syr)
+		//if(active(log_m_devs)&&i>syr)
+		if(active(log_m_nodes)&&i>syr)
 		{
 			M_tot(i)=M_tot(i-1)*exp(log_m_devs(i));
 		}
 		
 	}
 	m_bar = mean(M_tot);
-	
 	
 	Z=M_tot+F;
 	S=mfexp(-Z);
@@ -1137,7 +1158,7 @@ FUNCTION calc_stock_recruitment
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
 	lx(nage)/=(1.-exp(-m_bar));
 	
-	dvariable phib = (lx*exp(-m_bar*cntrl(12))) * avg_fec;  //fec(syr);		//SM Dec 6, 2010
+	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;  //fec(syr);		//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass
@@ -1146,7 +1167,7 @@ FUNCTION calc_stock_recruitment
 	//CHANGED adjusted spawning biomass downward by ctrl(12)
 	for(i=syr;i<=nyr;i++)
 	{
-		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(12)))*fec(i);
+		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
@@ -1220,7 +1241,7 @@ FUNCTION calc_objective_function
 		nlvec(2,k)=dnorm(epsilon(k),sig);
 	}
 	
-
+	
 	
 	
 	//3) likelihood for age-composition data
@@ -1243,7 +1264,7 @@ FUNCTION calc_objective_function
 			nu.initialize();
 			
 			//TODO add a switch statement here to choose form of the likelihood
-			switch(int(cntrl(13)))
+			switch(int(cntrl(14)))
 			{
 				case 1:
 					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
@@ -1262,10 +1283,13 @@ FUNCTION calc_objective_function
 	}
 	
 	
+	
 	//4) likelihood for stock-recruitment relationship
 	dvariable tau = (1.-rho)/varphi;
 	if(active(theta(1)))
 		nlvec(4,1)=dnorm(delta,tau);
+	
+	
 	
 	//5-6) likelihood for selectivity paramters
 	for(k=1;k<=ngear;k++)
@@ -1294,6 +1318,7 @@ FUNCTION calc_objective_function
 	// CONSTRAINT FOR SELECTIVITY DEV VECTORS
 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
 	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
+	
 	for(k=1;k<=ngear;k++)
 	{
 		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 )
@@ -1428,12 +1453,14 @@ FUNCTION calc_objective_function
 	}
 	
 	//Priors for deviations in natural mortality rates
-	if(active(log_m_devs))
+	//if(active(log_m_devs))
+	if(active(log_m_nodes))
 	{
 		double std_mdev = cntrl(11);
 		dvar_vector fd_mdevs=first_difference(log_m_devs);
 		//pvec(2) = dnorm(log_m_devs,std_mdev);
 		pvec(2) = dnorm(fd_mdevs,std_mdev);
+		pvec(2) += 0.5*norm2(log_m_nodes);
 	}
 	
 	
@@ -1655,7 +1682,7 @@ FUNCTION void simulation_model(const long& seed)
 	/*----------------------------------*/
 	dvector lx=pow(exp(-value(m_bar)),age-min(age));
 	lx(nage)/=(1.-exp(-value(m_bar)));
-	double phie=(lx*exp(-value(m_bar)*cntrl(12)))*avg_fec;//fec(syr);
+	double phie=(lx*exp(-value(m_bar)*cntrl(13)))*avg_fec;//fec(syr);
 	so=kappa/phie;
 	
 	
@@ -1800,7 +1827,7 @@ FUNCTION void simulation_model(const long& seed)
 		
 		
 		//CHANGED definition of spawning biomass based on ctrl(12)
-		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(12)))*fec(i));
+		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(13)))*fec(i));
 		
 		//Update numbers at age
 		if(i>=syr+sage-1)
@@ -1988,6 +2015,8 @@ REPORT_SECTION
 	REPORT(ro);
 	double rbar=value(exp(log_avgrec));
 	REPORT(rbar);
+	double rinit=value(exp(log_recinit));
+	REPORT(rinit);
 	REPORT(bo);
 	REPORT(kappa);
 	REPORT(m);
@@ -2080,7 +2109,7 @@ REPORT_SECTION
 FUNCTION mcmc_output
 	if(nf==1){
 		ofstream ofs("iscam.mcmc");
-		ofs<<"log.ro\t h\t log.m\t log.rbar\t rho\t kappa\t";
+		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
 		ofs<<"bo\t bmsy\t msy\t fmsy\t"<<endl;
 		
 		ofstream of1("sbt.mcmc");

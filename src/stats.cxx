@@ -68,9 +68,11 @@ dvariable dnorm(const dvariable& x, const double& mu, const double& std)
 
 dvariable dnorm(const dvar_vector& residual, const dvariable std)
 {
+	RETURN_ARRAYS_INCREMENT();
 	double pi=3.141593;
 	long n=size_count(residual);
 	dvariable SS=norm2(residual);
+	RETURN_ARRAYS_DECREMENT();
 	return(n*(0.5*log(2.*pi)+log(std))+0.5*SS/(std*std));
 	//return(n*(0.5*log(2.*pi)-log(std))+0.5*SS*(std*std));
 }
@@ -88,19 +90,23 @@ dvariable dnorm(const dvar_vector& residual, const double std)
 
 dvariable dnorm(const dvar_vector& residual, const dvector std)
 {
+	RETURN_ARRAYS_INCREMENT();
 	double pi=3.141593;
 	int n=size_count(residual);
 	dvector var=elem_prod(std,std);
 	dvar_vector SS=elem_prod(residual,residual);
+	RETURN_ARRAYS_DECREMENT();
 	return(0.5*n*log(2.*pi)+sum(log(std))+sum(elem_div(SS,2.*var)));
 }
 
 dvariable dnorm(const dvar_vector& residual, const dvar_vector std)
 {
+	RETURN_ARRAYS_INCREMENT();
 	double pi=3.141593;
 	int n=size_count(residual);
 	dvar_vector var=elem_prod(std,std);
 	dvar_vector SS=elem_prod(residual,residual);
+	RETURN_ARRAYS_DECREMENT();
 	return(0.5*n*log(2.*pi)+sum(log(std))+sum(elem_div(SS,2.*var)));
 }
 
@@ -281,6 +287,10 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
      NB minp must be greater than 0, otherwise algorithm returns 
      an error if one of the observed proportions is zero.
      tau2 returns the median absolute standardized residual
+
+	FIX ME SM I'm getting an array out of Bounds error in here for gear3
+		has to do with the if statement (if minp >1.-4) because Ncount is only 
+		1.  I've commented the if statement out for now.
 	*/
 	RETURN_ARRAYS_INCREMENT();
 	int i,j,k,n;
@@ -295,8 +305,10 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
 	nu.initialize();
 	dvariable nloglike=0.;
     //ofstream ofs("check.tmp");
+	
 	for(i=t; i<=T; i++)
 	{	
+		//cout<<"Ok to here 1"<<endl;
 		Nsamp=sum(o(i))/(1.+proc_err*sum(o(i)));
 		n=0;
 		dvector oo = o(i)/sum(o(i));
@@ -337,7 +349,7 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
 		
 		//CHANGED Later addition from Viv to prevent crashes if
 		//min(p1) is very small.
-		if(min(p1)>1e-4)
+		//if(min(p1)>1e-4)
 		{
 			dvar_vector t1 = elem_div(o1-p1,sqrt(elem_prod(p1,1.-p1)/Nsamp));
 			for(j=1;j<=n;j++)
@@ -357,9 +369,13 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
 		
 		nloglike+=sum(-1.*elem_prod(Nsamp*o1,log(p1))+
 					elem_prod(Nsamp*o1,log(o1)));
+		//cout<<"Ok to here 2"<<endl;
 	}
+	
 	dvector w=sort(tmptau(1,Ncount-1));
+	//cout<<"All good "<<Ncount<<endl;
 	tau2=w(int(Ncount/2.)); //mle of the variance 
+	
 	RETURN_ARRAYS_DECREMENT();
 	return(nloglike);
 }

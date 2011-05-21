@@ -390,7 +390,7 @@ guiView	<- function()
 	with(admbObj, {
 		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 0, 0))
 		par(mfcol=c(2, 2))
-		for(i in 7:10)
+		for(i in 8:11)
 		{
 			ps=mcmc[, i]
 			xl=range(ps)
@@ -508,10 +508,10 @@ guiView	<- function()
 	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
 
 	with(admbObj, {
-		std=apply(mcmc[,1:6],2,sd)
+		std=apply(mcmc[,1:7],2,sd)
 		nr=length(std[std!=0])/2
 		par(mfcol=c(nr, 2))
-		for(i in 1:6){
+		for(i in 1:7){
 			if(std[i]!=0){
 				ps = mcmc[, i]  #posterior samples
 				xl=range(ps)
@@ -525,7 +525,7 @@ guiView	<- function()
 				pt = ctrl[i, 5]+1
 				fn=match.fun(nfn[pt])
 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
-				browser()
+				#browser()
 				if(pt!=4)
 					curve(unlist(lapply(x,fn,p1,p2)),
 						xl[1],xl[2],add=T, col=4, lty=2)
@@ -811,8 +811,8 @@ guiView	<- function()
 {
 	#plot the spawning biomass depletion level & reference points
 	with(repObj, {
-		xx=yrs
-		yy=sbt/bo
+		xx=yr
+		yy=sbt[1:length(xx)]/bo
 		yrange=c(0,1.1*max(yy, na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
@@ -848,8 +848,8 @@ guiView	<- function()
 {
 	#plot total biomass & spawning biomass 
 	with(repObj, {
-		xx=yrs
-		yy=cbind(bt, sbt)
+		xx=yr
+		yy=cbind(bt[1:length(xx)], sbt[1:length(xx)])
 		
 		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
 		
@@ -1005,9 +1005,10 @@ guiView	<- function()
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1,
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=age_tau2[i],
 					bg=colr("white", 0.5))
 			}
+			
 		}
 		else{print("There is no age-composition data")}
 	})
