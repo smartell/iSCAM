@@ -8,13 +8,14 @@
 ##   -3 beta (p1=alpha,p2=beta)
 ##   -4 gamma(p1=alpha,p2=beta)
 ## ____________________________________________________________________________ ##
-6   ## npar
+7   ## npar
 ##  ival        lb      ub      phz   prior     p1      p2      parameter name
 ## ____________________________________________________________________________ ##
     7.1         -5.0    15       4     0         -5.0    15     #log_ro/msy
     0.95        0.2     1.0      4     3         1.01    1.01   #steepness/fmsy
     -1.06421   -5.0    0.0      -2     2         -1.469  0.05   #log.m
     7.1         -5.0    15      -1     0         -5.0    15     #log_avgrec
+    7.20        -5.0    15       1     0         -5.0    15     #log_recinit
     0.50        0.001   0.999    3     3         125.0   125.0  #rho
     5.00        0.01    500      3     4         1.01    1.01   #kappa (precision)
 ## ____________________________________________________________________________ ##
@@ -70,9 +71,10 @@
 0.01		## 8  std in mean fishing mortality in first phase
 5.00		## 9  std in mean fishing mortality in last phase
 -1			## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
-0.1			## 11 std in deviations for natural mortality
-0.5	        ## 12 fraction of total mortality that takes place prior to spawning
-1           ## 13 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+12			## 11 number of estimated nodes for deviations in natural mortality
+0.1			## 12 std in deviations for natural mortality
+0.5	        ## 13 fraction of total mortality that takes place prior to spawning
+1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 ## eofc
 999
