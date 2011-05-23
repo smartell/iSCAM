@@ -2301,8 +2301,8 @@ FUNCTION void projection_model();
 		
 		
 	}
-	cout<<p_sbt<<endl<<endl;
-	cout<<bmsy<<endl;
+	//cout<<p_sbt<<endl<<endl;
+	//cout<<bmsy<<endl;
 	
 	//cout<<msy<<endl;
 	//cout<<p_Z<<endl;

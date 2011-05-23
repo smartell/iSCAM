@@ -1005,8 +1005,9 @@ guiView	<- function()
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=age_tau2[i],
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[i],
 					bg=colr("white", 0.5))
+				title(main=paste("Variance=",round(age_tau2[i],3)),line=-1,cex.main=0.75)
 			}
 			
 		}
