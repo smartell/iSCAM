@@ -32,9 +32,9 @@
 ## isel_type
     1
 ## Age at 50% selectivity (logistic)
-    3.5
+    2.5
 ## STD at 50% selectivity (logistic)
-    1.0
+    0.25
 ## No. of age nodes for each gear (0 to ignore).
     5       
 ## No. of year nodes for each gear (0 to ignore).
@@ -73,7 +73,7 @@
 -1			## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 12			## 11 number of estimated nodes for deviations in natural mortality
 0.1			## 12 std in deviations for natural mortality
-0.5	        ## 13 fraction of total mortality that takes place prior to spawning
+0.0	        ## 13 fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 ## eofc

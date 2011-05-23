@@ -29,13 +29,14 @@
 ##      4) a time varying cubic spline with age-nodes
 ##      5) a time varying bicubic spline with age & year nodes.
 ##      6) fixed logistic (set isel_type=6, and estimation phase to -1)
+##      7) logistic function of body weight.
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
     1        1          7       6       6
 ## Age at 50% selectivity (logistic)
-    1.5      2.0        0.6     2.055   2.055
+    2.0      3.0        0.6     2.055   2.055
 ## STD at 50% selectivity (logistic)
     0.25      0.25      0.15    0.05    0.05
 ## No. of age nodes for each gear (0 to ignore).
@@ -43,7 +44,7 @@
 ## No. of year nodes for each gear (0 to ignore).
     12       3          10      0       0
 ## Estimation phase
-    2        2           2      -1      -1
+    1        1           1      -1      -1
 ## Penalty weight for 2nd differences w=1/(2*sig^2)
     125.     125.       12.5    12.5    12.5
 ## Penalty weight for dome-shaped selectivity 1=1/(2*sig^2)
@@ -76,7 +77,7 @@
 -3          ## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## 11 std in deviations for natural mortality
 12			## 12 number of estimated nodes for deviations in natural mortality
-0.99        ## 13 fraction of total mortality that takes place prior to spawning
+1.00        ## 13 fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 

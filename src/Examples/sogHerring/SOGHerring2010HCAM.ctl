@@ -74,7 +74,7 @@
 0.20        ## Mean fishing mortality for regularizing the estimates of Ft
 0.01        ## std in mean fishing mortality in first phase
 2.00        ## std in mean fishing mortality in last phase
-1           ## phase for estimating m_deviations (use -1 to turn off mdevs)
+3           ## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## std in deviations for natural mortality
 9			## number of estimated nodes for deviations in natural mortality
 0.99        ## fraction of total mortality that takes place prior to spawning
