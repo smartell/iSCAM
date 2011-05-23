@@ -27,6 +27,10 @@
 // TODO:  fix cubic spline selectivity for only years when data avail  //
 // CHANGED: fixed a bug in the simulation model log_ft_pars goes out   //
 //        of bounds.                                                   //
+// TODO: write a projection routine and verify equilibrium calcs       //
+//                                                                     //
+//                                                                     //
+//                                                                     //
 //                                                                     //
 //                                                                     //
 //                                                                     //
@@ -119,17 +123,32 @@ DATA_SECTION
 	
 	init_int ngear;				//number of gear types with unique selectivities
 	!! cout<<"ngear\t"<<ngear<<endl;
-	init_ivector fsh_flag(1,ngear);
-	ivector ft_phz(1,ngear);
+	init_vector allocation(1,ngear);
+	ivector fsh_flag(1,ngear);
 	LOC_CALCS
+		//If allocation >0 then set fish flag =1 else 0
 		int k;
-		ft_phz=1;
+		allocation = allocation/sum(allocation);
 		for(k=1;k<=ngear;k++)
 		{
-			if(!fsh_flag(k))
-				ft_phz(k)=-1;
+			if(allocation(k)>0)
+				fsh_flag(k)=1;
+			else
+				fsh_flag(k)=0;
 		}
 	END_CALCS
+	
+	//The following code has been deprecated
+	//ivector ft_phz(1,ngear);
+	//LOC_CALCS
+	//	int k;
+	//	ft_phz=1;
+	//	for(k=1;k<=ngear;k++)
+	//	{
+	//		if(!fsh_flag(k))
+	//			ft_phz(k)=-1;
+	//	}
+	//END_CALCS
 	
 	init_number fixed_m;
 	init_number linf;
@@ -454,8 +473,9 @@ PARAMETER_SECTION
 	//theta[2]		steepness(h), or log_fmsy
 	//theta[3]		log_m
 	//theta[4]		log_avgrec
-	//theta[5]		rho
-	//theta[6]		kappa
+	//theta[5]		log_recinit
+	//theta[6]		rho
+	//theta[7]		kappa
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
@@ -560,6 +580,7 @@ PARAMETER_SECTION
 	
 	sdreport_number sd_depletion;
 	
+	
 PRELIMINARY_CALCS_SECTION
   //Run the model with input parameters to simulate real data.
   nf=0;
@@ -605,6 +626,7 @@ PROCEDURE_SECTION
 	//cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 	
 FUNCTION initParameters
+  {
 	/*
 	This function is used to extract the specific parameter values
 	from the init_bounded_number_vector to the specific variables
@@ -641,7 +663,10 @@ FUNCTION initParameters
 	
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
+  }
+	
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
+  {
 	RETURN_ARRAYS_INCREMENT();
 	int nodes=size_count(spline_coffs);
 	dvector ia(1,nodes);
@@ -659,8 +684,10 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 		cout<<test_ffa(fa)<<endl;
 		exit(1);*/
 	return(ffa(fa));
+  }
 
 FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
+  {
 	RETURN_ARRAYS_INCREMENT();
 	int nodes= spline_coffs.colmax()-spline_coffs.colmin()+1;
 	int rmin = spline_coffs.rowmin();
@@ -675,9 +702,11 @@ FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
 	RETURN_ARRAYS_DECREMENT();
 	return(fna(fa));
 	
+  }
 
 
 FUNCTION calcSelectivities
+  {
 	/*
 		This function loops over each ngear and calculates the corresponding
 		selectivity for that gear type. It first uses a switch statement 
@@ -817,10 +846,10 @@ FUNCTION calcSelectivities
 	
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
+  }	
 	
-	
-
 FUNCTION calcTotalMortality
+  {
 	/*
 	This routine calculates fishing mortality, total mortality
 	and annaul survival rates (exp(-Z)) for each age in each
@@ -903,7 +932,10 @@ FUNCTION calcTotalMortality
 	S=mfexp(-Z);
 	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
+  }
+	
 FUNCTION calcNumbersAtAge
+  {
 	/*
 		TODO Need to check the difference between the initialization 
 		of the numbers at age here at the margins in comparison to the
@@ -958,8 +990,11 @@ FUNCTION calcNumbersAtAge
 		N(i+1,nage)+=N(i,nage)*S(i,nage);
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
+	
+  }
 
 FUNCTION calcAgeProportions
+  {
 	/*This function loops over each gear and year
 	and calculates the predicted proportions at age
 	sampled based on the selectivity of that gear and
@@ -983,8 +1018,11 @@ FUNCTION calcAgeProportions
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
-	
+
+  }	
+
 FUNCTION calcFisheryObservations
+  {
 	/*
 	Dec 6, 2010.  Modified ct calculations to include
 				  empirical weight at age data (wt_obs);
@@ -1042,9 +1080,11 @@ FUNCTION calcFisheryObservations
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
-	
+
+  }	
 	
 FUNCTION calc_survey_observations
+  {
 	/*This code needs to be modified to accomodate
 	multiple surveys or block changes in survey q.
 	
@@ -1128,7 +1168,10 @@ FUNCTION calc_survey_observations
 	
 	if(verbose)cout<<"**** Ok after calc_survey_observations ****"<<endl;
 	
+  }
+	
 FUNCTION calc_stock_recruitment
+  {
 	/*
 	The following code is used to derive unfished
 	spawning stock biomass bo and the stock-
@@ -1196,8 +1239,10 @@ FUNCTION calc_stock_recruitment
 	
 	if(verbose)cout<<"**** Ok after calc_stock_recruitment ****"<<endl;
 	
+  }
+	
 FUNCTION calc_objective_function
-	{
+  {
 	//Dec 20, 2010.  SJDM added prior to survey qs.
 	/*q_prior is an ivector with current options of 0 & 1.
 	0 is a uniform density (ignored) and 1 is a normal
@@ -1410,10 +1455,14 @@ FUNCTION calc_objective_function
 	
 	//Priors for suvey q based on control file.
 	dvar_vector qvec(1,nits);
+
 	qvec.initialize();
 	for(i=1;i<=nits;i++)
 	{
-		if(q_prior(i)==1) qvec(i)=dnorm(log(q(i)),q_mu(i),q_sd(i));
+		if(q_prior(i)==1) 
+		{
+			qvec(i)=dnorm(log(q(i)),q_mu(i),q_sd(i));
+		}
 	}
 	
 	
@@ -1474,10 +1523,11 @@ FUNCTION calc_objective_function
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 	nf++;
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
-	}
-
-
+	
+  }
+	
 FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+  {
 	/*
 	This is the equilibrium age-structured model that is 
 	conditioned on fe (the steady state fishing mortality rate).
@@ -1504,6 +1554,9 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	phiq		-per recruit yield
 	dre_df		-partial of recruitment wrt fe
 	dphiq_df	-partial of per recruit yield wrt fe
+	
+	FIXME add Ricker model to reference points calculations.
+	FIXME partial derivatives for dphif_df need to be fixed when cntrl(12)>0.
 	*/
 	int i;
 	
@@ -1519,6 +1572,8 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	double phie = lx*fa;		//eggs per recruit
 	double so = kap/phie;
 	double beta = (kap-1.)/(ro*phie);
+	
+	
 	double dlz_df = 0, dphif_df = 0;
 	dphiq_df=0; dre_df=0;
 	for(i=sage; i<=nage; i++)
@@ -1535,7 +1590,12 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 		dphif_df=dphif_df+fa(i)*dlz_df;
 		dphiq_df=dphiq_df+wa(i)*qa(i)*dlz_df+(lz(i)*wa(i)*va(i)*va(i))/za(i)*(exp(-za[i])-sa(i)/za(i));
 	}
-	double phif = lz*fa;
+	//CHANGED need to account for fraction of mortality that occurs
+	//before the spawning season in the recruitment calculation.
+	//cout<<"lz\t"<<elem_prod(lz,exp(-za*cntrl(13)))<<endl;
+	//exit(1);
+	//double phif = lz*fa;
+	double phif = elem_prod(lz,exp(-za*cntrl(13)))*fa;
 	phiq=sum(elem_prod(elem_prod(lz,wa),qa));
 	re=ro*(kap-phie/phif)/(kap-1.);
 	//re<0?re=0:NULL;
@@ -1546,9 +1606,10 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	
 	//cout<<"Equilibrium\n"<<ro<<"\n"<<re<<"\n"<<ye<<endl;
 	
-
+  }
+	
 FUNCTION void calc_reference_points()
-	{
+  {
 	/*
 	Uses Newton_Raphson method to determine Fmsy and MSY 
 	based reference points.  
@@ -1578,12 +1639,13 @@ FUNCTION void calc_reference_points()
 	/*Calculate average vulnerability*/
 	dvector va_bar(sage,nage);
 	va_bar.initialize();
-	/*TODO user should specify allocation for MSY based reference points*/
-	dvector allocation(1,ngear);
-	allocation = dvector(fsh_flag/sum(fsh_flag));
+	/*CHANGED user now specifies allocation for MSY based reference points 
+	in the data file.  Used to be fsh_flag, but now is an allocation for gear k*/
+	//dvector allocation(1,ngear);
+	//allocation = dvector(fsh_flag/sum(fsh_flag));
 	
 	
-	/*FIXME Allow for user to specify allocation among gear types.*/
+	/*CHANGED Allow for user to specify allocation among gear types.*/
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
@@ -1594,21 +1656,39 @@ FUNCTION void calc_reference_points()
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+					fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
 		ddye_df = phiq*dre_df + re*dphiq_df;
 		fe = fe - dye_df/ddye_df;
-		//cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
+		cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
 		if(sfabs(dye_df)<1.e-5)break;
 	}
 	fmsy=fe;
-	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+				fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 	msy=ye;
 	bmsy=be;
-	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
+	
+	/*SM Loop over discrete value of fe and ensure above code is 
+	finding the correct value of msy.
+	
+	TODO print this to the REPORT file for plotting.*/
+	cout<<fmsy<<endl;
+	for(i=1; i<=101; i++)
+	{
+		fe = (i-1.)/100.*2.*fmsy;
+		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+					fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		cout<<i<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<endl;
 	}
-
+	//exit(1);
+	
+	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
+  }
+	
 FUNCTION void simulation_model(const long& seed)
+  {
 	/*
 	Call this routine to simulate data for simulation testing.
 	The random number seed can be used to repeat the same 
@@ -1992,21 +2072,27 @@ FUNCTION void simulation_model(const long& seed)
 	
 	//cout<<N<<endl;
 	//exit(1);
+  }
 	
 FUNCTION dvector cis(const dvector& na)
+  {
 	//Cohort Influenced Selectivity
 	//This function returns a vector of residuals from a
 	//linear regression of log(pa)= a+b*age+res that can be
 	//used to modify age-based selectivity according to relative
 	//cohort strengths.
+	
+	//SM  Currently not used at all in iscam and should be deprecated.
 	dvector y = log(na);
 	dvector x = age;
 	double b = sum(elem_prod(x-mean(x),y-mean(y)))/sum(square(x-mean(x)));
 	double a = mean(y)-b*mean(x);
 	dvector res = y - (a+b*x);
 	return(res);
+  }
 
 REPORT_SECTION
+  {
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	int i,j,k;
 	REPORT(ControlFile);
@@ -2104,9 +2190,11 @@ REPORT_SECTION
 		system(copyrep);
 	}
 	
+	if(last_phase()) projection_model();
+  }
 	
-
 FUNCTION mcmc_output
+  {
 	if(nf==1){
 		ofstream ofs("iscam.mcmc");
 		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
@@ -2129,6 +2217,98 @@ FUNCTION mcmc_output
 	// output age-1 recruits
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<rt<<endl;
+  }
+
+FUNCTION void projection_model();
+  {
+	/*
+	This routine conducts population projections based on 
+	the estimated values of theta.  Note that all variables
+	in this routine are data type variables.
+	
+	theta(1) = log_ro
+	theta(2) = h
+	theta(3) = log_m
+	theta(4) = log_avgrec
+	theta(5) = log_recinit
+	theta(6) = rho
+	theta(7) = kappa
+	
+	*/
+	
+	int i,j,k;
+	int pyr = 2050;	//projection year.
+	
+	// --derive stock recruitment parameters
+	dvector lx(sage,nage); lx=1;
+	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-value(m_bar));
+	lx(nage)/=(1.-exp(-value(m_bar)));
+	
+	double phib = lx*fec(nyr);//(lx*exp(-value(m_bar))) * fec(nyr);//avg_fec;  
+	double so = value(kappa)/phib;		//max recruits per spawner
+	double beta;
+	double bo = value(ro)*phib;  				//unfished spawning biomass	
+	switch(int(cntrl(2)))
+	{
+		case 1:
+			beta = (value(kappa)-1.)/bo;
+		break;
+		case 2:
+			beta = log(value(kappa))/bo;
+		break;
+	}
+	
+	
+	dvector p_sbt(syr,pyr);
+	dmatrix p_N(syr,pyr+1,sage,nage);
+	dmatrix p_Z(syr,pyr,sage,nage);
+	p_N.initialize();
+	p_N.sub(syr,nyr) = value(N.sub(syr,nyr));
+	p_sbt(syr,nyr)=value(sbt(syr,nyr));
+	p_Z.sub(syr,nyr) = value(Z.sub(syr,nyr));
+	
+	//selecticity
+	/*CHANGED User to specifies allocation among gear types in data file.*/
+	dvector va_bar(sage,nage);
+	for(k=1;k<=ngear;k++)
+	{
+		va_bar+=allocation(k)*value(exp(log_sel(k)(nyr)));
+		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
+	}
+	
+	
+	for(i = nyr; i<=pyr; i++)
+	{
+		//Calculate mortality
+		p_Z(i) = value(m_bar)+fmsy*va_bar;
+		
+		//Spawning biomass
+		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*fec(nyr);//avg_fec;
+		
+		//Age-sage recruits
+		if(i>=syr+sage-1)
+		{
+			double rt;
+			double et=p_sbt(i-sage+1);
+			if(cntrl(2)==1)rt=(so*et/(1.+beta*et));
+			if(cntrl(2)==2)rt=(so*et*exp(-beta*et));
+			p_N(i+1,sage)=rt;//*exp(wt(i)-0.5*tau*tau);
+		}
+		
+		//Update numbers at age
+		p_N(i+1)(sage+1,nage)=++elem_prod(p_N(i)(sage,nage-1),exp(-p_Z(i)(sage,nage-1)));
+		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
+		
+		
+	}
+	cout<<p_sbt<<endl<<endl;
+	cout<<bmsy<<endl;
+	
+	//cout<<msy<<endl;
+	//cout<<p_Z<<endl;
+	
+	
+  }
 
 TOP_OF_MAIN_SECTION
 	time(&start);
