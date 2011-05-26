@@ -249,7 +249,7 @@ guiView	<- function()
 		admbObj = read.admb( "iscam" )
 		admbObj$mcsbt = read.table( "sbt.mcmc" )
 		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotSbtPosterior( admbObj, TRUE )
+		.plotSbtPosterior( admbObj, TRUE, annotate=annotate )
 	}
 	
 	if ( plotType=="traceplot" )
@@ -406,22 +406,28 @@ guiView	<- function()
 	
 }
 
-.plotSbtPosterior	<- function( admbObj, depletion=FALSE )
+.plotSbtPosterior	<- function( admbObj, depletion=FALSE, annotate=FALSE )
 {
-	#To do.  Add Sbo and posterior at syr-1
-	#for reference.
+	## Median and 95% CI for spawning biomass or depletion
 	print("	.plotSbtPosterior")
 	with( admbObj, {
-		xx <- yrs
+		xx <- yr
 		yy <- t(apply( mcsbt, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
 		
 		bo <- quantile( mcmc$bo, probs=c(0.5, 0.025, 0.975) )
+		bmsy <- quantile( mcmc$bmsy, probs=c(0.5, 0.025, 0.975) )
+		yl="Spawning biomass (1000 t)"
 		
-		if(depletion) yy <- t(t(yy)/bo)
+		if(depletion)
+		{
+			yy <- t(apply( mcsbt/mcmc$bo, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
+			yl = "Spawning biomass depletion"
+		}
+			
 
-		matplot(yrs, yy, type="n", xlab="Year", 
-			ylab="Spawning biomass (1000 t)", axes=FALSE, 
-			ylim=c(0, max(yy)) )
+		matplot(xx, yy, type="n", xlab="Year", 
+			ylab=yl, axes=FALSE, 
+			ylim=c(0, 1.2*max(yy)) )
 		
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
@@ -429,8 +435,8 @@ guiView	<- function()
 		
 		polygon(c(xx, rev(xx)), 
 			c(yy[,2],rev(yy[,3])), 
-			col=colr("red",0.5), border=NA)
-		
+			col=colr("red",0.25), border=NA)
+		print(yy)
 		lines(xx, yy[,1], lwd=1.5)
 		#matlines(xx, yy)
 		
@@ -440,6 +446,19 @@ guiView	<- function()
 			arrows(min(xx)-0.4,bo[2], min(xx)-0.4, bo[3], length=0)
 		}
 		
+		if ( annotate && depletion )
+		{
+			#mfg <- par( "mfg" )
+			#if ( mfg[1]==1 && mfg[2]==1 )
+			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
+			#	"Upper stock reference","Limit reference point"),
+			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
+			
+			#Delinate critical zone,  cautious zone, healthy zone.
+			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy[1]/bo[1],col=colr("red",0.1), border=NA)
+			rect(min(xx)-5,0.4*bmsy[1]/bo[1],max(xx)+5,0.8*bmsy[1]/bo[1],col=colr("yellow",0.1),border=NA)
+			rect(min(xx)-5,0.8*bmsy[1]/bo[1],max(xx)+5,1.5,col=colr("green",0.1), border=NA)
+		}
 		
 		
 	})
@@ -941,7 +960,7 @@ guiView	<- function()
 			txt = c(paste("Gear",1:ngear),"Natural mortality")
 			#mfg <- par( "mfg" )
 			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "right",legend=txt,
+			legend( "topright",legend=txt,
 				bty='n',lty=c(1:ngear,1),lwd=lw,pch=-1,ncol=1)
 		}
 	})
@@ -1225,52 +1244,66 @@ guiView	<- function()
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
-	## Run the model once to determine # of estimated parameters
-	arg = paste("./iscam -nox -sim", 111)
-	system(arg)
-	admbObj <- read.admb("iscam")
-	
-	itheta  <- grep("theta", admbObj$fit$names)
-	ix		<- as.numeric(substr(admbObj$fit$names[itheta],7,7))
-	theta <- admbObj$ctrl[ix, 1]
-	theta_p <- NULL
-	rPoints	<- NULL
-	for(i in 1:nTrials)
+	# First read iscamMC.rda if it exists.
+	if(file.exists("iscamMC.rda"))
 	{
-		seed = randomSeed + 2*(i-1)
-		arg = paste("./iscam -nox -sim", seed)
+		MC=dget("iscamMC.rda")
+	}
+	else
+	{
+		## Run the model once to determine # of estimated parameters
+		arg = paste("./iscam -nox -sim", 111)
 		system(arg)
-		
 		admbObj <- read.admb("iscam")
-		admbObj$sim = read.rep( "iscam.sim" )
-		theta_p = rbind( theta_p, admbObj$fit$est[itheta] )
-		rp = c(admbObj$fmsy/admbObj$sim$fmsy, 
-			admbObj$msy/admbObj$sim$msy, 
-			admbObj$bmsy/admbObj$sim$bmsy)
-		rPoints = rbind( rPoints, log2(rp) )
-		.plotSimulationSummary( admbObj )
-		print(paste("Trial ", i))
+	
+		itheta  <- grep("theta", admbObj$fit$names)
+		ix		<- as.numeric(substr(admbObj$fit$names[itheta],7,7))
+		theta <- admbObj$ctrl[ix, 1]
+		theta_p <- NULL
+		rPoints	<- NULL
+		for(i in 1:nTrials)
+		{
+			seed = randomSeed + 2*(i-1)
+			arg = paste("./iscam -nox -sim", seed)
+			system(arg)
+		
+			admbObj <- read.admb("iscam")
+			admbObj$sim = read.rep( "iscam.sim" )
+			theta_p = rbind( theta_p, admbObj$fit$est[itheta] )
+			rp = c(admbObj$fmsy/admbObj$sim$fmsy, 
+				admbObj$msy/admbObj$sim$msy, 
+				admbObj$bmsy/admbObj$sim$bmsy)
+			rPoints = rbind( rPoints, log2(rp) )
+			.plotSimulationSummary( admbObj )
+			print(paste("Trial ", i))
+		}
+		pn	<- c("log(Ro)","h","log(m)","log(Rbar)","log(Rinit)","rho","vartheta")
+		theta_dev<-log2(t(t(theta_p)/theta))
+		#theta_dev<-cbind(theta_dev, rPoints)
+		#browser()
+
+		colnames(theta_dev)= (pn[ix])#(pn[itheta])
+		colnames(rPoints) = c("Fmsy","MSY","Bmsy")
+		MC=list(theta_dev=theta_dev, rPoints=rPoints)
 	}
 	
-	pn	<- c("log(Ro)","h","log(m)","log(Rbar)","rho","vartheta")
-	theta_dev<-log2(t(t(theta_p)/theta))
-	#theta_dev<-cbind(theta_dev, rPoints)
-	browser()
 	
-	colnames(theta_dev)= (pn[ix])#(pn[itheta])
-	colnames(rPoints) = c("Fmsy","MSY","Bmsy")
 	op = par(no.readonly=T)
 	par(mfcol=c(2, 1), las=1)
-	boxplot(theta_dev, ylab="log2(theta/theta')", 
+	boxplot(MC$theta_dev, ylab="log2(theta/theta')", 
 			ylim=c(-1, 1) )
 			#ylim=c(-max(c(1, abs(theta_dev))),max(c(1, abs(theta_dev)))) )
 	abline(h=0, col="grey")
 	
-	boxplot(rPoints,ylab="log2 bias", 
+	boxplot(MC$rPoints,ylab="log2 bias", 
 			ylim=c(-1, 1) )
 			#ylim=c(-max(c(1, abs(rPoints))), max(c(1, abs(rPoints)))) )
 	abline(h=0, col="grey")	
 	par(op)
+
+	dput(MC,file="iscamMC.rda")
+	
+	#TODO	write theta_dev and rPoints to files so you don't have to repeat.
 }
 
 #######################

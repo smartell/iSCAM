@@ -4,6 +4,12 @@
 #Examples/NamibianHake/NamibianHake.dat
 #Examples/NamibianHake/NamibianHake.ctl
 
+#Examples/sogHerring/QCIHerring2010.dat
+
+#Examples/sogHerring/PRDHerring2010.dat
+
+#Examples/sogHerring/CCHerring2010.dat
+
 Examples/sogHerring/SOGHerring2010.dat
 #Examples/sogHerring/SOGHerring2010.ctl
 Examples/sogHerring/SOGHerring2010HCAM.ctl

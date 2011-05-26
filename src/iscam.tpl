@@ -1507,7 +1507,6 @@ FUNCTION calc_objective_function
 	{
 		double std_mdev = cntrl(11);
 		dvar_vector fd_mdevs=first_difference(log_m_devs);
-		//pvec(2) = dnorm(log_m_devs,std_mdev);
 		pvec(2) = dnorm(fd_mdevs,std_mdev);
 		pvec(2) += 0.5*norm2(log_m_nodes);
 	}
@@ -1598,7 +1597,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	double phif = elem_prod(lz,exp(-za*cntrl(13)))*fa;
 	phiq=sum(elem_prod(elem_prod(lz,wa),qa));
 	re=ro*(kap-phie/phif)/(kap-1.);
-	//re<0?re=0:NULL;
+	//cout<<fe<<" spr ="<<phif/phie<<endl;
 	if(re<=0) re=0;
 	dre_df=(ro/(kap-1.))*phie/square(phif)*dphif_df;
 	ye=fe*re*phiq;
@@ -1633,7 +1632,7 @@ FUNCTION void calc_reference_points()
 	*/
 	int i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
-	double dye_df,ddye_df;
+	double dye_df,ddye_df,spr;
 	fe = 1.5*value(m_bar);
 	
 	/*Calculate average vulnerability*/
@@ -1661,7 +1660,7 @@ FUNCTION void calc_reference_points()
 		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
 		ddye_df = phiq*dre_df + re*dphiq_df;
 		fe = fe - dye_df/ddye_df;
-		cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
+		if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
 		if(sfabs(dye_df)<1.e-5)break;
 	}
 	fmsy=fe;
@@ -1670,17 +1669,30 @@ FUNCTION void calc_reference_points()
 	msy=ye;
 	bmsy=be;
 	
+	/*TODO print this to the REPORT file for plotting.*/
 	/*SM Loop over discrete value of fe and ensure above code is 
-	finding the correct value of msy.
+	finding the correct value of msy.*/
 	
-	TODO print this to the REPORT file for plotting.*/
-	cout<<fmsy<<endl;
-	for(i=1; i<=101; i++)
+	
+	ofstream report_file("iscam.eql");
+	
+	if(report_file.is_open())
 	{
-		fe = (i-1.)/100.*2.*fmsy;
-		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-					fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-		cout<<i<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<endl;
+		report_file<<"index\t fe \t ye \t be \t re \t spr\n";
+		
+		fe = 0; i=0;
+		while(i < 1500)
+		{
+			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+			if(re<=0)break;
+			
+			double spr = value(-ro/((kappa-1)*re-ro*kappa));
+			report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t";
+			report_file<<re<<"\t"<<spr<<endl;
+			
+			fe += 0.01;
+		}
 	}
 	//exit(1);
 	
@@ -2169,11 +2181,18 @@ REPORT_SECTION
 	dmatrix ctrl=theta_control;
 	REPORT(ctrl);
 	
+	
+	if(last_phase()) projection_model();
 	if(verbose)cout<<"END of Report Section..."<<endl;
+	
+	
+	
+	
 	
 	//Make copies of the report file using the ReportFileName
 	//to ensure the results are saved to the same directory 
-	//that the data file is in.
+	//that the data file is in. This should probably go in the 
+	//FINAL_SECTION
 	if(last_phase() && PLATFORM =="Linux")
 	{
 		adstring copyrep = "cp iscam.rep " +ReportFileName;
@@ -2190,7 +2209,7 @@ REPORT_SECTION
 		system(copyrep);
 	}
 	
-	if(last_phase()) projection_model();
+	
   }
 	
 FUNCTION mcmc_output
@@ -2212,7 +2231,7 @@ FUNCTION mcmc_output
 	
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);
-	of1<<sbt<<endl;
+	of1<<sbt(syr,nyr)<<endl;
 	
 	// output age-1 recruits
 	ofstream of2("rt.mcmc",ios::app);
