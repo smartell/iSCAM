@@ -13,7 +13,7 @@
 ## ____________________________________________________________________________ ##
     7.60        -5.0    15       4       0       -5.0    15      #log_ro 
     0.67        0.2     1.0      4       3       10.0    4.925373    #steepness
-    -0.7985077  -5.0    5.0      3       1       -0.7985077 0.4    #log.m
+    -0.7985077  -5.0    5.0      3       1       -0.7985077 0.2    #log.m
     7.40        -5.0    15       1       0       -5.0    15      #log_avgrec
     7.20        -5.0    15       1       0       -5.0    15      #log_recinit
     0.3043478   0.001   0.999   -3       3       15.0    60.0    #rho
@@ -72,7 +72,7 @@
 0           ## Assume unfished in first year (0=FALSE, 1=TRUE)
 0.02        ## Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        ## Mean fishing mortality for regularizing the estimates of Ft
-0.01        ## std in mean fishing mortality in first phase
+0.05        ## std in mean fishing mortality in first phase
 2.00        ## std in mean fishing mortality in last phase
 3           ## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## std in deviations for natural mortality

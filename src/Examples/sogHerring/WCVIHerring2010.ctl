@@ -8,13 +8,14 @@
 ##                      -3 beta (p1=alpha,p2=beta)
 ##                      -4 gamma(p1=alpha,p2=beta)
 ## ____________________________________________________________________________ ##
-6   ## npar
+7   ## npar
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
     7.6         -5.0    15       4       0       -5.0    15      #log_ro/msy 
     0.70        0.2     1.0      4       3       1.1     1.1     #steepness/fmsy
     -0.7985     -5.0    0.0      2       1       -0.7985 0.2     #log.m
     7.35        -5.0    15       1       0       -5.0    15      #log_avgrec
+	7.20        -5.0    15       1       0       -5.0    15      #log_recinit
     0.05        0.001   0.999    3       3       5.0     100     #rho
     1.18        0.01    500     -3       4      1.01     1.01    #kappa (precision)
 ## ____________________________________________________________________________ ##
@@ -63,15 +64,15 @@
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
 0			## verbose ADMB output (0=off, 1=on)
 1			## recruitment model (1=beverton-holt, 2=ricker)
-0.025		## std in observed catches in first phase.
-0.005		## std in observed catches in last phase.
+0.100		## std in observed catches in first phase.
+0.0707		## std in observed catches in last phase.
 0			## Assume unfished in first year (0=FALSE, 1=TRUE)
 0.02		## Minimum proportion to consider in age-proportions for dmvlogistic
 0.20		## Mean fishing mortality for regularizing the estimates of Ft
 0.01		## std in mean fishing mortality in first phase
 5.00		## std in mean fishing mortality in last phase
 -3			## phase for estimating m_deviations (use -1 to turn off mdevs)
-0.01		## std in deviations for natural mortality
+0.1			## std in deviations for natural mortality
 12			## number of estimated nodes for deviations in natural mortality
 0.99        ## fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
