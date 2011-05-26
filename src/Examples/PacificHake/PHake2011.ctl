@@ -8,13 +8,14 @@
 ##                      -3 beta (p1=alpha,p2=beta)
 ##                      -4 gamma(p1=alpha,p2=beta)
 ## ____________________________________________________________________________ ##
-6   ## npar
+7   ## npar
 ##  ival        lb      ub      phz     prior    p1      p2      parameter name
 ## ____________________________________________________________________________ ##
     1.6         -5.0    15       4       0       -5.0    15.     #log_ro/msy 
     0.65        0.2     1.0      4       3       3       2       #steepness/fmsy
     -1.469      -5.0    0.0      2       1       -1.469  0.05    #log.m
     1.6         -5.0    15       1       0       -5.0    15      #log_avgrec
+    1.60        -5.0    15       1     0         -5.0    15     #log_recinit
     0.2         0.001   0.999    3       3       12.0    52.8    #rho
     1.25        0.01    10.      3       4       39.0625 62.5    #kappa (precision)
 ## ____________________________________________________________________________ ##
@@ -70,7 +71,7 @@
 0.20        ## Mean fishing mortality for regularizing the estimates of Ft
 0.05        ## std in mean fishing mortality in first phase
 2.00        ## std in mean fishing mortality in last phase
--1          ## phase for estimating m_deviations (use -1 to turn off mdevs)
+3           ## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## std in deviations for natural mortality
 12			## 11 number of estimated nodes for deviations in natural mortality
 0.00        ## fraction of total mortality that takes place prior to spawning
