@@ -729,6 +729,7 @@ FUNCTION calcSelectivities
 	
 	*/
 	int i,j;
+	double tiny=1.e-10;
 	dvariable p1,p2;//,p3;
 	dvar_vector age_dev=age;
 	dvar_matrix t1;
@@ -751,7 +752,7 @@ FUNCTION calcSelectivities
 				// logistic selectivity for case 1 or 6
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
-				jlog_sel(j) = log( plogis(age,p1,p2) );
+				jlog_sel(j) = log( plogis(age,p1,p2)+tiny );
 				break;
 			
 			case 6:
@@ -801,7 +802,7 @@ FUNCTION calcSelectivities
 				for(i = syr; i<=nyr; i++)
 				{
 					dvar_vector tmpwt=log(wt_obs(i)*1000)/mean(log(wt_obs*1000.));
-					tmp2(i) = log( plogis(tmpwt,p1,p2) );
+					tmp2(i) = log( plogis(tmpwt,p1,p2)+tiny );
 					
 					//tmp2(i) = log(1./(1.+exp(p1-p2*wt_obs(i))));
 				}	 
@@ -823,10 +824,8 @@ FUNCTION calcSelectivities
 		//subtract mean to ensure sum(log_sel)==0
 		//substract max to ensure exp(log_sel) ranges from 0-1
 		for(int i=syr;i<=nyr;i++)
-			log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
+			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
 			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
-			
-		//TODO 
 			
 		
 		//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
@@ -986,7 +985,7 @@ FUNCTION calcNumbersAtAge
 	
 	for(i=syr;i<=nyr;i++)
 	{
-		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1));
+		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1))+1.e-10;
 		N(i+1,nage)+=N(i,nage)*S(i,nage);
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
@@ -1050,7 +1049,7 @@ FUNCTION calcFisheryObservations
 			if(obs_ct(k,i)>0)
 			{/*If there is a commercial fishery, then calculate the
 			   catch-at-age (in numbers) and total catch (in weight)*/
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));//+1.e-10;
 				ct(k,i) = Chat(k,i)*wt_obs(i);
 			}
 			else
@@ -1201,7 +1200,7 @@ FUNCTION calc_stock_recruitment
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
 	lx(nage)/=(1.-exp(-m_bar));
 	
-	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;  //fec(syr);		//SM Dec 6, 2010
+	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass
@@ -2195,8 +2194,19 @@ REPORT_SECTION
 	//FINAL_SECTION
 	if(last_phase() && PLATFORM =="Linux")
 	{
-		adstring copyrep = "cp iscam.rep " +ReportFileName;
-		system(copyrep);
+		adstring bscmd = "cp iscam.rep " +ReportFileName;
+		system(bscmd);
+		
+		bscmd = "cp iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
+		
+		bscmd = "cp iscam.std " + BasefileName + ".std";
+		system(bscmd);
+		
+		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
+		
+		
 	}
 	
 	/*IN the following, I'm renaming the report file
