@@ -75,7 +75,7 @@ DATA_SECTION
 	init_adstring ControlFile;
 	
 	
-	!! BaseFileName=stripExtension(DataFile);
+	!! BaseFileName=stripExtension(ControlFile);
 	!! cout<<BaseFileName<<endl;
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	
@@ -2188,26 +2188,6 @@ REPORT_SECTION
 	
 	
 	
-	//Make copies of the report file using the ReportFileName
-	//to ensure the results are saved to the same directory 
-	//that the data file is in. This should probably go in the 
-	//FINAL_SECTION
-	if(last_phase() && PLATFORM =="Linux")
-	{
-		adstring bscmd = "cp iscam.rep " +ReportFileName;
-		system(bscmd);
-		
-		bscmd = "cp iscam.par " + BaseFileName + ".par";
-		system(bscmd); 
-		
-		bscmd = "cp iscam.std " + BasefileName + ".std";
-		system(bscmd);
-		
-		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
-		system(bscmd);
-		
-		
-	}
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
@@ -2411,4 +2391,38 @@ FINAL_SECTION
 	cout<<"--Number of function evaluations: "<<nf<<endl;
 	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
+
+	//Make copies of the report file using the ReportFileName
+	//to ensure the results are saved to the same directory 
+	//that the data file is in. This should probably go in the 
+	//FINAL_SECTION
+	if(last_phase() && PLATFORM =="Linux")
+	{
+		adstring bscmd = "cp iscam.rep " +ReportFileName;
+		system(bscmd);
+		
+		bscmd = "cp iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
+		
+		bscmd = "cp iscam.std " + BaseFileName + ".std";
+		system(bscmd);
+		
+		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
+		
+		bscmd = "cp iscam.psv " + BaseFileName + ".psv";
+		system(bscmd);
+		
+		bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
+		system(bscmd);
+		
+		bscmd = "cp sbt.mcmc " + BaseFileName + ".mcst";
+		system(bscmd);
+		
+		bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
+		system(bscmd);
+		
+	}
+
+
 

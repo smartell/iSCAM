@@ -15,7 +15,7 @@
 # 1. requires PBSmodelling                                                      #
 #                                                                               #
 #                                                                               #
-# TODO: Finish  test priors widget to examine priors for parameters             #
+# CHANGED: Finish  test priors widget to examine priors for parameters          #
 # TODO: Save input List as an .rda file (dput & dget) for saving scenarios      #
 #                                                                               #
 #                                                                               #
@@ -23,7 +23,7 @@
 # April 25,  .runSimulationTrials now has a box plot of log2 ratios for         #
 #            estimated values of theta (grep parameters for theta)              #
 #                                                                               #
-#                                                                               #
+# June 4  Major changes to routines for allowing multiple stocks/scenarios      #
 #                                                                               #
 #                                                                               #
 #-------------------------------------------------------------------------------#
@@ -41,7 +41,7 @@ require(Riscam)	#custom library built specifically for iscam.
 .VIEWLAS  <- 1
 
 .REPFILES <- list.files(pattern="\\.rep")
-
+.VIEWTRCK  <- "iSCAMViewTracker.txt"  # File containing list of report files.
 
 
 
@@ -63,8 +63,21 @@ require(Riscam)	#custom library built specifically for iscam.
 	closeWin()
 	
 	#Create a file list object for selection
-	ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
-		
+	
+	
+	trckExists <- file.exists( .VIEWTRCK )
+	if (trckExists)
+	{
+		tmp <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
+		cat( "MSG (.hCamViewSetup): Viewer tracking file ",.VIEWTRCK, " found.\n" )
+		ifiles <- tmp
+	}
+	else
+	{
+		ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
+	}
+	
+	#FIXME need to depricate this	
 	#Read iscam report file and get controls for priors tab
 	A=read.rep("iscam.rep")
 	#Build data frame
@@ -93,9 +106,10 @@ guiView	<- function()
 {
 	guiInfo <- getWinVal(scope="L")
 	
+	
 	##Graphics options
 	# Check graphics options
-	if( autolayout && ! plotbyrow )
+	if( autoLayout && ! plotbyrow )
 	{
 		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(1, 1))
 	} 
@@ -127,154 +141,205 @@ guiView	<- function()
 	
 	# Determine which files have been selected
 	hdr	<- ifiles[ ifiles$Select, ]
-	#hdr$Report.Files contains the vector of report files to examine.
-	
-	# Read the report file
-	repObj	<- read.rep(hdr$Report.Files)
-	#repObj	<- read.rep("iscam.rep")
-	
-	
-	
-	
-	
-	
-	
-	# Conditional statements for radio button selections of plots
-	if ( plotType=="catch" )
+	print(hdr)
+	nRuns <- nrow(hdr)
+	#hdr$Report.File contains the vector of report files to examine.
+
+	## TODO auto layout stuff.
+	if ( autoLayout )
 	{
-		.plotCatch( repObj, legend.txt=NULL )
+		if (nRuns < 4 )
+		{
+			winCols <- 1
+			winRows <- nRuns
+		}
+		else if( nRuns >3 && nRuns<=6 )
+		{
+			winCols <- 2
+			winRows <- 3
+		}
+		
+		if (plotType=="selectivity")
+		{
+			winCols <- 1
+			winRows <- 1
+		}
 	}
 	
-	if ( plotType=="survey" )
-	{
-		.plotIndex( repObj, annotate=annotate )
-	}
+	## set graphical parameters
+	if ( plotbyrow )
+		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
+	else
+		par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
 	
-	if ( plotType=="biomass" )
-    {
-    	.plotBiomass( repObj, annotate=TRUE )
-    }
+	## TODO Loop over runs and plot corresponding graph
 	
-	if ( plotType=="depletion" )
+	for(i in 1:nRuns)
 	{
-		.plotDepletion( repObj, annotate=TRUE )
-	}
+		# Read the report file
+		#repObj	<- read.rep(hdr$Report.File[i])
+		repObj	<- read.admb(hdr$Control.File[i])
+		repObj$stock = hdr$Stock[i]
+		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
+		repObj$mcmc = read.table( mcfile, header=TRUE )
+		
+		if(plotType=="sbmcmc" || plotType=="depletionmcmc")
+		{
+			mcfile=paste(hdr$Control.File[i],".mcst", sep="")
+			repObj$mcsbt = read.table( mcfile, header=FALSE )
+		}
+		#repObj	<- read.rep("iscam.rep")
 	
-	if ( plotType=="surveyfit" )
-	{
-		.plotSurveyfit( repObj, annotate=TRUE )
-	}
 	
-	if ( plotType=="mortality" )
-	{
-		.plotMortality( repObj, annotate=TRUE )
-	}
 	
-	if ( plotType=="agecomps" )
-	{
-		.plotAgecomps( repObj, meanAge=TRUE )
-	}
 	
-	if ( plotType=="catchresid" )
-	{
-		.plotCatchResiduals( repObj, annotate=TRUE )
-	}
 	
-	if ( plotType=="surveyresid" )
-	{
-		.plotSurveyResiduals( repObj, annotate=TRUE )
-	}
 	
-	if ( plotType=="recresid" )
-	{
-		.plotRecruitmentResiduals( repObj )
-	}
 	
-	if ( plotType=="agecompsresid" )
-	{
-		.plotAgecompresiduals( repObj )
-	}
+		# Conditional statements for radio button selections of plots
+		if ( plotType=="catch" )
+		{
+			.plotCatch( repObj, legend.txt=NULL )
+		}
 	
-	if ( plotType=="recruitment" )
-	{
-		.plotRecruitment( repObj )
-	}
+		if ( plotType=="survey" )
+		{
+			.plotIndex( repObj, annotate=annotate )
+		}
 	
-	if ( plotType=="meanwt" )
-	{
-		.plotMeanwt( repObj )
-	}
+		if ( plotType=="biomass" )
+	    {
+	    	.plotBiomass( repObj, annotate=TRUE )
+	    }
 	
-	if ( plotType=="selectivity" )
-	{
-		.plotSelectivity( repObj )
-	}
+		if ( plotType=="depletion" )
+		{
+			.plotDepletion( repObj, annotate=TRUE )
+		}
 	
-	if ( plotType=="stockrecruit" )
-	{
-		.plotStockRecruit( repObj )
-	}
+		if ( plotType=="surveyfit" )
+		{
+			.plotSurveyfit( repObj, annotate=TRUE )
+		}
 	
-	if ( plotType=="parameters" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotMarginalPosteriors( admbObj )
-	}
+		if ( plotType=="mortality" )
+		{
+			.plotMortality( repObj, annotate=TRUE )
+		}
 	
-	if ( plotType=="refpoints" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotReferencePoints( admbObj )
-	}
+		if ( plotType=="agecomps" )
+		{
+			.plotAgecomps( repObj, meanAge=TRUE )
+		}
 	
-	if ( plotType=="kobeplot" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotStockStatus( admbObj )
-	}
+		if ( plotType=="catchresid" )
+		{
+			.plotCatchResiduals( repObj, annotate=TRUE )
+		}
 	
-	if ( plotType=="sbmcmc" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcsbt = read.table( "sbt.mcmc" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotSbtPosterior( admbObj )
-	}
+		if ( plotType=="surveyresid" )
+		{
+			.plotSurveyResiduals( repObj, annotate=TRUE )
+		}
 	
-	if ( plotType=="depletionmcmc" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcsbt = read.table( "sbt.mcmc" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.plotSbtPosterior( admbObj, TRUE, annotate=annotate )
-	}
+		if ( plotType=="recresid" )
+		{
+			.plotRecruitmentResiduals( repObj )
+		}
 	
-	if ( plotType=="traceplot" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-		.mcmcTrace( admbObj )
-	}
+		if ( plotType=="agecompsresid" )
+		{
+			.plotAgecompresiduals( repObj )
+		}
 	
-	if ( plotType=="simplot" )
-	{
-		admbObj = read.admb( "iscam" )
-		admbObj$sim = read.rep( "iscam.sim" )
-		.plotSimulationSummary( admbObj )
-	}
+		if ( plotType=="recruitment" )
+		{
+			.plotRecruitment( repObj )
+		}
 	
-	if(gLetter)
-	{
-		mfg=par("mfg")
-		if(mfg[1]==1 && mfg[2]==1) ix=1
-		if(mfg[1]==2 && mfg[2]==1) ix=2
-		if(mfg[1]==1 && mfg[2]==2) ix=3
-		if(mfg[1]==2 && mfg[2]==2) ix=4
-		gletter(ix)
-	}
+		if ( plotType=="meanwt" )
+		{
+			.plotMeanwt( repObj )
+		}
+	
+		if ( plotType=="selectivity" )
+		{
+			.plotSelectivity( repObj )
+		}
+	
+		if ( plotType=="stockrecruit" )
+		{
+			.plotStockRecruit( repObj )
+		}
+	
+		if ( plotType=="parameters" )
+		{
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			#.plotMarginalPosteriors( admbObj )
+			.plotMarginalPosteriors( repObj )
+		}
+	
+		if ( plotType=="refpoints" )
+		{
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.plotReferencePoints( repObj )
+		}
+	
+		if ( plotType=="kobeplot" )
+		{
+			admbObj = read.admb( "iscam" )
+			admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.plotStockStatus( admbObj )
+		}
+	
+		if ( plotType=="sbmcmc" )
+		{
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcsbt = read.table( "sbt.mcmc" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			
+			.plotSbtPosterior( repObj )
+		}
+	
+		if ( plotType=="depletionmcmc" )
+		{
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcsbt = read.table( "sbt.mcmc" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.plotSbtPosterior( repObj, TRUE, annotate=annotate )
+		}
+	
+		if ( plotType=="traceplot" )
+		{
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.mcmcTrace( repObj )
+		}
+		
+		if ( plotType=="mcmcpairs" )
+		{
+			.mcmcPairs( repObj )
+		}
+	
+		if ( plotType=="simplot" )
+		{
+			admbObj = read.admb( "iscam" )
+			admbObj$sim = read.rep( "iscam.sim" )
+			.plotSimulationSummary( admbObj )
+		}
+	
+		if(gLetter)
+		{
+			mfg=par("mfg")
+			if(mfg[1]==1 && mfg[2]==1) ix=1
+			if(mfg[1]==2 && mfg[2]==1) ix=2
+			if(mfg[1]==1 && mfg[2]==2) ix=3
+			if(mfg[1]==2 && mfg[2]==2) ix=4
+			gletter(ix)
+		}
+	}  #end of loop over nRuns
 	
 	## Saving PDF of figure in current device
 	if(savePDF)
@@ -388,7 +453,7 @@ guiView	<- function()
 	print("	.plotReferencePoints")
 	op=par(no.readonly=T)
 	with(admbObj, {
-		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 0, 0))
+		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
 		par(mfcol=c(2, 2))
 		for(i in 8:11)
 		{
@@ -398,8 +463,8 @@ guiView	<- function()
 				main="", ylab="",
 				xlim=xl)#, ...)
 		}
-		mtext(c("MSY reference points", "Probability density"), 
-		c(1, 2),outer=T, line=-1, las=0)
+		mtext(c("MSY reference points", "Probability density",paste(stock)), 
+		c(1, 2, 3),outer=T, line=-1, las=0)
 	})
 	
 	par(op)
@@ -427,7 +492,7 @@ guiView	<- function()
 
 		matplot(xx, yy, type="n", xlab="Year", 
 			ylab=yl, axes=FALSE, 
-			ylim=c(0, 1.2*max(yy)) )
+			ylim=c(0, 1.0*max(yy)), main=paste(stock) )
 		
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
@@ -464,11 +529,68 @@ guiView	<- function()
 	})
 }
 
+.mcmcPairs	<- function( admbObj )
+{
+	## pairs plot of mcmc samples for theta
+	## code kindly stolen from ARK.
+	panel.mcmc <- function( x,y,z=modes )
+  {
+	xMean <- mean( x,na.rm=T )
+    yMean <- mean( y,na.rm=T )
+	points( x,y,pch=16,cex=0.5,col=colr("black", 0.15) )
+	abline( h=yMean,v=xMean,col="blue",lty=3 )
+	points( xMean,yMean, bg="cyan", pch=21,cex=1.25 )
+	if ( !is.null(modes) )
+   	{
+      # This is logic to figure out what "pair" is being plotted.
+      # The modal estimates are the first row of the mcmcObj.
+      # The par()$mfg calls finds the current row and column indices of
+      # the panel being plotted.
+
+		xMode <- z[ par()$mfg[2] ]
+    	yMode <- z[ par()$mfg[1] ]
+		points( xMode,yMode, bg="red", pch=22, cex=1.25 )
+    }
+  }
+
+  panel.hist <- function( x,... )
+  {
+    # Histograms for diagonal of pairs plot (from PBS Modelling CCA).
+	  usr <- par("usr")
+      on.exit( par(usr) )
+	  h <- hist( x, breaks="Sturges", plot=FALSE )
+	  breaks <- h$breaks
+      nB <- length(breaks)
+	  y <- h$counts
+      y <- y / sum(y)
+	  par( usr = c(usr[1:2], 0, max(y)*1.5) )
+	  rect( breaks[-nB], 0, breaks[-1], y, col="#FFD18F" )
+      box()
+  }
+
+  # Find the active parameters.  If the chain is all equal, then the parameter
+  # was fixed in the model configuration.  This gets a Boolean vector that
+  # indicates which columns have fixed values.
+  mcmcObj <- admbObj$mcmc
+  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
+  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
+
+  tmp <- mcmcObj[ ,iPars ]
+  tmpNames <- names( tmp )
+
+  modes <- mcmcObj[1,]
+  pairs( tmp, panel=panel.mcmc, diag.panel=panel.hist, gap=0 )
+  mtext(admbObj$stock, side=3, outer=T, line=-1.5)
+  
+}
+
 .mcmcTrace	<- function( admbObj, label=NULL )
 {
 	## this function examines the trace plots for the
 	## estimated leading parameters
 	print("	.mcmcTrace")
+	op=par(no.readonly=T)
+	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 2, 1, 0), mfcol=c(3, 3))
 	plotTrace <- function( obj )
 	{
 	  # Input "obj" is a VECTOR of MCMC samples.
@@ -504,14 +626,15 @@ guiView	<- function()
 	  for ( i in 1:ncol(tmp) )
 	  {
 	    plotTrace( tmp[,i] )
+		title(ylab=colnames(mcmc[i]))
 	    #panLab( 0.5, 0.9, cex=1.0, tmpNames[i] )  
 	  }
 
-	  if ( !is.null(label) )
-	    mtext( side=3, line=-0.5, cex=1.0, outer=T, label )
-	  mtext( side=1, line=0.5, cex=1.0, outer=T, "Sample" )
+	  mtext(c("Sample", "Parameter",paste(stock)), c(1, 2, 3), 
+			outer=T, line=c(-1,0, -1), las=0)
 	  
 	})
+	par(op)
 }
 
 
@@ -521,15 +644,27 @@ guiView	<- function()
 	print("	.plotMarginalPosteriors")
 	#Marginal distributions & priors for theta
 	op=par(no.readonly=T)
-	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 0, 0))
+	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 1, 0))
 
 	## Read control file to get bounds and priors for theta
 	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
 
 	with(admbObj, {
 		std=apply(mcmc[,1:7],2,sd)
-		nr=length(std[std!=0])/2
-		par(mfcol=c(nr, 2))
+		nr=length(std[std!=0])
+		if(nr > 6)
+		{
+			nRow=3; nCol=3
+		}
+		else if(nr>4)
+		{
+			nRow=3; nCol=2
+		}
+		else
+		{
+			nRow=2; nCol=2
+		}
+		par(mfcol=c(nRow, nCol))
 		for(i in 1:7){
 			if(std[i]!=0){
 				ps = mcmc[, i]  #posterior samples
@@ -547,14 +682,14 @@ guiView	<- function()
 				#browser()
 				if(pt!=4)
 					curve(unlist(lapply(x,fn,p1,p2)),
-						xl[1],xl[2],add=T, col=4, lty=2)
+						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
 				else
 					curve(unlist(lapply((x-ctrl[i,2])/
 						 (ctrl[i,3]-ctrl[i,2])
-						,fn,p1,p2)),xl[1],xl[2],add=T, col=4, lty=2)
+						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
 			}
 		}
-		mtext(c("Parameter", "Probability density"), c(1, 2), 
+		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
 			outer=T, line=-1, las=0)
 	})
 	par(op)
@@ -567,7 +702,9 @@ guiView	<- function()
 		yy = rt
 		
 		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
-			xlab="Spawning biomass", ylab=paste("Age-",min(age)," recruits", sep=""))
+			xlab="Spawning biomass", 
+			ylab=paste("Age-",min(age)," recruits", sep=""), 
+			main=paste(stock))
 			
 		points(xx, yy)
 		points(xx[1],yy[1], pch=20, col="green")
@@ -596,16 +733,17 @@ guiView	<- function()
 	#plot the selectivity curves (3d plots)
 	with(repObj, {
 		#par(mgp=c(3, 3, 5))
-		plot.sel<-function(x, y, z)
+		plot.sel<-function(x, y, z, ...)
 		{
 			#z=exp(A$log_sel)*3
 			#x=A$yr
 			#y=A$age
+			z <- z/max(z)
 			z0 <- 0#min(z) - 20
 			z <- rbind(z0, cbind(z0, z, z0), z0)
 			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
 			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
-			clr=colorRampPalette(c("honeydew", "lawngreen"))
+			clr=colorRampPalette(c("honeydew","lawngreen"))
 			nbcol=50
 			iclr=clr(nbcol)
 			nrz <- nrow(z)
@@ -617,17 +755,18 @@ guiView	<- function()
 			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
 
 			par(bg = "transparent")
-			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=15, 
+			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=5, 
 				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
-				xlab="Year",ylab="Age",zlab="Selectivity",
-				ticktype="detailed")
+				xlab="Year",ylab="Age",zlab="Selectivity", 
+				ticktype="simple", ...)
 			
 			#require(lattice)
 			#wireframe(z, drap=TRUE, col=fill)
 		}
 		ix=1:length(yr)
 		for(k in 1:ngear){
-			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]))
+			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
+			main=paste(stock, "Gear", k))
 			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
 			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
 		}
@@ -644,11 +783,11 @@ guiView	<- function()
 		nage=length(age)
 		
 		plot(range(xx), range(wt_obs), type="n", axes=FALSE,
-		xlab="Cohort year", ylab="Weight-at-age (kg)")
+		xlab="Cohort year", ylab="Weight-at-age (kg)", main=paste(stock))
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		
-		for(i in 1:dim(wt_obs)[1])
+		for(i in 1:(dim(wt_obs)[1]-1))
 		{
 			#ir = (age-min(age))+i
 			#xx = yr[i]+(age-min(age))
@@ -658,7 +797,7 @@ guiView	<- function()
 			
 			yy[yy==0]=NA;xx[yy==NA]=NA
 			lines(xx,yy)
-
+			print(c(i, dim(wt_obs)[1]))
 			points(xx[1],yy[1],pch=20,col="steelblue",cex=0.5)
 			points(xx[nage],yy[nage],pch=20,col="salmon",cex=0.5)
 			
@@ -676,7 +815,7 @@ guiView	<- function()
 		yrange=c(0, max(yy, na.rm=T))
 		
 		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", 
+			xlab="Year", main=paste(stock), 
 			ylab=paste("Age-", min(age), " recruits", sep=""))
 		
 		lines(xx, yy, type="h")
@@ -695,31 +834,35 @@ guiView	<- function()
 		if(is.matrix(epsilon)){
 			xx = yr
 			yy = t(epsilon)
+			t1 = colSums(yy,na.rm=T)
+			ng = length(t1[t1!=0])
 		}else{
 			xx = yr
 			yy = epsilon
+			ng = 1
 		}
-		
+		#browser()
 		absmax = abs(max(yy, na.rm=TRUE))
 		if(absmax<=1e-3)absmax=1
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Catch residual")
+			xlab="Year", ylab="Catch residual", main=paste(stock))
 		
-		matlines(xx, yy, type="h", col="black")
+		matlines(xx, yy, type="h", col="black",lty=1)
+		matpoints(xx, yy,pch=1:ng, cex=0.75, col=1)
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
 		if ( annotate )
 		{
-			n=dim(xx)[2]
-			txt=paste("Gear",1:n)
+			#n=dim(yy)[2]
+			txt=paste("Gear",1:ng)
 			
 			mfg <- par( "mfg" )
 			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=1:n,lwd=1,pch=-1,ncol=1 )
+			legend( "top",legend=txt,cex=0.75, 
+				bty='n',pch=1:ng,lwd=1,lty=-1,ncol=ng )
 		}
 	})
 }
@@ -741,7 +884,7 @@ guiView	<- function()
 		yrange=c(-absmax, absmax)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Survey residual")
+			xlab="Year", ylab="Survey residual", main=paste(stock))
 		
 		matlines(xx, yy, type="h", col="black")
 		axis( side=1 )
@@ -773,7 +916,7 @@ guiView	<- function()
 		yrange=c(-absmax, absmax)
 		
 		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Recruitment residuals")
+			xlab="Year", ylab="Recruitment residuals", main=paste(stock))
 			
 		lines(xx, yy, type="h", col="black")
 		axis( side=1 )
@@ -798,7 +941,7 @@ guiView	<- function()
 		
 		matplot(xx, yy, type="n", axes=FALSE,
 			xlab="Year", ylab="Relative abundance", 
-			ylim=yrange )
+			ylim=yrange , main=paste(stock))
 		
 		matlines(xx, yy, col="black",type="o", pch=1:ncol(yy))
 		
@@ -820,7 +963,7 @@ guiView	<- function()
 	#barplot of the observed catch
 	with(repObj, {
 		barplot(obs_ct, names.arg=yr,axes=FALSE, 
-			xlab="Year", ylab="Catch (1000 t)", 
+			xlab="Year", ylab="Catch (1000 t)",main=paste(stock),  
 			legend.text = legend.txt)
 		axis( side=2, las=.VIEWLAS )
 	})
@@ -835,7 +978,7 @@ guiView	<- function()
 		yrange=c(0,1.1*max(yy, na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
-			xlab="Year", ylab="Spawning depletion", 
+			xlab="Year", ylab="Spawning depletion",main=paste(stock), 
 			ylim=yrange)
 		lines(xx, yy)
 		rlvl=c(1.0, 0.8, 0.4)
@@ -873,7 +1016,7 @@ guiView	<- function()
 		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,
-				xlab="Year", ylab="Biomass (1000 t)", 
+				xlab="Year", ylab="Biomass (1000 t)",main=paste(stock), 
 				ylim=yrange)
 		
 		matlines(xx,yy,
@@ -908,7 +1051,7 @@ guiView	<- function()
 		yrange=c(0, max(yy, y2, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
-			xlab="Year", ylab="Relative abundance")
+			xlab="Year", ylab="Relative abundance", main=paste(stock))
 		
 		matlines(xx, yy, col="black")
 		matpoints(xx, y2, col="black")
@@ -947,7 +1090,7 @@ guiView	<- function()
 		lt = c(1:ngear,1)
 		
 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Mortality rate")
+			xlab="Year", ylab="Mortality rate", main=paste(stock))
 			
 		matlines(xx, yy, col="black", lwd=lw, lty=lt)
 		axis( side=1 )
@@ -975,6 +1118,7 @@ guiView	<- function()
 	with( repObj, {
 		if(!is.null(repObj$A)){
 			nagear = unique(A[, 2])
+			xrange = range(A[, 1])
 			#par(mfcol=c(length(nagear), 1))
 			for(i in nagear)
 			{
@@ -986,7 +1130,8 @@ guiView	<- function()
 				# plot proportions-at-age (cpro=TRUE)
 				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
 					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1, 
-					bg=colr("steelblue", 0.5))
+					bg=colr("steelblue", 0.5),main=paste(stock, "Gear", i), 
+					xlim=xrange)
 				
 				if( meanAge )
 				{
@@ -1015,6 +1160,7 @@ guiView	<- function()
 	with( repObj, {
 		if(!is.null(repObj$A)){
 			nagear = unique(A[, 2])
+			xrange = range(A[, 1])
 			#par(mfcol=c(length(nagear), 1))
 			for(i in nagear)
 			{
@@ -1025,7 +1171,7 @@ guiView	<- function()
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
 					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[i],
-					bg=colr("white", 0.5))
+					bg=colr("white", 0.5), xlim=xrange,main=paste(stock, "Gear", i))
 				title(main=paste("Variance=",round(age_tau2[i],3)),line=-1,cex.main=0.75)
 			}
 			

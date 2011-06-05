@@ -6,13 +6,15 @@
 
 #Examples/sogHerring/QCIHerring2010.dat
 
-#Examples/sogHerring/PRDHerring2010.dat
+#Examples/prdHerring/PRDHerring2010.dat
+#Examples/prdHerring/PRDHerring2010.ctl
 
-#Examples/sogHerring/CCHerring2010.dat
+#Examples/ccHerring/CCHerring2010.dat
+#Examples/ccHerring/CCHerring2010.ctl
 
 Examples/sogHerring/SOGHerring2010.dat
-#Examples/sogHerring/SOGHerring2010.ctl
-Examples/sogHerring/SOGHerring2010HCAM.ctl
+Examples/sogHerring/SOGHerring2010.ctl
+#Examples/sogHerring/SOGHerring2010HCAM.ctl
 #Examples/sogHerring/SOGHerring2010sim.ctl
 #Examples/sogHerring/SOGHerring2010mc.ctl
 

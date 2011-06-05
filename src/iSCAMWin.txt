@@ -11,21 +11,21 @@ menu nitems=1 label="File" font="Courier 10"
 
 #----------------------------------------------------------------------------------#
 
-notebook tabs="Results System Priors" name=nb width=500 height=550 \
- 	font="Courier" padx=2 pady=2
+notebook tabs="Results System Priors" name=nb width=500 height=620 \
+ 	font="Courier" padx=0 pady=0
 	
 	##--------------------------------------------------------------------------------##	
 	##-- RESULTS TAB                                                                --##
 	##--------------------------------------------------------------------------------##
 	#grid for the widgets on the results tab
-	grid 3 1 toptitle="Controls for iSCAM results (tables & graphs)" relief="raised"
+	grid 4 1 toptitle="Controls for iSCAM results (tables & graphs)" relief="raised"
 			
 	#-- widget 1
-	grid 1 2 relief="ridge" pady=5
+	grid 1 1 relief="ridge" pady=5
 		#-- widget 1a
-		object name=ifiles pady=2 sticky=W font="Courier 10" rowshow=5 rowlabels=FALSE width=20 sticky=W
+		object name=ifiles pady=2 sticky=W font="Courier 10" rowshow=5 rowlabels=FALSE width="5 5 12 25" sticky=W
 		#-- widget 1b
-		image file="iscamlogo.gif" sticky="E" subsample=2
+		#image file="iscamlogo.gif" sticky="E" subsample=2
 	
 	
 	#-- widget 2
@@ -57,7 +57,7 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 		radio name=plotType value=agecompsresid text="Age composition"   function=.mpdView mode=character sticky=W
 		
 		#-- widget 2c
-		grid 7 1 toptitle="Posteriors" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
+		grid 8 1 toptitle="Posteriors" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=5
 		radio name=plotType value=parameters    text="Leading parameters"		function=.mpdView mode=character sticky=W
 		radio name=plotType value=refpoints     text="Reference points" 		function=.mpdView mode=character sticky=W
 		radio name=plotType value=sbmcmc        text="Spawning stock biomass" 	function=.mpdView mode=character sticky=W
@@ -65,15 +65,16 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 		radio name=plotType value=kobeplot      text="Stock status (KOBE)" 		function=.mpdView mode=character sticky=W
 		label text="MCMC diagnostics" font="Courier bold 10" sticky=W
 		radio name=plotType value=traceplot     text="Trace plots" 				function=.mpdView mode=character sticky=W
+		radio name=plotType value=mcmcpairs     text="Pairs plots" 				function=.mpdView mode=character sticky=W
 		
 	#-- widget 3
 	grid 4 1 toptitle="Graphics options" topfont="Courier underline 10" relief="sunken" padx=5 pady=5
-		
+		# FIXME replace calls to .subView with .mpdView
 		#-- widget 3a
 		grid 1 2 padx=2
 			label text="Device layout " font="Courier 10" sticky=W
 			grid 1 6 relief="sunken"
-				check name=autolayout function=.subView checked=T text="Auto Layout" sticky=W
+				check name=autoLayout function=.subView checked=T text="Auto Layout" sticky=W
 				check name=plotbyrow  function=.subView checked=F text="Plot by row" sticky=W
 				entry name=nrows      function=.subView value="1" width=3 mode=numeric action="nrows" sticky=W
 				label text="rows" sticky=W
@@ -99,6 +100,8 @@ notebook tabs="Results System Priors" name=nb width=500 height=550 \
 			entry name=figFileName width=30 font="Courier 10" value="Figure File Name" mode="character" sticky=W
 			button text="Save graphic" font="Courier 10"	function=.saveGraphic sticky=W
 			
+	#-- widget 4
+	image file="iscamlogo.gif" sticky="E" subsample=2 padx=1 pady=1
 	
 	##--------------------------------------------------------------------------------##	
 	##-- SYSTEM TAB                                                                 --##
