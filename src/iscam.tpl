@@ -420,6 +420,7 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector q_mu(1,nits);
 	init_vector q_sd(1,nits);
+	!! cout<<"nits\n"<<nits<<endl;
 	!! cout<<"q Prior\n"<<q_mu<<endl<<q_sd<<endl;
 	
 	
@@ -571,6 +572,8 @@ PARAMETER_SECTION
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
+	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
+	
 
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
@@ -618,7 +621,16 @@ PROCEDURE_SECTION
 
 	sd_depletion=sbt(nyr)/bo;
 	
-	if(mceval_phase()) mcmc_output();
+	if(mc_phase())
+	{
+		mcmcPhase=1;
+	}
+	
+	if(mceval_phase())
+	{
+		mcmcEvalPhase=1;
+		mcmc_output();
+	}
 	
 	//The following causes a linker error
 	//duplicate symbol in libdf1b2o.a
@@ -1157,8 +1169,29 @@ FUNCTION calc_survey_observations
 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
 		epsilon(i).sub(1,nx) = zt-mean(zt);
 		q(i) = exp(mean(zt));
-		//pit(i).sub(1,nx)=(V*wa)*q(i);	//predicted index
 		pit(i).sub(1,nx)=t1(1,nx)*q(i);	//predicted index
+		
+		
+		//TODO, this might not be working correctly, simulation test it.
+		if(q_prior(i)==2)
+		{
+			//random walk in q
+			epsilon(i)=0;
+			dvar_vector fd_zt=first_difference(zt);
+			epsilon(i).sub(1,nx-1) = fd_zt-mean(fd_zt);
+			//dvar_vector qt(1,nx);
+			qt(i,1) = exp(zt(1));
+			for(j=2;j<=nx;j++)
+				qt(i,j) = qt(i,j-1)*exp(fd_zt(j-1));
+				
+			pit(i).sub(1,nx)=elem_prod(t1(1,nx),qt(i)(1,nx));
+			//cout<<sum(epsilon(i))<<endl;
+			//exit(1);
+		}
+		
+		
+		
+		
 		
 	}
 	
@@ -2155,6 +2188,7 @@ REPORT_SECTION
 	REPORT(ln_rt);
 	REPORT(delta);
 	REPORT(q);
+	REPORT(qt);
 	REPORT(it);
 	REPORT(pit);
 	REPORT(epsilon);
@@ -2354,6 +2388,8 @@ GLOBALS_SECTION
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
+	bool mcmcPhase = 0;
+	bool mcmcEvalPhase = 0;
 	
 	adstring BaseFileName;
 	adstring ReportFileName;
@@ -2396,6 +2432,9 @@ FINAL_SECTION
 	//to ensure the results are saved to the same directory 
 	//that the data file is in. This should probably go in the 
 	//FINAL_SECTION
+	
+	//FIXME only copy over the mcmc files if in mceval_phase()
+	
 	if(last_phase() && PLATFORM =="Linux")
 	{
 		adstring bscmd = "cp iscam.rep " +ReportFileName;
@@ -2410,17 +2449,27 @@ FINAL_SECTION
 		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
 		system(bscmd);
 		
-		bscmd = "cp iscam.psv " + BaseFileName + ".psv";
-		system(bscmd);
+		if(mcmcPhase)
+		{
+			bscmd = "cp iscam.psv " + BaseFileName + ".psv";
+			system(bscmd);
+			
+			cout<<"Copied binary posterior sample values"<<endl;
+		}
 		
-		bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
-		system(bscmd);
+		if(mcmcEvalPhase)
+		{		
+			bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
+			system(bscmd);
 		
-		bscmd = "cp sbt.mcmc " + BaseFileName + ".mcst";
-		system(bscmd);
+			bscmd = "cp sbt.mcmc " + BaseFileName + ".mcst";
+			system(bscmd);
 		
-		bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
-		system(bscmd);
+			bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
+			system(bscmd);
+		
+			cout<<"Copied MCMC Files"<<endl;
+		}
 		
 	}
 
