@@ -62,7 +62,7 @@
 //-- May 6, 2011- added pre-processor commands to determin PLATFORM  --//
 //--              either "Windows" or "Linux"                        --//
 //--                                                                 --//
-//-- FIXME -cannot do MCMC when estimating log_m_nodes with SOG her. --//
+//-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning     --//
 //--                                                                 --//
 // ------------------------------------------------------------------- //
 
@@ -175,11 +175,12 @@ DATA_SECTION
 	init_matrix catch_data(syr,nyr,1,ngear+1);
 	matrix obs_ct(1,ngear,syr,nyr);
 	int ft_count;
+	int i;
 	LOC_CALCS
 		ft_count=0;
 		for(k=1;k<=ngear;k++)
 			obs_ct(k)=column(catch_data,k+1);
-		int i;
+		
 		for(k=1;k<=ngear;k++)
 		{	
 			for(i=syr;i<=nyr;i++)
@@ -363,7 +364,7 @@ DATA_SECTION
 		//cout up the number of selectivity parameters
 		//depending on the value of isel_type
 		isel_npar.initialize();
-		for(int i=1;i<=ngear;i++)
+		for(i=1;i<=ngear;i++)
 		{	
 			jsel_npar(i)=1;
 			switch(isel_type(i))
@@ -828,14 +829,14 @@ FUNCTION calcSelectivities
 		
 
 		log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
-		for(int i=syr;i<nyr;i++)
+		for(i=syr;i<nyr;i++)
 		{
 			log_sel(j)(i+1)(sage,nage) = log_sel(j)(i)(sage,nage)+tmp(i)+tmp2(i+1);			
 		}
 		
 		//subtract mean to ensure sum(log_sel)==0
 		//substract max to ensure exp(log_sel) ranges from 0-1
-		for(int i=syr;i<=nyr;i++)
+		for(i=syr;i<=nyr;i++)
 			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
 			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
 			
@@ -1166,6 +1167,8 @@ FUNCTION calc_survey_observations
 		dvar_vector t1 = rowsum(V);//V*wa;
 		//cout<<"V\n"<<t1<<endl;
 		
+		//See Ludwig & Walters 1994
+		//Note this is incorrect if each survey has different weights.
 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
 		epsilon(i).sub(1,nx) = zt-mean(zt);
 		q(i) = exp(mean(zt));
@@ -1340,7 +1343,7 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 			
-			//TODO add a switch statement here to choose form of the likelihood
+			//CHANGED add a switch statement here to choose form of the likelihood
 			switch(int(cntrl(14)))
 			{
 				case 1:
@@ -2216,12 +2219,22 @@ REPORT_SECTION
 	
 	
 	if(last_phase()) projection_model();
+	
+	dvector rt3(1,3);
+	if(last_phase())
+	{
+		dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));
+		REPORT(rt3);
+	}
+	
+	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	REPORT(future_bt);
+	double future_bt4 = sum(future_bt(4,nage));
+	REPORT(future_bt4);
+	
+
+	
 	if(verbose)cout<<"END of Report Section..."<<endl;
-	
-	
-	
-	
-	
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
@@ -2241,17 +2254,24 @@ FUNCTION mcmc_output
 	if(nf==1){
 		ofstream ofs("iscam.mcmc");
 		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
-		ofs<<"bo\t bmsy\t msy\t fmsy\t"<<endl;
+		ofs<<"bo\t bmsy\t msy\t fmsy\t";
+		ofs<<"SSB\t Age-4\t Poor\t Average\t Good"<<endl;
 		
 		ofstream of1("sbt.mcmc");
 		ofstream of2("rt.mcmc");
+		
 	}
 	
 	// leading parameters & reference points
 	calc_reference_points();
+	// decision table output
+	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	double future_bt4 = sum(future_bt(4,nage));
+	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	ofstream ofs("iscam.mcmc",ios::app);
 	ofs<<theta;
-	ofs<<" "<<bo<<" "<<bmsy<<" "<<msy<<" "<<fmsy<<endl;
+	ofs<<" "<<bo<<" "<<bmsy<<" "<<msy<<" "<<fmsy<<"\t\t";
+	ofs<<sbt(nyr)<<" "<<future_bt4<<" "<<future_bt4+rt3<<endl;
 	
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);
@@ -2260,6 +2280,35 @@ FUNCTION mcmc_output
 	// output age-1 recruits
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<rt<<endl;
+	
+  }
+
+FUNCTION dvector age3_recruitment(const dvector& rt, const double& wt,const double& M)
+  {
+	/*
+	This routine returns the poor average and good age-3 recruits
+	that is used in constructing the decision table for the pacific
+	herring fisheries.
+	
+	-1) sort the rt vector from small to large
+	-2) find the 33rd and 66th percentiles
+	-3) take the averge of the 0-33, 34-66, 67-100
+	-4) multiply by the average weight
+	-5) return the age-3 recruitment biomass
+	*/
+	
+	dvector s_rt = sort(rt);
+	dvector rbar(1,3);
+	
+	double idx = floor((nyr-syr+1.)/3.);
+	int ix1 = syr+int(idx);
+	int ix2 = syr+int(2.*idx);
+	rbar(1) = mean(s_rt(syr,ix1));
+	rbar(2) = mean(s_rt(ix1+1,ix2));
+	rbar(3) = mean(s_rt(ix2+1,nyr));
+	rbar = rbar*wt*exp(-M);
+	//cout<<rbar<<endl;
+	return(rbar);
   }
 
 FUNCTION void projection_model();
