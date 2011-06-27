@@ -13,11 +13,11 @@
 ## ____________________________________________________________________________ ##
     7.1         -5.0    15       4     0         -5.0    15     #log_ro/msy
     0.95        0.2     1.0      4     3         1.01    1.01   #steepness/fmsy
-    -1.06421   -5.0    0.0      -2     2         -1.469  0.05   #log.m
+    -1.06421   -5.0    0.0      -2     2         -1.06421  0.05   #log.m
     7.1         -5.0    15      -1     0         -5.0    15     #log_avgrec
     7.20        -5.0    15       1     0         -5.0    15     #log_recinit
     0.50        0.001   0.999    3     3         125.0   125.0  #rho
-    5.00        0.01    500      3     4         1.01    1.01   #kappa (precision)
+    5.00        0.01    500      3     4         0.01    0.01   #kappa (precision)
 ## ____________________________________________________________________________ ##
 
 ## _________________________SELECTIVITY PARAMETERS_____________________________ ##
@@ -65,14 +65,14 @@
 1           ## 2  recruitment model (1=beverton-holt, 2=ricker)
 0.05        ## 3  std in observed catches in first phase.
 0.025       ## 4  std in observed catches in last phase.
-1           ## 5  Assume unfished in first year (0=FALSE, 1=TRUE)
+0           ## 5  Assume unfished in first year (0=FALSE, 1=TRUE)
 0.01		## 6  Minimum proportion to consider in age-proportions for dmvlogistic
 0.20		## 7  Mean fishing mortality for regularizing the estimates of Ft
 0.01		## 8  std in mean fishing mortality in first phase
 5.00		## 9  std in mean fishing mortality in last phase
 -1			## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1			## 11 std in deviations for natural mortality
-12			## 12 number of estimated nodes for deviations in natural mortality
+3			## 12 number of estimated nodes for deviations in natural mortality
 0.0	        ## 13 fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##

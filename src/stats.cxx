@@ -42,6 +42,10 @@ dvariable dunif(const dvariable& x, const double min, const double max)
 //beta distribution
 dvariable dbeta(const dvariable& x, const double a, const double b)
 {
+	//E(x)=a/(a+b)
+	//V(x)=ab/((a+b)^2(a+b+1))
+	//b=(E(x)-1)(E(x)^2-E(x)+V(x))/V(x)
+	//a=(E(x)b)/(1-E(x)) 
 	return - gammln(a+b)+(gammln(a)+gammln(b))-(a-1.)*log(x)-(b-1.)*log(1.-x);
 }
 
@@ -301,6 +305,8 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
 	dvector tmptau(1,A*T);	// vector of residuals
     int Ncount=1;
     dvariable Nsamp;           // multinomial sample size
+	//FIXME NB Make proc_err into a switch in the control file
+	//add this likelihood description to the documentation.
     dvariable proc_err=0.009;   // allow for process error in the pred.age freq...fixed value based on HCAM assessments
 	nu.initialize();
 	dvariable nloglike=0.;
@@ -374,7 +380,7 @@ dvariable dmultinom(const dmatrix o, const dvar_matrix& p,dvar_matrix& nu,double
 	
 	dvector w=sort(tmptau(1,Ncount-1));
 	//cout<<"All good "<<Ncount<<endl;
-	tau2=w(int(Ncount/2.)); //mle of the variance 
+	tau2=w(int(Ncount/2.)); //median absolute residual (expected value of 0.67ish)
 	
 	RETURN_ARRAYS_DECREMENT();
 	return(nloglike);
@@ -429,7 +435,7 @@ dvariable multifan(const double& s,const dvector obsQ,const dvar_vector& preQ, d
 
 dvar_matrix ALK(dvar_vector mu, dvar_vector sig, dvector x)
 {
-	//RETURN_ARRAYS_INCREMENT();
+	RETURN_ARRAYS_INCREMENT();
 	int i, j;
 	dvariable z1;
 	dvariable z2;
@@ -446,10 +452,10 @@ dvar_matrix ALK(dvar_vector mu, dvar_vector sig, dvector x)
 			z2=((x(j)+xs)-mu(i))/sig(i);
 			pdf(i,j)=cumd_norm(z2)-cumd_norm(z1);
 		}//end nbins
-		//pdf(i)/=sum(pdf(i));
+		pdf(i)/=sum(pdf(i));
 	}//end nage
-	pdf/=sum(pdf);
-	//RETURN_ARRAYS_DECREMENT();
+	//pdf/=sum(pdf);
+	RETURN_ARRAYS_DECREMENT();
 	return(pdf);
 }
 

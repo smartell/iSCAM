@@ -28,14 +28,17 @@
 ##      3) a constant cubic spline with age-nodes
 ##      4) a time varying cubic spline with age-nodes
 ##      5) a time varying bicubic spline with age & year nodes.
-##      6) fixed logistic (set isel_type=1, and estimation phase to -1)
+##      6) fixed logistic (set isel_type=6, and estimation phase to -1)
+##      7) logistic function of body weight.
+##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50
+##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
-    1        1			1		1		1
+    1        1			7		1		1
 ## Age at 50% selectivity (logistic)
-    1.5      2.0		2.5		2.05	2.05
+    1.5      2.0		0.6		2.05	2.05
 ## STD at 50% selectivity (logistic)
-    0.75      0.5		0.2		0.05	0.05
+    0.75      0.5		0.15	0.05	0.05
 ## No. of age nodes for each gear (0 to ignore).
     5        5			5		0		0
 ## No. of year nodes for each gear (0 to ignore).
@@ -56,9 +59,9 @@
 ## priors 0=uniform density		1=normal density
 	0		1
 ## prior log(mean)
-	0		0
+	0		-0.662
 ## prior sd
-	1		0.1
+	1		0.226
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
@@ -71,7 +74,7 @@
 0.20		## Mean fishing mortality for regularizing the estimates of Ft
 0.01		## std in mean fishing mortality in first phase
 5.00		## std in mean fishing mortality in last phase
--3			## phase for estimating m_deviations (use -1 to turn off mdevs)
+3			## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1			## std in deviations for natural mortality
 12			## number of estimated nodes for deviations in natural mortality
 0.99        ## fraction of total mortality that takes place prior to spawning

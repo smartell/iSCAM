@@ -1,14 +1,14 @@
 #NB The data herein were taken from qci2010_final.dat for the HCAM model.
 ## ________________________
 ## ____Model Dimensions____
-1951		#first year of data
-2010		#last year of data
-2			#age of youngest age class
-10			#age of plus group
-5			#number of gears (ngear)
+1951        #first year of data
+2010        #last year of data
+2           #age of youngest age class
+10          #age of plus group
+5           #number of gears (ngear)
 ## flags for fishery (1) or survey (0) in ngears
-#1	1	1	0	0
-0.0686819 0.4137555 0.5175626 0.0000000 0.0000000
+#1  1   1   0   0
+0.100 0.405 0.495 0.0 0.0
 ## ________________________
 ## ________________________
 #Age-schedule and population parameters
@@ -89,13 +89,13 @@
 #60
 2
 #nit_nobs
-37		23
+37      23
 #survey type 
 ## 1 = survey is proportional to vulnerable numbers
 ## 2 = survey is proportional to vulnerable biomass
 ## 3 = survey is proportional to spawning biomass (e.g., herring spawn survey)
-3	3
-#iyr     it gear wt		survey timing
+3   3
+#iyr     it gear wt     survey timing
 1951  4.213    4  1  1
 1952  2.578    4  1  1
 1953  7.555    4  1  1
@@ -160,12 +160,12 @@
 #na_gears
 3
 #na_nobs
-10	39	15
+10  39  15
 #a_sage
-2	2	2
+2   2   2
 #a_page
-10	10	10
-#yr gear   		V2   V3   V4   V5  V6  V7  V8 V9 V10  #Number aged.
+10  10  10
+#yr gear        V2   V3   V4   V5  V6  V7  V8 V9 V10  #Number aged.
 1951  1    1  226  781  226  170   62    9   1   0     
 1952  1  381  485  760  479   92   25    2   0   0     
 1956  1    2  216  130  838  113   37   10   0   0     

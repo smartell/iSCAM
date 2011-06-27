@@ -12,8 +12,8 @@
 #                                                                               #
 #                                                                               #
 # NOTES:                                                                        #
-# 1. requires PBSmodelling                                                      #
-#                                                                               #
+# 1. requires PBSmodelling hacks Riscam Hmisc                                   #
+# 2.                                                                            #
 #                                                                               #
 # CHANGED: Finish  test priors widget to examine priors for parameters          #
 # TODO: Save input List as an .rda file (dput & dget) for saving scenarios      #
@@ -30,19 +30,20 @@
 
 require(hacks)	#transparent colors using the function colr("color",tranparency)
 require(Riscam)	#custom library built specifically for iscam.
-
+require(Hmisc)
+source("read.admb.R")
 
 # Graphics defaults.
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
 .VIEWPANCEX <- 1            # Default cex for panLab.
 
-.VIEWMAR  <- c(4, 4, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
-.VIEWOMA  <- c(0, 0, 0, 0)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
+.VIEWMAR  <- c(3, 3, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
+.VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 1
 
 .REPFILES <- list.files(pattern="\\.rep")
-.VIEWTRCK  <- "iSCAMViewTracker.txt"  # File containing list of report files.
-
+.VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
+.TABLEDIR <- "../Manuscript2011HerringAssessment/Tables/"
 
 
 
@@ -102,35 +103,214 @@ guiView	<- function()
 	.iscamViewSetup("iscam")
 }
 
-.subView	<- function()
+
+.iscamTable	<- function()
 {
+	print(".iscamTable")
+	
+	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
+	# Determine which files have been selected
+	hdr	<- ifiles[ ifiles$Select, ]
+	#print(hdr)
+	nRuns <- nrow(hdr)
 	
-	##Graphics options
-	# Check graphics options
-	if( autoLayout && ! plotbyrow )
+	if ( tableType == "catch" )
 	{
-		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(1, 1))
-	} 
-	
-	if( plotbyrow )
-	{
-		winCols <- ncols
-		winRows <- nrows
-		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(winRows, winCols))
+		.tableCatch( hdr )
 	}
-	
-	if( !plotbyrow )
+	if ( tableType == "survey" )
 	{
-		winCols <- ncols
-		winRows <- nrows
-		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfcol=c(winRows, winCols))
+		.tableSurvey( hdr )
 	}
-	#call the plotting function again if user change plotting options.
-	.mpdView()
+	if ( tableType == "refpoints" )
+	{
+		.tableRefpoints( hdr )
+	}
+	if ( tableType == "forecast" )
+	{
+		.tableForecast( hdr )
+	}
 }
 
+.tableForecast	<- function( hdr )
+{
+	#This function is currently set up to reproduce the
+	#decision table for the Pacific herring assessments.
+	#Colum headers are:
+	#Stock 2010SSB 2011Age-4 PreFishBiomass Cuttoff AvailHarvest
+	#Use poor average good recruitment for PrefishBio and AvailHarvest
+	#All results are based on median values.
+	nRuns <- nrow(hdr)
+	
+	cutoff = c(10700, 12100, 17600, 21200, 18800)
+	xTable = NULL
+	for ( i in 1:nRuns )
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep = ""))
+		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
+		if(file.exists(mcfile))
+			repObj$mcmc = read.table( mcfile, header=TRUE )
+		else
+			cat("NB. MCMC file missing.")
+		
+		Bo = quantile(repObj$mcmc$bo, prob=0.5)*1000
+		#cutoff[i] = 0.25*Bo
+		SSB = quantile(repObj$mcmc$SSB, prob=0.5)*1000
+		Bt4 = quantile(repObj$mcmc$Age.4, prob=0.5)*1000
+		Btpoor = quantile(repObj$mcmc$Poor, prob=0.5)*1000
+		Btaverage = quantile(repObj$mcmc$Average, prob=0.5)*1000
+		Btgood = quantile(repObj$mcmc$Good, prob=0.5)*1000
+		tmp1 = c(hdr$Stock[i],SSB, Bt4, Btpoor, Btaverage, Btgood,cutoff[i])
+		
+		
+		fhr <-function(bt, eps, hr=0.2)
+		{
+			if(bt < eps)
+				return(0)
+			if(bt-hr*bt>eps)
+				return(hr)
+			else if(bt>eps && bt-hr*bt<=eps)
+				return((bt-eps)/bt)
+		}
+		
+		Ctpoor = fhr(Btpoor, cutoff[i], 0.2)*Btpoor
+		Ctaverage = fhr(Btaverage, cutoff[i], 0.2)*Btaverage
+		Ctgood = fhr(Btgood, cutoff[i], 0.2)*Btgood
+		
+		tmp1 = c(tmp1, Ctpoor, Ctaverage, Ctgood)
+		tmp1[-1] = prettyNum(round(as.numeric(tmp1[-1]), 0), big.mark=",")
+		xTable=rbind(xTable, tmp1)
+		
+	}
+	cgrp = c("", "Pre-fishery forecast biomass", "", "Available harvest")
+	ncgrp = c(3, 3, 1, 3)
+	colnames(xTable) = c("Stock", "SSB","4+ Biomass","Poor","Average","Good"
+					, "Cutoff", "Poor","Average","Good")
+	print(xTable)
+	cap = "Estimated spawning stock biomass,  age-4+ biomass and pre-fishery
+			biomass for poor average and good recruitment,  cutoffs,  and 
+			available harvest."
+	fn=paste(.TABLEDIR, "DecisionTable.tex", sep="")
+	tmp <- latex(xTable, file=fn, rowname=NULL, longtable=FALSE
+		, landscape=FALSE, cgroup=cgrp, n.cgroup=ncgrp
+		, caption=cap, label="TableCatchAdvice", na.blank=TRUE, vbar=FALSE
+		, size="small")
+
+	cat("Latex table saved as", fn)
+}
+
+.tableRefpoints	<- function( hdr )
+{
+	#Creat a latex table with stock-specific reference points.
+	nRuns <- nrow(hdr)
+	rpTable = NULL
+	for( i in 1:nRuns )
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep = ""))
+		repObj$fit	<- read.fit(paste(hdr$Control.File[i],"", sep = ""))
+		tmp = c(round(repObj$fmsy, 2)
+			,round(c(repObj$msy, repObj$bo, 0.25*repObj$bo
+			, repObj$bmsy,  0.8*repObj$bmsy, 0.4*repObj$bmsy)*1000, 0)
+			, round(repObj$sbt[length(repObj$sbt)-1]/repObj$bo, 2))
+		tmp = c(hdr$Stock[i], round(repObj$fit$nopar, 0), prettyNum(tmp, big.mark=","))
+		
+		rpTable=rbind(rpTable, tmp)
+	}
+	colnames(rpTable) = c("Stock", "No.", "\\fmsy","MSY","$B_0$", "0.25$B_0$", 
+						"\\bmsy","0.8\\bmsy", "0.4\\bmsy", "Spawn depletion")
+	cap <- "Reference points"
+
+	fn=paste(.TABLEDIR, "RefPointsTable.tex", sep="")
+	tmp <- latex(rpTable, file=fn, rowname=NULL, longtable=FALSE
+		, landscape=FALSE, cgroup=NULL, n.cgroup=NULL
+		, caption=cap, label="TableRefPoints", na.blank=TRUE, vbar=FALSE
+		, size="small")
+
+	cat("Latex table saved as", fn)
+}
+
+.tableSurvey	<- function( hdr )
+{
+	#Create a latex table with all the relative abundance data in it.
+	#hdr contains thie checked files for extracting the survey data
+	nRuns <- nrow(hdr)
+	ytTable=cgrp=ncgrp=NULL
+	for( i in 1:nRuns )
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep = ""))
+		it 		<- t(as.matrix(repObj$it))
+		yr		<- t(as.matrix(repObj$iyr))
+		nCols	<- dim(it)[2]
+		for(j in 1:nCols)
+		{
+			tmp = cbind(yr[, j], it[, j])
+			colnames(tmp) <- c("Year", paste("Survey", j))
+			ytTable = cbind(ytTable, tmp)
+		}
+		cgrp = c(cgrp, hdr$Stock[i])
+		ncgrp = c(ncgrp, 2*nCols)
+	}
+	print(ytTable)
+	cap <- "Abundance for each survey by year for each stock."
+	
+	fn=paste(.TABLEDIR, "SurveyTable.tex", sep="")
+	tmp <- latex(ytTable, file=fn, rowname=NULL, longtable=TRUE
+		, landscape=TRUE, lines.page=60, cgroup=cgrp, n.cgroup=ncgrp
+		, caption=cap, label="TableSurvey", na.blank=TRUE, vbar=TRUE
+		, size="tiny")
+	
+	cat("Latex table saved as", fn)	
+}
+
+
+.tableCatch	<- function( hdr )
+{
+	#hdr contains thie checked files for extracting the catch
+	nRuns <- nrow(hdr)
+	
+	#Now loop over each file and assemble a catch table using cbind
+	ctTable=NULL
+	for(i in 1:nRuns)
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep=""))
+		
+		#report only non-zero catches in the table.
+		ct = t(as.matrix(repObj$ct))
+		iCols <- apply( ct,2,function(x) { sum(diff(x))!=0.0 } )
+		nCols <- length(iCols[iCols])
+		ct[ct==0]=NA
+		if(i==1)
+		{
+			tmp <- cbind(repObj$yr, signif(ct[, iCols], 3))
+			colnames(tmp) = c("Year", paste("Gear",1:nCols))
+			cgrp = c("Stock",hdr$Stock[i])
+			ncgrp = c(1, nCols)
+		}
+		else
+		{
+			tmp <- signif(ct[, iCols], 3)
+			colnames(tmp) = paste("Gear",1:nCols)
+			cgrp = c(cgrp, hdr$Stock[i])
+			ncgrp = c(ncgrp, nCols)
+		}
+		
+		ctTable = cbind(ctTable, tmp)
+		
+		
+	}
+	print(ctTable)
+	cap <- "Observed catch by gear type and year for each stock."
+	
+	fn=paste(.TABLEDIR, "CatchTable.tex", sep="")
+	tmp <- latex(ctTable, file=fn, rowname=NULL, longtable=TRUE
+		, landscape=TRUE, lines.page=60, cgroup=cgrp, n.cgroup=ncgrp
+		, caption=cap, label="TableCatch", na.blank=TRUE, vbar=TRUE
+		, size="footnotesize")
+	
+	cat("Latex table saved as", fn)
+}
 
 .mpdView	<- function()
 {
@@ -166,6 +346,12 @@ guiView	<- function()
 		}
 	}
 	
+	if ( !autoLayout )
+	{
+		winCols <- ncols
+		winRows <- nrows
+	}
+	
 	## set graphical parameters
 	if ( plotbyrow )
 		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
@@ -181,7 +367,10 @@ guiView	<- function()
 		repObj	<- read.admb(hdr$Control.File[i])
 		repObj$stock = hdr$Stock[i]
 		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
-		repObj$mcmc = read.table( mcfile, header=TRUE )
+		if(file.exists(mcfile))
+			repObj$mcmc = read.table( mcfile, header=TRUE )
+		else
+			cat("NB. MCMC file missing.")
 		
 		if(plotType=="sbmcmc" || plotType=="depletionmcmc")
 		{
@@ -327,6 +516,7 @@ guiView	<- function()
 		{
 			admbObj = read.admb( "iscam" )
 			admbObj$sim = read.rep( "iscam.sim" )
+			
 			.plotSimulationSummary( admbObj )
 		}
 	
@@ -571,7 +761,7 @@ guiView	<- function()
   # Find the active parameters.  If the chain is all equal, then the parameter
   # was fixed in the model configuration.  This gets a Boolean vector that
   # indicates which columns have fixed values.
-  mcmcObj <- admbObj$mcmc
+  mcmcObj <- admbObj$mcmc[, 1:11]
   iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
   nPars <- sum( iPars )     # Number of active parameters in mcmc output.
 
@@ -590,7 +780,25 @@ guiView	<- function()
 	## estimated leading parameters
 	print("	.mcmcTrace")
 	op=par(no.readonly=T)
-	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 2, 1, 0), mfcol=c(3, 3))
+	guiInfo <- getWinVal(scope="L")
+	if ( !autoLayout )
+	{
+		winCols <- ncols
+		winRows <- nrows
+	}
+	else
+	{
+		winCols <- 3
+		winCols <- 3
+	}
+	
+	## set graphical parameters
+	if ( plotbyrow )
+		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
+	else
+		par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
+	
+	#par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 2, 1, 0), mfcol=c(3, 3))
 	plotTrace <- function( obj )
 	{
 	  # Input "obj" is a VECTOR of MCMC samples.
@@ -616,7 +824,7 @@ guiView	<- function()
 	  # Find the active parameters.  If the chain is all equal, then the parameter
 	  # was fixed in the model configuration.  This gets a Boolean vector that
 	  # indicates which columns have fixed values.
-	  mcmcObj=mcmc
+	  mcmcObj=mcmc[, 1:11]
 	  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
 	  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
 
@@ -626,7 +834,7 @@ guiView	<- function()
 	  for ( i in 1:ncol(tmp) )
 	  {
 	    plotTrace( tmp[,i] )
-		title(ylab=colnames(mcmc[i]))
+		title(ylab=tmpNames[i])#colnames(mcmc[i]))
 	    #panLab( 0.5, 0.9, cex=1.0, tmpNames[i] )  
 	  }
 
@@ -782,26 +990,46 @@ guiView	<- function()
 		yy = age	## yaxis labels
 		nage=length(age)
 		
+		if(sum(par("mfcol"))==2)
+		{
+			xl = "Cohort year";xlm=""
+			yl = "Weight-at-age (kg)";ylm=""
+		}
+		else
+		{
+			xlm = "Cohort year";xl=""
+			ylm = "Weight-at-age (kg)";yl=""
+		}
+		
 		plot(range(xx), range(wt_obs), type="n", axes=FALSE,
-		xlab="Cohort year", ylab="Weight-at-age (kg)", main=paste(stock))
+		xlab=xl, ylab=yl, main=paste(stock))
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
+		box()
+		grid()
 		
 		for(i in 1:(dim(wt_obs)[1]-1))
 		{
-			#ir = (age-min(age))+i
-			#xx = yr[i]+(age-min(age))
-			#yy = (diag(as.matrix(wt_obs[ir, ])))
 			yy = (diag(as.matrix(wt_obs[0:-i, ]))) 
 			xx = 1:length(yy)+yr[i]-min(age)+1
 			
 			yy[yy==0]=NA;xx[yy==NA]=NA
 			lines(xx,yy)
-			print(c(i, dim(wt_obs)[1]))
+			
 			points(xx[1],yy[1],pch=20,col="steelblue",cex=0.5)
 			points(xx[nage],yy[nage],pch=20,col="salmon",cex=0.5)
-			
 		}
+		for(i in 1:dim(wt_obs)[2]-1)
+		{
+			yy = diag(as.matrix(wt_obs[,-1:-i]))
+			n = length(yy)
+			xx = yr[1]:(yr[1]+n-1)
+			lines(xx, yy)
+			points(xx[n], yy[n], pch=20, col="salmon", cex=0.5)
+		}
+		
+		mtext(xlm, side=1, outer=T, line=0)
+		mtext(ylm, side=2, outer=T, line=0)
 	})
 }
 
@@ -819,6 +1047,10 @@ guiView	<- function()
 			ylab=paste("Age-", min(age), " recruits", sep=""))
 		
 		lines(xx, yy, type="h")
+		
+		#add 0.33 and 0.66 quantile lines
+		qtl = quantile(yy, prob=c(0.333, 0.666))
+		abline(h=qtl,lty=1, col=colr("darkgrey",0.75))
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
@@ -879,6 +1111,7 @@ guiView	<- function()
 			xx = iyr
 			yy = epsilon
 		}
+		
 		absmax = abs(max(yy, na.rm=TRUE))
 		if(absmax< 1e-3) absmax=1
 		yrange=c(-absmax, absmax)
@@ -937,13 +1170,14 @@ guiView	<- function()
 			xx=iyr
 			yy=it
 		}
-				yrange=c(0, max(yy, na.rm=TRUE))
+		n=nrow(t(as.matrix(yy)))
+		yrange=c(0, max(yy, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n", axes=FALSE,
 			xlab="Year", ylab="Relative abundance", 
 			ylim=yrange , main=paste(stock))
 		
-		matlines(xx, yy, col="black",type="o", pch=1:ncol(yy))
+		matlines(xx, yy, col="black",type="o", pch=1:n)
 		
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
@@ -951,7 +1185,6 @@ guiView	<- function()
 		
 		if( annotate )
 		{
-			n=nrow(t(as.matrix(yy)))
 			txt=paste("Survey",1:n)
 			legend("top", txt, lty=1:n, pch=1:n, bty="n")
 		}
@@ -962,9 +1195,11 @@ guiView	<- function()
 {
 	#barplot of the observed catch
 	with(repObj, {
-		barplot(obs_ct, names.arg=yr,axes=FALSE, 
+		tmp = obs_ct
+		iRows <- apply( tmp,1,function(x) { sum(diff(x))!=0.0 } )
+		barplot( tmp[iRows,], names.arg=yr,axes=FALSE, 
 			xlab="Year", ylab="Catch (1000 t)",main=paste(stock),  
-			legend.text = legend.txt)
+			legend.text = legend.txt )
 		axis( side=2, las=.VIEWLAS )
 	})
 }
@@ -1041,58 +1276,24 @@ guiView	<- function()
 	with(repObj, {
 		if(is.matrix(it)){
 			xx = t(iyr)
-			yy = t(pit)
-			y2 = t(it)
+			m = apply(it,1,max, na.rm=T)
+			yy = t(pit/m)
+			y2 = t(it/m)
 		}else{
 			xx = iyr
 			yy = pit
 			y2 = it
 		}
-		yrange=c(0, max(yy, y2, na.rm=TRUE))
+		n=nrow(t(as.matrix(yy)))
+		#n=dim(xx)[2]
+		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
 			xlab="Year", ylab="Relative abundance", main=paste(stock))
 		
-		matlines(xx, yy, col="black")
-		matpoints(xx, y2, col="black")
+		matlines(xx, yy, col=1:n, lty=1)
+		matpoints(xx, y2, col=1:n, pch=1:n)
 		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		
-		if ( annotate )
-		{
-			n=dim(xx)[2]
-			txt=rep(c( "Predicted","Observed"),1)
-			
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=c(1,-1),lwd=1,pch=c(-1,"1"),ncol=1 )
-		}
-	})
-}
-
-
-.plotMortality	<- function( repObj, annotate=FALSE )
-{
-	#plot average total mortality,  fishing mortality & natural mortality
-	with(repObj, {
-		xx=yr
-		if(is.matrix(ft))
-			yy=t(as.matrix(ft))
-		else
-			yy=ft
-		
-		yy = cbind( yy, rowMeans(M_tot) )	
-		yrange=c(0, max(yy, na.rm=TRUE))
-		lw = c(rep(1,ngear),2)
-		lt = c(1:ngear,1)
-		
-		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Mortality rate", main=paste(stock))
-			
-		matlines(xx, yy, col="black", lwd=lw, lty=lt)
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
@@ -1100,11 +1301,76 @@ guiView	<- function()
 		
 		if ( annotate )
 		{
-			txt = c(paste("Gear",1:ngear),"Natural mortality")
+			
+			txt=paste("Survey ",1:n,", q=",round(q, 3), sep="")
+			
+			mfg <- par( "mfg" )
+			#if ( mfg[1]==1 && mfg[2]==1 )
+			legend( "top",legend=txt,
+				bty='n',lty=1,lwd=1,pch=1:n,ncol=n, col=1:n )
+				
+			#print(q)
+		}
+	})
+}
+
+
+.plotMortality	<- function( repObj, annotate=FALSE )
+{
+	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
+	#plot average total mortality,  fishing mortality & natural mortality
+	with(repObj, {
+		xx=yr
+		if(is.matrix(ft))
+		{
+			yy=t(as.matrix(ft))
+		}
+		else
+		{
+			yy=as.matrix(ft)
+		}
+		#n=nrow(t(as.matrix(yy)))
+		icol=apply(yy,2,function(x){sum(cumsum(x))!=0.0})
+		ng=length(icol[icol==T])
+		
+		yy = cbind( rowMeans(M_tot), yy[,icol] )
+		
+		csyy = t(apply(yy,1, cumsum))	#cumulative sum
+			
+		yrange=c(0, max(csyy, na.rm=TRUE))
+		lw = c(1, rep(1,ng))
+		lt = 1
+		iclr = colr(1:(ng+1),0.5)
+		
+		matplot(xx, csyy, type="n", axes=FALSE, log="y",  
+			xlab="Year", ylab="Mortality rate", main=paste(stock))
+			
+		
+		#lines(xx, yy[,1], lwd=2, lty=1, col=1)
+		matlines(xx, csyy, log="y", col=iclr, lwd=lw, lty=lt)
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		box()
+		grid()
+		
+		ry=cbind(1.e-30,csyy)
+		for(i in 1:dim(csyy)[2])
+		{
+			x2=c(xx, rev(xx))
+			y2=c(ry[,i+1], rev(ry[,i]))
+			#browser()
+			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
+		}
+		
+		
+		
+		if ( annotate )
+		{
+			txt = c("Natural mortality", paste("Gear",1:ng))
 			#mfg <- par( "mfg" )
 			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "topright",legend=txt,
-				bty='n',lty=c(1:ngear,1),lwd=lw,pch=-1,ncol=1)
+			legend( "topright",legend=txt,col=iclr, 
+				bty='n',lty=lt,lwd=5,pch=-1,ncol=2)
 		}
 	})
 }
@@ -1162,17 +1428,19 @@ guiView	<- function()
 			nagear = unique(A[, 2])
 			xrange = range(A[, 1])
 			#par(mfcol=c(length(nagear), 1))
+			j=0
 			for(i in nagear)
 			{
+				j=j+1
 				ac = subset(A_nu, A_nu[, 2]==i)
 				xx = ac[, 1]
 				zz = t(ac[, -1:-2])
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[i],
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[j],
 					bg=colr("white", 0.5), xlim=xrange,main=paste(stock, "Gear", i))
-				title(main=paste("Variance=",round(age_tau2[i],3)),line=-1,cex.main=0.75)
+				title(main=paste("Variance=",round(age_tau2[j],3)),line=-1,cex.main=0.75)
 			}
 			
 		}
@@ -1451,6 +1719,39 @@ guiView	<- function()
 	
 	#TODO	write theta_dev and rPoints to files so you don't have to repeat.
 }
+
+
+## The following has been deprecated and is scheduled for deletion
+##.subView	<- function()
+##{
+##	guiInfo <- getWinVal(scope="L")
+##	
+##	
+##	##Graphics options
+##	# Check graphics options
+##	if( autoLayout && ! plotbyrow )
+##	{
+##		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(1, 1))
+##	} 
+##	
+##	if( plotbyrow )
+##	{
+##		winCols <- ncols
+##		winRows <- nrows
+##		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfrow=c(winRows, winCols))
+##	}
+##	
+##	if( !plotbyrow )
+##	{
+##		winCols <- ncols
+##		winRows <- nrows
+##		par(mar=.VIEWMAR, oma=.VIEWOMA, las=.VIEWLAS, mfcol=c(winRows, winCols))
+##	}
+##	#call the plotting function again if user change plotting options.
+##	.mpdView()
+##}
+##
+
 
 #######################
 #Type: guiView()
