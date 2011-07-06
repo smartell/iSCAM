@@ -2181,9 +2181,11 @@ REPORT_SECTION
 	REPORT(obs_ct);
 	REPORT(ct);
 	REPORT(ft);
-	report<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
+	/*FIXED small problem here with array bounds if using -retro option*/
+	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
 	report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
 	report<<"sbt\n"<<sbt<<endl;
+
 	int rectype=int(cntrl(2));
 	REPORT(rectype);
 	REPORT(rt);
@@ -2205,7 +2207,7 @@ REPORT_SECTION
 	REPORT(A_nu);
 	REPORT(N);
 	REPORT(wt_obs);
-	
+
 	if(last_phase())
 	{	calc_reference_points();
 		REPORT(fmsy);
@@ -2484,7 +2486,7 @@ FINAL_SECTION
 	
 	//FIXME only copy over the mcmc files if in mceval_phase()
 	
-	if(last_phase() && PLATFORM =="Linux")
+	if(last_phase() && PLATFORM =="Linux" && !retro_yrs)
 	{
 		adstring bscmd = "cp iscam.rep " +ReportFileName;
 		system(bscmd);
@@ -2498,7 +2500,7 @@ FINAL_SECTION
 		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
 		system(bscmd);
 		
-		if(mcmcPhase)
+		if( mcmcPhase )
 		{
 			bscmd = "cp iscam.psv " + BaseFileName + ".psv";
 			system(bscmd);
@@ -2506,7 +2508,7 @@ FINAL_SECTION
 			cout<<"Copied binary posterior sample values"<<endl;
 		}
 		
-		if(mcmcEvalPhase)
+		if( mcmcEvalPhase )
 		{		
 			bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
 			system(bscmd);
@@ -2519,8 +2521,13 @@ FINAL_SECTION
 		
 			cout<<"Copied MCMC Files"<<endl;
 		}
-		
 	}
 
+	if( last_phase() && PLATFORM =="Linux" && retro_yrs )
+	{
+		//copy report file with .ret# extension for retrospective analysis
+		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
+		system(bscmd);
+	}
 
 
