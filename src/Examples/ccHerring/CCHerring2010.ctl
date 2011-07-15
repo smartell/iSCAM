@@ -44,7 +44,7 @@
 ## No. of year nodes for each gear (0 to ignore).
     12       3          10      0       0
 ## Estimation phase
-    1        1           1      -1      -1
+    2        2           2      -1      -1
 ## Penalty weight for 2nd differences w=1/(2*sig^2)
     125.     125.       12.5    12.5    12.5
 ## Penalty weight for dome-shaped selectivity 1=1/(2*sig^2)
