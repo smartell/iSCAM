@@ -1,0 +1,54 @@
+\select@language {english}
+\select@language {english}
+\contentsline {subsection}{Preface}{i}{section*.1}
+\contentsline {subsection}{Preface}{i}{section*.2}
+\contentsline {subsection}{Contents}{ii}{section*.3}
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Overview of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Obtaining {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{1}{subsection.1.2}
+\contentsline {section}{\numberline {2}Running {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}; input files \& command line options}{1}{section.2}
+\contentsline {subsection}{\numberline {2.1}The \texttt {iscam.dat} file}{1}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}The data file}{1}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}The control file (still under development)}{5}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Prior type distributions}{5}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}Selectivity controls}{5}{subsubsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.3}Priors for survey catchability}{6}{subsubsection.2.3.3}
+\contentsline {subsubsection}{\numberline {2.3.4}Other miscellaneous controls}{6}{subsubsection.2.3.4}
+\contentsline {subsection}{\numberline {2.4}Command line options}{7}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Running the simulation model}{7}{subsubsection.2.4.1}
+\contentsline {section}{\numberline {3}Model Documentation}{7}{section.3}
+\contentsline {subsection}{\numberline {3.1}Age-structured population model: equilibrium considerations}{7}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}MSY based reference points}{8}{subsubsection.3.1.1}
+\contentsline {subsection}{\numberline {3.2}Age-structured population model: state-dynamics}{9}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Options for selectivity ($v_{k,t,a}$)}{10}{subsubsection.3.2.1}
+\contentsline {paragraph}{Logistic selectivity}{11}{section*.4}
+\contentsline {paragraph}{Age-specific selectivity coefficients}{11}{section*.5}
+\contentsline {paragraph}{Cubic spline interpolation}{11}{section*.6}
+\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{11}{section*.7}
+\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{12}{section*.8}
+\contentsline {subsection}{\numberline {3.3}Residuals, likelihoods \& objective function value components}{12}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Catch data}{12}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}Relative abundance data}{12}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Age composition data}{13}{subsubsection.3.3.3}
+\contentsline {subsubsection}{\numberline {3.3.4}Stock-recruitment}{14}{subsubsection.3.3.4}
+\contentsline {section}{\numberline {4}Example: Simulation based on Strait of Georgia Pacific herring}{14}{section.4}
+\contentsline {subsection}{\numberline {4.1}Introduction \& purpose}{14}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Data \& control files}{15}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Results}{16}{subsection.4.3}
+\contentsline {section}{\numberline {5}Example Assessment: the Namibian hake case study}{16}{section.5}
+\contentsline {subsection}{\numberline {5.1}Maximum likelihood estimates of the model parameters}{18}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Bayesian analysis of model parameters \& policy parameters}{18}{subsection.5.2}
+\contentsline {section}{\numberline {6}Example Assessment: the Pacific hake fishery}{20}{section.6}
+\contentsline {subsection}{\numberline {6.1}Data \& assumptions}{20}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Maximum likelihood estimates}{21}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Time-varying selectivity}{22}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Bayesian implementation}{23}{subsection.6.4}
+\contentsline {section}{References}{27}{table.7}
+\contentsline {section}{\numberline {A}Statistical functions \& probability distributions}{28}{appendix.A}
+\contentsline {paragraph}{dbeta}{28}{section*.10}
+\contentsline {paragraph}{dgamma}{28}{section*.11}
+\contentsline {paragraph}{dnorm}{28}{section*.12}
+\contentsline {paragraph}{dlnorm}{29}{section*.13}
+\contentsline {section}{\numberline {B}Scripts}{29}{appendix.B}
+\contentsline {subsection}{\numberline {B.1}Bash script for creating the iscamArchive.zip \& .tar.gz files}{29}{subsection.B.1}
+\contentsline {section}{\numberline {C}R-code for figures and Tables}{29}{appendix.C}

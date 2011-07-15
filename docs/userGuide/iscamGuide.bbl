@@ -1,0 +1,69 @@
+\begin{thebibliography}{}
+
+\bibitem[{ADMB Project}, 2009]{ADMB2009}
+{ADMB Project} (2009).
+\newblock 2009 ad model builder: Automatic differentiation model builder.
+  developed by {David Fournier} and freely available from admb-project.org.
+
+\bibitem[Fournier and Archibald, 1982]{fournier1982general}
+Fournier, D. and Archibald, C. (1982).
+\newblock {A general theory for analyzing catch at age data}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  39(8):1195--1207.
+
+\bibitem[Gavaris and Ianelli, 2002]{gavaris2002sif}
+Gavaris, S. and Ianelli, J. (2002).
+\newblock {Statistical Issues in Fisheries' Stock Assessments*}.
+\newblock {\em Scandinavian Journal of Statistics}, 29(2):245--267.
+
+\bibitem[Hilborn and Mangel, 1997]{hilborn1997ecological}
+Hilborn, R. and Mangel, M. (1997).
+\newblock {\em {The ecological detective: confronting models with data}}.
+\newblock Princeton Univ Pr.
+
+\bibitem[Martell, 2009]{Martell2009}
+Martell, S. (2009).
+\newblock Assessment and management advice for pacific hake in u.s. and
+  canadian waters in 2009.
+\newblock {\em DFO Can. Sci. Advis. Sec. Res. Doc.}, 2009/021:iv+54p.
+
+\bibitem[Martell et~al., 2008]{Martell2008pam}
+Martell, S. J.~D., Pine, W.~E., and Walters, C.~J. (2008).
+\newblock Parameterizing age-structured models from a fisheries management
+  perspective.
+\newblock {\em Can. J. Fish. Aquat. Sci.}, 65:1586--1600.
+
+\bibitem[McAllister and Ianelli, 1997]{MCALLISTER1997}
+McAllister, M.~K. and Ianelli, J. (1997).
+\newblock {Bayesian stock assessment using catch-age data and the sampling:
+  importance resampling algorithm}.
+\newblock {\em Canadian journal of fisheries and aquatic sciences(Print)},
+  54(2):284--300.
+
+\bibitem[{Otter Research}, 2008]{otterResearch}
+{Otter Research} (2008).
+\newblock {\em An introduction to AD Model Builder for use in nonlinear
+  modeling and statistics}.
+\newblock Otter Research Ltd., Nanaimo, B.C.
+
+\bibitem[Richards et~al., 1997]{richards1997visualizing}
+Richards, L., Schnute, J., and Olsen, N. (1997).
+\newblock {Visualizing catch-age analysis: a case study}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  54(7):1646--1658.
+
+\bibitem[Schnute and Richards, 1995]{schnute1995influence}
+Schnute, J. and Richards, L. (1995).
+\newblock {The influence of error on population estimates from catch-age
+  models}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  52(10):2063--2077.
+
+\bibitem[Walters and Ludwig, 1994]{walters1994calculation}
+Walters, C. and Ludwig, D. (1994).
+\newblock {Calculation of Bayes posterior probability distributions for key
+  population parameters}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  51(3):713--722.
+
+\end{thebibliography}
