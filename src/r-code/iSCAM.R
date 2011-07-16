@@ -43,7 +43,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../Manuscript2011HerringAssessment/Tables/"
+.TABLEDIR <- "../../fba/BC-herring-2011/Tables/"
 
 
 
