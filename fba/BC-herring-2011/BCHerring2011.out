@@ -1,0 +1,60 @@
+\BOOKMARK [2][-]{section*.1}{Abstract}{}
+\BOOKMARK [2][-]{section*.2}{Contents}{}
+\BOOKMARK [2][-]{section*.3}{List of Figures}{}
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [1][-]{section.2}{Methods}{}
+\BOOKMARK [2][-]{subsection.2.1}{Input data \046 assumptions}{section.2}
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Catch data}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.2}{Relative abundance data}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.3}{Biological samples}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.4}{Age composition data}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.5}{Mean weight-at-age data}{subsection.2.1}
+\BOOKMARK [2][-]{subsection.2.2}{Analytical methods}{section.2}
+\BOOKMARK [2][-]{subsection.2.3}{Simulation testing}{section.2}
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Estimation performance with perfect information}{subsection.2.3}
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Bias \046 precision with observation \046 process errors}{subsection.2.3}
+\BOOKMARK [2][-]{subsection.2.4}{Comparison of HCAM with \040iSCAM}{section.2}
+\BOOKMARK [3][-]{subsubsection.2.4.1}{Age-composition data}{subsection.2.4}
+\BOOKMARK [3][-]{subsubsection.2.4.2}{Commercial catch data}{subsection.2.4}
+\BOOKMARK [3][-]{subsubsection.2.4.3}{Spawn survey data}{subsection.2.4}
+\BOOKMARK [3][-]{subsubsection.2.4.4}{Specification of prior distributions}{subsection.2.4}
+\BOOKMARK [2][-]{subsection.2.5}{Forecasts of pre-fishery biomass based on SFF reference points}{section.2}
+\BOOKMARK [1][-]{section.3}{Results}{}
+\BOOKMARK [2][-]{subsection.3.1}{Simulation testing}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Estimation performance with perfect information}{subsection.3.1}
+\BOOKMARK [3][-]{subsubsection.3.1.2}{Bias \046 precision with observation \046 process errors}{subsection.3.1}
+\BOOKMARK [2][-]{subsection.3.2}{Comparison of HCAM with \040iSCAM}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Strait of Georgia herring assessment}{subsection.3.2}
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Retrospective and prospective analyses}{subsection.3.2}
+\BOOKMARK [2][-]{subsection.3.3}{Alternative assumptions about catchability, mortality \046 selectivity}{section.3}
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Impacts of informative priors on q's}{subsection.3.3}
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Implications of variable natural mortality rate Mt}{subsection.3.3}
+\BOOKMARK [3][-]{subsubsection.3.3.3}{Implications of variable selectivity in directed fisheries}{subsection.3.3}
+\BOOKMARK [2][-]{subsection.3.4}{Separating test fishery data from the purse seine roe fishery data}{section.3}
+\BOOKMARK [2][-]{subsection.3.5}{Preliminary assessments for all other areas}{section.3}
+\BOOKMARK [1][-]{section.4}{Discussion}{}
+\BOOKMARK [1][-]{section.4}{References}{}
+\BOOKMARK [1][-]{appendix.A}{Technical description of \040iSCAM}{}
+\BOOKMARK [2][-]{subsection.A.1}{Analytic methods}{appendix.A}
+\BOOKMARK [3][-]{subsubsection.A.1.1}{Equilibrium considerations}{subsection.A.1}
+\BOOKMARK [3][-]{subsubsection.A.1.2}{MSY based reference points}{subsection.A.1}
+\BOOKMARK [3][-]{subsubsection.A.1.3}{Dynamic age-structured model}{subsection.A.1}
+\BOOKMARK [3][-]{subsubsection.A.1.4}{Options for selectivity}{subsection.A.1}
+\BOOKMARK [3][-]{subsubsection.A.1.5}{Options for natural mortality}{subsection.A.1}
+\BOOKMARK [2][-]{subsection.A.2}{Residuals, likelihoods \046 objective function value components}{appendix.A}
+\BOOKMARK [3][-]{subsubsection.A.2.1}{Catch data}{subsection.A.2}
+\BOOKMARK [3][-]{subsubsection.A.2.2}{Relative abundance data}{subsection.A.2}
+\BOOKMARK [3][-]{subsubsection.A.2.3}{Age composition data}{subsection.A.2}
+\BOOKMARK [3][-]{subsubsection.A.2.4}{Stock-recruitment}{subsection.A.2}
+\BOOKMARK [2][-]{subsection.A.3}{Parameter Estimation and Uncertainty}{appendix.A}
+\BOOKMARK [3][-]{subsubsection.A.3.1}{Negative loglikelihoods}{subsection.A.3}
+\BOOKMARK [3][-]{subsubsection.A.3.2}{Constraints}{subsection.A.3}
+\BOOKMARK [3][-]{subsubsection.A.3.3}{Priors for parameters}{subsection.A.3}
+\BOOKMARK [3][-]{subsubsection.A.3.4}{Survey priors}{subsection.A.3}
+\BOOKMARK [3][-]{subsubsection.A.3.5}{Convergence penalties}{subsection.A.3}
+\BOOKMARK [1][-]{appendix.B}{Data and Control files}{}
+\BOOKMARK [2][-]{subsection.B.1}{Haida Gwaii}{appendix.B}
+\BOOKMARK [2][-]{subsection.B.2}{Prince Rupert District}{appendix.B}
+\BOOKMARK [2][-]{subsection.B.3}{Central Coast}{appendix.B}
+\BOOKMARK [2][-]{subsection.B.4}{Strait of Geogia}{appendix.B}
+\BOOKMARK [2][-]{subsection.B.5}{West Coast of Vancouver Island}{appendix.B}

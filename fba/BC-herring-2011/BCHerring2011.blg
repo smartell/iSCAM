@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.7)
+The top-level auxiliary file: BCHerring2011.aux
+The style file: apalike.bst
+Database file #1: $HOME/Documents/ARTICLES/Articles-1.bib
+Warning--entry type for "ADMB2009" isn't style-file defined
+--line 480 of file $HOME/Documents/ARTICLES/Articles-1.bib
+You've used 15 entries,
+            1935 wiz_defined-function locations,
+            566 strings with 6578 characters,
+and the built_in function-call counts, 5688 in all, are:
+= -- 558
+> -- 221
+< -- 11
++ -- 74
+- -- 72
+* -- 491
+:= -- 1003
+add.period$ -- 44
+call.type$ -- 15
+change.case$ -- 109
+chr.to.int$ -- 15
+cite$ -- 15
+duplicate$ -- 210
+empty$ -- 400
+format.name$ -- 99
+if$ -- 1095
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 16
+newline$ -- 77
+num.names$ -- 45
+pop$ -- 87
+preamble$ -- 1
+purify$ -- 111
+quote$ -- 0
+skip$ -- 162
+stack$ -- 0
+substring$ -- 410
+swap$ -- 19
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 86
+warning$ -- 0
+while$ -- 49
+width$ -- 0
+write$ -- 191
+(There was 1 warning)
