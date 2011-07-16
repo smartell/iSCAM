@@ -1,33 +1,6 @@
 #Examples/PacificHake/PHake2011.dat		#Data file name
 #Examples/PacificHake/PHake2011.ctl		#Control file name
 
-#Examples/NamibianHake/NamibianHake.dat
-#Examples/NamibianHake/NamibianHake.ctl
+../../Examples/NamibianHake/NamibianHake.dat
+../../Examples/NamibianHake/NamibianHake.ctl
 
-#Examples/Cusk/Cusk.dat
-#Examples/Cusk/Cusk.ctl
-
-
-Examples/qciHerring/QCIHerring2010.dat
-Examples/qciHerring/QCIHerring2010.ctl
-
-#Examples/prdHerring/PRDHerring2010.dat
-#Examples/prdHerring/PRDHerring2010.ctl
-
-#Examples/ccHerring/CCHerring2010.dat
-#Examples/ccHerring/CCHerring2010.ctl
-
-#Examples/sogHerring/SOGHerring2010.dat
-#Examples/sogHerring/SOGHerring2010.ctl
-#Examples/sogHerring/SOGHerring2010HCAM.ctl
-#Examples/sogHerring/SOGHerring2010sim.ctl
-#Examples/sogHerring/SOGHerring2010mc.ctl
-
-#Examples/sogHerring/SOGHerring2010b.dat
-#Examples/sogHerring/SOGHerring2010b.ctl
-
-#Examples/sogHerring/WCVIHerring2010.dat
-#Examples/sogHerring/WCVIHerring2010.ctl
-
-#Examples/4VWXHerring/4VWX-1.dat
-#Examples/4VWXHerring/4VWX-1.ctl
