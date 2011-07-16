@@ -1,0 +1,273 @@
+\documentclass[10pt,letterpaper]{article}
+
+%% -packages-
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{epstopdf}
+\usepackage{psfrag}
+\usepackage[round]{natbib}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{rotate}
+\usepackage{lscape}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[colorlinks,bookmarks,citecolor=magenta]{hyperref}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{alltt}
+\usepackage{listings}
+
+
+\lstset{ %
+language=R,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=2,                   % the step between two line-numbers. If it's 1 each line 
+                                % will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,                   % adds a frame around the code
+tabsize=2,                      % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting;
+                                % also try caption instead of title
+escapeinside={\%*}{*)},         % if you want to add a comment within your code
+morekeywords={*,...}            % if you want to add more keywords to the set
+}
+
+
+
+%\usepackage[latin1]{inputenc} % To use characters such as é without typing \'e
+%\usepackage[cyr]{aeguill} % To display characters such as é
+%\usepackage{xspace} % To get the right spacings in front of : and so on
+\usepackage[french,english]{babel}
+
+%% ---------------------------------------------------------------------
+%%Page Layout Properties-------------------------------------------------
+
+%\voffset 0in \textwidth 7.0in  \oddsidemargin 0in
+%\evensidemargin 0in \headheight 0.in \textheight 9in  %%Look at Box13.1 for text scale
+\voffset -0.75in
+\hoffset -0.75in
+\textwidth 6.5in%
+\textheight 9.0in%
+%\evensidemargin 0.in%
+
+%\textwidth 6in%
+%\topmargin 0in%
+\setlength{\LTcapwidth}{\textwidth} %caption width for longtables
+
+%Arial font
+\renewcommand{\rmdefault}{ppl} % Arial
+\renewcommand{\sfdefault}{ppl} % Arial phv  % palatino ppl
+
+%%	%Logo
+%%	\usepackage{fancyhdr}
+%%	\renewcommand{\headheight}{0.6in}
+%%	\setlength{\headwidth}{\textwidth}
+%%	\fancyhead[L]{}% empty left
+%%	\fancyhead[R]{ % right
+%%	   \includegraphics[height=0.53in]{iscamlogo.eps}
+%%	}
+%%	\pagestyle{fancy}
+
+
+%-------------------------------------------------------------------------
+%Water mark
+\usepackage{eso-pic}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{type1cm}
+\usepackage{float} 
+
+\makeatletter
+  \AddToShipoutPicture{%
+    \setlength{\@tempdimb}{.6\paperwidth}%
+    \setlength{\@tempdimc}{.45\paperheight}%
+    \setlength{\unitlength}{1pt}%
+    \put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){%
+      \makebox(0,0){\rotatebox{45}{\textcolor[gray]{0.85}{\fontsize{2.00cm}{1.75cm}\selectfont{DRAFT  \today\ DRAFT}}}}
+    }
+} \makeatother
+
+
+%% -math-
+\newcounter{saveEq}
+  \def\putEq{\setcounter{saveEq}{\value{equation}}}
+  \def\getEq{\setcounter{equation}{\value{saveEq}}}
+  \def\tableEq{ % equations in tables
+    \putEq \setcounter{equation}{0}
+    \renewcommand{\theequation}{T\arabic{table}.\arabic{equation}}
+    \vspace{-5mm}
+    }
+  \def\normalEq{ % renew normal equations
+    \getEq
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}}
+
+  \def\puthrule{ %thick rule lines for equation tables
+    \hrule \hrule \hrule \hrule \hrule}
+
+
+%%\newcommand{\msy}{$C^*$}
+%%\newcommand{\fmsy}{$F^*$}
+%%\newcommand{\sbmsy}{$\rm{SB_{MSY}}$}
+%%\newcommand{\sbfour}{$\rm{SB_{40}}$}
+%%\newcommand{\é}{\'e}
+%%\newcommand{\è}{\`e}
+%%\newcommand{\à}{\`a}
+%%\newcommand{\ê}{\^e}
+\newcommand{\iscam}{
+{$^i$}\textcolor{red}{S}\textcolor{green}{\small{}C}{\textcolor{blue}{\footnotesize{}A}}\textcolor{black}{$_\textnormal{M}$}}%{\raisebox{-0.7ex}{M}}%
+
+\newcommand{\fmsy}{F$_{\textnormal{MSY}}$}
+\newcommand{\bmsy}{B$_{\textnormal{MSY}}$}
+
+%% ---------------------------------------------------------------------
+
+
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+%% ---------------------------------------------------------------------
+
+
+\title{
+%\includegraphics[height=2.53in]{iscamlogo.eps}
+Part I: Moving towards the sustainable fisheries framework for Pacific herring: data, models, and alternative assumptions. \vfill
+Part II: Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks\\\vfill 2011 Assessment and 2012 Forecasts
+\vfill
+}
+
+
+
+\author{Steven Martell, Jake Schweigert, Jaclyn Cleary, Vivian Haist}
+
+\date{\vfill \today}
+
+
+
+
+
+
+
+\begin{document}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+    \maketitle \thispagestyle{empty}
+%    \vfill
+%    \noindent\hrulefill\\
+%    Draft document for peer review: Started on Wednesday, February 11, 2009\\
+%    Draft document completed on Thursday, February 19, 2009\\
+%    Final document completed on Wednesday, March 4, 2009.\\
+%    CSAS revisions completed on Wednesday, March 11, 2009.
+%    \clearpage
+\thispagestyle{empty}
+\clearpage
+
+
+\newpage
+
+
+%\begin{abstract}
+%This is the abstract
+%  \end{abstract}
+%\clearpage
+
+
+%%
+ \selectlanguage{english}
+
+    %\input{ToDoList}
+%% -Executive summary material------------------------------------------
+
+\pagenumbering{roman}
+\subsection*{Abstract}
+\addcontentsline{toc}{subsection}{Abstract}
+
+June 15, 2011.  Structure of this paper has changed a bit. This document will now consist of an assessment and forecast of the five major stocks and the two minor stocks.  There will be at least 5 appendixes that 1) describe the input data and the control files used for the assessment model, 2) a detailed description of \iscam, 3) a description of the methods used to develop the prior distribution, 4) simulation testing of the \iscam model, 5) moving toward the sustainable fisheries framework (see Cleary and Cox paper) and include discussion of the issues of developing an MSY-based framework for a multigear fishery with changing selectivities and natural mortality rates, and finally 6) a list of research recommendations.
+
+Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where iSCAM is set up with nearly the same assumptions as 2010 HCAM assessment), 2) an iSCAM assessment with several scenarios addressing (a) q with various priors, (b) time-varying versus constant M, (c) alternative selectivity models, and (d) the interactions of all three of these confounded variables, and 3) an iSCAM assessment with the test fishery and seine roe fishery data separated into specific fleets.  The side by side comparison will examine similarities/differences between trends in biomass, fishing mortality rates, and residual fits to the spawn survey data an age-composition data.  These two models have some fundamental differences in the statistical assumptions about the catch-at-age data, so results are likely to be slightly different.  Results for all three themes will focus on reconstructing table 5 from last years assessment, with the addition of LRP and USRP to be compared with the cuttoffs and catch advice for low med and high recruitment.
+
+
+
+
+
+
+%%\input{ExecutiveSummary}
+
+\newpage
+\tableofcontents
+\addcontentsline{toc}{subsection}{Contents}
+\newpage
+
+\listoffigures
+\addcontentsline{toc}{subsection}{List of Figures}
+\newpage
+%% -Main body of the document-------------------------------------------
+\pagenumbering{arabic}
+
+
+%% SECTION Introduction
+\input{Introduction}
+
+
+%% SECTION Methods
+\input{Methods}
+
+%% SECTION Results
+\input{Results}
+	
+\section{Discussion}
+	
+  %% -References
+\clearpage
+%input "Refs.bib"
+%\bibliographystyle{plainnat}
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{apalike}
+\bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+%% -Appendix material Model Description --------------------------------
+\newpage
+\appendix
+\renewcommand{\thetable}{A-\arabic{table}}
+\setcounter{table}{0}
+
+\input{Appendix_iSCAMdescription}
+
+\renewcommand{\thetable}{B-\arabic{table}}
+\setcounter{table}{0}
+\input{Appendix1}
+
+
+\input{Tables/CatchTable}
+\input{Tables/SurveyTable}
+
+
+\input{Tables/RefPointsTableq1}
+\input{Tables/DecisionTableq1}
+\input{Tables/DecisionTableq1b}
+
+\clearpage
+\input{Tables/RefPointsTableq587}
+\input{Tables/DecisionTableq587}
+\input{Tables/DecisionTableq587b}
+%Decision table
+Were not completely comfortable with the q estimates, but we believe the approach used to develop the informative prior for q is better than the ad hoc q=1 assumption.  Assuming q=1 is more conservative.
+
+\end{document}
