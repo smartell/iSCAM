@@ -27,6 +27,7 @@ dev.off()
 
 #png(file="iScamLogo.png", bg="transparent")
 png(file="iScamLogo.png", bg="transparent",width=100, height=50, pointsize=6)
+png(file="iScamLogo.png", bg="transparent",width=100, height=50, pointsize=6)
 par(mfcol=c(1, 1), 
 	xaxt="n", yaxt="n", mar=rep(0.25, length=4), oma=rep(0, length=4))
 

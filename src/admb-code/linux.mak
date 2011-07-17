@@ -18,4 +18,3 @@ opt:
 clean:
 	@rm -rvf ${DISK}/debug
 	@rm -rvf ${DISK}/release
-	@rm -rvf ${DISK}

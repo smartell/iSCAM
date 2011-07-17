@@ -8,28 +8,28 @@
 #TRUE,SOG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010
 #TRUE,WCVI,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2010
 
-TRUE,HG,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2011q1
-TRUE,PRD, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/prdHerring/PRDHerring2011q1
-TRUE,CC,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/ccHerring/CCHerring2011q1
-TRUE,SOG, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2011q1
-TRUE,WCVI,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2011q1
-FALSE,A2W,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area2wHerring/Area2wHerring2011
-FALSE,A27,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area27Herring/Area27Herring2011
+TRUE,HG,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/qciHerring/qciHerring2011q1
+TRUE,PRD, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/prdHerring/PRDHerring2011q1
+TRUE,CC,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/ccHerring/CCHerring2011q1
+TRUE,SOG, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/sogHerring/SOGHerring2011q1
+TRUE,WCVI,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/wcviHerring/WCVIHerring2011q1
+FALSE,A2W,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area2wHerring/Area2wHerring2011
+FALSE,A27,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area27Herring/Area27Herring2011
 
-
-FALSE,HG,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010q1
-FALSE,PRD,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/prdHerring/PRDHerring2010q1
-FALSE,CC,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/ccHerring/CCHerring2010q1
-FALSE,SOG,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010q1
-FALSE,WCVI,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2010q1
-FALSE,A2W,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area2wHerring/Area2wHerring2010
-FALSE,A27,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area27Herring/Area27Herring2010
-
-FALSE,HG,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010HCAM
-FALSE,PRD,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/prdHerring/PRDHerring2010HCAM
-FALSE,CC,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/ccHerring/CCHerring2010HCAM
-FALSE,SOG,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010HCAM
-FALSE,WCVI,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2010HCAM
+#
+#FALSE,HG,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010q1
+#FALSE,PRD,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/prdHerring/PRDHerring2010q1
+#FALSE,CC,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/ccHerring/CCHerring2010q1
+#FALSE,SOG,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010q1
+#FALSE,WCVI,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2010q1
+#FALSE,A2W,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area2wHerring/Area2wHerring2010
+#FALSE,A27,"2010data_q1",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Area27Herring/Area27Herring2010
+#
+#FALSE,HG,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010HCAM
+#FALSE,PRD,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/prdHerring/PRDHerring2010HCAM
+#FALSE,CC,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/ccHerring/CCHerring2010HCAM
+#FALSE,SOG,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010HCAM
+#FALSE,WCVI,"2010data_HCAM",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/wcviHerring/WCVIHerring2010HCAM
 #TRUE,SOGb,"2010datab",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/sogHerring/SOGHerring2010b
 
 #TRUE,CSK,"Cusk Tmp Data",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/Cusk/Cusk

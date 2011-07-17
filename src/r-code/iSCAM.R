@@ -79,12 +79,13 @@ source("read.admb.R")
 	}
 	
 	#FIXME need to depricate this	
-	#Read iscam report file and get controls for priors tab
-	A=read.rep("iscam.rep")
+	#dummy data frame for parameter controls for loading
+	A=(matrix(1,nrow=7,ncol=7))
+	#
 	#Build data frame
 	colhdr=c("ival", "lb", "ub", "phz", "prior", "mu\nshape","SD\nrate")
 	rownme=c("log(Ro)","steepness","log(M)","log(Rbar)","log(Rinit)","rho","precision")
-	ctrlDF<<-as.data.frame(A$ctrl)
+	ctrlDF<<-as.data.frame(A)
 	rownames(ctrlDF)<<-rownme
 	colnames(ctrlDF)<<-colhdr
 	ctrlDF<<-cbind(ctrlDF,View=TRUE)
