@@ -35,33 +35,33 @@
 \contentsline {subsection}{\numberline {3.4}Separating test fishery data from the purse seine roe fishery data}{24}{subsection.3.4}
 \contentsline {subsection}{\numberline {3.5}Preliminary assessments for all other areas}{24}{subsection.3.5}
 \contentsline {section}{\numberline {4}Discussion}{24}{section.4}
-\contentsline {section}{References}{25}{section.4}
-\contentsline {section}{\numberline {A}Technical description of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{26}{appendix.A}
-\contentsline {subsection}{\numberline {A.1}Analytic methods}{26}{subsection.A.1}
-\contentsline {subsubsection}{\numberline {A.1.1}Equilibrium considerations}{26}{subsubsection.A.1.1}
-\contentsline {subsubsection}{\numberline {A.1.2}MSY based reference points}{26}{subsubsection.A.1.2}
-\contentsline {subsubsection}{\numberline {A.1.3}Dynamic age-structured model}{29}{subsubsection.A.1.3}
-\contentsline {subsubsection}{\numberline {A.1.4}Options for selectivity}{32}{subsubsection.A.1.4}
-\contentsline {paragraph}{Logistic selectivity}{32}{section*.29}
-\contentsline {paragraph}{Age-specific selectivity coefficients}{32}{section*.30}
-\contentsline {paragraph}{Cubic spline interpolation}{32}{section*.31}
-\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{33}{section*.33}
-\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{33}{section*.34}
-\contentsline {subsubsection}{\numberline {A.1.5}Options for natural mortality}{33}{subsubsection.A.1.5}
-\contentsline {subsection}{\numberline {A.2}Residuals, likelihoods \& objective function value components}{34}{subsection.A.2}
-\contentsline {subsubsection}{\numberline {A.2.1}Catch data}{34}{subsubsection.A.2.1}
-\contentsline {subsubsection}{\numberline {A.2.2}Relative abundance data}{35}{subsubsection.A.2.2}
-\contentsline {subsubsection}{\numberline {A.2.3}Age composition data}{35}{subsubsection.A.2.3}
-\contentsline {subsubsection}{\numberline {A.2.4}Stock-recruitment}{36}{subsubsection.A.2.4}
-\contentsline {subsection}{\numberline {A.3}Parameter Estimation and Uncertainty}{37}{subsection.A.3}
-\contentsline {subsubsection}{\numberline {A.3.1}Negative loglikelihoods}{37}{subsubsection.A.3.1}
-\contentsline {subsubsection}{\numberline {A.3.2}Constraints}{37}{subsubsection.A.3.2}
-\contentsline {subsubsection}{\numberline {A.3.3}Priors for parameters}{38}{subsubsection.A.3.3}
-\contentsline {subsubsection}{\numberline {A.3.4}Survey priors}{38}{subsubsection.A.3.4}
-\contentsline {subsubsection}{\numberline {A.3.5}Convergence penalties}{38}{subsubsection.A.3.5}
-\contentsline {section}{\numberline {B}Data and Control files}{40}{appendix.B}
-\contentsline {subsection}{\numberline {B.1}Haida Gwaii}{40}{subsection.B.1}
-\contentsline {subsection}{\numberline {B.2}Prince Rupert District}{42}{subsection.B.2}
-\contentsline {subsection}{\numberline {B.3}Central Coast}{44}{subsection.B.3}
-\contentsline {subsection}{\numberline {B.4}Strait of Geogia}{46}{subsection.B.4}
-\contentsline {subsection}{\numberline {B.5}West Coast of Vancouver Island}{49}{subsection.B.5}
+\contentsline {section}{References}{27}{section.4}
+\contentsline {section}{\numberline {A}Technical description of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{28}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Analytic methods}{28}{subsection.A.1}
+\contentsline {subsubsection}{\numberline {A.1.1}Equilibrium considerations}{28}{subsubsection.A.1.1}
+\contentsline {subsubsection}{\numberline {A.1.2}MSY based reference points}{28}{subsubsection.A.1.2}
+\contentsline {subsubsection}{\numberline {A.1.3}Dynamic age-structured model}{31}{subsubsection.A.1.3}
+\contentsline {subsubsection}{\numberline {A.1.4}Options for selectivity}{34}{subsubsection.A.1.4}
+\contentsline {paragraph}{Logistic selectivity}{34}{section*.30}
+\contentsline {paragraph}{Age-specific selectivity coefficients}{34}{section*.31}
+\contentsline {paragraph}{Cubic spline interpolation}{34}{section*.32}
+\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{35}{section*.34}
+\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{35}{section*.35}
+\contentsline {subsubsection}{\numberline {A.1.5}Options for natural mortality}{35}{subsubsection.A.1.5}
+\contentsline {subsection}{\numberline {A.2}Residuals, likelihoods \& objective function value components}{36}{subsection.A.2}
+\contentsline {subsubsection}{\numberline {A.2.1}Catch data}{36}{subsubsection.A.2.1}
+\contentsline {subsubsection}{\numberline {A.2.2}Relative abundance data}{37}{subsubsection.A.2.2}
+\contentsline {subsubsection}{\numberline {A.2.3}Age composition data}{37}{subsubsection.A.2.3}
+\contentsline {subsubsection}{\numberline {A.2.4}Stock-recruitment}{38}{subsubsection.A.2.4}
+\contentsline {subsection}{\numberline {A.3}Parameter Estimation and Uncertainty}{39}{subsection.A.3}
+\contentsline {subsubsection}{\numberline {A.3.1}Negative loglikelihoods}{39}{subsubsection.A.3.1}
+\contentsline {subsubsection}{\numberline {A.3.2}Constraints}{39}{subsubsection.A.3.2}
+\contentsline {subsubsection}{\numberline {A.3.3}Priors for parameters}{40}{subsubsection.A.3.3}
+\contentsline {subsubsection}{\numberline {A.3.4}Survey priors}{40}{subsubsection.A.3.4}
+\contentsline {subsubsection}{\numberline {A.3.5}Convergence penalties}{40}{subsubsection.A.3.5}
+\contentsline {section}{\numberline {B}Data and Control files}{42}{appendix.B}
+\contentsline {subsection}{\numberline {B.1}Haida Gwaii}{42}{subsection.B.1}
+\contentsline {subsection}{\numberline {B.2}Prince Rupert District}{44}{subsection.B.2}
+\contentsline {subsection}{\numberline {B.3}Central Coast}{46}{subsection.B.3}
+\contentsline {subsection}{\numberline {B.4}Strait of Geogia}{48}{subsection.B.4}
+\contentsline {subsection}{\numberline {B.5}West Coast of Vancouver Island}{51}{subsection.B.5}
