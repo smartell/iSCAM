@@ -1,3 +1,4 @@
+%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/fba/BC-herring-2011/WRITEUP/BCHerring2011.tex
 \section{Technical description of \iscam}\label{appiSCAM}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
@@ -108,7 +109,7 @@ Given an estimate of \fmsy, other reference points such as MSY are calculated us
 \begin{figure}[!tbp]
   % Requires \usepackage{graphicx}
   \centering
-  \includegraphics[width=0.5\columnwidth]{Figs/Fig1Quadplot.pdf}\\
+  \includegraphics[width=0.5\columnwidth]{../Figs/Fig1Quadplot.pdf}\\
   \caption{Equilibrium yield (a), recruits (b), biomass (c) and
 spawner per recruit ($\phi_e/\phi_E$) (d) versus instantaneous
 fishing mortality $F_e$ for two different values of the recruitment
@@ -352,7 +353,7 @@ where  $S''(x_0) = S''(x_n)=0$  is the condition that defines a natural cubic sp
 \begin{figure}
 	\centering
 	% Requires \usepackage{graphicx}
-	\includegraphics[width=0.4\columnwidth]{Figs/SplineEg.pdf}\\
+	\includegraphics[width=0.4\columnwidth]{../Figs/SplineEg.pdf}\\
 	\caption{Example of a natural cubic spline interpolation for estimating selectivity coefficients.  In \iscam\ the user specifies the number of nodes (circles) to estimate; then age-specific selectivity coefficients are interpolated using a natural cubic spline.}\label{Fig2}
 \end{figure}
 
@@ -365,7 +366,7 @@ The same penalty functions for curvature and dome-shaped selectivity are also in
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
-	\includegraphics[width=0.9\textwidth]{Figs/BicubicEg.pdf}\\
+	\includegraphics[width=0.9\textwidth]{../Figs/BicubicEg.pdf}\\
 	\caption{Example of a time-varying cubic spline (left) and bicubic spline (right) interpolation for selectivity. The panel on the left contains 165 estimated selectivity parameters and the bicubic interpolation estimates 85 selectivity parameters, or 5 age nodes and 17 year nodes. There are 495 actual nodes (selectivity parameters) being interpolated.}\label{Fig3}
 \end{figure}
 
@@ -508,7 +509,7 @@ An array of selectivity parameters (i.e., \verb"init_bounded_matrix_vector") is 
 \begin{figure}[!tbp]
 	\centering
 	% Requires \usepackage{graphicx}
-	\includegraphics[width=0.7\textwidth]{Figs/priorexample.pdf}\\
+	\includegraphics[width=0.7\textwidth]{../Figs/priorexample.pdf}\\
 	\caption{An example of the prior distributions used for $\ln(R_o),h,\ln(M),\ln(\bar{R}),\rho,\vartheta$.  The actual values used for the SOG herring assessment can be found in the control file in the appendix.}\label{FigPriorExample}
 \end{figure}
 
