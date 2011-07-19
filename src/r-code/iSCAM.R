@@ -1635,7 +1635,7 @@ guiView	<- function()
 	}
 	figFile = figFileName
 	
-	fileName = paste(graphicDirectory, "/", figFile,".pdf", sep="")
+	fileName = paste(graphicDirectory, "/iscam_Åfig_", figFile,".pdf", sep="")
 	dev.copy2pdf(file=fileName)
 	cat("Graphic saved as:", fileName, "\n")
 }
