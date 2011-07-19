@@ -1,0 +1,13 @@
+## Unix shell script: generate new project folders
+## example ./makeproject HakeAssessment
+## use chmod 777 makeproject to change permissions if necessary
+mkdir $1
+mkdir $1/DATA
+mkdir $1/FIGS
+mkdir $1/TABLES
+mkdir $1/WRITEUP
+mkdir $1/MISC
+## don't forget to add to the svn repository
+
+## iscam logo
+cp ../src/r-code/iScamLogo.eps $1/MISC
