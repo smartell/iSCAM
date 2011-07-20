@@ -2,31 +2,53 @@ _____________________________________________________________
 _____________________________________________________________
          Integrated Statistical Catch Age Model (iSCAM)
 
-						VERSION 1.1
-				Tue Jul 19 22:24:46 PDT 2011
+                        VERSION 1.1
+                Tue Jul 19 22:24:46 PDT 2011
 
-			Created by Steven Martell on 2010-04-09 
-			Copyright (c) 2010. All rights reserved.                    
-
+            Created by Steven Martell on 2010-04-09 
+            Copyright (c) 2010. All rights reserved.                    
 _____________________________________________________________
+
 iSCAM is and Integrated Statistical Catch Age Model
 written by Steve Martell. This software was originally
 developed for the BC herring stock assessments in 2011.
 
 The project started in the fall of 2010 and is hosted on 
-an svn server.
+an svn server: http://code.google.com/p/iscam-project/
+
+Additional information about the software can also be obtained
+from a website: https://sites.google.com/site/iscamproject/
 
 Obtaining iSCAM:
 ================
-To check out a copy of the project code, open terminal and
-go to the directory (folder) where you want to keep 
-the files, and use:
+- To check out a copy of the project code, open terminal and
+  go to the directory (folder) where you want to keep 
+  the files, and use:
 
-svn checkout http://iscam-project.googlecode.com/svn/trunk/
+  svn checkout http://iscam-project.googlecode.com/svn/trunk/
+
+- If you would like write permissions to the repository please
+  contact the project owner (email address available at the
+  google repository).
+
+Setting up a new project in fba:
+================================
+- fba is a directory (short for full blow assessments) that 
+  contains project folders with a specific directory structure.
+  It is important to maintain this directory structure within
+  the project folders because the R and shell scripts use the
+  relative paths for maintaining inputs and outputs to automate
+  much of the running of iSCAM and its outputs.
+
+- to set up a new project, use the makeproject shell script.
+  For example: ./makeproject MyAssessment  
+  It may be necessary to change the permissions if you are 
+  running MacOSX, eg: type "chmod 777 makeproject" in terminal
+  at the fba directory to allow execution permissions for 
+  makeproject.
 
 
-
-ToDo List
-===============
+ToDo List:
+==========
 TODO Move Herring from examples to fba
 
