@@ -1,0 +1,32 @@
+_____________________________________________________________
+_____________________________________________________________
+         Integrated Statistical Catch Age Model (iSCAM)
+
+						VERSION 1.1
+				Tue Jul 19 22:24:46 PDT 2011
+
+			Created by Steven Martell on 2010-04-09 
+			Copyright (c) 2010. All rights reserved.                    
+
+_____________________________________________________________
+iSCAM is and Integrated Statistical Catch Age Model
+written by Steve Martell. This software was originally
+developed for the BC herring stock assessments in 2011.
+
+The project started in the fall of 2010 and is hosted on 
+an svn server.
+
+Obtaining iSCAM:
+================
+To check out a copy of the project code, open terminal and
+go to the directory (folder) where you want to keep 
+the files, and use:
+
+svn checkout http://iscam-project.googlecode.com/svn/trunk/
+
+
+
+ToDo List
+===============
+TODO Move Herring from examples to fba
+
