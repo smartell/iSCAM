@@ -41,7 +41,7 @@ Obtaining iSCAM:
 
 Setting up a new project in fba:
 ================================
-- fba is a directory (short for full blow assessments) that 
+- fba is a directory (short for "full blown assessments") that 
   contains project folders with a specific directory structure.
   It is important to maintain this directory structure within
   the project folders because the R and shell scripts use the
