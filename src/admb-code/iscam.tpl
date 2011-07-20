@@ -1,8 +1,8 @@
 // ------------------------------------------------------------------- //
 //         integrated Statistical Catch Age Model (iSCAM)              //
 //                                                                     //
-//                           VERSION 1.0                               //
-//                            2010-11-27                               //
+//                           VERSION 1.1                               //
+//               Tue Jul 19 22:23:58 PDT 2011                          //
 //                                                                     //
 //                                                                     //
 //           Created by Steven Martell on 2010-04-09                   //
@@ -1658,7 +1658,9 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	
 FUNCTION void calc_reference_points()
   {
-	/*
+	/**
+	\file iscam.tpl
+	\author Steven Martell
 	Uses Newton_Raphson method to determine Fmsy and MSY 
 	based reference points.  
 	
