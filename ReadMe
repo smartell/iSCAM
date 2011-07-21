@@ -51,7 +51,7 @@ Setting up a new project in fba:
 - to set up a new project, use the makeproject shell script.
   For example: ./makeproject MyAssessment  
   It may be necessary to change the permissions if you are 
-  running MacOSX, eg: type "chmod 777 makeproject" in terminal
+  running MacOSX, eg: type "chmod 755 makeproject" in terminal
   at the fba directory to allow execution permissions for 
   makeproject.
 
