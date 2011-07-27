@@ -57,11 +57,11 @@
 ## nits  #number of surveys
     2
 ## priors 0=uniform density     1=normal density
-    1       1
+    0       1
 ## prior log(mean)
-    -0.569   -0.569
+    0.0     0.0
 ## prior sd
-    0.274    0.274 
+    1.0     0.001 
 ## ____________________________________________________________________________ ##
 
 ## _______________________OTHER MISCELLANEOUS CONTROLS_________________________ ##
@@ -76,7 +76,7 @@
 2.00        ## 9  std in mean fishing mortality in last phase
 3           ## 10 phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         ## 11 std in deviations for natural mortality
-12			## 12 number of estimated nodes for deviations in natural mortality
+60			## 12 number of estimated nodes for deviations in natural mortality
 1.00        ## 13 fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
