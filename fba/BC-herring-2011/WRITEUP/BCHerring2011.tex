@@ -1,4 +1,4 @@
-\documentclass[10pt,letterpaper]{article}
+\documentclass[10pt,letterpaper]{report}
 
 %% -packages-
 \usepackage{graphicx}
@@ -147,8 +147,8 @@ morekeywords={*,...}            % if you want to add more keywords to the set
 
 \title{
 %\includegraphics[height=2.53in]{iscamlogo.eps}
-Part I: Moving towards the sustainable fisheries framework for Pacific herring: data, models, and alternative assumptions. \vfill
-Part II: Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks\\\vfill 2011 Assessment and 2012 Forecasts
+Part I\\Moving towards the sustainable fisheries framework for Pacific herring: data, models, and alternative assumptions. \vfill
+Part II\\Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks:\\ 2011 Assessment and 2012 Forecasts
 \vfill
 }
 
@@ -222,12 +222,15 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 \pagenumbering{arabic}
 
 
-%% SECTION Introduction
-\input{Introduction}
+\include{./PART1/PART_I}
+
+\include{./PART2/PART_II}
+
+
 
 
 %% SECTION Methods
-\input{Methods}
+%\input{Methods}
 
 %% SECTION Results
 \input{Results}
@@ -243,18 +246,23 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 \bibliography{$HOME/Documents/ARTICLES/Articles-1}
 
 %% -Appendix material Model Description --------------------------------
+
 \newpage
 \appendix
+\part{Appendixes}
+\addtocounter{chapter}{1}
+
 \renewcommand{\thetable}{A-\arabic{table}}
 \setcounter{table}{0}
-
-\input{Appendix_iSCAMdescription}
+\input{./APPENDIX_A/Appendix_iSCAMdescription}
 
 \renewcommand{\thetable}{B-\arabic{table}}
 \setcounter{table}{0}
-\input{Appendix1}
+\input{./APPENDIX_B/AppendixB}
 
 
+
+%% Relocate the stuff below, used during devlepment.
 \input{../Tables/CatchTable}
 \input{../Tables/SurveyTable}
 
