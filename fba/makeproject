@@ -7,7 +7,13 @@ mkdir $1/FIGS
 mkdir $1/TABLES
 mkdir $1/WRITEUP
 mkdir $1/MISC
+mkdir $1/R
 ## don't forget to add to the svn repository
 
 ## iscam logo
 cp ../src/r-code/iScamLogo.eps $1/MISC
+cp ../src/r-code/iSCAM.R $1/R
+cp ../src/r-code/iScamLogo.gif $1/R
+cp ../src/r-code/iSCAMViewTracker.txt $1/R
+cp ../src/r-code/iSCAMWin.txt $1/R
+cp ../src/r-code/read.admb.R $1/R

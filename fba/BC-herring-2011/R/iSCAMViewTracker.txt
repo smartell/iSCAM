@@ -1,10 +1,20 @@
 # iSCAM View Tracker File 
 # Do not use extension for the control file (using read.admb to input results)
+
+# 2011 Assessment Results
 "Select","Stock","Description","Control File"
-TRUE,HG,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/qciHerring/qciHerring2011q1
-TRUE,PRD, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/prdHerring/PRDHerring2011q1
-TRUE,CC,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/ccHerring/CCHerring2011q1
-TRUE,SOG, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/sogHerring/SOGHerring2011q1
-TRUE,WCVI,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/wcviHerring/WCVIHerring2011q1
-FALSE,A2W,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area2wHerring/Area2wHerring2011
-FALSE,A27,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area27Herring/Area27Herring2011
+TRUE,HG,  "2011data_q1",../DATA/QCI/qciHerring2011q1
+TRUE,PRD, "2011data_q1",../DATA/PRD/PRDHerring2011q1
+TRUE,CC,  "2011data_q1",../DATA/CC/CCHerring2011q1
+TRUE,SOG, "2011data_q1",../DATA/SOG/SOGHerring2011q1
+TRUE,WCVI,"2011data_q1",../DATA/WCVI/WCVIHerring2011q1
+FALSE,A2W,"2011data_q1",../DATA/AREA2W/Area2wHerring2011
+FALSE,A27,"2011data_q1",../DATA/ARES27/Area27Herring2011
+
+
+FALSE,HG,  "2010 HCAM",../DATA/QCI/qciHerring2010HCAM
+FALSE,PRD, "2010 HCAM",../DATA/PRD/PRDHerring2010HCAM
+FALSE,CC,  "2010 HCAM",../DATA/CC/CCHerring2010HCAM
+FALSE,SOG, "2010 HCAM",../DATA/SOG/SOGHerring2010HCAM
+FALSE,WCVI,"2010 HCAM",../DATA/WCVI/WCVIHerring2010HCAM
+

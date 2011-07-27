@@ -320,6 +320,9 @@ guiView	<- function()
 	# Get the guiPerf parameters so that plot controls available.
 	guiInfo <- getWinVal(scope="L")
 	
+	# List of gui changes
+	guiChanges <- list()
+	
 	# Determine which files have been selected
 	hdr	<- ifiles[ ifiles$Select, ]
 	print(hdr)
@@ -347,17 +350,36 @@ guiView	<- function()
 		}
 	}
 	
+	newPlot <- TRUE
 	if ( !autoLayout )
 	{
 		winCols <- ncols
 		winRows <- nrows
+		
+		## Determin if newPlot should be set to TRUE
+		# This sets newPlot to TRUE if current plot panel is the last row and
+	    # last column of the layout.
+		newPlot <- FALSE
+	    mfg <- par( "mfg" )
+	    if ( (mfg[1]==mfg[3]) && (mfg[2]==mfg[4]) )
+	      newPlot <- TRUE
+	    
 	}
 	
+	## Update the gui
+	guiChanges$ncols = winCols
+	guiChanges$nrows = winRows
+	setWinVal( guiChanges )
+	
+	
 	## set graphical parameters
-	if ( plotbyrow )
-		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
-	else
-		par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
+	if (newPlot)
+	{
+		if ( plotbyrow )
+			par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
+		else
+			par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
+	}
 	
 	## TODO Loop over runs and plot corresponding graph
 	
