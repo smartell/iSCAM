@@ -1,0 +1,10 @@
+# iSCAM View Tracker File 
+# Do not use extension for the control file (using read.admb to input results)
+"Select","Stock","Description","Control File"
+TRUE,HG,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/qciHerring/qciHerring2011q1
+TRUE,PRD, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/prdHerring/PRDHerring2011q1
+TRUE,CC,  "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/ccHerring/CCHerring2011q1
+TRUE,SOG, "2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/sogHerring/SOGHerring2011q1
+TRUE,WCVI,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/wcviHerring/WCVIHerring2011q1
+FALSE,A2W,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area2wHerring/Area2wHerring2011
+FALSE,A27,"2011data_q1",~/Documents/CURRENT PROJECTS/iSCAM-trunk/Examples/Area27Herring/Area27Herring2011
