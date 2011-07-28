@@ -9,6 +9,8 @@
 ## if sim.R has been modified then data will be carried out.
 
 ARG="-nox"
+MCMC="'-nox -mcmc 5000 -mcsave 500 -mcscale 1000 -mcmult 2.0'"
+#MCEVAL="'-mceval'"
 
 SUBDIRS = AREA27 AREA2W CC PRD QCI SOG WCVI
 RELEASE= "../../../dist/release/iscam"
@@ -20,8 +22,8 @@ all: release est clear
 
 datadirs := $(shell echo 'd=dir()[file.info(dir())$$isdir]' | R --slave)
 dirloop := $(foreach DIR,$(SUBDIRS),$(DIR)/cleaner)
-estloop := $(foreach DIR,$(SUBDIRS),$(DIR)/est)
 clrloop := $(foreach DIR,$(SUBDIRS),$(DIR)/clr)
+mcmcloop:= $(foreach DIR,$(SUBDIRS),$(DIR))
 
 
 COPYISCAM = 'datadirs=dir()[file.info(dir())$$isdir]; \
@@ -37,15 +39,18 @@ COPYISCAM = 'datadirs=dir()[file.info(dir())$$isdir]; \
 release: 
 	echo $(COPYISCAM) | R --vanilla --slave
 
-test: $(estloop)
-
-$(estloop):
-	cd $(@D); make ARG=$(ARG);
-
 est: $(SUBDIRS)
 
 $(SUBDIRS):
 	$(MAKE) -C $@ ARG=$(ARG)
+
+mcmc: $(mcmcloop) 
+$(mcmcloop):
+	$(MAKE) -C $@ ARG=$(MCMC); 
+
+
+
+
 
 clear: $(clrloop)
 

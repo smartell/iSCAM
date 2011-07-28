@@ -37,7 +37,7 @@ source("read.admb.R")
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
 .VIEWPANCEX <- 1            # Default cex for panLab.
 
-.VIEWMAR  <- c(3, 3, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
+.VIEWMAR  <- c(5, 5, 1, 1)  # Multi-panel plots: plot margin sizes c(b,l,t,r).
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 1
 
@@ -546,10 +546,12 @@ guiView	<- function()
 		if(gLetter)
 		{
 			mfg=par("mfg")
-			if(mfg[1]==1 && mfg[2]==1) ix=1
-			if(mfg[1]==2 && mfg[2]==1) ix=2
-			if(mfg[1]==1 && mfg[2]==2) ix=3
-			if(mfg[1]==2 && mfg[2]==2) ix=4
+			#if(mfg[1]==1 && mfg[2]==1) ix=1
+			#if(mfg[1]==2 && mfg[2]==1) ix=2
+			#if(mfg[1]==1 && mfg[2]==2) ix=3
+			#if(mfg[1]==2 && mfg[2]==2) ix=4
+			
+			ix <- mfg[1] + (mfg[2]-1)*mfg[3]
 			gletter(ix)
 		}
 	}  #end of loop over nRuns
@@ -956,6 +958,7 @@ guiView	<- function()
 		ro=ro*exp(-0.5*tau^2)
 		points(bo, ro, pch="O", col=2)
 		points(bo, ro, pch="+", col=2)
+		grid()
 	})
 }
 
@@ -1282,6 +1285,7 @@ guiView	<- function()
 			ylim=c(0,max(yy,na.rm=T)))
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
+		grid()
 		box()
 		
 		if ( annotate )

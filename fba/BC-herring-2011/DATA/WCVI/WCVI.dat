@@ -1,8 +1,8 @@
 #../../fba/BC-herring-2011/DATA/WCVI/WCVIHerring2011.dat
 #../../fba/BC-herring-2011/DATA/WCVI/WCVIHerring2011q1.ctl
-#WCVIHerring2011.dat
-#WCVIHerring2011q1.ctl
+WCVIHerring2011.dat
+WCVIHerring2011q1.ctl
 
 ## For comparison with HCAM
-WCVIHerring2010.dat
-WCVIHerring2010HCAM.ctl
+#WCVIHerring2010.dat
+#WCVIHerring2010HCAM.ctl

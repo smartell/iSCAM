@@ -1,8 +1,8 @@
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011.dat
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011q1.ctl
-#SOGHerring2011.dat
-#SOGHerring2011q1.ctl
+SOGHerring2011.dat
+SOGHerring2011q1.ctl
 
 ## For comparison with HCAM
-SOGHerring2010.dat
-SOGHerring2010HCAM.ctl
+#SOGHerring2010.dat
+#SOGHerring2010HCAM.ctl
