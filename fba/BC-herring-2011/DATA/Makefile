@@ -9,7 +9,7 @@
 ## if sim.R has been modified then data will be carried out.
 
 ARG="-nox"
-MCMC="'-nox -mcmc 5000 -mcsave 500 -mcscale 1000 -mcmult 2.0'"
+MCMC="'-nox -mcmc 500000 -mcsave 500 -mcscale 100000 -mcmult 2.0'"
 #MCEVAL="'-mceval'"
 
 SUBDIRS = AREA27 AREA2W CC PRD QCI SOG WCVI
