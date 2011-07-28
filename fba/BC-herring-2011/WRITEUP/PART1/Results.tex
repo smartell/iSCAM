@@ -32,11 +32,11 @@ The lower panel of Figure \ref{FigSogBias} shows the apparent precision and bias
 
 	\subsection{Comparison of HCAM with \iscam}
 	
-	Based on the description of the priors and model setup in Section \ref{secMethodsHCAM} on page \pageref{secMethodsHCAM}, a comparison of the spawning stock biomass between \iscam\ and HCAM were very similar (Figure \ref{fig1_HCAM_ctrl}a).  Between 1951 and 1969 the absolute difference in spawning biomass is minimal and post 1970 estimates of spawning biomass are slightly higher for the HCAM model. The only real difference between the two models during this period is a structural differences in selectivity for the gill net fishery.
+	Based on the description of the priors and model setup in Section \ref{secMethodsHCAM} on page \pageref{secMethodsHCAM}, a comparison of the spawning stock biomass between \iscam\ and HCAM were very similar (Figure \ref{fig1_HCAM_ctrl}a) for the Strait of Georgia stock.  Between 1951 and 1969 the absolute difference in spawning biomass is minimal and post 1970 estimates of spawning biomass are slightly higher for the HCAM model. The only real difference between the two models during this period is a differences in the assumptions about the error structure for the age-composition data.
 	
-	Estimates of spawning depletion are based on the post fishery spawning biomass relative to the estimated unfished spawning biomass (Figure \ref{fig1_HCAM_ctrl}b).  Note how ever the predicted 2011 estimate is the pre-fishery spawning biomass.  The three coloured zones demarcate the critical zone, cautious zone, and healthy zones which are defined by 0.4\bmsy\ and 0.8\bmsy, respectively.
+	Estimates of spawning depletion are based on the post fishery spawning biomass relative to the estimated unfished spawning biomass (Figure \ref{fig1_HCAM_ctrl}b).  The three coloured zones demarcate the critical zone, cautious zone, and healthy zones which are defined by 0.4\bmsy\ and 0.8\bmsy, respectively.
 	
-Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM are summarized in Table \ref{TableHCAMcompare}.  Estimates of $B_o$ and MSY based reference points are sensitive to the initial starting conditions and the phase in which some of the parameters are estimated.  The \iscam\ model tends to have a lower estimate of $B_o$ in comparison to the HCAM model and a  higher value of steepness ($h$).  These two parameters are usually negatively correlated and it is expected that if $B_o$ was higher in one model in comparison to the other, then $h$ would normally be lower to compensate.  Information to estimate $B_o$ and $h$ come from the apparent stock-recruitment data and the structural form of the stock recruitment relationship.  In \iscam\ annual recruitment is freely estimated and the residuals are based on the Beverton-Holt stock recruitment model and the estimates of spawning stock biomass.  Similarly, in HCAM recruitment is a function of the spawning stock biomass and the Beverton-Holt model and the annual deviations are estimated and assumed to be normally distributed random variables.
+Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM are summarized in Table \ref{TableHCAMcompare}.    The \iscam\ model tends to have a lower estimate of $B_o$ in comparison to the HCAM model and a  higher value of steepness ($h$).  These two parameters are usually negatively correlated and it is expected that if $B_o$ was higher in one model in comparison to the other, then $h$ would normally be lower to compensate.  Information to estimate $B_o$ and $h$ come from the apparent stock-recruitment data and the structural form of the stock recruitment relationship.  In \iscam\ annual recruitment is freely estimated and the residuals are based on the Beverton-Holt stock recruitment model and the estimates of spawning stock biomass.  Similarly, in HCAM recruitment is a function of the spawning stock biomass and the Beverton-Holt model and the annual deviations are estimated and assumed to be normally distributed random variables.
 
 
 
@@ -46,10 +46,10 @@ Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM a
 \begin{tabular}{lll}
 \hline
 Parameter & \iscam\ & HCAM \\ \hline
-Unfished spawning biomass ($B_o$ 1000 t) & 151.492 & 190.817\\
-Steepness ($h$) & 0.763  &  0.683\\
-Average natural mortality rate & 0.504 &  0.334\\
-Survey $q$ for period 1 & 1.213  & 1.1105\\
+Unfished spawning biomass ($B_o$ 1000 t) & 114.492 & 190.817\\
+Steepness ($h$) & 0.786  &  0.683\\
+Average natural mortality rate & 0.535 &  0.334\\
+Survey $q$ for period 1 & 1.101  & 1.1105\\
 \hline
 \end{tabular}
 \end{center}
@@ -58,7 +58,7 @@ Survey $q$ for period 1 & 1.213  & 1.1105\\
 
 %% Revisions required below with updates.
 
-Average natural mortality rates are similar between the two models, and the survey $q$ for the pre-1988 spawn survey data is slightly higher in the \iscam\ model.  The more contemporary survey data were both forced to scale with $q=1.0$.  There is some pattern in the residuals for the overall fits to the survey data (Figure \ref{fig1_HCAM_ctrl}d), the model fails to predict the large increases in abundance in the late 1970s and early 2000s and the recent decline in the late 2000s.  The assumed standard deviation for the survey errors was 0.35 and 0.3 for the pre and post 1988 survey data, the standard deviation of the residual errors in Figure \ref{fig1_HCAM_ctrl}d is 0.424 and 0.32, respectively.
+Average natural mortality rate is higher in the \iscam\ model (Table \ref{TableHCAMcompare}), and the survey $q$ for the pre-1988 spawn survey data is nearly identical in the two models (Figure \ref{fig1_HCAM_ctrl}f).  The more contemporary survey data were both forced to scale with $q=1.0$.  There is some pattern in the residuals for the overall fits to the survey data (Figure \ref{fig1_HCAM_ctrl}f), the model fails to predict the large increases in abundance in the late 1970s and early 2000s and the recent sharp decline in the mid 2000s.  The assumed standard deviation for the survey errors was 0.35 and 0.3 for the pre and post 1988 survey data, the standard deviation of the residual errors in Figure \ref{fig1_HCAM_ctrl}d is 0.335 and 0.334, respectively.
 	
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}

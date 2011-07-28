@@ -11,6 +11,14 @@
 	In short, for each stock a two input files are required for \iscam: (1) a data file that contains the historical catch, survey, life-history and age-composition information, and (2) a control file that specifies initial parameter values, priors, selectivity options, and various other controls that specify options for time-varying natural mortality, type of recruitment model, etc.  Each major and minor stock has its own data and control file and these are provided in Appendix \ref{AppendixDataFiles} such that these results can be verified by an independent reviewer using the \iscam\ software.
 	
 	Estimated model parameters includes the initial numbers-at-age, annual age-2 recruits, annual fishing mortality rates for each gear, selectivity parameters, natural mortality rates, parameters that describe the observation error and process error variance, and the unfished age-2 recruits and the steepness of the stock recruitment relationship.  The total number of estimated parameters differs for each stock assessment region depending on the number of years of active fishing, assumptions about selectivity, and the number of assumed nodes in natural mortality rates.  In general the total number of estimated parameters ranges from  
+	
+	\subsection{Sustainable Fisheries Framework reference points}
+	The general framework for developing a harvest strategy that is compliant with the precautionary approach is to divide the stock into three stock status zones; healthy, cautious, and critical zones \citep{dfo2006}.  In this work we define these stock status thresholds as 0.4\bmsy\ and 0.8\bmsy\ when crossing from the critical-cautious zone and cautious-healthy zone, respectively.  A critical component to this interpretation is the definition of \bmsy.  In the case of a single fishing fleet using a fixed gear type, \bmsy\ is normally defined as the spawning stock biomass that would, on average, support the largest surplus yield.  In the case of multiple fishing fleets, each using a different gear with different selectivities, the definition of \bmsy\ is more complex and is a function of allocation of mortality to each gear type.  For example, if one gear harvest fish at a much younger age than the other gear, an increase in allocation to the gear that catches younger sexually immature fish will shift \bmsy\ upwards. Also, changes in selectivity over time (perhaps due to changes in growth) will also result in changing \bmsy.  This precise definition for \bmsy\ increases the difficulty in estimating reference points when there are non-stationary parameters in the model (i.e., time-varying natural mortality rates, selectivity, growth in the case of Pacific herring).
+	
+	Estimates of reference points are based on equilibrium calculations (see Appendix \ref{appiSCAM}), where the average natural mortality rate over the time period in question is used along with the most recent empirical estimates of weight-at-age and fecundity.  The ratios of average catch over the past 20 years for each gear type, in each SAR, are used for allocation purposes. 
+	
+	
+	
 
 	
 	\subsection{Simulation testing}
@@ -69,13 +77,13 @@ The prior for steepness in the HCAM model was based on a lognormal distribution 
 The last informative prior that is not explicit in the table of priors in the HCAM model is the scaling parameter ($q$) for the spawn survey.  The spawn survey data are broken into two separate time series, pre and post 1988 when the survey switch from from a surface estimate to dive surveys for estimating total egg deposition.  In the HCAM implementation, a very informative prior for $q$ in the post 1988 period was used where the mean was fixed at $q=1.0$ and not permitted to vary (i.e., $\sigma_q=0$).  The scaling parameter in the first period was then freely estimated. Again, to emulate these assumptions in the \iscam\ implementation a normal prior for $\ln(q)$ with a mean =0 and a standard deviation of 0.001 was used for the post 1988 data and a uniform prior for the pre 1988 data.
 
 		
-	\subsection{Retrospective analysis}
-	A retrospective analysis was conducted for each of the major and minor SARs.  The retrospective analysis successively removes the last 10-years of data and examines changes in estimates of spawning biomass and estimated reference points.  
-	
-	\subsection{Abundance and recruitment forecasts}
-	The abundance forecast for the upcoming fishing season, also referred to as pre-fishery biomass, is defined as the predicted biomass of age-4 fish and older plus the number of age-3 fish recruiting in year $T+1$.  The abundance estimates are based on the median values from the sampled posterior distribution.  Age-3 recruits are based on poor, average, and good recruitment scenarios; see next paragraph for definitions of poor, average and good.
-	
-	The recruitment forecasts are based on the surviving number of age-3 fish at the start of the fishing season times the average weight-at-age 3 in the last 5 years. The definitions of poor, average, and good recruitment are as follows: \textbf{Poor} is the average recruitment from the 0-33 percentile, \textbf{Average} is the average recruitment from the 33-66 percentile, and \textbf{Good} is the average recruitment from the 66-100 percentile.  Note that all cohorts from 1951 to 2010  were included in the recruitment forecast calculation.	
+%	\subsection{Retrospective analysis}
+%	A retrospective analysis was conducted for each of the major and minor SARs.  The retrospective analysis successively removes the last 10-years of data and examines changes in estimates of spawning biomass and estimated reference points.  
+%	
+%	\subsection{Abundance and recruitment forecasts}
+%	The abundance forecast for the upcoming fishing season, also referred to as pre-fishery biomass, is defined as the predicted biomass of age-4 fish and older plus the number of age-3 fish recruiting in year $T+1$.  The abundance estimates are based on the median values from the sampled posterior distribution.  Age-3 recruits are based on poor, average, and good recruitment scenarios; see next paragraph for definitions of poor, average and good.
+%	
+%	The recruitment forecasts are based on the surviving number of age-3 fish at the start of the fishing season times the average weight-at-age 3 in the last 5 years. The definitions of poor, average, and good recruitment are as follows: \textbf{Poor} is the average recruitment from the 0-33 percentile, \textbf{Average} is the average recruitment from the 33-66 percentile, and \textbf{Good} is the average recruitment from the 66-100 percentile.  Note that all cohorts from 1951 to 2010  were included in the recruitment forecast calculation.	
 
 	
 	
