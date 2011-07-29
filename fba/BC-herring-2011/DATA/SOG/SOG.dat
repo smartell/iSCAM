@@ -1,8 +1,14 @@
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011.dat
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011q1.ctl
-SOGHerring2011.dat
-SOGHerring2011q1.ctl
+#SOGHerring2011.dat
+#SOGHerring2011q1.ctl
 
 ## For comparison with HCAM
 #SOGHerring2010.dat
 #SOGHerring2010HCAM.ctl
+
+## q prior scenario with HCAM 2010
+SOGHerring2010.dat
+#SOGHerring2010HCAMq1.ctl
+#SOGHerring2010HCAMfixM.ctl
+SOGHerring2010HCAMgillsel.ctl

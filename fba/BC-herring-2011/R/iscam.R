@@ -81,6 +81,8 @@ source("read.admb.R")
 	#FIXME need to depricate this	
 	#dummy data frame for parameter controls for loading
 	A=(matrix(1,nrow=7,ncol=7))
+	dumfile = paste(ifiles[1, 4],".rep", sep="")
+	A=read.rep(dumfile)$ctrl
 	#
 	#Build data frame
 	colhdr=c("ival", "lb", "ub", "phz", "prior", "mu\nshape","SD\nrate")
