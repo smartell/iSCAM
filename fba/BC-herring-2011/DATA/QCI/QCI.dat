@@ -1,7 +1,13 @@
 #../../fba/BC-herring-2011/DATA/QCI/QCIHerring2011.dat
 #../../fba/BC-herring-2011/DATA/QCI/QCIHerring2011q1.ctl
+#QCIHerring2011.dat
+#QCIHerring2011q1.ctl
+
+
 QCIHerring2011.dat
-QCIHerring2011q1.ctl
+QCIHerring2011qfix.ctl
+
+
 
 ## For comparison with HCAM
 #QCIHerring2010.dat

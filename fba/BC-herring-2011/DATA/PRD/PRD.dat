@@ -1,7 +1,12 @@
 #../../fba/BC-herring-2011/DATA/PRD/PRDHerring2011.dat
 #../../fba/BC-herring-2011/DATA/PRD/PRDHerring2011q1.ctl
+#PRDHerring2011.dat
+#PRDHerring2011q1.ctl
+
+
 PRDHerring2011.dat
-PRDHerring2011q1.ctl
+PRDHerring2011qfix.ctl
+
 
 ## For comparison with HCAM
 #PRDHerring2010.dat

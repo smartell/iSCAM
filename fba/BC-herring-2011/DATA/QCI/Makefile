@@ -1,23 +1,27 @@
-## Author: Steve Martell
-## Run the ADMB program
-## Rules : est
+## Makefile for running iscam
+## Targets: default - run iscam with $(args)
 
-ARG=-nox
-DAT= QCI.dat
-REP= QCIHerring2011q1
+args = -nox
+datf = QCI.dat
+niter = 10000
+nsave = 100
 
-.PHONY = all est 
+.PHONY: default all mcmc mceval clean
 
-all: est $(REP).mcmc
+default:
+	./iscam -ind $(datf) $(args)
 
-est: $(REP).rep
+all: default mcmc mceval clean
 
-$(REP).rep: $(REP).ctl $(DAT) 
-	chmod +x iscam;
-	$(shell echo ./iscam -ind $(DAT) $(ARG))
+mcmc: 
+	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox
 
-$(REP).mcmc: $(REP).ctl $(REP).psv
-	$(shell echo ./iscam -ind $(DAT) -mceval)
 
-clean:
-	rm -f $(REP).rep $(REP).cor $(REP).mcmc
+
+mceval: iscam.psv
+	-./iscam -ind $(datf) -mceval
+
+
+
+clean: 
+	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log
