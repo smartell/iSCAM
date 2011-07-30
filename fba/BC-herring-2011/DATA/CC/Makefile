@@ -11,14 +11,15 @@ nsave = 100
 default:
 	./iscam -ind $(datf) $(args)
 
-all: default mcmc mceval clean
+all: mcmc mceval
 
 mcmc: 
 	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox
+	./iscam -ind $(datf) -mceval
 
 
 
-mceval: iscam.psv
+mceval: 
 	-./iscam -ind $(datf) -mceval
 
 

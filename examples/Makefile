@@ -16,4 +16,10 @@ $(subdirs):
 
 
 
+.PHONY: clean
+clean_files := $(foreach dir,$(subdirs),$(dir)/clean)
+
+clean: $(clean_files)
+$(clean_files):
+	cd $(@D) && $(MAKE) clean
 

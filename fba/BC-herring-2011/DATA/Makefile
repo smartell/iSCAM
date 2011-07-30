@@ -3,17 +3,23 @@
 ## targets:
 
 ## Macros
-subdirs = AREA27 AREA2W CC PRD QCI SOG WCVI
-makeopt = default
+SUBDIRS = CC PRD QCI SOG WCVI AREA27 AREA2W
 
-.PHONY: default $(subdirs)
+.PHONY: default $(SUBDIRS)
 
 ## Targets
-default: $(subdirs)
-$(subdirs):
+default: $(SUBDIRS)
+
+$(SUBDIRS):
 	@echo $@
-	cd $@ && $(MAKE) all
+	$(MAKE) mcmc -C $@
 
 
 
+.PHONY: clean
+clean_files := $(foreach dir,$(SUBDIRS),$(dir)/clean)
+
+clean: $(clean_files)
+$(clean_files):
+	cd $(@D) && $(MAKE) clean
 

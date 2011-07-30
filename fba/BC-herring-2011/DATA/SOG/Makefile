@@ -5,20 +5,22 @@ args = -nox
 datf = SOG.dat
 niter = 10000
 nsave = 100
+mcmult = 2.0
+
 
 .PHONY: default all mcmc mceval clean
 
 default:
 	./iscam -ind $(datf) $(args)
 
-all: default mcmc mceval clean
+all: mcmc mceval
 
 mcmc: 
-	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox
+	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox -mcmult $(mcmult)
+	./iscam -ind $(datf) -mceval
 
 
-
-mceval: iscam.psv
+mceval: 
 	-./iscam -ind $(datf) -mceval
 
 

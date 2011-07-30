@@ -1,12 +1,12 @@
 #../../fba/BC-herring-2011/DATA/CC/CCHerring2011.dat
 #../../fba/BC-herring-2011/DATA/CC/CCHerring2011q1.ctl
 
-#CCHerring2011.dat
-#CCHerring2011q1.ctl
-
-
 CCHerring2011.dat
-CCHerring2011qfix.ctl
+CCHerring2011q1.ctl
+
+
+#CCHerring2011.dat
+#CCHerring2011qfix.ctl
 
 
 ## For comparison with HCAM
