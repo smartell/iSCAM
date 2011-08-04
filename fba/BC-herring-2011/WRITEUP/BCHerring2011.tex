@@ -221,9 +221,12 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 %% -Main body of the document-------------------------------------------
 \pagenumbering{arabic}
 
-
+\setcounter{table}{0}
+\setcounter{figure}{0}
 \include{./PART1/PART_I}
 
+\setcounter{table}{0}
+\setcounter{figure}{0}
 \include{./PART2/PART_II}
 
 
@@ -264,6 +267,11 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 \input{./APPENDIX_B/AppendixB}
 
 %% Appendix C
+\addtocounter{chapter}{1}
+\renewcommand{\thetable}{C-\arabic{table}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\input{./APPENDIX_C/AppendixC}
 
 %% Relocate the stuff below, used during development.
 \input{../Tables/CatchTable}

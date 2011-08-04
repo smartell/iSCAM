@@ -1,7 +1,8 @@
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011.dat
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011q1.ctl
 SOGHerring2011.dat
-SOGHerring2011q1.ctl
+#SOGHerring2011q1.ctl
+SOGHerring2011qprior.ctl
 
 
 #SOGHerring2011.dat

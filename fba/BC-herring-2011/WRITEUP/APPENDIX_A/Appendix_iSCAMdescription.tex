@@ -407,7 +407,7 @@ The relative abundance data are assumed to be proportional to biomass that is vu
 \end{equation}
 where $v_{k,a}$ is the age-specific selectivity of gear $k$, and $w_a$ is the mean-weight-at-age. A user specified fraction of the total mortality $\lambda_{k,t}$ adjusts the numbers-at-age to correct for survey timing.  In the case of Pacific herring spawn surveys, the vulnerability is fixed to the assumed maturity ogive and the empirical weight-at-age data are used to construct the predicted relative abundance.  Also, it was assumed that all the mortality (post-fishing) had occurred during the time the survey took place (i.e., $\lambda_{k,t}=1$).  The residuals between the observed and predicted relative abundance index is given by:
 \begin{equation}\label{eq5}
-\epsilon_{k,t} = \ln(I_{k,t}) - \ln(q_k)+\ln(V_{k,t}),
+\epsilon_{k,t} = \ln(I_{k,t}) - \ln(q_k) - \ln(V_{k,t}),
 \end{equation}
 where $I_{k,t}$ is the observed relative abundance index, $q_k$ is the catchability coefficient for index $k$, and $V_{k,t}$ is the predicted vulnerable biomass at the time of sampling.  The catchability coefficient $q_k$ is evaluated at its conditional maximum likelihood estimate:
 \[

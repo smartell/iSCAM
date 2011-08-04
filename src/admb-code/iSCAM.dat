@@ -1,6 +1,6 @@
 #Examples/PacificHake/PHake2011.dat		#Data file name
 #Examples/PacificHake/PHake2011.ctl		#Control file name
 
-../../Examples/NamibianHake/NamibianHake.dat
-../../Examples/NamibianHake/NamibianHake.ctl
+../../Examples/Hake/NamibianHake.dat
+../../Examples/Hake/NamibianHake.ctl
 

@@ -28,7 +28,7 @@
 // CHANGED: fixed a bug in the simulation model log_ft_pars goes out   //
 //        of bounds.                                                   //
 // TODO: write a projection routine and verify equilibrium calcs       //
-//                                                                     //
+// TODO: add DIC calculation for MCMC routines (in -mcveal phase)      //
 //                                                                     //
 //                                                                     //
 //                                                                     //
@@ -1569,8 +1569,9 @@ FUNCTION calc_objective_function
 		cout<<"penalties\t"<<pvec<<endl;
 	}
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
+	cout<<f<<endl;
 	nf++;
-	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
+	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
   }
 	
@@ -2299,6 +2300,32 @@ FUNCTION mcmc_output
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<rt<<endl;
 	
+	// Deviance Information Criterion
+	/*
+		DIC = pd + Dbar, where:
+		pd is the effective number of parameters,
+		Dbar is the expected (average deviance)
+		
+		Dbar = mean(D(theta))
+		pd = Dbar - D(mean(theta))
+		Agorithm:
+			-for each sample compute Dtotal += 2*f;
+			-compute a running Dbar = Dtotal/nf;
+			
+			
+	
+	//cout<<initial_params::nvarcalc()<<endl;
+	int nvar = initial_params::nvarcalc();
+	dvector y(1,nvar);
+	static dvector sum_y(1,nvar);
+	initial_params::xinit(y);
+	sum_y = sum_y + y;
+	cout<<y(1,3)<<endl;
+	cout<<sum_y(1,3)<<endl;
+	get_monte_carlo_value(nvar,y);
+	if(nf==2)exit(1);
+	*/
+	
   }
 
 FUNCTION dvector age3_recruitment(const dvector& rt, const double& wt,const double& M)
@@ -2500,7 +2527,7 @@ FINAL_SECTION
 	//that the data file is in. This should probably go in the 
 	//FINAL_SECTION
 	
-	//FIXME only copy over the mcmc files if in mceval_phase()
+	//CHANGED only copy over the mcmc files if in mceval_phase()
 	
 	if(last_phase() && PLATFORM =="Linux" && !retro_yrs)
 	{

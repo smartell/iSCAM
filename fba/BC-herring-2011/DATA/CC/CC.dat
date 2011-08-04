@@ -2,7 +2,8 @@
 #../../fba/BC-herring-2011/DATA/CC/CCHerring2011q1.ctl
 
 CCHerring2011.dat
-CCHerring2011q1.ctl
+#CCHerring2011q1.ctl
+CCHerring2011qprior.ctl
 
 
 #CCHerring2011.dat
