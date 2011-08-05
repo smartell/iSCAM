@@ -43,7 +43,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/"
+.TABLEDIR <- "../TABLES/qPriorTables/"
 
 
 
@@ -137,6 +137,9 @@ guiView	<- function()
 	}
 }
 
+
+
+
 .tableForecast	<- function( hdr )
 {
 	#This function is currently set up to reproduce the
@@ -216,17 +219,26 @@ guiView	<- function()
 		tmp = c(round(repObj$fmsy, 2)
 			,round(c(repObj$msy, repObj$bo, 0.25*repObj$bo
 			, repObj$bmsy,  0.8*repObj$bmsy, 0.4*repObj$bmsy)*1000, 0)
+			, round(repObj$sbt[length(repObj$sbt)-1]*1000, 0)
 			, round(repObj$sbt[length(repObj$sbt)-1]/repObj$bo, 2))
-		tmp = c(hdr$Stock[i], round(repObj$fit$nopar, 0), prettyNum(tmp, big.mark=","))
+		tmp = c( round(repObj$fit$nopar, 0), prettyNum(tmp, big.mark=","))
 		
-		rpTable=rbind(rpTable, tmp)
+		rpTable=cbind(rpTable,tmp)
 	}
-	colnames(rpTable) = c("Stock", "No.", "\\fmsy","MSY","$B_0$", "0.25$B_0$", 
-						"\\bmsy","0.8\\bmsy", "0.4\\bmsy", "Spawn depletion")
-	cap <- "Reference points"
+	rownames(rpTable) = c( "No.", "\\fmsy","MSY","$B_0$", "0.25$B_0$", 
+						"\\bmsy","0.8\\bmsy", "0.4\\bmsy","$B_t$",  "$B_t/B_0$")
+	colnames(rpTable) = c(hdr$Stock)
+	cap <- "Summary of maximum likelihood estimates for each of the 
+	five major stock areas.  No. is the total number of estimated 
+	parameters, \fmsy\ the average instantaneous fishing rate to 
+	achieve the maximum sustainable yield (MSY), \bo\ is the unfished 
+	spawning biomass, \bmsy\ is the spawning biomass that achieves 
+	maximum sustainable yield,$B_t$ is the spawning biomass at the end 
+	of the 2011 fishing season, and $B_t/B_0$ is the spawning depletion 
+	level at the end of the 2011 fishing season."
 
 	fn=paste(.TABLEDIR, "RefPointsTable.tex", sep="")
-	tmp <- latex(rpTable, file=fn, rowname=NULL, longtable=FALSE
+	tmp <- latex(rpTable, file=fn,title="Stock",  longtable=FALSE
 		, landscape=FALSE, cgroup=NULL, n.cgroup=NULL
 		, caption=cap, label="TableRefPoints", na.blank=TRUE, vbar=FALSE
 		, size="small")
@@ -1244,14 +1256,14 @@ guiView	<- function()
 			xlab="Year", ylab="Spawning depletion",main=paste(stock), 
 			ylim=yrange)
 		lines(xx, yy)
-		rlvl=c(1.0, 0.8, 0.4)
-		abline(h=rlvl*bmsy/bo,lty=2,lwd=0.5)
-		
+		#rlvl=c(1.0, 0.8, 0.4)
+		#abline(h=rlvl*bmsy/bo,lty=2,lwd=0.5)
+		abline(h=c(0.25, 0.4), lty=3)
 		
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
-		grid()
+		#grid()
 		
 		if ( annotate )
 		{
@@ -1264,8 +1276,9 @@ guiView	<- function()
 			#Delinate critical zone,  cautious zone, healthy zone.
 			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/bo,col=colr("red",0.1), border=NA)
 			rect(min(xx)-5,0.4*bmsy/bo,max(xx)+5,0.8*bmsy/bo,col=colr("yellow",0.1),border=NA)
-			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,1.5,col=colr("green",0.1), border=NA)
+			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,3.0,col=colr("green",0.1), border=NA)
 		}
+		abline(h=c(0.25, 0.4), lty=3, lwd=0.5)
 	})
 }
 
@@ -1294,7 +1307,7 @@ guiView	<- function()
 		{
 			mfg <- par( "mfg" )
 			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=c( "Pre-fishery biomass","Spawning biomass"),
+			legend( "top",legend=c( "Total biomass","Spawning biomass"),
 				bty='n',lty=c(1,2),lwd=c(1,1),pch=c(-1,-1),ncol=1 )
 		}
 	})	
