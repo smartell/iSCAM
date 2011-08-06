@@ -1,0 +1,1674 @@
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  6 AUG 2011 12:41
+entering extended mode
+\write18 enabled.
+ %&-line parsing enabled.
+**BCHerring2011.tex
+(./BCHerring2011.tex
+LaTeX2e <2005/12/01>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, german-x-2008-06-18, ngerman-x-2008-06-18, ancientgreek, ibycus, ar
+abic, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danish, dutc
+h, esperanto, estonian, farsi, finnish, french, galician, german, ngerman, mono
+greek, greek, hungarian, icelandic, indonesian, interlingua, irish, italian, la
+tin, lithuanian, mongolian, mongolian2a, bokmal, nynorsk, polish, portuguese, r
+omanian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, turki
+sh, ukenglish, ukrainian, uppersorbian, welsh, loaded.
+(/usr/local/texlive/2008/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2005/09/16 v1.4f Standard LaTeX document class
+(/usr/local/texlive/2008/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2006/02/20 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2008/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 90.
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2008/09/08 v0.04l Graphics/color for pdfTeX
+\Gread@gobject=\count88
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/subfig/subfig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2008/08/24 v3.1j Customizing captions (AR)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2008/08/24 v3.1j caption3 kernel (AR)
+\captionmargin=\dimen105
+\captionmargin@=\dimen106
+\captionwidth=\dimen107
+\caption@indent=\dimen108
+\caption@parindent=\dimen109
+\caption@hangindent=\dimen110
+)
+\c@ContinuedFloat=\count89
+)
+\c@KVtest=\count90
+\sf@farskip=\skip43
+\sf@captopadj=\dimen111
+\sf@capskip=\skip44
+\sf@nearskip=\skip45
+\c@subfigure=\count91
+\c@subfigure@save=\count92
+\c@lofdepth=\count93
+\c@subtable=\count94
+\c@subtable@save=\count95
+\c@lotdepth=\count96
+\sf@top=\skip46
+\sf@bottom=\skip47
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/epstopdf.sty
+Package: epstopdf 2008/05/06 v1.7 Conversion with epstopdf on the fly (HO)
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2007/09/09 v1.2 Providing info/warning/message (HO)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2007/09/30 v1.0 Managing graphics extensions (HO)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2007/10/18 v3.0 Keyval support for LaTeX options (HO)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2007/12/12 v0.3 LuaTeX support for pdfTeX utility functions
+ (HO)
+Package pdftexcmds Info: LuaTeX not detected on input line 139.
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 323.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/psfrag/psfrag.sty
+Package: psfrag 1998/04/11 v3.04 PSfrag (MCG)
+\pfg@pcount=\count97
+\pfg@scount=\count98
+\pfg@temp=\write3
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2009/02/02 8.3 (PWD, AO)
+\bibhang=\skip48
+\bibsep=\skip49
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count99
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip50
+\LTright=\skip51
+\LTpre=\skip52
+\LTpost=\skip53
+\LTchunksize=\count100
+\LTcapwidth=\dimen112
+\LT@head=\box26
+\LT@firsthead=\box27
+\LT@foot=\box28
+\LT@lastfoot=\box29
+\LT@cols=\count101
+\LT@rows=\count102
+\c@LT@tables=\count103
+\c@LT@chunks=\count104
+\LT@p@ftn=\toks15
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/rotating/rotating.sty
+Package: rotating 2008/10/05 v2.15c rotated objects in LaTeX
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\c@r@tfl@t=\count105
+\rotFPtop=\skip54
+\rotFPbot=\skip55
+\rot@float@box=\box30
+\rot@mess@toks=\toks16
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/dvips/rotate.sty
+\@rotdimen=\dimen113
+\@rotbox=\box31
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2002/01/22 v2.2d
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2001/10/25 v2.2f
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 132.
+))
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip56
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen114
+))
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen115
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count106
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count107
+\leftroot@=\count108
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count109
+\DOTSCASE@=\count110
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box32
+\strutbox@=\box33
+\big@size=\dimen116
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count111
+\c@MaxMatrixCols=\count112
+\dotsspace@=\muskip10
+\c@parentequation=\count113
+\dspbrk@lvl=\count114
+\tag@help=\toks19
+\row@=\count115
+\column@=\count116
+\maxfields@=\count117
+\andhelp@=\toks20
+\eqnshift@=\dimen117
+\alignsep@=\dimen118
+\tagshift@=\dimen119
+\tagwidth@=\dimen120
+\totwidth@=\dimen121
+\lineht@=\dimen122
+\@envbody=\toks21
+\multlinegap=\skip57
+\multlinetaggap=\skip58
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2009/02/22 v6.78p Hypertext links for LaTeX
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2007/12/12 v1.6 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode detected.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/hycolor.sty
+Package: hycolor 2008/09/08 v1.4 Code for color options of hyperref/bookmark (H
+O)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/xcolor-patch.sty
+Package: xcolor-patch 2008/09/08 xcolor patch
+))
+\@linkdim=\dimen123
+\Hy@linkcounter=\count118
+\Hy@pagecounter=\count119
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2009/02/22 v6.78p Hyperref: PDFDocEncoding definition (HO)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2007/12/12 v1.2 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)
+(/usr/local/texlive/2008/texmf/tex/latex/config/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 2824.
+Package hyperref Info: Option `bookmarks' set `true' on input line 2824.
+Package hyperref Info: Hyper figures OFF on input line 2935.
+Package hyperref Info: Link nesting OFF on input line 2940.
+Package hyperref Info: Hyper index ON on input line 2943.
+Package hyperref Info: Plain pages OFF on input line 2950.
+Package hyperref Info: Backreferencing OFF on input line 2955.
+
+Implicit mode ON; LaTeX internals redefined
+Package hyperref Info: Bookmarks ON on input line 3145.
+(/usr/local/texlive/2008/texmf-dist/tex/latex/ltxmisc/url.sty
+\Urlmuskip=\muskip11
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 3382.
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/bitset.sty
+Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/intcalc.sty
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/bigintcalc.sty
+Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
+))
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2007/09/29 v1.3 Key value parser with default handler suppor
+t (HO)
+)
+\Fld@menulength=\count120
+\Field@Width=\dimen124
+\Fld@charsize=\dimen125
+\Field@toks=\toks23
+Package hyperref Info: Hyper figures OFF on input line 4299.
+Package hyperref Info: Link nesting OFF on input line 4304.
+Package hyperref Info: Hyper index ON on input line 4307.
+Package hyperref Info: backreferencing OFF on input line 4314.
+Package hyperref Info: Link coloring ON on input line 4317.
+Package hyperref Info: Link coloring with OCG OFF on input line 4324.
+Package hyperref Info: PDF/A mode OFF on input line 4329.
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
+)
+\Hy@abspage=\count121
+\c@Item=\count122
+\c@Hfootnote=\count123
+)
+*hyperref using default driver hpdftex*
+(/usr/local/texlive/2008/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2009/02/22 v6.78p Hyperref driver for pdfTeX
+\Fld@listcount=\count124
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2008/texmf/tex/latex/config/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2006/05/18 v1.6g multicolumn formatting (FMi)
+\c@tracingmulticols=\count125
+\mult@box=\box34
+\multicol@leftmargin=\dimen126
+\c@unbalance=\count126
+\c@collectmore=\count127
+\doublecol@number=\count128
+\multicoltolerance=\count129
+\multicolpretolerance=\count130
+\full@width=\dimen127
+\page@free=\dimen128
+\premulticols=\dimen129
+\postmulticols=\dimen130
+\multicolsep=\skip59
+\multicolbaselineskip=\skip60
+\partial@page=\box35
+\last@line=\box36
+\mult@rightbox=\box37
+\mult@grightbox=\box38
+\mult@gfirstbox=\box39
+\mult@firstbox=\box40
+\@tempa=\box41
+\@tempa=\box42
+\@tempa=\box43
+\@tempa=\box44
+\@tempa=\box45
+\@tempa=\box46
+\@tempa=\box47
+\@tempa=\box48
+\@tempa=\box49
+\@tempa=\box50
+\@tempa=\box51
+\@tempa=\box52
+\@tempa=\box53
+\@tempa=\box54
+\@tempa=\box55
+\@tempa=\box56
+\@tempa=\box57
+\c@columnbadness=\count131
+\c@finalcolumnbadness=\count132
+\last@try=\dimen131
+\multicolovershoot=\dimen132
+\multicolundershoot=\dimen133
+\mult@nat@firstbox=\box58
+\colbreak@box=\box59
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count133
+\lst@gtempboxa=\box60
+\lst@token=\toks24
+\lst@length=\count134
+\lst@currlwidth=\dimen134
+\lst@column=\count135
+\lst@pos=\count136
+\lst@lostspace=\dimen135
+\lst@width=\dimen136
+\lst@newlines=\count137
+\lst@lineno=\count138
+\lst@maxwidth=\dimen137
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count139
+\lst@skipnumbers=\count140
+\lst@framebox=\box61
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/listings/lstlang3.sty
+File: lstlang3.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2008/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2008/07/06 v3.8l The Babel package
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/babel/frenchb.ldf
+Language: frenchb 2008/05/08 v2.2a French support from the babel system
+
+(/usr/local/texlive/2008/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2008/07/06 v3.8l Babel common definitions
+\babel@savecnt=\count141
+\U@D=\dimen138
+)
+Package babel Info: Making : an active character on input line 119.
+Package babel Info: Making ; an active character on input line 120.
+Package babel Info: Making ! an active character on input line 121.
+Package babel Info: Making ? an active character on input line 122.
+\FB@Mht=\dimen139
+\std@mcc=\count142
+\dec@mcc=\count143
+\parindentFFN=\dimen140
+
+*************************************
+* Local config file frenchb.cfg used
+*
+(/usr/local/texlive/2008/texmf-dist/tex/generic/babel/frenchb.cfg))
+(/usr/local/texlive/2008/texmf-dist/tex/generic/babel/english.ldf
+Language: english 2005/03/30 v3.3o English support from the babel system
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+(/usr/local/texlive/2008/texmf-dist/tex/latex/carlisle/scalefnt.sty)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2006/07/14 v1.1d eso-pic (RN)
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/ms/everyshi.sty
+Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
+))
+(/usr/local/texlive/2008/texmf-dist/tex/latex/type1cm/type1cm.sty
+Package: type1cm 2002/09/05 v0.04 BlueSky/Y&Y Type1 CM font definitions (DPC, p
+atched RF)
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count144
+\float@exts=\toks25
+\float@box=\box62
+\@float@everytoks=\toks26
+\@floatcapt=\box63
+)
+\c@saveEq=\count145
+
+(./BCHerring2011.aux (./PART1/PART_I.aux) (./PART2/PART_II.aux
+
+LaTeX Warning: Label `TableCatchAdvice' multiply defined.
+
+))
+\openout1 = `BCHerring2011.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 168.
+LaTeX Font Info:    ... okay on input line 168.
+LaTeX Font Info:    Try loading font information for OT1+ppl on input line 168.
+
+ (/usr/local/texlive/2008/texmf-dist/tex/latex/psnfss/ot1ppl.fd
+File: ot1ppl.fd 2001/06/04 font definitions for OT1/ppl.
+)
+(/usr/local/texlive/2008/texmf-dist/tex/context/base/supp-pdf.tex
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count146
+\scratchdimen=\dimen141
+\scratchbox=\box64
+\nofMPsegments=\count147
+\nofMParguments=\count148
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count149
+\MPscratchDim=\dimen142
+\MPnumerator=\count150
+\everyMPtoPDFconversion=\toks28
+)
+Package caption Info: Begin \AtBeginDocument code.
+Package caption3 Info: subfig package 1.2 or 1.3 is loaded.
+LaTeX Info: Redefining \subref on input line 168.
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+ (/usr/local/texlive/2008/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2008/03/28 v1.2 longtable captions (AR)
+)
+Package caption Info: rotating package is loaded.
+Package caption Info: End \AtBeginDocument code.
+Package hyperref Info: Link coloring ON on input line 168.
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/refcount.sty
+Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
+)
+\c@section@level=\count151
+)
+LaTeX Info: Redefining \ref on input line 168.
+LaTeX Info: Redefining \pageref on input line 168.
+
+(./BCHerring2011.out) (./BCHerring2011.out)
+\@outlinefile=\write4
+\openout4 = `BCHerring2011.out'.
+
+\AtBeginShipoutBox=\box65
+\c@lstlisting=\count152
+LaTeX Info: Redefining \degres on input line 168.
+
+
+Package frenchb.ldf Warning: The definition of \@makecaption has been changed,
+(frenchb.ldf)                frenchb will NOT customise it;
+(frenchb.ldf)                reported on input line 168.
+
+LaTeX Info: Redefining \dots on input line 168.
+LaTeX Info: Redefining \up on input line 168.
+
+Package frenchb.ldf Warning: OT1 encoding should not be used for French. 
+(frenchb.ldf)                Add \usepackage[T1]{fontenc} to the preamble
+(frenchb.ldf)                of your document, on input line 168.
+
+ABD: EveryShipout initializing macros [1{/usr/local/texlive/2008/texmf-var/font
+s/map/pdftex/updmap/pdftex.map}
+Non-PDF special ignored!
+
+]
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 200.
+pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.214 \newpage
+               [1
+
+]
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <24.88> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 215.
+ (./BCHerring2011.toc [2
+
+])
+\tf@toc=\write5
+\openout5 = `BCHerring2011.toc'.
+
+ [3] (./BCHerring2011.lof [4
+
+]
+[5] [6])
+\tf@lof=\write6
+\openout6 = `BCHerring2011.lof'.
+
+ [7]
+\openout2 = `./PART1/PART_I.aux'.
+
+ (./PART1/PART_I.tex
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <20.74> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 4.
+ [1
+
+
+] (./PART1/Introduction.tex
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 4.
+
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 4.
+
+
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../FIGS/PBSfigs/Assessment_Regions_2
+W_27_2010_HG.pdf): PDF inclusion: found PDF version <1.6>, but at most version 
+<1.4> allowed
+
+<../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf, id=589, 614.295pt x 794.
+97pt>
+File: ../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf Graphic file (type p
+df)
+ <use ../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf>)
+(./PART1/Methods.tex [2] [3 <../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.p
+df>]
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 29.
+ [4]
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 43.
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 43.
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 43.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 43.
+
+[5]) (./PART1/Results.tex [6]
+<../Figs/simPlot.pdf, id=676, 556.0775pt x 459.7175pt>
+File: ../Figs/simPlot.pdf Graphic file (type pdf)
+
+<use ../Figs/simPlot.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 10--11
+
+ []
+
+<../Figs/SOGParameterBias.pdf, id=680, 556.0775pt x 459.7175pt>
+File: ../Figs/SOGParameterBias.pdf Graphic file (type pdf)
+
+<use ../Figs/SOGParameterBias.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 24--25
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 33.
+
+[7] [8 <../Figs/simPlot.pdf>] [9 <../Figs/SOGParameterBias.pdf>]
+<../Figs/iscam_fig_HCAM_SOG_MLE.pdf, id=716, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_HCAM_SOG_MLE.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_HCAM_SOG_MLE.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 65--66
+
+ []
+
+<../FIGS/iscam_fig_HCAM_SOG_RES.pdf, id=720, 556.0775pt x 459.7175pt>
+File: ../FIGS/iscam_fig_HCAM_SOG_RES.pdf Graphic file (type pdf)
+
+<use ../FIGS/iscam_fig_HCAM_SOG_RES.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 79--80
+
+ []
+
+[10] [11 <../Figs/iscam_fig_HCAM_SOG_MLE.pdf>] [12 <../FIGS/iscam_fig_HCAM_SOG_
+RES.pdf>]
+<../FIGS/iscam_fig_HCAM_qFix_qPrior.pdf, id=757, 640.3925pt x 491.8375pt>
+File: ../FIGS/iscam_fig_HCAM_qFix_qPrior.pdf Graphic file (type pdf)
+
+<use ../FIGS/iscam_fig_HCAM_qFix_qPrior.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
+
+ []
+
+<../FIGS/iscam_fig_HCAM_qFix_Mfix.pdf, id=759, 640.3925pt x 491.8375pt>
+File: ../FIGS/iscam_fig_HCAM_qFix_Mfix.pdf Graphic file (type pdf)
+
+<use ../FIGS/iscam_fig_HCAM_qFix_Mfix.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 144--145
+
+ []
+
+
+<../FIGS/iscam_fig_HCAM_Ares_qFix_GillFix.pdf, id=762, 640.3925pt x 491.8375pt>
+File: ../FIGS/iscam_fig_HCAM_Ares_qFix_GillFix.pdf Graphic file (type pdf)
+<use ../FIGS/iscam_fig_HCAM_Ares_qFix_GillFix.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 156--157
+
+ []
+
+[13] [14 <../FIGS/iscam_fig_HCAM_qFix_qPrior.pdf>] [15 <../FIGS/iscam_fig_HCAM_
+qFix_Mfix.pdf>] [16 <../FIGS/iscam_fig_HCAM_Ares_qFix_GillFix.pdf>]
+
+LaTeX Warning: Reference `figHCAMvsiSCAM' on page 17 undefined on input line 16
+8.
+
+<../Figs/iscam_fig_SBt_iSCAMvsHCAM.pdf, id=809, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_SBt_iSCAMvsHCAM.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_SBt_iSCAMvsHCAM.pdf> [17 <../Figs/iscam_fig_SBt_iSCAMvsH
+CAM.pdf>])) [18
+
+]
+\openout2 = `./PART2/PART_II.aux'.
+
+ (./PART2/PART_II.tex [19
+
+
+
+] (./PART2/Introduction.tex
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 4.
+
+File: ../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf Graphic file (type p
+df)
+<use ../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf>)
+(./PART2/Methods.tex [20] [21]
+<../Figs/iscam_fig_CatchMajorAreas.pdf, id=846, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_CatchMajorAreas.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_CatchMajorAreas.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 14--15
+
+ []
+
+[22 <../Figs/iscam_fig_CatchMajorAreas.pdf>]
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-HG-Prelim-WG.pd
+f): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+<../Figs/PBSfigs/2011-HG-Prelim-WG.pdf, id=859, 794.97pt x 614.295pt>
+File: ../Figs/PBSfigs/2011-HG-Prelim-WG.pdf Graphic file (type pdf)
+
+<use ../Figs/PBSfigs/2011-HG-Prelim-WG.pdf>
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-PRD-Prelim-WG.p
+df): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+<../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf, id=860, 794.97pt x 614.295pt>
+File: ../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf Graphic file (type pdf)
+
+<use ../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf>
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-CC-Prelim-WG.pd
+f): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+<../Figs/PBSfigs/2011-CC-Prelim-WG.pdf, id=861, 794.97pt x 614.295pt>
+File: ../Figs/PBSfigs/2011-CC-Prelim-WG.pdf Graphic file (type pdf)
+
+<use ../Figs/PBSfigs/2011-CC-Prelim-WG.pdf>
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-SOG-Prelim-WG.p
+df): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+<../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf, id=862, 794.97pt x 614.295pt>
+File: ../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf Graphic file (type pdf)
+
+<use ../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf>
+
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-WCVI-Prelim-WG.
+pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+
+<../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf, id=863, 794.97pt x 614.295pt>
+File: ../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf Graphic file (type pdf)
+
+<use ../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf>
+<../Figs/iscam_fig_SurveyMajorAreas.pdf, id=866, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_SurveyMajorAreas.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_SurveyMajorAreas.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 51--52
+
+ []
+
+
+LaTeX Warning: Reference `XXX' on page 23 undefined on input line 59.
+
+
+LaTeX Warning: Reference `XXX' on page 23 undefined on input line 59.
+
+<../Figs/iscam_fig_AgeCompsHG.pdf, id=871, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_AgeCompsHG.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_AgeCompsHG.pdf>
+<../Figs/iscam_fig_AgeCompsPRD.pdf, id=872, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_AgeCompsPRD.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_AgeCompsPRD.pdf>
+<../Figs/iscam_fig_AgeCompsCC.pdf, id=873, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_AgeCompsCC.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_AgeCompsCC.pdf>
+<../Figs/iscam_fig_AgeCompsSOG.pdf, id=874, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_AgeCompsSOG.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_AgeCompsSOG.pdf>
+<../Figs/iscam_fig_AgeCompsWCVI.pdf, id=875, 556.0775pt x 459.7175pt>
+File: ../Figs/iscam_fig_AgeCompsWCVI.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_AgeCompsWCVI.pdf> [23] [24 <../Figs/PBSfigs/2011-HG-Prel
+im-WG.pdf> <../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf>] [25 <../Figs/PBSfigs/2011-
+CC-Prelim-WG.pdf> <../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf>] [26 <../Figs/PBSfig
+s/2011-WCVI-Prelim-WG.pdf>] [27 <../Figs/iscam_fig_SurveyMajorAreas.pdf>]
+[28 <../Figs/iscam_fig_AgeCompsHG.pdf>] [29 <../Figs/iscam_fig_AgeCompsPRD.pdf>
+] [30 <../Figs/iscam_fig_AgeCompsCC.pdf>] [31 <../Figs/iscam_fig_AgeCompsSOG.pd
+f>] [32 <../Figs/iscam_fig_AgeCompsWCVI.pdf>]
+<../Figs/iscam_fig_MeanWt.pdf, id=1032, 554.07pt x 566.115pt>
+File: ../Figs/iscam_fig_MeanWt.pdf Graphic file (type pdf)
+
+<use ../Figs/iscam_fig_MeanWt.pdf> [33 <../Figs/iscam_fig_MeanWt.pdf>])
+(./PART2/Results.tex
+<../FIGS/qPriorFigs/iscam_fig_catchresid.pdf, id=1045, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_catchresid.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_catchresid.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
+
+ []
+
+[34] [35 <../FIGS/qPriorFigs/iscam_fig_catchresid.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf, id=1064, 556.0775pt x 459.7175pt
+>
+File: ../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf Graphic file (type pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 25--26
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf, id=1067, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 33--34
+
+ []
+
+[36 <../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf>] [37 <../FIGS/qPriorFigs/isc
+am_fig_surveyfit.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf, id=1087, 556.0775pt x 459.7
+175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf Graphic file (type pdf)
+
+ <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf>
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf, id=1089, 556.0775pt x 459.
+7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf Graphic file (type pdf
+)
+ <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf>
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf, id=1091, 556.0775pt x 459.7
+175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf Graphic file (type pdf)
+
+ <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf>
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf, id=1093, 556.0775pt x 459.
+7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf Graphic file (type pdf
+)
+ <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf>
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf, id=1095, 556.0775pt x 459
+.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf Graphic file (type pd
+f)
+ <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf>
+
+LaTeX Warning: Reference `PartII:Table1:referencePoints' on page 38 undefined o
+n input line 101.
+
+
+LaTeX Warning: Reference `PartII:Table1:referencePoints' on page 38 undefined o
+n input line 103.
+
+[38] [39 <../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf>] [40 <../FIGS/qPri
+orFigs/iscam_fig_agecompsresid_PRD.pdf>] [41 <../FIGS/qPriorFigs/iscam_fig_agec
+ompsresid_CC.pdf>] [42 <../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf>]
+[43 <../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf>]
+(../TABLES/qPriorTables/RefPointsTable.tex)
+<../FIGS/qPriorFigs/iscam_fig_biomass.pdf, id=1162, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_biomass.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_biomass.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 113--114
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_depletion.pdf, id=1163, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_depletion.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_depletion.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 120--121
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_mortality.pdf, id=1167, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_mortality.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
+
+ []
+
+[44] [45 <../FIGS/qPriorFigs/iscam_fig_biomass.pdf>] [46 <../FIGS/qPriorFigs/is
+cam_fig_depletion.pdf>] [47 <../FIGS/qPriorFigs/iscam_fig_mortality.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf, id=1215, 556.0775pt x
+ 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf Graphic file (typ
+e pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 156--157
+
+ []
+
+
+Overfull \hbox (0.42966pt too wide) in paragraph at lines 160--161
+[]\OT1/ppl/m/n/10 For the seine-roe fish-ery, max-i-mum like-li-hood es-ti-mate
+s of se-lec-tiv-ity were much more con-sis-tent among
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf, id=1217, 556.0775pt x 45
+9.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf Graphic file (type p
+df)
+ <use ../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 164--165
+
+ []
+
+[48 <../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf>] [49 <../FIGS/qPr
+iorFigs/iscam_fig_sel2d_seine_roe_sel.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf, id=1238, 556.0775pt x 4
+59.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf Graphic file (type 
+pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 172--173
+
+ []
+
+[50 <../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_recruitment.pdf, id=1249, 556.0775pt x 459.7175pt
+>
+File: ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf Graphic file (type pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 208--209
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf, id=1251, 556.0775pt x 459.7175p
+t>
+File: ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf Graphic file (type pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 218--219
+
+ []
+
+<../FIGS/qPriorFigs/iscam_fig_recresid.pdf, id=1253, 556.0775pt x 459.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_recresid.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_recresid.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 228--229
+
+ []
+
+
+Overfull \hbox (3.24889pt too wide) in paragraph at lines 237--238
+\OT1/ppl/m/n/10 Marginal pos-te-rior dis-tri-bu-tions for es-ti-mated model pa-
+ram-e-ters were con-structed us-ing AD Model Builders
+ []
+
+[51] [52 <../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>] [53 <../FIGS/qPriorFig
+s/iscam_fig_stockrecruit.pdf>] [54 <../FIGS/qPriorFigs/iscam_fig_recresid.pdf>]
+
+<../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf, id=1293, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf>
+<../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf, id=1294, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 254--255
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf, id=1295, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 260--261
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=1296, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 266--267
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf, id=1297, 721.69624pt x 600.2425pt
+>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf Graphic file (type pdf)
+ <use ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 272--273
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf, id=1298, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 281--282
+
+ []
+
+
+<../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf, id=1299, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 288--289
+
+ []
+
+(../TABLES/DecisionTableqFix.tex) (../TABLES/DecisionTableq1.tex)
+(../TABLES/DecisionTable.tex))) [55] [56 <../FIGS/qPriorFigs/iscam_fig_trace_HG
+.pdf>] [57 <../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf>] [58 <../FIGS/qPriorFig
+s/iscam_fig_trace_CC.pdf>] [59 <../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>]
+[60 <../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf>] [61 <../FIGS/qPriorFigs/isca
+m_fig_pairs_HG.pdf>] [62 <../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf>] [63]
+(./BCHerring2011.bbl [64
+
+
+
+]) [65] [66
+
+]
+(./APPENDIX_A/Appendix_iSCAMdescription.tex
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 2.
+
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 6.
+
+[67] [68] <../Figs/Fig1Quadplot.pdf, id=1457, 505.89pt x 505.89pt>
+File: ../Figs/Fig1Quadplot.pdf Graphic file (type pdf)
+
+<use ../Figs/Fig1Quadplot.pdf> [69pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.129 
+       <../Figs/Fig1Quadplot.pdf>]pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.173     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.8}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.12}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.13}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.A.1.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.257     \end{align}
+                      [70] [71] [72]pdfTeX warning (ext4): destination with the
+ same identifier (name{equation.A.1.2}) has been already used, duplicate ignore
+d
+<to be read again> 
+                   \relax 
+l.330 \begin{equation}
+                      \label{eq2ndDiff}pdfTeX warning (ext4): destination with 
+the same identifier (name{equation.A.1.2}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.330 \begin{equation}
+                      \label{eq2ndDiff}pdfTeX warning (ext4): destination with 
+the same identifier (name{equation.A.1.2}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.330 \begin{equation}
+                      \label{eq2ndDiff}pdfTeX warning (ext4): destination with 
+the same identifier (name{equation.A.1.2}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.330 \begin{equation}
+                      \label{eq2ndDiff}pdfTeX warning (ext4): destination with 
+the same identifier (name{equation.A.1.3}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.334 \begin{equation}
+                      \label{eqDomePenalty}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.A.1.3}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.334 \begin{equation}
+                      \label{eqDomePenalty}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.A.1.3}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.334 \begin{equation}
+                      \label{eqDomePenalty}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.A.1.3}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.334 \begin{equation}
+                      \label{eqDomePenalty}
+<../Figs/SplineEg.pdf, id=1507, 505.89pt x 505.89pt>
+File: ../Figs/SplineEg.pdf Graphic file (type pdf)
+
+<use ../Figs/SplineEg.pdf> [73]
+<../Figs/BicubicEg.pdf, id=1516, 811.03pt x 488.82625pt>
+File: ../Figs/BicubicEg.pdf Graphic file (type pdf)
+
+<use ../Figs/BicubicEg.pdf> [74 <../Figs/SplineEg.pdf>]pdfTeX warning (ext4): d
+estination with the same identifier (name{equation.A.1.4}) has been already use
+d, duplicate ignored
+<to be read again> 
+                   \relax 
+l.393 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.393 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.393 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.393 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.397 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.397 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.397 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.397 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.405 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.405 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.405 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.405 \begin{equation}
+                      \label{eq4} [75 <../Figs/BicubicEg.pdf>]pdfTeX warning (e
+xt4): destination with the same identifier (name{equation.A.1.7}) has been alre
+ady used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.409 \begin{equation}
+                      \label{eq5}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.409 \begin{equation}
+                      \label{eq5}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.409 \begin{equation}
+                      \label{eq5}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.409 \begin{equation}
+                      \label{eq5}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.8}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.421 \end{align}
+                  [76]pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.438 \begin{equation}
+                      \label{eq7}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.438 \begin{equation}
+                      \label{eq7}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.438 \begin{equation}
+                      \label{eq7}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.438 \begin{equation}
+                      \label{eq7}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      \label{eq8}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      \label{eq8}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      \label{eq8}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.446 \begin{equation}
+                      \label{eq8}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.459 \begin{equation}
+                      \label{eq9}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.459 \begin{equation}
+                      \label{eq9}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.459 \begin{equation}
+                      \label{eq9}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.459 \begin{equation}
+                      \label{eq9}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.A.1.12}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.465 \begin{equation}
+                      \label{eq10}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.12}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.465 \begin{equation}
+                      \label{eq10}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.12}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.465 \begin{equation}
+                      \label{eq10}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.12}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.465 \begin{equation}
+                      \label{eq10}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.13}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.475 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.A.1.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.475 \end{align}
+                  [77]pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.A.1.15}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.496 \begin{equation}
+                      \label{eq11}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.15}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.496 \begin{equation}
+                      \label{eq11}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.15}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.496 \begin{equation}
+                      \label{eq11}pdfTeX warning (ext4): destination with the s
+ame identifier (name{equation.A.1.15}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.496 \begin{equation}
+                      \label{eq11} [78]
+<../Figs/priorexample.pdf, id=1585, 556.0775pt x 459.7175pt>
+File: ../Figs/priorexample.pdf Graphic file (type pdf)
+
+<use ../Figs/priorexample.pdf> [79] [80 <../Figs/priorexample.pdf>])
+(./APPENDIX_B/AppendixB.tex (../DATA/QCI/QCIHerring2011.dat [81
+
+])
+(../DATA/QCI/QCIHerring2011q1.ctl) [82] (../DATA/PRD/PRDHerring2011.dat
+[83
+
+]) (../DATA/PRD/PRDHerring2011q1.ctl [84]) [85]
+(../DATA/CC/CCHerring2011.dat [86
+
+]) (../DATA/CC/CCHerring2011q1.ctl) [87]
+(../DATA/SOG/SOGHerring2011.dat [88
+
+]) (../DATA/SOG/SOGHerring2011q1.ctl
+[89]) [90] (../DATA/WCVI/WCVIHerring2011.dat [91
+
+])
+(../DATA/WCVI/WCVIHerring2011q1.ctl) [92] (../DATA/SOG/SOGHerring2010sim.ctl)
+(../DATA/SOG/SOGHerring2010mc.ctl)) (./APPENDIX_C/AppendixC.tex
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2.
+
+[93
+
+]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 15.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 15.
+
+Missing character: There is no Ð in font pplr7t!
+Missing character: There is no Ò in font pplr7t!
+Missing character: There is no Ó in font pplr7t!
+[94]
+Missing character: There is no Õ in font pplr7t!
+Missing character: There is no Ò in font pplr7t!
+Missing character: There is no Ó in font pplr7t!
+Missing character: There is no Ð in font pplr7t!
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 68.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 68.
+
+Missing character: There is no Õ in font pplr7t!
+<../FIGS/qprior.pdf, id=1686, 433.62pt x 288.07625pt>
+File: ../FIGS/qprior.pdf Graphic file (type pdf)
+ <use ../FIGS/qprior.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 106--107
+[]\OT1/ppl/b/n/10 Rationale for in-clu-sion/ex-clu-sion
+ []
+
+
+Underfull \hbox (badness 3547) in paragraph at lines 108--109
+[]\OT1/ppl/m/n/10 Not in-cluded be-cause study es-ti-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--114
+[]\OT1/ppl/m/n/10 Included be-cause com-pre-hen-sive
+ []
+
+Missing character: There is no Ð in font pplr7t!
+Missing character: There is no Ð in font pplr7t!
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
+[]\OT1/ppl/m/n/10 Included be-cause com-pre-hen-sive
+ []
+
+Missing character: There is no Ð in font pplr7t!
+
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
+[]\OT1/ppl/m/n/10 Not in-cluded be-cause study re-
+ []
+
+Missing character: There is no Õ in font pplr7t!
+LaTeX Font Info:    Try loading font information for OMS+ppl on input line 133.
+
+(/usr/local/texlive/2008/texmf-dist/tex/latex/psnfss/omsppl.fd
+File: omsppl.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 133.
+Missing character: There is no Ð in font pplr7t!
+Missing character: There is no Ð in font pplr7t!
+Missing character: There is no Ð in font pplr7t!
+Missing character: There is no Ð in font pplr7t!
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--142
+[]\OT1/ppl/m/n/10 Comprehensive study in Prince
+ []
+
+
+Overfull \hbox (23.99998pt too wide) in paragraph at lines 103--144
+ [] 
+ []
+
+Missing character: There is no Ð in font pplr7t!
+) (../Tables/CatchTable.tex [95] [96 <../FIGS/qprior.pdf>] [97] [98] [99]
+[100
+
+] [101]) (../Tables/SurveyTable.tex
+LaTeX Font Info:    Font shape `OT1/ppl/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ppl/b/n' tried instead on input line 10.
+ [102
+
+
+]) (./BCHerring2011.aux
+(./PART1/PART_I.aux) (./PART2/PART_II.aux))
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 10039 strings out of 493876
+ 154028 string characters out of 1150567
+ 444128 words of memory out of 3000000
+ 12624 multiletter control sequences out of 10000+50000
+ 34527 words of font info for 96 fonts, out of 3000000 for 5000
+ 714 hyphenation exceptions out of 8191
+ 44i,21n,45p,2363b,596s stack positions out of 5000i,500n,10000p,200000b,50000s
+pdfTeX warning (dest): name{table.caption.98} has been referenced but does no
+t exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{table.caption.101} has been referenced but does not
+ exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{table.caption.83} has been referenced but does not 
+exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{table.caption.81} has been referenced but does not 
+exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{table.caption.77} has been referenced but does not 
+exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{figure.caption.100} has been referenced but does no
+t exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{figure.caption.92} has been referenced but does not
+ exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{figure.caption.89} has been referenced but does not
+ exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{figure.caption.82} has been referenced but does not
+ exist, replaced by a fixed one
+
+{/usr/local/texlive/2008/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/tex
+live/2008/texmf-dist/fonts/type1/bluesky/cm/cmex10.pfb></usr/local/texlive/2008
+/texmf-dist/fonts/type1/bluesky/cm/cmmi10.pfb></usr/local/texlive/2008/texmf-di
+st/fonts/type1/bluesky/cm/cmmi12.pfb></usr/local/texlive/2008/texmf-dist/fonts/
+type1/bluesky/cm/cmmi5.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/blue
+sky/cm/cmmi6.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmm
+i7.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmmi8.pfb></u
+sr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmmi9.pfb></usr/local/t
+exlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmr10.pfb></usr/local/texlive/200
+8/texmf-dist/fonts/type1/bluesky/cm/cmr5.pfb></usr/local/texlive/2008/texmf-dis
+t/fonts/type1/bluesky/cm/cmr6.pfb></usr/local/texlive/2008/texmf-dist/fonts/typ
+e1/bluesky/cm/cmr7.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/
+cm/cmr8.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy10.p
+fb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy5.pfb></usr/l
+ocal/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy7.pfb></usr/local/texli
+ve/2008/texmf-dist/fonts/type1/bluesky/cm/cmtt10.pfb></usr/local/texlive/2008/t
+exmf-dist/fonts/type1/bluesky/cm/cmtt12.pfb></usr/local/texlive/2008/texmf-dist
+/fonts/type1/bluesky/cm/cmtt8.pfb></usr/local/texlive/2008/texmf-dist/fonts/typ
+e1/bluesky/ams/msbm10.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/p
+alatino/uplb8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/palatino
+/uplr8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/palatino/uplri8
+a.pfb>
+Output written on BCHerring2011.pdf (110 pages, 104813035 bytes).
+PDF statistics:
+ 1907 PDF objects out of 2073 (max. 8388607)
+ 326 named destinations out of 1000 (max. 131072)
+ 748 words of extra memory for PDF output out of 10000 (max. 10000000)
+

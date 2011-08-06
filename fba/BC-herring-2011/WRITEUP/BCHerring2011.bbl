@@ -1,0 +1,157 @@
+\begin{thebibliography}{}
+
+\bibitem[{ADMB Project}, 2009]{ADMB2009}
+{ADMB Project} (2009).
+\newblock {2009 AD Model Builder: Automatic Differentiation Model Builder.
+  Developed by {David Fournier} and freely available from admb-project.org.}
+
+\bibitem[Bishop and Green, 2001]{bishop2001predation}
+Bishop, M. and Green, S. (2001).
+\newblock Predation on pacific herring (clupea pallasi) spawn by birds in
+  prince william sound, alaska.
+\newblock {\em Fisheries Oceanography}, 10:149--158.
+
+\bibitem[Cleary and Schweigert, 2010]{Clear2010}
+Cleary, J. and Schweigert, J. (2010).
+\newblock {Stock Assessment and Management Advice for the British Columbia
+  Herring Stocks: 2010 Assessment and 2011 Forecasts}.
+\newblock {\em Canadian Science Advisory Secretariat}, 2010:90.
+
+\bibitem[Conn et~al., 2010]{conn2010can}
+Conn, P., Williams, E., and Shertzer, K. (2010).
+\newblock {When can we reliably estimate the productivity of fish stocks?}
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  67(3):511--523.
+
+\bibitem[Cordue, 2006]{CordueInPrep}
+Cordue, P.~L. ({in prep, 2006}).
+\newblock Prior distributions for trawl and acoustic survey proportionality
+  constants used in the 2006 orange roughy stock assessments.
+\newblock {\em New Zealand Fisheries Assessment Report.}, Draft:22p.
+
+\bibitem[{Fisheries and Oceans Canada}, 2006]{dfo2006}
+{Fisheries and Oceans Canada} (2006).
+\newblock A harvest strategy compliant with the precautionary approach.
+\newblock {\em Canadian Science Advisory Secretariat Sci. Adv. Rep. No.
+  2006/023}.
+
+\bibitem[Fournier and Archibald, 1982]{fournier1982general}
+Fournier, D. and Archibald, C. (1982).
+\newblock {A general theory for analyzing catch at age data}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  39(8):1195--1207.
+
+\bibitem[Gavaris and Ianelli, 2002]{gavaris2002sif}
+Gavaris, S. and Ianelli, J. (2002).
+\newblock {Statistical Issues in Fisheries' Stock Assessments*}.
+\newblock {\em Scandinavian Journal of Statistics}, 29(2):245--267.
+
+\bibitem[Gelman, 2004]{gelman2004bayesian}
+Gelman, A. (2004).
+\newblock {\em {Bayesian data analysis}}.
+\newblock CRC press.
+
+\bibitem[Haegele and Schweigert, 1989]{Haegele1989egg}
+Haegele, C. and Schweigert, J. (1989).
+\newblock Egg loss from pacific herring spawns in barkley sound in 1988.
+\newblock {\em Canadian Manuscript Report Fish. Aquat. Sci.}
+
+\bibitem[Haegele and Schweigert, 1991]{haegele1991egg}
+Haegele, C. and Schweigert, J. (1991).
+\newblock Egg loss in herring spawns in georgia strait, british columbia.
+\newblock In {\em Proceedings of the international herring symposium.
+  University of Alaska, Alaska Sea Grant Report}, pages 91--01.
+
+\bibitem[Haist et~al., 1986]{haist1986stock}
+Haist, V., Schweigert, J., Stocker, M., Station, P., of~Fisheries, C.~D., and
+  Oceans (1986).
+\newblock {\em {Stock assessments for British Columbia herring in 1985 and
+  forecasts of the potential catch in 1986}}.
+\newblock Fisheries and Oceans, Canada.
+
+\bibitem[Hardwick, 1973]{hardwick1973biomass}
+Hardwick, J. (1973).
+\newblock Biomass estimates of spawning herring, clupea harengus pallasi,
+  herring eggs, and associated vegetation in tomales bay.
+\newblock {\em Calif. Fish Game}, 59(1):36--61.
+
+\bibitem[Hay et~al., 2011]{HayEggLoss}
+Hay, D., Fort, C., Schweigert, J.~F., Hamer, L., and McCarter, P.~B. ({in
+  press, 2011}).
+\newblock Investigating changes in pacific herring spawn intensity (layers).
+\newblock {\em Canadian Stock Advisory Secretariat}, 2011(xx).
+
+\bibitem[McAllister and Ianelli, 1997]{MCALLISTER1997}
+McAllister, M.~K. and Ianelli, J. (1997).
+\newblock {Bayesian stock assessment using catch-age data and the sampling:
+  importance resampling algorithm}.
+\newblock {\em Canadian journal of fisheries and aquatic sciences(Print)},
+  54(2):284--300.
+
+\bibitem[Midgley, 2003]{Midgley:2003fk}
+Midgley, P. (2003).
+\newblock Definitions and codings of localities, herring sections, stock
+  assessment regions for british columbia herring data.
+\newblock {\em Can. MS Rep. Fish. Aquat. Sci.}, 2634:113.
+
+\bibitem[Outram, 1958]{outram1958magnitude}
+Outram, D. (1958).
+\newblock The magnitude of herring spawn losses due to bird predation on the
+  west coast of vancouver island.
+\newblock {\em Fisheries Research Board of Canada, Progress Reports of Pacific
+  Biological Stations}, 111:9--13.
+
+\bibitem[Palsson, 1984]{palsson1984egg}
+Palsson, W. (1984).
+\newblock {\em Egg mortality upon natural and artificial substrata within
+  Washington state spawning grounds of Pacific herring (Clupea harengus
+  pallasi)}.
+\newblock PhD thesis, University of Washington.
+
+\bibitem[Richards et~al., 1997]{richards1997visualizing}
+Richards, L., Schnute, J., and Olsen, N. (1997).
+\newblock {Visualizing catch-age analysis: a case study}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  54(7):1646--1658.
+
+\bibitem[Rooper et~al., 1999]{rooper1999habitat}
+Rooper, C., Haldorson, L., and Quinn, T. (1999).
+\newblock Habitat factors controlling pacific herring (clupea pallasi) egg loss
+  in prince william sound, alaska.
+\newblock {\em Canadian journal of fisheries and aquatic sciences},
+  56(6):1133--1142.
+
+\bibitem[Schnute and Richards, 1995]{schnute1995influence}
+Schnute, J. and Richards, L. (1995).
+\newblock {The influence of error on population estimates from catch-age
+  models}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  52(10):2063--2077.
+
+\bibitem[Schweigert, 2002]{schweigert2002herring}
+Schweigert, J. (2002).
+\newblock {Herring size-at-age variation in the North Pacific}.
+\newblock {\em PICES-GLOBEC INTERNATIONAL PROGRAM ON CLIMATE CHANGE AND
+  CARRYING CAPACITY}, page~47.
+
+\bibitem[Schweigert et~al., 2009]{schweigert2009stock}
+Schweigert, J., Christensen, L., Haist, V., and Secretariat, C. S.~A. (2009).
+\newblock {\em {Stock Assesment for British Columbia Herring in 2008 and
+  Forecasts of the Potential Catch in 2009}}.
+\newblock Canadian Science Advisory Secretariat= Secr{\'e}tariat canadien de
+  consultation scientifique.
+
+\bibitem[Schweigert et~al., 2001]{schweigert2001stock}
+Schweigert, J., Secretariat, C. S.~A., of~Fisheries, C.~D., and Oceans (2001).
+\newblock Stock assessment for british columbia herring in 2001 and forecasts
+  of the potential catch in 2002.
+\newblock {\em Can. Sci. Adv. Secr.}, 2001(140):84.
+
+\bibitem[Walters and Ludwig, 1994]{walters1994calculation}
+Walters, C. and Ludwig, D. (1994).
+\newblock {Calculation of Bayes posterior probability distributions for key
+  population parameters}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  51(3):713--722.
+
+\end{thebibliography}

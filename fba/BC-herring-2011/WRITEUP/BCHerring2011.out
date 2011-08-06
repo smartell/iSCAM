@@ -1,0 +1,60 @@
+\BOOKMARK [2][-]{section*.1}{Abstract}{}
+\BOOKMARK [2][-]{chapter*.2}{Contents}{}
+\BOOKMARK [2][-]{chapter*.3}{List of Figures}{}
+\BOOKMARK [-1][-]{part.1}{I Moving towards a sustainable fisheries framework for Pacific herring: data, models and alternative assumptions}{}
+\BOOKMARK [0][-]{section.1.1}{Introduction}{part.1}
+\BOOKMARK [1][-]{section.1.2}{Methods}{section.1.1}
+\BOOKMARK [2][-]{subsection.1.2.1}{Analytical methods}{section.1.2}
+\BOOKMARK [2][-]{subsection.1.2.2}{Sustainable Fisheries Framework reference points}{section.1.2}
+\BOOKMARK [2][-]{subsection.1.2.3}{Simulation testing}{section.1.2}
+\BOOKMARK [2][-]{subsection.1.2.4}{Comparison of HCAM with \040iSCAM}{section.1.2}
+\BOOKMARK [1][-]{section.1.3}{Results}{section.1.1}
+\BOOKMARK [2][-]{subsection.1.3.1}{Simulation testing}{section.1.3}
+\BOOKMARK [2][-]{subsection.1.3.2}{Comparison of HCAM with \040iSCAM}{section.1.3}
+\BOOKMARK [2][-]{subsection.1.3.3}{Alternative assumptions about catchability, mortality \046 selectivity}{section.1.3}
+\BOOKMARK [2][-]{subsection.1.3.4}{Preliminary assessments for all other areas}{section.1.3}
+\BOOKMARK [1][-]{section.1.4}{Discussion}{section.1.1}
+\BOOKMARK [-1][-]{part.2}{II Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks: 2011 Assessment and 2012 Forecasts}{}
+\BOOKMARK [0][-]{section.2.5}{Introduction}{part.2}
+\BOOKMARK [1][-]{section.2.6}{BC Herring Stocks}{section.2.5}
+\BOOKMARK [1][-]{section.2.7}{Methods}{section.2.5}
+\BOOKMARK [2][-]{subsection.2.7.1}{Input data \046 assumptions}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.2}{Analytical methods}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.3}{Retrospective analysis}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.4}{Abundance and recruitment forecasts}{section.2.7}
+\BOOKMARK [1][-]{section.2.8}{Results}{section.2.5}
+\BOOKMARK [2][-]{subsection.2.8.1}{Maximum likelihood fits to the data}{section.2.8}
+\BOOKMARK [2][-]{subsection.2.8.2}{Marginal posterior distributions}{section.2.8}
+\BOOKMARK [2][-]{subsection.2.8.3}{Forecast and catch advice based on the joint posterior distribtution}{section.2.8}
+\BOOKMARK [1][-]{section.2.9}{Discussion}{section.2.5}
+\BOOKMARK [1][-]{section.2.9}{References}{section.2.5}
+\BOOKMARK [-1][-]{part.3}{III Appendixes}{}
+\BOOKMARK [0][-]{section.A.1}{Technical description of \040iSCAM}{part.3}
+\BOOKMARK [1][-]{subsection.A.1.1}{Analytic methods}{section.A.1}
+\BOOKMARK [2][-]{subsection.A.1.2}{Equilibrium considerations}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.3}{MSY based reference points}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.4}{Dynamic age-structured model}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.5}{Options for selectivity}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.6}{Options for natural mortality}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.7}{Residuals, likelihoods \046 objective function value components}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.8}{Catch data}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.9}{Relative abundance data}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.10}{Age composition data}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.11}{Stock-recruitment}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.12}{Parameter Estimation and Uncertainty}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.13}{Negative loglikelihoods}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.14}{Constraints}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.15}{Priors for parameters}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.16}{Survey priors}{subsection.A.1.1}
+\BOOKMARK [2][-]{subsection.A.1.17}{Convergence penalties}{subsection.A.1.1}
+\BOOKMARK [1][-]{section.B.2}{Data and Control files}{section.A.1}
+\BOOKMARK [2][-]{subsection.B.2.1}{Haida Gwaii}{section.B.2}
+\BOOKMARK [2][-]{subsection.B.2.2}{Prince Rupert District}{section.B.2}
+\BOOKMARK [2][-]{subsection.B.2.3}{Central Coast}{section.B.2}
+\BOOKMARK [2][-]{subsection.B.2.4}{Strait of Geogia}{section.B.2}
+\BOOKMARK [2][-]{subsection.B.2.5}{West Coast of Vancouver Island}{section.B.2}
+\BOOKMARK [2][-]{subsection.B.2.6}{Control file for the simulation studies}{section.B.2}
+\BOOKMARK [1][-]{section.C.3}{Bayesian prior for the dive survey spawn index proportionality constant q}{section.A.1}
+\BOOKMARK [2][-]{subsection.C.3.1}{The process}{section.C.3}
+\BOOKMARK [2][-]{subsection.C.3.2}{Factors affecting q and their distributions}{section.C.3}
+\BOOKMARK [2][-]{subsection.C.3.3}{Simulating the dive survey spawn index q}{section.C.3}
