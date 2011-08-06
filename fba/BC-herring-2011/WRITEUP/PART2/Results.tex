@@ -276,22 +276,66 @@ No formal  statistical tests were carried out to determine if the samples from t
 
 \subsubsection{Parameter confounding}
 
+To examine the level of confounding among the estimated parameters, 200 randomly selected points from the joint posterior distribution for the seven leading parameters were plotted against each other in a pairs plot (e.g., Fig. \ref{PartII:MCMC:pairsHG}). Only 200 points were plotted to reduce the file size.   Among the seven leading estimated parameters ($R_0,h,M,\bar{R},\ddot{R}, \rho, \vartheta$) there was very little confounding (Figures \ref{PartII:MCMC:pairsHG} -- \ref{PartII:MCMC:pairsWCVI}).
+
+There is, however, some strong confounding between the estimated parameters and a few of the derived reference points.  In all major areas, there was a strong positive correlation between steepness ($h$) and \fmsy; similarly there is a strong positive correlation between \bo and $R_0$.  Among the reference points alone, there is a negative correlation between \bmsy and \fmsy, and a positive correlation between \fmsy and MSY.  This level of confounding among the derived variables is not cause for concern  from a parameter estimation standpoint; it does, however,  highlight the tradeoffs that must be made from a decision makers perspective.
+
+
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf}\\
-	\caption{Pairs plot and marginal distributions for leading parameters in HG region.  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsHG}
+	\caption{Pairs plot and marginal distributions for leading parameters in HG region (200 random samples).  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsHG}
 \end{figure}
 
 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf}\\
-	\caption{Pairs plot and marginal distributions for leading parameters in PRD region.  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsPRD}
+	\caption{Pairs plot and marginal distributions for leading parameters in PRD region (200 random samples).  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsPRD}
+\end{figure}
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf}\\
+	\caption{Pairs plot and marginal distributions for leading parameters in CC region (200 random samples).  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsCC}
+\end{figure}
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf}\\
+	\caption{Pairs plot and marginal distributions for leading parameters in SOG region (200 random samples).  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsSOG}
+\end{figure}
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf}\\
+	\caption{Pairs plot and marginal distributions for leading parameters in WCVI region (200 random samples).  The dotted lines correspond to the means of the distributions, circle is the mean, and the red square is the mode of the distribution.}\label{PartII:MCMC:pairsWCVI}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Marginal posterior distributions}
 
+Marginal posterior distributions and long with the prior densities for the seven leading parameters are shown in Figure \ref{PartII:MCMC:Marginals}. In all cases, the steepness parameter, followed by the instantaneous natural mortality rate appears to be the most influenced by the prior density. Uniform prior distributions were assumed for the scaling parameters ($R_0, \bar{R}$, and $\ddot{R}$).  There were good posterior updates for the total variance and variance portioning parameters ($\vartheta, \rho$).
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\centering
+	\setlength\fboxsep{0pt}
+\setlength\fboxrule{0.5pt}
+%\fbox{\includegraphics{chick}}
+	\fbox{\includegraphics[width=0.49\textwidth]{../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf}}
+	\fbox{\includegraphics[width=0.49\textwidth]{../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf}}
+	\fbox{\includegraphics[width=0.49\textwidth]{../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf}}
+	\fbox{\includegraphics[width=0.49\textwidth]{../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf}}
+	\fbox{\includegraphics[width=0.49\textwidth]{../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf}}
+
+	\caption{Marginal posterior densities (histograms) and prior densities (lines) for the seven leading parameters for each of the five major assessment regions.}\label{PartII:MCMC:Marginals}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Forecast and catch advice based on the joint posterior distribtution} \label{Section:Forecast}
  The catch advice in Tables \ref{TableCatchAdvice} and \ref{TableCatchAdviceqFix} is based on the old cuttoffs.
