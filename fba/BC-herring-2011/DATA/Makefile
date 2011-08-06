@@ -4,6 +4,7 @@
 
 ## Macros
 SUBDIRS = CC PRD QCI SOG WCVI AREA27 AREA2W
+EXECUTABLE = ../../../dist/release/iscam
 
 .PHONY: default $(SUBDIRS)
 
@@ -15,6 +16,14 @@ $(SUBDIRS):
 	$(MAKE) mcmc -C $@
 
 
+dist: $(EXECUTABLE)
+	cp $(EXECUTABLE) ./CC/
+	cp $(EXECUTABLE) ./PRD/
+	cp $(EXECUTABLE) ./QCI/
+	cp $(EXECUTABLE) ./SOG/
+	cp $(EXECUTABLE) ./WCVI/
+	cp $(EXECUTABLE) ./AREA27/
+	cp $(EXECUTABLE) ./AREA2W/
 
 .PHONY: clean
 clean_files := $(foreach dir,$(SUBDIRS),$(dir)/clean)

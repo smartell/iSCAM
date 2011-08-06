@@ -285,17 +285,29 @@ DATA_SECTION
 			wt_dev = (wt_obs-mean(wt_obs))/sd(wt_obs);
 			
 			Not implemented, using the version provided by Vivian.
+			
+			Aug 5, 2011, noticed that Vivian's method was implemented
+			in an awkward way where GN selectivities were a random walk
+			sel(t+1)=sel(t) + tmp(2);
+			
+			Trying a compromize where estimating an additional parameter
+			that attemps to explain residual variation in age-comps
+			via changes in standardized mean weights at age. This is 
+			implemented as:
+			
+			log_sel = log(plogis(age,s1,s2)) + s3*delta
+			where delta is a matrix of standardized deviations
+			(mu=0, std=1) of weights at age.  delta is calculated
+			based on the wt_dev matrix above.
 		*/
 		wt_dev.initialize();
 		dmatrix mtmp = trans(wt_obs);
 		for(i=sage;i<=nage;i++)
 		{
-			mtmp(i) = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
+			dvector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
+			mtmp(i) = wa_dev;
 		}
-		wt_dev = trans(mtmp);
-		//cout<<colsum(wt_dev)<<endl;
-		//exit(1);
-		
+		wt_dev = trans(mtmp);	//each column has mean=0 sd=1
 		
 	END_CALCS
 	
@@ -423,6 +435,10 @@ DATA_SECTION
 					isel_npar(i) = 2;
 					break;
 					
+				case 8:
+					// Alternative logistic selectivity with wt_dev coefficients.
+					isel_npar(i) = 3;
+					break;
 				default: break;
 			}
 		}
@@ -503,7 +519,7 @@ PARAMETER_SECTION
 		//set phase to -1 for fixed selectivity.
 		for(int k=1;k<=ngear;k++)
 		{
-			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)==7 )
+			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)>=7 )
 			{
 				sel_par(k,1,1) = log(ahat(k));
 				sel_par(k,1,2) = log(ghat(k));
@@ -573,7 +589,7 @@ PARAMETER_SECTION
 	
 	matrix nlvec(1,6,1,ilvec);	//matrix for negative loglikelihoods
 	
-	matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
+	//matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	
 	matrix N(syr,nyr+1,sage,nage);			//Numbers at age
@@ -752,17 +768,20 @@ FUNCTION calcSelectivities
 		TODO: Add penality (10.*square(avg_log_sel)) to objective function 
 		in cases where estimating sel_coffs to mimic an init_bounded_dev vector.
 		
+		FIXME: Problem with case 7: turns out to be a random walk, so there
+		is changes in selectivity even with constant growth.  Remove the
+		random walk outside the switch statement.
 	
 	*/
 	int i,j;
 	double tiny=1.e-10;
-	dvariable p1,p2;//,p3;
+	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
 	dvar_matrix t1;
 	dvar_matrix tmp(syr,nyr-1,sage,nage);
 	dvar_matrix tmp2(syr,nyr,sage,nage);
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
-	jlog_sel.initialize();
+	//jlog_sel.initialize();
 	log_sel.initialize();
 	avg_log_sel.initialize();
 	
@@ -778,35 +797,53 @@ FUNCTION calcSelectivities
 				// logistic selectivity for case 1 or 6
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
-				jlog_sel(j) = log( plogis(age,p1,p2)+tiny );
+				for(i=syr; i<=nyr; i++)
+				{
+					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny );
+				}
 				break;
 			
 			case 6:
 				// logistic selectivity for case 1 or 6
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
-				jlog_sel(j) = log( plogis(age,p1,p2) );
+				for(i=syr; i<=nyr; i++)
+				{
+					log_sel(j)(i) = log( plogis(age,p1,p2) );
+				}
 				break;
 				
 			case 2:		
 				// age-specific selectivity coefficients
-				jlog_sel(j)(sage,nage-1) = sel_par(j)(sage);
-				jlog_sel(j,nage) = jlog_sel(j,nage-1);
+				for(i=syr; i<=nyr; i++)
+				{
+					log_sel(j)(i)(sage,nage-1) = sel_par(j)(sage);
+					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
+				}
 				break;
 				
 			case 3:		
 				// cubic spline
-				jlog_sel(j)=cubic_spline( sel_par(j)(1) );
+				log_sel(j)(syr)=cubic_spline( sel_par(j)(1) );
+				for(i=syr; i<nyr; i++)
+				{
+					log_sel(j)(i+1) = log_sel(j)(i);
+				}
 				break;
 				
 			case 4:		
 				// time-varying cubic spline every year
-				jlog_sel(j) = cubic_spline(sel_par(j)(1));
-				t1 = cubic_spline_matrix(sel_par(j).sub(2,jsel_npar(j)));
-				for(i = t1.indexmin(); i <= t1.indexmax(); i++)
+				for(i=syr; i<=nyr; i++)
 				{
-					tmp( syr+(i-t1.indexmin()) ) = t1(i);
+					log_sel(j)(i) = cubic_spline(sel_par(j)(i-syr+1));
 				}
+				
+				//jlog_sel(j) = cubic_spline(sel_par(j)(1));
+				//t1 = cubic_spline_matrix(sel_par(j).sub(2,jsel_npar(j)));
+				//for(i = t1.indexmin(); i <= t1.indexmax(); i++)
+				//{
+				//	tmp( syr+(i-t1.indexmin()) ) = t1(i);
+				//}
 				break;
 				
 			case 5:		
@@ -814,40 +851,54 @@ FUNCTION calcSelectivities
 				ia.fill_seqadd( 0,1./(age_nodes(j)-1) );
 				iy.fill_seqadd( 0,1./(yr_nodes(j)-1) );
 				// bicubic_spline function is located in stats.cxx library
-				bicubic_spline( iy,ia,sel_par(j),tmp2 );  
+				bicubic_spline( iy,ia,sel_par(j),tmp2 );
+				log_sel(j) = tmp2; 
 				break;
 				
 			case 7:
 				// time-varying selectivity based on deviations in weight-at-age
 				// CHANGED This is not working and should not be used. (May 5, 2011)
 				// SJDM:  I was not able to get this to run very well.
+				// AUG 5, CHANGED so it no longer has the random walk component.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
 				
-				jlog_sel(j) = 0.;
 				for(i = syr; i<=nyr; i++)
 				{
 					dvar_vector tmpwt=log(wt_obs(i)*1000)/mean(log(wt_obs*1000.));
-					tmp2(i) = log( plogis(tmpwt,p1,p2)+tiny );
-					
-					//tmp2(i) = log(1./(1.+exp(p1-p2*wt_obs(i))));
+					log_sel(j)(i) = log( plogis(tmpwt,p1,p2)+tiny );
 				}	 
 				break;
 				
+			case 8:
+				//Alternative time-varying selectivity based on weight deviations (wt_dev)
+				//wt_dev is a matrix(syr,nyr+1,sage,nage)
+				//p3 is the coefficient that describes variation in log_sel.
+				p1 = mfexp(sel_par(j,1,1));
+				p2 = mfexp(sel_par(j,1,2));
+				p3 = sel_par(j,1,3);
+				
+				for(i=syr; i<=nyr; i++)
+				{
+					tmp2(i) = p3*wt_dev(i);
+					log_sel(j)(i) = log( plogis(age,p1,p2)+ tiny ) + tmp2(i);
+				}
+				break;
+				
 			default:
-				jlog_sel(j)=0;
+				log_sel(j)=0;
 				break;
 				
 		}  // switch
 		
 
-		log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
-		for(i=syr;i<nyr;i++)
-		{
-			log_sel(j)(i+1)(sage,nage) = log_sel(j)(i)(sage,nage)+tmp(i)+tmp2(i+1);			
-		}
+		//log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
+		//for(i=syr;i<nyr;i++)
+		//{
+		//	log_sel(j)(i+1)(sage,nage) = log_sel(j)(i)(sage,nage)+tmp(i)+tmp2(i+1);			
+		//}
 		
-		//subtract mean to ensure sum(log_sel)==0
+		//subtract mean to ensure mean(exp(log_sel))==1
 		//substract max to ensure exp(log_sel) ranges from 0-1
 		for(i=syr;i<=nyr;i++)
 			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
@@ -1391,7 +1442,7 @@ FUNCTION calc_objective_function
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
-			if( isel_type(k)!=1 && isel_type(k)!=7 )  
+			if( isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1415,7 +1466,7 @@ FUNCTION calc_objective_function
 	
 	for(k=1;k<=ngear;k++)
 	{
-		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 )
+		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1569,7 +1620,7 @@ FUNCTION calc_objective_function
 		cout<<"penalties\t"<<pvec<<endl;
 	}
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
-	cout<<f<<endl;
+	//cout<<f<<endl;
 	nf++;
 	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	

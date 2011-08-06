@@ -162,7 +162,7 @@ guiView	<- function()
 			cat("NB. MCMC file missing.")
 		
 		Bo = quantile(repObj$mcmc$bo, prob=0.5)*1000
-		#cutoff[i] = 0.25*Bo
+		cutoff[i] = 0.25*Bo
 		SSB = quantile(repObj$mcmc$SSB, prob=0.5)*1000
 		Bt4 = quantile(repObj$mcmc$Age.4, prob=0.5)*1000
 		Btpoor = quantile(repObj$mcmc$Poor, prob=0.5)*1000
@@ -230,9 +230,9 @@ guiView	<- function()
 	colnames(rpTable) = c(hdr$Stock)
 	cap <- "Summary of maximum likelihood estimates for each of the 
 	five major stock areas.  No. is the total number of estimated 
-	parameters, \fmsy\ the average instantaneous fishing rate to 
-	achieve the maximum sustainable yield (MSY), \bo\ is the unfished 
-	spawning biomass, \bmsy\ is the spawning biomass that achieves 
+	parameters, \\fmsy\\ the average instantaneous fishing rate to 
+	achieve the maximum sustainable yield (MSY), \\bo\\ is the unfished 
+	spawning biomass, \\bmsy\\ is the spawning biomass that achieves 
 	maximum sustainable yield,$B_t$ is the spawning biomass at the end 
 	of the 2011 fishing season, and $B_t/B_0$ is the spawning depletion 
 	level at the end of the 2011 fishing season."
@@ -488,6 +488,12 @@ guiView	<- function()
 			.plotMeanwt( repObj )
 		}
 	
+		if ( plotType=="sel2d" )
+		{
+			.plotSel2d( repObj )
+		}
+		
+		
 		if ( plotType=="selectivity" )
 		{
 			.plotSelectivity( repObj )
@@ -976,6 +982,23 @@ guiView	<- function()
 	})
 }
 
+.plotSel2d	<- function( repObj )
+{
+	#plot 2d selectivity curves
+	par(las=1)
+	with(repObj, {
+		gear = 2
+		xx = age
+		yy = exp(t(log_sel[log_sel[,1]==gear, -1]))
+		matplot( xx, yy, type="n", xlab="Age", 
+			ylab="Selectivity", main=paste(stock) )
+			
+		matlines(xx, yy, lty=1, col=1)
+		grid()
+	})
+}
+
+
 .plotSelectivity	<- function( repObj )
 {
 	#plot the selectivity curves (3d plots)
@@ -1012,7 +1035,7 @@ guiView	<- function()
 			#wireframe(z, drap=TRUE, col=fill)
 		}
 		ix=1:length(yr)
-		for(k in 1:ngear){
+		for(k in 3){
 			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
 			main=paste(stock, "Gear", k))
 			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
@@ -1151,6 +1174,7 @@ guiView	<- function()
 			xx = iyr
 			yy = epsilon
 		}
+		print(c(sd(yy, na.rm=T), sig))
 		
 		absmax = abs(max(yy, na.rm=TRUE))
 		if(absmax< 1e-3) absmax=1
@@ -1184,9 +1208,12 @@ guiView	<- function()
 		ii = 1:min(age)
 		xx = yr[-ii]
 		yy = delta
+		print( paste("Std residuals & tau: "
+			, round(sd(yy), 2)
+			, round(tau, 2)) )
 		absmax = abs(max(yy, na.rm=TRUE))
 		if(absmax< 1e-3) absmax=1
-		yrange=c(-absmax, absmax)
+		yrange=1.2*c(-absmax, absmax)
 		
 		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
 			xlab="Year", ylab="Recruitment residuals", main=paste(stock))
@@ -1195,6 +1222,12 @@ guiView	<- function()
 		axis( side=1 )
 		axis( side=2,  las=.VIEWLAS )
 		box()
+		
+		#Added legend to show sd(yy) and mle estimate of tau
+		legend( "top",c(
+				paste("std residuals = ", round(sd(yy), 2))
+				,paste("MLE tau = ", round(tau, 2)) 
+				), ncol=2, bty="n" )
 	})
 }
 
