@@ -1,0 +1,89 @@
+%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/fba/BC-herring-2011/WRITEUP/BCHerring2011.tex
+
+\section{Stock assessments for minor stock areas}
+
+Abundance estimates for the minor stock areas, Area 2W and Area 27 were also obtained using the \iscam\ model.  For these minor areas, there were some minor differences in the treatment of the data and model assumptions.  Also, the gillnet selectivity in area 27 was not allowed to vary over time due to the sparse amount of information (and presumably biological samples) available to reliably estimate minor changes in selectivity for this fishery. Selectivity for area 27 gillnet fishery was assumed to be a logistic function of age and invariant over time.
+
+The input data (Catch and relative abundance) for the minor areas is shown in Figure \ref{Results:Minor:figData}.  As in the previous assessments of Area 2W, the spawn survey data is treated as a single continuous series from 1978 to 2011.  Area 27 however, the time series is split into two series between 1978-1987 and 1988-2011.  The age-composition data used in fitting the model is shown in Figure \ref{Results:Minor:figAgeComps}.
+
+
+
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf}\\
+	\caption{Catch and survey data for minor stock Areas 2W and Area 27.}\label{Results:Minor:figData}
+\end{figure}
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf}\\
+	\caption{Age composition data for Area 2W and Area 27 for the seine-roe fishery (Gear 2) and the gillnet fishery (Gear 3).}\label{Results:Minor:figAgeComps}
+\end{figure}
+
+
+\subsection{Maximum likelihood estimates of biomass}
+
+Spawning biomass in 2011 for Area 2W and Area 27 was estimated at 4,671 tonnes and 928 tonnes, respectively (Table \ref{TableRefPointsMinorAreas}).  The time series of total biomass and spawning biomass for these two areas is presented in Figure \ref{Results:Minor:figBiomass}
+
+
+\input{../TABLES/MinorAreas/RefPointsTable}
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf}\\
+	\caption{Maximum likelihood estimates of total biomass, spawning biomass, spawning depletion and fits to the spawn survey data for the two minor stock areas.}\label{Results:Minor:figBiomass}
+\end{figure}
+
+\subsection{Estimates of recruitment and reference points}
+Maximum likelihood estimates of age-2 recruitment, stock-recruitment relationships and residuals in the stock-recruitment model is shown in Figure \ref{Results:Minor:Recruitment}.  Estimates of age-2 recruits in area 2W have been poor-to average for much of the time-series.  There have been 4 periods of above average recruitment for area 2W (late 1970s, mid 1980s, 2002, and 2008-2010.  Recruitment in area 27 has been much more consistent by comparison.  Estimates of unfished spawning biomass for ares 2W and 27 are 2,915 tonnes and 2,112 tonnes.
+
+\begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\includegraphics[width=\textwidth]{../FIGS/MinorAreas/iscam_fig_Recruitment.pdf}\\
+	\caption{Maximum likelihood estimates of age-2 recruits, spawner-recruit relationships with the fitted Beverton Holt model and unfished reference points ($B_o, R_o$), and the residuals between the estimated age-2 recruits and that predicted by the Beverton-Holt model.}\label{Results:Minor:Recruitment}
+\end{figure}
+
+
+\subsection{Marginal posterior distributions and trace plots}
+
+Information for the catch advice for the two minor areas is based on the median values of the joint posterior distribution.  Therefore, it is important to show posterior samples to ensure proper convergence and the marginal posterior distributions for the leading parameter estimates and derived variables  that are of management interest.
+
+ The trace plots for the two minor areas are summarized in Figure \ref{Results:Minor:mcmcTrace}, and the marginal distributions for the leading parameters is shown in Figure \ref{Results:Minor:mcmcMarginals}.  Again, no formal convergence statistics were examined to determine if MCMC chain converged to a stable distribution.  Visual inspection of the trace plots appear to have a homogenous distribution over the course of the 2000 samples.  In both of the statistical areas, the posterior updates did occur (Figure \ref{Results:Minor:mcmcMarginals}.  The marginal posterior for steepness in area 27 does appear to be influence considerably by the assumed prior distribution.
+ 
+ \begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\centering
+	\fbox{\includegraphics[width=0.75\textwidth]{../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf}}\\
+	\fbox{\includegraphics[width=0.75\textwidth]{../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf}}\\
+	\caption{A systematic sample of 2000 points from a chain of length 1,000,000 from the joint posterior distribution for areas 2W and area 27.}\label{Results:Minor:mcmcTrace}
+\end{figure}
+
+ \begin{figure}[!tbp]
+	% Requires \usepackage{graphicx}
+	\centering
+	\fbox{\includegraphics[width=0.75\textwidth]{../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf}}\\
+	\fbox{\includegraphics[width=0.75\textwidth]{../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf}}\\
+	\caption{Marginal distributions for the leanding parameters based on a systematic sample of 2000 points from a chain of length 1,000,000 from the joint posterior distribution for areas 2W and area 27.}\label{Results:Minor:mcmcMarginals}
+\end{figure}
+
+\subsection{Catch advice}
+Catch advice for the minor areas differs from that of the major areas in that there are not cuttoffs for these two areas and the reference exploitation rate is reduced from 20\% to 10\%.  The same decision table format is provided with catch advice based on poor, average, and good recruitment. Catch advice for the two minor areas is summarized in Table \ref{TableCatchAdviceMinorAreas}.
+
+
+\input{../TABLES/MinorAreas/DecisionTable}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
