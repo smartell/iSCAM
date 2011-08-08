@@ -1,6 +1,6 @@
-This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  8 AUG 2011 10:20
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  8 AUG 2011 10:36
 entering extended mode
- file:line:error style messages enabled.
+\write18 enabled.
  %&-line parsing enabled.
 **BCHerring2011.tex
 (./BCHerring2011.tex
@@ -104,14 +104,12 @@ Package: pdftexcmds 2007/12/12 v0.3 LuaTeX support for pdfTeX utility functions
  (HO)
 Package pdftexcmds Info: LuaTeX not detected on input line 139.
 )
-
-Package epstopdf Warning: Shell escape feature is not enabled.
-
 Package grfext Info: Graphics extension search list:
 (grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 323.
-) (/usr/local/texlive/2008/texmf-dist/tex/latex/psfrag/psfrag.sty
+)
+(/usr/local/texlive/2008/texmf-dist/tex/latex/psfrag/psfrag.sty
 Package: psfrag 1998/04/11 v3.04 PSfrag (MCG)
 \pfg@pcount=\count97
 \pfg@scount=\count98
@@ -605,9 +603,9 @@ Package hyperref Warning: Difference (2) between bookmark levels is greater
 
 
 
-pdfTeX warning: pdflatex (file ../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG
-.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowe
-d
+pdfTeX warning: /usr/texbin/pdflatex (file ../FIGS/PBSfigs/Assessment_Regions_2
+W_27_2010_HG.pdf): PDF inclusion: found PDF version <1.6>, but at most version 
+<1.4> allowed
 
 <../FIGS/PBSfigs/Assessment_Regions_2W_27_2010_HG.pdf, id=784, 614.295pt x 794.
 97pt>
@@ -764,41 +762,42 @@ Underfull \hbox (badness 10000) in paragraph at lines 14--15
 
 [20 <../Figs/iscam_fig_CatchMajorAreas.pdf>]
 
-pdfTeX warning: pdflatex (file ../Figs/PBSfigs/2011-HG-Prelim-WG.pdf): PDF incl
-usion: found PDF version <1.6>, but at most version <1.4> allowed
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-HG-Prelim-WG.pd
+f): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
 <../Figs/PBSfigs/2011-HG-Prelim-WG.pdf, id=1042, 794.97pt x 614.295pt>
 File: ../Figs/PBSfigs/2011-HG-Prelim-WG.pdf Graphic file (type pdf)
 
 <use ../Figs/PBSfigs/2011-HG-Prelim-WG.pdf>
 
-pdfTeX warning: pdflatex (file ../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf): PDF inc
-lusion: found PDF version <1.6>, but at most version <1.4> allowed
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-PRD-Prelim-WG.p
+df): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
 <../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf, id=1043, 794.97pt x 614.295pt>
 File: ../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf Graphic file (type pdf)
 
 <use ../Figs/PBSfigs/2011-PRD-Prelim-WG.pdf>
 
-pdfTeX warning: pdflatex (file ../Figs/PBSfigs/2011-CC-Prelim-WG.pdf): PDF incl
-usion: found PDF version <1.6>, but at most version <1.4> allowed
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-CC-Prelim-WG.pd
+f): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
 <../Figs/PBSfigs/2011-CC-Prelim-WG.pdf, id=1044, 794.97pt x 614.295pt>
 File: ../Figs/PBSfigs/2011-CC-Prelim-WG.pdf Graphic file (type pdf)
 
 <use ../Figs/PBSfigs/2011-CC-Prelim-WG.pdf>
 
-pdfTeX warning: pdflatex (file ../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf): PDF inc
-lusion: found PDF version <1.6>, but at most version <1.4> allowed
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-SOG-Prelim-WG.p
+df): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
 <../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf, id=1045, 794.97pt x 614.295pt>
 File: ../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf Graphic file (type pdf)
 
 <use ../Figs/PBSfigs/2011-SOG-Prelim-WG.pdf>
 
-pdfTeX warning: pdflatex (file ../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf): PDF in
-clusion: found PDF version <1.6>, but at most version <1.4> allowed
+pdfTeX warning: /usr/texbin/pdflatex (file ../Figs/PBSfigs/2011-WCVI-Prelim-WG.
+pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.4> allowed
+
 <../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf, id=1046, 794.97pt x 614.295pt>
 File: ../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf Graphic file (type pdf)
 
 <use ../Figs/PBSfigs/2011-WCVI-Prelim-WG.pdf>
-<../Figs/iscam_fig_SurveyMajorAreas.pdf, id=1049, 556.0775pt x 459.7175pt>
+<../Figs/iscam_fig_SurveyMajorAreas.pdf, id=1051, 556.0775pt x 459.7175pt>
 File: ../Figs/iscam_fig_SurveyMajorAreas.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_SurveyMajorAreas.pdf>
@@ -812,23 +811,23 @@ LaTeX Warning: Reference `XXX' on page 21 undefined on input line 59.
 
 LaTeX Warning: Reference `XXX' on page 21 undefined on input line 59.
 
-<../Figs/iscam_fig_AgeCompsHG.pdf, id=1054, 721.69624pt x 600.2425pt>
+<../Figs/iscam_fig_AgeCompsHG.pdf, id=1056, 721.69624pt x 600.2425pt>
 File: ../Figs/iscam_fig_AgeCompsHG.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_AgeCompsHG.pdf>
-<../Figs/iscam_fig_AgeCompsPRD.pdf, id=1055, 721.69624pt x 600.2425pt>
+<../Figs/iscam_fig_AgeCompsPRD.pdf, id=1057, 721.69624pt x 600.2425pt>
 File: ../Figs/iscam_fig_AgeCompsPRD.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_AgeCompsPRD.pdf>
-<../Figs/iscam_fig_AgeCompsCC.pdf, id=1056, 721.69624pt x 600.2425pt>
+<../Figs/iscam_fig_AgeCompsCC.pdf, id=1058, 721.69624pt x 600.2425pt>
 File: ../Figs/iscam_fig_AgeCompsCC.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_AgeCompsCC.pdf>
-<../Figs/iscam_fig_AgeCompsSOG.pdf, id=1057, 721.69624pt x 600.2425pt>
+<../Figs/iscam_fig_AgeCompsSOG.pdf, id=1059, 721.69624pt x 600.2425pt>
 File: ../Figs/iscam_fig_AgeCompsSOG.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_AgeCompsSOG.pdf>
-<../Figs/iscam_fig_AgeCompsWCVI.pdf, id=1058, 721.69624pt x 600.2425pt>
+<../Figs/iscam_fig_AgeCompsWCVI.pdf, id=1060, 721.69624pt x 600.2425pt>
 File: ../Figs/iscam_fig_AgeCompsWCVI.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_AgeCompsWCVI.pdf> [21] [22 <../Figs/PBSfigs/2011-HG-Prel
@@ -838,7 +837,7 @@ s/2011-WCVI-Prelim-WG.pdf>] [25 <../Figs/iscam_fig_SurveyMajorAreas.pdf>]
 [26 <../Figs/iscam_fig_AgeCompsHG.pdf>] [27 <../Figs/iscam_fig_AgeCompsPRD.pdf>
 ] [28 <../Figs/iscam_fig_AgeCompsCC.pdf>] [29 <../Figs/iscam_fig_AgeCompsSOG.pd
 f>] [30 <../Figs/iscam_fig_AgeCompsWCVI.pdf>]
-<../Figs/iscam_fig_MeanWt.pdf, id=1215, 554.07pt x 566.115pt>
+<../Figs/iscam_fig_MeanWt.pdf, id=1218, 554.07pt x 566.115pt>
 File: ../Figs/iscam_fig_MeanWt.pdf Graphic file (type pdf)
 
 <use ../Figs/iscam_fig_MeanWt.pdf> [31 <../Figs/iscam_fig_MeanWt.pdf>]
@@ -852,7 +851,7 @@ LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 149.
 )
 (./PART2/Results.tex [32]
-<../FIGS/qPriorFigs/iscam_fig_catchresid.pdf, id=1235, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_catchresid.pdf, id=1238, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_catchresid.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_catchresid.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 13--14
@@ -860,7 +859,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 13--14
  []
 
 [33 <../FIGS/qPriorFigs/iscam_fig_catchresid.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf, id=1249, 556.0775pt x 459.7175pt
+<../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf, id=1252, 556.0775pt x 459.7175pt
 >
 File: ../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf>
@@ -869,7 +868,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 25--26
  []
 
 [34 <../FIGS/qPriorFigs/iscam_fig_surveyresid.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf, id=1261, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf, id=1264, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf>
@@ -878,27 +877,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 33--34
  []
 
 [35 <../FIGS/qPriorFigs/iscam_fig_surveyfit.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf, id=1274, 556.0775pt x 459.7
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf, id=1277, 556.0775pt x 459.7
 175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf Graphic file (type pdf)
 
  <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf>
-<../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf, id=1276, 556.0775pt x 459.
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf, id=1279, 556.0775pt x 459.
 7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf Graphic file (type pdf
 )
  <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf>
-<../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf, id=1278, 556.0775pt x 459.7
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf, id=1281, 556.0775pt x 459.7
 175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf Graphic file (type pdf)
 
  <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf>
-<../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf, id=1280, 556.0775pt x 459.
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf, id=1283, 556.0775pt x 459.
 7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf Graphic file (type pdf
 )
  <use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf>
-<../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf, id=1282, 556.0775pt x 459
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf, id=1285, 556.0775pt x 459
 .7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf Graphic file (type pd
 f)
@@ -908,7 +907,7 @@ ig_agecompsresid_HG.pdf>] [38 <../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.p
 df>] [39 <../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf>] [40 <../FIGS/qPri
 orFigs/iscam_fig_agecompsresid_SOG.pdf>] [41 <../FIGS/qPriorFigs/iscam_fig_agec
 ompsresid_WCVI.pdf>])
-<../FIGS/qPriorFigs/iscam_fig_biomass.pdf, id=1349, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_biomass.pdf, id=1352, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_biomass.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_biomass.pdf>
@@ -917,7 +916,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 113--114
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_depletion.pdf, id=1350, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_depletion.pdf, id=1353, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_depletion.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_depletion.pdf>
@@ -926,7 +925,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 120--121
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_mortality.pdf, id=1354, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_mortality.pdf, id=1357, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_mortality.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_mortality.pdf>
@@ -936,7 +935,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 137--138
 
 [42] [43 <../FIGS/qPriorFigs/iscam_fig_biomass.pdf>] [44 <../FIGS/qPriorFigs/is
 cam_fig_depletion.pdf>] [45 <../FIGS/qPriorFigs/iscam_fig_mortality.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf, id=1400, 556.0775pt x
+<../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf, id=1403, 556.0775pt x
  459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf Graphic file (typ
 e pdf)
@@ -952,7 +951,7 @@ s of se-lec-tiv-ity were much more con-sis-tent among
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf, id=1402, 556.0775pt x 45
+<../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf, id=1405, 556.0775pt x 45
 9.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_sel2d_seine_roe_sel.pdf Graphic file (type p
 df)
@@ -963,7 +962,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 164--165
 
 [46 <../FIGS/qPriorFigs/iscam_fig_sel2d_winter_seine_sel.pdf>] [47 <../FIGS/qPr
 iorFigs/iscam_fig_sel2d_seine_roe_sel.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf, id=1422, 556.0775pt x 4
+<../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf, id=1425, 556.0775pt x 4
 59.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf Graphic file (type 
 pdf)
@@ -973,7 +972,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 172--173
  []
 
 [48 <../FIGS/qPriorFigs/iscam_fig_gill_net_selectivity.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_recruitment.pdf, id=1432, 556.0775pt x 459.7175pt
+<../FIGS/qPriorFigs/iscam_fig_recruitment.pdf, id=1435, 556.0775pt x 459.7175pt
 >
 File: ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>
@@ -982,7 +981,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 208--209
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf, id=1434, 556.0775pt x 459.7175p
+<../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf, id=1437, 556.0775pt x 459.7175p
 t>
 File: ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf>
@@ -990,7 +989,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 218--219
 
  []
 
-<../FIGS/qPriorFigs/iscam_fig_recresid.pdf, id=1436, 556.0775pt x 459.7175pt>
+<../FIGS/qPriorFigs/iscam_fig_recresid.pdf, id=1439, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_recresid.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_recresid.pdf>
@@ -1005,11 +1004,11 @@ ram-e-ters were con-structed us-ing AD Model Builders
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf, id=1441, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf, id=1444, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf>
-<../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf, id=1442, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf, id=1445, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 254--255
@@ -1017,7 +1016,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 254--255
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf, id=1443, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf, id=1446, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf>
@@ -1026,7 +1025,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 260--261
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=1444, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=1447, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 266--267
@@ -1034,7 +1033,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 266--267
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf, id=1445, 721.69624pt x 600.2425pt
+<../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf, id=1448, 721.69624pt x 600.2425pt
 >
 File: ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf>
@@ -1048,7 +1047,7 @@ s/iscam_fig_stockrecruit.pdf>] [52 <../FIGS/qPriorFigs/iscam_fig_recresid.pdf>]
 fig_trace_PRD.pdf>] [55 <../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf>] [56 <../FI
 GS/qPriorFigs/iscam_fig_trace_SOG.pdf>] [57 <../FIGS/qPriorFigs/iscam_fig_trace
 _WCVI.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf, id=1525, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf, id=1528, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf>
@@ -1057,7 +1056,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 286--287
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf, id=1526, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf, id=1529, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 293--294
@@ -1065,7 +1064,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 293--294
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf, id=1527, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf, id=1530, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf>
@@ -1074,7 +1073,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 299--300
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf, id=1528, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf, id=1531, 721.69624pt x 600.2425pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 305--306
@@ -1082,7 +1081,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 305--306
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf, id=1529, 721.69624pt x 600.2425pt
+<../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf, id=1532, 721.69624pt x 600.2425pt
 >
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf>
@@ -1094,23 +1093,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 311--312
 fig_pairs_PRD.pdf>] [60 <../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf>] [61 <../FI
 GS/qPriorFigs/iscam_fig_pairs_SOG.pdf>] [62 <../FIGS/qPriorFigs/iscam_fig_pairs
 _WCVI.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf, id=1591, 721.69624pt x 600.2425
+<../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf, id=1594, 721.69624pt x 600.2425
 pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf>
-<../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf, id=1592, 721.69624pt x 600.242
+<../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf, id=1595, 721.69624pt x 600.242
 5pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf>
-<../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf, id=1593, 721.69624pt x 600.2425
+<../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf, id=1596, 721.69624pt x 600.2425
 pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf>
-<../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf, id=1594, 721.69624pt x 600.242
+<../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf, id=1597, 721.69624pt x 600.242
 5pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf>
-<../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf, id=1595, 721.69624pt x 600.24
+<../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf, id=1598, 721.69624pt x 600.24
 25pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf>
@@ -1120,7 +1119,7 @@ File: ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf Graphic file (type pdf)
 _HG.pdf> <../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf> <../FIGS/qPriorFigs/i
 scam_fig_marginals_CC.pdf> <../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf> <..
 /FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf>]
-<../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf, id=1639, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf, id=1642, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf>
@@ -1129,7 +1128,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 14--15
  []
 
 
-<../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf, id=1640, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf, id=1643, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf>
@@ -1139,7 +1138,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 20--21
 
 (../TABLES/MinorAreas/RefPointsTable.tex [65 <../FIGS/MinorAreas/iscam_fig_Mino
 rAreaData.pdf>] [66 <../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf>])
-<../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf, id=1665, 556.0775pt x 459
+<../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf, id=1668, 556.0775pt x 459
 .7175pt>
 File: ../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf Graphic file (type pd
 f)
@@ -1149,7 +1148,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 34--35
  []
 
 
-<../FIGS/MinorAreas/iscam_fig_Recruitment.pdf, id=1667, 556.0775pt x 459.7175pt
+<../FIGS/MinorAreas/iscam_fig_Recruitment.pdf, id=1670, 556.0775pt x 459.7175pt
 >
 File: ../FIGS/MinorAreas/iscam_fig_Recruitment.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_Recruitment.pdf>
@@ -1158,19 +1157,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 43--44
  []
 
 
-<../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf, id=1671, 556.0775pt x 459.717
+<../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf, id=1674, 556.0775pt x 459.717
 5pt>
 File: ../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf>
-<../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf, id=1672, 556.0775pt x 459.717
+<../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf, id=1675, 556.0775pt x 459.717
 5pt>
 File: ../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf>
-<../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf, id=1673, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf, id=1676, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf>
-<../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf, id=1674, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf, id=1677, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf>
@@ -1222,7 +1221,7 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
 (hyperref)                than one, level fixed on input line 6.
 
-[76] [77] <../Figs/Fig1Quadplot.pdf, id=1810, 505.89pt x 505.89pt>
+[76] [77] <../Figs/Fig1Quadplot.pdf, id=1813, 505.89pt x 505.89pt>
 File: ../Figs/Fig1Quadplot.pdf Graphic file (type pdf)
 
 <use ../Figs/Fig1Quadplot.pdf> [78pdfTeX warning (ext4): destination with the s
@@ -1380,11 +1379,11 @@ ith the same identifier (name{equation.A.1.3}) has been already used, duplicate
                    \relax 
 l.334 \begin{equation}
                       \label{eqDomePenalty}
-<../Figs/SplineEg.pdf, id=1856, 505.89pt x 505.89pt>
+<../Figs/SplineEg.pdf, id=1859, 505.89pt x 505.89pt>
 File: ../Figs/SplineEg.pdf Graphic file (type pdf)
 
 <use ../Figs/SplineEg.pdf> [82]
-<../Figs/BicubicEg.pdf, id=1865, 811.03pt x 488.82625pt>
+<../Figs/BicubicEg.pdf, id=1868, 811.03pt x 488.82625pt>
 File: ../Figs/BicubicEg.pdf Graphic file (type pdf)
 
 <use ../Figs/BicubicEg.pdf> [83 <../Figs/SplineEg.pdf>] [84 <../Figs/BicubicEg.
@@ -1592,7 +1591,7 @@ ame identifier (name{equation.A.1.15}) has been already used, duplicate ignored
                    \relax 
 l.507 \begin{equation}
                       \label{eq11}
-<../Figs/priorexample.pdf, id=1935, 556.0775pt x 459.7175pt>
+<../Figs/priorexample.pdf, id=1938, 556.0775pt x 459.7175pt>
 File: ../Figs/priorexample.pdf Graphic file (type pdf)
 
 <use ../Figs/priorexample.pdf> [88] [89 <../Figs/priorexample.pdf>] [90])
@@ -1856,7 +1855,7 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 
 Missing character: There is no Ã in font pplr7t!
 Missing character: There is no • in font pplr7t!
-<../FIGS/qprior.pdf, id=2042, 433.62pt x 288.07625pt>
+<../FIGS/qprior.pdf, id=2045, 433.62pt x 288.07625pt>
 File: ../FIGS/qprior.pdf Graphic file (type pdf)
  <use ../FIGS/qprior.pdf>
 Underfull \hbox (badness 10000) in paragraph at lines 106--107
@@ -1929,10 +1928,10 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 10206 strings out of 493876
- 159585 string characters out of 1150567
- 457925 words of memory out of 3000000
- 12713 multiletter control sequences out of 10000+50000
+ 10210 strings out of 493876
+ 159690 string characters out of 1150567
+ 457948 words of memory out of 3000000
+ 12716 multiletter control sequences out of 10000+50000
  34527 words of font info for 96 fonts, out of 3000000 for 5000
  714 hyphenation exceptions out of 8191
  44i,21n,45p,2363b,596s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1958,9 +1957,9 @@ ype1/bluesky/ams/msbm10.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw
 /palatino/uplb8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/palati
 no/uplr8a.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/urw/palatino/uplr
 i8a.pfb>
-Output written on BCHerring2011.pdf (124 pages, 42725700 bytes).
+Output written on BCHerring2011.pdf (124 pages, 42726312 bytes).
 PDF statistics:
- 2262 PDF objects out of 2487 (max. 8388607)
- 357 named destinations out of 1000 (max. 131072)
+ 2265 PDF objects out of 2487 (max. 8388607)
+ 358 named destinations out of 1000 (max. 131072)
  948 words of extra memory for PDF output out of 10000 (max. 10000000)
 
