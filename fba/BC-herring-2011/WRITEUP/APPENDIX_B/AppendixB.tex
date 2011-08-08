@@ -13,12 +13,12 @@
 
 \tiny
 \begin{alltt}
- \input{../DATA/QCI/QCIHerring2011q1.ctl}
+ \input{../DATA/QCI/QCIHerring2011qprior.ctl}
 \end{alltt}
 \normalsize
 
 \end{multicols}
-\clearpage
+%\clearpage
 
 %% ******* Prince Rupert **********
 \subsection{Prince Rupert District}
@@ -32,12 +32,12 @@
 
 \tiny
 \begin{alltt}
- \input{../DATA/PRD/PRDHerring2011q1.ctl}
+ \input{../DATA/PRD/PRDHerring2011qprior.ctl}
 \end{alltt}
 \normalsize
 
 \end{multicols}
-\clearpage
+%\clearpage
 
 %% ******* Central Coast **********
 \subsection{Central Coast}
@@ -51,12 +51,12 @@
 
 \tiny
 \begin{alltt}
- \input{../DATA/CC/CCHerring2011q1.ctl}
+ \input{../DATA/CC/CCHerring2011qprior.ctl}
 \end{alltt}
 \normalsize
 
 \end{multicols}
-\clearpage
+%\clearpage
 
 %% ******* Strait of Georgia **********
 \subsection{Strait of Geogia}
@@ -70,12 +70,12 @@
 
 \tiny
 \begin{alltt}
- \input{../DATA/SOG/SOGHerring2011q1.ctl}
+ \input{../DATA/SOG/SOGHerring2011qprior.ctl}
 \end{alltt}
 \normalsize
 
 \end{multicols}
-\clearpage
+%\clearpage
 
 %% ******* Strait of Georgia **********
 \subsection{West Coast of Vancouver Island}
@@ -89,12 +89,50 @@
 
 \tiny
 \begin{alltt}
- \input{../DATA/WCVI/WCVIHerring2011q1.ctl}
+ \input{../DATA/WCVI/WCVIHerring2011qprior.ctl}
 \end{alltt}
 \normalsize
 
 \end{multicols}
-\clearpage
+%\clearpage
+
+%% ********** Area 2W ************
+\subsection{Area 2W}
+\begin{multicols}{2}
+
+\tiny
+\begin{alltt}
+ \input{../DATA/AREA2W/Area2Wherring2011.dat}
+\end{alltt}
+\normalsize
+
+\tiny
+\begin{alltt}
+ \input{../DATA/AREA2W/Area2WHerring2011qprior.ctl}
+\end{alltt}
+\normalsize
+
+\end{multicols}
+%\clearpage
+
+%% ********** Area 27 ************
+\subsection{Area 27}
+\begin{multicols}{2}
+
+\tiny
+\begin{alltt}
+ \input{../DATA/AREA27/Area27herring2011.dat}
+\end{alltt}
+\normalsize
+
+\tiny
+\begin{alltt}
+ \input{../DATA/AREA27/Area27Herring2011qprior.ctl}
+\end{alltt}
+\normalsize
+
+\end{multicols}
+%\clearpage
 
 
 \subsection{Control file for the simulation studies}
@@ -120,51 +158,4 @@ The following control file was used in the simulation study where data were gene
 
 
 
-%\begin{multicols}{2}
-%
-%%%Appendix item.
-%\begin{tablehere}
-%\caption{Control file for the SOG herring example based on simulating data with perfect information.} \label{TableSOGsimCtrl}
-%%\noindent \hrulefill\\
-%
-%\tiny
-%
-%
-%\begin{alltt}
-%\input{../srcWorkingCopy/Examples/sogHerring/SOGHerring2010sim.ctl}
-%\end{alltt}
-%
-%
-%\end{tablehere}
-%
-%
-%%%Appendix item.
-%\begin{tablehere}
-%\caption{Control file for the SOG herring example based on simulating data with a total precision of 2.50.} \label{TableSOGmcCtrl}
-%%\noindent \hrulefill\\
-%
-%\tiny
-%
-%
-%\begin{alltt}
-%\input{../srcWorkingCopy/Examples/sogHerring/SOGHerring2010mc.ctl}
-%\end{alltt}
-%
-%\end{tablehere}
-%
-%
-%%%Appendix item Cntrl file for HCAM comparison.
-%\begin{tablehere}
-%\caption{Control file for \iscam\ using for the comparison with the HCAM model.  The summary results of this comparison are shown in Figure \ref{fig1_HCAM_ctrl}.} \label{TableSOGmcCtrl}
-%%\noindent \hrulefill\\
-%
-%\tiny
-%
-%
-%\begin{alltt}
-%\input{../srcWorkingCopy/Examples/sogHerring/SOGHerring2010HCAM.ctl}
-%\end{alltt}
-%
-%\end{tablehere}
-%
-%\end{multicols}
+

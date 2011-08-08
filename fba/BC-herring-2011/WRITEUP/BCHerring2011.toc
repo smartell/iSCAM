@@ -90,17 +90,19 @@
 \contentsline {subsection}{\numberline {A.1.17}Convergence penalties}{89}{subsection.A.1.17}
 \contentsline {section}{\numberline {B.2}Data and Control files}{91}{section.B.2}
 \contentsline {subsection}{\numberline {B.2.1}Haida Gwaii}{91}{subsection.B.2.1}
-\contentsline {subsection}{\numberline {B.2.2}Prince Rupert District}{93}{subsection.B.2.2}
-\contentsline {subsection}{\numberline {B.2.3}Central Coast}{96}{subsection.B.2.3}
-\contentsline {subsection}{\numberline {B.2.4}Strait of Geogia}{98}{subsection.B.2.4}
-\contentsline {subsection}{\numberline {B.2.5}West Coast of Vancouver Island}{101}{subsection.B.2.5}
-\contentsline {subsection}{\numberline {B.2.6}Control file for the simulation studies}{103}{subsection.B.2.6}
-\contentsline {section}{\numberline {C.3}Bayesian prior for the dive survey spawn index proportionality constant $q$}{104}{section.C.3}
-\contentsline {subsection}{\numberline {C.3.1}The process}{104}{subsection.C.3.1}
-\contentsline {subsection}{\numberline {C.3.2}Factors affecting $q$ and their distributions}{104}{subsection.C.3.2}
-\contentsline {subsubsection}{Proportion of total spawn surveyed}{104}{section*.104}
-\contentsline {subsubsection}{Egg loss prior to survey}{104}{section*.105}
-\contentsline {subsubsection}{Bias in mean egg density}{105}{section*.106}
-\contentsline {subsubsection}{Drift in dive survey observations}{105}{section*.107}
-\contentsline {subsection}{\numberline {C.3.3}Simulating the dive survey spawn index $q$}{105}{subsection.C.3.3}
-\contentsline {section}{\numberline {D.4}Landings and Survey data}{110}{section.D.4}
+\contentsline {subsection}{\numberline {B.2.2}Prince Rupert District}{92}{subsection.B.2.2}
+\contentsline {subsection}{\numberline {B.2.3}Central Coast}{95}{subsection.B.2.3}
+\contentsline {subsection}{\numberline {B.2.4}Strait of Geogia}{97}{subsection.B.2.4}
+\contentsline {subsection}{\numberline {B.2.5}West Coast of Vancouver Island}{99}{subsection.B.2.5}
+\contentsline {subsection}{\numberline {B.2.6}Area 2W}{101}{subsection.B.2.6}
+\contentsline {subsection}{\numberline {B.2.7}Area 27}{102}{subsection.B.2.7}
+\contentsline {subsection}{\numberline {B.2.8}Control file for the simulation studies}{104}{subsection.B.2.8}
+\contentsline {section}{\numberline {C.3}Bayesian prior for the dive survey spawn index proportionality constant $q$}{105}{section.C.3}
+\contentsline {subsection}{\numberline {C.3.1}The process}{105}{subsection.C.3.1}
+\contentsline {subsection}{\numberline {C.3.2}Factors affecting $q$ and their distributions}{105}{subsection.C.3.2}
+\contentsline {subsubsection}{Proportion of total spawn surveyed}{105}{section*.104}
+\contentsline {subsubsection}{Egg loss prior to survey}{105}{section*.105}
+\contentsline {subsubsection}{Bias in mean egg density}{106}{section*.106}
+\contentsline {subsubsection}{Drift in dive survey observations}{106}{section*.107}
+\contentsline {subsection}{\numberline {C.3.3}Simulating the dive survey spawn index $q$}{106}{subsection.C.3.3}
+\contentsline {section}{\numberline {D.4}Landings and Survey data}{111}{section.D.4}
