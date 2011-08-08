@@ -314,7 +314,7 @@ and for the Ricker model this is given by:
 		
 \subsection{Options for selectivity}
 		
-At present, there are six alternative age-specific selectivity options in \iscam.  The simplest of the selectivity options is a simple logistic function with two parameters where it is assumed that selectivity is time-invariant.  The more complex selectivity options assume that selectivity may vary over time a may have as many as (A-1)$\cdot$T parameters.  For time-varying selectivity, cubic and bicubic splines are used to reduce the number of estimated parameters.  Prior to parameter estimation, \iscam\ will determine the exact number of selectivity parameters that need to be estimated based on which selectivity option was chosen for each gear type.  It is not necessary for all gear types to have the same selectivity option.  For example it is possible to have a simple two parameter selectivity curve for say a survey gear, and a much more complicated selectivity option for a commercial fishery.
+At present, there are eight alternative age-specific selectivity options in \iscam.  The simplest of the selectivity options is a simple logistic function with two parameters where it is assumed that selectivity is time-invariant.  The more complex selectivity options assume that selectivity may vary over time a may have as many as (A-1)$\cdot$T parameters.  For time-varying selectivity, cubic and bicubic splines are used to reduce the number of estimated parameters. The last two options consider how selectivity may vary over time based on changes in mean weight-at-age. Prior to parameter estimation, \iscam\ will determine the exact number of selectivity parameters that need to be estimated based on which selectivity option was chosen for each gear type.  It is not necessary for all gear types to have the same selectivity option.  For example it is possible to have a simple two parameter selectivity curve for say a survey gear, and a much more complicated selectivity option for a commercial fishery.
 
 \paragraph{Logistic selectivity} 
 The logistic selectivity option is a two parameter model of the form
@@ -371,8 +371,19 @@ The same penalty functions for curvature and dome-shaped selectivity are also in
 \end{figure}
 
 
+\paragraph{Selectivity as a logistic function of weight-at-age}
 
+The seventh option for selectivity is to parameterize a logistic function in terms of the weight-at-age in year $t$ ($w_{a,t}$). In this case changes in weight-at-age over time allow for changes in selectivity. Such a weight-based function may be appropriate for size selective gears such as gill nets. 
+\[
+v_{a,t} = \frac{1}{1+ \exp{(-(w_{a,t}-\mu_{a})/\sigma_a)}}
+\]
 
+\paragraph{Using weight as a covariate}
+The eighth option for selectivity is to use a logistic function based on age, but allow selectivity to vary based on deviations in the mean weight-at-age over time.  In this case:
+\[
+v_{a,t} = \frac{1}{1+ \exp{(-(a-\mu_{a})/\sigma_a)}}\exp(\lambda^{(a)} \delta_{a,t})
+\]
+where $\lambda^{(a)}$ is a latent variable that describes the residual variation in the age-composition data that is due to changes  in selectivity, and $\delta_{a,t}$ is a standardized ($\mu=0, \sigma=1$) annual age-specific deviation in mean weight-at-age.  In this case, estimates of $\lambda^{(a)}=0$ imply that variation in the empirical weight-at-age data explain none of the residual variation in the age-composition data.  Values  of $\lambda^{(a)}\neq0$ imply a positive or negative affect of variation in growth on selectivity.
 
 
 		\subsection{Options for natural mortality}

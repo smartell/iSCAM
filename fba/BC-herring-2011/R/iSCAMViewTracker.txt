@@ -9,7 +9,7 @@ TRUE,CC,  "2011data_qprior",../DATA/CC/CCHerring2011qprior
 TRUE,SOG, "2011data_qprior",../DATA/SOG/SOGHerring2011qprior
 TRUE,WCVI,"2011data_qprior",../DATA/WCVI/WCVIHerring2011qprior
 FALSE,A2W,"2011data_qprior",../DATA/AREA2W/Area2wHerring2011qprior
-FALSE,A27,"2011data_qprior",../DATA/ARES27/Area27Herring2011qprior
+FALSE,A27,"2011data_qprior",../DATA/AREA27/Area27Herring2011qprior
 
 
 FALSE,HG,  "2011data_q1",../DATA/QCI/qciHerring2011q1

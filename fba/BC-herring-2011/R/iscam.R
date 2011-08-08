@@ -43,7 +43,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/qPriorTables/"
+.TABLEDIR <- "../TABLES/MinorAreas/"
 
 
 
@@ -162,7 +162,7 @@ guiView	<- function()
 			cat("NB. MCMC file missing.")
 		
 		Bo = quantile(repObj$mcmc$bo, prob=0.5)*1000
-		cutoff[i] = 0.25*Bo
+		cutoff[i] = 0*0.25*Bo
 		SSB = quantile(repObj$mcmc$SSB, prob=0.5)*1000
 		Bt4 = quantile(repObj$mcmc$Age.4, prob=0.5)*1000
 		Btpoor = quantile(repObj$mcmc$Poor, prob=0.5)*1000
@@ -180,10 +180,10 @@ guiView	<- function()
 			else if(bt>eps && bt-hr*bt<=eps)
 				return((bt-eps)/bt)
 		}
-		
-		Ctpoor = fhr(Btpoor, cutoff[i], 0.2)*Btpoor
-		Ctaverage = fhr(Btaverage, cutoff[i], 0.2)*Btaverage
-		Ctgood = fhr(Btgood, cutoff[i], 0.2)*Btgood
+		HR = 0.1
+		Ctpoor = fhr(Btpoor, cutoff[i], HR)*Btpoor
+		Ctaverage = fhr(Btaverage, cutoff[i], HR)*Btaverage
+		Ctgood = fhr(Btgood, cutoff[i], HR)*Btgood
 		
 		tmp1 = c(tmp1, Ctpoor, Ctaverage, Ctgood)
 		tmp1[-1] = prettyNum(round(as.numeric(tmp1[-1]), 0), big.mark=",")

@@ -94,7 +94,7 @@ In the case of WCVI, there is good correspondence between the observed and predi
 
 
 
-\subsubsection{Biomass estimates \& reference points}
+\subsection{Biomass estimates \& reference points}
 
 Maximum likelihood estimates of total biomass (age 2+) and the spawning stock biomass for each of the five major assessment regions in summarized in Figure \ref{PartII:Results:figBiomass}.  Estimates of spawning stock depletion ($B_t/B_0$) for the five major regions is summarized in Figure \ref{PartII:Results:figDepletion} along with estimates of the sustainable fisheries framework reference points.  With the exceptions of CC and WCVI, estimates of spawning stock depletion in 2011 are all currently at or above 40\% of their estimated unfished state. In the  CC and WCVI, spawning stock depletion is estimated to be  25\% and 25\% of their unfished state, respectively (Fig \ref{PartII:Results:figDepletion}).
 
@@ -124,7 +124,7 @@ Estimates of unfished spawning biomass for each region is as follows: HG -- 40,6
 
 
 
-\subsubsection{Estimates of mortality}
+\subsection{Estimates of mortality}
 
 The most recent HCAM assessment model allowed for annual estimates of $M_t$ where natural mortality was modelled as a random walk process.  The same random walk model has been adopted in this \iscam\ implementation; however, a reduced number of parameters (12 nodes instead of 60 annual deviations) was estimated and interpolated using a bicubic spline.  The number of estimated nodes does have minor influences on the various trends in natural mortality; we came to arrive at estimating 12 nodes by ensuring the estimated trends were very similar to trends in $M$ when estimating 60 annual natural mortality rate deviations (NB. the use of formal model selection criterion should be used to determine the optimal number of nodes).
 
@@ -144,7 +144,7 @@ Estimates of fishing mortality rates in each of the regions, between 1951 and 19
 
 
 
-\subsubsection{Selectivity}
+\subsection{Selectivity}
 
 Maximum likelihood estimates of selectivity for the winter seine fishery, seine-roe fishery and the gillnet fishery for each of the five major SARs are shown in Figures \ref{PartII:Results:figWinterSeineSel}, \ref{PartII:Results:figSeineRoeSel}, and \ref{PartII:Results:figGillNetSel}, respectively.  Selectivities for the seine fisheries were assumed time-invariant, and selectivity for the gillnet fishery varies over time due to changes in the mean weight-at-age data.
 
@@ -196,7 +196,7 @@ WCVI	& 	 1.608		&   -0.6647			& 	 0.08677\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Recruitment and stock-recruitment relationships}
+\subsection{Recruitment and stock-recruitment relationships}
 
 Recruitment to each stock is defined as the number of age-2 fish entering the population at the beginning of each year. Age-2 recruitment is estimated as a free parameter within \iscam, subject to the constraint that annual estimates vary around a Beverton-Holt stock recruitment relationship with an estimated standard deviation.  Maximum likelihood estimates of age-2 recruits are shown in Figure \ref{PartII:Results:FigAge2Recruits} along with horizontal lines that demarcate the 0.33 and 0.66 quantiles that was traditionally used to categorize recruitment as poor, average, and good in previous assessments.
 
@@ -274,7 +274,7 @@ No formal  statistical tests were carried out to determine if the samples from t
 \end{sidewaysfigure}
 
 
-\subsubsection{Parameter confounding}
+\subsection{Parameter confounding}
 
 To examine the level of confounding among the estimated parameters, 200 randomly selected points from the joint posterior distribution for the seven leading parameters were plotted against each other in a pairs plot (e.g., Fig. \ref{PartII:MCMC:pairsHG}). Only 200 points were plotted to reduce the file size.   Among the seven leading estimated parameters ($R_0,h,M,\bar{R},\ddot{R}, \rho, \vartheta$) there was very little confounding (Figures \ref{PartII:MCMC:pairsHG} -- \ref{PartII:MCMC:pairsWCVI}).
 
@@ -314,7 +314,7 @@ There is, however, some strong confounding between the estimated parameters and 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Marginal posterior distributions}
+\subsection{Marginal posterior distributions}
 
 Marginal posterior distributions and long with the prior densities for the seven leading parameters are shown in Figure \ref{PartII:MCMC:Marginals}. In all cases, the steepness parameter, followed by the instantaneous natural mortality rate appears to be the most influenced by the prior density. Uniform prior distributions were assumed for the scaling parameters ($R_0, \bar{R}$, and $\ddot{R}$).  There were good posterior updates for the total variance and variance portioning parameters ($\vartheta, \rho$).
 
@@ -338,17 +338,25 @@ Marginal posterior distributions and long with the prior densities for the seven
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Forecast and catch advice based on the joint posterior distribtution} \label{Section:Forecast}
- The catch advice in Tables \ref{TableCatchAdvice} and \ref{TableCatchAdviceqFix} is based on the old cuttoffs.
+
+Catch advice has historically been provided in the form of a decision table based on median values of the joint posterior distribution.  The decision table contains columns specifying the 2011 SSB the age 4+ total biomass, estimates of age-3 recruit biomass for poor, average, and good recruitment, cuttoff levels, and the available harvest under poor, average, and good recruitment scenarios.  Moving towards DFO's sustainable fisheries framework  (SFF) is a necessary next step.
+
+Cuttoff levels for the BC herring stocks is defined as 0.25\bo. The historical cuttoff levels have not been updated for the over 10 years now (1996/1997).  Recent stock assessments for BC herring have assumed $q=1$ for the spawn survey data (the lead author is unaware if the historical estimates of \bo were based on the same $q=1$ assumption).  In this assessment we have relaxed this assumption and as a consequence estimates of herring biomass have increased substantially.  Due to significant changes in population scaling it would not make sense to continue to use the previous cuttoff levels as this may lead to policies that would result in overfishing or under utilization of the resource.  We therefore present catch advice based on both the old cuttoffs and the new cuttoffs in Tables \ref{TableCatchAdviceOldCuttoffs}-\ref{TableCatchAdviceNewCuttoffs} 
+
+% The catch advice in Tables \ref{TableCatchAdviceNewCuttoffs} and \ref{TableCatchAdviceqFix} is based on the old cuttoffs.
+
+\input{../TABLES/qPriorTables/DecisionTableOldCuttoffs}
+\input{../TABLES/qPriorTables/DecisionTableNewCuttoffs}
 
 
-\input{../TABLES/DecisionTableqFix}
+%\input{../TABLES/DecisionTableqFix}
 
-\input{../TABLES/DecisionTableq1}
+%\input{../TABLES/DecisionTableq1}
 
-\input{../TABLES/DecisionTable}
+%\input{../TABLES/DecisionTable}
 
 
 
 %Decision table
-Notes from June Meeting:\\
-Were not completely comfortable with the q estimates, but we believe the approach used to develop the informative prior for q is better than the ad hoc q=1 assumption.  Assuming $q=1$ is more conservative as there is a tendency for $q<1$ when freely estimated with an informative prior.
+%Notes from June Meeting:\\
+%Were not completely comfortable with the q estimates, but we believe the approach used to develop the informative prior for q is better than the ad hoc q=1 assumption.  Assuming $q=1$ is more conservative as there is a tendency for $q<1$ when freely estimated with an informative prior.

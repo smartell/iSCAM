@@ -16,7 +16,7 @@ A Bayesian prior for the herring dive survey spawn index proportionality constan
 The factors that contribute to the spawn index $q$ prior include: the proportion of the total spawn that is surveyed; the amount of egg loss that occurs prior to the spawn survey; bias in the estimate of mean egg density; and drift in spawn survey observations over time. The distributions for each of these factors should reflect uncertainty in their average affect over years, not capture inter-annual variation in them. 
 
 \subsubsection{Proportion of total spawn surveyed}
-The proportion of the total spawn that is surveyed has a natural upper bound of 1, though its central tendency is not known. Reasons for not surveying herring spawns include non-detection (early or late in season or very deep and not observed) or lack of resources to conduct the survey.  For the latter case the spawns will be reported, and this occurrence is rare. The proportion of the total spawn that is not-detected is likely higher in more remote locations and when spawning abundance is low. With limited information, we assume a uniform distribution on 0.9 – 1.0 for the average proportion of total spawn surveyed. 
+The proportion of the total spawn that is surveyed has a natural upper bound of 1, though its central tendency is not known. Reasons for not surveying herring spawns include non-detection (early or late in season or very deep and not observed) or lack of resources to conduct the survey.  For the latter case the spawns will be reported, and this occurrence is rare. The proportion of the total spawn that is not-detected is likely higher in more remote locations and when spawning abundance is low. With limited information, we assume a uniform distribution on 0.9 √ê 1.0 for the average proportion of total spawn surveyed. 
 
 \subsubsection{Egg loss prior to survey}
 
@@ -26,7 +26,7 @@ The herring egg loss literature, recently summarized by \cite[][their Appendix 7
 
 
 
-The second component of the egg loss distribution is the average number of days between the spawn event and the surveys.  Information to inform the distribution of this factor was available in the B.C. herring spawn survey database.  Only “dive” survey records were selected, and numerous error checks imposed to remove erroneous data (Table \ref{AppendixC:Table4}).  For each spawn record, the number of days between the spawn event and subsequent survey was estimated as the difference between the mid-spawn date and the mid-survey date. The mean time between a spawn deposition event and the subsequent survey ranges from 6.4 to 9.2 days across the stock assessment regions (Table \ref{AppendixC:Table6}).  A normal distribution for the average time between egg deposition and surveys is assumed, based on the mean and standard deviation of the mean values for the stock assessment regions (mean=7.7; standard deviation =1.13). 
+The second component of the egg loss distribution is the average number of days between the spawn event and the surveys.  Information to inform the distribution of this factor was available in the B.C. herring spawn survey database.  Only √ídive√ì survey records were selected, and numerous error checks imposed to remove erroneous data (Table \ref{AppendixC:Table4}).  For each spawn record, the number of days between the spawn event and subsequent survey was estimated as the difference between the mid-spawn date and the mid-survey date. The mean time between a spawn deposition event and the subsequent survey ranges from 6.4 to 9.2 days across the stock assessment regions (Table \ref{AppendixC:Table6}).  A normal distribution for the average time between egg deposition and surveys is assumed, based on the mean and standard deviation of the mean values for the stock assessment regions (mean=7.7; standard deviation =1.13). 
 
 
 \subsubsection{Bias in mean egg density}
@@ -35,7 +35,7 @@ The equation predicting egg density from dive survey observations was calculated
 
 \subsubsection{Drift in dive survey observations}
 
-The studies to calibrate field observations of herring spawns to egg density estimates were primarily conducted during the mid 1980s by research divers.  Since then, Fisheries Officers and subsequently research divers have conducted the coast wide herring spawn surveys. While there is considerable effort to ensure standardization of the surveys, it is possible that there has been drift in how observations are made.  There is no direct information on how survey observations may have changed over time, however Hay (in press) suggests that if drift has occurred it’s direction is to observations that result in lower density estimates (i.e. there has been an increase in “trace” observations.)  For now, we do not include this factor in calculating a prior distribution for the spawn survey $q$. 
+The studies to calibrate field observations of herring spawns to egg density estimates were primarily conducted during the mid 1980s by research divers.  Since then, Fisheries Officers and subsequently research divers have conducted the coast wide herring spawn surveys. While there is considerable effort to ensure standardization of the surveys, it is possible that there has been drift in how observations are made.  There is no direct information on how survey observations may have changed over time, however Hay (in press) suggests that if drift has occurred it√ïs direction is to observations that result in lower density estimates (i.e. there has been an increase in √ítrace√ì observations.)  For now, we do not include this factor in calculating a prior distribution for the spawn survey $q$. 
 
 Table \ref{AppendixC:Table1} summarizes the factors affecting the q prior and their assumed distributions.
 
@@ -46,7 +46,7 @@ Table \ref{AppendixC:Table1} summarizes the factors affecting the q prior and th
 \hline
 Factor affecting the $q$ prior &	Distribution & Parameters of distribution\\
 \hline
-Proportion of total spawn surveyed ($p_i$)&Uniform &0.9–-1.0\\
+Proportion of total spawn surveyed ($p_i$)&Uniform &0.9√ê-1.0\\
 %%
 \multicolumn{3}{l}{Egg loss prior to survey:}\\
 \multicolumn{1}{r}{Instantaneous daily egg loss rate ($Z_i$)}& Normal &Mean 0.0642  Std. dev 0.0187\\
@@ -67,7 +67,7 @@ Bias in mean egg density ($b_i$)&	Normal	&Mean 1  Std. dev.  0.2\\
 
 \subsection{Simulating the dive survey spawn index $q$}
 
-Monte-Carlo simulations were conducted, randomly sampling from each factors’ distribution.  The factors will operate independently so covariance structure does not need to be considered. For each of 10,000 replicates (i), a random draw was made for each factor to generate a point in the joint distribution for the $q$ prior ($\tilde{q}_i$): 
+Monte-Carlo simulations were conducted, randomly sampling from each factors√ï distribution.  The factors will operate independently so covariance structure does not need to be considered. For each of 10,000 replicates (i), a random draw was made for each factor to generate a point in the joint distribution for the $q$ prior ($\tilde{q}_i$): 
 \[
 \tilde{q}_i = p_i b_i \exp(-d_i Z_i)
 \]
@@ -113,27 +113,27 @@ Estimated 58\% herring egg loss over 14 day incubation period (Lambert Channel 1
 Included because comprehensive B.C. study. \\
 \hline
 \cite{Haegele1989egg} & \\
-Estimated 19.5\% egg loss from predation based on predator counts and consumption rates (birds and invertebrates).  From egg counts, total egg loss estimated at 68.8\% over a 14 day incubation period (their Table 3 egg loss equations).  Modelled changes in observations of egg layers over the incubation period:  egg layers on sea grasses= 2.17 – 0.07 (day); egg layers on filamentous algae= 3.47 – 0.13 (day).  Equations result in 45\% and 52\% decrease in egg layers over 14 days incubation period, respectively.
+Estimated 19.5\% egg loss from predation based on predator counts and consumption rates (birds and invertebrates).  From egg counts, total egg loss estimated at 68.8\% over a 14 day incubation period (their Table 3 egg loss equations).  Modelled changes in observations of egg layers over the incubation period:  egg layers on sea grasses= 2.17 √ê 0.07 (day); egg layers on filamentous algae= 3.47 √ê 0.13 (day).  Equations result in 45\% and 52\% decrease in egg layers over 14 days incubation period, respectively.
 &
 Included because comprehensive B.C. study. \\
 \hline
 \cite{outram1958magnitude}  & \\
-Seabird predator exclusion study, West coast Vancouver Island (1951 – 1953).  Overall, estimated 39\% egg loss due to seabirds over the incubation period. Total egg loss over incubation period ranged from 56\% to 99\% (based on change in egg biomass for the control plots). Study was restricted to eelgrass beds.
+Seabird predator exclusion study, West coast Vancouver Island (1951 √ê 1953).  Overall, estimated 39\% egg loss due to seabirds over the incubation period. Total egg loss over incubation period ranged from 56\% to 99\% (based on change in egg biomass for the control plots). Study was restricted to eelgrass beds.
 &
 Not included because study restricted to eel grass beds\\
 \hline
 \cite{palsson1984egg}  & \\
-Estimated daily egg loss rates from 16.9\% to 51.8\% (positively correlated with egg density just after spawning).  Large predators account for 20\% to 50\% of daily egg loss.  Initial egg densities were very low, ranging from 400 to 80,000 eggs/m2 across 9 study sites.  Paulson’s thesis cites additional egg loss literature that is not included here because the studies generally focussed on a limited range of habitat types.
+Estimated daily egg loss rates from 16.9\% to 51.8\% (positively correlated with egg density just after spawning).  Large predators account for 20\% to 50\% of daily egg loss.  Initial egg densities were very low, ranging from 400 to 80,000 eggs/m2 across 9 study sites.  Paulson√ïs thesis cites additional egg loss literature that is not included here because the studies generally focussed on a limited range of habitat types.
 &
 Not included because study egg densities were much lower than densities generally seen in B.C. spawns.\\
 \hline
 \cite{rooper1999habitat}& \\
 Surveys conducted 1991, 1992, 1994 and 1995.  Depth is factor that best accounts for egg loss rates (higher egg loss in shallower waters).  Mean daily egg loss rates (Z) were (their Table 2):
 \begin{itemize}
-\item 1990 – 0.076
-\item 1991 – 0.042
-\item 1994 – 0.096
-\item 1995 – 0.096 
+\item 1990 √ê 0.076
+\item 1991 √ê 0.042
+\item 1994 √ê 0.096
+\item 1995 √ê 0.096 
 \end{itemize}
 Note that population was much lower in 1994 and 1995.
 &
@@ -168,7 +168,7 @@ Rooper et al. (1999)&	PWS	&1992	&0.042\\
 \end{table}%
 
 \begin{table}[htdp]
-\caption{default}
+\caption{Criteria for selecting herring spawn survey data records for estimating days between spawning and surveys. The "number of records" is the records retained after each successive selection criterion. }
 \begin{center}
 \begin{tabular}{lc}
 \hline
@@ -177,7 +177,7 @@ Selection criterion	 &Number of Records\\
 Total dive survey records (1985-2010)	&3457\\ \hline
 Spawn and survey start/end dates completed &	3188\\ \hline
 End spawn date $\leq$ start spawn date &\\
-End spawn date – start spawn date $<$ 20 &\\
+End spawn date √ê start spawn date $<$ 20 &\\
 Survey days $\leq$ 14	3130 &  3130\\ \hline
 End spawn date-end survey date$\leq$ 2 &\\
 End survey date- end spawn date $<$ 20&	3074\\
@@ -229,4 +229,5 @@ Mean&7.8&8.7&8.3&6.8&9.2&6.6&6.4\\
 \label{AppendixC:Table6}
 \end{table}%
 
+\clearpage
 

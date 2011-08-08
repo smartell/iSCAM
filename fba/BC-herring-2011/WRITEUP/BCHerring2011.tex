@@ -231,16 +231,17 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 \include{./PART2/PART_II}
 
 
-
-
-%% SECTION Methods
-%\input{Methods}
-
-%% SECTION Results
-%\input{Results}
+\section{Acknowledgements}
+{
+	The authors would like to thank Charles Fort and Kristen Daniel for their continued efforts in error checking, reviewing and updating the catch, spawn survey and biological sampling databases.  We would also like to acknowledge Howard Stiff for providing programming support for the MS Access database used to summarize the assessment data time series.
 	
-%%\section{Discussion}
+Funding for the test fishing and spawn survey programs was provided by DFO through Larocque relief funds through a contract to the HCRS.  The herring industry provided additional biological samples for the SOG and PRD stock areas through a modified roe testing program.
 	
+	
+	We also extend our thanks to Jim Ianelli for ideas and help with the cubic splines for selectivity and time varying natural mortality rates.  Also, our huge appreciation to the members of the ADMB Foundation for continued development and support of AD Model Builder.
+}
+
+
   %% -References
 \clearpage
 %input "Refs.bib"
@@ -274,9 +275,12 @@ Summary:  Three major themes of the paper: 1) a comparing HCAM and iSCAM (where 
 \setcounter{figure}{0}
 \input{./APPENDIX_C/AppendixC}
 
-%% Relocate the stuff below, used during development.
-\input{../Tables/CatchTable}
-\input{../Tables/SurveyTable}
+%% Appendix D
+\addtocounter{chapter}{1}
+\renewcommand{\thetable}{D-\arabic{table}}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+\input{./APPENDIX_D/AppendixD}
 
 
 %\input{../Tables/RefPointsTableq1}

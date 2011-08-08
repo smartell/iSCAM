@@ -14,7 +14,7 @@ default:
 all: mcmc mceval
 
 mcmc: 
-	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox
+	./iscam -ind $(datf) -mcmc $(niter) -mcsave $(nsave) -nosdmcmc -nox -mcmult 2.0
 	./iscam -ind $(datf) -mceval
 
 

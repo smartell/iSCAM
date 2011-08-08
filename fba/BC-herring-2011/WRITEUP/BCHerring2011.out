@@ -13,21 +13,32 @@
 \BOOKMARK [2][-]{subsection.1.3.2}{Comparison of HCAM with \040iSCAM}{section.1.3}
 \BOOKMARK [2][-]{subsection.1.3.3}{Alternative assumptions about catchability, mortality \046 selectivity}{section.1.3}
 \BOOKMARK [2][-]{subsection.1.3.4}{Preliminary assessments for all other areas}{section.1.3}
-\BOOKMARK [1][-]{section.1.4}{Discussion}{section.1.1}
 \BOOKMARK [-1][-]{part.2}{II Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks: 2011 Assessment and 2012 Forecasts}{}
-\BOOKMARK [0][-]{section.2.5}{Introduction}{part.2}
-\BOOKMARK [1][-]{section.2.6}{BC Herring Stocks}{section.2.5}
-\BOOKMARK [1][-]{section.2.7}{Methods}{section.2.5}
-\BOOKMARK [2][-]{subsection.2.7.1}{Input data \046 assumptions}{section.2.7}
-\BOOKMARK [2][-]{subsection.2.7.2}{Analytical methods}{section.2.7}
-\BOOKMARK [2][-]{subsection.2.7.3}{Retrospective analysis}{section.2.7}
-\BOOKMARK [2][-]{subsection.2.7.4}{Abundance and recruitment forecasts}{section.2.7}
-\BOOKMARK [1][-]{section.2.8}{Results}{section.2.5}
-\BOOKMARK [2][-]{subsection.2.8.1}{Maximum likelihood fits to the data}{section.2.8}
-\BOOKMARK [2][-]{subsection.2.8.2}{Marginal posterior distributions}{section.2.8}
-\BOOKMARK [2][-]{subsection.2.8.3}{Forecast and catch advice based on the joint posterior distribtution}{section.2.8}
-\BOOKMARK [1][-]{section.2.9}{Discussion}{section.2.5}
-\BOOKMARK [1][-]{section.2.9}{References}{section.2.5}
+\BOOKMARK [0][-]{section.2.4}{Introduction}{part.2}
+\BOOKMARK [1][-]{section.2.5}{BC Herring Stocks}{section.2.4}
+\BOOKMARK [1][-]{section.2.6}{Methods}{section.2.4}
+\BOOKMARK [2][-]{subsection.2.6.1}{Input data \046 assumptions}{section.2.6}
+\BOOKMARK [2][-]{subsection.2.6.2}{Analytical methods}{section.2.6}
+\BOOKMARK [2][-]{subsection.2.6.3}{Retrospective analysis}{section.2.6}
+\BOOKMARK [2][-]{subsection.2.6.4}{Abundance and recruitment forecasts}{section.2.6}
+\BOOKMARK [2][-]{subsection.2.6.5}{Catch advice}{section.2.6}
+\BOOKMARK [1][-]{section.2.7}{Results}{section.2.4}
+\BOOKMARK [2][-]{subsection.2.7.1}{Maximum likelihood fits to the data}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.2}{Biomass estimates \046 reference points}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.3}{Estimates of mortality}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.4}{Selectivity}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.5}{Recruitment and stock-recruitment relationships}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.6}{Marginal posterior distributions}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.7}{Parameter confounding}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.8}{Marginal posterior distributions}{section.2.7}
+\BOOKMARK [2][-]{subsection.2.7.9}{Forecast and catch advice based on the joint posterior distribtution}{section.2.7}
+\BOOKMARK [1][-]{section.2.8}{Stock assessments for minor stock areas}{section.2.4}
+\BOOKMARK [2][-]{subsection.2.8.1}{Maximum likelihood estimates of biomass}{section.2.8}
+\BOOKMARK [2][-]{subsection.2.8.2}{Estimates of recruitment and reference points}{section.2.8}
+\BOOKMARK [2][-]{subsection.2.8.3}{Marginal posterior distributions and trace plots}{section.2.8}
+\BOOKMARK [2][-]{subsection.2.8.4}{Catch advice}{section.2.8}
+\BOOKMARK [1][-]{section.2.9}{Acknowledgements}{section.2.4}
+\BOOKMARK [1][-]{section.2.9}{References}{section.2.4}
 \BOOKMARK [-1][-]{part.3}{III Appendixes}{}
 \BOOKMARK [0][-]{section.A.1}{Technical description of \040iSCAM}{part.3}
 \BOOKMARK [1][-]{subsection.A.1.1}{Analytic methods}{section.A.1}
@@ -58,3 +69,4 @@
 \BOOKMARK [2][-]{subsection.C.3.1}{The process}{section.C.3}
 \BOOKMARK [2][-]{subsection.C.3.2}{Factors affecting q and their distributions}{section.C.3}
 \BOOKMARK [2][-]{subsection.C.3.3}{Simulating the dive survey spawn index q}{section.C.3}
+\BOOKMARK [1][-]{section.D.4}{Landings and Survey data}{section.A.1}
