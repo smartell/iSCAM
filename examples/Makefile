@@ -3,21 +3,20 @@
 ## targets:
 
 ## Macros
-subdirs = Hake PacificHake
-makeopt = default
+SUBDIR = Hake PacificHake
+TARGET = 
 
-.PHONY: default $(subdirs)
+.PHONY: default $(SUBDIR) mcmc
 
 ## Targets
-default: $(subdirs)
-$(subdirs):
-	@echo $@
-	cd $@ && $(MAKE) all
+default: $(SUBDIR)
+$(SUBDIR):
+	cd $@ && $(MAKE) $(TARGET)
 
 
 
 .PHONY: clean
-clean_files := $(foreach dir,$(subdirs),$(dir)/clean)
+clean_files := $(foreach dir,$(SUBDIR),$(dir)/clean)
 
 clean: $(clean_files)
 $(clean_files):
