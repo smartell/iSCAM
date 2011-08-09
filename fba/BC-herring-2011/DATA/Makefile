@@ -3,32 +3,21 @@
 ## targets:
 
 ## Macros
-SUBDIRS = CC PRD QCI SOG WCVI AREA27 AREA2W
-EXECUTABLE = ../../../dist/release/iscam
+SUBDIR = CC PRD QCI SOG WCVI AREA27 AREA2W
+TARGET = 
 
-.PHONY: default $(SUBDIRS)
+.PHONY: default $(SUBDIR) mcmc
 
 ## Targets
-default: $(SUBDIRS)
-
-$(SUBDIRS):
-	@echo $@
-	$(MAKE) mcmc -C $@
+default: $(SUBDIR)
+$(SUBDIR):
+	cd $@ && $(MAKE) $(TARGET)
 
 
-dist: $(EXECUTABLE)
-	cp $(EXECUTABLE) ./CC/
-	cp $(EXECUTABLE) ./PRD/
-	cp $(EXECUTABLE) ./QCI/
-	cp $(EXECUTABLE) ./SOG/
-	cp $(EXECUTABLE) ./WCVI/
-	cp $(EXECUTABLE) ./AREA27/
-	cp $(EXECUTABLE) ./AREA2W/
 
 .PHONY: clean
-clean_files := $(foreach dir,$(SUBDIRS),$(dir)/clean)
+clean_files := $(foreach dir,$(SUBDIR),$(dir)/clean)
 
 clean: $(clean_files)
 $(clean_files):
 	cd $(@D) && $(MAKE) clean
-

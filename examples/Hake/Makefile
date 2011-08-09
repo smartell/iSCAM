@@ -10,6 +10,8 @@ ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
 
+
+
 ifdef DEBUG
   DIST=../../dist/debug/iscam
 else
@@ -33,9 +35,11 @@ mcmc: $(EXEC) $(EXEC).psv
 $(EXEC).psv:
 	./$(EXEC) $(DAT) $(MCFLAG) $(ARG)
 
-retro: $(EXEC) $(EXEC).ret1
+#retro: $(EXEC) $(EXEC).ret$(NR)
+retro: $(EXEC) $(robjects)
+	echo $(RETROBJS)
 
-$(EXEC).ret1:
+$(EXEC).ret$(NR):
 	@echo $(RUNRETRO) | R --vanilla --slave
 
 RUNRETRO = 'args = paste("-retro",1:$(NR)); \

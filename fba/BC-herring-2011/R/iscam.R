@@ -403,6 +403,7 @@ guiView	<- function()
 		#repObj	<- read.rep(hdr$Report.File[i])
 		repObj	<- read.admb(hdr$Control.File[i])
 		repObj$stock = hdr$Stock[i]
+		repObj$Control.File = hdr$Control.File[i]
 		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
 		if(file.exists(mcfile))
 			repObj$mcmc = read.table( mcfile, header=TRUE )
@@ -504,6 +505,12 @@ guiView	<- function()
 			.plotStockRecruit( repObj )
 		}
 	
+		if ( plotType=="retrospective" )
+		{
+			#plot spawning biomass retrospective
+			.plotSBretrospective( repObj )
+		}
+	
 		if ( plotType=="parameters" )
 		{
 			#admbObj = read.admb( "iscam" )
@@ -586,6 +593,34 @@ guiView	<- function()
 		setWinVal(c(figFileName=plotType))
 		.saveGraphic()
 	}
+}
+
+.plotSBretrospective <- function( repObj )
+{
+	plot.sb <- function(fn, ...)
+	{
+		if(file.exists(fn))
+		{
+			Obj = read.rep(fn)
+			lines(Obj$yr, Obj$sbt[1:length(Obj$yr)],...)
+		}
+	}
+	
+	with(repObj, {
+		plot( yr, sbt[1:length(yr)], type="l"
+			, ylim=c(0,1.2*max(sbt)), lwd=2
+			, xlab="Year", ylab="Spawnig biomass (1000 t)", 
+			main=stock )
+	
+		fn = paste(Control.File,".ret",1:30, sep="")
+		ix=0
+		for(ifn in fn) 
+		{
+			ix = ix +1
+			plot.sb(ifn, col=ix)
+		}
+			
+	})
 }
 
 .plotSimulationSummary	<- function( admbObj )
