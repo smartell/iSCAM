@@ -5,7 +5,7 @@
 ##		mcmc:  -copy executable and run in mcmc mode and mceval
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
-prefix=../../../../dist
+prefix=../../dist
 DAT=-ind Hake.dat
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
