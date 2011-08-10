@@ -5,17 +5,16 @@
 ##		mcmc:  -copy executable and run in mcmc mode and mceval
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
+prefix=../../../../dist
 DAT=-ind Hake.dat
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
 
-
-
 ifdef DEBUG
-  DIST=../../dist/debug/iscam
+  DIST=$(prefix)/debug/iscam
 else
-  DIST=../../dist/release/iscam
+  DIST=$(prefix)/release/iscam
 endif
 
 all: $(EXEC) $(EXEC).rep
@@ -35,14 +34,12 @@ mcmc: $(EXEC) $(EXEC).psv
 $(EXEC).psv:
 	./$(EXEC) $(DAT) $(MCFLAG) $(ARG)
 
-#retro: $(EXEC) $(EXEC).ret$(NR)
-retro: $(EXEC) $(robjects)
-	echo $(RETROBJS)
+retro: $(EXEC) $(EXEC).ret1
 
-$(EXEC).ret$(NR):
+$(EXEC).ret1:
 	@echo $(RUNRETRO) | R --vanilla --slave
 
-RUNRETRO = 'args = paste("-retro",1:$(NR)); \
+RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
             sapply(args,\
             function(a){ cmd=paste("./$(EXEC)","$(DAT)",a);\
                         system(cmd)})'

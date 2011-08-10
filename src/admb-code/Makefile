@@ -1,22 +1,20 @@
-#Make file for building iSCAM
+## Make file for building iSCAM
+## Author: Steven Martell
 
 .PHONY: default opt clean
 
 ifndef DISK
-  DISK=../../dist
+  DISK=../../dist/
 endif
 
 default:
-	mkdir -p ${DISK}/safe
-	admb -s iscam
-	cp iscam ${DISK}/safe
+	admb -s -g iscam
+	cp iscam ${DISK}/debug
 
 opt:
-	mkdir -p ${DISK}/opt
 	admb iscam
-	cp iscam ${DISK}/opt
+	cp iscam ${DISK}/release
 
 clean:
-	@rm -rvf ${DISK}/safe
-	@rm -rvf ${DISK}/opt
-	@rm -rvf ${DISK}
+	@rm -rvf ${DISK}/debug
+	@rm -rvf ${DISK}/release
