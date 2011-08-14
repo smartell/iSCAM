@@ -46,10 +46,10 @@ Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM a
 \begin{tabular}{lll}
 \hline
 Parameter & \iscam\ & HCAM \\ \hline
-Unfished spawning biomass ($B_o$ 1000 t) & 114.492 & 190.817\\
-Steepness ($h$) & 0.786  &  0.683\\
-Average natural mortality rate & 0.535 &  0.334\\
-Survey $q$ for period 1 & 1.101  & 1.1105\\
+Unfished spawning biomass ($B_o$ 1000 t) & 108.492 & 190.817\\
+Steepness ($h$) & 0.811  &  0.683\\
+Average natural mortality rate & 0.563 &  0.334\\
+Survey $q$ for period 1 & 0.985  & 1.1105\\
 \hline
 \end{tabular}
 \end{center}
@@ -115,10 +115,10 @@ The following table presents a few summary statistics in the following section f
 \hline
 Model & No. & $f$ & $B_o$& $h$ & $\bar{M}$ & \bmsy & $q_1$ & $q_2$\\
 \hline
-Fixed $q$ & 279 & -1165.77 & 114.93 & 0.786 & 0.53 & 23.114 & 1.101 & 1.0\\ 
-Prior $q$ & 279 & -1161.49 & 116.98 & 0.766 & 0.58 & 24.370 & 0.988 & 0.878\\
-Fixed $M$ & 219 & -1051.92 & 126.59 & 0.706 & 0.68 & 28.510 & 0.681 & 0.795\\
-Gill net Selectivity & 279 & -1196.06 & 121.65 & 0.76 & 0.655 & 25.27 & 0.817 & 0.795\\ 
+Fixed $q$ & 279 & -1166.62 & 108.49 & 0.812 & 0.56 & 20.962 & 0.985 & 1.0\\ 
+Prior $q$ & 279 & -1161.83 & 110.57 & 0.798 & 0.59 & 21.964 &     0.912  &  0.912\\
+Fixed $M$ & 219 & -1055.48 & 128.06 & 0.687 & 0.67 & 25.727 & 0.688 & 0.796\\
+Gill net Selectivity & 279 & -1196.06 & 121.65 & 0.76 & 0.655 & 25.27 & 0.817 & 0.683\\ 
 \hline
 \end{tabular}
 \end{center}
@@ -131,7 +131,7 @@ The implication of relaxing the informative prior on $q$ for the contemporary sp
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/iscam_fig_HCAM_qFix_qPrior.pdf}\\
-	\caption{A comparison of the estimated biomass and spawning biomass and fits to the survey data when q is either fixed at 1 for Survey 2, or  estimated using an informative prior with an expected mean of 0 and a log standard deviation of 0.274.}\label{fig:qFix_qPrior}
+	\caption{A comparison of the estimated biomass and spawning biomass and fits to the survey data when q is either fixed at 1 for Survey 2 (panels a, b), or  estimated using an informative prior with an expected mean of 0 and a log standard deviation of 0.274 (panels c and d).}\label{fig:qFix_qPrior}
 \end{figure}
 
 The net result of relaxing this prior on $q$ is a slight increase in the global scaling (the spawn biomass increases by roughly 12\%) in comparison to the fixed $q=1$ scenario.  There is no appreciable difference in the overall fits to the data (see objective function value in Table \ref{Table:HCAM_stats}.

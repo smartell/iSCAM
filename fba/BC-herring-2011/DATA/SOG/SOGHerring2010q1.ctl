@@ -36,7 +36,7 @@
 ## isel_type
     1        1          7       6       6
 ## Age at 50% selectivity (logistic)
-    1.5      2.0        0.6     2.055   2.055
+    1.5      2.0        2.6     2.055   2.055
 ## STD at 50% selectivity (logistic)
     0.25      0.25      0.15    0.05    0.05
 ## No. of age nodes for each gear (0 to ignore).
