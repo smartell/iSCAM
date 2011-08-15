@@ -27,7 +27,7 @@
 
 
 \usepackage{graphicx}
-\usepackage{pdfsync}	 % Check out Skim for previws of pdfs
+\usepackage[round]{natbib}
 %\usepackage{bm}         % For typesetting bold math (not \mathbold)
 \logo{\includegraphics[height=0.6cm]{iScamLogo.pdf}}
 %
@@ -46,6 +46,7 @@ University of British Columbia \\
 % Alternatively, you can specify a date.
 %
 \begin{document}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
 %
 \begin{frame}
 \titlepage
@@ -53,6 +54,12 @@ University of British Columbia \\
 %
 
 \include{./Part1/Part_1}
+\begin{frame}[t]\frametitle{Bibliography}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+	\bibliographystyle{apalike}
+	\bibliography{$HOME/Documents/ARTICLES/Articles-1}	
+\end{frame}
+%
 
 
 % End of slides

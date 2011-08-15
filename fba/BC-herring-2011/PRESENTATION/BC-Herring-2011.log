@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  13 AUG 2011 20:18
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=pdflatex 2008.12.28)  14 AUG 2011 09:48
 entering extended mode
  file:line:error style messages enabled.
  %&-line parsing enabled.
@@ -634,8 +634,12 @@ Package: beamerinnerthemedefault 2007/01/28  (rcs-revision 1.20)
 emedefault.sty
 Package: beamerouterthemedefault 2007/01/28  (rcs-revision 1.14)
 )))
-(/usr/local/texlive/2008/texmf-dist/tex/latex/pdfsync/pdfsync.sty
-Package: pdfsync 2008/01/26 v1.1
+(/usr/local/texlive/2008/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2009/02/02 8.3 (PWD, AO)
+\bibhang=\skip55
+\bibsep=\skip56
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count150
 )
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
@@ -661,15 +665,15 @@ LaTeX Font Info:    ... okay on input line 48.
 
 (/usr/local/texlive/2008/texmf-dist/tex/context/base/supp-pdf.tex
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count150
+\scratchcounter=\count151
 \scratchdimen=\dimen178
 \scratchbox=\box52
-\nofMPsegments=\count151
-\nofMParguments=\count152
+\nofMPsegments=\count152
+\nofMParguments=\count153
 \everyMPshowfont=\toks38
-\MPscratchCnt=\count153
+\MPscratchCnt=\count154
 \MPscratchDim=\dimen179
-\MPnumerator=\count154
+\MPnumerator=\count155
 \everyMPtoPDFconversion=\toks39
 )
 *geometry auto-detecting driver*
@@ -720,7 +724,7 @@ Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 (/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/refcount.sty
 Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
-\c@section@level=\count155
+\c@section@level=\count156
 )
 LaTeX Info: Redefining \ref on input line 48.
 LaTeX Info: Redefining \pageref on input line 48.
@@ -776,26 +780,12 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 (/usr/local/texlive/2008/texmf-dist/tex/latex/translator/translator-theorem-dic
 tionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
-)
-Configuring pdfsync
-\PDFSYNC@ut=\write5
-\openout5 = `BC-Herring-2011.pdfsync'.
-
-\PDFSYNCf@li@=\count156
-\PDFSYNC@rder=\count157
-**** pdfsync.sty: Synchronizing at \everypar
-\PDFSYNCeveryp@r=\toks40
-**** pdfsync.sty: Synchronizing at \everymath
-\PDFSYNCeverym@th=\toks41
-**** pdfsync.sty: Synchronizing at \everyhbox
-\PDFSYNCeveryhb@x=\toks42
-**** pdfsync.sty: started
- (./BC-Herring-2011.nav)
+) (./BC-Herring-2011.nav)
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 52.
+(Font)              size <5> substituted on input line 53.
 
-<iScamLogo.pdf, id=17, 433.62pt x 216.81pt>
+<iScamLogo.pdf, id=29, 433.62pt x 216.81pt>
 File: iScamLogo.pdf Graphic file (type pdf)
  <use iScamLogo.pdf> [1
 
@@ -825,7 +815,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
  <use iScamLogo.pdf> [3
 
 ]
-<SSF.pdf, id=59, 648.4225pt x 544.0325pt>
+<SSF.pdf, id=71, 648.4225pt x 544.0325pt>
 File: SSF.pdf Graphic file (type pdf)
  <use SSF.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -836,15 +826,39 @@ File: iScamLogo.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
  <use iScamLogo.pdf> [5
 
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+ <use iScamLogo.pdf> [6
+
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+
+<use iScamLogo.pdf> [7
+
+
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+ <use iScamLogo.pdf> [8
+
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+ <use iScamLogo.pdf> [9
+
 ])
-\tf@nav=\write6
-\openout6 = `BC-Herring-2011.nav'.
+(./BC-Herring-2011.bbl)
+File: iScamLogo.pdf Graphic file (type pdf)
+ <use iScamLogo.pdf> [10
 
-\tf@toc=\write7
-\openout7 = `BC-Herring-2011.toc'.
 
-\tf@snm=\write8
-\openout8 = `BC-Herring-2011.snm'.
+]
+\tf@nav=\write5
+\openout5 = `BC-Herring-2011.nav'.
+
+\tf@toc=\write6
+\openout6 = `BC-Herring-2011.toc'.
+
+\tf@snm=\write7
+\openout7 = `BC-Herring-2011.snm'.
 
  (./BC-Herring-2011.aux
 (./Part1/Part_1.aux))
@@ -854,23 +868,24 @@ LaTeX Font Warning: Size substitutions with differences
 
  ) 
 Here is how much of TeX's memory you used:
- 12605 strings out of 493876
- 225729 string characters out of 1150567
- 300963 words of memory out of 3000000
- 15527 multiletter control sequences out of 10000+50000
- 14242 words of font info for 53 fonts, out of 3000000 for 5000
+ 12935 strings out of 493876
+ 229582 string characters out of 1150567
+ 306288 words of memory out of 3000000
+ 15838 multiletter control sequences out of 10000+50000
+ 15848 words of font info for 59 fonts, out of 3000000 for 5000
  714 hyphenation exceptions out of 8191
- 43i,32n,51p,341b,682s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmss10.pfb></usr/l
-ocal/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmss12.pfb></usr/local/texl
-ive/2008/texmf-dist/fonts/type1/bluesky/cm/cmss8.pfb></usr/local/texlive/2008/t
-exmf-dist/fonts/type1/bluesky/cm/cmss9.pfb></usr/local/texlive/2008/texmf-dist/
-fonts/type1/bluesky/cm/cmssi10.pfb></usr/local/texlive/2008/texmf-dist/fonts/ty
-pe1/bluesky/cm/cmssi8.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/blues
-ky/ams/msam7.pfb>
-Output written on BC-Herring-2011.pdf (5 pages, 137078 bytes).
+ 43i,14n,51p,341b,576s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmmi10.pfb></usr/l
+ocal/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmss10.pfb></usr/local/texl
+ive/2008/texmf-dist/fonts/type1/bluesky/cm/cmss12.pfb></usr/local/texlive/2008/
+texmf-dist/fonts/type1/bluesky/cm/cmss8.pfb></usr/local/texlive/2008/texmf-dist
+/fonts/type1/bluesky/cm/cmss9.pfb></usr/local/texlive/2008/texmf-dist/fonts/typ
+e1/bluesky/cm/cmssi10.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/blues
+ky/cm/cmssi8.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/ams/ms
+am7.pfb>
+Output written on BC-Herring-2011.pdf (10 pages, 151338 bytes).
 PDF statistics:
- 110 PDF objects out of 1000 (max. 8388607)
- 14 named destinations out of 1000 (max. 131072)
- 63 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 157 PDF objects out of 1000 (max. 8388607)
+ 29 named destinations out of 1000 (max. 131072)
+ 87 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -436,7 +436,10 @@ guiView	<- function()
 	
 		if ( plotType=="biomass" )
 	    {
-	    	.plotBiomass( repObj, annotate=TRUE )
+			AA=read.table("../MISC/HCAM_SSB.txt",header=T)
+			repObj$H.sbt=AA[,i]
+			.plotSpawnBiomass( repObj, annotate=TRUE )
+	    	#.plotBiomass( repObj, annotate=TRUE )
 	    }
 	
 		if ( plotType=="depletion" )
@@ -1381,6 +1384,39 @@ guiView	<- function()
 		}
 	})	
 }
+
+.plotSpawnBiomass	<- function( repObj, annotate=FALSE )
+{
+	#plot total biomass & spawning biomass 
+	with(repObj, {
+		xx=yr
+		yy=cbind( sbt[1:length(xx)], H.sbt[1:length(xx)] )
+		
+		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
+		
+		matplot(xx, yy, type="n",axes=FALSE,
+				xlab="Year", ylab="Spawn Biomass (1000 t)",main=paste(stock), 
+				ylim=yrange)
+		
+		matlines(xx,yy, lty=c(1, 4), 
+			type="l", col=c(1, 4),
+			ylim=c(0,max(yy,na.rm=T)))
+		axis( side=1 )
+		axis( side=2, las=.VIEWLAS )
+		grid()
+		box()
+		
+		if ( annotate )
+		{
+			mfg <- par( "mfg" )
+			if ( mfg[1]==1 && mfg[2]==1 )
+			legend( "top",legend=c( "iSCAM","HCAM"),
+				bty='n',lty=c(1,4),lwd=c(1,1),
+				pch=c(-1,-1),ncol=2, col=c(1, 4) )
+		}
+	})	
+}
+
 
 .plotSurveyfit	<- function( repObj, annotate=FALSE)
 {

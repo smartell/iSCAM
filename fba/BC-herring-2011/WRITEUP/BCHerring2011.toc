@@ -28,84 +28,84 @@
 \contentsline {subsubsection}{Implications of variable selectivity in directed fisheries}{16}{section*.24}
 \contentsline {subsection}{\numberline {1.3.4}Preliminary assessments for all other areas}{16}{subsection.1.3.4}
 \contentsline {section}{\numberline {1.4}Discussion}{18}{section.1.4}
-\contentsline {part}{II\hspace {1em}Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks: 2011 Assessment and 2012 Forecasts}{19}{part.2}
-\contentsline {section}{\numberline {2.5}Introduction}{20}{section.2.5}
-\contentsline {section}{\numberline {2.6}BC Herring Stocks}{20}{section.2.6}
-\contentsline {section}{\numberline {2.7}Methods}{20}{section.2.7}
-\contentsline {subsection}{\numberline {2.7.1}Input data \& assumptions}{20}{subsection.2.7.1}
-\contentsline {subsubsection}{Catch data}{20}{section*.27}
-\contentsline {subsubsection}{Relative abundance data}{21}{section*.29}
-\contentsline {subsubsection}{Biological samples}{22}{section*.34}
-\contentsline {subsubsection}{Age composition data}{22}{section*.35}
-\contentsline {subsubsection}{Mean weight-at-age data}{22}{section*.41}
-\contentsline {subsection}{\numberline {2.7.2}Analytical methods}{33}{subsection.2.7.2}
-\contentsline {subsection}{\numberline {2.7.3}Retrospective analysis}{33}{subsection.2.7.3}
-\contentsline {subsection}{\numberline {2.7.4}Abundance and recruitment forecasts}{33}{subsection.2.7.4}
-\contentsline {subsection}{\numberline {2.7.5}Catch advice}{33}{subsection.2.7.5}
-\contentsline {section}{\numberline {2.8}Results}{33}{section.2.8}
-\contentsline {subsection}{\numberline {2.8.1}Maximum likelihood fits to the data}{34}{subsection.2.8.1}
-\contentsline {subsubsection}{Catch residuals}{34}{section*.43}
-\contentsline {subsubsection}{Fits to the spawn survey data}{35}{section*.45}
-\contentsline {subsubsection}{Age composition residuals}{36}{section*.48}
-\contentsline {subsection}{\numberline {2.8.2}Biomass estimates \& reference points}{37}{subsection.2.8.2}
-\contentsline {subsection}{\numberline {2.8.3}Estimates of mortality}{43}{subsection.2.8.3}
-\contentsline {subsection}{\numberline {2.8.4}Selectivity}{47}{subsection.2.8.4}
-\contentsline {subsection}{\numberline {2.8.5}Recruitment and stock-recruitment relationships}{49}{subsection.2.8.5}
-\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{50}{subsection.2.8.6}
-\contentsline {subsection}{\numberline {2.8.7}Marginal posterior distributions}{50}{subsection.2.8.7}
-\contentsline {subsubsection}{Diagnostic trace plots}{55}{section*.66}
-\contentsline {subsection}{\numberline {2.8.8}Parameter confounding}{55}{subsection.2.8.8}
-\contentsline {subsection}{\numberline {2.8.9}Marginal posterior distributions}{55}{subsection.2.8.9}
-\contentsline {subsection}{\numberline {2.8.10}Forecast and catch advice based on the joint posterior distribtution}{55}{subsection.2.8.10}
-\contentsline {section}{\numberline {2.9}Stock assessments for minor stock areas}{55}{section.2.9}
-\contentsline {subsection}{\numberline {2.9.1}Maximum likelihood estimates of biomass}{67}{subsection.2.9.1}
-\contentsline {subsection}{\numberline {2.9.2}Estimates of recruitment and reference points}{67}{subsection.2.9.2}
-\contentsline {subsection}{\numberline {2.9.3}Retrospective analysis}{70}{subsection.2.9.3}
-\contentsline {subsection}{\numberline {2.9.4}Marginal posterior distributions and trace plots}{70}{subsection.2.9.4}
-\contentsline {subsection}{\numberline {2.9.5}Catch advice}{70}{subsection.2.9.5}
-\contentsline {section}{\numberline {2.10}Acknowledgements}{75}{section.2.10}
-\contentsline {section}{References}{76}{section.2.10}
-\contentsline {part}{III\hspace {1em}Appendixes}{78}{part.3}
-\contentsline {section}{\numberline {A.1}Technical description of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{79}{section.A.1}
-\contentsline {subsection}{\numberline {A.1.1}Analytic methods}{79}{subsection.A.1.1}
-\contentsline {subsection}{\numberline {A.1.2}Equilibrium considerations}{79}{subsection.A.1.2}
-\contentsline {subsection}{\numberline {A.1.3}MSY based reference points}{79}{subsection.A.1.3}
-\contentsline {subsection}{\numberline {A.1.4}Dynamic age-structured model}{82}{subsection.A.1.4}
-\contentsline {subsection}{\numberline {A.1.5}Options for selectivity}{85}{subsection.A.1.5}
-\contentsline {paragraph}{Logistic selectivity}{85}{section*.95}
-\contentsline {paragraph}{Age-specific selectivity coefficients}{85}{section*.96}
-\contentsline {paragraph}{Cubic spline interpolation}{85}{section*.97}
-\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{86}{section*.99}
-\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{86}{section*.100}
-\contentsline {paragraph}{Selectivity as a logistic function of weight-at-age}{86}{section*.102}
-\contentsline {paragraph}{Using weight as a covariate}{86}{section*.103}
-\contentsline {subsection}{\numberline {A.1.6}Options for natural mortality}{87}{subsection.A.1.6}
-\contentsline {subsection}{\numberline {A.1.7}Residuals, likelihoods \& objective function value components}{87}{subsection.A.1.7}
-\contentsline {subsection}{\numberline {A.1.8}Catch data}{88}{subsection.A.1.8}
-\contentsline {subsection}{\numberline {A.1.9}Relative abundance data}{88}{subsection.A.1.9}
-\contentsline {subsection}{\numberline {A.1.10}Age composition data}{89}{subsection.A.1.10}
-\contentsline {subsection}{\numberline {A.1.11}Stock-recruitment}{90}{subsection.A.1.11}
-\contentsline {subsection}{\numberline {A.1.12}Parameter Estimation and Uncertainty}{90}{subsection.A.1.12}
-\contentsline {subsection}{\numberline {A.1.13}Negative loglikelihoods}{91}{subsection.A.1.13}
-\contentsline {subsection}{\numberline {A.1.14}Constraints}{91}{subsection.A.1.14}
-\contentsline {subsection}{\numberline {A.1.15}Priors for parameters}{91}{subsection.A.1.15}
-\contentsline {subsection}{\numberline {A.1.16}Survey priors}{92}{subsection.A.1.16}
-\contentsline {subsection}{\numberline {A.1.17}Convergence penalties}{92}{subsection.A.1.17}
-\contentsline {section}{\numberline {B.2}Data and Control files}{94}{section.B.2}
-\contentsline {subsection}{\numberline {B.2.1}Haida Gwaii}{94}{subsection.B.2.1}
-\contentsline {subsection}{\numberline {B.2.2}Prince Rupert District}{95}{subsection.B.2.2}
-\contentsline {subsection}{\numberline {B.2.3}Central Coast}{98}{subsection.B.2.3}
-\contentsline {subsection}{\numberline {B.2.4}Strait of Geogia}{100}{subsection.B.2.4}
-\contentsline {subsection}{\numberline {B.2.5}West Coast of Vancouver Island}{102}{subsection.B.2.5}
-\contentsline {subsection}{\numberline {B.2.6}Area 2W}{104}{subsection.B.2.6}
-\contentsline {subsection}{\numberline {B.2.7}Area 27}{105}{subsection.B.2.7}
-\contentsline {subsection}{\numberline {B.2.8}Control file for the simulation studies}{107}{subsection.B.2.8}
-\contentsline {section}{\numberline {C.3}Bayesian prior for the dive survey spawn index proportionality constant $q$}{108}{section.C.3}
-\contentsline {subsection}{\numberline {C.3.1}The process}{108}{subsection.C.3.1}
-\contentsline {subsection}{\numberline {C.3.2}Factors affecting $q$ and their distributions}{108}{subsection.C.3.2}
-\contentsline {subsubsection}{Proportion of total spawn surveyed}{108}{section*.105}
-\contentsline {subsubsection}{Egg loss prior to survey}{108}{section*.106}
-\contentsline {subsubsection}{Bias in mean egg density}{109}{section*.107}
-\contentsline {subsubsection}{Drift in dive survey observations}{109}{section*.108}
-\contentsline {subsection}{\numberline {C.3.3}Simulating the dive survey spawn index $q$}{109}{subsection.C.3.3}
-\contentsline {section}{\numberline {D.4}Landings and Survey data}{114}{section.D.4}
+\contentsline {part}{II\hspace {1em}Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks: 2011 Assessment and 2012 Forecasts}{20}{part.2}
+\contentsline {section}{\numberline {2.5}Introduction}{21}{section.2.5}
+\contentsline {section}{\numberline {2.6}BC Herring Stocks}{21}{section.2.6}
+\contentsline {section}{\numberline {2.7}Methods}{21}{section.2.7}
+\contentsline {subsection}{\numberline {2.7.1}Input data \& assumptions}{21}{subsection.2.7.1}
+\contentsline {subsubsection}{Catch data}{21}{section*.27}
+\contentsline {subsubsection}{Relative abundance data}{22}{section*.29}
+\contentsline {subsubsection}{Biological samples}{23}{section*.34}
+\contentsline {subsubsection}{Age composition data}{23}{section*.35}
+\contentsline {subsubsection}{Mean weight-at-age data}{23}{section*.41}
+\contentsline {subsection}{\numberline {2.7.2}Analytical methods}{34}{subsection.2.7.2}
+\contentsline {subsection}{\numberline {2.7.3}Retrospective analysis}{34}{subsection.2.7.3}
+\contentsline {subsection}{\numberline {2.7.4}Abundance and recruitment forecasts}{34}{subsection.2.7.4}
+\contentsline {subsection}{\numberline {2.7.5}Catch advice}{34}{subsection.2.7.5}
+\contentsline {section}{\numberline {2.8}Results}{34}{section.2.8}
+\contentsline {subsection}{\numberline {2.8.1}Maximum likelihood fits to the data}{35}{subsection.2.8.1}
+\contentsline {subsubsection}{Catch residuals}{35}{section*.43}
+\contentsline {subsubsection}{Fits to the spawn survey data}{36}{section*.45}
+\contentsline {subsubsection}{Age composition residuals}{37}{section*.48}
+\contentsline {subsection}{\numberline {2.8.2}Biomass estimates \& reference points}{38}{subsection.2.8.2}
+\contentsline {subsection}{\numberline {2.8.3}Estimates of mortality}{44}{subsection.2.8.3}
+\contentsline {subsection}{\numberline {2.8.4}Selectivity}{48}{subsection.2.8.4}
+\contentsline {subsection}{\numberline {2.8.5}Recruitment and stock-recruitment relationships}{50}{subsection.2.8.5}
+\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{51}{subsection.2.8.6}
+\contentsline {subsection}{\numberline {2.8.7}Marginal posterior distributions}{51}{subsection.2.8.7}
+\contentsline {subsubsection}{Diagnostic trace plots}{56}{section*.66}
+\contentsline {subsection}{\numberline {2.8.8}Parameter confounding}{56}{subsection.2.8.8}
+\contentsline {subsection}{\numberline {2.8.9}Marginal posterior distributions}{56}{subsection.2.8.9}
+\contentsline {subsection}{\numberline {2.8.10}Forecast and catch advice based on the joint posterior distribtution}{56}{subsection.2.8.10}
+\contentsline {section}{\numberline {2.9}Stock assessments for minor stock areas}{56}{section.2.9}
+\contentsline {subsection}{\numberline {2.9.1}Maximum likelihood estimates of biomass}{68}{subsection.2.9.1}
+\contentsline {subsection}{\numberline {2.9.2}Estimates of recruitment and reference points}{68}{subsection.2.9.2}
+\contentsline {subsection}{\numberline {2.9.3}Retrospective analysis}{71}{subsection.2.9.3}
+\contentsline {subsection}{\numberline {2.9.4}Marginal posterior distributions and trace plots}{71}{subsection.2.9.4}
+\contentsline {subsection}{\numberline {2.9.5}Catch advice}{71}{subsection.2.9.5}
+\contentsline {section}{\numberline {2.10}Acknowledgements}{76}{section.2.10}
+\contentsline {section}{References}{77}{section.2.10}
+\contentsline {part}{III\hspace {1em}Appendixes}{79}{part.3}
+\contentsline {section}{\numberline {A.1}Technical description of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{80}{section.A.1}
+\contentsline {subsection}{\numberline {A.1.1}Analytic methods}{80}{subsection.A.1.1}
+\contentsline {subsection}{\numberline {A.1.2}Equilibrium considerations}{80}{subsection.A.1.2}
+\contentsline {subsection}{\numberline {A.1.3}MSY based reference points}{80}{subsection.A.1.3}
+\contentsline {subsection}{\numberline {A.1.4}Dynamic age-structured model}{83}{subsection.A.1.4}
+\contentsline {subsection}{\numberline {A.1.5}Options for selectivity}{86}{subsection.A.1.5}
+\contentsline {paragraph}{Logistic selectivity}{86}{section*.95}
+\contentsline {paragraph}{Age-specific selectivity coefficients}{86}{section*.96}
+\contentsline {paragraph}{Cubic spline interpolation}{86}{section*.97}
+\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{87}{section*.99}
+\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{87}{section*.100}
+\contentsline {paragraph}{Selectivity as a logistic function of weight-at-age}{87}{section*.102}
+\contentsline {paragraph}{Using weight as a covariate}{87}{section*.103}
+\contentsline {subsection}{\numberline {A.1.6}Options for natural mortality}{88}{subsection.A.1.6}
+\contentsline {subsection}{\numberline {A.1.7}Residuals, likelihoods \& objective function value components}{88}{subsection.A.1.7}
+\contentsline {subsection}{\numberline {A.1.8}Catch data}{89}{subsection.A.1.8}
+\contentsline {subsection}{\numberline {A.1.9}Relative abundance data}{89}{subsection.A.1.9}
+\contentsline {subsection}{\numberline {A.1.10}Age composition data}{90}{subsection.A.1.10}
+\contentsline {subsection}{\numberline {A.1.11}Stock-recruitment}{91}{subsection.A.1.11}
+\contentsline {subsection}{\numberline {A.1.12}Parameter Estimation and Uncertainty}{91}{subsection.A.1.12}
+\contentsline {subsection}{\numberline {A.1.13}Negative loglikelihoods}{92}{subsection.A.1.13}
+\contentsline {subsection}{\numberline {A.1.14}Constraints}{92}{subsection.A.1.14}
+\contentsline {subsection}{\numberline {A.1.15}Priors for parameters}{92}{subsection.A.1.15}
+\contentsline {subsection}{\numberline {A.1.16}Survey priors}{93}{subsection.A.1.16}
+\contentsline {subsection}{\numberline {A.1.17}Convergence penalties}{93}{subsection.A.1.17}
+\contentsline {section}{\numberline {B.2}Data and Control files}{95}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Haida Gwaii}{95}{subsection.B.2.1}
+\contentsline {subsection}{\numberline {B.2.2}Prince Rupert District}{96}{subsection.B.2.2}
+\contentsline {subsection}{\numberline {B.2.3}Central Coast}{99}{subsection.B.2.3}
+\contentsline {subsection}{\numberline {B.2.4}Strait of Geogia}{101}{subsection.B.2.4}
+\contentsline {subsection}{\numberline {B.2.5}West Coast of Vancouver Island}{103}{subsection.B.2.5}
+\contentsline {subsection}{\numberline {B.2.6}Area 2W}{105}{subsection.B.2.6}
+\contentsline {subsection}{\numberline {B.2.7}Area 27}{106}{subsection.B.2.7}
+\contentsline {subsection}{\numberline {B.2.8}Control file for the simulation studies}{108}{subsection.B.2.8}
+\contentsline {section}{\numberline {C.3}Bayesian prior for the dive survey spawn index proportionality constant $q$}{109}{section.C.3}
+\contentsline {subsection}{\numberline {C.3.1}The process}{109}{subsection.C.3.1}
+\contentsline {subsection}{\numberline {C.3.2}Factors affecting $q$ and their distributions}{109}{subsection.C.3.2}
+\contentsline {subsubsection}{Proportion of total spawn surveyed}{109}{section*.105}
+\contentsline {subsubsection}{Egg loss prior to survey}{109}{section*.106}
+\contentsline {subsubsection}{Bias in mean egg density}{110}{section*.107}
+\contentsline {subsubsection}{Drift in dive survey observations}{110}{section*.108}
+\contentsline {subsection}{\numberline {C.3.3}Simulating the dive survey spawn index $q$}{110}{subsection.C.3.3}
+\contentsline {section}{\numberline {D.4}Landings and Survey data}{115}{section.D.4}

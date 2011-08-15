@@ -12,8 +12,27 @@
 \headcommand {\beamer@framepages {4}{4}}
 \headcommand {\slideentry {1}{0}{5}{5/5}{}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\beamer@partpages {1}{5}}
-\headcommand {\beamer@subsectionpages {6}{5}}
-\headcommand {\beamer@sectionpages {6}{5}}
-\headcommand {\beamer@documentpages {5}}
-\headcommand {\def \inserttotalframenumber {5}}
+\headcommand {\slideentry {1}{0}{6}{6/6}{}{0}}
+\headcommand {\beamer@framepages {6}{6}}
+\headcommand {\slideentry {1}{0}{6}{6/7}{}{0}}
+\headcommand {\beamer@framepages {6}{7}}
+\headcommand {\sectionentry {2}{inputdata}{8}{inputdata}{0}}
+\headcommand {\beamer@sectionpages {3}{7}}
+\headcommand {\beamer@subsectionpages {3}{7}}
+\headcommand {\slideentry {2}{0}{7}{8/8}{}{0}}
+\headcommand {\beamer@framepages {8}{8}}
+\headcommand {\sectionentry {3}{analyticalMethods}{9}{analyticalMethods}{0}}
+\headcommand {\beamer@sectionpages {8}{8}}
+\headcommand {\beamer@subsectionpages {8}{8}}
+\headcommand {\slideentry {3}{0}{8}{9/9}{}{0}}
+\headcommand {\beamer@framepages {9}{9}}
+\headcommand {\sectionentry {4}{References}{10}{References}{0}}
+\headcommand {\beamer@sectionpages {9}{9}}
+\headcommand {\beamer@subsectionpages {9}{9}}
+\headcommand {\slideentry {4}{0}{9}{10/10}{}{0}}
+\headcommand {\beamer@framepages {10}{10}}
+\headcommand {\beamer@partpages {1}{10}}
+\headcommand {\beamer@subsectionpages {9}{10}}
+\headcommand {\beamer@sectionpages {9}{10}}
+\headcommand {\beamer@documentpages {10}}
+\headcommand {\def \inserttotalframenumber {10}}
