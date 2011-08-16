@@ -11,7 +11,7 @@
 	\caption{True (thin line) and estimated (thick shaded line) spawning biomass (a), fishing mortality rates by gear (b), observed and predicted relative abundance (c), and residuals between observed and predicted relative abundance (d) for the SOG herring simulation with perfect information and a deterministic stock-recruitment relationship.}\label{FigSimPlot}
 \end{figure}
 		
-Residuals between the observed and predicted age-composition data (not shown) were also extremely small and are easily summarized by the conditional maximum likelihood estimates of the residual variance 	$\widehat{\tau}^2$ for the winter seine fishery $\widehat{\tau}^2=2.49e-03$, the seine roe fishery $\widehat{\tau}^2=1.25e-27$, and the gill net fishery  $\widehat{\tau}^2=1.24e-27$.  
+Residuals between the observed and predicted age-composition data (not shown) were also extremely small and are easily summarized by the conditional maximum likelihood estimates of the residual variance 	$\widehat{\tau}^2$ for the winter seine fishery $\widehat{\tau}^2=2.49e-03$, the seine roe fishery $\widehat{\tau}^2=1.25e-27$, and the gillnet fishery  $\widehat{\tau}^2=1.24e-27$.  
 
 This perfect fit to the data is used only to judge if the code is syntactically correct and to determine if it is capable of estimating model parameters exactly given perfect information.  In the following section, observation errors and process errors are introduced to determine bias and precision in parameter estimates.
 		
@@ -69,7 +69,7 @@ Average natural mortality rate is higher in the \iscam\ model (Table \ref{TableH
 
 Estimates of the components of total mortality for the comparison with the HCAM model are shown in Figure \ref{fig1_HCAM_ctrl}e.  The fishing mortality rates for each gear represent the average fishing mortality rate over all age-classes, and the natural mortality rate is assumed to be age-independent.  During the 1950s through to 1968, fishing mortality rates for Pacific herring in the Strait of Georgia were extremely high; this period was almost exclusively a winter purse-seine fishery where fish were taken for fishmeal (the reduction fishery).  After the fishery reopened in the early 1970s fishing mortality rates were greatly reduced and targeted the spring spawning aggregations as the market was for herring roe. 
 
-Estimates of natural mortality are based on a random walk process, initially starting at a value of 0.401 in 1951 and declining to a very low value of 0.217 in 1959, then increasing to a maximum of 0.915 in 1969 (Figure \ref{fig1_HCAM_ctrl}e).  Information to estimate natural mortality rates comes from the age-composition data, and assumptions about selectivity in the fishery.  In this comparison, the \iscam\ model assumes selectivity is invariant for the purse seine gears and is a function of weight-at-age for the gill net gear. Much of the residual variation in the age-composition is explained by variation in $M$ and variation in age-2 recruits (see Figures \ref{fig1_HCAM_ctrl}c \& d for and age-2 recruitment and stock recruitment relationship).  The HCAM model has a very similar trend in the estimates of natural mortality but the variability is much less than that of the \iscam\ assessment.  This is almost certainly due to the differences in the assumptions about the error structure in the age-composition data (or relative weights associated with the age-composition).
+Estimates of natural mortality are based on a random walk process, initially starting at a value of 0.401 in 1951 and declining to a very low value of 0.217 in 1959, then increasing to a maximum of 0.915 in 1969 (Figure \ref{fig1_HCAM_ctrl}e).  Information to estimate natural mortality rates comes from the age-composition data, and assumptions about selectivity in the fishery.  In this comparison, the \iscam\ model assumes selectivity is invariant for the purse seine gears and is a function of weight-at-age for the gillnet gear. Much of the residual variation in the age-composition is explained by variation in $M$ and variation in age-2 recruits (see Figures \ref{fig1_HCAM_ctrl}c \& d for and age-2 recruitment and stock recruitment relationship).  The HCAM model has a very similar trend in the estimates of natural mortality but the variability is much less than that of the \iscam\ assessment.  This is almost certainly due to the differences in the assumptions about the error structure in the age-composition data (or relative weights associated with the age-composition).
 
 
 
@@ -85,14 +85,14 @@ There is good correspondence between the observed and predicted catch, however, 
 The fit to the spawn survey data in Strait of Georgia is nearly iid for the 1951:1987 time period.  There is some pattern in the residuals post 1988 that appears to be in contradiction with other information (i.e., age-composition data and structural assumptions about selectivity) (Fig. \ref{fig_HCAM_SOG_RES}).  The pattern in the recruitment residuals for the Strait of Georgia suggest periods of below average-recruitment in the 1970s and early 1980s and above average recruitment starting in the early 1990s.
 
 
-Fits to the age-composition data for the purse seine-roe fishery were best in comparison to the winter seine and gillnet fisheries.   The conditional maximum likelihood estimates of the variance of the age-composition data are 0.205, 0.083, and 0.198 for the winter purse seine, seine-roe, and gill net fisheries, respectively.The smaller the standard deviation, the better correspondence between the observed and predicted age-composition data.  Also the pattern of residuals does indicate some model mis-specification (e.g., the gillnet fishery in the Strait of Georgia).
+Fits to the age-composition data for the purse seine-roe fishery were best in comparison to the winter seine and gillnet fisheries.   The conditional maximum likelihood estimates of the variance of the age-composition data are 0.205, 0.083, and 0.198 for the winter purse seine, seine-roe, and gillnet fisheries, respectively.The smaller the standard deviation, the better correspondence between the observed and predicted age-composition data.  Also the pattern of residuals does indicate some model mis-specification (e.g., the gillnet fishery in the Strait of Georgia).
 
 
 
 %\begin{figure}[!tbp]
 %	% Requires \usepackage{graphicx}
 %	\includegraphics[width=\textwidth]{../Figs/fig3_HCAM_ctrl.pdf}\\
-%	\caption{Estimates of age-2 recruits (a) and the residuals (observed-predicted, positive shown in black)  in the age-composition data for the winter purse seine fishery (lower left), seine-roe fishery (upper right) and gill net fishery (lower right). The area of each circle is proportional to the residual error, and zeros are not shown. Note that observed age-proportions less than 2\% were pooled into the adjacent (younger) age class and the conditional maximum likelihood estimates of the variance is displayed on the top of each panel.}\label{fig3_HCAM_ctrl}
+%	\caption{Estimates of age-2 recruits (a) and the residuals (observed-predicted, positive shown in black)  in the age-composition data for the winter purse seine fishery (lower left), seine-roe fishery (upper right) and gillnet fishery (lower right). The area of each circle is proportional to the residual error, and zeros are not shown. Note that observed age-proportions less than 2\% were pooled into the adjacent (younger) age class and the conditional maximum likelihood estimates of the variance is displayed on the top of each panel.}\label{fig3_HCAM_ctrl}
 %\end{figure}
 
 %\begin{figure}[!tbp]
@@ -118,7 +118,7 @@ Model & No. & $f$ & $B_o$& $h$ & $\bar{M}$ & \bmsy & $q_1$ & $q_2$\\
 Fixed $q$ & 279 & -1166.62 & 108.49 & 0.812 & 0.56 & 20.962 & 0.985 & 1.0\\ 
 Prior $q$ & 279 & -1161.83 & 110.57 & 0.798 & 0.59 & 21.964 &     0.912  &  0.912\\
 Fixed $M$ & 219 & -1055.48 & 128.06 & 0.687 & 0.67 & 25.727 & 0.688 & 0.796\\
-Gill net Selectivity & 279 & -1196.06 & 121.65 & 0.76 & 0.655 & 25.27 & 0.817 & 0.683\\ 
+Gillnet Selectivity & 279 & -1196.06 & 121.65 & 0.76 & 0.655 & 25.27 & 0.817 & 0.683\\ 
 \hline
 \end{tabular}
 \end{center}
@@ -142,22 +142,22 @@ The net result of relaxing this prior on $q$ is a slight increase in the global 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/iscam_fig_HCAM_qFix_Mfix.pdf}\\
-	\caption{A comparison of fits to the survey data and estimated components of average mortality by year when $M$ is allowed to vary via a random walk process or is estimated and assumed time invariant. }\label{fig:qFix_Mfix}
+	\caption{A comparison of fits to the survey data and estimated components of average mortality by year when $M$ is allowed to vary via a random walk process or is estimated and assumed time invariant. Note that the y-axis in panels (b) and (d) are on a log scale and that the estimate of $M$ is 0.67 in panel (d). }\label{fig:qFix_Mfix}
 \end{figure}
 		
 In the case where $M$ is assumed to be time invariant, estimates of average $M$ over the entire time series does increase slightly as well as the overall scaling of population size (Table \ref{Table:HCAM_stats}).  There are 60 fewer estimated parameters in this case but the overall fit to the data is slightly degraded (Fig \ref{fig:qFix_Mfix}, and see objective function values in Table \ref{Table:HCAM_stats}).
 		
 		\subsubsection{Implications of variable selectivity in directed fisheries}
 
-Finally, we also explored the option of treating the gill net selectivity as time invariant and estimated two parameters that describe age-specific selectivity using a logistic curve.	In this case we also allowed for a random walk  process in natural mortality rates so the total number of estimated parameters remains the same. 
+Finally, we also explored the option of treating the gillnet selectivity as time invariant and estimated two parameters that describe age-specific selectivity using a logistic curve.	In this case we also allowed for a random walk  process in natural mortality rates so the total number of estimated parameters remains the same. 
 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/iscam_fig_HCAM_Ares_qFix_GillFix.pdf}\\
-	\caption{Residuals in the age-composition data when gill net selectivity is a function of mean weight-at-age (left column with q Fixed in each caption) and or is a logistic function of age and time invariant (right column with Fixed Gillnet in each caption).}\label{fig:qFix_GillFix}
+	\caption{Residuals in the age-composition data when gillnet selectivity is a function of mean weight-at-age (left column with q Fixed in each caption) and or is a logistic function of age and time invariant (right column with Fixed Gillnet in each caption).}\label{fig:qFix_GillFix}
 \end{figure}
 
-Slightly better fits were obtained to the gill net fishery age-composition data with a constant selectivity, and the residual pattern also appears to improve under the assumption of constant selectivity (Fig. \ref{fig:qFix_GillFix}).  There was also a slight degradation to the age composition data in the winter purse seine fishery (Gear 1), but residual patterns were nearly identical in both the seine fisheries (Fig. \ref{fig:qFix_GillFix}).  The same number of model parameters were estimated and there was a slight improvement in the overall objective function with constant selectivity (Table \ref{Table:HCAM_stats}).  However, there is much more variability in the estimates of natural mortality rates when the gill net selectivity is assumed constant.
+Better fits to the gillnet fishery age-composition data were obtained with  constant selectivity, and the residual pattern also appears to improve under the assumption of constant selectivity (Fig. \ref{fig:qFix_GillFix}).  There was also a slight degradation to the age composition data in the winter purse seine fishery (Gear 1), but residual patterns were nearly identical in both the seine fisheries (Fig. \ref{fig:qFix_GillFix}).  The same number of model parameters were estimated and there was a slight improvement in the overall objective function with constant selectivity (Table \ref{Table:HCAM_stats}).  Trends in the estimates of natural mortality rates are similar when the gillnet selectivity is assumed constant.
 
 
 	

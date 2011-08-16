@@ -401,7 +401,9 @@ guiView	<- function()
 	{
 		# Read the report file
 		#repObj	<- read.rep(hdr$Report.File[i])
-		repObj	<- read.admb(hdr$Control.File[i])
+		repObj	<- try(read.admb(hdr$Control.File[i]))
+			
+			
 		repObj$stock = hdr$Stock[i]
 		repObj$Control.File = hdr$Control.File[i]
 		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
@@ -569,7 +571,7 @@ guiView	<- function()
 		{
 			admbObj = read.admb( "iscam" )
 			admbObj$sim = read.rep( "iscam.sim" )
-			
+			browser()
 			.plotSimulationSummary( admbObj )
 		}
 	
