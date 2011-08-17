@@ -7,6 +7,7 @@
 EXEC=iscam
 prefix=../../../../dist
 DAT=-ind Area2W.dat
+CTL=Area2wHerring2011qprior
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
@@ -33,6 +34,11 @@ mcmc: $(EXEC) $(EXEC).psv
 
 $(EXEC).psv:
 	./$(EXEC) $(DAT) $(MCFLAG) $(ARG)
+
+mceval: $(EXEC)
+	cp $(CTL).psv $(EXEC).psv
+	./$(EXEC) $(DAT) -mceval
+
 
 retro: $(EXEC) $(EXEC).ret1
 

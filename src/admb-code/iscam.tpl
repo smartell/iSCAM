@@ -2322,13 +2322,14 @@ REPORT_SECTION
 FUNCTION mcmc_output
   {
 	if(nf==1){
-		adstring str_q(1,nit);
+		adstring str_q;
 		str_q="lnq";
 		ofstream ofs("iscam.mcmc");
 		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
 		ofs<<"bo\t bmsy\t msy\t fmsy\t";
-		ofs<<"SSB\t Age-4\t Poor\t Average\t Good";
-		ofs<<str_q<<endl;
+		ofs<<"SSB\t Age-4\t Poor\t Average\t Good\t";
+		for(int i=1;i<=nit;i++)ofs<<str_q<<i<<"\t";
+		ofs<<endl;
 		
 		ofstream of1("sbt.mcmc");
 		ofstream of2("rt.mcmc");

@@ -4,7 +4,7 @@
 .PHONY: default opt clean
 
 ifndef DISK
-  DISK=../../dist/
+  DISK=../../dist
 endif
 
 default:

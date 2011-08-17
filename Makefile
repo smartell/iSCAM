@@ -3,7 +3,7 @@
 
 
 ifndef DISK
-  DISK=dist/
+  DISK=dist
 endif
 
 

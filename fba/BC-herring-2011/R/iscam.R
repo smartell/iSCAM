@@ -983,6 +983,26 @@ guiView	<- function()
 						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
 			}
 		}
+		
+		#Marginals for q
+		n=dim(mcmc)[2]
+		for(i in 17:n)
+		{
+			ps = mcmc[, i]  #posterior samples
+			xl=range(ps)
+
+			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+				main="", ylab="", col="tan",breaks=30, 
+				xlim=xl)
+				
+			fn="dnorm"
+			p1=-0.569; p2 = 0.274
+			
+			curve(unlist(lapply(x,fn,p1,p2)),
+				xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+				
+		}
+		
 		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
 			outer=T, line=-1, las=0)
 	})
