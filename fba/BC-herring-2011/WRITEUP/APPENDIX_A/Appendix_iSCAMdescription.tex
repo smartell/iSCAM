@@ -312,7 +312,7 @@ and for the Ricker model this is given by:
 
 
 		
-\subsection{Options for selectivity}
+\subsection{Options for selectivity}\label{Appendix:SelectivityOptions}
 		
 At present, there are eight alternative age-specific selectivity options in \iscam.  The simplest of the selectivity options is a simple logistic function with two parameters where it is assumed that selectivity is time-invariant.  The more complex selectivity options assume that selectivity may vary over time a may have as many as (A-1)$\cdot$T parameters.  For time-varying selectivity, cubic and bicubic splines are used to reduce the number of estimated parameters. The last two options consider how selectivity may vary over time based on changes in mean weight-at-age. Prior to parameter estimation, \iscam\ will determine the exact number of selectivity parameters that need to be estimated based on which selectivity option was chosen for each gear type.  It is not necessary for all gear types to have the same selectivity option.  For example it is possible to have a simple two parameter selectivity curve for say a survey gear, and a much more complicated selectivity option for a commercial fishery.
 

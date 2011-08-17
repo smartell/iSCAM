@@ -2322,10 +2322,13 @@ REPORT_SECTION
 FUNCTION mcmc_output
   {
 	if(nf==1){
+		adstring str_q(1,nit);
+		str_q="lnq";
 		ofstream ofs("iscam.mcmc");
 		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
 		ofs<<"bo\t bmsy\t msy\t fmsy\t";
-		ofs<<"SSB\t Age-4\t Poor\t Average\t Good"<<endl;
+		ofs<<"SSB\t Age-4\t Poor\t Average\t Good";
+		ofs<<str_q<<endl;
 		
 		ofstream of1("sbt.mcmc");
 		ofstream of2("rt.mcmc");
@@ -2341,7 +2344,8 @@ FUNCTION mcmc_output
 	ofstream ofs("iscam.mcmc",ios::app);
 	ofs<<theta;
 	ofs<<" "<<bo<<" "<<bmsy<<" "<<msy<<" "<<fmsy<<"\t\t";
-	ofs<<sbt(nyr)<<" "<<future_bt4<<" "<<future_bt4+rt3<<endl;
+	ofs<<sbt(nyr)<<" "<<future_bt4<<" "<<future_bt4+rt3<<"\t\t";
+	ofs<<log(q)<<endl;
 	
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);
