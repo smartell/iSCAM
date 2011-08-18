@@ -768,7 +768,7 @@ FUNCTION calcSelectivities
 		TODO: Add penality (10.*square(avg_log_sel)) to objective function 
 		in cases where estimating sel_coffs to mimic an init_bounded_dev vector.
 		
-		FIXME: Problem with case 7: turns out to be a random walk, so there
+		CHANGED: Problem with case 7: turns out to be a random walk, so there
 		is changes in selectivity even with constant growth.  Remove the
 		random walk outside the switch statement.
 	
@@ -1755,6 +1755,7 @@ FUNCTION void calc_reference_points()
 	}
 	
 	/*CHANGED Changed equilibrium calculations based on average m */
+	//FIXME: change Bmsy calculations to be based on average fecundity & weight at age. 
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);

@@ -44,13 +44,22 @@
 %
 %
 %
-\begin{document}%
+\begin{document}	\def\newblock{\hskip .11em plus .33em minus .07em}
+%
 \begin{frame}
 \titlepage
 \end{frame}
 %
 
 \include{./Part1/Part_1}
+
+% References
+\begin{frame}[t]\frametitle{Bibliography}
+	\def\newblock{\hskip .11em plus .33em minus .07em}
+	\bibliographystyle{apalike}
+	\bibliography{$HOME/Documents/ARTICLES/Articles-1}	
+\end{frame}
+%
 
 
 % End of slides

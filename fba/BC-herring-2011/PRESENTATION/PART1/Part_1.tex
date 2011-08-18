@@ -142,10 +142,71 @@
 	\end{block}
 \end{frame}
 %
-\begin{frame}[t]\frametitle{Assumptions}
-	\begin{itemize}
-		\item<+-> Observation errors in catch is known
-		\item<+-> Survey $q$ is proportional
-	\end{itemize}
+\begin{frame}[t,allowframebreaks]\frametitle{Assumptions}
+	\begin{block}
+		{Error distributions}
+		\begin{itemize}
+			\item Observation errors in catch are lognormal \& $\sigma$ is known.
+			\item Errors in spawn survey are lognormal \& $\sigma$ is unknown.
+			\item Recruitment deviations are lognormal \& $\sigma$ is unknown.
+			\item Age-composition residuals follow a multivariate-logistic distribution.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}
+		{Selectivity}
+		\begin{itemize}
+			\item Seine gears: asymptotic and time invariant.
+			\item Gillnet gear: parametric logistic function with weight anomalies as a covariate. 
+		\end{itemize}
+	\end{block}
+	
+	\framebreak
+	\begin{block}
+		{Structural assumptions}
+		\begin{itemize}
+			\item Age-2 recruitment with a Beverton-Holt model.
+			\item Fishing \& natural mortality occur simultaneously (Baranov catch equation).
+			\item Natural mortality is age-independent.
+			\item Natural mortality can vary over time (random walk, $\sigma=0.1$).
+			\item 100\% of the total mortality occurs before spawning.
+			\item Fecundity is proportional to mature biomass.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}
+		{Equilibrium \& MSY-based reference points}
+		\begin{itemize}
+			\item $B_o$ is based on average $M$ and average fecundity-at-age.
+			\item $B_{MSY}$ is based on average ($M$) and \underline{fecundity in terminal year}.
+		\end{itemize}
+	\end{block}
+	
 \end{frame}
+
+\begin{frame}[t,allowframebreaks]\frametitle{Objective function}
+	\begin{block}
+		{Major components of the objective function}
+		\begin{itemize}
+			\item Likelihoods for data.
+			\item Likelihoods for structural assumptions.
+			\item Phased penalties to ensure regular solution.
+			\item Prior densities for model parameters.
+		\end{itemize}
+	\end{block}
+	\framebreak
+	
+	\begin{block}	
+		{Likelihoods for data}
+		\begin{itemize}
+			\item Normal density functions for:
+			\begin{itemize}
+				\item catch residuals (log-scale) with fixed $\sigma^2$,
+				\item spawn survey residuals (log-scale) with estimated $\sigma^2$. 
+			\end{itemize}
+			\item Multivariate logistic function for age-composition evaluated at the conditional MLE of $\sigma^2$.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
 % section analyticalmethods (end)
