@@ -3,7 +3,8 @@
 ## targets:
 
 ## Macros
-SUBDIR = CC PRD QCI SOG WCVI AREA27 AREA2W
+SUBDIR = CC PRD QCI SOG WCVI 
+#AREA27 AREA2W
 TARGET = 
 
 .PHONY: default $(SUBDIR) mcmc

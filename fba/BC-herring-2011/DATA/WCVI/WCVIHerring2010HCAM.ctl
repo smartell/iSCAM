@@ -36,9 +36,9 @@
 ## isel_type
     1        1			7		1		1
 ## Age at 50% selectivity (logistic)
-    2.0      3.0		0.6		2.05	2.05
+    3.0      3.0		0.6		2.05	2.05
 ## STD at 50% selectivity (logistic)
-    0.25      0.25		0.15	0.05	0.05
+    0.25      0.25		0.25	0.05	0.05
 ## No. of age nodes for each gear (0 to ignore).
     5        5			5		0		0
 ## No. of year nodes for each gear (0 to ignore).
@@ -76,8 +76,8 @@
 5.00		## std in mean fishing mortality in last phase
 3			## phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1			## std in deviations for natural mortality
-60			## number of estimated nodes for deviations in natural mortality
-0.99        ## fraction of total mortality that takes place prior to spawning
+59			## number of estimated nodes for deviations in natural mortality
+1.00        ## fraction of total mortality that takes place prior to spawning
 1           ## 14 switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ## ____________________________________________________________________________ ##
 
