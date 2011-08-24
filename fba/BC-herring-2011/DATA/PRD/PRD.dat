@@ -12,4 +12,5 @@
 
 ## For comparison with HCAM
 PRDHerring2010.dat
-PRDHerring2010HCAM.ctl
+#PRDHerring2010HCAM.ctl
+PRDHerring2010qprior.ctl

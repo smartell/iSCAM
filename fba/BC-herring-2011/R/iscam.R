@@ -43,7 +43,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/MinorAreas/"
+.TABLEDIR <- "../TABLES/2010/"
 
 
 
@@ -135,9 +135,29 @@ guiView	<- function()
 	{
 		.tableForecast( hdr )
 	}
+	if ( tableType == "likelihoods" )
+	{
+		.tableLogLikelihoods( hdr )
+	}
 }
 
-
+.tableLogLikelihoods <- function( hdr )
+{
+	#This function constructs a table of the nlvec for each area
+	nRuns <- nrow(hdr)
+	lvec <- NULL
+	for ( i in 1: nRuns )
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep = ""))
+		tmp <- as.vector(t(repObj$nlvec))
+		tmp <- na.omit(tmp[tmp != 0])
+		lvec <- cbind(lvec, c(tmp, sum(tmp)))
+	}
+	colnames(lvec) = hdr$Stock
+	print(round(lvec, 2))
+	fn=paste(.TABLEDIR, "Table_Likelihoods.tex", sep="")
+	latex(round(lvec,2) , file=fn)
+}
 
 
 .tableForecast	<- function( hdr )
@@ -162,7 +182,7 @@ guiView	<- function()
 			cat("NB. MCMC file missing.")
 		
 		Bo = quantile(repObj$mcmc$bo, prob=0.5)*1000
-		cutoff[i] = 0*0.25*Bo
+		cutoff[i] = 0.25*Bo
 		SSB = quantile(repObj$mcmc$SSB, prob=0.5)*1000
 		Bt4 = quantile(repObj$mcmc$Age.4, prob=0.5)*1000
 		Btpoor = quantile(repObj$mcmc$Poor, prob=0.5)*1000
@@ -180,7 +200,7 @@ guiView	<- function()
 			else if(bt>eps && bt-hr*bt<=eps)
 				return((bt-eps)/bt)
 		}
-		HR = 0.1
+		HR = 0.2
 		Ctpoor = fhr(Btpoor, cutoff[i], HR)*Btpoor
 		Ctaverage = fhr(Btaverage, cutoff[i], HR)*Btaverage
 		Ctgood = fhr(Btgood, cutoff[i], HR)*Btgood

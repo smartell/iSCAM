@@ -11,7 +11,8 @@
 
 ## For comparison with HCAM
 SOGHerring2010.dat
-SOGHerring2010HCAM.ctl
+#SOGHerring2010HCAM.ctl
+SOGHerring2010qprior.ctl
 
 ## q prior scenario with HCAM 2010
 #SOGHerring2010.dat

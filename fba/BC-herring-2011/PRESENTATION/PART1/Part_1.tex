@@ -56,7 +56,7 @@
 	\begin{figure}
 		[htbp] \centering 
 		\includegraphics[width=0.7
-		\textwidth]{SSF} \caption{Fisheries management framework consistent with a precautionary approach.} \label{fig:label} 
+		\textwidth]{SSF} \caption{Fisheries management framework consistent with a precautionary approach.} \label{fig:SSF} 
 	\end{figure}
 \end{frame}
 
@@ -137,7 +137,7 @@
 			\item Flexible options for modelling selectivity, natural mortality, \& survey catchability.
 			
 			\item Integrated framework: joint estimation of policy parameters (e.g., reference pionts).
-			\item Bayesian implementation... 
+			\item Model is implemented in AD Model Builder \cite{ADMB2009}, and the source code is maintained at:  \url{http://code.google.com/p/iscam-project/}
 		\end{itemize}
 	\end{block}
 \end{frame}
@@ -205,8 +205,93 @@
 				\item spawn survey residuals (log-scale) with estimated $\sigma^2$. 
 			\end{itemize}
 			\item Multivariate logistic function for age-composition evaluated at the conditional MLE of $\sigma^2$.
+			\begin{itemize}
+				\item age-proportions $<$ 2\% are pooled into adjacent age class. 
+			\end{itemize}
 		\end{itemize}
 	\end{block}
+	
+	\framebreak
+	\begin{block}
+		{Likelihoods for structural assumptions}
+		\begin{itemize}
+			\item Stock-recruitment \\ 
+			\begin{align}
+				\ln\ell &= n\ln(\tau) + \frac{\sum_t \delta_t^2}{2\tau^2},\nonumber\\
+				\delta_t &= \ln(N_{2,t}) - \ln(f(SB_t))\nonumber
+			\end{align}
+			\item Natural mortality (random walk)\\
+			\begin{align}
+				M_{t+1} &= M_t \exp(\varphi_t) \nonumber \\
+				\ln\ell &= n\ln(\sigma) + \frac{\sum_{t=2}^T (\varphi_t-\varphi_{t-1})^2}{2\sigma^2}\nonumber
+			\end{align}
+		\end{itemize}
+	\end{block}
+	
+	\framebreak
+	\begin{block}	
+		{Phased penalties to ensure regular solution}
+		\begin{itemize}
+			\item  Mean fishing mortality rate:
+			\[  \ln(\sigma_{\bar{F}}) + \frac{(\ln(\bar{F})-\ln(0.2))^2}{2\sigma_{\bar{F}}^2},
+			\quad \sigma_{\bar{F}}^{(1-3)}=0.05, \quad \sigma_{\bar{F}}^{(4)}=2.0  \]
+			
+			\item Deviations in average recruitment:
+			\begin{align}
+				\ln(\sigma_{\omega}) + \frac{\sum_t\omega_t^2}{2\sigma_{\omega}^2},
+				\quad \sigma_{\omega}^{(1-3)}=0.0707, \quad \sigma_{\omega}^{(4)}=2.0 \nonumber\\
+				%
+				\ln(\sigma_{\ddot{\omega}}) + \frac{\sum_t\ddot{\omega}_t^2}{2\sigma_{\ddot{\omega}}^2},
+				\quad \sigma_{\ddot{\omega}}^{(1-3)}=0.0707, \quad \sigma_{\ddot{\omega}}^{(4)}=2.0\nonumber
+			\end{align}
+		\end{itemize}
+	\end{block}
+	
+	\framebreak
+	\begin{block}	
+		{Prior densities for model parameters}
+ 			\begin{tabular}{cccc}
+			\hline
+			Parameter & Distribution  & P1 & P2 \\
+			\hline
+			$\ln(R_0)$ & Uniform &  -5.0 & 15 \\
+			Steepness & Beta &  10.0 & 4.925373\\
+			Natural mortality ($\ln(M)$) &  Normal &   -0.7985077 & 0.2\\
+			Rbar & Uniform &  -5.0 & 15 \\
+			Rinit & Uniform &   -5.0 & 15 \\
+			Variance ratio ($\rho$) & Beta & 17.08696 & 39.0559 \\
+			Precision & Gamma &  25.0 & 28.75\\
+			Survey $\ln(q)$ &Normal &  -0.569 & 0.274\\
+			\hline
+			\end{tabular}	
+	\end{block}
+	
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.7\textwidth]{../FIGS/qPriorFigs/iscam_fig_theta_prior_density.pdf}
+		\caption{Prior densities for leading model parameters.}
+		\label{fig:priors}
+	\end{figure}
 \end{frame}
 
 % section analyticalmethods (end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

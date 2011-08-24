@@ -11,4 +11,5 @@
 
 ## For comparison with HCAM
 WCVIHerring2010.dat
-WCVIHerring2010HCAM.ctl
+#WCVIHerring2010HCAM.ctl
+WCVIHerring2010qprior.ctl

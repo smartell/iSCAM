@@ -12,4 +12,5 @@
 
 ## For comparison with HCAM
 QCIHerring2010.dat
-QCIHerring2010HCAM.ctl
+#QCIHerring2010HCAM.ctl
+QCIHerring2010qprior.ctl
