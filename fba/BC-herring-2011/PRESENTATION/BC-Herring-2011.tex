@@ -2,22 +2,42 @@
 %\usetheme[style=simple,sidebar=.125\paperwidth]{Frederiksberg}
 %\usetheme{Madrid} % My favorite!
 %\usetheme{Boadilla} % Pretty neat, soft color.
-\usetheme{default}
+%\usetheme{PaloAlto}  %****
+%\usetheme{Hannover}  %****
+%\usetheme{Montpellier}
+%\usetheme{default}
+\usetheme{Frankfurt}
 %\usetheme{Warsaw}
 %\usetheme{Bergen} % This template has nagivation on the left
 %\usetheme{Frankfurt} % Similar to the default 
 %with an extra region at the top.
 %\usecolortheme{seahorse} % Simple and clean template
+\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{dolphin}
 %\usetheme{Darmstadt} % not so good
 % Uncomment the following line if you want %
 % page numbers and using Warsaw theme%
 % \setbeamertemplate{footline}[page number]
-%\setbeamercovered{transparent}
-\setbeamercovered{invisible}
+\setbeamercovered{transparent}
+%\setbeamercovered{invisible}
 % To remove the navigation symbols from 
 % the bottom of slides%
 \setbeamertemplate{navigation symbols}{} 
 %
+\mode<presentation>
+
+%Add table of content at the beginning of each new section
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+
 
 %iscam logo
 \newcommand{\iscam}{

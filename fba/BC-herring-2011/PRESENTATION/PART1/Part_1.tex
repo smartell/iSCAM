@@ -3,31 +3,73 @@
 %!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/fba/BC-herring-2011/PRESENTATION/BC-Herring-2011.tex
 %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   
 %% Outline for Part I
-%% Introduction:
-%% Analytical approach:
+%% Sustainable Fisheries Framework.
+%% 		-HCAM Review
 %% 
 %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   %%%   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame} % (fold)
-	\frametitle{Moving towards the sustainable fisheries framework.} 
-	\begin{block}
-		{Overview} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sustainable Fisheries Framework} % (fold)
+\label{sec:sustainable_fisheries_framework}
+
+
+\subsection{HCAM Review} % (fold)
+\label{sub:hcam_review}
+
+\begin{frame}[t]\frametitle{June 2010: HCAM Review Workshop}
+	\begin{block}	{Terms of Reference (paraphrased)}
 		\begin{itemize}
-			\item Review of the HCAM model in June 17-18, 2010. 
-			\begin{itemize}
-				\item Model parameterization of $q$. 
-				\item Parametrization of $q$, $M$, and selectivity is confounded. 
-			\end{itemize}
-			\item Development of a new integrated Statistical Catch Age Model (\iscam). 
-			\item Data, assumptions and Analytical methods. 
-			\item Outstanding issues. 
+			\item<1-> Herring spawn index, is $q=1$ assumption appropriate?
+			\item<1-> HCR, should CUTOFF change in concert with $B_0$ updates?
+			\item<1-> What is the best way to parameterize natural mortality?
+			\item<1-> Are the priors appropriate and is uncertainty appropriately reflected in assessments?
+			\item<1-> Preference for selectivity/availability parameterization.
+			\item<1-> Should stock assessments be conducted on a risk-neutral or risk-averse basis?
+			\item<2-> Appropriate assumptions for an operating model (MSE).
 		\end{itemize}
 	\end{block}
 \end{frame}
 
+%
+\begin{frame}[t]\frametitle{Summary of Panel Recommendations}
+	\begin{enumerate}
+		\item<+> Assumption that $q=1$ was inappropriate.
+		\item<+> CUTOFFS can be fixed or updated annually.
+		\item<+> A model based approach to estimating $B_0$ and $B_{MSY}$ is appropriate.
+		\item<+> Recruitment variation $\sigma_R$ should be estimated within the model.
+		\item<+> Issues regarding estimation of selectivity, natural mortality and $q$ should be explored.
+		\item<+> Science advice should be risk neutral.
+	\end{enumerate}
+	
+	\only<1>{The model parameterization of $q$ could potentially have the single greatest effect on estimation of management parameters, and as such further investigation is recommended. }
+	
+	\only<2>{If the intention is that the CUTOFF represents 25\% $B_0$ then it should be updated in conjunction with stock assessment updates.  }
+	
+	\only<3>{Estimates of MSY based reference points are sensitive to the assumed form of the recruitment model and allocation to gears with different selectivities.}
+	
+	\only<4>{Note that MLE estimates of $\sigma_R$ are biased; values from the joint posterior distribution are unbiased. }
+\end{frame}
+
+% subsection hcam_review (end)
+
+\subsection{Harvest Control Rule} % (fold)
+\label{sub:harvest_control_rule}
+\begin{frame}[t]\frametitle{Current Harvest Control Rule}
+	\begin{itemize}
+		\item  CUTOFF set at 0.25 $B_0$ (last updated in 1996).
+		\item 20\% exploitation rate.
+		\item Forecast based on poor, average, good recruitment.
+	\end{itemize}
+	
+\end{frame}
+% subsection harvest_control_rule (end)
 
 
+% section sustainable_fisheries_framework (end)
+%%_________________________________________________%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +145,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{inputdata} % (fold)
+\section{Input Data} % (fold)
 \label{sec:inputdata}
 
 %
@@ -124,7 +166,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{analyticalMethods} % (fold)
+\section{Methods} % (fold)
 \label{sec:analyticalmethods}
 %
 \begin{frame} {Analytical methods} 
