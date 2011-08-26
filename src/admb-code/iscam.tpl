@@ -992,15 +992,14 @@ FUNCTION calcTotalMortality
 		log_m_devs = m_spline(fm);
 	}
 	
-	//Random walk in natural mortality.
+	// Random walk in natural mortality.
 	for(i=syr;i<=nyr;i++)
 	{
-		//if(active(log_m_devs)&&i>syr)
+		// if(active(log_m_devs)&&i>syr)
 		if(active(log_m_nodes)&&i>syr)
 		{
 			M_tot(i)=M_tot(i-1)*exp(log_m_devs(i));
 		}
-		
 	}
 	m_bar = mean(M_tot);
 	
