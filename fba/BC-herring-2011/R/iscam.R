@@ -511,7 +511,7 @@ guiView	<- function()
 	
 		if ( plotType=="meanwt" )
 		{
-			.plotMeanwt( repObj )
+			.ggplotMeanwt( repObj )
 		}
 	
 		if ( plotType=="sel2d" )
@@ -1125,6 +1125,23 @@ guiView	<- function()
 		
 	})
 }
+
+.ggplotMeanwt <- function( repObj )
+{
+	
+	#Use ggplots to plot mean weight-at-age
+	require(ggplot2)
+	tmp <- repObj$wt_obs
+	colnames(tmp)<-paste("Age", repObj$age)
+	W <- data.frame(Year=repObj$yrs,tmp)
+	M <- melt(W, id=1)
+	names(M)=c("Year","Age","Weight")
+	p <- ggplot(M,aes(Year,Weight,color=Age))
+	
+	print(p+stat_smooth()+geom_point())
+	
+}
+
 
 .plotMeanwt	<- function( repObj )
 {
