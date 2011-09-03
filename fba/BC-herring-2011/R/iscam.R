@@ -364,6 +364,7 @@ guiView	<- function()
 	#hdr$Report.File contains the vector of report files to examine.
 
 	## TODO auto layout stuff.
+	winCols <- winRows <- 1
 	if ( autoLayout )
 	{
 		if (nRuns < 4 )
@@ -458,10 +459,10 @@ guiView	<- function()
 	
 		if ( plotType=="biomass" )
 	    {
-			AA=read.table("../MISC/HCAM_SSB.txt",header=T)
-			repObj$H.sbt=AA[,i]
-			.plotSpawnBiomass( repObj, annotate=TRUE )
-	    	#.plotBiomass( repObj, annotate=TRUE )
+			#AA=read.table("../MISC/HCAM_SSB.txt",header=T)
+			#repObj$H.sbt=AA[,i]
+			#.plotSpawnBiomass( repObj, annotate=TRUE )
+	    	.plotBiomass( repObj, annotate=TRUE )
 	    }
 	
 		if ( plotType=="depletion" )

@@ -2329,7 +2329,7 @@ FUNCTION mcmc_output
 		ofs<<"bo\t bmsy\t msy\t fmsy\t";
 		ofs<<"SSB\t Age-4\t Poor\t Average\t Good\t";
 		for(int i=1;i<=nit;i++)ofs<<str_q<<i<<"\t";
-		ofs<<endl;
+		ofs<<"f\t"<<endl;
 		
 		ofstream of1("sbt.mcmc");
 		ofstream of2("rt.mcmc");
@@ -2346,7 +2346,7 @@ FUNCTION mcmc_output
 	ofs<<theta;
 	ofs<<" "<<bo<<" "<<bmsy<<" "<<msy<<" "<<fmsy<<"\t\t";
 	ofs<<sbt(nyr)<<" "<<future_bt4<<" "<<future_bt4+rt3<<"\t\t";
-	ofs<<log(q)<<endl;
+	ofs<<log(q)<<" "<<f<<endl;
 	
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);

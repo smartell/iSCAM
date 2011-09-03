@@ -2,11 +2,11 @@
 #../../fba/BC-herring-2011/DATA/SOG/SOGHerring2011q1.ctl
 SOGHerring2011.dat
 #SOGHerring2011q1.ctl
-SOGHerring2011qprior.ctl
+#SOGHerring2011qprior.ctl
 
 
 #SOGHerring2011.dat
-#SOGHerring2011qfix.ctl
+SOGHerring2011qfix.ctl
 
 
 ## For comparison with HCAM

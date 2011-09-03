@@ -34,7 +34,7 @@
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00
 ## Gear 1:3 fishery:  Gear 4-5 survey
 ## isel_type
-    1        1			7		1		1
+    1        1			8		1		1
 ## Age at 50% selectivity (logistic)
     1.5      2.0		0.7		2.05	2.05
 ## STD at 50% selectivity (logistic)
