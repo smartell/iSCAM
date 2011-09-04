@@ -1,0 +1,15 @@
+
+CCHerring2011.dat
+#CCHerring2011q1.ctl
+#CCHerring2011qprior.ctl
+ 
+ 
+#CCHerring2011.dat
+CCHerring2011qfix.ctl
+ 
+ 
+## For comparison with HCAM
+#CCHerring2010.dat
+#CCHerring2010HCAM.ctl
+#CCHerring2010qprior.ctl
+
