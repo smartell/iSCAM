@@ -11,3 +11,7 @@
 \beamer@subsectionintoc {2}{3}{SOG Comparison}{33}{0}{2}
 \beamer@subsectionintoc {2}{4}{Spawning biomass in major areas}{39}{0}{2}
 \beamer@subsectionintoc {2}{5}{Discussion}{44}{0}{2}
+\beamer@sectionintoc {3}{Part II}{48}{0}{3}
+\beamer@subsectionintoc {3}{1}{Introduction}{49}{0}{3}
+\beamer@subsectionintoc {3}{2}{2011 Data}{50}{0}{3}
+\beamer@subsectionintoc {3}{3}{Analytical Methods}{76}{0}{3}

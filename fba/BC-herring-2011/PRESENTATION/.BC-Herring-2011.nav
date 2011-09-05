@@ -63,13 +63,37 @@
 \headcommand {\beamer@subsectionentry {0}{2}{5}{44}{Discussion}}\headcommand {\beamer@subsectionpages {39}{43}}
 \headcommand {\slideentry {2}{5}{1}{44/47}{Discussion}{0}}
 \headcommand {\beamer@framepages {44}{47}}
-\headcommand {\sectionentry {3}{References}{48}{References}{0}}
+\headcommand {\sectionentry {3}{Part II}{48}{Part II}{0}}
 \headcommand {\beamer@sectionpages {14}{47}}
 \headcommand {\beamer@subsectionpages {44}{47}}
-\headcommand {\slideentry {3}{0}{2}{48/48}{Discussion}{0}}
+\headcommand {\slideentry {3}{0}{2}{48/48}{}{0}}
 \headcommand {\beamer@framepages {48}{48}}
-\headcommand {\beamer@partpages {1}{48}}
-\headcommand {\beamer@subsectionpages {44}{48}}
-\headcommand {\beamer@sectionpages {14}{48}}
-\headcommand {\beamer@documentpages {48}}
-\headcommand {\def \inserttotalframenumber {25}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{49}{Introduction}}\headcommand {\beamer@subsectionpages {48}{48}}
+\headcommand {\slideentry {3}{1}{1}{49/49}{Introduction}{0}}
+\headcommand {\beamer@framepages {49}{49}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{50}{2011 Data}}\headcommand {\beamer@subsectionpages {49}{49}}
+\headcommand {\slideentry {3}{2}{1}{50/50}{2011 Data}{0}}
+\headcommand {\beamer@framepages {50}{50}}
+\headcommand {\slideentry {3}{2}{2}{51/55}{2011 Data}{0}}
+\headcommand {\beamer@framepages {51}{55}}
+\headcommand {\slideentry {3}{2}{3}{56/60}{2011 Data}{0}}
+\headcommand {\beamer@framepages {56}{60}}
+\headcommand {\slideentry {3}{2}{4}{61/65}{2011 Data}{0}}
+\headcommand {\beamer@framepages {61}{65}}
+\headcommand {\slideentry {3}{2}{5}{66/70}{2011 Data}{0}}
+\headcommand {\beamer@framepages {66}{70}}
+\headcommand {\slideentry {3}{2}{6}{71/75}{2011 Data}{0}}
+\headcommand {\beamer@framepages {71}{75}}
+\headcommand {\beamer@subsectionentry {0}{3}{3}{76}{Analytical Methods}}\headcommand {\beamer@subsectionpages {50}{75}}
+\headcommand {\slideentry {3}{3}{1}{76/85}{Analytical Methods}{0}}
+\headcommand {\beamer@framepages {76}{85}}
+\headcommand {\sectionentry {4}{References}{86}{References}{0}}
+\headcommand {\beamer@sectionpages {48}{85}}
+\headcommand {\beamer@subsectionpages {76}{85}}
+\headcommand {\slideentry {4}{0}{2}{86/86}{Analytical Methods}{0}}
+\headcommand {\beamer@framepages {86}{86}}
+\headcommand {\beamer@partpages {1}{86}}
+\headcommand {\beamer@subsectionpages {76}{86}}
+\headcommand {\beamer@sectionpages {48}{86}}
+\headcommand {\beamer@documentpages {86}}
+\headcommand {\def \inserttotalframenumber {34}}
