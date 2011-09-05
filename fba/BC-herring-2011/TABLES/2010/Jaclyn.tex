@@ -1,0 +1,96 @@
+%
+%  Jaclyn
+%
+%  Created by Steven James Dean Martell on 2011-08-24.
+%  Copyright (c) 2011 UBC Fisheries Centre. All rights reserved.
+%
+\documentclass[]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+%\usepackage{fancyhdr}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+\title{A comparison of Pacific herring decision tables using 1951:2010 data and different priors for $q$.}
+\author{Steven Martell}
+
+\date{2011-08-24}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\maketitle
+Jaclyn,
+
+Here are the four tables you requested.  To construct these tables I've run two scenarios that differ only in the prior information on $q$.  In Tables \ref{TableCatchAdvice1} and \ref{TableCatchAdvice2}, the $q$ in the second period is approximately equal to 1 (where a very small variance for the prior on $q$ is assumed) and a uniform prior for $q$ in the first period.  The catch advice in Table \ref{TableCatchAdvice2} is based on the updated estimates of $B_0$, where the cuttoff is set based on 0.25 times the median value of $B_0$ obtained from the joint posterior distribution.
+
+Tables \ref{TableCatchAdvice3} and \ref{TableCatchAdvice4} are similar to the previous tables except in this case, a less informative prior for $q_2$ and a more informative prior for $q_1$ was used.  In this case I used a normal prior for $\ln(q)$ with a mean of -0.569 and a standard deviation of 0.274 (derived in the Appendix of the assessment document).
+
+A couple of comments that you might find helpful in trying to understand these results and the discrepancies between this and the assessment document.  First off the PRD estimates of $B_0$ are highly uncertain and tend to have a very long tail. This long tail can drag the median values upwards (in this case substantially).  Second, the information presented in Tables \ref{TableCatchAdvice1}--\ref{TableCatchAdvice4} are based on the old (HCAM implementation) weight-based selectivity function for the gillnet fishery.  Table 2.5 and 2.6 in the assessment document are based on a different selectivity function that uses deviations in average-weight to explain changes in selectivity for the gillnet fishery.  In that case, the age-composition data from the gillnet fishery does not suggest that changes in mean body weight on influences in selectivity (but of course this could also be confounded with changes in natural mortality over time).  Bottom line is that the change in the selectivity function for the GN fishery also has a significant impact on the catch advice; the gillnet fishery selectivity has not tended to catch older fish over time as was previously thought.
+
+Components of the objective function values for each of the model runs is summarized in Table \ref{Table:likelihoods}. These are negative loglikelihoods and a smaller value implies a better fit to the data.  For most of the areas, better fits to the survey data were obtained when using the less informative prior for $q$.  A similar table should be constructed with the new selectivity function to better understand this (and explain it). But I ran out of time.  Hope this helps.  Steve.
+
+\input{Table_Likelihoods}
+
+
+
+\newpage
+
+\input{DT_qfix_old_cuttoffs}
+\input{DT_qfix_new_cuttoffs}
+\input{DT_qprior_old_cuttoffs}
+\input{DT_qprior_new_cuttoffs}
+
+% 
+% \begin{abstract}
+% \end{abstract}
+% 
+% \section{Introduction}
+% 
+% \bibliographystyle{plain}
+% \bibliography{}
+\end{document}
