@@ -15,3 +15,6 @@
 \beamer@subsectionintoc {3}{1}{Introduction}{49}{0}{3}
 \beamer@subsectionintoc {3}{2}{2011 Data}{50}{0}{3}
 \beamer@subsectionintoc {3}{3}{Analytical Methods}{76}{0}{3}
+\beamer@subsectionintoc {3}{4}{Maximum Likelihood Estimates}{89}{0}{3}
+\beamer@subsectionintoc {3}{5}{Diagnostics}{105}{0}{3}
+\beamer@subsectionintoc {3}{6}{Advice for management}{109}{0}{3}

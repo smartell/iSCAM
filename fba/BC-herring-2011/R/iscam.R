@@ -139,6 +139,10 @@ guiView	<- function()
 	{
 		.tableLogLikelihoods( hdr )
 	}
+	if ( tableType == "decision" )
+	{
+		.tableDecisionTable( hdr )
+	}
 }
 
 .tableLogLikelihoods <- function( hdr )
@@ -159,6 +163,60 @@ guiView	<- function()
 	latex(round(lvec,2) , file=fn)
 }
 
+.tableDecisionTable <- function( hdr )
+{
+	#This function contructs a decision table based on alternative
+	#hypotheses (model configurations),  where the user selects the
+	#Scenarios to be compared on the Results tab.
+	#Row is the poor,  average and good recruitment scearios
+	#Col is the alternative model
+	#Last column is the weighted average of the catch based on
+	#Bayes Factor (harmonic mean (1/colMeans(1/f)))/Sum(Bayes Factor)
+	#______________________________________________________________
+	
+	nRuns <- nrow(hdr)
+	bf <- NULL
+	Vi <- NULL
+	for ( i in 1:nRuns )
+	{
+		repObj	<- read.rep(paste(hdr$Control.File[i],".rep", sep = ""))
+		mcfile  <- paste(hdr$Control.File[i],".mcmc", sep="")
+		if(file.exists(mcfile))
+			repObj$mcmc = read.table( mcfile, header=TRUE )
+		else
+			cat("NB. MCMC file missing.")
+			
+		#Calculate Bayes Factor (Harmonic Mean of objective function)
+		bf <- c(bf, 1/mean(1/repObj$mcmc$f))
+		
+		#Calculate catch for poor average and good recruitment scenarios
+		Bo <- quantile(repObj$mcmc$bo,  prob=0.5) * 1000
+		cutoff = 0.25*Bo
+		B1 <- quantile(repObj$mcmc$Poor,  prob=0.5) * 1000
+		B2 <- quantile(repObj$mcmc$Average,  prob=0.5) * 1000
+		B3 <- quantile(repObj$mcmc$Good,  prob=0.5) * 1000
+		
+		hr <- function(bt, eps, hr=0.2)
+		{
+			if(bt<=eps)return(0)
+			if(bt-hr*bt>eps)
+				return(0.2)
+			else if(bt>eps && bt-hr*bt<=eps)
+				return((bt-eps)/bt)
+		}
+		C1 <- hr(B1, cutoff, 0.2) * B1
+		C2 <- hr(B2, cutoff, 0.2) * B2
+		C3 <- hr(B3, cutoff, 0.2) * B3
+		
+		Vi <- cbind(Vi, c(C1, C2, C3))
+	}
+	#relative weight for model (ph)
+	ph <- bf/sum(bf)
+	
+	print (bf)
+	print (ph)
+	print (Vi)
+}
 
 .tableForecast	<- function( hdr )
 {
@@ -1138,8 +1196,8 @@ guiView	<- function()
 	M <- melt(W, id=1)
 	names(M)=c("Year","Age","Weight")
 	p <- ggplot(M,aes(Year,Weight,color=Age))
-	
-	print(p+stat_smooth()+geom_point())
+	p_title <- paste(repObj$stock)
+	print(p+stat_smooth()+geom_point()+opts(title=p_title))
 	
 }
 

@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=.BC-Herring-2011 2011.9.5)  5 SEP 2011 16:18
+This is pdfTeXk, Version 3.1415926-1.40.9 (Web2C 7.5.7) (format=.BC-Herring-2011 2011.9.6)  6 SEP 2011 12:05
 entering extended mode
  %&-line parsing enabled.
 **&.BC-Herring-2011 "./.BC-Herring-2011.tex"
@@ -14,7 +14,7 @@ omanian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, turki
 sh, ukenglish, ukrainian, uppersorbian, welsh, loaded.
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\vfill' on input line 67.
+(hyperref)                removing `\vfill' on input line 69.
 
 (./.BC-Herring-2011.aux (./Part1/Part_1.aux) (./Part2/Part_2.aux
 
@@ -23,20 +23,20 @@ LaTeX Warning: Label `sub:analytical_methods' multiply defined.
 ))
 \openout1 = `.BC-Herring-2011.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 67.
-LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
 (/usr/local/texlive/2008/texmf-dist/tex/context/base/supp-pdf.tex
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count151
@@ -91,7 +91,7 @@ driver: pdftex
 
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
-Package hyperref Info: Link coloring OFF on input line 67.
+Package hyperref Info: Link coloring OFF on input line 69.
 (/usr/local/texlive/2008/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
 (/usr/local/texlive/2008/texmf-dist/tex/latex/oberdiek/refcount.sty
@@ -99,55 +99,55 @@ Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
 \c@section@level=\count156
 )
-LaTeX Info: Redefining \ref on input line 67.
-LaTeX Info: Redefining \pageref on input line 67.
+LaTeX Info: Redefining \ref on input line 69.
+LaTeX Info: Redefining \pageref on input line 69.
 (./.BC-Herring-2011.out) (./.BC-Herring-2011.out)
 \@outlinefile=\write4
 \openout4 = `.BC-Herring-2011.out'.
 
 \AtBeginShipoutBox=\box53
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 67.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 69.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 67.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 69.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 67.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 67.
+(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 69.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 67.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 67.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 67.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 69.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 67.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 67.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 67.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 69.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 67.
+(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 67.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 67.
+(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 69.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 67.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 67.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 69.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 67.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 69.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 67.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 67.
+(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 67.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 67.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 67.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 69.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 67.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 69.
 
 (/usr/local/texlive/2008/texmf-dist/tex/latex/translator/translator-theorem-dic
 tionary-English.dict
@@ -155,9 +155,9 @@ Dictionary: translator-theorem-dictionary, Language: English
 ) (./.BC-Herring-2011.nav)
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 71.
+(Font)              size <5> substituted on input line 73.
 
-<iScamLogo.pdf, id=109, 433.62pt x 216.81pt>
+<iScamLogo.pdf, id=131, 433.62pt x 216.81pt>
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [1{/usr/local/texlive/2008/texmf-var/fonts/map/pdftex/updma
 p/pdftex.map} <./iScamLogo.pdf>]
@@ -208,13 +208,13 @@ File: iScamLogo.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [10
 
-] <../FIGS/Herring_HCR.pdf, id=586, 386.44376pt x 291.0875pt>
+] <../FIGS/Herring_HCR.pdf, id=721, 386.44376pt x 291.0875pt>
 File: ../FIGS/Herring_HCR.pdf Graphic file (type pdf)
 <use ../FIGS/Herring_HCR.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [11
 
- <../FIGS/Herring_HCR.pdf>] <SSF.pdf, id=636, 648.4225pt x 544.0325pt>
+ <../FIGS/Herring_HCR.pdf>] <SSF.pdf, id=781, 648.4225pt x 544.0325pt>
 File: SSF.pdf Graphic file (type pdf)
 <use SSF.pdf>
 Overfull \vbox (6.33788pt too high) detected at line 90
@@ -282,7 +282,7 @@ Overfull \hbox (4.70097pt too wide) in paragraph at lines 282--282
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_theta_prior_density.pdf, id=1206, 556.0775pt x 45
+<../FIGS/qPriorFigs/iscam_fig_theta_prior_density.pdf, id=1494, 556.0775pt x 45
 9.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_theta_prior_density.pdf Graphic file (type p
 df)
@@ -296,7 +296,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 
  <../FIGS/qPriorFigs/iscam_fig_theta_prior_density.pdf>] <../FIGS/simplot.pdf, 
-id=1290, 556.0775pt x 459.7175pt>
+id=1598, 556.0775pt x 459.7175pt>
 File: ../FIGS/simplot.pdf Graphic file (type pdf)
 <use ../FIGS/simplot.pdf>
 Overfull \vbox (9.86188pt too high) detected at line 306
@@ -323,7 +323,7 @@ Overfull \vbox (9.86188pt too high) detected at line 306
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [30
 
-] <../FIGS/SOGparameterBias.pdf, id=1417, 556.0775pt x 459.7175pt>
+] <../FIGS/SOGparameterBias.pdf, id=1755, 556.0775pt x 459.7175pt>
 File: ../FIGS/SOGparameterBias.pdf Graphic file (type pdf)
 <use ../FIGS/SOGparameterBias.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -351,7 +351,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [36
 
-] <../FIGS/iscam_fig_HCAM_SOG_MLE.pdf, id=1660, 556.0775pt x 459.7175pt>
+] <../FIGS/iscam_fig_HCAM_SOG_MLE.pdf, id=2058, 556.0775pt x 459.7175pt>
 File: ../FIGS/iscam_fig_HCAM_SOG_MLE.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_HCAM_SOG_MLE.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -363,7 +363,7 @@ File: ../FIGS/iscam_fig_HCAM_SOG_MLE.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [38
 
-] <../FIGS/iscam_fig_SBt_iSCAMvsHCAM.pdf, id=1752, 556.0775pt x 459.7175pt>
+] <../FIGS/iscam_fig_SBt_iSCAMvsHCAM.pdf, id=2170, 556.0775pt x 459.7175pt>
 File: ../FIGS/iscam_fig_SBt_iSCAMvsHCAM.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_SBt_iSCAMvsHCAM.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -426,7 +426,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [50
 
-] <../FIGS/iscam_fig_CatchMajorAreas.pdf, id=2241, 556.0775pt x 459.7175pt>
+] <../FIGS/iscam_fig_CatchMajorAreas.pdf, id=2782, 556.0775pt x 459.7175pt>
 File: ../FIGS/iscam_fig_CatchMajorAreas.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_CatchMajorAreas.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -460,7 +460,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 pdfTeX warning: pdfetex (file ../FIGS/PBSfigs/2011-HG-Prelim-WG.pdf): PDF inclu
 sion: found PDF version <1.6>, but at most version <1.4> allowed
-<../FIGS/PBSfigs/2011-HG-Prelim-WG.pdf, id=2446, 794.97pt x 614.295pt>
+<../FIGS/PBSfigs/2011-HG-Prelim-WG.pdf, id=3037, 794.97pt x 614.295pt>
 File: ../FIGS/PBSfigs/2011-HG-Prelim-WG.pdf Graphic file (type pdf)
 <use ../FIGS/PBSfigs/2011-HG-Prelim-WG.pdf>
 Overfull \vbox (5.44894pt too high) detected at line 117
@@ -473,7 +473,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 pdfTeX warning: pdfetex (file ../FIGS/PBSfigs/2011-PRD-Prelim-WG.pdf): PDF incl
 usion: found PDF version <1.6>, but at most version <1.4> allowed
-<../FIGS/PBSfigs/2011-PRD-Prelim-WG.pdf, id=2496, 794.97pt x 614.295pt>
+<../FIGS/PBSfigs/2011-PRD-Prelim-WG.pdf, id=3097, 794.97pt x 614.295pt>
 File: ../FIGS/PBSfigs/2011-PRD-Prelim-WG.pdf Graphic file (type pdf)
 <use ../FIGS/PBSfigs/2011-PRD-Prelim-WG.pdf>
 Overfull \vbox (5.44894pt too high) detected at line 117
@@ -486,7 +486,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 pdfTeX warning: pdfetex (file ../FIGS/PBSfigs/2011-CC-Prelim-WG.pdf): PDF inclu
 sion: found PDF version <1.6>, but at most version <1.4> allowed
-<../FIGS/PBSfigs/2011-CC-Prelim-WG.pdf, id=2546, 794.97pt x 614.295pt>
+<../FIGS/PBSfigs/2011-CC-Prelim-WG.pdf, id=3157, 794.97pt x 614.295pt>
 File: ../FIGS/PBSfigs/2011-CC-Prelim-WG.pdf Graphic file (type pdf)
 <use ../FIGS/PBSfigs/2011-CC-Prelim-WG.pdf>
 Overfull \vbox (5.44894pt too high) detected at line 117
@@ -499,7 +499,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 pdfTeX warning: pdfetex (file ../FIGS/PBSfigs/2011-SOG-Prelim-WG.pdf): PDF incl
 usion: found PDF version <1.6>, but at most version <1.4> allowed
-<../FIGS/PBSfigs/2011-SOG-Prelim-WG.pdf, id=2596, 794.97pt x 614.295pt>
+<../FIGS/PBSfigs/2011-SOG-Prelim-WG.pdf, id=3217, 794.97pt x 614.295pt>
 File: ../FIGS/PBSfigs/2011-SOG-Prelim-WG.pdf Graphic file (type pdf)
 <use ../FIGS/PBSfigs/2011-SOG-Prelim-WG.pdf>
 Overfull \vbox (5.44894pt too high) detected at line 117
@@ -512,7 +512,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 
 pdfTeX warning: pdfetex (file ../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf): PD
 F inclusion: found PDF version <1.6>, but at most version <1.4> allowed
-<../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf, id=2646, 614.295pt x 794.97pt>
+<../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf, id=3277, 614.295pt x 794.97pt>
 File: ../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf Graphic file (type pdf)
 <use ../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf>
 Overfull \vbox (3.99828pt too high) detected at line 117
@@ -522,7 +522,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [60
 
  <../FIGS/PBSfigs/2011_spawn_WCVI_August16.pdf>] <../FIGS/iscam_fig_SurveyMajor
-Areas.pdf, id=2703, 556.0775pt x 459.7175pt>
+Areas.pdf, id=3344, 556.0775pt x 459.7175pt>
 File: ../FIGS/iscam_fig_SurveyMajorAreas.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_SurveyMajorAreas.pdf>
 File: iScamLogo.pdf Graphic file (type pdf)
@@ -552,7 +552,7 @@ File: ../FIGS/iscam_fig_SurveyMajorAreas.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [65
 
-] <../FIGS/iscam_fig_AgeCompsHG.pdf, id=2909, 721.69624pt x 600.2425pt>
+] <../FIGS/iscam_fig_AgeCompsHG.pdf, id=3600, 721.69624pt x 600.2425pt>
 File: ../FIGS/iscam_fig_AgeCompsHG.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_AgeCompsHG.pdf>
 Overfull \vbox (7.25116pt too high) detected at line 222
@@ -561,8 +561,8 @@ Overfull \vbox (7.25116pt too high) detected at line 222
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [66
 
- <../FIGS/iscam_fig_AgeCompsHG.pdf>] <../FIGS/iscam_fig_AgeCompsPRD.pdf, id=295
-7, 721.69624pt x 600.2425pt>
+ <../FIGS/iscam_fig_AgeCompsHG.pdf>] <../FIGS/iscam_fig_AgeCompsPRD.pdf, id=365
+8, 721.69624pt x 600.2425pt>
 File: ../FIGS/iscam_fig_AgeCompsPRD.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_AgeCompsPRD.pdf>
 Overfull \vbox (7.25116pt too high) detected at line 222
@@ -571,8 +571,8 @@ Overfull \vbox (7.25116pt too high) detected at line 222
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [67
 
- <../FIGS/iscam_fig_AgeCompsPRD.pdf>] <../FIGS/iscam_fig_AgeCompsCC.pdf, id=300
-6, 721.69624pt x 600.2425pt>
+ <../FIGS/iscam_fig_AgeCompsPRD.pdf>] <../FIGS/iscam_fig_AgeCompsCC.pdf, id=371
+7, 721.69624pt x 600.2425pt>
 File: ../FIGS/iscam_fig_AgeCompsCC.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_AgeCompsCC.pdf>
 Overfull \vbox (7.25116pt too high) detected at line 222
@@ -581,8 +581,8 @@ Overfull \vbox (7.25116pt too high) detected at line 222
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [68
 
- <../FIGS/iscam_fig_AgeCompsCC.pdf>] <../FIGS/iscam_fig_AgeCompsSOG.pdf, id=305
-4, 721.69624pt x 600.2425pt>
+ <../FIGS/iscam_fig_AgeCompsCC.pdf>] <../FIGS/iscam_fig_AgeCompsSOG.pdf, id=377
+5, 721.69624pt x 600.2425pt>
 File: ../FIGS/iscam_fig_AgeCompsSOG.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_AgeCompsSOG.pdf>
 Overfull \vbox (7.25116pt too high) detected at line 222
@@ -592,7 +592,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [69
 
  <../FIGS/iscam_fig_AgeCompsSOG.pdf>] <../FIGS/iscam_fig_AgeCompsWCVI.pdf, id=3
-102, 721.69624pt x 600.2425pt>
+833, 721.69624pt x 600.2425pt>
 File: ../FIGS/iscam_fig_AgeCompsWCVI.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_AgeCompsWCVI.pdf>
 Overfull \vbox (7.25116pt too high) detected at line 222
@@ -602,7 +602,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [70
 
  <../FIGS/iscam_fig_AgeCompsWCVI.pdf>] <../FIGS/iscam_fig_weight-at-age_HG.pdf,
- id=3149, 720.6925pt x 453.695pt>
+ id=3890, 720.6925pt x 453.695pt>
 File: ../FIGS/iscam_fig_weight-at-age_HG.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_weight-at-age_HG.pdf>
 Overfull \vbox (3.18936pt too high) detected at line 270
@@ -612,7 +612,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [71
 
  <../FIGS/iscam_fig_weight-at-age_HG.pdf>] <../FIGS/iscam_fig_weight-at-age_PRD
-.pdf, id=3196, 720.6925pt x 453.695pt>
+.pdf, id=3947, 720.6925pt x 453.695pt>
 File: ../FIGS/iscam_fig_weight-at-age_PRD.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_weight-at-age_PRD.pdf>
 Overfull \vbox (3.18936pt too high) detected at line 270
@@ -622,7 +622,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [72
 
  <../FIGS/iscam_fig_weight-at-age_PRD.pdf>] <../FIGS/iscam_fig_weight-at-age_CC
-.pdf, id=3243, 720.6925pt x 453.695pt>
+.pdf, id=4004, 720.6925pt x 453.695pt>
 File: ../FIGS/iscam_fig_weight-at-age_CC.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_weight-at-age_CC.pdf>
 Overfull \vbox (3.18936pt too high) detected at line 270
@@ -632,7 +632,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [73
 
  <../FIGS/iscam_fig_weight-at-age_CC.pdf>] <../FIGS/iscam_fig_weight-at-age_SOG
-.pdf, id=3291, 720.6925pt x 453.695pt>
+.pdf, id=4062, 720.6925pt x 453.695pt>
 File: ../FIGS/iscam_fig_weight-at-age_SOG.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_weight-at-age_SOG.pdf>
 Overfull \vbox (3.18936pt too high) detected at line 270
@@ -642,7 +642,7 @@ File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [74
 
  <../FIGS/iscam_fig_weight-at-age_SOG.pdf>] <../FIGS/iscam_fig_weight-at-age_WC
-VI.pdf, id=3338, 720.6925pt x 453.695pt>
+VI.pdf, id=4119, 720.6925pt x 453.695pt>
 File: ../FIGS/iscam_fig_weight-at-age_WCVI.pdf Graphic file (type pdf)
 <use ../FIGS/iscam_fig_weight-at-age_WCVI.pdf>
 Overfull \vbox (3.18936pt too high) detected at line 270
@@ -697,9 +697,285 @@ File: iScamLogo.pdf Graphic file (type pdf)
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [85
 
-]) (./.BC-Herring-2011.bbl)
+]
 File: iScamLogo.pdf Graphic file (type pdf)
 <use iScamLogo.pdf> [86
+
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [87
+
+]
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [88
+
+]
+<../FIGS/qPriorFigs/iscam_fig_survey_fit_HG.pdf, id=4801, 795.97375pt x 495.852
+5pt>
+File: ../FIGS/qPriorFigs/iscam_fig_survey_fit_HG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_survey_fit_HG.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 359--359
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [89
+
+ <../FIGS/qPriorFigs/iscam_fig_survey_fit_HG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_survey_fit_PRD.pdf, id=4856, 795.97375pt x 495.85
+25pt>
+File: ../FIGS/qPriorFigs/iscam_fig_survey_fit_PRD.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_survey_fit_PRD.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 359--359
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [90
+
+ <../FIGS/qPriorFigs/iscam_fig_survey_fit_PRD.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_survey_fit_CC.pdf, id=4910, 795.97375pt x 495.852
+5pt>
+File: ../FIGS/qPriorFigs/iscam_fig_survey_fit_CC.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_survey_fit_CC.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 359--359
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [91
+
+ <../FIGS/qPriorFigs/iscam_fig_survey_fit_CC.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_survey_fit_SOG.pdf, id=4965, 795.97375pt x 495.85
+25pt>
+File: ../FIGS/qPriorFigs/iscam_fig_survey_fit_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_survey_fit_SOG.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 359--359
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [92
+
+ <../FIGS/qPriorFigs/iscam_fig_survey_fit_SOG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_survey_fit_WCVI.pdf, id=5019, 795.97375pt x 495.8
+525pt>
+File: ../FIGS/qPriorFigs/iscam_fig_survey_fit_WCVI.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_survey_fit_WCVI.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 359--359
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [93
+
+ <../FIGS/qPriorFigs/iscam_fig_survey_fit_WCVI.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf, id=5072, 556.0775pt x 459.7
+175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf>
+Overfull \vbox (1.22491pt too high) detected at line 417
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [94
+
+ <../FIGS/qPriorFigs/iscam_fig_agecompsresid_HG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf, id=5128, 556.0775pt x 459.
+7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf Graphic file (type pdf
+)
+<use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf>
+Overfull \vbox (1.22491pt too high) detected at line 417
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [95
+
+ <../FIGS/qPriorFigs/iscam_fig_agecompsresid_PRD.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf, id=5184, 556.0775pt x 459.7
+175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf Graphic file (type pdf)
+
+<use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf>
+Overfull \vbox (1.22491pt too high) detected at line 417
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [96
+
+ <../FIGS/qPriorFigs/iscam_fig_agecompsresid_CC.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf, id=5240, 556.0775pt x 459.
+7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf Graphic file (type pdf
+)
+<use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf>
+Overfull \vbox (1.22491pt too high) detected at line 417
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [97
+
+ <../FIGS/qPriorFigs/iscam_fig_agecompsresid_SOG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf, id=5297, 556.0775pt x 459
+.7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf Graphic file (type pd
+f)
+<use ../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf>
+Overfull \vbox (1.22491pt too high) detected at line 417
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [98
+
+ <../FIGS/qPriorFigs/iscam_fig_agecompsresid_WCVI.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_mortality_HG.pdf, id=5352, 795.97375pt x 495.8525
+pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality_HG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_mortality_HG.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 475--475
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [99
+
+ <../FIGS/qPriorFigs/iscam_fig_mortality_HG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_mortality_PRD.pdf, id=5409, 795.97375pt x 495.852
+5pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality_PRD.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_mortality_PRD.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 475--475
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [100
+
+ <../FIGS/qPriorFigs/iscam_fig_mortality_PRD.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_mortality_CC.pdf, id=5466, 795.97375pt x 495.8525
+pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality_CC.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_mortality_CC.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 475--475
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [101
+
+ <../FIGS/qPriorFigs/iscam_fig_mortality_CC.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_mortality_SOG.pdf, id=5523, 795.97375pt x 495.852
+5pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_mortality_SOG.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 475--475
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [102
+
+ <../FIGS/qPriorFigs/iscam_fig_mortality_SOG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_mortality_WCVI.pdf, id=5580, 795.97375pt x 495.85
+25pt>
+File: ../FIGS/qPriorFigs/iscam_fig_mortality_WCVI.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_mortality_WCVI.pdf>
+Overfull \hbox (11.094pt too wide) in paragraph at lines 475--475
+ [] 
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [103
+
+ <../FIGS/qPriorFigs/iscam_fig_mortality_WCVI.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_recruitment.pdf, id=5637, 556.0775pt x 459.7175pt
+>
+File: ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [104
+
+ <../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf, id=5692, 556.0775pt x 459.
+7175pt>
+File: ../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf Graphic file (type pdf
+)
+<use ../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf>
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [105
+
+ <../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=5745, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [106
+
+ <../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf, id=5797, 721.69624pt x 600.2425pt>
+File: ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf>
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [107
+
+ <../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf, id=5853, 556.0775pt x 459.7175
+pt>
+File: ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf Graphic file (type pdf)
+<use ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf>
+Overfull \vbox (5.04276pt too high) detected at line 525
+ []
+
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [108
+
+ <../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf>] (../TABLES/qPriorTables/Deci
+sionTableOldCuttoffs.tex
+Overfull \hbox (11.3806pt too wide) in paragraph at lines 9--27
+ [] 
+ []
+
+)
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [109
+
+] (../TABLES/qPriorTables/DecisionTableNewCuttoffs.tex
+! Undefined control sequence.
+\insertcaption ...ased on median value of 0.25\bo 
+                                                  \ estimated within the \is...
+l.5 ...btuion.\label{TableCatchAdviceNewCuttoffs}}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+\insertcaption ...ased on median value of 0.25\bo 
+                                                  \ estimated within the \is...
+l.5 ...btuion.\label{TableCatchAdviceNewCuttoffs}}
+                                                  
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (11.3806pt too wide) in paragraph at lines 7--25
+ [] 
+ []
+
+)
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [110
+
+]) (./.BC-Herring-2011.bbl)
+File: iScamLogo.pdf Graphic file (type pdf)
+<use iScamLogo.pdf> [111
 
 
 ]
@@ -722,27 +998,28 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 1670 strings out of 481882
- 33873 string characters out of 936321
- 351559 words of memory out of 3000000
- 16323 multiletter control sequences out of 10000+50000
- 15709 words of font info for 59 fonts, out of 3000000 for 5000
+ 1880 strings out of 481882
+ 40179 string characters out of 936321
+ 366360 words of memory out of 3000000
+ 16448 multiletter control sequences out of 10000+50000
+ 16003 words of font info for 60 fonts, out of 3000000 for 5000
  714 hyphenation exceptions out of 8191
- 47i,20n,76p,291b,755s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 47i,20n,76p,476b,755s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmex10.pfb></usr/l
 ocal/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmmi10.pfb></usr/local/texl
 ive/2008/texmf-dist/fonts/type1/bluesky/cm/cmmi8.pfb></usr/local/texlive/2008/t
 exmf-dist/fonts/type1/bluesky/cm/cmss10.pfb></usr/local/texlive/2008/texmf-dist
 /fonts/type1/bluesky/cm/cmss12.pfb></usr/local/texlive/2008/texmf-dist/fonts/ty
 pe1/bluesky/cm/cmss8.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesk
-y/cm/cmss9.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmssi
-10.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmssi8.pfb></
-usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy10.pfb></usr/local
-/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy8.pfb></usr/local/texlive/2
-008/texmf-dist/fonts/type1/bluesky/cm/cmtt10.pfb>
-Output written on .BC-Herring-2011.pdf (86 pages, 5086880 bytes).
+y/cm/cmss9.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmssb
+x10.pfb></usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmssi10.pfb>
+</usr/local/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmssi8.pfb></usr/loc
+al/texlive/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy10.pfb></usr/local/texliv
+e/2008/texmf-dist/fonts/type1/bluesky/cm/cmsy8.pfb></usr/local/texlive/2008/tex
+mf-dist/fonts/type1/bluesky/cm/cmtt10.pfb>
+Output written on .BC-Herring-2011.pdf (111 pages, 12568137 bytes).
 PDF statistics:
- 3889 PDF objects out of 4296 (max. 8388607)
- 208 named destinations out of 1000 (max. 131072)
- 542 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 6156 PDF objects out of 6186 (max. 8388607)
+ 265 named destinations out of 1000 (max. 131072)
+ 666 words of extra memory for PDF output out of 10000 (max. 10000000)
 

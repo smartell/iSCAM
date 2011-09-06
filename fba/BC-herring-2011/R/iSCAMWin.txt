@@ -171,4 +171,4 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 	radio name=tableType value=refpoints	text="Reference points"		function=.iscamTable mode=character sticky=W
 	radio name=tableType value=forecast		text="Catch forecast"		function=.iscamTable mode=character sticky=W
 	radio name=tableType value=likelihoods	text="Likelihoods"	    	function=.iscamTable mode=character sticky=W
-	null
+	radio name=tableType value=decision		text="Decision table"		function=.iscamTable mode=character sticky=W
