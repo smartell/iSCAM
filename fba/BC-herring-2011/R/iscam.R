@@ -43,7 +43,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/2010/"
+.TABLEDIR <- "../TABLES/qPriorTables/"
 
 
 
@@ -278,11 +278,81 @@ guiView	<- function()
 			available harvest."
 	fn=paste(.TABLEDIR, "DecisionTable.tex", sep="")
 	tmp <- latex(xTable, file=fn, rowname=NULL, longtable=FALSE
-		, landscape=FALSE, cgroup=cgrp, n.cgroup=ncgrp
-		, caption=cap, label="TableCatchAdvice", na.blank=TRUE, vbar=FALSE
-		, size="small")
-
+			, landscape=FALSE, cgroup=cgrp, n.cgroup=ncgrp
+			, caption=cap, label="TableCatchAdvice", na.blank=TRUE, vbar=FALSE
+			, size="small")
+	
 	cat("Latex table saved as", fn)
+	.plotRisk( hdr )
+}
+
+.plotRisk<-function( hdr )
+{
+	nRuns <-nrow(hdr)
+	probs <-seq(0.05, 0.95, by=0.05)
+	logit <-log(probs/(1-probs))
+	TAC   <-NULL
+	for(i in 1:nRuns)
+	{
+		repObj <- read.admb(hdr$Control.File[i])
+		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
+		if(file.exists(mcfile))
+			repObj$mcmc = read.table( mcfile, header=TRUE )
+		else
+			cat("NB. MCMC file missing.")
+		pcfile=paste(hdr$Control.File[i],".proj", sep="")
+		if(file.exists(pcfile))
+			repObj$proj <- read.table( pcfile, header=TRUE )
+			
+		print(head(repObj$proj))
+		with(repObj, {
+			tac <- proj$TAC
+			psc <- proj$PSC; psc[psc<1]=0; psc[psc>=1]=1
+			pss <- proj$PSS; pss[pss<1]=0; pss[pss>=1]=1
+			ut  <- proj$Ut; ut[ut<=0.2]=0; ut[ut>0]=1
+			
+			fit.sc <- glm(psc~tac, family=binomial(logit))
+			fit.ss <- glm(pss~tac, family=binomial(logit))
+			fit.ut <- glm(ut~tac, family=binomial(logit))
+			
+			plot(tac, psc, pch=".", xlab="Catch option", ylab="P(SBt<Cutoff)")
+			lines(sort(tac), sort(fit.sc$fitted.values), lwd=2, col=2)
+			
+			plot(tac, pss, pch=".", xlab="Catch option", ylab="P(SB2013<SB2012)")
+			lines(sort(tac), sort(fit.ss$fitted.values), lwd=2, col=3)
+			
+			plot(tac, ut, pch=".", xlab="Catch option", ylab="P(Ut>0.2)")
+			lines(sort(tac), sort(fit.ut$fitted.values), lwd=2, col=4)
+			
+			mtext(hdr$Stock[i], outer=TRUE,line=-1)
+			
+			#Decision table
+			cof.sc <- coef(fit.sc)
+			tac.sc <- round((logit-cof.sc[1])/cof.sc[2]*1000,0); tac.sc[tac.sc<0]=0
+			cof.ss <- coef(fit.ss)
+			tac.ss <- round((logit-cof.ss[1])/cof.ss[2]*1000,0); tac.ss[tac.ss<0]=0
+			cof.ut <- coef(fit.ut)
+			tac.ut <- round((logit-cof.ut[1])/cof.ut[2]*1000,0); tac.ut[tac.ut<0]=0
+			TAC <- cbind(probs, prettyNum(tac.sc,","), prettyNum(tac.ss,","), prettyNum(tac.ut,","))
+			colnames(TAC)=c("Risk level","$P(SB_{2013})<$Cutoff",
+			"$P(SB_{2013}<SB_{2012})$","$P(U_{2012}<0.2)$")
+			fn=paste(.TABLEDIR, "tableRisk",hdr$Stock[i],".tex", sep="")
+			cap <-paste("Decision table for", hdr$Stock[i],"where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g.,", TAC[5, 2], "tonnes).")
+			tmp <- latex(TAC, file=fn,title="Risk",  longtable=FALSE
+				, landscape=FALSE, cgroup=NULL, n.cgroup=NULL
+				, caption=cap, label=paste("Table:Risk",hdr$Stock[i], sep="")
+				, na.blank=TRUE, vbar=FALSE)
+		})
+	}
 }
 
 .tableRefpoints	<- function( hdr )
@@ -491,7 +561,7 @@ guiView	<- function()
 		else
 			cat("NB. MCMC file missing.")
 		
-		if(plotType=="sbmcmc" || plotType=="depletionmcmc")
+		if(plotType=="sbmcmc" || plotType=="depletionmcmc" || plotType=="kobeplot")
 		{
 			mcfile=paste(hdr$Control.File[i],".mcst", sep="")
 			repObj$mcsbt = read.table( mcfile, header=FALSE )
@@ -612,9 +682,9 @@ guiView	<- function()
 	
 		if ( plotType=="kobeplot" )
 		{
-			admbObj = read.admb( "iscam" )
-			admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			.plotStockStatus( admbObj )
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.plotStockStatus( repObj )
 		}
 	
 		if ( plotType=="sbmcmc" )
@@ -743,7 +813,32 @@ guiView	<- function()
 	par(op)
 }
 
-.plotStockStatus	<- function( admbObj )
+.plotStockStatus <- function( admbObj )
+{
+	#The following plots the marginal posterior densities for:
+	# -terminal year spawning biomass
+	cat("	.plotStockStatus")
+	with(admbObj, {
+		N = dim(mcsbt)[2]
+		SBt = mcsbt[, N]
+		Bo = mcmc$bo
+		
+		hist(SBt/Bo, probability=TRUE, 
+			col=colr("blue", 0.2), 
+			xlab="2011 Spawning depletion",
+			ylab="Density", 
+			main=stock)
+		ci = quantile(SBt/Bo, probs=c(0.5, 0.025, 0.975))
+		abline(v=ci, lty=c(1, 3, 3), lwd=2, col="plum")
+		legend("topright",paste(c("50% =", "2.5% =", "97.5% ="), round(ci, 2)), bty="n")
+		print(c(round(quantile(SBt, probs=c(0.5, 0.025, 0.975)), 2),
+			round(quantile(Bo, probs=c(0.5, 0.025, 0.975)), 2), 
+		 	round(ci, 2)))
+	})
+}
+
+#The following function has been deprecated.
+.plotStockStatus_deprecated	<- function( admbObj )
 {
 	print("	.plotStockStatus")
 	
@@ -926,7 +1021,7 @@ guiView	<- function()
   # Find the active parameters.  If the chain is all equal, then the parameter
   # was fixed in the model configuration.  This gets a Boolean vector that
   # indicates which columns have fixed values.
-  mcmcObj <- admbObj$mcmc[, 1:11]
+  mcmcObj <- admbObj$mcmc[, c(1:11, 17:18)]
   iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
   nPars <- sum( iPars )     # Number of active parameters in mcmc output.
 
@@ -934,7 +1029,7 @@ guiView	<- function()
   tmpNames <- names( tmp )
 
   modes <- mcmcObj[1,]
-  pairs( tmp, panel=panel.mcmc, diag.panel=panel.hist, gap=0 )
+  pairs( tmp, panel=panel.mcmc, diag.panel=panel.hist, gap=0, cex.labels=1.0 )
   mtext(admbObj$stock, side=3, outer=T, line=-1.5)
   
 }

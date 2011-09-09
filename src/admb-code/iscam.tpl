@@ -2288,7 +2288,7 @@ REPORT_SECTION
 	REPORT(ctrl);
 	
 	
-	if(last_phase()) projection_model();
+	//if(last_phase()) projection_model(0);
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -2325,7 +2325,7 @@ FUNCTION mcmc_output
 		adstring str_q;
 		str_q="lnq";
 		ofstream ofs("iscam.mcmc");
-		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t kappa\t";
+		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t vartheta\t";
 		ofs<<"bo\t bmsy\t msy\t fmsy\t";
 		ofs<<"SSB\t Age-4\t Poor\t Average\t Good\t";
 		for(int i=1;i<=nit;i++)ofs<<str_q<<i<<"\t";
@@ -2355,6 +2355,13 @@ FUNCTION mcmc_output
 	// output age-1 recruits
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<rt<<endl;
+	
+	// Projection model.
+	for(int i=0;i<=10;i++)
+	{
+		double tac = double(i)/10. * 1.5*msy;
+		projection_model(tac);
+	}
 	
 	// Deviance Information Criterion
 	/*
@@ -2412,12 +2419,16 @@ FUNCTION dvector age3_recruitment(const dvector& rt, const double& wt,const doub
 	return(rbar);
   }
 
-FUNCTION void projection_model();
+FUNCTION void projection_model(const double& tac);
   {
 	/*
 	This routine conducts population projections based on 
 	the estimated values of theta.  Note that all variables
 	in this routine are data type variables.
+	
+	Arguments:
+	tac is the total allowable catch that must be allocated 
+	to each gear type based on allocation(k)
 	
 	theta(1) = log_ro
 	theta(2) = h
@@ -2425,12 +2436,12 @@ FUNCTION void projection_model();
 	theta(4) = log_avgrec
 	theta(5) = log_recinit
 	theta(6) = rho
-	theta(7) = kappa
+	theta(7) = vartheta
 	
 	*/
 	
 	int i,j,k;
-	int pyr = 2050;	//projection year.
+	int pyr = nyr+2;	//projection year.
 	
 	// --derive stock recruitment parameters
 	dvector lx(sage,nage); lx=1;
@@ -2453,53 +2464,73 @@ FUNCTION void projection_model();
 	
 	
 	dvector p_sbt(syr,pyr);
+	dvector p_ct(1,ngear);
+	dmatrix p_ft(nyr+1,pyr);
 	dmatrix p_N(syr,pyr+1,sage,nage);
 	dmatrix p_Z(syr,pyr,sage,nage);
 	p_N.initialize();
-	p_N.sub(syr,nyr) = value(N.sub(syr,nyr));
+	p_N.sub(syr,nyr+1) = value(N.sub(syr,nyr+1));
 	p_sbt(syr,nyr)=value(sbt(syr,nyr));
 	p_Z.sub(syr,nyr) = value(Z.sub(syr,nyr));
 	
 	//selecticity
 	/*CHANGED User to specifies allocation among gear types in data file.*/
-	dvector va_bar(sage,nage);
+	dmatrix va_bar(1,ngear,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
-		va_bar+=allocation(k)*value(exp(log_sel(k)(nyr)));
+		//va_bar+=allocation(k)*value(exp(log_sel(k)(nyr)));
 		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
+		p_ct(k)   = allocation(k)*tac;
+		va_bar(k) = exp(value(log_sel(k)(nyr)));
 	}
+		
 	
-	
-	for(i = nyr; i<=pyr; i++)
+	for(i = nyr+1; i<=pyr; i++)
 	{
+		
+		//get_ft is defined in the Baranov.cxx file
+		//(wt_obs(nyr+1) is the average wt at age in the last 5 years)
+		p_ft(i) = get_ft(p_ct,value(m_bar),va_bar,p_N(i),wt_obs(nyr+1));
+		
 		//Calculate mortality
-		p_Z(i) = value(m_bar)+fmsy*va_bar;
+		p_Z(i) = value(m_bar);
+		for(k=1;k<=ngear;k++)
+		{
+			p_Z(i)+=p_ft(i,k)*va_bar(k);
+		}
+		
 		
 		//Spawning biomass
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*fec(nyr);//avg_fec;
 		
 		//Age-sage recruits
+		double tau = value((1.-rho)/varphi); 
+		double xx = randn(int(tac)+i)*tau;
+		
 		if(i>=syr+sage-1)
 		{
 			double rt;
 			double et=p_sbt(i-sage+1);
 			if(cntrl(2)==1)rt=(so*et/(1.+beta*et));
 			if(cntrl(2)==2)rt=(so*et*exp(-beta*et));
-			p_N(i+1,sage)=rt;//*exp(wt(i)-0.5*tau*tau);
+			p_N(i+1,sage)=rt*exp(xx-0.5*tau*tau); 
 		}
 		
 		//Update numbers at age
 		p_N(i+1)(sage+1,nage)=++elem_prod(p_N(i)(sage,nage-1),exp(-p_Z(i)(sage,nage-1)));
 		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
 		
-		
 	}
-	//cout<<p_sbt<<endl<<endl;
-	//cout<<bmsy<<endl;
-	
-	//cout<<msy<<endl;
-	//cout<<p_Z<<endl;
-	
+	if(nf==1)
+	{
+		ofstream ofs(BaseFileName + ".proj");
+		ofs<<"TAC\t PSC\t PSS\t Ut"<<endl;
+	}
+	ofstream ofs(BaseFileName + ".proj",ios::app);
+	ofs<<tac<<"\t"
+	<<0.25*bo/p_sbt(pyr)<<"\t"
+	<<p_sbt(pyr-1)/p_sbt(pyr)<<"\t"
+	<<(tac/(p_N(pyr-1)(3,nage)*wt_obs(nyr+1)(3,nage)))<<endl;
 	
   }
 

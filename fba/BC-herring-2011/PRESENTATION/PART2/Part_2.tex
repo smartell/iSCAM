@@ -77,32 +77,35 @@
 	\only<1>{
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[scale=0.3]
-		{../FIGS/PBSfigs/2011-HG-Prelim-WG}
+		\includegraphics[scale=0.23]
+		{../FIGS/PBSfigs/2011_spawn_HG_2E_July13}
+		\includegraphics[scale=0.23]
+		{../FIGS/PBSfigs/2011_spawn_HG_2W_July13}
+		%{../FIGS/PBSfigs/2011-HG-Prelim-WG}
 		\caption{2010 Spawning activity in Haida Gwaii.}
 	\end{figure}
 	}
 	\only<2>{
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[scale=0.3]
-		{../FIGS/PBSfigs/2011-PRD-Prelim-WG}
+		\includegraphics[scale=0.23]
+		{../FIGS/PBSfigs/2011_spawn_PRD_July13}
 		\caption{2010 Spawning activity in Prince Rupert District.}
 	\end{figure}
 	}
 	\only<3>{
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[scale=0.3]
-		{../FIGS/PBSfigs/2011-CC-Prelim-WG}
+		\includegraphics[scale=0.23]
+		{../FIGS/PBSfigs/2011_spawn_CCJuly13}
 		\caption{2010 Spawning activity in Central Coast.}
 	\end{figure}
 	}
 	\only<4>{
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[scale=0.3]
-		{../FIGS/PBSfigs/2011-SOG-Prelim-WG}
+		\includegraphics[scale=0.23]
+		{../FIGS/PBSfigs/2011_spawn_SOG_July13}
 		\caption{2010 Spawning activity in Strait of Georgia.}
 	\end{figure}
 	}
@@ -509,9 +512,9 @@
 \begin{frame}[t]\frametitle{Diagnostics: Pair plots}
 	\begin{figure}[htbp]
 		\centering
-		\vspace{-0.75cm}	\includegraphics[scale=0.35]
+		\vspace{-1cm}	\includegraphics[scale=0.4]
 		{../FIGS/qPriorFigs/iscam_fig_pairs_SOG}
-		\vspace{-0.65cm}
+		\vspace{-0.85cm}
 		\caption{Posterior samples from leading parameters \& derived variables.}
 	\end{figure}
 \end{frame}
@@ -527,6 +530,52 @@
 
 \subsection{Advice for management} % (fold)
 \label{sub:advice_for_management}
+\begin{frame}[t]\frametitle{Uncertainty in 2011 spawning biomass}
+	\only<1>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[scale=0.35]
+			{../FIGS/qPriorFigs/iscam_fig_2011_SBt_posteriors}
+		\caption{Marginal posterior distributions for 2011 spawning biomass.}
+	\end{figure}
+	}
+	%
+	\only<2>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[scale=0.35]
+			{../FIGS/qPriorFigs/iscam_fig_2011_depletion_posteriors}
+		\caption{Marginal posterior distributions for 2011 spawning biomass depletion.}
+	\end{figure}
+	}
+	%
+	\only<3>{
+	\begin{table}
+		\caption{Estimates of 2011 spawning biomass, $B_0$, and depletion.}
+		\begin{center}
+		\begin{tiny}
+		\begin{tabular}{l>{\bfseries}ccc|>{\bfseries}ccc|>{\bfseries}ccc}
+		\hline 
+		&\multicolumn{3}{c}{$SB_{2011}$} 
+		&\multicolumn{3}{c}{$B_0$} 
+		&\multicolumn{3}{c}{$SB_{2011}/B_0$}\\
+		Stock 
+		&Median & 2.5\% & 97.5\%
+		&Median & 2.5\% & 97.5\%
+		&Median & 2.5\% & 97.5\% \\
+		\hline
+		HG & 16.58 & 7.70 &33.63& 41.74 &30.05 &61.51&  0.39  &0.19  &0.75 \\
+		PRD & 27.05 & 14.45&  50.59 & 78.56 & 54.15 &150.18 &  0.34  & 0.15  & 0.68\\
+		CC & 14.67 & 7.28 &27.28 &62.40& 48.47& 85.06 & 0.23 & 0.12 & 0.41\\
+		SOG & 125.14 & 70.43& 217.95 &140.05& 110.47& 184.24 &  0.89 &  0.53 &  1.45\\
+		WCVI & 14.68 & 6.99 &27.63& 59.58& 46.84& 78.53&  0.24 & 0.12&  0.43\\
+		\hline
+		\end{tabular}
+		\end{tiny}
+		\end{center}
+	\end{table}
+	}
+\end{frame}
 %
 \begin{frame}[t,shrink=35]\frametitle{Forecast: Old cutoffs}
 	\input{../TABLES/qPriorTables/DecisionTableOldCuttoffs}
@@ -535,6 +584,8 @@
 \begin{frame}[t,shrink=35]\frametitle{Forecast: New cutoffs}
 	\input{../TABLES/qPriorTables/DecisionTableNewCuttoffs}
 \end{frame}
+
+
 % subsection advice_for_management (end)
 
 \subsection{Outstanding issues} % (fold)
@@ -548,4 +599,70 @@
 \end{frame}
 
 % subsection outstanding_issues (end)
+
+\subsection{Response to reviewers} % (fold)
+\label{sub:response_to_reviewers}
+\begin{frame}[t]\frametitle{Risk based decision making}
+	\begin{block}{Considerations}
+		\begin{itemize}
+			\item What is the probability of the stock falling below the cutoff for a given catch option?
+			\item What is the probability of the spawning stock declining?
+			\item What is the probability of the harvest rate exceeding 0.2?
+		\end{itemize}
+	\end{block}
+\end{frame}
+%
+\begin{frame}[t]\frametitle{Probability of something bad happening}
+	\only<1>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=0.8\textheight]
+			{../FIGS/qPriorFigs/iscam_fig_risk_HG}
+			\vspace{-0.5cm}
+		\caption{Haida Gwaii}
+	\end{figure}
+	}
+	%
+	\only<2>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=0.8\textheight]
+			{../FIGS/qPriorFigs/iscam_fig_risk_PRD}
+			\vspace{-0.5cm}
+		\caption{Prince Rupert District}
+	\end{figure}
+	}
+	%
+	\only<3>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=0.8\textheight]
+			{../FIGS/qPriorFigs/iscam_fig_risk_CC}
+			\vspace{-0.5cm}
+		\caption{Central Coast}
+	\end{figure}
+	}
+	%
+	\only<4>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=0.8\textheight]
+			{../FIGS/qPriorFigs/iscam_fig_risk_SOG}
+			\vspace{-0.5cm}
+		\caption{Strait of Georgia}
+	\end{figure}
+	}
+	%
+	\only<5>{
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=0.8\textheight]
+			{../FIGS/qPriorFigs/iscam_fig_risk_WCVI}
+			\vspace{-0.5cm}
+		\caption{West Coast Vancouver Island}
+	\end{figure}
+	}
+\end{frame}
+
+% subsection response_to_reviewers (end)
 % section part_ii (end)

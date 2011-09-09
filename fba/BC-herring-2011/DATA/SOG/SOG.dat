@@ -6,8 +6,10 @@ SOGHerring2011.dat
 
 
 #SOGHerring2011.dat
-#SOGHerring2011qfix.ctl
-SOGHerring2011q1.ctl
+SOGHerring2011qfix.ctl
+#SOGHerring2011q1.ctl
+#SOGHerring2011q1S7.ctl
+#SOGHerring2011qwalk.ctl
 
 ## For comparison with HCAM
 #SOGHerring2010.dat

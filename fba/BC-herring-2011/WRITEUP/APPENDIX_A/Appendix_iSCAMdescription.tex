@@ -23,8 +23,8 @@ fecundity and Beverton-Holt type recruitment.}\label{Table2}
     \begin{gather}
            \hline
         \mbox{Parameters} \nonumber \\
-            \Theta = (B_o,\kappa,M_a,\hat{a},\hat{\gamma}) \label{T2.1}\\
-            B_o>0; \kappa > 1; M_a > 0\\
+            \Theta = (B_o,\kappa,M,\hat{a},\hat{\gamma}) \label{T2.1}\\
+            B_o>0; \kappa > 1; M > 0\\
             \Phi = (l_\infty, k, t_o,a,b,\dot{a},\dot{\gamma}) \label{T2.3}\\[1ex]
         %%
         %%
@@ -37,11 +37,11 @@ fecundity and Beverton-Holt type recruitment.}\label{Table2}
         %%
         \mbox{Survivorship} \nonumber\\
             \iota_a=\begin{cases} 1, \quad a=1      \label{T2.8} \\
-            \iota_{a-1}e^{-M_{a-1}},\quad a>1\\
-            \iota_{a-1}/(1-e^{-M_a}),\quad a=A \end{cases}\\
+            \iota_{a-1}e^{-M},\quad a>1\\
+            \iota_{a-1}/(1-e^{-M}),\quad a=A \end{cases}\\
             \hat{\iota}_a=\begin{cases} 1, \quad a=1\\
-            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}},\quad a>1\\
-            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}}/(1-e^{-M_{a}-F_e v_{a}}),\quad a=A
+            \hat{\iota}_{a-1}e^{-M-F_e v_{a-1}},\quad a>1\\
+            \hat{\iota}_{a-1}e^{-M-F_e v_{a-1}}/(1-e^{-M-F_e v_{a}}),\quad a=A
             \end{cases} \label{T2.9}\\[1ex]
         %%
         %%
@@ -51,8 +51,8 @@ fecundity and Beverton-Holt type recruitment.}\label{Table2}
             \phi_B=\sum_{a=1}^\infty \iota_a w_a v_a, \quad
             \phi_b=\sum_{a=1}^\infty \hat{\iota}_a w_a v_a \label{T2.11}\\
             \phi_q=\sum_{a=1}^\infty
-                \frac{ \hat{\iota}_a w_a v_a}{M_a+F_ev_a}
-                \left(1-e^{(-M_a-F_ev_a)}\right) \label{T2.11b} \\[1ex]
+                \frac{ \hat{\iota}_a w_a v_a}{M+F_ev_a}
+                \left(1-e^{(-M-F_ev_a)}\right) \label{T2.11b} \\[1ex]
         %%
         %%
         \mbox{Steady-state conditions} \nonumber \\
@@ -137,7 +137,7 @@ For this herring assessment, the average catch over the past 20 years was arbitr
     \begin{gather}
         \hline
         \mbox{Mortality \& Survival} \nonumber \\
-        Z_{a}=M_a+F_ev_a \label{T3.1} \\
+        Z_{a}=M+F_ev_a \label{T3.1} \\
         S_{a}=1-e^{-Z_a}\label{T3.2}\\[1ex]
         %%
         %%
@@ -195,7 +195,7 @@ There is an option to treat natural mortality as a random walk process \eqref{T4
 \begin{table}[!tpb]
   \centering
 \caption{Statistical catch-age model using the Baranov catch
-equation and $C^*$ and $F^*$ as leading parameters.}\label{Table4}
+equation.}\label{Table4}
 \tableEq
     \begin{align}
         \hline \nonumber \\

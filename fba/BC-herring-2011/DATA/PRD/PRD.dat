@@ -6,9 +6,9 @@ PRDHerring2011.dat
 
 
 #PRDHerring2011.dat
-#PRDHerring2011qfix.ctl
+PRDHerring2011qfix.ctl
 #PRDHerring2011q1.ctl
-PRDHerring2011qwalk.ctl
+#PRDHerring2011qwalk.ctl
 
 ## For comparison with HCAM
 #PRDHerring2010.dat

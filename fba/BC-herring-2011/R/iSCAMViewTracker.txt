@@ -3,17 +3,17 @@
 
 # 2011 Assessment Results
 "Select","Stock","Description","Control File"
-FALSE,HG,  "2011data_qprior",../DATA/QCI/qciHerring2011qprior
+TRUE,HG,  "2011data_qprior",../DATA/QCI/qciHerring2011qprior
 TRUE,PRD, "2011data_qprior",../DATA/PRD/PRDHerring2011qprior
-FALSE,CC,  "2011data_qprior",../DATA/CC/CCHerring2011qprior
-FALSE,SOG, "2011data_qprior",../DATA/SOG/SOGHerring2011qprior
-FALSE,WCVI,"2011data_qprior",../DATA/WCVI/WCVIHerring2011qprior
+TRUE,CC,  "2011data_qprior",../DATA/CC/CCHerring2011qprior
+TRUE,SOG, "2011data_qprior",../DATA/SOG/SOGHerring2011qprior
+TRUE,WCVI,"2011data_qprior",../DATA/WCVI/WCVIHerring2011qprior
 FALSE,A2W,"2011data_qprior",../DATA/AREA2W/Area2wHerring2011qprior
 FALSE,A27,"2011data_qprior",../DATA/AREA27/Area27Herring2011qprior
 
 
 FALSE,HG,  "2011data_q1",../DATA/QCI/qciHerring2011q1
-TRUE,PRD, "2011data_q1",../DATA/PRD/PRDHerring2011q1
+FALSE,PRD, "2011data_q1",../DATA/PRD/PRDHerring2011q1
 FALSE,CC,  "2011data_q1",../DATA/CC/CCHerring2011q1
 FALSE,SOG, "2011data_q1",../DATA/SOG/SOGHerring2011q1
 FALSE,WCVI,"2011data_q1",../DATA/WCVI/WCVIHerring2011q1
@@ -22,16 +22,16 @@ FALSE,A27,"2011data_q1",../DATA/AREA27/Area27Herring2011q1
 
 
 FALSE,HG,  "2011data_qfix",../DATA/QCI/qciHerring2011qfix
-TRUE,PRD, "2011data_qfix",../DATA/PRD/PRDHerring2011qfix
+FALSE,PRD, "2011data_qfix",../DATA/PRD/PRDHerring2011qfix
 FALSE,CC,  "2011data_qfix",../DATA/CC/CCHerring2011qfix
 FALSE,SOG, "2011data_qfix",../DATA/SOG/SOGHerring2011qfix
 FALSE,WCVI,"2011data_qfix",../DATA/WCVI/WCVIHerring2011qfix
 FALSE,A2W,"2011data_qfix",../DATA/AREA2W/Area2wHerring2011qfix
 FALSE,A27,"2011data_qfix",../DATA/ARES27/Area27Herring2011qfix
 
-TRUE,HG qwalk,  "2011data_qwalk",../DATA/QCI/qciHerring2011qwalk
-TRUE,PRD qwalk, "2011data_qwalk",../DATA/PRD/PRDHerring2011qwalk
-
+FALSE,HG qwalk,  "2011data_qwalk",../DATA/QCI/qciHerring2011qwalk
+FALSE,PRD qwalk, "2011data_qwalk",../DATA/PRD/PRDHerring2011qwalk
+FALSE,SOG q1S7, "2011data_q1S7",../DATA/SOG/SOGHerring2011q1S7
 
 FALSE,HG,  "2010 HCAM",../DATA/QCI/qciHerring2010HCAM
 FALSE,HGqp,  "2010 HCAM",../DATA/QCI/qciHerring2010qprior

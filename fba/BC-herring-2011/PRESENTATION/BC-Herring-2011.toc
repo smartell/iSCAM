@@ -18,4 +18,5 @@
 \beamer@subsectionintoc {3}{4}{Maximum Likelihood Estimates}{89}{0}{3}
 \beamer@subsectionintoc {3}{5}{Diagnostics}{105}{0}{3}
 \beamer@subsectionintoc {3}{6}{Advice for management}{109}{0}{3}
-\beamer@subsectionintoc {3}{7}{Outstanding issues}{111}{0}{3}
+\beamer@subsectionintoc {3}{7}{Outstanding issues}{114}{0}{3}
+\beamer@subsectionintoc {3}{8}{Response to reviewers}{117}{0}{3}

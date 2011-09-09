@@ -6,9 +6,9 @@ QCIHerring2011.dat
 
 
 #QCIHerring2011.dat
-#QCIHerring2011qfix.ctl
+QCIHerring2011qfix.ctl
 #QCIHerring2011q1.ctl
-QCIHerring2011qwalk.ctl
+#QCIHerring2011qwalk.ctl
 
 
 ## For comparison with HCAM

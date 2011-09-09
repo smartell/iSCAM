@@ -343,6 +343,33 @@ Marginal posterior distributions and along with the prior densities for the seve
 	\caption{Marginal posterior densities (histograms) and prior densities (lines) for the seven leading parameters and spawn survey scaler ($\ln(q)$, tan colour) for each of the five major assessment regions.}\label{PartII:MCMC:Marginals}
 \end{figure}
 
+Median estimates of the 2011 spawning stock biomass and the 95\% credible interval for each of the five major assessment regions are summarized in Table \ref{table:2011_SB_Depletion}.  Current estimates of depletion and the corresponding uncertainty is based on the ratio of the 2011 spawning biomass divided by the corresponding estimate of \bo.  Depletion levels less that 0.25 would be considered to be below the cutoff level.
+
+\begin{table}
+	\caption{Estimates of 2011 spawning biomass, $B_0$, and depletion based on 2000 systematic samples from the joint posterior distribution drawn from a chain of length 1,000,000.\label{table:2011_SB_Depletion}}
+	\begin{center}
+	\begin{small}
+	\begin{tabular}{l>{\bfseries}ccc|>{\bfseries}ccc|>{\bfseries}ccc}
+	\hline 
+	&\multicolumn{3}{c}{$SB_{2011}$} 
+	&\multicolumn{3}{c}{$B_0$} 
+	&\multicolumn{3}{c}{$SB_{2011}/B_0$}\\
+	Stock 
+	&Median & 2.5\% & 97.5\%
+	&Median & 2.5\% & 97.5\%
+	&Median & 2.5\% & 97.5\% \\
+	\hline
+	HG & 16.58 & 7.70 &33.63& 41.74 &30.05 &61.51&  0.39  &0.19  &0.75 \\
+	PRD & 27.05 & 14.45&  50.59 & 78.56 & 54.15 &150.18 &  0.34  & 0.15  & 0.68\\
+	CC & 14.67 & 7.28 &27.28 &62.40& 48.47& 85.06 & 0.23 & 0.12 & 0.41\\
+	SOG & 125.14 & 70.43& 217.95 &140.05& 110.47& 184.24 &  0.89 &  0.53 &  1.45\\
+	WCVI & 14.68 & 6.99 &27.63& 59.58& 46.84& 78.53&  0.24 & 0.12&  0.43\\
+	\hline
+	\end{tabular}
+	\end{small}
+	\end{center}
+\end{table}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,18 +380,35 @@ Catch advice has historically been provided in the form of a decision table base
 
 Cutoff levels for the BC herring stocks is defined as 0.25\bo. The historical cutoff levels have not been updated for over 10 years now (1996/1997).  Recent stock assessments (since 2001) for BC herring have assumed $q=1$ for the spawn survey data.  In this assessment we have relaxed this assumption and as a consequence estimates of herring biomass have increased substantially.  Due to significant changes in population scaling it would not make sense to continue to use the previous cutoff levels as this may lead to policies that would result in overfishing or under utilization of the resource.  We therefore present catch advice based on both the old cutoffs and the new cutoffs in Tables \ref{TableCatchAdviceOldCuttoffs}-\ref{TableCatchAdviceNewCuttoffs} 
 
-% The catch advice in Tables \ref{TableCatchAdviceNewCuttoffs} and \ref{TableCatchAdviceqFix} is based on the old cuttoffs.
 
 \input{../TABLES/qPriorTables/DecisionTableOldCuttoffs}
 \input{../TABLES/qPriorTables/DecisionTableNewCuttoffs}
 
 
-%\input{../TABLES/DecisionTableqFix}
+In addition to Tables \ref{TableCatchAdviceOldCuttoffs} and \ref{TableCatchAdviceNewCuttoffs} we also provide an additional risk-based decision table that attempts to integrate over all of the uncertainty in the model (Tables \ref{Table:RiskCC}-\ref{Table:RiskWCVI}).  This decision table is also represented graphically in Figure \ref{fig:Risk}.  Figure \ref{fig:Risk} should be interpreted as follows: the probability of the spawning stock biomass falling below the cutoff level is determined by drawing a vertical line that intersect the cumulative probability curve and reading off the corresponding probability level. The reverse of this process was used to construct Tables \ref{Table:RiskCC}-\ref{Table:RiskWCVI}.
+\clearpage
+\input{../TABLES/qPriorTables/tableRiskHG}
+\input{../TABLES/qPriorTables/tableRiskPRD}
+\input{../TABLES/qPriorTables/tableRiskCC}
+\input{../TABLES/qPriorTables/tableRiskSOG}
+\input{../TABLES/qPriorTables/tableRiskWCVI}
 
-%\input{../TABLES/DecisionTableq1}
-
-%\input{../TABLES/DecisionTable}
-
+\begin{sidewaysfigure}[htbp]
+	\centering
+		\fbox{\includegraphics[width=0.32\textwidth]
+		{../FIGS/qPriorFigs/iscam_fig_risk_HG}}
+		\fbox{\includegraphics[width=0.32\textwidth]
+		{../FIGS/qPriorFigs/iscam_fig_risk_PRD}}
+		\fbox{\includegraphics[width=0.32\textwidth]
+		{../FIGS/qPriorFigs/iscam_fig_risk_CC}}\\
+		\fbox{\includegraphics[width=0.32\textwidth]
+		{../FIGS/qPriorFigs/iscam_fig_risk_SOG}}
+		\fbox{\includegraphics[width=0.32\textwidth]
+		{../FIGS/qPriorFigs/iscam_fig_risk_WCVI}}
+	\caption{Top Panels: probability of the spawning stock biomass in 2013 falling below the cutoff level versus the 2012 catch option. Middle Panels: probability of the spawning stock in 2013 being less than the spawning stock biomass in 2012 versus the 2012 catch option. Bottom Panels: probability of the 2012 harvest rate (catch/3+ biomass) being greater than the target harvest rate of 0.2.}
+	\label{fig:Risk}
+\end{sidewaysfigure}
+ 
 
 
 %Decision table
