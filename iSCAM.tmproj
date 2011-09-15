@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>src/admb-code/iscam.tpl</string>
+	<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -43,6 +43,34 @@
 				<integer>16</integer>
 				<key>line</key>
 				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/AREA27/Area27.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>6</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/AREA2W/Area2W.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>6</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -182,29 +210,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>45</integer>
+				<integer>815</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>14</integer>
+			<integer>806</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>36</integer>
+				<integer>5</integer>
 				<key>line</key>
-				<integer>45</integer>
+				<integer>815</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>45</integer>
+				<integer>815</integer>
 			</dict>
 		</dict>
 		<key>fba/BC-herring-2011/TABLES/DecisionTableOldCutoffs2011.tex</key>
@@ -273,6 +301,34 @@
 				<integer>251</integer>
 				<key>line</key>
 				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/TABLES/MinorAreas/DecisionTable.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>54</integer>
+				<key>line</key>
+				<integer>6</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/TABLES/MinorAreas/RefPointsTable.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>10</integer>
+				<key>line</key>
+				<integer>5</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -382,14 +438,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>88</integer>
+				<integer>97</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>79</integer>
+			<integer>64</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>89</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>97</integer>
+			</dict>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011.texshop</key>
 		<dict>
@@ -438,29 +510,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>360</integer>
+				<integer>133</integer>
 				<key>line</key>
-				<integer>80</integer>
+				<integer>26</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
-			<integer>170</integer>
+			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>59</integer>
+			<integer>13</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>386</integer>
+				<integer>120</integer>
 				<key>line</key>
-				<integer>80</integer>
+				<integer>26</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>360</integer>
+				<integer>144</integer>
 				<key>line</key>
-				<integer>80</integer>
+				<integer>26</integer>
 			</dict>
 		</dict>
 		<key>src/admb-code/iSCAM.dat</key>
@@ -524,6 +596,8 @@
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
 		<string>fba/BC-herring-2011/R/iscam.R</string>
+		<string>fba/BC-herring-2011/DATA/AREA27/Area27.dat</string>
+		<string>fba/BC-herring-2011/DATA/AREA2W/Area2W.dat</string>
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskHG.tex</string>
 		<string>fba/BC-herring-2011/PRESENTATION/PART2/Part_2.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</string>
@@ -534,6 +608,8 @@
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskCC.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART2/ResultsMinorAreas.tex</string>
+		<string>fba/BC-herring-2011/TABLES/MinorAreas/DecisionTable.tex</string>
+		<string>fba/BC-herring-2011/TABLES/MinorAreas/RefPointsTable.tex</string>
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/DecisionTable.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART2/OutstandingIssues.tex</string>
 		<string>fba/BC-herring-2011/DATA/QCI/QCI.dat</string>
@@ -568,44 +644,14 @@
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>R</key>
+								<key>WRITEUP</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
 									<dict/>
 								</dict>
-								<key>WRITEUP</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>PART2</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
 							</dict>
-						</dict>
-					</dict>
-				</dict>
-				<key>src</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>admb-code</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
 						</dict>
 					</dict>
 				</dict>
@@ -613,6 +659,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{0, 4}, {1680, 1024}}</string>
+	<string>{{3, 75}, {1531, 1103}}</string>
 </dict>
 </plist>
