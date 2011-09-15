@@ -63,7 +63,7 @@
 \contentsline {subsection}{\numberline {2.9.3}Retrospective analysis}{79}{subsection.2.9.3}
 \contentsline {subsection}{\numberline {2.9.4}Marginal posterior distributions and trace plots}{79}{subsection.2.9.4}
 \contentsline {subsection}{\numberline {2.9.5}Catch advice}{80}{subsection.2.9.5}
-\contentsline {section}{\numberline {2.10}Outstanding Issues}{83}{section.2.10}
+\contentsline {section}{\numberline {2.10}Outstanding Issues}{80}{section.2.10}
 \contentsline {section}{\numberline {2.11}Acknowledgements}{84}{section.2.11}
 \contentsline {section}{References}{85}{section.2.11}
 \contentsline {part}{III\hspace {1em}Appendixes}{87}{part.3}
