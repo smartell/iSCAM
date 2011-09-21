@@ -258,7 +258,7 @@ guiView	<- function()
 			else if(bt>eps && bt-hr*bt<=eps)
 				return((bt-eps)/bt)
 		}
-		HR = 0.2
+		HR = 0.1
 		Ctpoor = fhr(Btpoor, cutoff[i], HR)*Btpoor
 		Ctaverage = fhr(Btaverage, cutoff[i], HR)*Btaverage
 		Ctgood = fhr(Btgood, cutoff[i], HR)*Btgood
