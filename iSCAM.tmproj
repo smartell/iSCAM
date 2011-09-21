@@ -35,6 +35,66 @@
 			<key>firstVisibleLine</key>
 			<integer>347</integer>
 		</dict>
+		<key>docs/userGuide/Introduction.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>docs/userGuide/iscamGuide.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>15</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>21</integer>
+				<key>line</key>
+				<integer>15</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>15</integer>
+			</dict>
+		</dict>
 		<key>examples/Hake/Hake.dat</key>
 		<dict>
 			<key>caret</key>
@@ -210,30 +270,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>815</integer>
+				<integer>52</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>806</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>5</integer>
-				<key>line</key>
-				<integer>815</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>16</integer>
-				<key>line</key>
-				<integer>815</integer>
-			</dict>
+			<integer>224</integer>
 		</dict>
 		<key>fba/BC-herring-2011/TABLES/DecisionTableOldCutoffs2011.tex</key>
 		<dict>
@@ -447,7 +491,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>64</integer>
+			<integer>46</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
@@ -476,6 +520,20 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>27</integer>
+				<key>line</key>
+				<integer>38</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>43</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/PART2/OutstandingIssues.tex</key>
 		<dict>
@@ -603,6 +661,9 @@
 		<string>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</string>
 		<string>fba/BC-herring-2011/PRESENTATION/BC-Herring-2011.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
+		<string>docs/userGuide/iscamGuide.tex</string>
+		<string>docs/userGuide/Introduction.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</string>
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskWCVI.tex</string>
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskSOG.tex</string>
 		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskCC.tex</string>
@@ -644,6 +705,21 @@
 							<true/>
 							<key>subItems</key>
 							<dict>
+								<key>FIGS</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict>
+										<key>PBSfigs</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
+								</dict>
 								<key>WRITEUP</key>
 								<dict>
 									<key>isExpanded</key>
@@ -659,6 +735,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{3, 75}, {1531, 1103}}</string>
+	<string>{{0, 4}, {1680, 1024}}</string>
 </dict>
 </plist>
