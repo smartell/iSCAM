@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
+	<string>src/r-code/read.admb.R</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -35,66 +35,6 @@
 			<key>firstVisibleLine</key>
 			<integer>347</integer>
 		</dict>
-		<key>docs/userGuide/Introduction.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-		</dict>
-		<key>docs/userGuide/iscamGuide.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>15</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>15</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>15</integer>
-			</dict>
-		</dict>
 		<key>examples/Hake/Hake.dat</key>
 		<dict>
 			<key>caret</key>
@@ -103,104 +43,6 @@
 				<integer>16</integer>
 				<key>line</key>
 				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/AREA27/Area27.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>6</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/AREA2W/Area2W.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>6</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/CC/CC.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>7</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/PRD/PRD.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>8</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/QCI/QCI.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>8</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/SOG/SOG.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>1</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/WCVI/WCVI.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>8</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -221,63 +63,65 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/BC-herring-2011/PRESENTATION/BC-Herring-2011.tex</key>
+		<key>fba/BC-herring-2011/R/iscam.R</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>52</integer>
+				<integer>58</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
-			<integer>0</integer>
+			<integer>80</integer>
 			<key>firstVisibleLine</key>
-			<integer>34</integer>
+			<integer>23</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>58</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>21</integer>
+				<key>line</key>
+				<integer>58</integer>
+			</dict>
 		</dict>
-		<key>fba/BC-herring-2011/PRESENTATION/PART2/Part_2.tex</key>
+		<key>fba/BC-herring-2011/R/read.admb.R</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>9</integer>
 				<key>line</key>
-				<integer>576</integer>
+				<integer>1</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>546</integer>
+			<integer>0</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>552</integer>
+				<integer>0</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>9</integer>
 				<key>line</key>
-				<integer>576</integer>
+				<integer>1</integer>
 			</dict>
-		</dict>
-		<key>fba/BC-herring-2011/R/iscam.R</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>52</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>224</integer>
 		</dict>
 		<key>fba/BC-herring-2011/TABLES/DecisionTableOldCutoffs2011.tex</key>
 		<dict>
@@ -351,26 +195,54 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/BC-herring-2011/TABLES/MinorAreas/DecisionTable.tex</key>
+		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>54</integer>
+				<integer>14</integer>
 				<key>line</key>
-				<integer>6</integer>
+				<integer>137</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>59</integer>
+			<key>firstVisibleLine</key>
+			<integer>130</integer>
+		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_B/AppendixB.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>143</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/BC-herring-2011/TABLES/MinorAreas/RefPointsTable.tex</key>
+		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_C/AppendixC.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>10</integer>
+				<integer>139</integer>
+				<key>line</key>
+				<integer>170</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_D/AppendixD.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>5</integer>
 			</dict>
@@ -378,90 +250,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/TABLES/qPriorTables/DecisionTable.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskCC.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1</integer>
-		</dict>
-		<key>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskHG.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>77</integer>
-				<key>line</key>
-				<integer>10</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskSOG.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>85</integer>
-				<key>line</key>
-				<integer>10</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskWCVI.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>15</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>15</integer>
-				<key>line</key>
-				<integer>139</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>346</integer>
-			<key>firstVisibleLine</key>
-			<integer>127</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011-mpgraph.mp</key>
 		<dict>
@@ -482,29 +270,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>97</integer>
+				<integer>100</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
-			<integer>0</integer>
+			<integer>67</integer>
 			<key>firstVisibleLine</key>
-			<integer>46</integer>
+			<integer>95</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>39</integer>
 				<key>line</key>
-				<integer>89</integer>
+				<integer>114</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>97</integer>
+				<integer>100</integer>
 			</dict>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011.texshop</key>
@@ -521,119 +309,49 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</key>
+		<key>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>27</integer>
+				<integer>455</integer>
 				<key>line</key>
-				<integer>38</integer>
+				<integer>48</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
-			<integer>0</integer>
+			<integer>57</integer>
 			<key>firstVisibleLine</key>
-			<integer>43</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/PART2/OutstandingIssues.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>4</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>429</integer>
-				<key>line</key>
-				<integer>345</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>342</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/PART2/ResultsMinorAreas.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>133</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>13</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>120</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>144</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-		</dict>
-		<key>src/admb-code/iSCAM.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>6</integer>
-				<key>line</key>
-				<integer>3</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>src/admb-code/iscam.cpp</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>2135</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>2117</integer>
+			<integer>80</integer>
 		</dict>
 		<key>src/admb-code/iscam.tpl</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>3</integer>
+				<integer>33</integer>
 				<key>line</key>
-				<integer>1161</integer>
+				<integer>554</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1146</integer>
+			<integer>1014</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>21</integer>
+				<key>line</key>
+				<integer>554</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>33</integer>
+				<key>line</key>
+				<integer>554</integer>
+			</dict>
 		</dict>
 		<key>src/r-code/read.admb.R</key>
 		<dict>
@@ -642,44 +360,26 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>86</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>64</integer>
+			<integer>69</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
+		<string>src/r-code/read.admb.R</string>
 		<string>fba/BC-herring-2011/R/iscam.R</string>
-		<string>fba/BC-herring-2011/DATA/AREA27/Area27.dat</string>
-		<string>fba/BC-herring-2011/DATA/AREA2W/Area2W.dat</string>
-		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskHG.tex</string>
-		<string>fba/BC-herring-2011/PRESENTATION/PART2/Part_2.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</string>
-		<string>fba/BC-herring-2011/PRESENTATION/BC-Herring-2011.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
-		<string>docs/userGuide/iscamGuide.tex</string>
-		<string>docs/userGuide/Introduction.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</string>
-		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskWCVI.tex</string>
-		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskSOG.tex</string>
-		<string>fba/BC-herring-2011/TABLES/qPriorTables/tableRiskCC.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_D/AppendixD.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_C/AppendixC.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_B/AppendixB.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/ResultsMinorAreas.tex</string>
-		<string>fba/BC-herring-2011/TABLES/MinorAreas/DecisionTable.tex</string>
-		<string>fba/BC-herring-2011/TABLES/MinorAreas/RefPointsTable.tex</string>
-		<string>fba/BC-herring-2011/TABLES/qPriorTables/DecisionTable.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/OutstandingIssues.tex</string>
-		<string>fba/BC-herring-2011/DATA/QCI/QCI.dat</string>
-		<string>fba/BC-herring-2011/DATA/PRD/PRD.dat</string>
-		<string>fba/BC-herring-2011/DATA/CC/CC.dat</string>
-		<string>fba/BC-herring-2011/DATA/WCVI/WCVI.dat</string>
-		<string>fba/BC-herring-2011/DATA/SOG/SOG.dat</string>
-		<string>src/admb-code/iscam.cpp</string>
-		<string>src/admb-code/iSCAM.dat</string>
+		<string>fba/BC-herring-2011/R/read.admb.R</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -705,22 +405,7 @@
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>FIGS</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>PBSfigs</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
-								<key>WRITEUP</key>
+								<key>PRESENTATION</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
@@ -735,6 +420,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{0, 4}, {1680, 1024}}</string>
+	<string>{{751, 286}, {1276, 742}}</string>
 </dict>
 </plist>

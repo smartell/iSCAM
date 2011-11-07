@@ -1,4 +1,4 @@
-* Edit the help file skeletons in 'man', possibly combining help files for
+ * Edit the help file skeletons in 'man', possibly combining help files for
   multiple functions.
 * Put any C/C++/Fortran code in 'src'.
 * If you have compiled code, add a .First.lib() function in 'R' to load the
