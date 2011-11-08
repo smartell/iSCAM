@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>src/r-code/read.admb.R</string>
+	<string>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -62,66 +62,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/R/iscam.R</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>58</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>80</integer>
-			<key>firstVisibleLine</key>
-			<integer>23</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>9</integer>
-				<key>line</key>
-				<integer>58</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>58</integer>
-			</dict>
-		</dict>
-		<key>fba/BC-herring-2011/R/read.admb.R</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>9</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>9</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
 		</dict>
 		<key>fba/BC-herring-2011/TABLES/DecisionTableOldCutoffs2011.tex</key>
 		<dict>
@@ -195,62 +135,6 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>137</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>59</integer>
-			<key>firstVisibleLine</key>
-			<integer>130</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_B/AppendixB.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>31</integer>
-				<key>line</key>
-				<integer>143</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_C/AppendixC.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>139</integer>
-				<key>line</key>
-				<integer>170</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/APPENDIX_D/AppendixD.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>5</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011-mpgraph.mp</key>
 		<dict>
 			<key>caret</key>
@@ -272,28 +156,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>100</integer>
+				<integer>99</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
-			<integer>67</integer>
+			<integer>259</integer>
 			<key>firstVisibleLine</key>
-			<integer>95</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>39</integer>
-				<key>line</key>
-				<integer>114</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>100</integer>
-			</dict>
+			<integer>232</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011.texshop</key>
 		<dict>
@@ -309,77 +177,85 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/EXEC_SUMMARY/ExecutiveSummary.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>1333</integer>
+				<key>line</key>
+				<integer>16</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>612</integer>
+			<key>firstVisibleLine</key>
+			<integer>8</integer>
+		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/PART1/Discussion.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>479</integer>
+				<key>line</key>
+				<integer>24</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>768</integer>
+			<key>firstVisibleLine</key>
+			<integer>18</integer>
+		</dict>
+		<key>fba/BC-herring-2011/WRITEUP/PART1/Introduction.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>625</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>697</integer>
+			<key>firstVisibleLine</key>
+			<integer>7</integer>
+		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>455</integer>
+				<integer>508</integer>
 				<key>line</key>
-				<integer>48</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>57</integer>
-			<key>firstVisibleLine</key>
-			<integer>80</integer>
-		</dict>
-		<key>src/admb-code/iscam.tpl</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>33</integer>
-				<key>line</key>
-				<integer>554</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1014</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
 				<integer>21</integer>
-				<key>line</key>
-				<integer>554</integer>
 			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>33</integer>
-				<key>line</key>
-				<integer>554</integer>
-			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>423</integer>
+			<key>firstVisibleLine</key>
+			<integer>12</integer>
 		</dict>
-		<key>src/r-code/read.admb.R</key>
+		<key>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>555</integer>
 				<key>line</key>
-				<integer>86</integer>
+				<integer>62</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>69</integer>
+			<integer>138</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>src/admb-code/iscam.tpl</string>
-		<string>src/r-code/read.admb.R</string>
-		<string>fba/BC-herring-2011/R/iscam.R</string>
 		<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/EXEC_SUMMARY/ExecutiveSummary.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART1/Introduction.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_D/AppendixD.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_C/AppendixC.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_B/AppendixB.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/APPENDIX_A/Appendix_iSCAMdescription.tex</string>
-		<string>fba/BC-herring-2011/R/read.admb.R</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART1/Discussion.tex</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -405,12 +281,35 @@
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>PRESENTATION</key>
+								<key>FIGS</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
-									<dict/>
+									<dict>
+										<key>2011_biosamples_maps</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
+								</dict>
+								<key>WRITEUP</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict>
+										<key>PART2</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
 								</dict>
 							</dict>
 						</dict>
@@ -420,6 +319,6 @@
 		</dict>
 	</dict>
 	<key>windowFrame</key>
-	<string>{{751, 286}, {1276, 742}}</string>
+	<string>{{0, 4}, {1680, 1024}}</string>
 </dict>
 </plist>
