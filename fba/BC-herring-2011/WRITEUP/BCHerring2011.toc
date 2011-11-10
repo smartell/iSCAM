@@ -10,23 +10,23 @@
 \contentsline {subsection}{\numberline {1.2.1}Analytical methods}{2}{subsection.1.2.1}
 \contentsline {subsection}{\numberline {1.2.2}Sustainable Fisheries Framework reference points}{4}{subsection.1.2.2}
 \contentsline {subsection}{\numberline {1.2.3}Simulation testing}{4}{subsection.1.2.3}
-\contentsline {subsubsection}{Estimation performance with perfect information}{4}{section*.6}
+\contentsline {subsubsection}{Estimation performance with perfect information}{5}{section*.6}
 \contentsline {subsubsection}{Bias \& precision with observation \& process errors}{5}{section*.7}
 \contentsline {subsection}{\numberline {1.2.4}Comparison of HCAM with {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{5}{subsection.1.2.4}
 \contentsline {subsubsection}{Age-composition data}{5}{section*.8}
-\contentsline {subsubsection}{Commercial catch data}{5}{section*.9}
+\contentsline {subsubsection}{Commercial catch data}{6}{section*.9}
 \contentsline {subsubsection}{Spawn survey data}{6}{section*.10}
 \contentsline {subsubsection}{Specification of prior distributions}{6}{section*.11}
 \contentsline {section}{\numberline {1.3}Results}{7}{section.1.3}
 \contentsline {subsection}{\numberline {1.3.1}Simulation testing}{7}{subsection.1.3.1}
-\contentsline {subsubsection}{Estimation performance with perfect information}{7}{section*.12}
-\contentsline {subsubsection}{Bias \& precision with observation \& process errors}{7}{section*.14}
+\contentsline {subsubsection}{Model validation against perfect information}{7}{section*.12}
+\contentsline {subsubsection}{Bias \& precision with observation \& process errors}{9}{section*.14}
 \contentsline {subsection}{\numberline {1.3.2}Comparison of HCAM with {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{10}{subsection.1.3.2}
 \contentsline {subsection}{\numberline {1.3.3}Alternative assumptions about catchability, mortality \& selectivity}{13}{subsection.1.3.3}
 \contentsline {subsubsection}{Impacts of informative priors on $q$'s}{13}{section*.20}
 \contentsline {subsubsection}{Implications of variable natural mortality rate $M_t$}{13}{section*.22}
 \contentsline {subsubsection}{Implications of variable selectivity in directed fisheries}{16}{section*.24}
-\contentsline {subsection}{\numberline {1.3.4}Preliminary assessments for all other areas}{17}{subsection.1.3.4}
+\contentsline {subsection}{\numberline {1.3.4}Preliminary assessments for all other areas}{16}{subsection.1.3.4}
 \contentsline {section}{\numberline {1.4}Discussion}{18}{section.1.4}
 \contentsline {part}{II\hspace {1em}Stock Assessment and Management Advice for the British Columbia Pacific Herring Stocks: 2011 Assessment and 2012 Forecasts}{20}{part.2}
 \contentsline {section}{\numberline {2.5}Introduction}{21}{section.2.5}
@@ -70,28 +70,28 @@
 \contentsline {section}{\numberline {A.1}Technical description of {$^i$}\leavevmode {\color {red}S}\leavevmode {\color {green}\relax \fontsize {9}{11}\selectfont \abovedisplayskip 8.5\p@ plus3\p@ minus4\p@ \abovedisplayshortskip \z@ plus2\p@ \belowdisplayshortskip 4\p@ plus2\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 4\p@ plus2\p@ minus2\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}C}{\leavevmode {\color {blue}\relax \fontsize {8}{9.5}\selectfont \abovedisplayskip 6\p@ plus2\p@ minus4\p@ \abovedisplayshortskip \z@ plus\p@ \belowdisplayshortskip 3\p@ plus\p@ minus2\p@ \def \leftmargin \leftmargini \parsep 4\p@ plus2\p@ minus\p@ \topsep 8\p@ plus2\p@ minus4\p@ \itemsep 4\p@ plus2\p@ minus\p@ {\leftmargin \leftmargini \topsep 3\p@ plus\p@ minus\p@ \parsep 2\p@ plus\p@ minus\p@ \itemsep \parsep }\belowdisplayskip \abovedisplayskip {}A}}\leavevmode {\color {black}$_\textnormal {M}$}}{89}{section.A.1}
 \contentsline {subsection}{\numberline {A.1.1}Analytic methods}{89}{subsection.A.1.1}
 \contentsline {subsection}{\numberline {A.1.2}Equilibrium considerations}{89}{subsection.A.1.2}
-\contentsline {subsection}{\numberline {A.1.3}MSY based reference points}{89}{subsection.A.1.3}
+\contentsline {subsection}{\numberline {A.1.3}MSY based reference points}{91}{subsection.A.1.3}
 \contentsline {subsection}{\numberline {A.1.4}Dynamic age-structured model}{92}{subsection.A.1.4}
 \contentsline {subsection}{\numberline {A.1.5}Options for selectivity}{95}{subsection.A.1.5}
 \contentsline {paragraph}{Logistic selectivity}{95}{section*.104}
 \contentsline {paragraph}{Age-specific selectivity coefficients}{95}{section*.105}
-\contentsline {paragraph}{Cubic spline interpolation}{95}{section*.106}
+\contentsline {paragraph}{Cubic spline interpolation}{96}{section*.106}
 \contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{96}{section*.108}
 \contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{96}{section*.109}
 \contentsline {paragraph}{Selectivity as a logistic function of weight-at-age}{96}{section*.111}
-\contentsline {paragraph}{Using weight as a covariate}{96}{section*.112}
+\contentsline {paragraph}{Using weight as a covariate}{97}{section*.112}
 \contentsline {subsection}{\numberline {A.1.6}Options for natural mortality}{97}{subsection.A.1.6}
-\contentsline {subsection}{\numberline {A.1.7}Residuals, likelihoods \& objective function value components}{97}{subsection.A.1.7}
+\contentsline {subsection}{\numberline {A.1.7}Residuals, likelihoods \& objective function value components}{98}{subsection.A.1.7}
 \contentsline {subsection}{\numberline {A.1.8}Catch data}{98}{subsection.A.1.8}
 \contentsline {subsection}{\numberline {A.1.9}Relative abundance data}{98}{subsection.A.1.9}
 \contentsline {subsection}{\numberline {A.1.10}Age composition data}{99}{subsection.A.1.10}
 \contentsline {subsection}{\numberline {A.1.11}Stock-recruitment}{100}{subsection.A.1.11}
-\contentsline {subsection}{\numberline {A.1.12}Parameter Estimation and Uncertainty}{100}{subsection.A.1.12}
+\contentsline {subsection}{\numberline {A.1.12}Parameter Estimation and Uncertainty}{101}{subsection.A.1.12}
 \contentsline {subsection}{\numberline {A.1.13}Negative loglikelihoods}{101}{subsection.A.1.13}
 \contentsline {subsection}{\numberline {A.1.14}Constraints}{101}{subsection.A.1.14}
-\contentsline {subsection}{\numberline {A.1.15}Priors for parameters}{101}{subsection.A.1.15}
+\contentsline {subsection}{\numberline {A.1.15}Priors for parameters}{102}{subsection.A.1.15}
 \contentsline {subsection}{\numberline {A.1.16}Survey priors}{102}{subsection.A.1.16}
-\contentsline {subsection}{\numberline {A.1.17}Convergence penalties}{102}{subsection.A.1.17}
+\contentsline {subsection}{\numberline {A.1.17}Convergence penalties}{103}{subsection.A.1.17}
 \contentsline {section}{\numberline {B.2}Data and Control files}{104}{section.B.2}
 \contentsline {subsection}{\numberline {B.2.1}Haida Gwaii}{104}{subsection.B.2.1}
 \contentsline {subsection}{\numberline {B.2.2}Prince Rupert District}{105}{subsection.B.2.2}

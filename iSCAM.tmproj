@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fba/BC-herring-2011/WRITEUP/PART1/Methods.tex</string>
+	<string>src/admb-code/iscam.tpl</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -224,14 +224,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>508</integer>
+				<integer>18</integer>
 				<key>line</key>
-				<integer>21</integer>
+				<integer>76</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
-			<integer>423</integer>
+			<integer>348</integer>
 			<key>firstVisibleLine</key>
-			<integer>12</integer>
+			<integer>69</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</key>
 		<dict>
@@ -247,9 +247,40 @@
 			<key>firstVisibleLine</key>
 			<integer>138</integer>
 		</dict>
+		<key>src/admb-code/iscam.tpl</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>32</integer>
+				<key>line</key>
+				<integer>1303</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1270</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>27</integer>
+				<key>line</key>
+				<integer>1303</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>32</integer>
+				<key>line</key>
+				<integer>1303</integer>
+			</dict>
+		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
+		<string>src/admb-code/iscam.tpl</string>
 		<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/EXEC_SUMMARY/ExecutiveSummary.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART1/Introduction.tex</string>
@@ -281,37 +312,29 @@
 							<true/>
 							<key>subItems</key>
 							<dict>
-								<key>FIGS</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict>
-										<key>2011_biosamples_maps</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
 								<key>WRITEUP</key>
 								<dict>
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
-									<dict>
-										<key>PART2</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
+									<dict/>
 								</dict>
 							</dict>
+						</dict>
+					</dict>
+				</dict>
+				<key>src</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>admb-code</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
 						</dict>
 					</dict>
 				</dict>

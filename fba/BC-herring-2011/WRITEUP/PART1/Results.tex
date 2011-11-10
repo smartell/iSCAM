@@ -1,7 +1,7 @@
 %!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/fba/BC-herring-2011/WRITEUP/BCHerring2011.tex
 \section{Results}
 	\subsection{Simulation testing}
-		\subsubsection{Estimation performance with perfect information}
+		\subsubsection{Model validation against perfect information}
 	
 	Given perfect information about trends in relative abundance and age composition information, and a deterministic stock-recruitment relationship, \iscam\ was able to estimate 216 parameters without any substantial errors.	  Estimation performance is easily demonstrated by comparing estimates of spawning biomass and fishing mortality rates to the true values that were used to simulate the data.  As shown in Figure \ref{FigSimPlot} estimates of spawning biomass and fishing mortality rates were exactly the same as the true values. There is no measurable difference between the observed and predicted trends in the relative abundance information (Figs. \ref{FigSimPlot}cd).
 	
@@ -17,31 +17,35 @@ This perfect fit to the data is used only to judge if the code is syntactically 
 		
 		\subsubsection{Bias \& precision with observation \& process errors}
 
-In the simulation experiments conducted with both observation error and process error included in the simulated data, there was no appreciable bias in the estimates of unfished biomass ($\ln(R_o)$) and the natural mortality rate $(\ln(M))$,  the average recruitment ($\ln(\bar{R}$) and the initial recruitment ($\ln(\dot{R})$, Figure \ref{FigSogBias}).   There was, however, a very slight upward bias in the estimate of the steepness parameter for the Beverton-Holt stock recruitment relationship.  Also, steepness was estimated with the least amount of precision.  The estimability of steepness depends on many factors including the precision of the observations, but also the history of exploitation, the true value of steepness and the natural mortality rate \citep{conn2010can}.
+In the simulation experiments conducted with both observation error and process error included in the simulated data, there was no appreciable bias in the estimates of unfished recruitment ($\ln(R_o)$) and the natural mortality rate ($\ln(M)$),  the average recruitment ($\ln(\bar{R})$) and the initial recruitment ($\ln(\dot{R})$), as shown in Figure \ref{FigSogBias}.   There was, however, a very slight upward bias in the estimate of the steepness parameter for the Beverton-Holt stock recruitment relationship.  Also, steepness was estimated with the least amount of precision.  The estimability of steepness depends on many factors including the precision of the observations, but also the history of exploitation, the true value of steepness and the natural mortality rate \citep{conn2010can}.
 		
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../Figs/SOGParameterBias.pdf}\\
-	\caption{Estimates of precision and bias in key model parameters and MSY based reference points for 50 simulated data sets conditioned on the Strait of Georgia herring catch. The log2 ratio of estimated versus true value is plotted; values of 1 and -1 correspond to a twice or  half the true value, respectively.}\label{FigSogBias}
+	\caption{Estimates of precision and bias in key model parameters and MSY based reference points for 50 simulated data sets conditioned on the Strait of Georgia herring catch. The log2 ratio of estimated (numerator) versus true (denominator) value is plotted; values of 1 and -1 correspond to a twice or  half the true value, respectively.}\label{FigSogBias}
 \end{figure}
 
 Its not surprising to see a slight upward bias in $h$ for these simulations because the true value of natural mortality was set quite high ($M=0.45$) along with steepness ($h=0.8$). These high values of $M$ and $h$ imply a very productive stock, and the spawning biomass would have to be driven to very low levels in order to generate data that would be informative about the underlying production function.  Note that $M$ and $h$ are confounded because $M$ is required to calculate the spawning stock biomass per recruit in unfished conditions. Furthermore, the simulated exploitation history involved a strong depletion signal between the 1950s and 1960's followed by very light exploitation from 1970 onward.  On average the assumed parameter values for the simulation and the catch time series generated sufficient contrast to reliably estimate key model parameters without the use of informative priors.
 
 The lower panel of Figure \ref{FigSogBias} shows the apparent precision and bias in the estimates of MSY based reference points.  There is a very slight upward bias in the estimate of \fmsy\ associated with the slight upward bias in steepness.  Estimates of \bmsy\ are also slightly biased in a downward direction, and MSY in a slight upward direction.  Overall, MSY is the most precisely estimated and \fmsy\ is the least precisely estimated management variable.
 
+It should also be noted here that this simulation is somewhat unrealistic in comparison to applying the model to the real data.  The simulated conditions have a much lower total variance in comparison to the real assessments, we assume the ratio of observation error to process error is precisely known, and $M$ and selectivity are constant. Whereas, in the real assessments the total error is estimated and partitioned into observation error and process error using an informative prior, $M$ and selectivity in the gill net fisheries are not constant and allowed to vary over time.  These assumptions should actually be simulation tested in future work to better characterize the nature of the data and model assumptions.
+% =====================================================================================
+% = Sean had a comment about not believing the simulations, too precise.  Investigate =
+% =====================================================================================
 
 	\subsection{Comparison of HCAM with \iscam}
 	
-	Based on the description of the priors and model setup in Section \ref{secMethodsHCAM} on page \pageref{secMethodsHCAM}, a comparison of the spawning stock biomass between \iscam\ and HCAM were very similar (Figure \ref{fig1_HCAM_ctrl}a) for the Strait of Georgia stock.  Between 1951 and 1969 the absolute difference in spawning biomass is minimal and post 1970 estimates of spawning biomass are slightly higher for the HCAM model. The only real difference between the two models during this period is a differences in the assumptions about the error structure for the age-composition data.
+	Based on the description of the priors and model setup in Section \ref{secMethodsHCAM} on page \pageref{secMethodsHCAM}, a comparison of the spawning stock biomass between \iscam\ and HCAM were very similar (Figure \ref{fig1_HCAM_ctrl}a) for the Strait of Georgia stock.  Between 1951 and 1969 the absolute difference in spawning biomass is minimal and post 1970 estimates of spawning biomass are slightly higher for the HCAM model. The only real difference between the two models during this period is a difference in the assumptions about the error structure for the age-composition data.
 	
 	Estimates of spawning depletion are based on the post fishery spawning biomass relative to the estimated unfished spawning biomass (Figure \ref{fig1_HCAM_ctrl}b).  The three coloured zones demarcate the critical zone, cautious zone, and healthy zones with transitions defined by 0.4\bmsy\ and 0.8\bmsy, respectively.
 	
-Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM are summarized in Table \ref{TableHCAMcompare}.    The \iscam\ model tends to have a lower estimate of $B_o$ in comparison to the HCAM model and a  higher value of steepness ($h$).  These two parameters are usually negatively correlated and it is expected that if $B_o$ was higher in one model in comparison to the other, then $h$ would normally be lower to compensate.  Information to estimate $B_o$ and $h$ come from the apparent stock-recruitment data and the structural form of the stock recruitment relationship.  In \iscam\ annual recruitment is freely estimated and the residuals are based on the Beverton-Holt stock recruitment model and the estimates of spawning stock biomass.  Similarly, in HCAM recruitment is a function of the spawning stock biomass and the Beverton-Holt model and the annual deviations are estimated and assumed to be normally distributed random variables.
+Maximum likelihood estimates of key model parameters for both \iscam\ and HCAM are summarized in Table \ref{TableHCAMcompare}.    The \iscam\ model has a lower estimate of $B_o$ in comparison to the HCAM model and a  higher value of steepness ($h$).  These two parameters are usually negatively correlated and it is expected that if $B_o$ was higher in one model in comparison to the other, then $h$ would normally be lower to compensate.  Information to estimate $B_o$ and $h$ come from the apparent stock-recruitment data and the structural form of the stock recruitment relationship.  Both models assume that stock-recruitment is in the form of Beverton-Holt, only the prior for steepness differs between the two models. %In \iscam\ annual recruitment is freely estimated and the residuals are based on the Beverton-Holt stock recruitment model and the estimates of spawning stock biomass.  Similarly, in HCAM recruitment is a function of the spawning stock biomass and the Beverton-Holt model and the annual deviations are estimated and assumed to be normally distributed random variables.
 
 
 
 \begin{table}[htdp]
-\caption{A comparison of key parameters from \iscam\ and the HCAM model}
+\caption{A comparison of key parameters from \iscam\ and the HCAM model with the \iscam\ model set up like HCAM.}
 \begin{center}
 \begin{tabular}{lll}
 \hline
@@ -58,12 +62,12 @@ Survey $q$ for period 1 & 0.985  & 1.1105\\
 
 %% Revisions required below with updates.
 
-Average natural mortality rate is higher in the \iscam\ model (Table \ref{TableHCAMcompare}), and the survey $q$ for the pre-1988 spawn survey data is nearly identical in the two models (Figure \ref{fig1_HCAM_ctrl}f).  The more contemporary survey data were both forced to scale with $q=1.0$.  There is some pattern in the residuals for the overall fits to the survey data (Figure \ref{fig1_HCAM_ctrl}f), the model fails to predict the large increases in abundance in the late 1970s and early 2000s and the recent sharp decline in the mid 2000s.  The assumed standard deviation for the survey errors was 0.35 and 0.3 for the pre and post 1988 survey data, the standard deviation of the residual errors in Figure \ref{fig1_HCAM_ctrl}d is 0.335 and 0.334, respectively.
+Average natural mortality rate is higher in the \iscam\ model (Table \ref{TableHCAMcompare}), and the survey $q$ for the pre-1988 spawn survey data is nearly identical in the two models (Figure \ref{fig1_HCAM_ctrl}f).  The more contemporary survey data were forced to scale with $q=1.0$.  There is some pattern in the residuals for the overall fits to the survey data (Figure \ref{fig1_HCAM_ctrl}f), the model fails to predict the large increases in abundance in the late 1970s and early 2000s and the recent sharp decline in the mid 2000s.  The assumed standard deviation for the survey errors was 0.35 and 0.3 for the pre and post 1988 survey data, the standard deviation of the residual errors in Figure \ref{fig1_HCAM_ctrl}f is 0.335 and 0.334, respectively.
 	
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../Figs/iscam_fig_HCAM_SOG_MLE.pdf}\\
-	\caption{Maximum likelihood estimates of pre-fishery biomass (defined as the numbers-at-age times the mean weight-at-age at the start of the year) and post fishery spawning biomass in the Strait of Georgia (a), spawning biomass depletion (b), age-2 recruits (c), stock-recruitment relationship and unfished reference points (d), components of total mortality (log-scale, e), and observed (points) and predicted (lines) spawn survey data (f).  These results are based on trying to configure the \iscam\ model as similar as possible to the previous HCAM assessment; the red line in panel (a) is the MLE estimate of spawning biomass from HCAM.}\label{fig1_HCAM_ctrl}
+	\caption{Results  based on trying to configure the \iscam\ model as similar as possible to the previous HCAM assessment.  Maximum likelihood estimates of pre-fishery biomass (defined as the numbers-at-age times the mean weight-at-age at the start of the year) and post fishery spawning biomass in the Strait of Georgia (a), spawning biomass depletion (b), age-2 recruits (c), stock-recruitment relationship and unfished reference points (d), components of total mortality (log-scale, panel e), and observed (points) and predicted (lines) spawn survey data (f).  The red line in panel (a) is the MLE estimate of spawning biomass from HCAM.}\label{fig1_HCAM_ctrl}
 \end{figure}
 
 
@@ -77,7 +81,7 @@ Estimates of natural mortality are based on a random walk process, initially sta
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/iscam_fig_HCAM_SOG_RES.pdf}\\
-	\caption{From top to bottom in the left column: the log residuals between observed and predicted catch for each gear, the residuals between the observed and predicted spawn survey index, and the annual deviations between age-2 recruitment and that predicted by the Beverton-Holt model and the estimated spawning stock biomass. Right column: residual patterns in the age-composition data (observed - predicted, where black is a positive residual) for each of the three commercial gears in the Strait of Georgia.}\label{fig_HCAM_SOG_RES}
+	\caption{Results are based on configuring \iscam\ to be similar to HCAM. From top to bottom in the left column: the log residuals between observed and predicted catch for each gear, the residuals between the observed and predicted spawn survey index, and the annual deviations between age-2 recruitment and that predicted by the Beverton-Holt model and the estimated spawning stock biomass. Right column: residual patterns in the age-composition data (observed - predicted, where black is a positive residual) for each of the three commercial gears in the Strait of Georgia.}\label{fig_HCAM_SOG_RES}
 \end{figure}
 
 There is good correspondence between the observed and predicted catch, however, the residual patterns do not appear to be iid for each of the fleets (Fig. \ref{fig_HCAM_SOG_RES}).  Recall that the fit to the catch data is largely determined by an assumed variance for the observation errors in the reported catch ($\sigma_C^2=0.005$).   
@@ -85,7 +89,7 @@ There is good correspondence between the observed and predicted catch, however, 
 The fit to the spawn survey data in Strait of Georgia is nearly iid for the 1951:1987 time period.  There is some pattern in the residuals post 1988 that appears to be in contradiction with other information (i.e., age-composition data and structural assumptions about selectivity) (Fig. \ref{fig_HCAM_SOG_RES}).  The pattern in the recruitment residuals for the Strait of Georgia suggest periods of below average-recruitment in the 1970s and early 1980s and above average recruitment starting in the early 1990s.
 
 
-Fits to the age-composition data for the purse seine-roe fishery were best in comparison to the winter seine and gillnet fisheries.   The conditional maximum likelihood estimates of the variance of the age-composition data are 0.205, 0.083, and 0.198 for the winter purse seine, seine-roe, and gillnet fisheries, respectively.The smaller the standard deviation, the better correspondence between the observed and predicted age-composition data.  Also the pattern of residuals does indicate some model mis-specification (e.g., the gillnet fishery in the Strait of Georgia).
+Fits to the age-composition data for the purse seine-roe fishery were best in comparison to the winter seine and gillnet fisheries.   The conditional maximum likelihood estimates of the variance of the age-composition data are 0.205, 0.083, and 0.198 for the winter purse seine, seine-roe, and gillnet fisheries, respectively.  The smaller the standard deviation, the better correspondence between the observed and predicted age-composition data.  Also the pattern of residuals does indicate some model mis-specification (e.g., the gillnet fishery in the Strait of Georgia).
 
 
 
@@ -104,9 +108,7 @@ Fits to the age-composition data for the purse seine-roe fishery were best in co
 
 	\subsection{Alternative assumptions about catchability, mortality \& selectivity}
 	
-	Here we briefly explore the differences between relaxing the informative prior on catchability for the survey, reducing the number of natural mortality parameters being estimated and exploring alternative selectivity options to try and reduce the residual pattern in the gillnet fishery age-composition data.  For the comparisons, we only examine the maximum likelihood fits to the data and the overall objective function value.
-	
-The following table presents a few summary statistics in the following section for easier comparison.
+	Here we briefly explore the differences between relaxing the informative prior on catchability for the survey, reducing the number of natural mortality parameters being estimated and exploring alternative selectivity options to try and reduce the residual pattern in the gillnet fishery age-composition data.  For the comparisons, we only examine the maximum likelihood fits to the data and the overall objective function value.  Table \ref{Table:HCAM_stats} presents a few summary statistics for the following sub sections for easier comparison.
 
 \begin{table}[htdp]
 \caption{Summary statistics for alternative structural assumptions about the Strait of Georgia herring assessment from 1951 to 2010.  Definitions are No. is the number of estimated parameters, $f$ the objective function value, $B_o$ unfished spawning biomass, $h$ steepness, $\bar{M}$ is the average natural mortality rate, \bmsy the biomass at maximum sustainable yield, $q$ survey scalers for pre and post 1988.}\label{Table:HCAM_stats}
@@ -134,10 +136,10 @@ The implication of relaxing the informative prior on $q$ for the contemporary sp
 	\caption{A comparison of the estimated biomass and spawning biomass and fits to the survey data when q is either fixed at 1 for Survey 2 (panels a, b), or  estimated using an informative prior with an expected mean of 0 and a log standard deviation of 0.274 (panels c and d).}\label{fig:qFix_qPrior}
 \end{figure}
 
-The net result of relaxing this prior on $q$ is a slight increase in the global scaling (the spawn biomass increases by roughly 12\%) in comparison to the fixed $q=1$ scenario.  There is no appreciable difference in the overall fits to the data (see objective function value in Table \ref{Table:HCAM_stats}.
+The net result of relaxing this prior on $q$ is a slight increase in the global scaling (the spawn biomass increases by roughly 12\%) in comparison to the fixed $q=1$ scenario.  There is no appreciable difference in the overall fits to the data (see objective function value in Table \ref{Table:HCAM_stats}).
 		
 		\subsubsection{Implications of variable natural mortality rate $M_t$}
-	In this next scenario we use the same prior for $\ln(q)$ but do not allow natural mortality rates to vary over time (i.e., fixed $M$).  The natural mortality rate and $q$ are confounded so it does not make sense to fix $q$ and estimate $M$ because the corresponding estimate of $M$ would simply be conditional on the assumed value of $q$.
+	In this next scenario we use the less informative prior for $\ln(q)$ as in the previous section but do not allow natural mortality rates to vary over time (i.e., fixed $M$).  The natural mortality rate and $q$ are confounded so it does not make sense to fix $q$ and estimate $M$ because the corresponding estimate of $M$ would simply be conditional on the assumed value of $q$.
 	
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}

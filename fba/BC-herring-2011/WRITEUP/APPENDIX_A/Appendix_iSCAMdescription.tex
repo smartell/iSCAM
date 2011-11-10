@@ -4,11 +4,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %%      Move to appendix  
 	\subsection{Analytic methods}
-	The section contains the documentation in mathematical form of the underlying age structured model, and its steady state version that is used to calculate MSY-based reference points, the observation models used in predicting observations, and the components of the objective function that formulate the statistical criterion that is used to estimate model parameters. All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model. \iscam was implemented in AD Model Builder version 10.1 \cite{ADMB2009}.  This appendix also describes some of the optional features in \iscam for estimating nonparametric selectivities.
+	The section contains the documentation in mathematical form of the underlying age structured model, and its steady state version that is used to calculate MSY-based reference points, the observation models used in predicting observations, and the components of the objective function that formulate the statistical criterion that is used to estimate model parameters. All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model. \iscam was implemented in AD Model Builder version 10.1 \citep{ADMB2009}.  This appendix also describes some of the optional features in \iscam\ for estimating nonparametric selectivities.  
+	
+	It should be noted here that MSY-based reference points assume steady-state conditions, and the model structure that is implemented for the BC herring stocks is non-stationary due to time-varying changes in natural mortality rates ($M_t$) and selectivity.  Estimates of MSY are conditional on the estimates of $M$, selectivity and mean weight-at-age; all of which change over time in the herring assessments.  In the calculations of reference points, we use the average natural mortality between 1951-2010 and estimated selectivities and the empirical weight-at-age data in 2011.
 
 \subsection{Equilibrium considerations}
 
-Steady-state conditions are presented in Table \ref{Table2}, in here we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown and would eventually be estimated by fitting \iscam\ to time series data.  For a given set of growth parameters and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow the von Bertalanffy model \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
+Steady-state conditions are presented in Table \ref{Table2}, in here we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown (with the exception of $F_e$) and would eventually be estimated by fitting \iscam\ to time series data. The definition of $F_e$ is the steady-state fishing mortality rate, and the value of $F_e$ that maximizes equilibrium yield corresponds to \fmsy\ (see section \ref{sec:Finding_MSY}).   For a given set of growth parameters (or if available empirical weight-at-age data) and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow the von Bertalanffy model \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
 
  
 
@@ -18,13 +20,13 @@ Steady-state conditions are presented in Table \ref{Table2}, in here we assume t
   %\centering
 \caption{Steady-state age-structured model assuming unequal
 vulnerability-at-age, age-specific natural mortality, age-specific
-fecundity and Beverton-Holt type recruitment.}\label{Table2} 
+fecundity and Beverton-Holt type recruitment.  Note that $M$ is the average natural mortality rate between 1951-2011.}\label{Table2} 
 \tableEq
     \begin{gather}
            \hline
         \mbox{Parameters} \nonumber \\
-            \Theta = (B_o,\kappa,M,\hat{a},\hat{\gamma}) \label{T2.1}\\
-            B_o>0; \kappa > 1; M > 0\\
+            \Theta = (B_o,\kappa,M,\hat{a},\hat{\gamma},F_e) \label{T2.1}\\
+            B_o>0; \kappa > 1; M > 0; F_e \ge 0 \nonumber\\
             \Phi = (l_\infty, k, t_o,a,b,\dot{a},\dot{\gamma}) \label{T2.3}\\[1ex]
         %%
         %%
@@ -78,9 +80,9 @@ s_o = \kappa/\phi_E,
 \beta = \frac{(\kappa-1)}{R_o\phi_E},
 \]
 which simplifies to \eqref{T2.13}.
-The equilibrium yield for a given fishing mortality rate is \eqref{T2.14}.  These steady-state conditions are critical for determining various reference points such as \fmsy\ and \bmsy. 
+The equilibrium yield for a given fishing mortality rate is \eqref{T2.14}.  These steady-state conditions are critical for determining various reference points such as \fmsy\ and \bmsy. The description of calculating steady-state yield for a given value of $F_e$ in Table \ref{Table2} is written assuming that only one fishing fleet exists.  The actual calculations are slightly more complicated for the BC herring fishery, as there are three distinct fishing fleets that each have different selectivities.  The actual selectivities and calculations of survivorship involve a matrix of age-specific fishing mortalities, where each row of this matrix corresponds to one fishing fleet.  In this case $F_e$ is the total fishing mortality rate for fully selected fish summed over all fleets.  In order to calculate the fleet specific fishing mortality rate, a fixed allocation of the total yield must be specified \textit{a priori}.
 	
-\subsection{MSY based reference points}
+\subsection{MSY based reference points}\label{sec:Finding_MSY}
 \iscam\ calculates MSY-based reference points by finding the value of $F_e$ that results in the zero derivative of the steady-state catch equation \eqref{T2.14}.  This is accomplished numerically using a Newton-Raphson method where an initial guess for \fmsy\ is set equal to 1.5$M$, then use \eqref{eq1.1} to iteratively find \fmsy.  Note that the partial derivatives in \eqref{eq1.1} can be found in Table \ref{Table3}.
 
 \begin{align}\label{eq1.1}
@@ -125,7 +127,7 @@ achieve MSY.}\label{FigMSY}
 
 There are some additional technical details about calculating MSY based reference points when considering multiple fishing gears with different selectivities.  The maximum sustainable yield summed over all fishing gears is a function of the selectivities of each gear type and what fraction of the total catch is allocated to each gear.  In the Pacific herring fishery, there are three distinct fleets that all have different selectivities; the purse-seine gears tend to catch smaller younger fish, while the gill net fishery tends to target larger mature females.  The optimum fishing mortality rate for each gear that would maximize the yield depends on what the other gears are removing; this in itself is another optimization problem that fisheries management must contend with.  For the purposes of this assessment, \iscam\ requires an allocation of the total catch (summed across gear type) to each gear before it proceeds with calculating reference points.
 
-For this herring assessment, the average catch over the past 20 years was arbitrarily used to determine the allocation scheme for each of the stock assessment regions.  For the Strait of Georgia this corresponds to 6.9\% for the winter seine fishery, 41.4\% for the seine roe fishery, and 51.8\% for the gill net fishery.  We further assume that 100\% of the total mortality takes place prior to spawning.
+For this herring assessment, the average catch over the past 20 years used to determine the allocation scheme for each of the stock assessment regions.  For the Strait of Georgia this corresponds to 6.9\% for the winter seine fishery, 41.4\% for the seine roe fishery, and 51.8\% for the gill net fishery.  We further assume that 100\% of the total mortality takes place prior to spawning, and the start of each biological year is the month of April.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +197,7 @@ There is an option to treat natural mortality as a random walk process \eqref{T4
 \begin{table}[!tpb]
   \centering
 \caption{Statistical catch-age model using the Baranov catch
-equation.}\label{Table4}
+equation, where $R_0$ and $\kappa$ are the leading parameters that define population scale and productivity, respectively.}\label{Table4}
 \tableEq
     \begin{align}
         \hline \nonumber \\
@@ -226,7 +228,7 @@ equation.}\label{Table4}
         N_{t,a}&=\bar{R}e^{\omega_{t}} ;\quad \acute{t}\leq t\leq T;  
         	a=\acute{a} \label{T4.5}\\
         v_{k,a}&=f(\vec{\gamma}_k) \label{T4.6}\\
-        M_t &= M_{t-1} \exp(\varphi_t), \quad t>1 \label{T4.6b}\\
+        M_t &= M_{t-1} \exp(\varphi_t), \quad t>1, \varphi_t \sim N(0,\sigma_M) \label{T4.6b}\\
         F_{k,t}&= \exp(\digamma_{k,t}) \label{T4.7}\\[1ex]
         %%F_{k,t}&=\bar{F}_k \exp(\delta_{k,t}) \label{T4.7}\\[1ex]
         %%
@@ -235,7 +237,7 @@ equation.}\label{Table4}
         B_t&=\sum_a N_{t,a}f_a \label{T4.8}\\
         Z_{t,a}&=M_t+\sum_k F_{k,t} v_{k,t,a}\label{T4.9}\\
         \hat{C}_{k,t}&=\sum _ a\frac {N_{{t,a}}w_{{a}}F_{k,t} v_{{k,t,a}}
-        \left( 1-{e^{-Z_{t,a}}} \right) }{Z_{t,a}}^{\eta_t} \label{T4.10}\\
+        \left( 1-{e^{-Z_{t,a}}} \right) }{Z_{t,a}} e^{\eta_t} \label{T4.10}\\
         %F_{t_{i+1}}= \ F_{t_{i}} -\frac{\hat{C}_t-C_t}{\hat{C}_t'} \label{T4.12}\\
         N_{t,a}&=\begin{cases}
             %\dfrac{s_oE_{t-1}}{1+\beta E_{t-1}} \exp(\omega_t-0.5\tau^2) &a=1\\ \\
@@ -245,10 +247,10 @@ equation.}\label{Table4}
         %%
         %%
         &\mbox{Recruitment models} \nonumber\\
-        R_t &= \frac{s_oB_{t-k}}{1+\beta B_{t-k}}e^{\delta_{t}-0.5\tau^2} 
-        	\quad \mbox{Beverton-Holt} \label{T4.12}\\
-        R_t &= s_oB_{t-k}e^{-\beta B_{t-k}+\delta_t-0.5\tau^2} 
-        	\quad \mbox{Ricker} \label{T4.13}\\
+        R_t &= \frac{s_oB_{t-k}}{1+\beta B_{t-k}}e^{\delta_{t}-0.5\tau^2}\label{T4.12}
+        	\quad \mbox{Beverton-Holt}  \\
+        R_t &= s_oB_{t-k}e^{-\beta B_{t-k}+\delta_t-0.5\tau^2}\label{T4.13}
+        	\quad \mbox{Ricker} \\
 	%%        \mbox{Residuals \& predicted observations} \nonumber\\
 	%%        \epsilon_t=\ln\left(\frac{I_t}{B_t}\right)-\frac{1}{n}\sum_{t \in I_t}\ln\left(\frac{I_t}{B_t}\right)\label{T4.15}\\
 	%%        \hat{A}_{t,a}=\dfrac{N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}
@@ -293,6 +295,15 @@ $\vec{\gamma}_k$ & & vector of selectivity parameters for gear $k$\\
 $\digamma_{k,t}$ & & logarithm of the instantaneous fishing mortality for gear $k$ in year $t$\\
 $\ddot{\omega}_a$&& age-$\acute{a}$ deviates from $\ddot{R}$ for year $\acute{t}$\\
 $\omega_t$&& age-$\acute{a}$ deviates from $\bar{R}$ for years $\acute{t}$ to $T$\\
+$\varphi_t$&& logarithm of annual change in natural mortality rate\\
+\multicolumn{3}{l}{\underline{Standard deviations}}\\
+$\sigma_M$ &0.1& standard deviation in random walk for natural mortality\\
+$\sigma$ && standard deviation for observation errors in survey index\\
+$\tau$ && standard deviation in process errors (recruitment deviations)\\
+$\sigma_C$& 0.0707 & standard deviation in observed catch by gear\\
+\multicolumn{3}{l}{\underline{Residuals}}\\
+$\delta_t$ && annual recruitment residual\\
+$\eta_t$ && residual error in predicted catch\\
 \hline \hline
 \end{tabular}
 \end{center}
@@ -354,7 +365,7 @@ where  $S''(x_0) = S''(x_n)=0$  is the condition that defines a natural cubic sp
 	\centering
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=0.4\columnwidth]{../Figs/SplineEg.pdf}\\
-	\caption{Example of a natural cubic spline interpolation for estimating selectivity coefficients.  In \iscam\ the user specifies the number of nodes (circles) to estimate; then age-specific selectivity coefficients are interpolated using a natural cubic spline.}\label{Fig2}
+	\caption{Example of a natural cubic spline interpolation for 15-selectivity coefficients based on estimating 6 nodes (true selectivity was based on a logistic function).  In \iscam\ the user specifies the number of nodes (e.g., 6 circles) to estimate; then the 15 age-specific selectivity coefficients are interpolated using a natural cubic spline.}\label{Fig2}
 \end{figure}
 
 The same penalty functions for curvature and dome-shaped selectivity are also invoked for the cubic spline interpolation of selectivity.
@@ -367,7 +378,7 @@ The same penalty functions for curvature and dome-shaped selectivity are also in
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.9\textwidth]{../Figs/BicubicEg.pdf}\\
-	\caption{Example of a time-varying cubic spline (left) and bicubic spline (right) interpolation for selectivity. The panel on the left contains 165 estimated selectivity parameters and the bicubic interpolation estimates 85 selectivity parameters, or 5 age nodes and 17 year nodes. There are 495 actual nodes (selectivity parameters) being interpolated.}\label{Fig3}
+	\caption{Example of a time-varying cubic spline (left) and bicubic spline (right) interpolation for selectivity based on data from the Pacific hake. The panel on the left contains 165 estimated selectivity parameters and the bicubic interpolation estimates 85 selectivity parameters, or 5 age nodes and 17 year nodes. There are 495 actual nodes (selectivity parameters) being interpolated.}\label{Fig3}
 \end{figure}
 
 
@@ -388,7 +399,7 @@ where $\lambda^{(a)}$ is a latent variable that describes the residual variation
 
 		\subsection{Options for natural mortality}
 		
-There is an option in \iscam\ to estimate a time series of deviations in natural mortality rates ($\varphi_t$).  If not estimated, natural mortality $M$ is assumed to be invariant over time and age.  If, however, $M$ is thought to vary over time, then \iscam\ models natural mortality as a random walk process \eqref{T4.6b}.  In such cases where $M$ is allowed to freely vary over time, the user must specify two additional components in the control file. First, the phase in which the vector of deviations $\varphi_t$ is estimated must be specified (use a -ve phase to turn off the estimation), and the user must also specify a standard deviation in the deviation parameters.  If estimated, then an additional component is added to the objective function to constrain the first differences in the deviation parameters.  This first difference constraint only limits how quickly $M$ may increase or decrease over time and does not penalize deviations from an underlying mean.  Thus it is possible for $M$ to drift (increase or decrease) away from some central tendency. This drifting can have profound effects on reference point calculations as it also allows for non-stationarity in the underlying production function.
+There is an option in \iscam\ to estimate a time series of annual changes in natural mortality rates ($\varphi_t$).  If not estimated, natural mortality $M$ is assumed to be invariant over time and age.  If, however, $M$ is thought to vary over time, then \iscam\ models natural mortality as a random walk process \eqref{T4.6b}.  In such cases where $M$ is allowed to freely vary over time, the user must specify two additional components in the control file. First, the phase in which the vector of deviations $\varphi_t$ is estimated must be specified (use a -ve phase to turn off the estimation), and the user must also specify a standard deviation in the rate of change $\sigma_M$.  If estimated, then an additional component is added to the objective function to constrain the first differences in the deviation parameters.  This first difference constraint only limits how quickly $M$ may increase or decrease over time and does not penalize deviations from an underlying mean.  Thus it is possible for $M$ to drift (increase or decrease) away from some central tendency. This drifting can have profound effects on reference point calculations as it also allows for non-stationarity in the underlying production function.
 
 
 		
@@ -428,9 +439,9 @@ where $N_k$ is the number of relative abundance observations for index $k$ \cite
 \begin{align}
 \ell_I &= \sum_k \sum_{t \in I_{k,t}}  \ln(\sigma_{k,t})+\frac{\epsilon_{k,t}^2}{2\sigma_{k,t}^2} \label{eq6}\\
 &\mbox{where}\nonumber\\
-\sigma_{k,t} &= \frac{\rho \vartheta^2}{ \omega_{k,t}},  \nonumber
+\sigma_{k,t} &= \frac{\rho \vartheta}{ \omega_{k,t}},  \nonumber
 \end{align}
-where $\rho \varphi^2$ is the proportion of the total error that is associated with observation errors, and $\omega_{k,t}$ is a user specified relative weight for observation $t$ from gear $k$.  The $ \omega_{k,t}$ terms allow each observation to be weighted relative to the total error $\rho \varphi^2$; for example, to omit a particular observation, set $\omega_{k,t}=0$, or to give 2 times the weight, then set  $\omega_{k,t}=2.0$. To assume all observations have the same variance then simply set  $\omega_{k,t}=1$.  Note that if  $\omega_{k,t}=0$ then equation \eqref{eq6} is undefined; therefore, \iscam\ adds a small constant to  $\omega_{k,t}$ (1.e-10, which is equivalent to assuming an extremely large variance)  to ensure the likelihood can be evaluated.
+where $\rho \vartheta$ is the proportion of the total error that is associated with observation errors, and $\omega_{k,t}$ is a user specified relative weight for observation $t$ from gear $k$.  The $ \omega_{k,t}$ terms allow each observation to be weighted relative to the total error $\rho \vartheta$; for example, to omit a particular observation, set $\omega_{k,t}=0$, or to give 2 times the weight, then set  $\omega_{k,t}=2.0$. To assume all observations have the same variance then simply set  $\omega_{k,t}=1$.  Note that if  $\omega_{k,t}=0$ then equation \eqref{eq6} is undefined; therefore, \iscam\ adds a small constant to  $\omega_{k,t}$ (1.e-10, which is equivalent to assuming an extremely large variance)  to ensure the likelihood can be evaluated.
 
 In the case of the Pacific herring assessment, the spawn survey data post-1988 were assumed to be twice as precise as the pre-dive survey data (1951-1987).  To implement this, weights for the 1951-1987 data were set equal to $\omega_{k,t}=1.0$ and the contemporary data was assigned $\omega_{k,t}=2.0$.  The standard deviation in the observation errors is conditional on estimated values of $\rho$ and $\varphi^2$.
 
@@ -460,7 +471,7 @@ and the negative loglikelihood evaluated at the conditional maximum likelihood e
 In short, the multivariate logistic likelihood for age-composition data is just the log of the residual variance weighted by the number observations over years and ages.
 
 %Add technical details about requiring the minimum p_{t,a} to be greater than 2% "Grouping".
-There is also a technical detail in \eqref{eq7}, where observed and predicted proportions-at-age must be greater than 0.  It is not uncommon in catch-age data sets to observe 0 proportions for older, or young, age classes.  \iscam\ adopts the same approach described by \cite{richards1997visualizing} where the definition of age-classes is altered to require that $p_{t,a}\geq 0.02$ for every age in each year.  This is accomplished by grouping consecutive ages, where $p_{t,a} <0.02$, into a single age-class and reducing the effective number of age-classes in the variance calculation ($\widehat{\tau}^2$) by the number of groups created.  The choice of 2\% is arbitrary and the user can specify the minimum proportion (including 0) to consider when pooling age-proportion data.  In the case of an exact 0 in the observed age-proportions the pooling of the adjacent age-class still occurs, this ensures that \eqref{eq7} is defined.
+There is also a technical detail in \eqref{eq7}, where observed and predicted proportions-at-age must be greater than 0.  It is not uncommon in catch-age data sets to observe 0 proportions for older, or young, age classes or weak year classes. In \iscam\ the same approach described by \cite{richards1997visualizing} is adopted where the definition of age-classes is altered to require that $p_{t,a}\geq \dot{p}$ for every age in each year, where $\dot{p}$ is the minimum percentage specified by the user (e.g., $\dot{p}=0.02$ corresponds to 2\%).  This is accomplished by grouping consecutive ages, where $p_{t,a} <\dot{p}$, into a single age-class and reducing the effective number of age-classes in the variance calculation ($\widehat{\tau}^2$) by the number of groups created.  The minimum proportion (including 0) is set by the user and can influence the results, especially in cases where there is sparse aging information.  In the case of $\dot{p}=0$, the pooling of the adjacent age-class still occurs, this ensures that \eqref{eq7} is defined.
 
 In the Strait of Georgia herring example, we set the minimum proportion to 2\% to reduce the influence of the large numbers of 0 proportions in the purse-seine fleets, especially prior to 1970 during the reduction fishery.
 
@@ -468,9 +479,9 @@ In the Strait of Georgia herring example, we set the minimum proportion to 2\% t
 \subsection{Stock-recruitment}
 There are two alternative stock-recruitment models available in \iscam: the Beverton-Holt model and the Ricker model.  Annual recruitment and the initial age-composition are treated as latent variables in \iscam, and residuals between estimated recruits and the deterministic stock-recruitment models are used to estimate unfished spawning stock biomass and recruitment compensation.  The residuals between the estimated and predicted recruits is given by
 \begin{equation}\label{eq9}
-	\delta_t = \ln(\bar{R}e^{w_t}) - f(B_{t-k})
+	\delta_t = \ln(\bar{R}e^{w_t}) - \ln(f(B_{t-\acute{a}}))
 \end{equation}
-where $f(B_{t-k})$ is given by either \eqref{T4.12} or \eqref{T4.13}, and $k$ is the age at recruitment.  Note that a bias correction term for the lognormal process  errors is included in  \eqref{T4.12} and \eqref{T4.13}.
+where $f(B_{t-k})$ is given by either \eqref{T4.12} or \eqref{T4.13}, and $\acute{a}$ is the age at recruitment.  Note that a bias correction term for the lognormal process  errors is included in  \eqref{T4.12} and \eqref{T4.13}.
 
 The negative log likelihood for the recruitment deviations is given by the normal density (ignoring the scaling constant):
 \begin{equation}\label{eq10}
@@ -515,20 +526,20 @@ There are two specific constraints that are described here: 1) parameter bounds,
 An array of selectivity parameters (i.e., \verb"init_bounded_matrix_vector") is estimated within \iscam\, where each matrix corresponds to a specific gear type, and the number of rows and columns of each depends on the type of selectivity function assumed for the gear and if that selectivity changes over time.  In cases where the nodes of a spline are estimated these nodes also have an additional constraint to sum to 0.  This is effectively implemented by adding to the objective function: \[ 1000 \left(\frac{1}{N_{\vec{\lambda_k}}}\sum \vec{\lambda}_k \right)^2.\]  This additional constraint is necessary to ensure the model remains separable and the annual fishing mortality rates are less confounded with selectivity parameters.
 
 \subsection{Priors for parameters}
-	Each of the six leading parameters specified in the control file ($\ln(R_o),h,\ln(M),\ln(\bar{R}),\rho,\vartheta$) are declared as bounded parameters and in addition the user can also specify an informative prior distribution for each of these parameters.  Five distinct prior distributions can be implemented: uniform, normal, lognormal, beta and a gamma distribution.  For the Strait of Georgia herring, a bounded uniform prior was specified for  the log of unfished recruitment U(-5.0,15), a non-informative beta prior was assumed for steepness Beta(1.01,1.01), a normal prior was specified for the log of natural mortality rate N(-1.0966,0.05), a bounded uniform prior for the log of average recruitment U(-5.0,15.0), a beta prior for the variance partitioning parameter $\rho$ Beta(15,60), and a gamma prior for the precision parameter $\vartheta$, Gamma(156.25,125.0). An example of these prior distributions based on the parameter specified above is show in Figure \ref{FigPriorExample}. 
+	Each of the six leading parameters specified in the control file ($\ln(R_o),h,\ln(M),\ln(\bar{R}),\rho,\vartheta$) are declared as bounded parameters and in addition the user can also specify an informative prior distribution for each of these parameters.  Five distinct prior distributions can be implemented: uniform, normal, lognormal, beta and a gamma distribution.  For the Strait of Georgia herring, a bounded uniform prior was specified for  the log of unfished recruitment U(-5.0,15), a vague beta prior was assumed for steepness Beta(1.01,1.01), a normal prior was specified for the log of natural mortality rate \emph{N}(-1.0966,0.05), a bounded uniform prior for the log of average recruitment U(-5.0,15.0), a beta prior for the variance partitioning parameter $\rho$ Beta(15,60), and a gamma prior for the precision parameter $\vartheta$, Gamma(156.25,125.0). These prior distributions based on the parameter specified above are shown in Figure \ref{FigPriorExample}. 
 	
 \begin{figure}[!tbp]
 	\centering
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=0.7\textwidth]{../Figs/priorexample.pdf}\\
-	\caption{An example of the prior distributions used for $\ln(R_o),h,\ln(M),\ln(\bar{R}),\rho,\vartheta$.  The actual values used for the SOG herring assessment can be found in the control file in the appendix.}\label{FigPriorExample}
+	\caption{Prior distributions used for $\ln(R_o),h,\ln(M),\ln(\bar{R}),\rho,\vartheta$ in the herring assessment models.}\label{FigPriorExample}
 \end{figure}
 
 In addition to the priors specified for the six leading parameter, there are several other informative distributions that are invoked for the non-parametric selectivity parameters.  In cases were age-specific selectivity coefficients are estimated, or nodes of a spline function are estimated, two additional penalties are added to the objective function to control how smooth the selectivity changes \eqref{eq2ndDiff} and how much dome-shape is allowed in the nonparametric selectivities \eqref{eqDomePenalty}.  
 
 \subsection{Survey priors}
 
-The scaling parameter $q$ for each of the surveys is not estimated; rather, the maximum likelihood estimate for $q$ conditional on all other parameters is used to scale the predicted spawning biomass to the observed spawn survey index.  In the case of Pacific herring, the relationship between fecundity and mature female biomass is relatively invariant at about 227 eggs per gram \citep{hardwick1973biomass}.  This relationship has been used to convert total egg deposition from the spawn survey to total female spawning biomass, and assuming all spawning was accounted for, then a reasonable estimate for $q$ should be 1.0.
+The scaling parameter $q$ for each of the surveys is not treated as an unknown parameter within the code; rather, the maximum likelihood estimate for $q$ conditional on all other parameters is used to scale the predicted spawning biomass to the observed spawn survey index.  In the case of Pacific herring, the relationship between fecundity and mature female biomass is relatively invariant at about 200 eggs per gram \citep{hay1985reproductive,hardwick1973biomass}.  This relationship has been used to convert total egg deposition from the spawn survey to total female spawning biomass, and assuming all spawning was accounted for, then a reasonable estimate for $q$ should be 1.0.
 
 In the Strait of Georgia herring assessment, we specified an informative normal prior on $\ln(q)$ with a mean of 0, and a a standard deviation of 0.05 for the contemporary data.  For the pre-1988 spawn survey data, we explored three alternative priors including a non-informative prior, and a normal prior with a mean 0 and standard deviations of 0.05, or 0.1.  The informative prior for the contemporary data implies a 95\% confidence interval of 0.82 to 1.22 for $q$.
 

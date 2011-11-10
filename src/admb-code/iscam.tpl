@@ -1747,6 +1747,7 @@ FUNCTION void calc_reference_points()
 	
 	
 	/*CHANGED Allow for user to specify allocation among gear types.*/
+	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));

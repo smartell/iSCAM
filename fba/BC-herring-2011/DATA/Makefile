@@ -1,4 +1,4 @@
-## Makefile for running examples
+## Makefile for running models
 ## Author: steven martell <martell.steve@gmail.com>
 ## targets:
 

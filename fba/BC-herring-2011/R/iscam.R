@@ -2009,6 +2009,9 @@ guiView	<- function()
 
 .runSimulationTrials <- function()
 {
+	#FIXME This no longer works after file re-organization.
+	#TODO: change the interface so appropriate input file can be input.
+	
 	#This function runs the simulation trials 
 	#given nTrials and randomSeed from the gui.
 	
@@ -2016,6 +2019,7 @@ guiView	<- function()
 	#Also compares bias ratios in estimated msy-based reference points.
 	
 	# Get the guiPerf parameters so that plot controls available.
+	cat("Running simulation trials")
 	guiInfo <- getWinVal(scope="L")
 	
 	# First read iscamMC.rda if it exists.
@@ -2064,7 +2068,7 @@ guiView	<- function()
 	
 	op = par(no.readonly=T)
 	par(mfcol=c(2, 1), las=1)
-	boxplot(MC$theta_dev, ylab="log2(theta/theta')", 
+	boxplot(MC$theta_dev, ylab="log2(theta/theta)", 
 			ylim=c(-1, 1) )
 			#ylim=c(-max(c(1, abs(theta_dev))),max(c(1, abs(theta_dev)))) )
 	abline(h=0, col="grey")
