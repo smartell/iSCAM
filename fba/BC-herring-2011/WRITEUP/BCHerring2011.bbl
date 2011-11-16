@@ -75,10 +75,18 @@ Haist, V., Schweigert, J., Stocker, M., Station, P., of~Fisheries, C.~D., and
   forecasts of the potential catch in 1986}}.
 \newblock Fisheries and Oceans, Canada.
 
+\bibitem[Hall et~al., 1988]{hall1988alternative}
+Hall, D., Hilborn, R., Stocker, M., and Walters, C. (1988).
+\newblock Alternative harvest strategies for pacific herring (clupea harengus
+  pallasi).
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  45(5):888--897.
+
 \bibitem[Hardwick, 1973]{hardwick1973biomass}
 Hardwick, J. (1973).
-\newblock Biomass estimates of spawning herring, clupea harengus pallasi,
-  herring eggs, and associated vegetation in tomales bay.
+\newblock Biomass estimates of spawning herring, \textit{Clupea harengus
+  pallasi}, herring eggs, and associated vegetation in \uppercase{T}omales
+  \uppercase{B}ay.
 \newblock {\em Calif. Fish Game}, 59(1):36--61.
 
 \bibitem[Hay, 1985]{hay1985reproductive}
@@ -152,6 +160,13 @@ Schweigert, J., Christensen, L., and Haist, V. (2009).
   of the Potential Catch in 2009}.
 \newblock {\em Can. Sci. Adv. Secr.}, 2009(019):66.
 
+\bibitem[Schweigert et~al., 1996]{schweigert1996stock}
+Schweigert, J., Fort, C., Hamer, L., of~Fisheries, C.~D., Oceans, and Station,
+  P. (1996).
+\newblock {\em Stock Assessment for British Columbia Herring in 1996 and
+  Forecasts of the Potential Catch in 1997}.
+\newblock Fisheries and Oceans, Canada.
+
 \bibitem[Schweigert et~al., 2002]{schweigert2002herring}
 Schweigert, J., Funk, F., Oda, K., and T., M. (2002).
 \newblock {Herring size-at-age variation in the North Pacific}.
@@ -165,11 +180,25 @@ Schweigert, J.~F. (2001).
   of the potential catch in 2002.
 \newblock {\em Can. Sci. Adv. Secr.}, 2001(140):84.
 
+\bibitem[Stocker, 1993]{stocker1993recent}
+Stocker, M. (1993).
+\newblock Recent management of the british columbia herring fishery.
+\newblock {\em Perspectives on Canadian Marine Fisheries Management}, pages
+  267--293.
+
 \bibitem[Walters and Ludwig, 1994]{walters1994calculation}
 Walters, C. and Ludwig, D. (1994).
 \newblock {Calculation of Bayes posterior probability distributions for key
   population parameters}.
 \newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
   51(3):713--722.
+
+\bibitem[Zheng et~al., 1993]{zheng1993evaluation}
+Zheng, J., Funk, F., Kruse, G., and Fagen, R. (1993).
+\newblock Evaluation of threshold management strategies for pacific herring in
+  alaska.
+\newblock In {\em Proceedings of the International Symposium on Management
+  Strategies for Exploited Fish Populations. Alaska Sea Grant College Program
+  Report}, pages 141--165.
 
 \end{thebibliography}

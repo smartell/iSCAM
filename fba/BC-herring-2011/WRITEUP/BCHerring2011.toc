@@ -41,19 +41,22 @@
 \contentsline {subsection}{\numberline {2.7.2}Analytical methods}{29}{subsection.2.7.2}
 \contentsline {subsection}{\numberline {2.7.3}Retrospective analysis}{29}{subsection.2.7.3}
 \contentsline {subsection}{\numberline {2.7.4}Abundance and recruitment forecasts}{29}{subsection.2.7.4}
-\contentsline {subsection}{\numberline {2.7.5}Catch advice}{29}{subsection.2.7.5}
-\contentsline {section}{\numberline {2.8}Results}{36}{section.2.8}
-\contentsline {subsection}{\numberline {2.8.1}Maximum likelihood fits to the data}{36}{subsection.2.8.1}
-\contentsline {subsubsection}{Catch residuals}{36}{section*.45}
-\contentsline {subsubsection}{Fits to the spawn survey data}{36}{section*.47}
-\contentsline {subsubsection}{Age composition residuals}{39}{section*.50}
-\contentsline {subsection}{\numberline {2.8.2}Biomass estimates \& reference points}{40}{subsection.2.8.2}
-\contentsline {subsection}{\numberline {2.8.3}Estimates of mortality}{46}{subsection.2.8.3}
-\contentsline {subsection}{\numberline {2.8.4}Selectivity}{50}{subsection.2.8.4}
-\contentsline {subsection}{\numberline {2.8.5}Recruitment and stock-recruitment relationships}{52}{subsection.2.8.5}
-\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{53}{subsection.2.8.6}
-\contentsline {subsection}{\numberline {2.8.7}Marginal posterior distributions}{53}{subsection.2.8.7}
-\contentsline {subsubsection}{Diagnostic trace plots}{58}{section*.68}
+\contentsline {subsection}{\numberline {2.7.5}Harvest control rule}{36}{subsection.2.7.5}
+\contentsline {subsubsection}{Reference Points}{36}{section*.45}
+\contentsline {subsubsection}{Harvest rate}{36}{section*.46}
+\contentsline {subsubsection}{Decision rules}{37}{section*.47}
+\contentsline {section}{\numberline {2.8}Results}{37}{section.2.8}
+\contentsline {subsection}{\numberline {2.8.1}Maximum likelihood fits to the data}{37}{subsection.2.8.1}
+\contentsline {subsubsection}{Catch residuals}{37}{section*.48}
+\contentsline {subsubsection}{Fits to the spawn survey data}{37}{section*.50}
+\contentsline {subsubsection}{Age composition residuals}{41}{section*.53}
+\contentsline {subsection}{\numberline {2.8.2}Biomass estimates \& reference points}{41}{subsection.2.8.2}
+\contentsline {subsection}{\numberline {2.8.3}Estimates of mortality}{47}{subsection.2.8.3}
+\contentsline {subsection}{\numberline {2.8.4}Selectivity}{51}{subsection.2.8.4}
+\contentsline {subsection}{\numberline {2.8.5}Recruitment and stock-recruitment relationships}{54}{subsection.2.8.5}
+\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{57}{subsection.2.8.6}
+\contentsline {subsection}{\numberline {2.8.7}Marginal posterior distributions}{57}{subsection.2.8.7}
+\contentsline {subsubsection}{Diagnostic trace plots}{58}{section*.71}
 \contentsline {subsection}{\numberline {2.8.8}Parameter confounding}{58}{subsection.2.8.8}
 \contentsline {subsection}{\numberline {2.8.9}Marginal posterior distributions}{58}{subsection.2.8.9}
 \contentsline {subsection}{\numberline {2.8.10}Forecast and catch advice based on the joint posterior distribtution}{58}{subsection.2.8.10}
@@ -73,13 +76,13 @@
 \contentsline {subsection}{\numberline {A.1.3}MSY based reference points}{91}{subsection.A.1.3}
 \contentsline {subsection}{\numberline {A.1.4}Dynamic age-structured model}{92}{subsection.A.1.4}
 \contentsline {subsection}{\numberline {A.1.5}Options for selectivity}{95}{subsection.A.1.5}
-\contentsline {paragraph}{Logistic selectivity}{95}{section*.104}
-\contentsline {paragraph}{Age-specific selectivity coefficients}{95}{section*.105}
-\contentsline {paragraph}{Cubic spline interpolation}{96}{section*.106}
-\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{96}{section*.108}
-\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{96}{section*.109}
-\contentsline {paragraph}{Selectivity as a logistic function of weight-at-age}{96}{section*.111}
-\contentsline {paragraph}{Using weight as a covariate}{97}{section*.112}
+\contentsline {paragraph}{Logistic selectivity}{95}{section*.107}
+\contentsline {paragraph}{Age-specific selectivity coefficients}{95}{section*.108}
+\contentsline {paragraph}{Cubic spline interpolation}{96}{section*.109}
+\contentsline {paragraph}{Time-varying selectivity with cubic spline interpolation}{96}{section*.111}
+\contentsline {paragraph}{Bicubic spline to interpolate over time and ages}{96}{section*.112}
+\contentsline {paragraph}{Selectivity as a logistic function of weight-at-age}{96}{section*.114}
+\contentsline {paragraph}{Using weight as a covariate}{97}{section*.115}
 \contentsline {subsection}{\numberline {A.1.6}Options for natural mortality}{97}{subsection.A.1.6}
 \contentsline {subsection}{\numberline {A.1.7}Residuals, likelihoods \& objective function value components}{98}{subsection.A.1.7}
 \contentsline {subsection}{\numberline {A.1.8}Catch data}{98}{subsection.A.1.8}
@@ -104,9 +107,9 @@
 \contentsline {section}{\numberline {C.3}Bayesian prior for the dive survey spawn index proportionality constant $q$}{118}{section.C.3}
 \contentsline {subsection}{\numberline {C.3.1}The process}{118}{subsection.C.3.1}
 \contentsline {subsection}{\numberline {C.3.2}Factors affecting $q$ and their distributions}{118}{subsection.C.3.2}
-\contentsline {subsubsection}{Proportion of total spawn surveyed}{118}{section*.114}
-\contentsline {subsubsection}{Egg loss prior to survey}{118}{section*.115}
-\contentsline {subsubsection}{Bias in mean egg density}{119}{section*.116}
-\contentsline {subsubsection}{Drift in dive survey observations}{119}{section*.117}
+\contentsline {subsubsection}{Proportion of total spawn surveyed}{118}{section*.117}
+\contentsline {subsubsection}{Egg loss prior to survey}{118}{section*.118}
+\contentsline {subsubsection}{Bias in mean egg density}{119}{section*.119}
+\contentsline {subsubsection}{Drift in dive survey observations}{119}{section*.120}
 \contentsline {subsection}{\numberline {C.3.3}Simulating the dive survey spawn index $q$}{119}{subsection.C.3.3}
 \contentsline {section}{\numberline {D.4}Landings and Survey data}{124}{section.D.4}

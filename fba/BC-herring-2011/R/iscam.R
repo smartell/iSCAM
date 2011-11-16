@@ -1636,9 +1636,11 @@ guiView	<- function()
 	with(repObj, {
 		if(is.matrix(it)){
 			xx = t(iyr)
-			m = apply(it,1,max, na.rm=T)
-			yy = t(pit/m)
-			y2 = t(it/m)
+			#m = apply(it,1,max, na.rm=T)
+			#yy = t(pit/m)
+			#y2 = t(it/m)
+			yy = t(pit/q)
+			y2 = t(it/q)
 		}else{
 			xx = iyr
 			yy = pit
@@ -1649,7 +1651,9 @@ guiView	<- function()
 		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
 		
 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
-			xlab="Year", ylab="Relative abundance", main=paste(stock))
+			xlab="Year", 
+			ylab=expression(paste("Abundance ",(I[t]/q))), 
+			main=paste(stock))
 		
 		matlines(xx, yy, col=1:n, lty=1)
 		matpoints(xx, y2, col=1:n, pch=1:n)

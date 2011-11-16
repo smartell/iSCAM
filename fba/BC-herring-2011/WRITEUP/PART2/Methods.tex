@@ -2,7 +2,7 @@
 \section{Methods}
 	\subsection{Input data \& assumptions}
 	\subsubsection{Catch data}
-	For each of the statistical areas, the required input data for \iscam\ consists of a catch time series for each of the fishing fleets.  For the BC herring fishery, the annual total removals has been partitioned into three distinct fishing fleets (or fishing periods, see Figure \ref{FigCatch}).  The first fleet is a winter seine fishery that has been in operation since the start of the assessment in 1951, the second is a seine-roe fishery that commenced in 1972 in the Strait of Georgia, and the third fleet is a gillnet fishery that targets females on the spawning grounds. The model is fit to the catch time series information and assumes measurement errors are lognormal, independent and identically distributed.  The assumed standard deviation in the catch observations must be specified in the control file and it is assumed that measurement errors in the catch is the same for all fishing periods.  The units of the catch are given in 1000s of metric tons.
+	For each of the statistical areas, the required input data for \iscam\ consists of a catch time series for each of the fishing fleets.  For the BC herring fishery, the annual total removals has been partitioned into three distinct fishing fleets (or fishing periods, see Figure \ref{FigCatch}).  The first fleet is a winter seine fishery that has been in operation since the start of the assessment in 1951, the second is a seine-roe fishery that commenced in 1972 in the Strait of Georgia, and the third fleet is a gillnet fishery that targets females on the spawning grounds. The model is fit to the catch time series information and assumes measurement errors are lognormal, independent and identically distributed.  The assumed standard deviation in the catch observation data must be specified in the control file and it is assumed that measurement errors in the catch is the same for all fishing periods.  The units of the catch are given in 1000s of metric tons.
 	
 	In addition to the commercial catch, removals from fisheries independent surveys must also be specified in \iscam. Two additional fleets are specified to represent the spawn survey, where the spawn survey is broken into two distinct time periods pre-1988 and post-1988, the year when the survey switched from surface surveys to dive surveys.  This partitioning of the data is done for two reasons: (1) to allow for different catchability coefficients to be specified for the early and late periods, and to allow for more weight to be placed on the contemporary data due to improved precision in the estimates of egg layers. 
 
@@ -48,7 +48,7 @@ The locations of the spawning beds for the five major and two minor stock areas 
 % 	\caption{Preliminary Spawning activity in 2011 for the West Coast of Vancouver Island (includes minor stock area 27).}\label{figSpawnMaps}
 % \end{figure}
 
-	The spawn survey is conducted after the fisheries in the area have been completed; therefore, it is assumed that all the mortality for the year has occurred just prior to commencing the spawning survey. The fisheries independent survey estimates egg density and total spawn area, and from this information the total female spawning biomass can be estimated assuming the 200 eggs per gram of female  or 100 eggs per gram of mature  individuals \citep{hay1985reproductive,hardwick1973biomass}. The assumed selectivity for the spawn survey is fixed to the maturity schedule for herring.  	
+	The spawn survey is conducted after the fisheries in the area have been completed; therefore, it is assumed that all the mortality for the year has occurred just prior to commencing the spawning survey. The fisheries independent survey estimates egg density and total spawn area, and from this information the total female spawning biomass can be estimated assuming the 200 eggs per gram of female body weight or 100 eggs per gram of mature body weight of both sexes \citep{hay1985reproductive,hardwick1973biomass}. The assumed selectivity for the spawn survey is fixed to the maturity schedule for herring and the mean weight-at-age data comes from empirical observations based on biological samples.  	
 	
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
@@ -58,7 +58,7 @@ The locations of the spawning beds for the five major and two minor stock areas 
 	
 	\subsubsection{Biological samples}
 	
-	Biological samples are collected from both commercial catch and from the test fishery program.  Commencing  in 1975, test fishery charters supplemented biological samples in areas with poor sampling that was not representative of the stock in that area (i.e., fishing solely on spawning aggregations), or in closed areas. Prior to 2006, test fishing charters were funded through an allocation of fish to the test program; the program is now fully funded by DFO.  Through a contract with DFO, the Herring Conservation and Research Society (HCRS) sub-contracts a number of vessels to collect biological samples.  Industry also conducts pre-season test sets for roe-quality testing in open areas and supplementary biological samples are provided as part of this program.  The following data are collected for all biological samples: fish length, weight, sex, and maturity.  Subsequently these sources of data are combined and information on weight-at-age and proportion-at-age become input data for the stock assessment model.
+	Biological samples are collected from both commercial catch and from the test fishery program.  Commencing  in 1975, test fishery charters supplemented biological samples in areas where catch sampling that was not representative of the stock in that area (i.e., fishing solely on spawning aggregations), or in closed areas. Prior to 2006, test fishing charters were funded through an allocation of fish to the test program; the program is now fully funded by DFO.  Through a contract with DFO, the Herring Conservation and Research Society (HCRS) sub-contracts a number of vessels to collect biological samples.  Industry also conducts pre-season test sets for roe-quality testing in open areas and supplementary biological samples are provided as part of this program.  The following data are collected for all biological samples: fish length, weight, sex, and maturity.  Subsequently these sources of data are compiled and used as the information on mean weight-at-age and catch-at-age data that are the essential input data for the stock assessment model.
 	
 	During the 2010/2011 season a total of 248 biological samples were collected, of which 151 were collected from the test fishery, 57 were collected from the roe fishery, 16 from the food \& bait fishery, 4 from Spawn on Kelp (SOK) operations, and 16 from the summer trawl research survey (Table \ref{table:PartII:bioSamples}).  Note that the definition of a sample is roughly 100 individual fish.  A summary of biological samples collected from commercial and pre-fishery charters from 2002/03--2010/11 is presented in Table \ref{table:PartII:sampleSizes} and the spatial locations of the biosamples are presented in Figure \ref{fig:FIGS_2011_biosamples_maps_2011_biosamplesNC_SAR}.
 
@@ -130,43 +130,43 @@ Fishing season & Commercial fishery samples & Charter and research samples & Tot
 	
 	\subsubsection{Age composition data}
 	
-	Ageing data, through the reading of fish scales, are collected from the biological samples taken from the commercial fisheries and test fishery charters. Age composition data is used to determine proportions-at-age and is an essential source of input data to the herring stock assessment model.
+	Ageing data, through the reading of fish scales, are collected from the biological samples taken from the commercial fisheries and test fishery charters.  At present, the biological samples from the test fisheries are pooled with the seine-roe fisheries. Future analyses may further disaggregate these data to determine if the test fishery and the seine-roe fishery have very different age-compositions. Age composition data is used to determine proportions-at-age and is an essential source of input data to the herring stock assessment model.
 	
-	Catch-at-age data from the winter seine fishery (top panels of Figures \ref{FigAgeCompsHG}-\ref{FigAgeCompsWCVI}) tend to consist of younger fish in comparison to the age composition data from the seine-roe and gillnet fleets post 1970. The shaded polygons in Figures \ref{FigAgeCompsHG}-\ref{FigAgeCompsWCVI} approximates the 95\% distribution of ages in the catch.  Roughly 90\% of the fish landed in the winter seine fishery were younger than age-7, and younger than age-6 in recent years.  In both the winter seine and seine-roe fishery age-2 fish are frequently landed; whereas, age-2 fish are rarely landed in the gillnet fishery, and fish do not appear to fully recruit to the gear until at least 4-5 years of age.  The mean age of the catch appears to be increasing between 2008 and 2010 in both the gillnet and winter seine fishery, and there is no obvious trend in the seine roe fishery.  There is however a declining trend in the older ages caught in the seine-roe fishery since 2006 (erosion of age-structure).
+	In all of the major SARS, catch-at-age data from the winter seine fishery (top panels of Figures \ref{FigAgeCompsHG}-\ref{FigAgeCompsWCVI}) tend to consist of younger fish in comparison to the age composition data from the seine-roe and gillnet fleets post 1970. The shaded polygons in Figures \ref{FigAgeCompsHG}-\ref{FigAgeCompsWCVI} approximates the 95\% distribution of ages in the catch.  Roughly 90\% of the fish landed in the winter seine fishery were younger than age-7, and younger than age-6 in recent years.  In both the winter seine and seine-roe fishery age-2 fish are frequently landed; whereas, age-2 fish are rarely landed in the gillnet fishery, and fish do not appear to fully recruit to the gillnet gear until at least 4-5 years of age.  The mean age of the catch appears to be increasing between 2008 and 2010 in both the gillnet and winter seine fishery, and there is no obvious trend in the seine roe fishery.  There is however a declining trend in the older ages caught in the seine-roe fishery since 2006 (erosion of age-structure).
 
 \begin{sidewaysfigure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.85\textwidth]{../Figs/iscam_fig_AgeCompsHG.pdf}\\
-	\caption{Bubble plots showing the proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in Haida Gwaii.  The area of the circle is proportional to cohort abundance, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsHG}
+	\caption{Proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in Haida Gwaii.  The area of the circle reflects the proportion-at-age, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsHG}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.85\textwidth]{../Figs/iscam_fig_AgeCompsPRD.pdf}\\
-	\caption{Bubble plots showing the proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in Prince Rupert District.  The area of the circle is proportional to cohort abundance, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsPRD}
+	\caption{Proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in Prince Rupert District.  The area of the circle reflects the proportion-at-age, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsPRD}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.85\textwidth]{../Figs/iscam_fig_AgeCompsCC.pdf}\\
-	\caption{Bubble plots showing the proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the Central Coast region.  The area of the circle is proportional to cohort abundance, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsCC}
+	\caption{Proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the Central Coast region.  The area of the circle reflects the proportion-at-age, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsCC}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.85\textwidth]{../Figs/iscam_fig_AgeCompsSOG.pdf}\\
-	\caption{Bubble plots showing the proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the Strait of Georgia.  The area of the circle is proportional to cohort abundance, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsSOG}
+	\caption{Proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the Strait of Georgia.  The area of the circle reflects the proportion-at-age, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsSOG}
 \end{sidewaysfigure}
 
 \begin{sidewaysfigure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\centering
 	\includegraphics[width=0.85\textwidth]{../Figs/iscam_fig_AgeCompsWCVI.pdf}\\
-	\caption{Bubble plots showing the proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the West Coast Vancouver Island region.  The area of the circle is proportional to cohort abundance, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsWCVI}
+	\caption{Proportions-at-age versus time for the winter purse seine fishery (top), seine roe fishery (middle) and the gillnet fishery (bottom) in the West Coast Vancouver Island region.  The area of the circle reflects the proportion-at-age, each column sums to 1, zeros are not shown, and age 10 is a plus group. Also shown is the mean age of the catch (line) and the approximate 95\% distribution of ages (shaded polygon) for each year.}\label{FigAgeCompsWCVI}
 \end{sidewaysfigure}
 
 
@@ -176,6 +176,8 @@ Fishing season & Commercial fishery samples & Charter and research samples & Tot
 	\subsubsection{Mean weight-at-age data}
 
 	From the mid-1970s until the present, there has been a measurable decline in weight-at-age for all ages in all major stock areas (Figure \ref{FigMeanWt}). Samples collected during the 2009/10 fishing year indicate weights-at-age that are among the lowest on record. This declining weight-at-age may be attributed to any number of factors, including: fishing effects (i.e., gear selectivity), environmental effects (changes in ocean productivity), or it may even be attributed to changes in sampling protocols (shorter time frame over which samples are collected). Declining weight-at-age has been observed in all five of the major stocks, and despite area closures over the last 10-years, has continued to occur in the QCI and WCVI stocks. Although the direct cause of this decline is still to be investigated, this trend has been observed in B.C. and U.S. waters, from California to Alaska \citep{schweigert2002herring}, and merits further research.	The observed mean weight-at-age data appear to have a few  errors that need to be investigated as well; for example, see the apparently small age-10 fish in 2001 in Figure \ref{FigMeanWt}.
+
+Mean weight-at-age data are based on the biological samples taken from the fisheries and test fishery data.  The spatial distribution of the biological samples from 2011 are shown in Figure \ref{fig:FIGS_2011_biosamples_maps_2011_biosamplesNC_SAR}.
 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
@@ -200,24 +202,51 @@ Fishing season & Commercial fishery samples & Charter and research samples & Tot
 	
 	The recruitment forecasts are based on the surviving number of age-3 fish at the start of the fishing season times the average weight-at-age 3 in the last 5 years. The definitions of poor, average, and good recruitment are as follows: \textbf{Poor} is the average recruitment from the 0-33 percentile, \textbf{Average} is the average recruitment from the 33-66 percentile, and \textbf{Good} is the average recruitment from the 66-100 percentile.  Note that all cohorts from 1951 to 2011  were included in the calculation of recruitment quantiles.
 	
-	\subsection{Catch advice}
-Catch advice is based on the application of the harvest control rule (HCR). The herring HCR has three components:
+	\subsection{Harvest control rule}
+Catch advice is based on the application of the harvest control rule (HCR). A formal HCR as been used to provide management advice for the major BC herring stocks since 1986 \citep{stocker1993recent}. The herring HCR has three components:
 \begin{enumerate}
-\item Reference points (LRP, USR, and cuttoffs)
+\item Reference points
 \item Harvest rate
 \item Decision rules
 \end{enumerate}
 
-For each of the five major stocks, the limit reference point (LRP) is the cuttoff value, which is defined here as 0.25\bo\, and the	Upper Stock Reference (USR) is defined as the 1.05*LRP (0.25\bo\ + 0.2*0.25\bo = LRP + 0.05LRP). \textbf{For clarification, references to \bo\ throughout this document refer to the mature spawning stock biomass.} The default harvest rate if the stock is at or above USR is 0.2, and declines linearly to 0 when the stock is at or below the LRP (a default harvest rate of 0.1 is used for the minor stock areas).  The decision rule for the major stock areas operates as follows:
+These three components are consistent with the DFO harvest strategy that is compliant with the precautionary approach \citep{dfo2006}.  In this strategy, there are two reference points: 1) the limit reference point (LRP) which is a minimum stock size where fishing activity is ceased if the stock falls below the LRP into the critical zone, and (2) the upper stock reference (USR) that defines the boundary between the cautious zone and healthy zones.
+
+\subsubsection{Reference Points} % (fold)
+\label{ssub:reference_points}
+The harvest control rule that is currently used to provide catch advice for the five major BC herring stocks is a hybrid between a fixed escapement policy and a fixed exploitation rate policy.  For each of the major stocks, the reference point is defined as a cutoff level (or escapement target)and is set at 25\% of the unfished spawning stock biomass.  The cutoff is intended to maintain a minimum spawning stock biomass of 25\% of the estimated unfished biomass.  Simulation studies in the past \citep{haist1986stock,hall1988alternative} suggest that 25\% of the unfished spawning biomass leaves a sufficient spawning reserve to ensure long-term sustainability of the resource.
+
+At present, there are no formal definitions for LRP and USR for the five major herring stocks.  The cutoff values for each of the stocks are thought to be more conservative than the default LRP of 0.4\bmsy.  For example, surplus production in most fish stocks is usually maximized when the stock is depleted in a range of 30\%-45\% of its unfished state.  If we assume that herring production was maximized at a depletion level of 45\% or \bmsy=0.45$B_o$, then the default LRP for herring would be equal to 18\% of the unfished biomass (i.e. 40\% of \bmsy/$B_o$).  This document also presents the maximum likelihood estimates of spawning biomass depletion, and these results are over-laid on coloured panels that define the default 0.4\bmsy\ and 0.8\bmsy\ LPR and USR, respectively (see Figure \ref{PartII:Results:figDepletion}).
+
+Critical to the HCR is the estimate of unfished spawning biomass ($B_o$).  The cutoff levels were last revised in 1996 \citep{schweigert1996stock}, and these same values have been used to provide catch advice ever since.  In this assessment, we provide updated estimates of $B_o$ and the associated cutoff values based on 0.25$B_o$.
+
+In the case of the minor stock areas, the harvest control rule consist of a fixed exploitation rate and there are now cutoff values associated with these stock assessment regions.
+
+
+% subsubsection reference_points (end)
+
+\subsubsection{Harvest rate} % (fold)
+\label{ssub:harvest_rate}
+	The Pacific Science Advice Review Committee (PSARC) has reviewed the biological basis for target exploitation rate, considering both the priority of assuring conservation of the resource and allowing sustainable harvesting opportunities (Schweigert and Ware 1995). The review concluded that 20\% is an appropriate exploitation rate for those major stock areas that are well above cutoff levels of 25\% of the estimated unfished biomass.. The recommended 20\% harvest rate is based on an analysis of stock dynamics which indicates this level will stabilize both catch and spawning biomass while foregoing minimum yield over the long term \citep{hall1988alternative,zheng1993evaluation}.
+	
+In the case of minor stock areas, data-limitations present a challenge in providing reliable estimates of unfished biomass, required for the calculation of stock-specific cutoffs. Consequently, the PSARC recommended harvest rate of 10\% is applied to the currently estimated biomass for the following year for these areas.
+
+% subsubsection harvest_rate (end)
+
+\subsubsection{Decision rules} % (fold)
+\label{ssub:decision_rules}
+For the major stock areas, the harvest control rule combines both constant exploitation rate and constant escapement policies, allowing for smaller fisheries in areas where the 20\% harvest rate would bring the escapement down to levels below the cutoff. The rule operates as follows:
 
 \begin{itemize}
-	\item If the forecast run is less than the LRP (cuttoff) then the area is closed to all commercial harvest  (i.e., stock is deemed to be in the critical zone).
-	
-	\item If the forecast run is greater than the LRP and less than the USR (i.e., cautious zone), then total allowable catch is based on a reduced harvest rate that would deplete the stock to the LRP level.
-	
-	\item If the forecast run is greater than USR, then the total allowable catch is set at 20\% of the forecast run.
+	\item If the forecast is less than the cutoff: the area is closed to all commercial harvest.
+	\item If the forecast run ($B_{t+1}$) is greater than the cutoff: A commercial harvest is permitted and the harvest rate is based on the following rules:
+	\begin{itemize}
+		\item If $0.8B_{t+1} >$ Cutoff, then harvest rate $u$= 20\%.
+		\item If $0.8B_{t+1} <$ Cutoff, then harvest rate $u = \frac{B_{t+1}-\mbox{Cutoff}}{B_{t+1}}$
+	\end{itemize}
 \end{itemize}
 
-
+In the case of the minor stock areas, the decision to allow for a commercial harvest has been at the discretion of Fisheries Management. In years where a commercial harvest is permitted, a harvest rate of 10\% is applied to the estimated biomass for the area.
+% subsubsection decision_rules (end)
 
 	

@@ -1,51 +1,52 @@
-This is BibTeX, Version 0.99c (Web2C 7.5.7)
+This is BibTeX, Version 0.99d (TeX Live 2011)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: BCHerring2011.aux
 A level-1 auxiliary file: ./PART1/PART_I.aux
 A level-1 auxiliary file: ./PART2/PART_II.aux
 The style file: apalike.bst
 Database file #1: $HOME/Documents/ARTICLES/Articles-1.bib
 Warning--entry type for "ADMB2009" isn't style-file defined
---line 615 of file $HOME/Documents/ARTICLES/Articles-1.bib
+--line 921 of file $HOME/Documents/ARTICLES/Articles-1.bib
 Warning--there's a number but no series in schweigert2002herring
-You've used 28 entries,
+You've used 32 entries,
             1935 wiz_defined-function locations,
-            658 strings with 8910 characters,
-and the built_in function-call counts, 10461 in all, are:
-= -- 1036
-> -- 371
-< -- 25
-+ -- 122
-- -- 118
-* -- 879
-:= -- 1835
-add.period$ -- 84
-call.type$ -- 28
-change.case$ -- 194
-chr.to.int$ -- 28
-cite$ -- 29
-duplicate$ -- 405
-empty$ -- 759
-format.name$ -- 166
-if$ -- 2036
+            680 strings with 9775 characters,
+and the built_in function-call counts, 12387 in all, are:
+= -- 1226
+> -- 457
+< -- 28
++ -- 152
+- -- 148
+* -- 1034
+:= -- 2151
+add.period$ -- 96
+call.type$ -- 32
+change.case$ -- 228
+chr.to.int$ -- 32
+cite$ -- 33
+duplicate$ -- 483
+empty$ -- 889
+format.name$ -- 200
+if$ -- 2428
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 29
-newline$ -- 142
-num.names$ -- 86
-pop$ -- 150
+missing$ -- 34
+newline$ -- 162
+num.names$ -- 98
+pop$ -- 189
 preamble$ -- 1
-purify$ -- 198
+purify$ -- 233
 quote$ -- 0
-skip$ -- 315
+skip$ -- 378
 stack$ -- 0
-substring$ -- 760
-swap$ -- 43
-text.length$ -- 4
+substring$ -- 897
+swap$ -- 65
+text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 162
+type$ -- 184
 warning$ -- 1
-while$ -- 93
+while$ -- 109
 width$ -- 0
-write$ -- 361
+write$ -- 412
 (There were 2 warnings)
