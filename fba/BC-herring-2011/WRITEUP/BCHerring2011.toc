@@ -54,12 +54,12 @@
 \contentsline {subsection}{\numberline {2.8.3}Estimates of mortality}{47}{subsection.2.8.3}
 \contentsline {subsection}{\numberline {2.8.4}Selectivity}{51}{subsection.2.8.4}
 \contentsline {subsection}{\numberline {2.8.5}Recruitment and stock-recruitment relationships}{54}{subsection.2.8.5}
-\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{57}{subsection.2.8.6}
+\contentsline {subsection}{\numberline {2.8.6}Retrospective analysis}{56}{subsection.2.8.6}
 \contentsline {subsection}{\numberline {2.8.7}Marginal posterior distributions}{57}{subsection.2.8.7}
 \contentsline {subsubsection}{Diagnostic trace plots}{58}{section*.71}
 \contentsline {subsection}{\numberline {2.8.8}Parameter confounding}{58}{subsection.2.8.8}
 \contentsline {subsection}{\numberline {2.8.9}Marginal posterior distributions}{58}{subsection.2.8.9}
-\contentsline {subsection}{\numberline {2.8.10}Forecast and catch advice based on the joint posterior distribtution}{58}{subsection.2.8.10}
+\contentsline {subsection}{\numberline {2.8.10}Forecast and catch advice based on the joint posterior distribution}{58}{subsection.2.8.10}
 \contentsline {section}{\numberline {2.9}Stock assessments for minor stock areas}{71}{section.2.9}
 \contentsline {subsection}{\numberline {2.9.1}Maximum likelihood estimates of biomass}{71}{subsection.2.9.1}
 \contentsline {subsection}{\numberline {2.9.2}Estimates of recruitment and reference points}{71}{subsection.2.9.2}

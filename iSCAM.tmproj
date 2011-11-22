@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>scripts/BeamerTemplate.tex</string>
+	<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qfix.mcmc</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -18,7 +18,7 @@
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
-	<integer>356</integer>
+	<integer>318</integer>
 	<key>metaData</key>
 	<dict>
 		<key>examples/Hake/Hake.dat</key>
@@ -34,6 +34,64 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qfix.ctl</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>25</integer>
+				<key>line</key>
+				<integer>36</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>17</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qfix.mcmc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>649</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.par</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>8</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>32</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
 		</dict>
 		<key>fba/BC-herring-2011/MISC/iScamLogo.eps</key>
 		<dict>
@@ -54,30 +112,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>39</integer>
+				<integer>43</integer>
 				<key>line</key>
-				<integer>1650</integer>
+				<integer>1210</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1628</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>36</integer>
-				<key>line</key>
-				<integer>1654</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>39</integer>
-				<key>line</key>
-				<integer>1650</integer>
-			</dict>
+			<integer>0</integer>
 		</dict>
 		<key>fba/BC-herring-2011/TABLES/DecisionTableOldCutoffs2011.tex</key>
 		<dict>
@@ -170,14 +212,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>47</integer>
+				<integer>33</integer>
 				<key>line</key>
 				<integer>14</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>97</integer>
+			<integer>35</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/BCHerring2011.texshop</key>
 		<dict>
@@ -212,99 +254,71 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>625</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>5</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
-			<integer>697</integer>
+			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>7</integer>
-		</dict>
-		<key>fba/BC-herring-2011/WRITEUP/PART2/Introduction.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>721</integer>
-				<key>line</key>
-				<integer>12</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>518</integer>
-			<key>firstVisibleLine</key>
-			<integer>12</integer>
+			<integer>0</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>230</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
-			<integer>403</integer>
+			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>229</integer>
+			<integer>0</integer>
 		</dict>
 		<key>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>100</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>70</integer>
+				<integer>130</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
-			<integer>0</integer>
+			<integer>87</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>scripts/BeamerTemplate.tex</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>13</integer>
-				<key>line</key>
-				<integer>38</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>9</integer>
+			<integer>113</integer>
 		</dict>
 		<key>src/admb-code/iscam.tpl</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
+				<integer>13</integer>
 				<key>line</key>
-				<integer>1170</integer>
+				<integer>753</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1155</integer>
+			<integer>879</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>36</integer>
+				<integer>2</integer>
 				<key>line</key>
-				<integer>1170</integer>
+				<integer>753</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
+				<integer>13</integer>
 				<key>line</key>
-				<integer>1170</integer>
+				<integer>753</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -312,11 +326,13 @@
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
 		<string>fba/BC-herring-2011/WRITEUP/BCHerring2011.tex</string>
-		<string>fba/BC-herring-2011/R/iscam.R</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</string>
-		<string>scripts/BeamerTemplate.tex</string>
-		<string>fba/BC-herring-2011/WRITEUP/PART2/Introduction.tex</string>
 		<string>fba/BC-herring-2011/WRITEUP/PART2/Methods.tex</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART2/Results.tex</string>
+		<string>fba/BC-herring-2011/R/iscam.R</string>
+		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qfix.ctl</string>
+		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qfix.mcmc</string>
+		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.par</string>
+		<string>fba/BC-herring-2011/WRITEUP/PART1/Introduction.tex</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -329,22 +345,7 @@
 			<key>isExpanded</key>
 			<true/>
 			<key>subItems</key>
-			<dict>
-				<key>docs</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
-				<key>fba</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict/>
-				</dict>
-			</dict>
+			<dict/>
 		</dict>
 	</dict>
 	<key>windowFrame</key>

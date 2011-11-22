@@ -6,47 +6,47 @@ A level-1 auxiliary file: ./PART2/PART_II.aux
 The style file: apalike.bst
 Database file #1: $HOME/Documents/ARTICLES/Articles-1.bib
 Warning--entry type for "ADMB2009" isn't style-file defined
---line 921 of file $HOME/Documents/ARTICLES/Articles-1.bib
+--line 938 of file $HOME/Documents/ARTICLES/Articles-1.bib
 Warning--there's a number but no series in schweigert2002herring
-You've used 32 entries,
+You've used 33 entries,
             1935 wiz_defined-function locations,
-            680 strings with 9775 characters,
-and the built_in function-call counts, 12387 in all, are:
-= -- 1226
-> -- 457
-< -- 28
-+ -- 152
-- -- 148
-* -- 1034
-:= -- 2151
-add.period$ -- 96
-call.type$ -- 32
-change.case$ -- 228
-chr.to.int$ -- 32
-cite$ -- 33
-duplicate$ -- 483
-empty$ -- 889
-format.name$ -- 200
-if$ -- 2428
+            686 strings with 9908 characters,
+and the built_in function-call counts, 12809 in all, are:
+= -- 1270
+> -- 470
+< -- 29
++ -- 156
+- -- 152
+* -- 1073
+:= -- 2221
+add.period$ -- 99
+call.type$ -- 33
+change.case$ -- 235
+chr.to.int$ -- 33
+cite$ -- 34
+duplicate$ -- 497
+empty$ -- 921
+format.name$ -- 207
+if$ -- 2511
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 34
-newline$ -- 162
-num.names$ -- 98
-pop$ -- 189
+missing$ -- 35
+newline$ -- 167
+num.names$ -- 101
+pop$ -- 193
 preamble$ -- 1
-purify$ -- 233
+purify$ -- 240
 quote$ -- 0
-skip$ -- 378
+skip$ -- 389
 stack$ -- 0
-substring$ -- 897
-swap$ -- 65
+substring$ -- 940
+swap$ -- 66
 text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 184
+type$ -- 190
 warning$ -- 1
-while$ -- 109
+while$ -- 113
 width$ -- 0
-write$ -- 412
+write$ -- 425
 (There were 2 warnings)

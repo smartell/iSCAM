@@ -31,6 +31,7 @@
 require(hacks)	#transparent colors using the function colr("color",tranparency)
 require(Riscam)	#custom library built specifically for iscam.
 require(Hmisc)
+require(ggplot2)
 source("read.admb.R")
 
 # Graphics defaults.
@@ -757,12 +758,14 @@ guiView	<- function()
 		{
 			Obj = read.rep(fn)
 			lines(Obj$yr, Obj$sbt[1:length(Obj$yr)],...)
+			points(max(Obj$yr), Obj$bo, pch=20, ...)
+			cat(fn, " ", Obj$bo, "\n")
 		}
 	}
 	
 	with(repObj, {
 		plot( yr, sbt[1:length(yr)], type="l"
-			, ylim=c(0,1.2*max(sbt)), lwd=2
+			, ylim=c(0,1.2*max(sbt, bo)), lwd=2
 			, xlab="Year", ylab="Spawnig biomass (1000 t)", 
 			main=stock )
 	
@@ -1190,13 +1193,15 @@ guiView	<- function()
 		yy = rt
 		
 		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
-			xlab="Spawning biomass", 
-			ylab=paste("Age-",min(age)," recruits", sep=""), 
+			xlab="Spawning biomass (t)", 
+			ylab=paste("Age-",min(age)," recruits\n", "(numbers)", sep=""), 
 			main=paste(stock))
 			
 		points(xx, yy)
 		points(xx[1],yy[1], pch=20, col="green")
 		points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
+		
+		abline(h=quantile(yy, probs=c(0.33, 0.66)), col=c("salmon","green"))
 		
 		st=seq(0, max(sbt, bo), length=100)
 		if(rectype==1)
@@ -1214,8 +1219,52 @@ guiView	<- function()
 		points(bo, ro, pch="O", col=2)
 		points(bo, ro, pch="+", col=2)
 		grid()
+		h <- round( kappa/(4+kappa), 2 )
+		legend("topright", paste("h=",h, sep=""), bty="n")
 	})
 }
+
+.plotSel <- function( repObj )
+{
+	# Routine to plot selectivity curves with 95% CI based
+	# posterior samples from the joint distribution.
+	# Selectivity parameters are in log-space,  therefore
+	# the transformed std is based on sd=exp(log_mu)*log_sd
+	
+	
+	## grep for sel_par to get index for selectivity parameters
+	t1 <- grep("sel_par", repObj$fit$names)
+	t2 <- unique(repObj$fit$names[t1])
+	age <- repObj$age
+	for(i in 1:1)#length(t2))
+	{
+		t3 <- which(repObj$fit$names==t2[i])
+		mu = exp(repObj$fit$est[t3])
+		sd = mu*repObj$fit$std[t3]
+		lb = mu-1.96*sd
+		ub = mu+1.96*sd
+		
+		fn <- function(mu)
+		{
+			log_sel <- log( plogis(age, mu[1], mu[2]) )
+			log_sel <- log_sel - log(mean(exp(log_sel)))
+			return(exp(log_sel))
+		}
+		
+		t4 <- exp(repObj$post.samp[, t3])
+		
+		
+		sel.ci <- t(apply(apply(t4, 1, fn), 1, quantile, probs=c(0.025, 0.5, 0.975)))
+		sel.mle <- cbind(fn(mu))
+		
+		matplot(age, sel.ci, type="l", xlab="Age", ylab="Selectivity", lty=c(3, 1, 3), col=1)
+		lines(age, sel.mle, lwd=2)
+		grid()
+		
+		return(t(sel.ci))
+	}
+}
+
 
 .plotSel2d	<- function( repObj )
 {
@@ -1351,17 +1400,25 @@ guiView	<- function()
 .plotRecruitment	<- function( repObj )
 {
 	#plot age-a recruits.
+	par(lend=2)
 	with(repObj, {
 		xx = yr
 		yy = exp(ln_rt)
 		yy=yy
-		yrange=c(0, max(yy, na.rm=T))
+		
+		# get asymptotic estimates of 95% CI
+		ii<-grep("^log_rec_devs",fit$names)
+		log.std <- fit$std[ii]
+		std <- yy*log.std
+		
+		yrange=c(0, max(yy+1.96*std, na.rm=T))
 		
 		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
 			xlab="Year", main=paste(stock), 
 			ylab=paste("Age-", min(age), " recruits", sep=""))
 		
-		lines(xx, yy, type="h")
+		lines(xx, yy, type="h", lwd=3.5, col=colr(1, 0.75))
+		arrows(xx, yy-1.96*std, xx, yy+1.96*std, length=0, col=colr("red", 0.75))
 		
 		#add 0.33 and 0.66 quantile lines
 		qtl = quantile(yy, prob=c(0.333, 0.666))

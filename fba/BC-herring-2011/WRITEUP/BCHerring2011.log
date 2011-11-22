@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  15 NOV 2011 21:26
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  21 NOV 2011 17:12
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1215,7 +1215,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 208--209
  []
 
 [54 <../FIGS/qPriorFigs/iscam_fig_recruitment.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf, id=1765, 556.0775pt x 459.7175p
+<../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf, id=1767, 556.0775pt x 459.7175p
 t>
 File: ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf>
@@ -1227,7 +1227,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 218--219
 
  []
 
-<../FIGS/qPriorFigs/iscam_fig_recresid.pdf, id=1767, 556.0775pt x 459.7175pt>
+[55 <../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_recresid.pdf, id=1782, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_recresid.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_recresid.pdf>
@@ -1239,187 +1240,186 @@ Underfull \hbox (badness 10000) in paragraph at lines 228--229
 
  []
 
-[55 <../FIGS/qPriorFigs/iscam_fig_stockrecruit.pdf>] [56 <../FIGS/qPriorFigs/is
-cam_fig_recresid.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf, id=1788, 556.0775pt x 459.
+[56 <../FIGS/qPriorFigs/iscam_fig_recresid.pdf>]
+<../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf, id=1793, 556.0775pt x 459.
 7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf Graphic file (type pdf
 )
  <use ../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf use
-d on input line 239.
+d on input line 243.
 (pdftex.def)             Requested size: 469.75499pt x 388.36269pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 239--240
+Underfull \hbox (badness 10000) in paragraph at lines 243--244
 
  []
 
 
-Overfull \hbox (3.24889pt too wide) in paragraph at lines 247--248
+Overfull \hbox (3.24889pt too wide) in paragraph at lines 251--252
 \OT1/ppl/m/n/10 Marginal pos-te-rior dis-tri-bu-tions for es-ti-mated model pa-
 ram-e-ters were con-structed us-ing AD Model Builders
  []
 
 [57 <../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf>]
-<../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf, id=1802, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf, id=1810, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf used on inpu
-t line 257.
-(pdftex.def)             Requested size: 585.38301pt x 486.87152pt.
+t line 261.
+(pdftex.def)             Requested size: 585.38301pt x 483.95221pt.
 
-<../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf, id=1803, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf, id=1811, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf Graphic file (type pdf)
+
 <use ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_trace_PRD.pdf used on inp
-ut line 264.
-(pdftex.def)             Requested size: 585.38301pt x 486.87152pt.
+ut line 268.
+(pdftex.def)             Requested size: 585.38301pt x 483.95221pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 264--265
+Underfull \hbox (badness 10000) in paragraph at lines 268--269
 
  []
 
-
-<../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf, id=1804, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf, id=1812, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf used on inpu
-t line 270.
-(pdftex.def)             Requested size: 585.38301pt x 486.87152pt.
+t line 274.
+(pdftex.def)             Requested size: 585.38301pt x 483.95221pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 270--271
+Underfull \hbox (badness 10000) in paragraph at lines 274--275
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=1805, 721.69624pt x 600.2425pt>
+<../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf, id=1813, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf Graphic file (type pdf)
+
 <use ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_trace_SOG.pdf used on inp
-ut line 276.
-(pdftex.def)             Requested size: 585.38301pt x 486.87152pt.
+ut line 280.
+(pdftex.def)             Requested size: 585.38301pt x 483.95221pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 276--277
+Underfull \hbox (badness 10000) in paragraph at lines 280--281
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf, id=1806, 721.69624pt x 600.2425pt
->
+<../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf, id=1814, 556.0775pt x 459.7175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf Graphic file (type pdf)
- <use ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf>
+<use ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_trace_WCVI.pdf used on in
-put line 282.
-(pdftex.def)             Requested size: 585.38301pt x 486.87152pt.
+put line 286.
+(pdftex.def)             Requested size: 585.38301pt x 483.95221pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 282--283
+Underfull \hbox (badness 10000) in paragraph at lines 286--287
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf, id=1810, 797.98125pt x 540.0175pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf, id=1818, 797.98125pt x 540.0175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_pairs_HG.pdf used on inpu
-t line 296.
+t line 300.
 (pdftex.def)             Requested size: 469.75499pt x 317.89893pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 296--297
+Underfull \hbox (badness 10000) in paragraph at lines 300--301
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf, id=1811, 797.98125pt x 540.0175pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf, id=1819, 797.98125pt x 540.0175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_pairs_PRD.pdf used on inp
-ut line 303.
+ut line 307.
 (pdftex.def)             Requested size: 469.75499pt x 317.89893pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 303--304
+Underfull \hbox (badness 10000) in paragraph at lines 307--308
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf, id=1812, 797.98125pt x 540.0175pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf, id=1820, 797.98125pt x 540.0175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_pairs_CC.pdf used on inpu
-t line 309.
+t line 313.
 (pdftex.def)             Requested size: 469.75499pt x 317.89893pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 309--310
+Underfull \hbox (badness 10000) in paragraph at lines 313--314
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf, id=1813, 797.98125pt x 540.0175pt>
+<../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf, id=1821, 797.98125pt x 540.0175pt>
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf Graphic file (type pdf)
 <use ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_pairs_SOG.pdf used on inp
-ut line 315.
+ut line 319.
 (pdftex.def)             Requested size: 469.75499pt x 317.89893pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 315--316
+Underfull \hbox (badness 10000) in paragraph at lines 319--320
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf, id=1814, 797.98125pt x 540.0175pt
+<../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf, id=1822, 797.98125pt x 540.0175pt
 >
 File: ../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_pairs_WCVI.pdf used on in
-put line 321.
+put line 325.
 (pdftex.def)             Requested size: 469.75499pt x 317.89893pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
+Underfull \hbox (badness 10000) in paragraph at lines 325--326
 
  []
 
 
-<../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf, id=1816, 556.0775pt x 459.7175p
+<../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf, id=1824, 556.0775pt x 459.7175p
 t>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_marginals_HG.pdf used on 
-input line 337.
+input line 341.
 (pdftex.def)             Requested size: 230.18251pt x 190.29518pt.
 
-<../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf, id=1817, 556.0775pt x 459.7175
+<../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf, id=1825, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_marginals_PRD.pdf used on
- input line 338.
+ input line 342.
 (pdftex.def)             Requested size: 230.18251pt x 190.29518pt.
 
-<../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf, id=1818, 556.0775pt x 459.7175p
+<../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf, id=1826, 556.0775pt x 459.7175p
 t>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_marginals_CC.pdf used on 
-input line 339.
+input line 343.
 (pdftex.def)             Requested size: 230.18251pt x 190.29518pt.
 
-<../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf, id=1819, 556.0775pt x 459.7175
+<../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf, id=1827, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_marginals_SOG.pdf used on
- input line 340.
+ input line 344.
 (pdftex.def)             Requested size: 230.18251pt x 190.29518pt.
 
-<../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf, id=1820, 556.0775pt x 459.717
+<../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf, id=1828, 556.0775pt x 459.717
 5pt>
 File: ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf Graphic file (type pdf)
  <use ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_marginals_WCVI.pdf used o
-n input line 341.
+n input line 345.
 (pdftex.def)             Requested size: 230.18251pt x 190.29518pt.
  [58] [59 <../FIGS/qPriorFigs/iscam_fig_trace_HG.pdf>] [60 <../FIGS/qPriorFigs/
 iscam_fig_trace_PRD.pdf>] [61 <../FIGS/qPriorFigs/iscam_fig_trace_CC.pdf>] [62 
@@ -1475,48 +1475,48 @@ LaTeX Warning: Command \textless invalid in math mode on input line 16.
 
 LaTeX Warning: Command \textless invalid in math mode on input line 16.
 
-) <../FIGS/qPriorFigs/iscam_fig_risk_HG.pdf, id=1978, 540.0175pt x 536.0025pt>
+) <../FIGS/qPriorFigs/iscam_fig_risk_HG.pdf, id=2000, 540.0175pt x 536.0025pt>
 File: ../FIGS/qPriorFigs/iscam_fig_risk_HG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_risk_HG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_risk_HG.pdf used on input
- line 399.
+ line 403.
 (pdftex.def)             Requested size: 208.14235pt x 206.5947pt.
 
-<../FIGS/qPriorFigs/iscam_fig_risk_PRD.pdf, id=1979, 540.0175pt x 536.0025pt>
+<../FIGS/qPriorFigs/iscam_fig_risk_PRD.pdf, id=2001, 540.0175pt x 536.0025pt>
 File: ../FIGS/qPriorFigs/iscam_fig_risk_PRD.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_risk_PRD.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_risk_PRD.pdf used on inpu
-t line 401.
+t line 405.
 (pdftex.def)             Requested size: 208.14235pt x 206.5947pt.
 
-<../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf, id=1980, 540.0175pt x 536.0025pt>
+<../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf, id=2002, 540.0175pt x 536.0025pt>
 File: ../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf used on input
- line 403.
+ line 407.
 (pdftex.def)             Requested size: 208.14235pt x 206.5947pt.
 
-<../FIGS/qPriorFigs/iscam_fig_risk_SOG.pdf, id=1981, 540.0175pt x 536.0025pt>
+<../FIGS/qPriorFigs/iscam_fig_risk_SOG.pdf, id=2003, 540.0175pt x 536.0025pt>
 File: ../FIGS/qPriorFigs/iscam_fig_risk_SOG.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_risk_SOG.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_risk_SOG.pdf used on inpu
-t line 405.
+t line 409.
 (pdftex.def)             Requested size: 208.14235pt x 206.5947pt.
 
-<../FIGS/qPriorFigs/iscam_fig_risk_WCVI.pdf, id=1982, 540.0175pt x 536.0025pt>
+<../FIGS/qPriorFigs/iscam_fig_risk_WCVI.pdf, id=2004, 540.0175pt x 536.0025pt>
 File: ../FIGS/qPriorFigs/iscam_fig_risk_WCVI.pdf Graphic file (type pdf)
 
 <use ../FIGS/qPriorFigs/iscam_fig_risk_WCVI.pdf>
 Package pdftex.def Info: ../FIGS/qPriorFigs/iscam_fig_risk_WCVI.pdf used on inp
-ut line 407.
+ut line 411.
 (pdftex.def)             Requested size: 208.14235pt x 206.5947pt.
 )
 (./PART2/ResultsMinorAreas.tex
-<../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf, id=1985, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf, id=2007, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf>
@@ -1529,7 +1529,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 14--15
  []
 
 
-<../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf, id=1986, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf, id=2008, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_AgeCompsMinor.pdf>
@@ -1546,7 +1546,7 @@ LaTeX Warning: Reference `TableRefPointsMinorAreas' on page 71 undefined on inp
 ut line 27.
 
 (../TABLES/MinorAreas/RefPointsTable.tex)
-<../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf, id=1988, 556.0775pt x 459
+<../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf, id=2010, 556.0775pt x 459
 .7175pt>
 File: ../FIGS/MinorAreas/iscam_fig_BiomassSpawnSurvey.pdf Graphic file (type pd
 f)
@@ -1567,7 +1567,7 @@ PriorFigs/iscam_fig_risk_PRD.pdf> <../FIGS/qPriorFigs/iscam_fig_risk_CC.pdf> <.
 VI.pdf>] [77 <../FIGS/MinorAreas/iscam_fig_MinorAreaData.pdf>] [78 <../FIGS/Min
 orAreas/iscam_fig_AgeCompsMinor.pdf>] [79 <../FIGS/MinorAreas/iscam_fig_Biomass
 SpawnSurvey.pdf>]
-<../FIGS/MinorAreas/iscam_fig_Recruitment.pdf, id=2066, 556.0775pt x 459.7175pt
+<../FIGS/MinorAreas/iscam_fig_Recruitment.pdf, id=2087, 556.0775pt x 459.7175pt
 >
 File: ../FIGS/MinorAreas/iscam_fig_Recruitment.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_Recruitment.pdf>
@@ -1580,7 +1580,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 43--44
  []
 
 
-<../FIGS/MinorAreas/iscam_fig_sbt_retrospective.pdf, id=2068, 657.45625pt x 286
+<../FIGS/MinorAreas/iscam_fig_sbt_retrospective.pdf, id=2089, 657.45625pt x 286
 .06876pt>
 File: ../FIGS/MinorAreas/iscam_fig_sbt_retrospective.pdf Graphic file (type pdf
 )
@@ -1594,7 +1594,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 54--55
  []
 
 [80 <../FIGS/MinorAreas/iscam_fig_Recruitment.pdf>]
-<../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf, id=2084, 556.0775pt x 459.717
+<../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf, id=2105, 556.0775pt x 459.717
 5pt>
 File: ../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf>
@@ -1602,7 +1602,7 @@ Package pdftex.def Info: ../FIGS/MinorAreas/iscam_fig_traceplots_A2W.pdf used o
 n input line 67.
 (pdftex.def)             Requested size: 352.31624pt x 291.272pt.
 
-<../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf, id=2085, 556.0775pt x 459.717
+<../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf, id=2106, 556.0775pt x 459.717
 5pt>
 File: ../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf>
@@ -1610,7 +1610,7 @@ Package pdftex.def Info: ../FIGS/MinorAreas/iscam_fig_traceplots_A27.pdf used o
 n input line 68.
 (pdftex.def)             Requested size: 352.31624pt x 291.272pt.
 
-<../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf, id=2086, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf, id=2107, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf>
@@ -1618,7 +1618,7 @@ Package pdftex.def Info: ../FIGS/MinorAreas/iscam_fig_marginals_A2W.pdf used on
  input line 75.
 (pdftex.def)             Requested size: 352.31624pt x 291.272pt.
 
-<../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf, id=2087, 556.0775pt x 459.7175
+<../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf, id=2108, 556.0775pt x 459.7175
 pt>
 File: ../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf Graphic file (type pdf)
  <use ../FIGS/MinorAreas/iscam_fig_marginals_A27.pdf>
@@ -1683,7 +1683,7 @@ tion.A.1.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.105 \end{align}
-                  <../Figs/Fig1Quadplot.pdf, id=2204, 505.89pt x 505.89pt>
+                  <../Figs/Fig1Quadplot.pdf, id=2225, 505.89pt x 505.89pt>
 File: ../Figs/Fig1Quadplot.pdf Graphic file (type pdf)
 
 <use ../Figs/Fig1Quadplot.pdf>
@@ -1837,14 +1837,14 @@ ith the same identifier (name{equation.A.1.3}) has been already used, duplicate
                    \relax 
 l.345 \begin{equation}
                       \label{eqDomePenalty} [95]
-<../Figs/SplineEg.pdf, id=2256, 505.89pt x 505.89pt>
+<../Figs/SplineEg.pdf, id=2277, 505.89pt x 505.89pt>
 File: ../Figs/SplineEg.pdf Graphic file (type pdf)
 
 <use ../Figs/SplineEg.pdf>
 Package pdftex.def Info: ../Figs/SplineEg.pdf used on input line 367.
 (pdftex.def)             Requested size: 187.89912pt x 187.90196pt.
 
-<../Figs/BicubicEg.pdf, id=2258, 811.03pt x 488.82625pt>
+<../Figs/BicubicEg.pdf, id=2279, 811.03pt x 488.82625pt>
 File: ../Figs/BicubicEg.pdf Graphic file (type pdf)
 
 <use ../Figs/BicubicEg.pdf>
@@ -2032,7 +2032,7 @@ ame{equation.A.1.14}) has been already used, duplicate ignored
                    \relax 
 l.497 \end{align}
                   [100] [101]
-<../Figs/priorexample.pdf, id=2335, 556.0775pt x 459.7175pt>
+<../Figs/priorexample.pdf, id=2356, 556.0775pt x 459.7175pt>
 File: ../Figs/priorexample.pdf Graphic file (type pdf)
 
 <use ../Figs/priorexample.pdf>
@@ -2097,7 +2097,7 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 
 Missing character: There is no Ã in font pplr7t!
 Missing character: There is no • in font pplr7t!
-<../FIGS/qprior.pdf, id=2440, 433.62pt x 288.07625pt>
+<../FIGS/qprior.pdf, id=2461, 433.62pt x 288.07625pt>
 File: ../FIGS/qprior.pdf Graphic file (type pdf)
  <use ../FIGS/qprior.pdf>
 Package pdftex.def Info: ../FIGS/qprior.pdf used on input line 95.
@@ -2198,7 +2198,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 293.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 293.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 293.
 Package rerunfilecheck Info: File `BCHerring2011.out' has not changed.
-(rerunfilecheck)             Checksum: 0D79E76EF1FED43C7CA4DD233E3878E9;6279.
+(rerunfilecheck)             Checksum: 4C45D55C3F750C3CC926AF42B87F5878;6278.
 
 
 LaTeX Warning: There were undefined references.
@@ -2206,10 +2206,10 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 293.
  ) 
 Here is how much of TeX's memory you used:
- 11260 strings out of 493633
- 179000 string characters out of 3143378
- 470587 words of memory out of 3000000
- 13719 multiletter control sequences out of 15000+200000
+ 11264 strings out of 493633
+ 179077 string characters out of 3143378
+ 470744 words of memory out of 3000000
+ 13722 multiletter control sequences out of 15000+200000
  33256 words of font info for 93 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
  44i,21n,45p,2363b,639s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -2236,10 +2236,10 @@ public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2011/texmf-dist/fonts/ty
 pe1/urw/palatino/uplb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw
 /palatino/uplr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/palati
 no/uplri8a.pfb>
-Output written on BCHerring2011.pdf (139 pages, 68633968 bytes).
+Output written on BCHerring2011.pdf (139 pages, 68705897 bytes).
 PDF statistics:
- 2669 PDF objects out of 2984 (max. 8388607)
- 2376 compressed objects within 24 object streams
- 396 named destinations out of 1000 (max. 500000)
+ 2692 PDF objects out of 2984 (max. 8388607)
+ 2391 compressed objects within 24 object streams
+ 397 named destinations out of 1000 (max. 500000)
  1018 words of extra memory for PDF output out of 10000 (max. 10000000)
 

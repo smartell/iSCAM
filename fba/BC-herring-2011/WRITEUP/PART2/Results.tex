@@ -178,15 +178,15 @@ In the case of the gillnet fishery, selectivity was allowed to vary over time ac
 \begin{table}[htdp]
 \caption{Maximum likelihood estimates of gillnet selectivity parameters, where $\mu_a$ is the age-at-50\% vulnerability, $\sigma_a$ is the standard deviation in selectivity, and $\lambda^{(a)}$ is the coefficient that describes the influence of growth on selectivity ($\lambda^{(a)}$=0 implies no effect, $\lambda^{(a)}>0$ implies a positive effect).}
 \begin{center}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \hline
-Stock 	& $\ln(\mu_a)$ 	& $\ln(\sigma_a)$	& $\lambda^{(a)}$ \\
+Stock 	& $\ln(\mu_a)$ 	& $\ln(\sigma_a)$	& $\lambda^{(a)}$ &$\sigma_{\lambda^{(a)}}$\\
 \hline
-HG		&	 1.598		&	-0.68125		&	-0.030581	\\
-PRD		&    1.727		&   -0.66217		&    0.040988 \\
-CC		&    1.604 		&   -0.8050        &   -0.019404\\
-SOG		&	 1.540		&   -0.9797			&   -0.02835\\
-WCVI	& 	 1.608		&   -0.6647			& 	 0.08677\\
+HG		&	 1.598		&	-0.68125		&	-0.030581 &	0.045 \\
+PRD		&    1.727		&   -0.66217		&    0.040988 & 0.108 \\
+CC		&    1.604 		&   -0.8050        &   -0.019404  & 0.028 \\
+SOG		&	 1.540		&   -0.9797			&   -0.02835  & 0.068 \\
+WCVI	& 	 1.608		&   -0.6647			& 	 0.08677  & 0.014\\
 \hline
 \end{tabular}
 \end{center}
@@ -198,15 +198,15 @@ WCVI	& 	 1.608		&   -0.6647			& 	 0.08677\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Recruitment and stock-recruitment relationships}
 
-Recruitment to each stock is defined as the number of age-2 fish entering the population at the beginning of each year. Age-2 recruitment is estimated as a free parameter within \iscam, subject to the constraint that annual estimates vary around a Beverton-Holt stock recruitment relationship with an estimated standard deviation.  Maximum likelihood estimates of age-2 recruits are shown in Figure \ref{PartII:Results:FigAge2Recruits} along with horizontal lines that demarcate the 0.33 and 0.66 quantiles that was traditionally used to categorize recruitment as poor, average, and good in previous assessments.
+Recruitment to each stock is defined as the number of age-2 fish entering the population at the beginning of each year (i.e., May 1). Age-2 recruitment is estimated as a free parameter within \iscam, subject to the constraint that annual estimates vary around a Beverton-Holt stock recruitment relationship with an estimated unknown standard deviation.  Maximum likelihood estimates of age-2 recruits are shown in Figure \ref{PartII:Results:FigAge2Recruits} along with horizontal lines that demarcate the 0.33 and 0.66 quantiles that was traditionally used to categorize recruitment as poor, average, and good in previous assessments.
 
-Estimates of age-2 recruits for 2010 and 2011 were average and good  in HG, average in PRD, good and average in CC, good in SOG, and average and poor in the WCVI region.
+Estimates of age-2 recruits for 2010 and 2011 were average and good  in HG, average in PRD, good and average in CC, good in SOG, and average and poor in the WCVI region.  Note however, that estimates of age-2 recruits are highly uncertain in the most recent years of a stock assessment because these age-classes are only partially recruited to the fishing gears.
 
 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_recruitment.pdf}\\
-	\caption{Maximum likelihood estimates of age-2 recruits for each of the five major stock areas.  The horizontal divisions demarcate the 0.33 and 0.66 quantiles that define poor, average, and good recruitment.}\label{PartII:Results:FigAge2Recruits}
+	\caption{Maximum likelihood estimates of age-2 recruits for each of the five major stock areas and the asymptotic estimates of the 95\% confidence interval.  The horizontal divisions demarcate the 0.33 and 0.66 quantiles that define poor, average, and good recruitment.}\label{PartII:Results:FigAge2Recruits}
 \end{figure}
 
 The underlying stock-recruitment relationship is key for determining reference points for this stock.  Maximum likelihood estimates of the age-2 recruits versus spawning biomass, along with the corresponding Beverton-Holt stock recruitment model are shown in Figure \ref{PARTII:Results:FigStockRecruit}.  The Beverton-Holt stock recruitment model was jointly fitted to these data by estimating the steepness of the stock recruitment relationship ($h$) and the unfished age-2 recruits ($R_0$).  The unfished spawning biomass was determined by using the average fecundity and average natural mortality rates (from 1951-2011) to calculate the average spawning biomass per recruit. Alternative stock-recruitment models (e.g., Ricker model) were not explored to determine if they provided a better fit.
@@ -231,13 +231,17 @@ The log residual differences between the estimated age-2 recruits and that predi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Retrospective analysis}
-Four of the five major regions contained little to no retrospective bias in the estimates of spawning stock biomass when fitting the data back to 2001 (10 years, Figure \ref{fig:PartII:sbRetrospective}).  The PRD region does show a strong retrospective bias; as each year of data is removed estimates of the terminal spawning biomass that year increase.  This pattern of declining estimates of biomass as data are added is persistent for all of the years in which the retrospective estimates were examined.
+Four of the five major regions contained little to no retrospective bias in the estimates of spawning stock biomass when fitting the data back to 2001 (10 years, Figure \ref{fig:PartII:sbRetrospective}).  The PRD region does show a strong retrospective bias; as each year of data is removed estimates of the terminal spawning biomass that year increase.  This pattern of declining estimates of biomass as data are added is persistent for all of the years in which the retrospective estimates were examined which implies that estimates of biomass in this region are positively biased.  The direction of bias in PRD warrants extra caution as uncertainty in biomass estimates are also likely biased upwards.
+
+In SOG, there was no retrospective bias; however, there is some retrospective error that occurs when data from 2008 and onwards are removed from the analysis. Information in the data prior to 2008 suggest large increases in spawning abundance in the early 2000s.  This increase is revised downwards when the 2008 data are included in the assessment.  It is not clear what components of the data suggest this downward revision.  
+
+Key to the harvest control rule is the estimate of unfished spawning biomass in each of the SARs.  The points plotted in Figure \ref{fig:PartII:sbRetrospective} show how estimates of $B_o$ change as more data accumulates over time.  If estimates of $B_o$ increase over time, then cuttoff levels would also increase, and vice versa.  In all regions with the exception of PRD, retrospective estimates of $B_o$ have been relatively consistent and trending downwards slightly as more and more data have accumulated over time.  Retrospecitve estimates of $B_o$ in PRD are much more variable in comparison to other areas. A more conservative policy would be to set cutoff levels an the upper end of the $B_o$ estimates for this region.
 
 
 \begin{figure}[!tbp]
 	% Requires \usepackage{graphicx}
 	\includegraphics[width=\textwidth]{../FIGS/qPriorFigs/iscam_fig_sbt_retrospective.pdf}\\
-	\caption{Retrospective estimates of spawning stock biomass for each of the five major stock assessment areas.  The model was sequentially fitted to the full data set, then from 1951:2010, 1951:2009, ... 1951:2001.}\label{fig:PartII:sbRetrospective}
+	\caption{Retrospective estimates of spawning stock biomass and estimates of unfished biomass ($B_o$ shown as circles) for each of the five major stock assessment areas.  The model was sequentially fitted to the full data set, then from 1951:2010, 1951:2009, ... 1951:2001.}\label{fig:PartII:sbRetrospective}
 \end{figure}
 
 
@@ -288,7 +292,7 @@ No formal  statistical tests were carried out to determine if the samples from t
 
 To examine the level of confounding among the estimated parameters, 200 randomly selected points from the joint posterior distribution for the seven leading parameters were plotted against each other in a pairs plot (e.g., Fig. \ref{PartII:MCMC:pairsHG}). Only 200 points were plotted to reduce the file size.   Among the seven leading estimated parameters ($R_0,h,M,\bar{R},\ddot{R}, \rho, \vartheta$) there was very little confounding (Figures \ref{PartII:MCMC:pairsHG} -- \ref{PartII:MCMC:pairsWCVI}).
 
-There is, however, some strong confounding between the estimated parameters and a few of the derived reference points.  In all major areas, there was a strong positive correlation between steepness ($h$) and \fmsy; similarly there is a strong positive correlation between \bo and $R_0$.  Among the reference points alone, there is a negative correlation between \bmsy and \fmsy, and a positive correlation between \fmsy and MSY.  This level of confounding among the derived variables is not cause for concern  from a parameter estimation standpoint; it does, however,  highlight the tradeoffs that must be made from a decision makers perspective.
+There is, however, some strong confounding between the estimated parameters and a few of the derived reference points.  In all major areas, there was a strong positive correlation between steepness ($h$) and \fmsy; similarly there is a strong positive correlation between \bo and $R_0$.  Among the reference points alone, there is a negative correlation between \bmsy\ and \fmsy, and a positive correlation between \fmsy\ and MSY.  This level of confounding among the derived variables is not cause for concern  from a parameter estimation standpoint; it does, however,  highlight the tradeoffs that must be made from a decision makers perspective.
 
 
 \begin{figure}[!tbp]
@@ -374,9 +378,9 @@ Median estimates of the 2011 spawning stock biomass and the 95\% credible interv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Forecast and catch advice based on the joint posterior distribtution} \label{Section:Forecast}
+\subsection{Forecast and catch advice based on the joint posterior distribution} \label{Section:Forecast}
 
-Catch advice has historically been provided in the form of a decision table based on median values of the joint posterior distribution.  The decision table contains columns specifying the 2011 SSB the age 4+ total biomass, estimates of age-3 recruit biomass for poor, average, and good recruitment, cutoff levels, and the available harvest under poor, average, and good recruitment scenarios.  Moving towards DFO's sustainable fisheries framework  (SFF) is a necessary next step.
+Catch advice has historically been provided in the form of a decision table based on median values of the joint posterior distribution.  The decision table contains columns specifying the 2011 SSB the age 4+ total biomass, estimates of age-3 recruit biomass for poor, average, and good recruitment, cutoff levels, and the available harvest under poor, average, and good recruitment scenarios.  Moving towards DFO's sustainable fisheries framework  (SFF) is a necessary next step.  The SFF calls for the establishment of three reference levels: (1) the limit reference point (LRP) that defines the transition between the critical zone and the cautious zone, (2) and Upper Stock Reference (USR) that defines the transition between the cautious zone and the healthy zone, and (3) the Removal Reference (RR) which is the maximum removal rate when the stock is in the healthy zone \citep{shelton2008s}.  Suggested default levels for these reference levels are 0.4\bmsy\ and 0.8\bmsy\ for the LRP and USR, respectively and \fmsy\ for the RR.  At present these suggested reference points have not undergone simulation testing.  Moreover, the definition of MSY based reference points for this fishery require an \textit{a priori} allocation of the total catch to each of the different gears that harvest herring.  Finally, there is also a great deal of uncertainty associated with estimates of \bmsy for each of the SARs; probabilities of exceeding these reference points must also be established \textit{a priori} before we can move this fishery towards the sustainable fisheries framework.  
 
 Cutoff levels for the BC herring stocks is defined as 0.25\bo. The historical cutoff levels have not been updated for over 10 years now (1996/1997).  Recent stock assessments (since 2001) for BC herring have assumed $q=1$ for the spawn survey data.  In this assessment we have relaxed this assumption and as a consequence estimates of herring biomass have increased substantially.  Due to significant changes in population scaling it would not make sense to continue to use the previous cutoff levels as this may lead to policies that would result in overfishing or under utilization of the resource.  We therefore present catch advice based on both the old cutoffs and the new cutoffs in Tables \ref{TableCatchAdviceOldCuttoffs}-\ref{TableCatchAdviceNewCuttoffs} 
 
