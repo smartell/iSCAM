@@ -1139,37 +1139,50 @@ guiView	<- function()
 		for(i in 1:7){
 			if(std[i]!=0){
 				ps = mcmc[, i]  #posterior samples
-				xl=range(ps)
+				xl=c(ctrl[i, 2], ctrl[i, 3])#range(ps)
 
 				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-					main="", ylab="", col="lightgrey",breaks=30, 
+					main="", ylab="", col="lightgrey", 
 					xlim=xl)#, ...)
-
+				
+				
+				
 				## Add priors
 				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
 				pt = ctrl[i, 5]+1
 				fn=match.fun(nfn[pt])
 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
 				#browser()
-				if(pt!=4)
+				if(pt!=4){
 					curve(unlist(lapply(x,fn,p1,p2)),
 						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-				else
+					if(pt!=1){
+						sr <- round(sd(ps)/p2, 2)
+						if(pt==5)sr <- round(sd(ps)/sqrt(p1*(1/p2)^2), 2)
+						legend("topright", paste(sr), bty="n")
+					}
+				}
+				else{
 					curve(unlist(lapply((x-ctrl[i,2])/
 						 (ctrl[i,3]-ctrl[i,2])
 						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+					sr <- round(sd(ps)/sqrt( p1*p2/((p1+p2)^2 *(p1+p2+1)) ), 2)
+					legend("topright", paste(sr), bty="n")
+				}
+						
+				
 			}
 		}
 		
 		#Marginals for q
 		n=dim(mcmc)[2]
-		for(i in 17:n)
+		for(i in 17:18)
 		{
 			ps = mcmc[, i]  #posterior samples
-			xl=range(ps)
+			xl=c(-2, 1)#range(ps)
 
 			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-				main="", ylab="", col="tan",breaks=30, 
+				main="", ylab="", col="tan", 
 				xlim=xl)
 				
 			fn="dnorm"
@@ -1177,7 +1190,9 @@ guiView	<- function()
 			
 			curve(unlist(lapply(x,fn,p1,p2)),
 				xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-				
+			
+			sr <- round(sd(ps)/p2, 2)
+			legend("topright", paste(sr), bty="n")
 		}
 		
 		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
