@@ -1,0 +1,15 @@
+\frametitle {Obtaining \iscam\ source code}
+Source code available at:\\
+\url{http://code.google.com/p/iscam-project/}
+\vfill
+Use subversion to checkout a copy
+\vfill
+\underline{On Mac \& Linux, in Terminal:}
+\tiny
+\begin{verbatim}
+svn checkout http://iscam-project.googlecode.com/svn/trunk/ iscam-project-read-only
+\end{verbatim}
+\normalsize
+\vfill
+\underline{On Windows use a subversion client}
+\url{http://tortoisesvn.net/}
