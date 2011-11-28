@@ -29,7 +29,7 @@
 #-------------------------------------------------------------------------------#
 
 require(hacks)	#transparent colors using the function colr("color",tranparency)
-require(Riscam)	#custom library built specifically for iscam.
+#require(Riscam)	#custom library built specifically for iscam.
 require(Hmisc)
 source("read.admb.R")
 
@@ -78,7 +78,7 @@ source("read.admb.R")
 		ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
 	}
 	
-	#FIXME need to depricate this	
+	#FIXME need to depricate this,  causes error if cannot find ifiles b/c directory is wrong	
 	#dummy data frame for parameter controls for loading
 	A=(matrix(1,nrow=7,ncol=7))
 	dumfile = paste(ifiles[1, 4],".rep", sep="")

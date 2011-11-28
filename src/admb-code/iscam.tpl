@@ -118,6 +118,8 @@ DATA_SECTION
 	
 	init_int sage;
 	init_int nage;
+	!! cout<<"sage\t"<<sage<<endl;
+	!! cout<<"nage\t"<<nage<<endl;
 	vector age(sage,nage);
 	!! age.fill_seqadd(sage,1);
 	
@@ -150,7 +152,7 @@ DATA_SECTION
 	//	}
 	//END_CALCS
 	
-	init_number fixed_m;
+	init_number fixed_m;		//FIXME: depricate this from data files
 	init_number linf;
 	init_number vonbk;
 	init_number to;
@@ -446,7 +448,7 @@ DATA_SECTION
 	END_CALCS
 	
 	//Controls for prior on survey q.
-	init_int nits;
+	init_int nits;					//FIXME (redundant with nit, could be deprecated)
 	init_ivector q_prior(1,nits);
 	init_vector q_mu(1,nits);
 	init_vector q_sd(1,nits);
@@ -773,7 +775,7 @@ FUNCTION calcSelectivities
 		random walk outside the switch statement.
 	
 	*/
-	int i,j;
+	int i,j,k;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -815,9 +817,11 @@ FUNCTION calcSelectivities
 				
 			case 2:		
 				// age-specific selectivity coefficients
+				if(verbose) cout<<"age-specific sel"<<endl;
 				for(i=syr; i<=nyr; i++)
 				{
-					log_sel(j)(i)(sage,nage-1) = sel_par(j)(sage);
+					for(k=sage;k<=nage-1;k++)
+					log_sel(j)(i)(k) = sel_par(j)(1)(k-sage+1);
 					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
 				}
 				break;
