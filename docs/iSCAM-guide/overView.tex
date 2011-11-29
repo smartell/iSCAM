@@ -29,6 +29,7 @@
 %
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{listings}
 %\usepackage{bm}         % For typesetting bold math (not \mathbold)
 %\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
 %
@@ -47,6 +48,9 @@
 \setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
 \setbeamerfont{frametitle}{size=\huge}
 %end of color theme
+
+%code block
+\newtheorem{code}{Code}
 
 %Table of contents at begining of each section
 \AtBeginSection[]
@@ -82,11 +86,13 @@ University of British Columbia \\
 % Alternatively, you can specify a date.
 %
 \begin{document}
+
 %
 \begin{frame}
 \titlepage
 \end{frame}
 %
+
 
 \include{./Installation/Installation}
 \include{./Compiling/Compiling}
