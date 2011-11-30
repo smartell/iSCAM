@@ -1,27 +1,26 @@
-\frametitle {More on using \texttt{make}}
-\begin{code}
+\frametitle {Parallel execution with \texttt{Make}}
+Run multiple models in SUBDIR using: \texttt{make -j4}\\
+The "-j#" option specifies the number of processors to use.\\
+\texttt{SUBDIR} is the list of subdirectories in \texttt{DATA} (one for each model)\\
+\begin{lstlisting}[frame=single]
+## Makefile for running models
+## Author: steven martell <martell.steve@gmail.com>
 
+## Macros
+SUBDIR = CC PRD QCI SOG WCVI AREA27 AREA2W
+TARGET =
+.PHONY: default $(SUBDIR) mcmc
 
-\begin{lstlisting}
-## Makefile for running iscam
-## Targets:
-## all:   -copy executable and run the model with DAT & ARG
-## run:   -copy executable and force a run
-## mcmc:  -copy executable and run in mcmc mode and mceval
-## retro: -copy executable and run  retrospective analysis
-EXEC=iscam
-prefix=../../../dist
-DAT=-ind RUN.dat
-CTL=ControlTemplate
-ARG=
-MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
-NR=4
+## Targets
+default: $(SUBDIR)
+$(SUBDIR):
+cd $@ && $(MAKE) $(TARGET)
 
-ifdef DEBUG
-  DIST=$(prefix)/debug/iscam
-else
-  DIST=$(prefix)/release/iscam
-endif
-\include{../../../scripts/ADMB_Makefile}
+.PHONY: clean
+clean_files := $(foreach dir,$(SUBDIR),$(dir)/clean)
+
+clean: $(clean_files)
+$(clean_files):
+cd $(@D) && $(MAKE) clean
 \end{lstlisting}
-\end{code}
+Sorry does not work on WINDOZE!
