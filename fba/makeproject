@@ -1,5 +1,5 @@
 ## Unix shell script: generate new project folders
-## example ./makeproject HakeAssessment
+## example ./makeproject Demo
 ## use chmod 777 makeproject to change permissions if necessary
 mkdir $1
 mkdir $1/DATA
@@ -20,5 +20,11 @@ cp ../src/r-code/iSCAMWin.txt $1/R
 cp ../src/r-code/read.admb.R $1/R
 
 ## Copy Beamer template to PRESENTATION FOLDER
-cp ../scripts/BeamerTemplate.tex $1/$1.tex
-cp ../scripts/iScamLogo.pdf $1/iScamLogo.pdf
+cp ../scripts/BeamerTemplate.tex $1/PRESENTATION/$1.tex
+cp ../scripts/iScamLogo.pdf $1/PRESENTATION/iScamLogo.pdf
+
+## Copy Makefile from Scripts to DATA directory
+cp ../scripts/ADMB_Makefile $1/DATA/Makefile
+cp ../scripts/RUN.dat	$1/DATA/RUN.dat
+cp ../scripts/DATATemplate.dat $1/DATA/DataTemplate.dat
+cp ../scripts/ControlTemplate.ctl $1/DATA/ControlTemplate.ctl

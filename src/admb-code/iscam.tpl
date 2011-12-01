@@ -1,70 +1,70 @@
-// ------------------------------------------------------------------- //
-//         integrated Statistical Catch Age Model (iSCAM)              //
-//                                                                     //
-//                           VERSION 1.1                               //
-//               Tue Jul 19 22:23:58 PDT 2011                          //
-//                                                                     //
-//                                                                     //
-//           Created by Steven Martell on 2010-04-09                   //
-//           Copyright (c) 2010. All rights reserved.                  //
-//                                                                     //
-// AUTHORS: SJDM Steven Martell                                        //
-//                                                                     //
-// CONVENTIONS: Formatting conventions are based on the The            //
-//               Elements of C++ Style (Misfeldt et al. 2004)          //
-//                                                                     //
-// NAMING CONVENTIONS:                                                 //
-//             Macros       -> UPPERCASE                               //
-//             Constants    -> UpperCamelCase                          //
-//             Functions    -> lowerCamelCase                          //
-//             Variables    -> lowercase                               //
-//                                                                     //
-// CHANGED add option for using empirical weight-at-age data           //
-// TODO:    add gtg options for length based fisheries                //
-// CHANGED add time varying natural mortality rate with splines        //
-// TODO:    add cubic spline interpolation for time varying M         //
-// CHANGED  Fix the type 6 selectivity implementation. not working.    //
-// TODO:  fix cubic spline selectivity for only years when data avail  //
-// CHANGED: fixed a bug in the simulation model log_ft_pars goes out   //
-//        of bounds.                                                   //
-// TODO: write a projection routine and verify equilibrium calcs       //
-// TODO: add DIC calculation for MCMC routines (in -mcveal phase)      //
-//                                                                     //
-//                                                                     //
-//                                                                     //
-//                                                                     //
-//                                                                     //
-// ------------------------------------------------------------------- //
-//-- CHANGE LOG:                                                     --//
-//--  Nov 30, 2010 -modified survey biomass by the fraction of total --//
-//--                mortality that occurred during the time of the   --//
-//--                survey. User specifies this fraction (0-1) in the--//
-//--                data file as the last column of the relative     --//
-//--                abundance index.                                 --//
-//--                                                                 --//
-//--  Dec 6, 2010 -modified the code to allow for empiracle weight-  --//
-//--               at-age data to be used.                           --//
-//--              -rescaled catch and relative abundance /1000, this --//
-//--               should be done in the data file and not here.     --//
-//--                                                                 --//
-//--  Dec 20, 2010-added prior to survey q's in control file         --//
-//--                                                                 --//
-//--  Dec 24, 2010-added random walk for natural mortality.          --//
-//--                                                                 --//
-//--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting--//
-//--               the naming conventions in The Elements of C++     --//
-//--               style to keep my mind busy.                       --//
-//--                                                                 --//
-//-- May 5, 2011- added logistic selectcitivty as a fucntion of      --//
-//--              mean body weight.  3 parameter logistic.           --//
-//--              NOT WORKING YET                                    --//
-//--                                                                 --//
-//-- May 6, 2011- added pre-processor commands to determin PLATFORM  --//
-//--              either "Windows" or "Linux"                        --//
-//--                                                                 --//
-//-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning     --//
-//--                                                                 --//
-// ------------------------------------------------------------------- //
+// ------------------------------------------------------------------------- //
+//         integrated Statistical Catch Age Model (iSCAM)                    //
+//                                                                           //
+//                           VERSION 1.1                                     //
+//               Tue Jul 19 22:23:58 PDT 2011                                //
+//                                                                           //
+//                                                                           //
+//           Created by Steven Martell on 2010-04-09                         //
+//           Copyright (c) 2010. All rights reserved.                        //
+//                                                                           //
+// AUTHORS: SJDM Steven Martell                                              //
+//                                                                           //
+// CONVENTIONS: Formatting conventions are based on the The                  //
+//               Elements of C++ Style (Misfeldt et al. 2004)                //
+//                                                                           //
+// NAMING CONVENTIONS:                                                       //
+//             Macros       -> UPPERCASE                                     //
+//             Constants    -> UpperCamelCase                                //
+//             Functions    -> lowerCamelCase                                //
+//             Variables    -> lowercase                                     //
+//                                                                           //
+// CHANGED add option for using empirical weight-at-age data                 //
+// TODO:    add gtg options for length based fisheries                      //
+// CHANGED add time varying natural mortality rate with splines              //
+// TODO:    add cubic spline interpolation for time varying M               //
+// CHANGED  Fix the type 6 selectivity implementation. not working.          //
+// TODO:  fix cubic spline selectivity for only years when data avail        //
+// CHANGED: fixed a bug in the simulation model log_ft_pars goes out         //
+//        of bounds.                                                         //
+// TODO: write a projection routine and verify equilibrium calcs             //
+// TODO: add DIC calculation for MCMC routines (in -mcveal phase)            //
+//                                                                           //
+//                                                                           //
+// FIXME: Steve I need help with this keg of beer.                           //
+//                                                                           //
+//                                                                           //
+// ------------------------------------------------------------------------- //
+//-- CHANGE LOG:                                                           --//
+//--  Nov 30, 2010 -modified survey biomass by the fraction of total       --//
+//--                mortality that occurred during the time of the         --//
+//--                survey. User specifies this fraction (0-1) in the      --//
+//--                data file as the last column of the relative           --//
+//--                abundance index.                                       --//
+//--                                                                       --//
+//--  Dec 6, 2010 -modified the code to allow for empiracle weight-        --//
+//--               at-age data to be used.                                 --//
+//--              -rescaled catch and relative abundance /1000, this       --//
+//--               should be done in the data file and not here.           --//
+//--                                                                       --//
+//--  Dec 20, 2010-added prior to survey q's in control file               --//
+//--                                                                       --//
+//--  Dec 24, 2010-added random walk for natural mortality.                --//
+//--                                                                       --//
+//--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting      --//
+//--               the naming conventions in The Elements of C++           --//
+//--               style to keep my mind busy.                             --//
+//--                                                                       --//
+//-- May 5, 2011- added logistic selectcitivty as a fucntion of            --//
+//--              mean body weight.  3 parameter logistic.                 --//
+//--              NOT WORKING YET                                          --//
+//--                                                                       --//
+//-- May 6, 2011- added pre-processor commands to determin PLATFORM        --//
+//--              either "Windows" or "Linux"                              --//
+//--                                                                       --//
+//-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning           --//
+//--                                                                       --//
+// ------------------------------------------------------------------------- //
 
 
 DATA_SECTION
@@ -331,7 +331,8 @@ DATA_SECTION
 	number msy;						//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 	vector age_tau2(1,na_gears);	//MLE estimate of the variance for the age comps
-	3darray d3C(1,ngear,syr,nyr,sage,nage);		//catch-age for simulation model (could be declared locally 3d_array)
+	//catch-age for simulation model (could be declared locally 3d_array)
+	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
 	
@@ -471,7 +472,7 @@ DATA_SECTION
 	// 11-> std in natural mortality deviations.
 	// 12-> fraction of total mortality that takes place prior to spawning
 	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
-	
+	// FIXME: document cntrl(14).
 	init_vector cntrl(1,14);
 	int verbose;
 	
@@ -497,6 +498,7 @@ DATA_SECTION
 	!!ilvec(4)=1;
 	
 	// SM Oct 31, 2010.  Implementing retrospective analysis.
+	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
 	
@@ -593,7 +595,7 @@ PARAMETER_SECTION
 	
 	//matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
-	
+	 
 	matrix N(syr,nyr+1,sage,nage);			//Numbers at age
 	matrix F(syr,nyr,sage,nage);			//Age-specific fishing mortality
 	matrix M_tot(syr,nyr,sage,nage);		//Age-specific natural mortality
