@@ -1,0 +1,43 @@
+% latex.default(TAC, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+ \caption{Decision table for CC where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g.,   402 tonnes).\label{Table:RiskCC}} 
+ \begin{center}
+ \begin{tabular}{llll}\hline\hline
+\multicolumn{1}{c}{Risk level}&\multicolumn{1}{c}{$P(SB_{2013})\textless$Cutoff}&\multicolumn{1}{c}{$P(SB_{2013}<SB_{2012})$}&\multicolumn{1}{c}{$P(U_{2012}<0.2)$}\tabularnewline
+\hline
+0.05&    0&     0&2,450\tabularnewline
+0.1&    0& 1,521&3,195\tabularnewline
+0.15&    0& 4,063&3,657\tabularnewline
+0.2&    0& 5,977&4,005\tabularnewline
+0.25&  402& 7,557&4,292\tabularnewline
+0.3&  994& 8,938&4,543\tabularnewline
+0.35&1,530&10,192&4,770\tabularnewline
+0.4&2,033&11,366&4,984\tabularnewline
+0.45&2,515&12,491&5,188\tabularnewline
+0.5&2,987&13,593&5,388\tabularnewline
+0.55&3,459&14,696&5,589\tabularnewline
+0.6&3,940&15,821&5,793\tabularnewline
+0.65&4,443&16,995&6,006\tabularnewline
+0.7&4,980&18,249&6,234\tabularnewline
+0.75&5,571&19,629&6,485\tabularnewline
+0.8&6,247&21,210&6,772\tabularnewline
+0.85&7,067&23,124&7,119\tabularnewline
+0.9&8,155&25,665&7,581\tabularnewline
+0.95&9,913&29,771&8,327\tabularnewline
+\hline
+\end{tabular}
+
+\end{center}
+
+\end{table}
+

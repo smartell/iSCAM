@@ -1,0 +1,43 @@
+% latex.default(TAC, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+ \caption{Decision table for HG where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g.,  3,060 tonnes).\label{Table:RiskHG}} 
+ \begin{center}
+ \begin{tabular}{llll}\hline\hline
+\multicolumn{1}{c}{Risk level}&\multicolumn{1}{c}{$P(SB_{2013})\textless$Cutoff}&\multicolumn{1}{c}{$P(SB_{2013}<SB_{2012})$}&\multicolumn{1}{c}{$P(U_{2012}<0.2)$}\tabularnewline
+\hline
+0.05&     0&     0& 2,228\tabularnewline
+0.1&     0&     0& 3,552\tabularnewline
+0.15&   583&     0& 4,372\tabularnewline
+0.2& 1,940&     0& 4,989\tabularnewline
+0.25& 3,060&     0& 5,498\tabularnewline
+0.3& 4,039&     0& 5,944\tabularnewline
+0.35& 4,928&     0& 6,348\tabularnewline
+0.4& 5,760&     0& 6,727\tabularnewline
+0.45& 6,558&     0& 7,090\tabularnewline
+0.5& 7,340&     0& 7,445\tabularnewline
+0.55& 8,121&     0& 7,801\tabularnewline
+0.6& 8,919&   907& 8,164\tabularnewline
+0.65& 9,751& 2,547& 8,542\tabularnewline
+0.7&10,640& 4,299& 8,947\tabularnewline
+0.75&11,619& 6,229& 9,392\tabularnewline
+0.8&12,740& 8,439& 9,902\tabularnewline
+0.85&14,096&11,113&10,519\tabularnewline
+0.9&15,898&14,666&11,338\tabularnewline
+0.95&18,809&20,404&12,662\tabularnewline
+\hline
+\end{tabular}
+
+\end{center}
+
+\end{table}
+

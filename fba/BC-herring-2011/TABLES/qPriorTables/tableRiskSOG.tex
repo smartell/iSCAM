@@ -1,0 +1,43 @@
+% latex.default(TAC, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+ \caption{Decision table for SOG where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g., 51,565 tonnes).\label{Table:RiskSOG}} 
+ \begin{center}
+ \begin{tabular}{llll}\hline\hline
+\multicolumn{1}{c}{Risk level}&\multicolumn{1}{c}{$P(SB_{2013})\textless$Cutoff}&\multicolumn{1}{c}{$P(SB_{2013}<SB_{2012})$}&\multicolumn{1}{c}{$P(U_{2012}<0.2)$}\tabularnewline
+\hline
+0.05&32,082&    0&32,080\tabularnewline
+0.1&39,969&    0&37,840\tabularnewline
+0.15&44,852&    0&41,406\tabularnewline
+0.2&48,528&    0&44,091\tabularnewline
+0.25&51,565&    0&46,308\tabularnewline
+0.3&54,218&    0&48,246\tabularnewline
+0.35&56,627&    0&50,005\tabularnewline
+0.4&58,882&    0&51,651\tabularnewline
+0.45&61,043&    0&53,230\tabularnewline
+0.5&63,161&    0&54,777\tabularnewline
+0.55&65,280&    0&56,324\tabularnewline
+0.6&67,441&    0&57,902\tabularnewline
+0.65&69,696&    0&59,549\tabularnewline
+0.7&72,105&    0&61,308\tabularnewline
+0.75&74,758&    0&63,245\tabularnewline
+0.8&77,794&    0&65,463\tabularnewline
+0.85&81,471&    0&68,148\tabularnewline
+0.9&86,354&    0&71,714\tabularnewline
+0.95&94,241&8,031&77,474\tabularnewline
+\hline
+\end{tabular}
+
+\end{center}
+
+\end{table}
+

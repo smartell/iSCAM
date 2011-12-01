@@ -1,0 +1,43 @@
+% latex.default(TAC, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+ \caption{Decision table for WCVI where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g.,    184 tonnes).\label{Table:RiskWCVI}} 
+ \begin{center}
+ \begin{tabular}{llll}\hline\hline
+\multicolumn{1}{c}{Risk level}&\multicolumn{1}{c}{$P(SB_{2013})\textless$Cutoff}&\multicolumn{1}{c}{$P(SB_{2013}<SB_{2012})$}&\multicolumn{1}{c}{$P(U_{2012}<0.2)$}\tabularnewline
+\hline
+0.05&     0&   907&2,269\tabularnewline
+0.1&     0& 6,355&3,125\tabularnewline
+0.15&     0& 9,728&3,655\tabularnewline
+0.2&     0&12,267&4,054\tabularnewline
+0.25&   184&14,365&4,384\tabularnewline
+0.3&   969&16,197&4,671\tabularnewline
+0.35& 1,682&17,861&4,933\tabularnewline
+0.4& 2,349&19,418&5,178\tabularnewline
+0.45& 2,989&20,912&5,412\tabularnewline
+0.5& 3,616&22,375&5,642\tabularnewline
+0.55& 4,243&23,838&5,872\tabularnewline
+0.6& 4,882&25,331&6,106\tabularnewline
+0.65& 5,549&26,888&6,351\tabularnewline
+0.7& 6,262&28,552&6,613\tabularnewline
+0.75& 7,047&30,385&6,900\tabularnewline
+0.8& 7,946&32,482&7,230\tabularnewline
+0.85& 9,034&35,022&7,629\tabularnewline
+0.9&10,478&38,395&8,159\tabularnewline
+0.95&12,812&43,842&9,015\tabularnewline
+\hline
+\end{tabular}
+
+\end{center}
+
+\end{table}
+

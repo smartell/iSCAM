@@ -1,0 +1,43 @@
+% latex.default(TAC, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+ \caption{Decision table for PRD where the risk 
+			level represents the probability of exceeding the quantities specified
+			in the headers of each column.  Three performance measures are considered:
+			the probability of the spawning stock biomass in 2013 falling below the cutoff
+			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
+			and the probability of 2012 exploitation rate exceeding the 20\% level that is
+			used in the harvest control rule. To use this table, first determine the 
+			appropriate level of risk (e.g. 0.25 or 25\% chance),  then choose the appropriate
+			management quantity (e.g. spawning biomass falling below the cutoff), and then read
+			off the recommended catch (e.g.,  1,788 tonnes).\label{Table:RiskPRD}} 
+ \begin{center}
+ \begin{tabular}{llll}\hline\hline
+\multicolumn{1}{c}{Risk level}&\multicolumn{1}{c}{$P(SB_{2013})\textless$Cutoff}&\multicolumn{1}{c}{$P(SB_{2013}<SB_{2012})$}&\multicolumn{1}{c}{$P(U_{2012}<0.2)$}\tabularnewline
+\hline
+0.05&     0&    0& 3,743\tabularnewline
+0.1&     0&    0& 4,914\tabularnewline
+0.15&     0&    0& 5,639\tabularnewline
+0.2&   655&  182& 6,185\tabularnewline
+0.25& 1,788&  787& 6,636\tabularnewline
+0.3& 2,777&1,315& 7,030\tabularnewline
+0.35& 3,675&1,795& 7,388\tabularnewline
+0.4& 4,516&2,244& 7,722\tabularnewline
+0.45& 5,322&2,675& 8,043\tabularnewline
+0.5& 6,112&3,097& 8,358\tabularnewline
+0.55& 6,902&3,518& 8,673\tabularnewline
+0.6& 7,708&3,949& 8,994\tabularnewline
+0.65& 8,549&4,398& 9,328\tabularnewline
+0.7& 9,447&4,878& 9,686\tabularnewline
+0.75&10,437&5,406&10,080\tabularnewline
+0.8&11,569&6,011&10,531\tabularnewline
+0.85&12,940&6,743&11,077\tabularnewline
+0.9&14,761&7,716&11,802\tabularnewline
+0.95&17,702&9,287&12,973\tabularnewline
+\hline
+\end{tabular}
+
+\end{center}
+
+\end{table}
+
