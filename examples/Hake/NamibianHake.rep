@@ -1,5 +1,5 @@
 ControlFile
-../../Examples/Hake/NamibianHake.ctl
+NamibianHake.ctl
 f
 -48.0345
 nlvec
@@ -26,7 +26,7 @@ tau
 sig
 0.0574008
 age_tau2
- -3.31676e-317
+ -1.28823e-231
 ngear
 1
 yr

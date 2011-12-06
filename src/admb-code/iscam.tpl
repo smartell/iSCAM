@@ -1687,7 +1687,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 		if(i>sage) dlz_df=dlz_df*exp(-za[i-1]) - lz[i-1]*va[i-1]*exp(-za[i-1]);
 		if(i==nage){ //6/11/2007 added plus group.
 					lz[i]/=(1.-mfexp(-za[i]));
-					//dlz_df=dlz_df*mfexp(-za[i-1]) - lz[i-1]*va[i-1]*mfexp(-za[i-1])/(1.-mfexp(-za[i]))
+					
 					dlz_df=dlz_df/(1.-mfexp(-za[i]))
 							-lz[i-1]*mfexp(-za[i-1])*va[i]*mfexp(-za[i])
 					/((1.-mfexp(-za[i]))*(1.-mfexp(-za[i])));

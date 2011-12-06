@@ -64,8 +64,6 @@ source("read.admb.R")
 	closeWin()
 	
 	#Create a file list object for selection
-	
-	
 	trckExists <- file.exists( .VIEWTRCK )
 	if (trckExists)
 	{
