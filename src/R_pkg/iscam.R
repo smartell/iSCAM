@@ -26,6 +26,9 @@
   source("plot.resid.R")
   source("iscamView.R")
   source("plotCatch.R")
+  source("plotAgeComps.R")
+  source("plotMeanWt.R")
+  source("plotIt.R")
 
 
 ## Instructions:

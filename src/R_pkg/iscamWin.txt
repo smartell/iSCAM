@@ -16,10 +16,13 @@ notebook tabs="Figures Tables Tools" name=nbtab width=520 height=600
 ## ------------------------------------------------------------------------- ##
 ## FIGURES TAB                                                               ##
 ## ------------------------------------------------------------------------- ##
-	grid 2 2 toptitle="Data" relief="sunken" pady=5
-	radio name=plotType mode=character value=catch		text="Catch"	function=.viewPlot
-	radio name=plotType mode=character value=survey		text="Survey"	function=.viewPlot
-	null
+	## RADIO BUTTONS FOR PLOTTING DATA
+	grid 2 3 toptitle="Data" relief="sunken" pady=5
+	radio name=plotType mode=character value=catch		text="Catch"	function=.viewPlot	sticky=W
+	radio name=plotType mode=character value=survey		text="Survey"	function=.viewPlot	sticky=W
+	radio name=plotType mode=character value=agecomp	text="Age Comps (bubble)"	function=.viewPlot	sticky=W
+	radio name=plotType mode=character value=agehist	text="Age Comps (histogram)"	function=.viewPlot	sticky=W
+	radio name=plotType mode=character value=meanwt		text="Mean weight-at-age" 	function=.viewPlot	sticky=W
 	null
 
 ## ------------------------------------------------------------------------- ##

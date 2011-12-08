@@ -82,6 +82,19 @@ function()
 		}, 
 		survey={
 			print("survey")
+			.plotIt(M)
+		}, 
+		agecomp={
+			print("agecomp")
+			.plotAgeComps(M)
+		},
+		agehist={
+			print("agehist")
+			.plotAgeHist(M)
+		},  
+		meanwt={
+			print("meanwt")
+			.plotMeanWt(M)
 		}
 		)
 	
