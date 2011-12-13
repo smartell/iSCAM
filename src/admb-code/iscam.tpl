@@ -64,6 +64,11 @@
 //--                                                                       --//
 //-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning           --//
 //--                                                                       --//
+//--                                                                       --//
+//-- Dec 11, 2011- added halibut branch to local git repository aim is to  --//
+//--               add gender dimension and stock dimension.               --//
+//--                                                                       --//
+//--                                                                       --//
 // ------------------------------------------------------------------------- //
 
 
