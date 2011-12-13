@@ -67,7 +67,7 @@
 //--                                                                       --//
 //-- Dec 11, 2011- added halibut branch to local git repository aim is to  --//
 //--               add gender dimension and stock dimension.               --//
-//--                                                                       --//
+//--               This was created on the "twosex" branch in git          --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
 
