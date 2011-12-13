@@ -1,0 +1,19 @@
+%iscam logo
+\newcommand{\iscam}{
+	\raisebox{0.75ex}{$i$}%
+	\textcolor{red}{\raisebox{0.25ex}{S}}%
+	\textcolor{green}{\raisebox{0.00ex}{C}}%
+	\textcolor{blue}{\raisebox{-.25ex}{A}}%
+	\raisebox{-.50ex}{M}%
+	}%
+	
+	
+%Logo
+\usepackage{fancyhdr}
+\renewcommand{\headheight}{0.6in}
+\setlength{\headwidth}{\textwidth}
+\fancyhead[L]{}% empty left
+\fancyhead[R]{ % right
+   \includegraphics[height=0.53in]{iscamlogo.eps}
+}
+\pagestyle{fancy}
