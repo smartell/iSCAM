@@ -4,7 +4,7 @@
 %  Created by Steven James Dean Martell on 2011-12-13.
 %  Copyright (c) 2011 UBC Fisheries Centre. All rights reserved.
 %
-\documentclass[]{article}
+\documentclass[10pt,letterpaper]{article}
 
 % Use utf-8 encoding for foreign characters
 \usepackage[utf8]{inputenc}
@@ -15,15 +15,20 @@
 % Uncomment some of the following if you use the features
 %
 % Running Headers and footers
-%\usepackage{fancyhdr}
+\usepackage{fancyhdr}
 
 % Multipart figures
 %\usepackage{subfigure}
 
+% Multicols
+\usepackage{multicol}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\columnsep}{15pt}
+
 % More symbols
-%\usepackage{amsmath}
-%\usepackage{amssymb}
-%\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
 
 % Surround parts of graphics with box
 \usepackage{boxedminipage}
@@ -36,6 +41,15 @@
 
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
+
+% Natbib
+\usepackage[round]{natbib}
+
+% Hyperref
+\usepackage[colorlinks,bookmarks,citecolor=magenta]{hyperref}
+
+% This is a custom iscamx package with the logo defs and fancyhdr
+\usepackage{iscamx}
 
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
@@ -50,10 +64,24 @@
 \else
 \usepackage{graphicx}
 \fi
-\title{A LaTeX Article}
-\author{  }
+\title{
+\includegraphics[height=2.53in]{iscamlogo}
+\vfill
+\iscam\ Users Guide\\
+Version 1.0\\
+\vfill}
 
-\date{2011-12-13}
+\author{Steven Martell\\
+University of British Columbia\\
+Fisheries Centre\\
+2202 Main Mall\\
+Vancouver, BC\\
+V6T 1Z4\\
+Canada\\ 
+\texttt{s.martell@fisheries.ubc.ca}}
+
+\date{\small{$^\copyright$  Copyright Steven Martell, \today.  All rights reserved.}}
+
 
 \begin{document}
 
@@ -65,12 +93,19 @@
 
 \maketitle
 
+\newpage
+\tableofcontents
+\addcontentsline{toc}{subsection}{Contents}
 
-\begin{abstract}
-\end{abstract}
+	\input{./Introduction/Introduction}
 
-\section{Introduction}
 
-\bibliographystyle{plain}
-\bibliography{}
+%% -References
+\clearpage
+%input "Refs.bib"
+%\bibliographystyle{plainnat}
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{apalike}
+\bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
 \end{document}

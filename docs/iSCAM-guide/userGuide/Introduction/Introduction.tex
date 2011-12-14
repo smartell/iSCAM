@@ -1,28 +1,70 @@
-%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-project/svn/docs/iSCAM-guide/userGuide/iscamGuide.tex
-
-\setlength{\columnseprule}{1pt}
-\setlength{\columnsep}{20pt}
-
+%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-project/svn/docs/iSCAM-guide/userGuide/usrGuide.tex
+\section{Introduction} % (fold)
+\label{sec:introduction}
 \begin{multicols}{2}
-\section{Introduction}
- The purpose of this users guide is to aid in the development of new assessment models using \iscam\ and to document the code. \iscam\ is written in AD Model Builder and the source code is freely available.
+	The purpose of this users guide is to aid in the development of new assessment models using \iscam\ and to document the code. \iscam{} is written in \admb{} and the source code is freely available.  This manual was written in \LaTeX{}.
 
-%\subsection{Overview}
-As an AD Model builder program, \iscam has several input files and several output files along with the executable program that actually performs the non-linear parameter estimation and all other model calculations.  There are three input files required:
+\subsection{Overview of \iscam} % (fold)
+\label{sub:overview}
+As an AD Model builder program, \iscam\ has several input files and several output files along with the executable program that actually performs the non-linear parameter estimation and all other model calculations.  There are three input files required:
 \begin{enumerate}
 	\item iscam.dat
 	\item $<$data file$>$
 	\item $<$control file$>$
 \end{enumerate}
- All three files are required to run \iscam\, and the files are read in the order presented above.  The iscam.dat file contains only the file names of the data file and the control file.  The data file contains all of the necessary data for a particular stock including, model dimensions, life-history information, time series data on observed catch, the relative abundance indices and information on age-compositions sampled from each of the fisheries.
+ All three files are required to run \iscam, and the files are read in the order presented above.  The iscam.dat file contains only the file names of the data file and the control file.  The data file contains all of the necessary data for a particular stock including, model dimensions, life-history information, time series data on observed catch, the relative abundance indices and information on age-compositions sampled from each of the fisheries.
  
  The control file contains the necessary information for setting bounds and priors for estimated model parameters, specifying the types of selectivity curves for each of the fisheries, and other miscellaneous controls for producing various outputs and weighing components of the objective function.  Note that \iscam\ is intended to have a lot of flexibility, but with this flexibility comes at a cost of being more difficult to rapidly develop models and obtain reasonable parameter estimates.
  
  \iscam\ also has a custom command line option for conducting simulation trials based on the observed data set. In a simulation trial, the historical data and known parameter values are used to simulate observed data with known assumptions. Following the simulation, the model then estimates the model parameters.   This is an important feature to ensure that your model set up is capable of estimating the true parameter values, or used in simulation-estimation experiments for exploring estimability and parameter bias.
  
- There are a number of standard report files produced by AD Model Builder programs, and in addition to these report files, there are additional custom files for dealing with the MCMC output from \iscam. 
- 
- \subsection{Obtaining \iscam}
- \iscam can be freely obtained from (website).  Or by directly emailing \href{mailto:s.martell@fisheries.ubc.ca}{Steven Martell}.
- 
+ There are a number of standard report files produced by AD Model Builder programs, and in addition to these report files, there are additional custom files for dealing with the MCMC output from \iscam.
+
+% subsection overview_of_is (end)
+
+\subsection{Obtaining \iscam} % (fold)
+\label{sub:obtaining_iscam}
+\iscam can be freely obtained from a google code repository \url{http://code.google.com/p/iscam-project/}.  Or by directly emailing \href{mailto:s.martell@fisheries.ubc.ca}{Steven Martell}.
+
+
+
+% subsection obtaining_iscam (end)
+
 \end{multicols}
+% section introduction (end)
+
+
+
+
+
+
+
+
+
+
+% \setlength{\columnseprule}{1pt}
+% \setlength{\columnsep}{20pt}
+% 
+% \begin{multicols}{2}
+% \section{Introduction}
+%  The purpose of this users guide is to aid in the development of new assessment models using \iscam\ and to document the code. \iscam\ is written in AD Model Builder and the source code is freely available.
+% 
+% %\subsection{Overview}
+% As an AD Model builder program, \iscam has several input files and several output files along with the executable program that actually performs the non-linear parameter estimation and all other model calculations.  There are three input files required:
+% \begin{enumerate}
+% 	\item iscam.dat
+% 	\item $<$data file$>$
+% 	\item $<$control file$>$
+% \end{enumerate}
+%  All three files are required to run \iscam\, and the files are read in the order presented above.  The iscam.dat file contains only the file names of the data file and the control file.  The data file contains all of the necessary data for a particular stock including, model dimensions, life-history information, time series data on observed catch, the relative abundance indices and information on age-compositions sampled from each of the fisheries.
+%  
+%  The control file contains the necessary information for setting bounds and priors for estimated model parameters, specifying the types of selectivity curves for each of the fisheries, and other miscellaneous controls for producing various outputs and weighing components of the objective function.  Note that \iscam\ is intended to have a lot of flexibility, but with this flexibility comes at a cost of being more difficult to rapidly develop models and obtain reasonable parameter estimates.
+%  
+%  \iscam\ also has a custom command line option for conducting simulation trials based on the observed data set. In a simulation trial, the historical data and known parameter values are used to simulate observed data with known assumptions. Following the simulation, the model then estimates the model parameters.   This is an important feature to ensure that your model set up is capable of estimating the true parameter values, or used in simulation-estimation experiments for exploring estimability and parameter bias.
+%  
+%  There are a number of standard report files produced by AD Model Builder programs, and in addition to these report files, there are additional custom files for dealing with the MCMC output from \iscam. 
+%  
+%  \subsection{Obtaining \iscam\}
+%  \iscam can be freely obtained from (website).  Or by directly emailing \href{mailto:s.martell@fisheries.ubc.ca}{Steven Martell}.
+%  
+% \end{multicols}
