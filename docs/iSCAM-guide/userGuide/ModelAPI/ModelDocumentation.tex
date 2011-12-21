@@ -51,34 +51,34 @@ a & & index for age\\
 t & & index for year\\
 k & & index for gear\\
 \multicolumn{3}{l}{\underline{Model dimensions}}\\
-$\acute{a}, A$ 	& 2, 10			& youngest and oldest age class ($A$ is a plus group)\\
-$\acute{t}, T$ 	& 1951, 2010 	& first and last year of catch data\\
-$K$ 			& 5 			& Number of gears including survey gears\\
+$\acute{a}, A$  & 2, 10         & youngest and oldest age class ($A$ is a plus group)\\
+$\acute{t}, T$  & 1951, 2010    & first and last year of catch data\\
+$K$             & 5             & Number of gears including survey gears\\
 \multicolumn{3}{l}{\underline{Observations (data)}}\\
-$C_{k,t}$ 		& & catch in weight by gear $k$ in year $t$\\
-$I_{k,t}$ 		& & relative abundance index for gear $k$ in year $t$\\
-$p_{k,t,a}$		& & observed proportion-at-age $a$ in year $t$ for gear $k$\\
+$C_{k,t}$       & & catch in weight by gear $k$ in year $t$\\
+$I_{k,t}$       & & relative abundance index for gear $k$ in year $t$\\
+$p_{k,t,a}$     & & observed proportion-at-age $a$ in year $t$ for gear $k$\\
 \multicolumn{3}{l}{\underline{Estimated parameters}}\\
-$R_o$ 				& & Age-$\acute{a}$ recruits in unfished conditions\\
-$\kappa$ 			& & recruitment compensation\\
-$M$ 				& & instantaneous natural mortality rate \\
-$\bar{R}$ 			& & average age-$\acute{a}$ recruitment from year $\acute{t}$ to $T$\\
-$\ddot{R}$ 			& & average age-$\acute{a}$ recruitment in year $\acute{t}-1$\\
-$\rho$ 				& & fraction of the total variance associated with observation error\\
-$\vartheta$ 		& & total precision (inverse of variance) of the total error\\
-$\vec{\gamma}_k$	& & vector of selectivity parameters for gear $k$\\
-$\digamma_{k,t}$	& & logarithm of the instantaneous fishing mortality for gear $k$ in year $t$\\
-$\ddot{\omega}_a$	& & age-$\acute{a}$ deviates from $\ddot{R}$ for year $\acute{t}$\\
-$\omega_t$			& & age-$\acute{a}$ deviates from $\bar{R}$ for years $\acute{t}$ to $T$\\
-$\varphi_t$			& & logarithm of annual change in natural mortality rate\\
+$R_o$               & & Age-$\acute{a}$ recruits in unfished conditions\\
+$\kappa$            & & recruitment compensation\\
+$M$                 & & instantaneous natural mortality rate \\
+$\bar{R}$           & & average age-$\acute{a}$ recruitment from year $\acute{t}$ to $T$\\
+$\ddot{R}$          & & average age-$\acute{a}$ recruitment in year $\acute{t}-1$\\
+$\rho$              & & fraction of the total variance associated with observation error\\
+$\vartheta$         & & total precision (inverse of variance) of the total error\\
+$\vec{\gamma}_k$    & & vector of selectivity parameters for gear $k$\\
+$\digamma_{k,t}$    & & logarithm of the instantaneous fishing mortality for gear $k$ in year $t$\\
+$\ddot{\omega}_a$   & & age-$\acute{a}$ deviates from $\ddot{R}$ for year $\acute{t}$\\
+$\omega_t$          & & age-$\acute{a}$ deviates from $\bar{R}$ for years $\acute{t}$ to $T$\\
+$\varphi_t$         & & logarithm of annual change in natural mortality rate\\
 \multicolumn{3}{l}{\underline{Standard deviations}}\\
-$\sigma_M$ 			&0.1	& standard deviation in random walk for natural mortality\\
-$\sigma$ 			& 		& standard deviation for observation errors in survey index\\
-$\tau$ 				& 		& standard deviation in process errors (recruitment deviations)\\
-$\sigma_C$			&0.0707	& standard deviation in observed catch by gear\\
+$\sigma_M$          &0.1    & standard deviation in random walk for natural mortality\\
+$\sigma$            &       & standard deviation for observation errors in survey index\\
+$\tau$              &       & standard deviation in process errors (recruitment deviations)\\
+$\sigma_C$          &0.0707 & standard deviation in observed catch by gear\\
 \multicolumn{3}{l}{\underline{Residuals}}\\
-$\delta_t$ 		&	& annual recruitment residual\\
-$\eta_t$ 		&	& residual error in predicted catch\\
+$\delta_t$      &   & annual recruitment residual\\
+$\eta_t$        &   & residual error in predicted catch\\
 
 
 \end{longtable}
@@ -94,8 +94,8 @@ For the steady-state conditions represented in Table~\ref{tab:equilibrium_model}
 Survivorship for unfished and fished populations is defined by \eqref{T2.8} and \eqref{T2.9}, respectively.  It is assumed that all individuals ages $A$ and older (i.e., the plus group) have the same total mortality rate.  The incidence functions refer to the life-time or per-recruit quantities such as spawning biomass per recruit ($\phi_E$) or vulnerable biomass per recruit ($\phi_b$).  Note that upper and lower case subscripts denote unfished and fished conditions, respectively.  Spawning biomass per recruit is given by \eqref{T2.10}, the vulnerable biomass per recruit is given by \eqref{T2.11} and the per recruit yield to the fishery is given by \eqref{T2.11b}.  Unfished recruitment is given by \eqref{T2.12} and the steady-state equilibrium recruitment  for a given fishing mortality rate $F_e$ is given by \eqref{T2.13}.  Note that in \eqref{T2.13} we assume that recruitment follows either a  Beverton-Holt or a Ricker model in the forms:
 \[
 R_e=\begin{cases}
-	\dfrac{s_o R_e \phi_e}{1+\beta R_e \phi_e},& \mbox{Beverton-Holt}\\[5ex]
-	s_o R_e \phi_e \exp(-\beta R_e \phi_e)& \mbox{Ricker}
+    \dfrac{s_o R_e \phi_e}{1+\beta R_e \phi_e},& \mbox{Beverton-Holt}\\[5ex]
+    s_o R_e \phi_e \exp(-\beta R_e \phi_e)& \mbox{Ricker}
 \end{cases}
 \]
 where the maximum juvenile survival rate is the same for both forms of the recruitment model and is given by:
@@ -105,8 +105,8 @@ s_o = \kappa/\phi_E,
 and the density-dependent term is given by:
 \[
 \beta =\begin{cases}
-	\dfrac{(\kappa-1)}{R_o\phi_E}, & \mbox{Beverton-Holt}\\[5ex]
-	{\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}} & \mbox{Ricker}
+    \dfrac{(\kappa-1)}{R_o\phi_E}, & \mbox{Beverton-Holt}\\[5ex]
+    {\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}} & \mbox{Ricker}
 \end{cases} 
 \]
 which simplifies to \eqref{T2.13}.
@@ -125,46 +125,45 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
     \begin{gather}
            \hline
         \mbox{Parameters} \nonumber \\
-            \Theta = (B_o,\kappa,M_a,\hat{a},\hat{\gamma}) 		\label{T2.1}\\
+            \Theta = (B_o,\kappa,M_a,\hat{a},\hat{\gamma})      \label{T2.1}\\
             B_o>0; \kappa > 1; M_a > 0\\
-            \Phi = (l_\infty, k, t_o,a,b,\dot{a},\dot{\gamma}) 	\label{T2.3}\\[1ex]
+            \Phi = (l_\infty, k, t_o,a,b,\dot{a},\dot{\gamma})  \label{T2.3}\\[1ex]
         %%
         %%
         \mbox{Age-schedule information} \nonumber\\
-            l_a=l_\infty(1-\exp(-k(a-t_o)))						\label{T2.4}\\
-            w_a=a(l_a)^b 										\label{T2.5}\\
-            v_a=(1+\exp(-(\hat{a}-a)/\gamma))^{-1} 				\label{T2.6}\\
-            f_a=w_a(1+\exp(-(\dot{a}-a)/\dot{\gamma}))^{-1} 	\label{T2.7}\\[1ex]
+            l_a=l_\infty(1-\exp(-k(a-t_o)))                     \label{T2.4}\\
+            w_a=a(l_a)^b                                        \label{T2.5}\\
+            v_a=(1+\exp(-(\hat{a}-a)/\gamma))^{-1}              \label{T2.6}\\
+            f_a=w_a(1+\exp(-(\dot{a}-a)/\dot{\gamma}))^{-1}     \label{T2.7}\\[1ex]
         %%
         %%
         \mbox{Survivorship} \nonumber\\
-            \iota_a=\begin{cases} 1, \quad a=1      			\label{T2.8}\\
-            \iota_{a-1}e^{-M_{a-1}},\quad a>1\\
-            \iota_{a-1}/(1-e^{-M_a}),\quad a=A \end{cases}\\
-            \hat{\iota}_a=\begin{cases} 1, \quad a=1\\
-            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}},\quad a>1\\
-            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}}/(1-e^{-M_{a}-F_e v_{a}}),\quad a=A
-            \end{cases} 										\label{T2.9}\\[1ex]
+            \iota_a=\begin{cases} 1, &\quad a=1                 \label{T2.8}\\
+            \iota_{a-1}e^{-M_{a-1}},&\quad a>1\\
+            \iota_{a-1}/(1-e^{-M_a}),&\quad a=A \end{cases}\\
+            \hat{\iota}_a=\begin{cases} 1, & a=1\\
+            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}},& a>1\\
+            \hat{\iota}_{a-1}e^{-M_{a-1}-F_e v_{a-1}}/(1-e^{-M_{a}-F_e v_{a}}),& a=A
+            \end{cases}                                         \label{T2.9}\\[1ex]
         %%
         %%
         \mbox{Incidence functions} \nonumber \\
             \phi_E=\sum_{a=1}^\infty \iota_a f_a, \quad
-            \phi_e=\sum_{a=1}^\infty \hat{\iota}_a f_a 			\label{T2.10}\\
+            \phi_e=\sum_{a=1}^\infty \hat{\iota}_a f_a          \label{T2.10}\\
             \phi_B=\sum_{a=1}^\infty \iota_a w_a v_a, \quad
-            \phi_b=\sum_{a=1}^\infty \hat{\iota}_a w_a v_a 		\label{T2.11}\\
+            \phi_b=\sum_{a=1}^\infty \hat{\iota}_a w_a v_a      \label{T2.11}\\
             \phi_q=\sum_{a=1}^\infty
                 \frac{ \hat{\iota}_a w_a v_a}{M_a+F_ev_a}
-                \left(1-e^{(-M_a-F_ev_a)}\right) 				\label{T2.11b}\\[1ex]
+                \left(1-e^{(-M_a-F_ev_a)}\right)                \label{T2.11b}\\[1ex]
         %%
         %%
         \mbox{Steady-state conditions} \nonumber \\
-        R_o=B_o/ \phi_B 										\label{T2.12}\\
-        R_e=R_o\begin{cases}
-        \dfrac{\kappa-\phi_E/\phi_e}{\kappa-1}&\mbox{Beverton-Holt}\label{T2.13}\\[2ex]
-        \dfrac{\ln(\kappa)-\ln(\phi_E/\phi_e)}{\ln(\kappa)}& \mbox{Ricker}
-        \end{cases}	\\
-        %%C_e=R_e \phi_b \frac{F_e}{Z_e}(1-\exp(-Z_e))\label{T2.14} \B \\
-        C_e=F_e R_e \phi_q										\label{T2.14}\\[1ex]
+            R_o=B_o/ \phi_B                                     \label{T2.12}\\
+            R_e=R_o\begin{cases}
+            \dfrac{\kappa-\phi_E/\phi_e}{\kappa-1}&\mbox{Beverton-Holt}\\[2ex]
+            \dfrac{\ln(\kappa)-\ln(\phi_E/\phi_e)}{\ln(\kappa)}& \mbox{Ricker}
+            \end{cases}                                         \label{T2.13}\\
+            C_e=F_e R_e \phi_q                                  \label{T2.14}\\[1ex]
         \hline \hline \nonumber
     \end{gather}
     \normalEq
@@ -201,19 +200,19 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
 
 The algorithm usually converges in less than 10 iterations depending on how close the initial guess of \fmsy\ is to the true value.  A maximum of 20 iterations are allowed in \iscam, however, if $\frac{\partial C_e}{\partial F_e}<1e-5$ the algorithm stops.  Note also, that this is only performed on data type variables and not differentiable variables within AD Model Builder.
  
- Given an estimate of \fmsy, other reference points such as MSY are calculated use the equations in Table~\ref{tab:equilibrium_model} where each of the expressions is evaluated at \fmsy.  A graphical representation of MSY based reference points for two alternative values of the recruitment compensation parameter $\kappa$ is show in Figure \ref{Fig1}.
+ Given an estimate of \fmsy, other reference points such as MSY are calculated use the equations in Table~\ref{tab:equilibrium_model} where each of the expressions is evaluated at \fmsy.  A graphical representation of MSY based reference points for two alternative values of the recruitment compensation parameter $\kappa$ is show in Figure \ref{fig:iscamFigs_Fig1Quadplot}.
 
 \begin{figurehere}
-	\centering
-		\includegraphics[height=3in]{iscamFigs/Fig1Quadplot.pdf}
-	\caption{Equilibrium yield (a), recruits (b), biomass (c) and
-	   spawner per recruit ($\phi_e/\phi_E$) (d) versus instantaneous
-	   fishing mortality $F_e$ for two different values of the recruitment
-	   compensation ratio ($\kappa=12$ solid lines, $\kappa=4$ dashed
-	   lines). Vertical lines in each panel correspond to \fmsy\ and
-	   horizontal lines correspond to various reference points that would
-	   achieve MSY.}
-	\label{fig:iscamFigs_Fig1Quadplot}
+    \centering
+        \includegraphics[height=3in]{iscamFigs/Fig1Quadplot.pdf}
+    \caption{Equilibrium yield (a), recruits (b), biomass (c) and
+       spawner per recruit ($\phi_e/\phi_E$) (d) versus instantaneous
+       fishing mortality $F_e$ for two different values of the recruitment
+       compensation ratio ($\kappa=12$ solid lines, $\kappa=4$ dashed
+       lines). Vertical lines in each panel correspond to \fmsy\ and
+       horizontal lines correspond to various reference points that would
+       achieve MSY.}
+    \label{fig:iscamFigs_Fig1Quadplot}
 \end{figurehere}
 
 
@@ -227,14 +226,14 @@ The algorithm usually converges in less than 10 iterations depending on how clos
     \begin{gather}
         \hline
         \mbox{Mortality \& Survival} \nonumber \\
-        Z_{a}=M_a+F_ev_a 								\label{T3.1} \\
-        S_{a}=1-e^{-Z_a}								\label{T3.2}\\[1ex]
+        Z_{a}=M_a+F_ev_a                                \label{T3.1} \\
+        S_{a}=1-e^{-Z_a}                                \label{T3.2}\\[1ex]
         %%
         %%
         \mbox{Partial for survivorship} \nonumber \\
         \frac{\partial \hat{\iota}_a}{\partial F_e} =
         \begin{cases}
-          0,& a=1 										\label{T3.3}\\
+          0,& a=1                                       \label{T3.3}\\
           e^{-Z_{a-1}}\left(\dfrac{\partial \hat{\iota}_{a-1}}{\partial F_e}
            -\hat{\iota}_{a-1}v_{a-1}\right),& 1<a<A\\
            \dfrac{\dfrac{\partial \hat{\iota}_{a-1}}{\partial F_e}}
@@ -253,20 +252,20 @@ The algorithm usually converges in less than 10 iterations depending on how clos
         \mbox{Partials for incidence functions} \nonumber \\
         \frac{\partial \phi_e}{\partial F_e}=
             \sum_{a=1}^\infty f_a \frac{\partial \hat{\iota}_a}{\partial
-            F_e} 										\label{T3.4}\\
+            F_e}                                        \label{T3.4}\\
         %%
         %%
         \frac{\partial \phi_q}{\partial F_e}=
             \sum_{a=1}^\infty \frac{w_av_a S_a}{Z_a}
              \frac{\partial \hat{\iota}_a}{\partial F_e}
              +\frac{\hat{\iota}_a w_av_a^2}{Z_a}\left(e^{-Z_a}-\frac{S_a}{Z_a} \right)
- 															\label{T3.5}\\[1ex]
+                                                            \label{T3.5}\\[1ex]
         %%
         %%
         \mbox{Partial for recruitment} \nonumber\\
         \frac{\partial R_e}{\partial F_e}=\frac{R_o}{\kappa-1}
         \frac{\phi_E}{\phi_e^2} \frac{\partial \phi_e}{\partial
-        F_e} 												\label{T3.6}\\[1ex]
+        F_e}                                                \label{T3.6}\\[1ex]
         \hline \hline \nonumber
     \end{gather}
 
@@ -313,11 +312,11 @@ and for the Ricker model this is given by:
         &\mbox{Estimated parameters} \nonumber\\
         \begin{split}
         \Theta&= 
-        		(R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},%\bar{F}_k,
-        		\digamma_{k,t},\\
-		&\quad \{\omega_t\}_{t=1-A}^{t=T},
-        		\{\varphi_t \}_{t=2}^T)
-	\end{split} \label{T4.1}\\
+                (R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},%\bar{F}_k,
+                \digamma_{k,t},\\
+        &\quad \{\omega_t\}_{t=1-A}^{t=T},
+                \{\varphi_t \}_{t=2}^T)
+    \end{split} \label{T4.1}\\
         \sigma^2&=\rho /\vartheta^2, \quad
         \tau^2=(1-\rho)/\vartheta^2\label{T4.2}\\[1ex]
         %\vartheta^2=\sigma^2+\tau^2, \quad
@@ -325,9 +324,9 @@ and for the Ricker model this is given by:
         %%
         %%
         &\mbox{Unobserved states} \nonumber\\
-        &N_{t,a},B_t,Z_{t,a}	\label{T4.3}\\
-	%%
-	%%	        
+        &N_{t,a},B_t,Z_{t,a}    \label{T4.3}\\
+    %%
+    %%          
         &\mbox{Initial states} \nonumber\\
         %v_a=\left[1+e^{-(\hat{a}-a)/\hat{\gamma}}\right]^{-1}\label{T4.7}\\
         N_{t,a}&=\bar{R}e^{\omega_{t-a}} \exp(-M_t)^{(a-1)};\quad t=1;  2\leq a\leq A \label{T4.4}\\
@@ -353,10 +352,10 @@ and for the Ricker model this is given by:
         &\mbox{Recruitment models} \nonumber\\
         R_t &= \frac{s_oB_{t-k}}{1+\beta B_{t-k}}e^{\delta_{t}-0.5\tau^2} \quad \mbox{Beverton-Holt} \label{T4.12}\\
         R_t &= s_oB_{t-k}e^{-\beta B_{t-k}+\delta_t-0.5\tau^2} \quad \mbox{Ricker} \label{T4.13}\\
-	%%        \mbox{Residuals \& predicted observations} \nonumber\\
-	%%        \epsilon_t=\ln\left(\frac{I_t}{B_t}\right)-\frac{1}{n}\sum_{t \in I_t}\ln\left(\frac{I_t}{B_t}\right)\label{T4.15}\\
-	%%        \hat{A}_{t,a}=\dfrac{N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}
-	%%        {\sum_a N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}\label{T4.16}\\
+    %%        \mbox{Residuals \& predicted observations} \nonumber\\
+    %%        \epsilon_t=\ln\left(\frac{I_t}{B_t}\right)-\frac{1}{n}\sum_{t \in I_t}\ln\left(\frac{I_t}{B_t}\right)\label{T4.15}\\
+    %%        \hat{A}_{t,a}=\dfrac{N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}
+    %%        {\sum_a N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}\label{T4.16}\\
         \hline \hline \nonumber
     \end{align}
 
@@ -364,6 +363,9 @@ and for the Ricker model this is given by:
 \end{tablehere}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 
 \subsubsection{Options for selectivity ($v_{k,t,a}$)} \label{ModelDocSelectivity}
@@ -397,18 +399,18 @@ For this selectivity option the user must specify the relative weights ($\lambda
 The third option also assumes time-invariant selectivity and estimates a selectivity coefficients for a series age-nodes (or spline points) and uses a natural cubic spline to interpolate between these nodes (Figure \ref{Fig2}). Given $n+1$ distinct knots $x_i$, selectivity can be interpolated in the intervals defined by
 \[
 S(x) = \begin{cases}
-	S_0(x) & x \in [x_0,x_1]\\
-	S_1(x) & x \in [x_1,x_2]\\
-	...\\
-	S_{n-1}(x) & x \in [x_{n-1},x_n]
+    S_0(x) & x \in [x_0,x_1]\\
+    S_1(x) & x \in [x_1,x_2]\\
+    ...\\
+    S_{n-1}(x) & x \in [x_{n-1},x_n]
 \end{cases}
 \]
 where  $S''(x_0) = S''(x_n)=0$  is the condition that defines a natural cubic spline.
 \begin{figurehere}
-	\centering
-	% Requires \usepackage{graphicx}
-	\includegraphics[width=\columnwidth]{iscamFigs/SplineEg.eps}\\
-	\caption{Example of a natural cubic spline interpolation for estimating selectivity coefficients.  In \iscam\ the user specifies the number of nodes (circles) to estimate; then age-specific selectivity coefficients are interpolated using a natural cubic spline.}\label{Fig2}
+    \centering
+    % Requires \usepackage{graphicx}
+    \includegraphics[width=\columnwidth]{iscamFigs/SplineEg.eps}\\
+    \caption{Example of a natural cubic spline interpolation for estimating selectivity coefficients.  In \iscam\ the user specifies the number of nodes (circles) to estimate; then age-specific selectivity coefficients are interpolated using a natural cubic spline.}\label{Fig2}
 \end{figurehere}
 
 The same penalty functions for curvature and dome-shaped selectivity are also invoked for the cubic spline interpolation of selectivity.
@@ -418,10 +420,10 @@ The same penalty functions for curvature and dome-shaped selectivity are also in
 \paragraph{Bicubic spline to interpolate over time and ages}  The fifth option allows for a two-dimensional interpolation using a bicubic spline (Figure \ref{Fig3}).  In this case the user must specify the number of age and year nodes.  Again the same curvature and dome shaped constraints are implemented.  It is not necessary to have age-composition data each and every year as in the previous case, as the bicubic spline will interpolate between years.  However, it is not advisable to extrapolate selectivity back in time or forward in time where there are no age-composition data unless some additional constraint, such as a random-walk in age-specific selectivity coefficients is implemented (as of \today, this has not been implemented).
 
 \begin{figure*}[!tbp]
-	% Requires \usepackage{graphicx}
-	\centering
-	\includegraphics[width=0.9\textwidth]{iscamFigs/BicubicEg.eps}\\
-	\caption{Example of a time-varying cubic spline (left) and bicubic spline (right) interpolation for selectivity as applied to the Pacific hake data. The panel on the left contains 165 estimated selectivity parameters and the bicubic interpolation estimates 85 selectivity parameters, or 5 age nodes and 17 year nodes. There are 495 actual nodes being interpolated.}\label{Fig3}
+    % Requires \usepackage{graphicx}
+    \centering
+    \includegraphics[width=0.9\textwidth]{iscamFigs/BicubicEg.eps}\\
+    \caption{Example of a time-varying cubic spline (left) and bicubic spline (right) interpolation for selectivity as applied to the Pacific hake data. The panel on the left contains 165 estimated selectivity parameters and the bicubic interpolation estimates 85 selectivity parameters, or 5 age nodes and 17 year nodes. There are 495 actual nodes being interpolated.}\label{Fig3}
 \end{figure*}
 %\end{multicols}
 
@@ -481,7 +483,7 @@ The conditional maximum likelihood estimate of the variance is given by
 \]
 and the negative loglikelihood evaluated at the conditional maximum likelihood estimate of the variance is given by:
 \begin{equation}\label{eq8}
-	\ell_A = (A-1)T \ln(\widehat{\tau}^2).
+    \ell_A = (A-1)T \ln(\widehat{\tau}^2).
 \end{equation}
 In short, the multivariate logistic likelihood for age-composition data is just the log of the residual variance weighted by the number observations over years and ages.
 
@@ -494,7 +496,7 @@ A \textbf{WARNING} about extremely weak year classes is required here.  A potent
 \subsubsection{Stock-recruitment}
 There are two alternative stock-recruitment models available in \iscam: the Beverton-Holt model and the Ricker model.  Annual recruitment and the initial age-composition are treated as latent variables in \iscam, and residuals between estimated recruits and the deterministic stock-recruitment models are used to estimate unfished spawning stock biomass and recruitment compensation.  The residuals between the estimated and predicted recruits is given by
 \begin{equation}\label{eq9}
-	\delta_t = \ln(\bar{R}e^{w_t}) - f(B_{t-k})
+    \delta_t = \ln(\bar{R}e^{w_t}) - f(B_{t-k})
 \end{equation}
 where $f(B_{t-k})$ is given by either \eqref{T4.12} or \eqref{T4.13}, and $k$ is the age at recruitment.  Note that a bias correction term for the lognormal process  errors is included in  \eqref{T4.12} and \eqref{T4.13}.
 
