@@ -16,12 +16,12 @@
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
    1.0          -5.0    15      4       0       -5.0    15      #log_ro      ##
-   0.75         0.2     1.0     4       3       4.50    1.50    #steepness   ##
-   -0.638272    -3.0    2.0     1       1       -0.63   0.01    #log_m       ##
+   0.75         0.2     1.0     4       3       4.50    2.50    #steepness   ##
+   -0.7144      -3.0    2.0     1       1       -0.7144 0.05    #log_m       ##
    1.0          -5.0    15      1       0       -5.0    15      #log_avgrec  ##
    1.0          -5.0    15      1       0       -5.0    15      #log_recinit ##
-   0.5          0.01    0.99    3       3       125.    125.    #rho         ##
-   1.25         0.01    15.     3       4       1.01    1.01    #vartheta    ##
+   0.1          0.01    0.99    3       3       75.5    75.5    #rho         ##
+   1.16         0.01    15.     3       4       2.50    1.50    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -73,9 +73,9 @@
 0.0707      # 4  -std in observed catches in last phase.
 1           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.40        # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.60        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.01        # 8  -std in mean fishing mortality in first phase
-2.00        # 9  -std in mean fishing mortality in last phase
+0.20        # 9  -std in mean fishing mortality in last phase
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality

@@ -27,14 +27,14 @@
 ## ------------------------------------------------------------------------- ##
 ## Age-schedule and population parameters                                    ##
 ## ------------------------------------------------------------------------- ##
-0.23			# -natural mortality rate (m_fixed) TOBE DEPRECATED
-85.0			# -asymptotic length (linf)  
-0.153	 		# -brody growth coefficient (k)
+0.193			# -natural mortality rate (m_fixed) TOBE DEPRECATED
+125.0			# -asymptotic length (linf)  
+0.129	 		# -brody growth coefficient (k)
 -0.5			# -theoretical age at zero length (to)
-1.e-5			# -scaler in length-weight allometry
-3.0				# -power parameter in length-weight allometry
-3.118			# -age at 50% maturity (approx with log(3.0)/k)
-0.311			# -std at 50% maturity (CV ~ 0.1)
+1.44e-6			# -scaler in length-weight allometry
+3.25				# -power parameter in length-weight allometry
+3.75			# -age at 50% maturity (approx with log(3.0)/k)
+0.375			# -std at 50% maturity (CV ~ 0.1)
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##

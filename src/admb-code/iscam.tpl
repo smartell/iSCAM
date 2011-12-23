@@ -515,7 +515,7 @@ PARAMETER_SECTION
 	//theta[4]		log_avgrec
 	//theta[5]		log_recinit
 	//theta[6]		rho
-	//theta[7]		kappa
+	//theta[7]		vartheta
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
@@ -574,7 +574,7 @@ PARAMETER_SECTION
     
 	number ro;					//unfished age-1 recruits
 	number bo;					//unfished spawning stock biomass
-	number kappa;
+	number kappa;				//Goodyear compensation ratio
 	number m;					//initial natural mortality rate
 	number m_bar;				//average natural mortality rate
 	number log_avgrec;			//log of average recruitment.
@@ -687,8 +687,15 @@ FUNCTION initParameters
 	simulation model to generate fake data.
 	*/
 	
-	ro = mfexp(theta(1));
+	ro          = mfexp(theta(1));
 	dvariable h = theta(2);
+	m           = mfexp(theta(3));
+	log_avgrec  = theta(4);
+	log_recinit = theta(5);
+	rho         = theta(6);
+	varphi      = theta(7);
+	
+	
 	switch(int(cntrl(2)))
 	{
 		case 1:
@@ -705,12 +712,7 @@ FUNCTION initParameters
 	//TODO Alternative parameterization using MSY and FMSY as leading parameters
 	
 	
-	m = mfexp(theta(3));
-	log_avgrec = theta(4);
-	log_recinit = theta(5);
-	
-	rho=theta(6);
-	varphi=theta(7);
+
 	
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
@@ -2232,6 +2234,8 @@ REPORT_SECTION
 	REPORT(rinit);
 	REPORT(bo);
 	REPORT(kappa);
+	double steepness=value(theta(2));
+	REPORT(steepness);
 	REPORT(m);
 	double tau = value((1.-rho)/varphi);
 	double sig = value(rho/varphi);
