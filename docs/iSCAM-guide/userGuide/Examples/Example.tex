@@ -1,67 +1,69 @@
-\section{Example: Simulation based on Strait of Georgia Pacific herring}
-\begin{multicols}{2}
-
-\subsection{Introduction \& purpose}
-The purpose of this example is to demonstrate how to use \iscam\ to simulate data with known parameter values and then demonstrate the ability of the model to estimate the unknown parameters with and without observation and process errors.  This example is based on data from the Strait of Georgia Pacific herring fishery.
-
-There are three distinct commercial fishing fleets for Pacific herring in the Strait of Georgia that have operated, and continue to operate, between 1951 and 2010 (Figure \ref{pHerringFig1}).  The first of these fleets is a purse seine fishery that generally operates in the winter months and historically used to catch herring for a reduction fishery and since the 1970s is now a much smaller bait fishery operation.  Since the early 1970s a much more valuable seine fishery for sac roe has been in operation along with a gill net fishery that also targets spawning female herring for its roe.
-
-\begin{figurehere}
-	% Requires \usepackage{graphicx}
-	\psfrag{Catch (t)}[][c]{Catch (1000 mt)}
-	\psfrag{Year}[][c]{Year}
-	\includegraphics[width=\columnwidth]{iscamfigs/pHerringFig1.eps}\\
-	\caption{Total landings of Pacific herring in the Strait of Georgia stock assessment region by purse-seine (dark bars), Sn-roe (medium) and gill net (light bars).}\label{pHerringFig1}
-\end{figurehere}
-
-
-\subsection{Data \& control files}
-The available data for the herring fishery consist of commercial landings for each of the three fisheries, age-composition data from each of these fisheries (see Figure \ref{pHerringFig3} for the winter purse seine fishery), average weight-at-age of the catch, and a fisheries independent spawning biomass index (based on spawn deposition).  The spawn survey index is split into two separate series that correspond to a change in methods for estimating spawning deposition between 1987 and 1988.  The model is fit to all of these data and uses the empirical weight-at-age data to convert numbers-at-age to biomass.
-
-
-
-
-In this example, the command line option \texttt{-sim 000} is invoked to simulate fake data based on parameter values specified in the control file.  Recall the command line option \texttt{-sim} is used to tell \iscam\ to overwrite the existing observations in memory with simulated values (in this case with zero error because the random number seed is set to 000), and then attempt to estimate these model parameters.  If all is working correctly, the \texttt{iscam.par} file should have nearly identical estimates for the model parameters as the initial values that are specified in the control file.
-
-The control file used in this example is shown here, and there are a couple of things that should be highlighted with simulating data with no error.  First off, the phase for the variance and variance partitioning parameters ($\vartheta$ and $\rho$, respectively) should be set to a negative value and not be estimated.  Second ensure that the upper bound for $\vartheta$ (vartheta or the total precision) is set to a very high value (say 5000) and the initial value is set close to the upper bound (4999 in this case).  The reason for fixing the parameters should be obvious, there is no error in the data to begin and thus its not necessary to estimate the total variance.  The reason to set the initial value of $\vartheta$ to a large value is to minimize the a slight bias due to the lognormal bias correction in the stock-recruitment relationship (i.e., the $-0.5\tau^2$ in \ref{T4.12} or \ref{T4.13}) during the parameter estimation phase.  If you do not specify a large value of $\vartheta$ then it is unlikely that you will obtain nearly exact estimates of the unfished recruitment $R_o$.
-
-
-%%Here is a pdf figure rotated.
-\begin{figurehere}
-	% Requires \usepackage{graphicx}
-	\centering
-	\psfrag{Year}[][c]{Year}
-	\includegraphics[height=\columnwidth,angle=-90]{iscamfigs/pHerringFig3.pdf}\\
-	\caption{Age comps for the purse seine fishery in the Strait of Georgia between 1951 and 2010.}\label{pHerringFig3}
-\end{figurehere}
-\vspace{0.1in}
-
-\noindent \hrulefill\\
-\small
-Control file for the SOG herring example
-\tiny
-\begin{alltt}
-\input{../../Examples/sogHerring/SOGHerring2010sim.ctl}
-\end{alltt}
-\hrulefill
-\normalsize
-
-
-\subsection{Results}
-The ability of the model to estimate the parameters is demonstrated by the estimates of spawning stock biomass and the estimated fishing mortality rates for each of the fisheries.  Shown in Figure \ref{pHerringFig2} is the estimated pre-fishery biomass and the spawning stock biomass for the simulated data where the true values for the spawning stock biomass are shown by the filled circles.  Estimates of spawning stock biomass exactly match the true values that were used to simulate the data.  Departures from the true values when there is no simulated error would imply a structural problem, or potential coding error, and should be investigated further before proceeding with an actual assessment.
-
-
-\begin{figurehere}
-	% Requires \usepackage{graphicx}
-	\psfrag{Year}[][c]{Year}
-	\includegraphics[width=\columnwidth]{iscamfigs/pHerringFig2.eps}\\
-	\caption{Estimates of pre-fishery biomass and spawning stock biomass (lines) from \iscam\  in comparison to the true spawning stock biomass (filled points) based on the simulation model. No errors were generated in the simulation model.}\label{pHerringFig2}
-\end{figurehere}
-
-
-
-\end{multicols}
-
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
+% 
+% \section{Example: Simulation based on Strait of Georgia Pacific herring}
+% \begin{multicols}{2}
+% 
+% \subsection{Introduction \& purpose}
+% The purpose of this example is to demonstrate how to use \iscam\ to simulate data with known parameter values and then demonstrate the ability of the model to estimate the unknown parameters with and without observation and process errors.  This example is based on data from the Strait of Georgia Pacific herring fishery.
+% 
+% There are three distinct commercial fishing fleets for Pacific herring in the Strait of Georgia that have operated, and continue to operate, between 1951 and 2010 (Figure \ref{pHerringFig1}).  The first of these fleets is a purse seine fishery that generally operates in the winter months and historically used to catch herring for a reduction fishery and since the 1970s is now a much smaller bait fishery operation.  Since the early 1970s a much more valuable seine fishery for sac roe has been in operation along with a gill net fishery that also targets spawning female herring for its roe.
+% 
+% \begin{figurehere}
+% 	% Requires \usepackage{graphicx}
+% 	%\psfrag{Catch (t)}[][c]{Catch (1000 mt)}
+% 	%\psfrag{Year}[][c]{Year}
+% 	\includegraphics[width=\columnwidth]{iscamfigs/pHerringFig1.pdf}\\
+% 	\caption{Total landings of Pacific herring in the Strait of Georgia stock assessment region by purse-seine (dark bars), Sn-roe (medium) and gill net (light bars).}\label{pHerringFig1}
+% \end{figurehere}
+% 
+% 
+% \subsection{Data \& control files}
+% The available data for the herring fishery consist of commercial landings for each of the three fisheries, age-composition data from each of these fisheries (see Figure \ref{pHerringFig3} for the winter purse seine fishery), average weight-at-age of the catch, and a fisheries independent spawning biomass index (based on spawn deposition).  The spawn survey index is split into two separate series that correspond to a change in methods for estimating spawning deposition between 1987 and 1988.  The model is fit to all of these data and uses the empirical weight-at-age data to convert numbers-at-age to biomass.
+% 
+% 
+% 
+% 
+% In this example, the command line option \texttt{-sim 000} is invoked to simulate fake data based on parameter values specified in the control file.  Recall the command line option \texttt{-sim} is used to tell \iscam\ to overwrite the existing observations in memory with simulated values (in this case with zero error because the random number seed is set to 000), and then attempt to estimate these model parameters.  If all is working correctly, the \texttt{iscam.par} file should have nearly identical estimates for the model parameters as the initial values that are specified in the control file.
+% 
+% The control file used in this example is shown here, and there are a couple of things that should be highlighted with simulating data with no error.  First off, the phase for the variance and variance partitioning parameters ($\vartheta$ and $\rho$, respectively) should be set to a negative value and not be estimated.  Second ensure that the upper bound for $\vartheta$ (vartheta or the total precision) is set to a very high value (say 5000) and the initial value is set close to the upper bound (4999 in this case).  The reason for fixing the parameters should be obvious, there is no error in the data to begin and thus its not necessary to estimate the total variance.  The reason to set the initial value of $\vartheta$ to a large value is to minimize the a slight bias due to the lognormal bias correction in the stock-recruitment relationship (i.e., the $-0.5\tau^2$ in \ref{T4.12} or \ref{T4.13}) during the parameter estimation phase.  If you do not specify a large value of $\vartheta$ then it is unlikely that you will obtain nearly exact estimates of the unfished recruitment $R_o$.
+% 
+% 
+% %%Here is a pdf figure rotated.
+% \begin{figurehere}
+% 	% Requires \usepackage{graphicx}
+% 	\centering
+% 	%\psfrag{Year}[][c]{Year}
+% 	\includegraphics[height=\columnwidth,angle=-90]{iscamfigs/pHerringFig3.pdf}\\
+% 	\caption{Age comps for the purse seine fishery in the Strait of Georgia between 1951 and 2010.}\label{pHerringFig3}
+% \end{figurehere}
+% \vspace{0.1in}
+% 
+% \noindent \hrulefill\\
+% \small
+% Control file for the SOG herring example
+% \tiny
+% \begin{alltt}
+% \input{../../../Examples/sogHerring/SOGHerring2010sim.ctl}
+% \end{alltt}
+% \hrulefill
+% \normalsize
+% 
+% 
+% \subsection{Results}
+% The ability of the model to estimate the parameters is demonstrated by the estimates of spawning stock biomass and the estimated fishing mortality rates for each of the fisheries.  Shown in Figure \ref{pHerringFig2} is the estimated pre-fishery biomass and the spawning stock biomass for the simulated data where the true values for the spawning stock biomass are shown by the filled circles.  Estimates of spawning stock biomass exactly match the true values that were used to simulate the data.  Departures from the true values when there is no simulated error would imply a structural problem, or potential coding error, and should be investigated further before proceeding with an actual assessment.
+% 
+% 
+% \begin{figurehere}
+% 	% Requires \usepackage{graphicx}
+% 	\psfrag{Year}[][c]{Year}
+% 	\includegraphics[width=\columnwidth]{iscamfigs/pHerringFig2.eps}\\
+% 	\caption{Estimates of pre-fishery biomass and spawning stock biomass (lines) from \iscam\  in comparison to the true spawning stock biomass (filled points) based on the simulation model. No errors were generated in the simulation model.}\label{pHerringFig2}
+% \end{figurehere}
+% 
+% 
+% 
+% \end{multicols}
+% 
 
 
 
@@ -83,7 +85,7 @@ For the estimated leading parameters, two of the six parameters are not estimate
 \noindent \hrulefill
 \begin{alltt}
 Control file for the Namibian hake data.
-\input{../../Examples/NamibianHake/NamibianHake.ctl}
+\input{../../../Examples/Hake/NamibianHake.ctl}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -98,7 +100,7 @@ There is no age-composition data to speak of, but \verb"#na_gears" must have a v
 \noindent \hrulefill
 \begin{alltt}
 Data file for the Namibian hake data.
-\input{../../Examples/NamibianHake/NamibianHake.dat}
+\input{../../../Examples/Hake/NamibianHake.dat}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -109,7 +111,7 @@ Estimates of unfished spawning biomass is 2,877, steepness is 0.79, MSY is 266, 
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=\columnwidth]{iscamFigs/NhakeFigs.eps}
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/NhakeFigs.eps}
 	\caption{Estimates of total biomass and spawning biomass, observed and predicted CPUE, for the Namibian hake data from \iscam. Unfished biomass, \bmsy, and MSY based depletion levels are shown as horizontal dotted lines.}\label{fig4}
 \end{figurehere}
 
@@ -121,12 +123,12 @@ Uniform prior distributions for the unfished recruitment and average recruitment
 \begin{figurehere}
 	% Requires \usepackage{graphicx}
 	\centering
-	\psfrag{log.ro}[c][][0.75]{$\ln(R_0)$}
-	\psfrag{log.rbar}[c][][0.75]{$\ln(\bar{R})$}
-	\psfrag{kappa}[c][][0.75]{$\vartheta$}
-	\psfrag{h}[c][][0.75]{$h$}
+	% \psfrag{log.ro}[c][][0.75]{$\ln(R_0)$}
+	% 	\psfrag{log.rbar}[c][][0.75]{$\ln(\bar{R})$}
+	% 	\psfrag{kappa}[c][][0.75]{$\vartheta$}
+	% 	\psfrag{h}[c][][0.75]{$h$}
 	%%\includegraphics[width=\columnwidth]{iscamFigs/fig5.eps}\\
-	\includegraphics[width=\columnwidth]{iscamFigs/nHakeparameters.pdf}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/nHakeparameters.pdf}\\
 	\caption{Marginal posterior probability densities (histograms) and prior densities (lines) for unfished recruitment $R_0$, steepness $h$, mean recruitment $\bar{R}$ and recruitment compensation $\kappa$ for the Namibian hake case study.}\label{fig5}
 \end{figurehere}
 
@@ -135,12 +137,12 @@ Marginal posterior densities can also be produced for derived quantities such as
 \begin{figurehere}
 	% Requires \usepackage{graphicx}
 	\centering
-	\psfrag{bo}[c][][0.75]{$B_0$}
-	\psfrag{bmsy}[c][][0.75]{\bmsy}
-	\psfrag{msy}[c][][0.75]{MSY}
-	\psfrag{fmsy}[c][][0.75]{\fmsy}
+	% \psfrag{bo}[c][][0.75]{$B_0$}
+	% 	\psfrag{bmsy}[c][][0.75]{\bmsy}
+	% 	\psfrag{msy}[c][][0.75]{MSY}
+	% 	\psfrag{fmsy}[c][][0.75]{\fmsy}
 	%%\includegraphics[width=\columnwidth]{iscamFigs/fig6.eps}\\
-	\includegraphics[width=\columnwidth]{iscamFigs/nHakerefpoints.pdf}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/nHakerefpoints.pdf}\\
 	\caption{Marginal posterior probability densities for unfished spawning biomass $B_0$, optimal spawning biomass \bmsy, MSY and \fmsy\ for the Namibian hake case study.}\label{fig6}
 \end{figurehere}
 
@@ -148,10 +150,10 @@ To represent changes in stock status over time, the default plot compares estima
 
 \begin{figurehere}
 	\centering
-	\psfrag{bstatus}[c][][0.75]{$B_t/$\bmsy}
-	\psfrag{fstatus}[c][][0.75]{$F_t/$\fmsy}
+	% \psfrag{bstatus}[c][][0.75]{$B_t/$\bmsy}
+	% 	\psfrag{fstatus}[c][][0.75]{$F_t/$\fmsy}
 	%%\includegraphics[width=\columnwidth]{iscamFigs/fig7.eps}\\
-	\includegraphics[width=\columnwidth]{iscamFigs/NhakeKobeplot.pdf}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/NhakeKobeplot.pdf}\\
 	\caption{Stock status plot (or Kobe plot) where the ``fried egg'' represents uncertainty.}\label{fig7}
 \end{figurehere}
 
@@ -182,7 +184,7 @@ Here is the \iscam\ control file for the Pacific hake data, and the data file is
 \tiny
 \noindent \hrulefill
 \begin{alltt}
-\input{../../Examples/PacificHake/PHake2010.ctl}
+\input{../../../Examples/PacificHake/PHake2010.ctl}
 \end{alltt}
 \hrulefill
 \normalsize
@@ -201,17 +203,19 @@ A total of 176 model parameters were estimated and it took  roughly 10 seconds t
 
 Maximum likelihood estimates of total biomass and spawning biomass along with estimates of $B_0$ and \bmsy are shown in Fig. \ref{fig9}.  Starting in 1977, estimates of spawning biomass was just slightly less than the estimate of \bmsy.  Starting in the 1980's, spawning biomass increased to a maximum in 1990 owing to two very large year classes (1980 and 1984, Fig. \ref{fig10}). Between 1985 and 1999, recruitment ranged between average and median values and the spawning stock biomass declined to less than \bmsy values in 2001 while fisheries removals exceeded 200,000 mt per year.  Another significant year class (1999) was responsible for rebuilding the spawning stock biomass up to 2004, and since 2005, the spawning stock biomass has continued to decline.
 
+Information to estimate age-1 recruitment for Pacific hake comes from the catch-age composition data.  Between 1978 and 2009 the average age-1 recruitment is estimated to be 2.72 billion individuals and the median value is 1.16 billion individuals (Fig. \ref{fig11}).  The maximum likelihood estimate of the standard deviation in recruitment ($\tau$, see eq. \ref{T4.2} on page \pageref{tab:statistical_catch_age_model}) was 1.29 given the prior information specified in the control file for this assessment.
+
+
 \begin{figurehere}
 	\centering
-	\includegraphics[width=0.95\columnwidth]{iscamFigs/phakefig2.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig2.eps}\\
 	\caption{Maximum likelihood estimates of total biomass and spawning stock biomass for Pacific hake along with reference points (dotted lines) for unfished spawning biomass $B_0$ and \bmsy.}\label{fig9}
 \end{figurehere}
 
-Information to estimate age-1 recruitment for Pacific hake comes from the catch-age composition data.  Between 1978 and 2009 the average age-1 recruitment is estimated to be 2.72 billion individuals and the median value is 1.16 billion individuals (Fig. \ref{fig11}).  The maximum likelihood estimate of the standard deviation in recruitment ($\tau$, see eq. \ref{T4.2} on page \pageref{Table4}) was 1.29 given the prior information specified in the control file for this assessment.
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=0.95\columnwidth]{iscamFigs/phakefig14.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig14.eps}\\
 	\caption{Maximum likelihood estimates of age-1 recruits from 1978 to 2009, with median and average values shown as the horizontal dashed and dotted lines.}\label{fig10}
 \end{figurehere}
 
@@ -219,7 +223,7 @@ Current estimates of stock status relative to \bmsy\ and the removal rate relati
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=0.95\columnwidth]{iscamFigs/phakefig8.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig8.eps}\\
 	\caption{Maximum likelihood estimates of stock status ($B_t/$\bmsy) and removal rate ($F_t/$\fmsy) for Pacific hake relative to the Department of Fisheries and Oceans Canada's  Fisheries Management Framework.}\label{fig11}
 \end{figurehere}
 
@@ -229,7 +233,7 @@ Recall that \iscam\ directly estimates annual recruitment values, and the report
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=0.95\columnwidth]{iscamFigs/phakefig11.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig11.eps}\\
 	\caption{Residuals between the observed and predicted catch, deviations between estimated recruitment and a deterministic Beverton-Holt model, and the observed and predicted relative abundance data from the acoustic survey.}\label{fig12}
 \end{figurehere}
 
@@ -241,17 +245,19 @@ In the Pacific hake example, estimates of selectivity increase with age during t
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=\columnwidth]{iscamFigs/phakefig9a.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig9a.eps}\\
 	\caption{Estimates of selectivity for the commercial fishery.}\label{fig13}
+\end{figurehere}
+
+
+\begin{figurehere}
+	\centering
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig13a.eps}\\
+	\caption{Observed age-composition (top panel) and Pearson residuals between observed and predicted proportions-at-age in the commercial fishery (bottom panel, with negative residuals given by dark circles).}\label{fig13a}
 \end{figurehere}
 
 The residual patterns in the age composition data from the commercial fishery don't appear to have any significant pattern that would indicate a major model mis-specification (Fig. \ref{fig13a}).  There is a tendency for age-2 proportions to have more negative residuals and age-3 positive residuals, but over all these residuals are fairly small.  This is not much of a surprise given the flexibility of the time-varying selectivity that was assumed in the commercial fishery.
 
-\begin{figurehere}
-	\centering
-	\includegraphics[width=\columnwidth]{iscamFigs/phakefig13a.eps}\\
-	\caption{Observed age-composition (top panel) and Pearson residuals between observed and predicted proportions-at-age in the commercial fishery (bottom panel, with negative residuals given by dark circles).}\label{fig13a}
-\end{figurehere}
 
 Although not shown here, the residual pattern for the survey age composition also appears to be random, and in this case a time-invariant asymptotic selectivity curve was used for the acoustic survey. Survey data from 1995 to 2007 were assumed to be twice as accurate in comparison to the data collected prior to 1995 when spatial coverage of the survey was incomplete.  Also, the 2009 survey carries no weight as this survey was contaminated by the presence of Humboldt squid (\textit{Dosidicus gigas}) during the 2009 survey.  Additional details about the data for the Pacific hake assessment and the methods used to aggregate the age-composition for the US and CAN fisheries can be found in \cite{Martell2009}.
 
@@ -262,13 +268,13 @@ The marginal posterior distributions and the corresponding prior distributions a
 
 \begin{figurehere}
 	\centering
-	\psfrag{log.ro}[c][][0.5]{$\ln(R_0)$}
-	\psfrag{log.rbar}[c][][0.5]{$\ln(\bar{R})$}
-	\psfrag{h}[c][][0.5]{$h$}
-	\psfrag{rho}[c][][0.5]{$\rho$}
-	\psfrag{log.m}[c][][0.5]{$\ln(M)$}
-	\psfrag{kappa}[c][][0.5]{$\vartheta$}
-	\includegraphics[width=\columnwidth]{iscamFigs/phakefig5.eps}\\
+	% \psfrag{log.ro}[c][][0.5]{$\ln(R_0)$}
+	% \psfrag{log.rbar}[c][][0.5]{$\ln(\bar{R})$}
+	% \psfrag{h}[c][][0.5]{$h$}
+	% \psfrag{rho}[c][][0.5]{$\rho$}
+	% \psfrag{log.m}[c][][0.5]{$\ln(M)$}
+	% \psfrag{kappa}[c][][0.5]{$\vartheta$}
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig5.eps}\\
 	\caption{Marginal posterior densities and prior densities for the leading parameters in \iscam.}\label{fig14}
 \end{figurehere}
 
@@ -284,7 +290,7 @@ Relative to the spawning stock depletion reference points, the median estimate o
 
 \begin{figurehere}
 	\centering
-	\includegraphics[width=\columnwidth]{iscamFigs/phakefig12.eps}\\
+	\includegraphics[width=0.9\columnwidth]{iscamFigs/phakefig12.eps}\\
 	\caption{Median estimates of spawning stock depletion and 95\% credible interval based 2000 samples from the joint posterior distribution. Transition between the critical, cautious and healthy zones is defined as 0.4\bmsy/$B_0$ and 0.8\bmsy/$B_0$, respectively }\label{fig16}
 \end{figurehere}
 
@@ -300,7 +306,7 @@ Relative to the spawning stock depletion reference points, the median estimate o
 Here is the data file for \iscam.
 \tiny
 \begin{alltt}
-  \input{../../Examples/PacificHake/PHake2010.dat}\label{HakeDataFile}
+  \input{../../../Examples/PacificHake/PHake2010.dat}\label{HakeDataFile}
 \end{alltt}
 \normalsize
 

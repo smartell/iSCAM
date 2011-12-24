@@ -39,6 +39,7 @@
 
 % Package for including code in the document
 \usepackage{listings}
+\usepackage{alltt}
 
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
@@ -104,6 +105,7 @@ Canada\\
 	\input{./Introduction/Introduction}
 	\input{./InputFiles/InputFiles}
 	\input{./ModelAPI/ModelDocumentation}
+	\input{./Examples/Example}
 
 %% -References
 \clearpage
@@ -112,5 +114,11 @@ Canada\\
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
 \bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+%% -Appendix material Model Description --------------------------------
+\newpage
+\appendix
+	\input{Stats}
+
 
 \end{document}
