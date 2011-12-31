@@ -1518,7 +1518,10 @@ FUNCTION calc_objective_function
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
-			if( isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )  
+			if( isel_type(k)!=1 && 
+				isel_type(k)!=7 && 
+				isel_type(k)!=8 &&
+				isel_type(k)!=11 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1543,7 +1546,11 @@ FUNCTION calc_objective_function
 	
 	for(k=1;k<=ngear;k++)
 	{
-		if( active(sel_par(k)) &&isel_type(k)!=1 &&isel_type(k)!=7 &&isel_type(k)!=8 )
+		if( active(sel_par(k)) &&
+			isel_type(k)!=1 &&
+			isel_type(k)!=7 &&
+			isel_type(k)!=8 &&
+			isel_type(k)!=11 )
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1555,7 +1562,9 @@ FUNCTION calc_objective_function
 					lvec(1)+=1000.*s*s;
 				}
 			}
-			if(isel_type(k)==4 || isel_type(k)==3)
+			if( isel_type(k)==4 ||
+			 	isel_type(k)==3 || 
+				isel_type(k)==12 )
 			{
 				dvar_matrix tmp = sel_par(k);
 				for(j=1;j<=tmp.rowmax();j++)
