@@ -208,6 +208,7 @@ DATA_SECTION
 	END_CALCS
 	
 	init_int nit;
+	!! cout<<"Number of surveys "<<nit<<endl;
 	init_ivector nit_nobs(1,nit);
 	//#survey type 
 	//## 1 = survey is proportional to vulnerable numbers

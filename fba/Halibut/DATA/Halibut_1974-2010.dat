@@ -22,19 +22,19 @@
 ## ------------------------------------------------------------------------- ##
 ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
 ## ------------------------------------------------------------------------- ##
-1
+1 0 0 0 0 0
 ##
 ## ------------------------------------------------------------------------- ##
 ## Age-schedule and population parameters                                    ##
 ## ------------------------------------------------------------------------- ##
-0.23            # -natural mortality rate (m_fixed) TOBE DEPRECATED
-68.160118       # -asymptotic length (linf)  
-0.272789        # -brody growth coefficient (k)
+0.175           # -natural mortality rate (m_fixed) TOBE DEPRECATED
+68.18           # -asymptotic length (linf)  
+0.116           # -brody growth coefficient (k)
 -1.219753       # -theoretical age at zero length (to)
 6.921e-6        # -scaler in length-weight allometry (a)
 3.24            # -power parameter in length-weight allometry (b)
-4.027334        # -age at 50% maturity (approx with log(3.0)/k)
-0.402           # -std at 50% maturity (CV ~ 0.1)
+11.59           # -age at 50% maturity (approx with log(3.0)/k)
+1.776           # -std at 50% maturity (CV ~ 0.1)
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
