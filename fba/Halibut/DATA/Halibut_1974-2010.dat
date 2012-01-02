@@ -13,11 +13,11 @@
 ## ------------------------------------------------------------------------- ##
 ## MODEL DIMENSIONS                                                          ##
 ## ------------------------------------------------------------------------- ##
-1974		# -first year of data			(syr)
-2010		# -last year of data			(nyr)
-1			# -age of youngest age class	(sage)
-30			# -age of plus group			(nage)
-6			# -number of gears 				(ngear)
+1974        # -first year of data           (syr)
+2010        # -last year of data            (nyr)
+1           # -age of youngest age class    (sage)
+30          # -age of plus group            (nage)
+6           # -number of gears              (ngear)
 ##
 ## ------------------------------------------------------------------------- ##
 ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
@@ -27,14 +27,14 @@
 ## ------------------------------------------------------------------------- ##
 ## Age-schedule and population parameters                                    ##
 ## ------------------------------------------------------------------------- ##
-0.23			# -natural mortality rate (m_fixed) TOBE DEPRECATED
-68.160118		# -asymptotic length (linf)  
-0.272789 		# -brody growth coefficient (k)
--1.219753		# -theoretical age at zero length (to)
-6.921e-6		# -scaler in length-weight allometry (a)
-3.24			# -power parameter in length-weight allometry (b)
-4.027334		# -age at 50% maturity (approx with log(3.0)/k)
-0.402			# -std at 50% maturity (CV ~ 0.1)
+0.23            # -natural mortality rate (m_fixed) TOBE DEPRECATED
+68.160118       # -asymptotic length (linf)  
+0.272789        # -brody growth coefficient (k)
+-1.219753       # -theoretical age at zero length (to)
+6.921e-6        # -scaler in length-weight allometry (a)
+3.24            # -power parameter in length-weight allometry (b)
+4.027334        # -age at 50% maturity (approx with log(3.0)/k)
+0.402           # -std at 50% maturity (CV ~ 0.1)
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
@@ -85,45 +85,78 @@
 ## ------------------------------------------------------------------------- ##
 ## ABUNDANCE INDICES -A RAGGED ARRAY: (1,nit,1,nit_nobs,1,5)                 ##
 ## ------------------------------------------------------------------------- ##
-1				# Number of abundance series 		int(nit)
-12				# Number of observations in series   ivector(nit_nobs(1,nit))
-1				# Survey type (see key below)		ivector(survey_type(1,nit))
+2               # Number of abundance series         int(nit)
+14  27          # Number of observations in series   ivector(nit_nobs(1,nit))
+2   2           # Survey type (see key below)        ivector(survey_type(1,nit))
 ## 1 = survey is proportional to vulnerable numbers
 ## 2 = survey is proportional to vulnerable biomass
 ## 3 = survey is proportional to spawning biomass (e.g., a spawn survey)
 ##
-## survey_data
-#iyr	it		  gear	wt	survey timing
-1968    189.1042  1     1   0.5
-1969    213.6809  1     1   0.5
-1970    252.0164  1     1   0.5
-1971    305.3218  1     1   0.5
-1972    288.2026  1     1   0.5
-1973    222.7052  1     1   0.5
-1974    161.6239  1     1   0.5
-1975    156.8800  1     1   0.5
-1976    187.9063  1     1   0.5
-1977    190.1439  1     1   0.5
-1978    215.9952  1     1   0.5
-1979    245.9929  1     1   0.5
+## survey_data (setline wpue)
+#iyr    it        gear  wt  survey timing
+ 1997   138       2     1   0.5
+ 1998   134       2     1   0.5
+ 1999   126       2     1   0.5
+ 2000   121       2     1   0.5
+ 2001   112       2     1   0.5
+ 2002   109       2     1   0.5
+ 2003    92       2     1   0.5
+ 2004    89       2     1   0.5
+ 2005    82       2     1   0.5
+ 2006    71       2     1   0.5
+ 2007    66       2     1   0.5
+ 2008    61       2     1   0.5
+ 2009    56       2     1   0.5
+ 2010    47       2     1   0.5
+## commercial wpue (all areas)
+ 1984 350         1     1   0.5
+ 1985 395         1     1   0.5
+ 1986 351         1     1   0.5
+ 1987 345         1     1   0.5
+ 1988 387         1     1   0.5
+ 1989 376         1     1   0.5
+ 1990 334         1     1   0.5
+ 1991 333         1     1   0.5
+ 1992 338         1     1   0.5
+ 1993 399         1     1   0.5
+ 1994 328         1     1   0.5
+ 1995 351         1     1   0.5
+ 1996 415         1     1   0.5
+ 1997 423         1     1   0.5
+ 1998 429         1     1   0.5
+ 1999 398         1     1   0.5
+ 2000 416         1     1   0.5
+ 2001 382         1     1   0.5
+ 2002 379         1     1   0.5
+ 2003 346         1     1   0.5
+ 2004 338         1     1   0.5
+ 2005 314         1     1   0.5
+ 2006 283         1     1   0.5
+ 2007 268         1     1   0.5
+ 2008 249         1     1   0.5
+ 2009 237         1     1   0.5
+ 2010 222         1     1   0.5
 ##
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-1			# Number of gears with age-comps int(na_gears)
-3			# Number of rows in the matrix   ivector(na_nobs)
-4			# Youngest age column			 ivector(a_sage)
-26			# Oldest age column +group       ivector(a_nage)
+2           # Number of gears with age-comps int(na_gears)
+5   1       # Number of rows in the matrix   ivector(na_nobs)
+4   4       # Youngest age column            ivector(a_sage)
+26  26      # Oldest age column +group       ivector(a_nage)
 ## year gear age colums (numbers or proportions)
    1991 1    0.000081 0.000402 0.004831 0.026811 0.054589 0.076892 0.123188 0.179468 0.173350 0.124235 0.103221 0.052335 0.029066 0.019082 0.013205 0.006119 0.004589 0.003462 0.001852 0.000725 0.000402 0.000564 0.001530
    1992 1    0.000217 0.000505 0.002379 0.017882 0.063090 0.107722 0.105703 0.135482 0.159997 0.135771 0.095753 0.073762 0.035330 0.022568 0.016223 0.008292 0.005552 0.004687 0.002956 0.002091 0.001370 0.000577 0.002091
    1993 1    0.000223 0.000671 0.002161 0.008197 0.037037 0.100454 0.142484 0.122140 0.125270 0.136299 0.113794 0.075639 0.056562 0.027573 0.016544 0.011849 0.006782 0.004620 0.002608 0.002459 0.001938 0.001416 0.003279
    1994 1    0.000313 0.000157 0.004233 0.017874 0.036767 0.065302 0.125745 0.153104 0.124647 0.109595 0.113359 0.084823 0.063578 0.040687 0.021324 0.010819 0.007918 0.005879 0.002744 0.001725 0.002352 0.001176 0.005879
+   2010 1    0.000000 0.000382 0.000446 0.004583 0.028833 0.060976 0.122207 0.167399 0.137356 0.081153 0.068296 0.057921 0.048183 0.029915 0.024251 0.018522 0.021132 0.021195 0.024378 0.023869 0.013685 0.008147 0.037171
+##
+   2010 2    0.000071 0.002060 0.010582 0.035156 0.092401 0.107812 0.145952 0.165980 0.122798 0.060156 0.050710 0.044247 0.033026 0.021449 0.014560 0.010724 0.010014 0.011932 0.011790 0.013210 0.009588 0.004616 0.021165
 ##
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##
 ## ------------------------------------------------------------------------- ##
-0			# Number of years of weight-at-age data int(n_wt_obs)
+0           # Number of years of weight-at-age data int(n_wt_obs)
 ## year age columns (sage, nage) of weight at age data
 ##
 ## ------------------------------------------------------------------------- ##
