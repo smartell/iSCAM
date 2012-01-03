@@ -20,8 +20,8 @@
    -1.742969    -3.0    2.0     -1      1       -1.74   0.1     #log_m       ##
    1.0          -5.0    15      1       0       -5.0    15      #log_avgrec  ##
    1.0          -5.0    15      1       0       -5.0    15      #log_recinit ##
-   0.5          0.01    0.99    3       3       1.01    1.01    #rho         ##
-   0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
+   0.5          0.01    0.99    -3       3       1.01    1.01    #rho         ##
+   0.8          0.01    5.0     -3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -41,13 +41,13 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-11		11    11    11   11   11  # -selectivity type ivector(isel_type) for gear
+12		11    11    11   11   11  # -selectivity type ivector(isel_type) for gear
 70.0	65    65    65   65   65  # -Age/length at 50% selectivity (logistic)
 5.25    5     5     5    5    5   # -STD at 50% selectivity (logistic)
 0		0	  0  	0 	 0    0   # -No. of age nodes for each gear (0=ignore)
 0		0	  0  	0 	 0    0   # -No. of year nodes for 2d spline(0=ignore)
-2		-2	  -2 	-2	 -2   -2  # -Phase of estimation (-1 for fixed)
-2.0		2	  2  	2 	 2    2   # -Penalty wt for 2nd differences w=1/(2*sig^2)
+2		2	  -2 	-2	 -2   -2  # -Phase of estimation (-1 for fixed)
+50.		2	  2  	2 	 2    2   # -Penalty wt for 2nd differences w=1/(2*sig^2)
 3.12	3	  3  	3 	 3    3   # -Penalty wt for dome-shaped w=1/(2*sig^2)
 ## ------------------------------------------------------------------------- ##
 ##
@@ -61,9 +61,9 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 2					# -number of surveys (nits)
-0	0   			# -prior type (see legend above)
+0	2   			# -prior type (see legend above)
 0	0   			# -prior log(mean)
-0	0   			# -prior sd
+0	0.01   			# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 

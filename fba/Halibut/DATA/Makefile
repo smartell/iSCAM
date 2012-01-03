@@ -7,7 +7,7 @@
 EXEC=iscam
 prefix=../../../dist
 DAT=RUN.dat
-CTL=ControlTemplate
+CTL=Halibut_1974-2010
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4

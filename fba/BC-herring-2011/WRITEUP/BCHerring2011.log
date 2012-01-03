@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  22 NOV 2011 14:40
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  3 JAN 2012 13:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -2204,15 +2204,12 @@ Package rerunfilecheck Info: File `BCHerring2011.out' has not changed.
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 293.
  ) 
 Here is how much of TeX's memory you used:
  11265 strings out of 493633
  179077 string characters out of 3143378
- 474896 words of memory out of 3000000
+ 474923 words of memory out of 3000000
  13721 multiletter control sequences out of 15000+200000
  33256 words of font info for 93 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
@@ -2240,7 +2237,7 @@ public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2011/texmf-dist/fonts/ty
 pe1/urw/palatino/uplb8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw
 /palatino/uplr8a.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/palati
 no/uplri8a.pfb>
-Output written on BCHerring2011.pdf (141 pages, 68756455 bytes).
+Output written on BCHerring2011.pdf (141 pages, 68756448 bytes).
 PDF statistics:
  2722 PDF objects out of 2984 (max. 8388607)
  2411 compressed objects within 25 object streams
