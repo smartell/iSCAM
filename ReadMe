@@ -19,8 +19,32 @@ an svn server: http://code.google.com/p/iscam-project/
 Additional information about the software can also be obtained
 from a website: https://sites.google.com/site/iscamproject/
 
-Obtaining iSCAM:
-================
+Obtaining iSCAM (MAC OSX):
+==========================
+- To check out a copy of the project code, open terminal and
+  go to the directory (folder) where you want to keep a clone
+  (copy) of the repository on your macbook pro.  If you are 
+  using Mac OSX 10.6 or later you will already have "git" 
+  installed on your computer. At the command prompt type:
+
+  git clone https://code.google.com/p/iscam-project/
+
+  The above command will now download a copy (referred to as a 
+  clone in git terminology) onto your computer in the current
+  directory. You only need to run the above command once.  To 
+  obtain updates of the repository, you can run the following:
+
+  git fetch https://code.google.com/p/iscam-project/
+
+version control system resources:
+=================================
+Before using git, I would highly recommend spending some time 
+learning how to use git.  There are many online resources and
+most of them can be found at: http://git-scm.com/documentation
+
+
+
+************************* DEPRECATED ************************
 - To check out a copy of the project code, open terminal and
   go to the directory (folder) where you want to keep 
   the files and type at the command prompt (you must have 
@@ -45,6 +69,8 @@ Obtaining iSCAM:
 - If you would like write permissions to the repository please
   contact the project owner (email address available at the
   google repository).
+ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
+
 
 Setting up a new project in fba:
 ================================

@@ -29,7 +29,7 @@
 //        of bounds.                                                         //
 // TODO: write a projection routine and verify equilibrium calcs             //
 // TODO: add DIC calculation for MCMC routines (in -mcveal phase)            //
-//                                                                           //
+// TODO: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds     //
 //                                                                           //
 // FIXME: Steve I need help with this keg of beer.                           //
 //                                                                           //
