@@ -67,7 +67,16 @@
 //--                                                                       --//
 //-- Dec 11, 2011- added halibut branch to local git repository aim is to  --//
 //--               add gender dimension and stock dimension.               --//
-//--               This was created on the "twosex" branch in git          --//
+//--               This was created on the "twosex" branch in git merged   --//
+//--                                                                       --//
+//-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
+//--                                                                       --//
+//--                                                                       --//
+//--                                                                       --//
+//--                                                                       --//
+//--                                                                       --//
+//--                                                                       --//
+//--                                                                       --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
 
@@ -199,6 +208,7 @@ DATA_SECTION
 	END_CALCS
 	
 	init_int nit;
+	!! cout<<"Number of surveys "<<nit<<endl;
 	init_ivector nit_nobs(1,nit);
 	//#survey type 
 	//## 1 = survey is proportional to vulnerable numbers
@@ -447,6 +457,17 @@ DATA_SECTION
 					// Alternative logistic selectivity with wt_dev coefficients.
 					isel_npar(i) = 3;
 					break;
+					
+				case 11:
+					// Logistic length-based selectivity.
+					isel_npar(i) = 2;
+					break;
+					
+				case 12:
+					// Length-based selectivity coeffs with cubic spline interpolation
+					isel_npar(i) = (nage-sage);
+					break;
+					
 				default: break;
 			}
 		}
@@ -739,6 +760,19 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 	return(ffa(fa));
   }
 
+FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector& la)
+  {
+	/*interplolation for length-based selectivity coefficeients*/
+	RETURN_ARRAYS_INCREMENT();
+	int nodes=size_count(spline_coffs);
+	dvector ia(1,nodes);
+	ia.fill_seqadd(0,1./(nodes-1));
+	dvector fa = (la-min(la))/(max(la)-min(la));
+	vcubic_spline_function ffa(ia,spline_coffs);
+	RETURN_ARRAYS_DECREMENT();
+	return(ffa(fa));
+  }
+
 FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
   {
 	RETURN_ARRAYS_INCREMENT();
@@ -772,16 +806,25 @@ FUNCTION calcSelectivities
 		5) Time varying bicubic spline (2d version)
 		6) Fixed logistic
 		7) logistic selectivity based on relative changes in mean weight at age
+		8) Time varying selectivity based on logistic with deviations in 
+		   weights at age (3 estimated parameters).
+		11) logistic selectivity with 2 parameters based on mean length
+		12) length-based selectivity using cubic spline interpolation
 		
-		Following the initializatoin of the selectivity curves, time-varying 
+		Following the initialization of the selectivity curves, time-varying 
 		considerations are implemented.
 		
-		TODO: Add penality (10.*square(avg_log_sel)) to objective function 
+		CHANGED: Add penality (10.*square(avg_log_sel)) to objective function 
 		in cases where estimating sel_coffs to mimic an init_bounded_dev vector.
 		
 		CHANGED: Problem with case 7: turns out to be a random walk, so there
 		is changes in selectivity even with constant growth.  Remove the
 		random walk outside the switch statement.
+		
+		TODO: add an option for length-based selectivity.  Use inverse of
+		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
+		empirical weight-at-age data, then calculate selectivity based on 
+		mean length. 
 	
 	*/
 	int i,j,k;
@@ -826,7 +869,6 @@ FUNCTION calcSelectivities
 				
 			case 2:		
 				// age-specific selectivity coefficients
-				if(verbose) cout<<"age-specific sel"<<endl;
 				for(i=syr; i<=nyr; i++)
 				{
 					for(k=sage;k<=nage-1;k++)
@@ -894,9 +936,32 @@ FUNCTION calcSelectivities
 				for(i=syr; i<=nyr; i++)
 				{
 					tmp2(i) = p3*wt_dev(i);
-					log_sel(j)(i) = log( plogis(age,p1,p2)+ tiny ) + tmp2(i);
+					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
 				}
 				break;
+				
+			case 11:
+				//logistic selectivity based on mean length-at-age
+				p1 = mfexp(sel_par(j,1,1));
+				p2 = mfexp(sel_par(j,1,2));
+				
+				for(i=syr; i<=nyr; i++)
+				{
+					dvector len = pow(wt_obs(i)/a,1./b);
+					log_sel(j)(i) = log( plogis(len,p1,p2) );
+				}
+				break;
+				
+			case 12:
+				//length-specific selectivity coefficients
+				//based on cubic spline interpolation
+				for(i=syr; i<=nyr; i++)
+				{
+					dvector len = pow(wt_obs(i)/a,1./b);
+					log_sel(j)(i)=cubic_spline( sel_par(j)(1), len );
+				}
+				break;
+				
 				
 			default:
 				log_sel(j)=0;
@@ -1454,7 +1519,10 @@ FUNCTION calc_objective_function
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
-			if( isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )  
+			if( isel_type(k)!=1 && 
+				isel_type(k)!=7 && 
+				isel_type(k)!=8 &&
+				isel_type(k)!=11 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1465,7 +1533,8 @@ FUNCTION calc_objective_function
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,i,j)>log_sel(k,i,j+1))
-							nlvec(6,k)+=sel_dome_wt(k)*square(log_sel(k,i,j)-log_sel(k,i,j+1));
+							nlvec(6,k)+=sel_dome_wt(k)
+										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
 				}
 			}
 		}
@@ -1478,7 +1547,11 @@ FUNCTION calc_objective_function
 	
 	for(k=1;k<=ngear;k++)
 	{
-		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )
+		if( active(sel_par(k)) &&
+			isel_type(k)!=1 &&
+			isel_type(k)!=7 &&
+			isel_type(k)!=8 &&
+			isel_type(k)!=11 )
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1490,7 +1563,9 @@ FUNCTION calc_objective_function
 					lvec(1)+=1000.*s*s;
 				}
 			}
-			if(isel_type(k)==4 || isel_type(k)==3)
+			if( isel_type(k)==4 ||
+			 	isel_type(k)==3 || 
+				isel_type(k)==12 )
 			{
 				dvar_matrix tmp = sel_par(k);
 				for(j=1;j<=tmp.rowmax();j++)
@@ -1502,31 +1577,7 @@ FUNCTION calc_objective_function
 		}
 	}
 	
-	/*if(active(spline_coffs)||active(spline2_coffs))
-		{   
-			//lvec(6)=1.*norm2(spline2_coffs);
-			for(i=syr;i<=nyr;i++)
-			{
-				//curvature in selectivity parameters
-				dvar_vector df2=first_difference(first_difference(log_sel(i)));
-				lvec(6)+=50.0/(nyr-syr+1)*norm2(df2);
-				
-				//penalty for dome-shapeness
-				for(j=sage;j<=nage-2;j++)
-					if(log_sel(i,j)>log_sel(i,j+1))
-						lvec(6)+=3.125*square(log_sel(i,j)-log_sel(i,j+1));
-			}
-			//penalty for random walk in age-changes
-			for(j=sage;j<=nage;j++){
-				lvec(6)+=0.*norm2(first_difference(trans(log_sel)(j)));
-			}
-		}
-		else
-		{
-			dvar_vector df2=first_difference(first_difference(log_sel(syr)));
-			lvec(6)=50./(nyr-syr+1)*norm2(df2);
-		}*/
-	 
+	
 	/*
 	PRIORS for estimated model parameters from the control file.
 	*/
