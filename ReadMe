@@ -46,7 +46,10 @@ Obtaining iSCAM (MAC OSX):
       git log                       <view commit log>
       git status                    <view changes & staging>
       git branch                    <list, create or delete branches>
-
+  
+  Making an alias for a git command, eg:
+      git config --global alias.ci commit
+      git config --global alias.lol "log --oneline --graph"
 
 version control system resources:
 =================================
@@ -54,6 +57,7 @@ Before using git, I would highly recommend spending some time
 learning how to use git.  There are many online resources and
 most of them can be found at: http://git-scm.com/documentation
 
+A video tutorial: http://www.youtube.com/watch?v=ZDR433b0HJY
 
 
 ************************* DEPRECATED ************************
