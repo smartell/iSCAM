@@ -36,6 +36,18 @@ Obtaining iSCAM (MAC OSX):
 
   git fetch https://code.google.com/p/iscam-project/
 
+  To gain write access to the repository contact martell.steve@gmail.com
+
+  THE FOLLOWING IS A LIST OF USEFUL GIT COMMANDS TO USE AT THE COMMAND LINE$:
+      git help                      <list git commands>
+      git clone url ILSMR/          <clone repository>
+      git add filename              <add new file>
+      git commit -m"message"        <commit with message>
+      git log                       <view commit log>
+      git status                    <view changes & staging>
+      git branch                    <list, create or delete branches>
+
+
 version control system resources:
 =================================
 Before using git, I would highly recommend spending some time 
