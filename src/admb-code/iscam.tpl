@@ -926,8 +926,8 @@ FUNCTION calcSelectivities
 				break;
 				
 			case 8:
-				//Alternative time-varying selectivity based on weight deviations (wt_dev)
-				//wt_dev is a matrix(syr,nyr+1,sage,nage)
+				//Alternative time-varying selectivity based on weight 
+				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
 				//p3 is the coefficient that describes variation in log_sel.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
@@ -1185,7 +1185,8 @@ FUNCTION calcFisheryObservations
 	*/
 	
 	/*
-		FIXED Reconcile the difference between the predicted catch here and in the simulation model.
+		FIXED Reconcile the difference between the predicted catch 
+		here and in the simulation model.
 	*/
 	int i,k;
 	ct.initialize();
@@ -1203,7 +1204,7 @@ FUNCTION calcFisheryObservations
 			if(obs_ct(k,i)>0)
 			{/*If there is a commercial fishery, then calculate the
 			   catch-at-age (in numbers) and total catch (in weight)*/
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));//+1.e-10;
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 				ct(k,i) = Chat(k,i)*wt_obs(i);
 			}
 			else
