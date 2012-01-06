@@ -674,7 +674,7 @@ PROCEDURE_SECTION
 	
 	calcAgeProportions();
 	
-	calc_survey_observations();
+	calcSurveyObservations();
 	
 	calc_stock_recruitment();
 	
@@ -1045,8 +1045,10 @@ FUNCTION calcTotalMortality
 			
 			ft(k,i)=ftmp;
 			
-			if(catch_type(k)!=3)	//exclude roe fisheries
+			if(catch_type(k)!=3){	//exclude roe fisheries
 				F(i)+=ftmp*mfexp(log_sel(k)(i));
+				//cout<<obs_ct(k,i)<<endl;
+			}
 		}
 	}
 	
@@ -1238,7 +1240,7 @@ FUNCTION calcFisheryObservations
 
   }	
 	
-FUNCTION calc_survey_observations
+FUNCTION calcSurveyObservations
   {
 	/*This code needs to be modified to accomodate
 	multiple surveys or block changes in survey q.
@@ -1259,13 +1261,16 @@ FUNCTION calc_survey_observations
 	than the spawning biomass in the stock-recruitment routine. (Based on fecundity which
 	changes with time when given empirical weight-at-age data.)
 	
+	Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
+	fishery that would remove potential spawn that would not be surveyed.
+	
 	*/
 	/*
 		CHANGED add capability to accomodate priors for survey q's.
 		DONE
 	*/
 	
-	int i,j,ii,k;
+	int i,j,ii,k,kk;
 	
 	
 	//survey abudance index residuals
@@ -1287,7 +1292,13 @@ FUNCTION calc_survey_observations
 			//Adjust survey biomass by the fraction of the mortality that 
 			//occurred during the time of the survey.
 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
-			//V(j)=elem_prod(N(ii),mfexp(log_va));
+			
+			//get fishing mortality rate on spawn.
+			dvariable ftmp = 0;
+			for(kk=1;kk<=ngear;kk++)
+				if(catch_type(kk)==3)
+					ftmp += ft(kk,ii);
+					
 			switch(survey_type(i))
 			{
 				case 1:
@@ -1297,7 +1308,8 @@ FUNCTION calc_survey_observations
 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
 				break;
 				case 3:
-					V(j)=elem_prod(Np,fec(ii));
+					//SJDM Jan 6, 2012 Modified for roe fishery
+					V(j)=elem_prod(Np,fec(ii))*exp(-ftmp);
 				break;
 			}
 			
@@ -1346,7 +1358,7 @@ FUNCTION calc_survey_observations
 	
 	
 	
-	if(verbose)cout<<"**** Ok after calc_survey_observations ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
   }
 	
@@ -1377,7 +1389,7 @@ FUNCTION calc_stock_recruitment
 	Jan 6, 2012.  Need to adjust stock-recruitment curvey for reductions 
 	in fecundity associated with removal of roe from a spawn on kelp fishery.
 	*/ 
-	int i;
+	int i,k;
 	dvariable tau = (1.-rho)/varphi;
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector lx(sage,nage); lx=1;
@@ -1396,6 +1408,11 @@ FUNCTION calc_stock_recruitment
 	for(i=syr;i<=nyr;i++)
 	{
 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
+		
+		//Adjustment to spawning biomass for roe fisheries
+		for(k=1;k<=ngear;k++)
+			if(catch_type(k)==3)
+				sbt(i) *= mfexp(-ft(k,i));
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;

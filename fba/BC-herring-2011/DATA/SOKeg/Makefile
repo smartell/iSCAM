@@ -18,7 +18,7 @@ else
   DIST=$(prefix)/release/iscam
 endif
 
-all: $(EXEC) $(EXEC).rep
+all: $(EXEC) $(EXEC).rep $(CTL).ctl
 
 $(EXEC):
 	cp $(DIST) $@
