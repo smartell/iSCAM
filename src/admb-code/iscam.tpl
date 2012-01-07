@@ -75,7 +75,7 @@
 //--             - modified the following routines:                        --//
 //--             - calcFisheryObservations                                 --//
 //--             - calcTotalMortality                                      --//
-//--                                                                       --//
+//-- TODO: add catch_type to equilibrium calculations for reference points --//
 //--                                                                       --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
