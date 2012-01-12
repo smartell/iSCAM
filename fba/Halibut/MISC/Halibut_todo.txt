@@ -9,6 +9,8 @@ The key questions for this project are:
 Modifications to iSCAM would have to include bycatch & wastage, and implementing size-limits in the selectivity functions of the models.
 
 Priority list of to do items:
+	0) develop an equilibrium model of halibut bycatch-wastage.
 	1) implement size-based selectivity in the code.
 	2) develop infrastructure to model bycatch & wastage.
  
+
