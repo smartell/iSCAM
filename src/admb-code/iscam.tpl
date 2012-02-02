@@ -497,8 +497,9 @@ DATA_SECTION
 	// 9 -> standard deviation of mean F penalty in last phase.
 	// 10-> phase for estimating deviations in natural mortality.
 	// 11-> std in natural mortality deviations.
-	// 12-> fraction of total mortality that takes place prior to spawning
-	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// 12-> number of estimated nodes for deviations in natural mortality
+	// 13-> fraction of total mortality that takes place prior to spawning
+	// 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	// FIXME: document cntrl(14).
 	init_vector cntrl(1,14);
 	int verbose;
