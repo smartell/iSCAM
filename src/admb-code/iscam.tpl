@@ -31,7 +31,7 @@
 // TODO: add DIC calculation for MCMC routines (in -mcveal phase)            //
 // TODO: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds     //
 //                                                                           //
-// FIXME: Steve I need help with this keg of beer.                           //
+//                                                                           //
 //                                                                           //
 //                                                                           //
 // ------------------------------------------------------------------------- //
@@ -71,11 +71,19 @@
 //--                                                                       --//
 //-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
 //--                                                                       --//
+<<<<<<< HEAD
 //-- Feb 5, 2012- working on two sex model for halibut.                    --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
+=======
+//-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector      --//
+//--             - modified the following routines:                        --//
+//--             - calcFisheryObservations                                 --//
+//--             - calcTotalMortality                                      --//
+//-- TODO: add catch_type to equilibrium calculations for reference points --//
+>>>>>>> master
 //--                                                                       --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
@@ -140,6 +148,7 @@ DATA_SECTION
 	init_int ngear;				//number of gear types with unique selectivities
 	!! cout<<"ngear\t"<<ngear<<endl;
 	init_vector allocation(1,ngear);
+	init_ivector catch_type(1,ngear);
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		//If allocation >0 then set fish flag =1 else 0
@@ -200,7 +209,7 @@ DATA_SECTION
 		for(k=1;k<=ngear;k++)
 		{	
 			for(i=syr;i<=nyr;i++)
-				if(obs_ct(k,i)>0) ft_count++;
+				if( obs_ct(k,i)>0 ) ft_count++;
 		}
 		cout<<"ft_count\n"<<ft_count<<endl;
 		cout<<"last row of catch \n"<<catch_data(nyr)<<endl;
@@ -496,8 +505,9 @@ DATA_SECTION
 	// 9 -> standard deviation of mean F penalty in last phase.
 	// 10-> phase for estimating deviations in natural mortality.
 	// 11-> std in natural mortality deviations.
-	// 12-> fraction of total mortality that takes place prior to spawning
-	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// 12-> number of estimated nodes for deviations in natural mortality
+	// 13-> fraction of total mortality that takes place prior to spawning
+	// 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	// FIXME: document cntrl(14).
 	init_vector cntrl(1,14);
 	int verbose;
@@ -673,7 +683,7 @@ PROCEDURE_SECTION
 	
 	calcAgeProportions();
 	
-	calc_survey_observations();
+	calcSurveyObservations();
 	
 	calc_stock_recruitment();
 	
@@ -926,8 +936,8 @@ FUNCTION calcSelectivities
 				break;
 				
 			case 8:
-				//Alternative time-varying selectivity based on weight deviations (wt_dev)
-				//wt_dev is a matrix(syr,nyr+1,sage,nage)
+				//Alternative time-varying selectivity based on weight 
+				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
 				//p3 is the coefficient that describes variation in log_sel.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
@@ -1020,6 +1030,10 @@ FUNCTION calcTotalMortality
 	SJDM.  Dec 24, 2010.  Adding time-varying natural mortality
 	
 	CHANGED May 20, 2011  Add cubic spline to the time-varying natural mortality
+	
+	Jan 5, 2012 Adding catch_type to allow for catch in numbers, weight or spawn.
+	In the case of spawn on kelp (roe fisheries), the Fishing mortality does not
+	occur on the adult component.  Added if(catch_type(k)!=3) //exclude roe fisheries
 	*/
 	int i,k,ki;
 	dvariable ftmp;
@@ -1033,21 +1047,17 @@ FUNCTION calcTotalMortality
 	{
 		
 		for(i=syr;i<=nyr;i++)
-		//for(i=f_syr(k);i<=f_nyr(k);i++)
-		{
-			/*if(i==0) break;
-						if(active(log_avg_f(k)))
-							log_ft(k,i)=log_avg_f(k)+log_ft_devs(k,i);
-						else log_ft(k,i)=-70.;*/	
-			
+		{	
 			ftmp=0;
-			if(obs_ct(k,i)>0)
+			if( obs_ct(k,i)>0  )
 				ftmp = mfexp(log_ft_pars(ki++));
 			
 			ft(k,i)=ftmp;
 			
-			//F(i)+=mfexp(log_ft(k,i)+log_sel(k)(i));
-			F(i)+=ftmp*mfexp(log_sel(k)(i));			
+			if(catch_type(k)!=3){	//exclude roe fisheries
+				F(i)+=ftmp*mfexp(log_sel(k)(i));
+				//cout<<obs_ct(k,i)<<endl;
+			}
 		}
 	}
 	
@@ -1124,19 +1134,7 @@ FUNCTION calcNumbersAtAge
 	}
 	N(nyr+1,sage)=mfexp(log_avgrec);
 	
-	/*
-	for(j=sage;j<=nage;j++) 
-	{
-		if(cntrl(5))  //if starting at unfished state
-		{
-			N(syr,j)=ro*exp(-m_bar*(j-1));
-		}
-		else{
-			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
-			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
-		}
-	}*/
-	
+	/* Dynamic state variables */
 	for(i=syr;i<=nyr;i++)
 	{
 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1))+1.e-10;
@@ -1182,10 +1180,15 @@ FUNCTION calcFisheryObservations
 				
 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
 					computing the age-comps in calc_fisheries_observations
+	
+	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
+					biomass, and harvest of roe.  
+	
 	*/
 	
 	/*
-		FIXED Reconcile the difference between the predicted catch here and in the simulation model.
+		FIXED Reconcile the difference between the predicted catch 
+		here and in the simulation model.
 	*/
 	int i,k;
 	ct.initialize();
@@ -1194,22 +1197,40 @@ FUNCTION calcFisheryObservations
 		for(k=1;k<=ngear;k++)
 		{
 			
-			dvar_vector log_va=log_sel(k)(i);// - log(mean(mfexp(log_sel(k)(i))));
-			//dvar_vector fa=mfexp(log_ft(k,i)+log_va);
+			dvar_vector log_va=log_sel(k)(i);
 			
 			
 			//SJDM Jan 16, 2011 Modification as noted above.
-			dvar_vector fa=ft(k,i)*mfexp(log_va);
+			//SJDM Jan 06, 2012 Modification as noted above.
 			if(obs_ct(k,i)>0)
+<<<<<<< HEAD
 			{/*If there is a commercial fishery, then calculate the
 			   catch-at-age (in numbers) and total catch (in weight)*/
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));//+1.e-10;
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 				ct(k,i) = Chat(k,i)*wt_obs(i);
+=======
+			{
+				dvar_vector fa=ft(k,i)*mfexp(log_va);
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+				switch(catch_type(k))
+				{
+					case 1:	//catch in weight
+						ct(k,i) = Chat(k,i)*wt_obs(i);
+					break;
+					case 2:	//catch in numbers
+						ct(k,i) = sum(Chat(k,i));
+					break;
+					case 3:	//catch in roe that does not contribute to SSB
+						dvariable ssb = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
+						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
+					break;
+				}
+>>>>>>> SOKherring
 			}
 			else
 			{/*If there is no commercial fishery the set Chat equal to 
 			   the expected proportions at age.*/
-				fa = mfexp(log_va);
+				dvar_vector fa = mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 			}
 			
@@ -1236,7 +1257,7 @@ FUNCTION calcFisheryObservations
 
   }	
 	
-FUNCTION calc_survey_observations
+FUNCTION calcSurveyObservations
   {
 	/*This code needs to be modified to accomodate
 	multiple surveys or block changes in survey q.
@@ -1257,13 +1278,16 @@ FUNCTION calc_survey_observations
 	than the spawning biomass in the stock-recruitment routine. (Based on fecundity which
 	changes with time when given empirical weight-at-age data.)
 	
+	Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
+	fishery that would remove potential spawn that would not be surveyed.
+	
 	*/
 	/*
 		CHANGED add capability to accomodate priors for survey q's.
 		DONE
 	*/
 	
-	int i,j,ii,k;
+	int i,j,ii,k,kk;
 	
 	
 	//survey abudance index residuals
@@ -1285,7 +1309,13 @@ FUNCTION calc_survey_observations
 			//Adjust survey biomass by the fraction of the mortality that 
 			//occurred during the time of the survey.
 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
-			//V(j)=elem_prod(N(ii),mfexp(log_va));
+			
+			//get fishing mortality rate on spawn.
+			dvariable ftmp = 0;
+			for(kk=1;kk<=ngear;kk++)
+				if(catch_type(kk)==3)
+					ftmp += ft(kk,ii);
+					
 			switch(survey_type(i))
 			{
 				case 1:
@@ -1295,7 +1325,8 @@ FUNCTION calc_survey_observations
 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
 				break;
 				case 3:
-					V(j)=elem_prod(Np,fec(ii));
+					//SJDM Jan 6, 2012 Modified for roe fishery
+					V(j)=elem_prod(Np,fec(ii))*exp(-ftmp);
 				break;
 			}
 			
@@ -1344,7 +1375,7 @@ FUNCTION calc_survey_observations
 	
 	
 	
-	if(verbose)cout<<"**** Ok after calc_survey_observations ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
   }
 	
@@ -1371,8 +1402,11 @@ FUNCTION calc_stock_recruitment
 	
 	CHANGED Need to adjust spawning biomass to post fishery numbers.
 	CHANGED Need to adjust spawners per recruit (phib) to average fecundity.
+	
+	Jan 6, 2012.  Need to adjust stock-recruitment curvey for reductions 
+	in fecundity associated with removal of roe from a spawn on kelp fishery.
 	*/ 
-	int i;
+	int i,k;
 	dvariable tau = (1.-rho)/varphi;
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector lx(sage,nage); lx=1;
@@ -1385,10 +1419,17 @@ FUNCTION calc_stock_recruitment
 	bo = ro*phib;  					//unfished spawning biomass
 	
 	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
-	//CHANGED adjusted spawning biomass downward by ctrl(12)
+	//CHANGED adjusted spawning biomass downward by ctrl(13)
+	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
+	//in the sbt calculation below.
 	for(i=syr;i<=nyr;i++)
 	{
 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
+		
+		//Adjustment to spawning biomass for roe fisheries
+		for(k=1;k<=ngear;k++)
+			if(catch_type(k)==3)
+				sbt(i) *= mfexp(-ft(k,i));
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
