@@ -10,7 +10,8 @@ Modifications to iSCAM would have to include bycatch & wastage, and implementing
 
 Priority list of to do items:
 	0) develop an equilibrium model of halibut bycatch-wastage.
-	1) implement size-based selectivity in the code.
+	1) implement size-based selectivity in the code.  DONE
 	2) develop infrastructure to model bycatch & wastage.
+	3) develop sex-structure in the iSCAM code
  
 
