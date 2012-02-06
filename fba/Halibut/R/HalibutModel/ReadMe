@@ -1,0 +1,12 @@
+An equilibrium age, sex structured model for Pacific Halibut.
+
+Author: Steven Martell, UBC
+DATE: Jan 8, 2012.
+
+OBJECTIVE: 
+	The objective here is to develop a simple steady-state model to examine
+	the impacts of changing size limits and wastage in the trawl fisheries, 
+	and how these changes would affect the coastwide exploitatble biomass and
+	yields.
+	
+CODE: The code for this model is written as an R-script.

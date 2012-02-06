@@ -71,7 +71,7 @@
 //--                                                                       --//
 //-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
 //--                                                                       --//
-//--                                                                       --//
+//-- Feb 5, 2012- working on two sex model for halibut.                    --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
