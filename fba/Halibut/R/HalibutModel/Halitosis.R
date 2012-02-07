@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------- ##
 # Halitosis.R
 # Written by Steve Martell,  UBC
-# Date: Jan 8,  2012
+# Date: Jan 8, 2012
 # -------------------------------------------------------------------------- ##
 
 # -------------------------------------------------------------------------- ##
@@ -26,12 +26,13 @@ linf	<- c(145, 110)		# Range female 145-190, male 110-155 (cm)
 k		<- c(0.1, 0.12)		# eyeballed growth pars from Clark & Hare 2002.
 
 # Selectivity parameters (cm)
-lhat	<- 70
-ghat	<- 08
+lhat	<- 97.132
+ghat	<- 1/0.1667
 slim	<- 81.28
 cvlm	<- 0.1
 
-tsasm	<- function(fe=0, slim=0)
+tsasm	<- 
+function(fe=0, slim=0, dm=0.17)
 {
 	# A two sex age structured model. #
 	
@@ -62,6 +63,7 @@ tsasm	<- function(fe=0, slim=0)
 	za	<- m+fe*va
 	sa	<- exp(-za)
 	qa	<- (sc*sr)*(1.-sa)/za	# fraction retained
+	da	<- (sc*sd)*(1.-sa)/za	# fraction discarded
 	
 	# Survivorship under fished conditions
 	lz	<- matrix(1, 2, A)
@@ -83,6 +85,9 @@ tsasm	<- function(fe=0, slim=0)
 	re		<- max(0, -(t1*ro*phi.E)/t2)
 	be		<- re * phi.e
 	ye		<- sum(re * fe * lz*wa*qa)
+	de		<- sum(re * fe * dm * lz*wa*da)
+	
+	# Per recruit calculations
 	ypr		<- sum(fe * lz*wa*qa)
 	spr		<- phi.e/phi.E
 	
@@ -91,24 +96,65 @@ tsasm	<- function(fe=0, slim=0)
 	# plot(b, r)
 	# points(bo, ro, pch=20, col=2)
 	# points(be, re, pch=20, col=3)
-	return(list(re=re, be=be, ye=ye, spr=spr, ypr=ypr))
+	return(list(re=re, be=be, ye=ye, 
+		de=de, spr=spr, ypr=ypr, 
+		dep=be/bo))
 }
 
-.ypr	<- function(fe=0, slim=0) tsasm(fe, slim)$ypr
-.ye		<- function(fe=0, slim=0) tsasm(fe, slim)$ye
-fe	<- seq(0, 0.3, length=100)
-sl	<- seq(60, 100, length=20)
-#X  <- sapply(fe,tsasm, slim=85)
-.Vye<-Vectorize(.ye,c("fe","slim"))
-Z <-outer(fe,sl,.Vye)
-contour(fe,sl,Z/max(Z))
+.equil	<-
+function(arg="ye", dm=0.17)
+{
+	fn	<- function(fe=0, slim=0, dm=dm)
+	{
+		tmp <- tsasm(fe, slim, dm)
+		idx <- which(names(tmp)==arg)
+		return(as.double(tmp[idx]))
+	}
+	V	<- Vectorize(fn, c("fe", "slim"))
+	fe	<- seq(0, 0.4, length=100)
+	sl	<- seq(60, 100, length=20)
+	Z	<- outer(fe, sl, V, dm)
+	obj	<- list(x=fe, y=sl, Z=Z)
+	class(obj) <- "isopleth"
+	return(obj)
+}
+
+plot.isopleth <- 
+function(obj, ...)
+{
+	# Plots the contour plot for the contour class
+	x <- obj$x
+	y <- obj$y
+	z <- obj$Z
+	
+	contour(x, y, z, ...)
+}
+
+# A key question is for every pound of bycatch what is the corresponding
+# yield loss to the directed fishery. This is computed by IPHC as the 
+# yield loss ration = (Wt. of yield loss)/(Wt. of bycatch).  The wt. of 
+# the bycatch is straight forward. The yield loss is the difference between
+# the yield obtained with discard mortality =0 and discard mortality =0.17
 
 
+SPR <- .equil("spr", dm=dm)
+YE  <- .equil("ye", dm=dm)
+YE0 <- .equil("ye", dm=0)
+DE	<- .equil("de", dm=dm)
 
 
-
-
-
+# REPORT SECTION
+par(mfcol=c(2, 2), las=1)
+isolvl <- c(0.35, seq(0, 1, by=0.1))
+isolwd <- c(2, rep(1, 11))
+xl     <- "Fishing mortality"
+yl     <- "Size limit (cm)"
+plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn biomass per recruit")
+plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield")
+plot(DE ,xlab=xl,ylab=yl,main="Discarded yield")
+X = DE
+X$Z = (YE0$Z-YE$Z)/(DE$Z)
+plot(X, xlab="Fishing Mortality",ylab="Size limit",main="Yield loss ratio")
 
 
 
