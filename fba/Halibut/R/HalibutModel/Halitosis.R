@@ -59,7 +59,7 @@ function(fe=0, slim=0, dm=0.17)
 	sd	<- 1-sr
 	va	<- sc*(sr+sd*dm)		# age-specific probability of dying due to F
 	
-	# Age-specific total mortality rate.
+	# Age-specific total mortality, surviva, retention, and discard rate.
 	za	<- m+fe*va
 	sa	<- exp(-za)
 	qa	<- (sc*sr)*(1.-sa)/za	# fraction retained
@@ -154,7 +154,11 @@ plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield")
 plot(DE ,xlab=xl,ylab=yl,main="Discarded yield")
 X = DE
 X$Z = (YE0$Z-YE$Z)/(DE$Z)
-plot(X, xlab="Fishing Mortality",ylab="Size limit",main="Yield loss ratio")
+plot(X, xlab=xl,ylab=yl,main="Yield loss ratio")
+
+E=DE
+E$Z = YE$Z/(YE$Z+DE$Z)
+plot(E, add=TRUE, col="red")
 
 
 
