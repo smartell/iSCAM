@@ -22,7 +22,7 @@ age	<- 1:A	# vector of ages
 pg	<- dnorm(seq(-3, 3, length=G), 0, 1); pg <- pg/sum(pg)
 
 # Population parameters (female, male)
-bo		<- 1.0				# unfished female spawning biomass
+bo		<- 100.0				# unfished female spawning biomass
 h		<- 0.75				# steepness
 m		<- c(0.15, 0.18)	# natural mortality rate
 dm		<- 0.17				# discard mortality rate
@@ -39,6 +39,10 @@ ghat	<- 1/0.1667
 slim	<- 81.28
 cvlm	<- 0.1
 
+# Halibut prices (10-20) (20-40) (40+)
+# $6.75  $7.30  $7.50  In Homer Alaska.
+
+
 tsasm	<- 
 function(fe=0, slim=0, dm=0.17)
 {
@@ -51,6 +55,7 @@ function(fe=0, slim=0, dm=0.17)
 	la	<- array(0, dim)
 	wa	<- array(0, dim)
 	fa	<- array(0, dim)
+	pa	<- array(0, dim)	# price per pound 
 	ma	<- plogis(age, a50, k50)
 	for(i in 1:S)
 	{
@@ -67,6 +72,12 @@ function(fe=0, slim=0, dm=0.17)
 		# maturity (this assumes maturity at a fixed age)
 		fa[,,i] <- ma*wa[,,i]
 	}
+	
+	# price premiums based on fish weight
+	pa[wa<10]  <- 0
+	pa[wa>=10] <- 6.75
+	pa[wa>=20] <- 7.30
+	pa[wa>=40] <- 7.50
 	
 	# lx	<- sapply(age, function(age) exp(-m)^(age-1) )
 	# lx[, A] <- lx[, A]/(1-exp(-m))
@@ -166,7 +177,18 @@ function(fe=0, slim=0, dm=0.17)
 	}
 	spr		<- phi.e/phi.E
 	
-	
+	# Need to calculate landed value per recruit versus slim and fe
+	# using the price and size categories from above.
+	# How many millions of dollars in Halibut are discarded each year?
+	landed.value	<- 0
+	discard.value	<- 0
+	for(i in 1:S)
+	{
+		t1 <- sum(re * fe * t(lz[,,i]*wa[,,i]*qa[,,i]*pa[,,i])*pg)
+		landed.value  <- landed.value + t1
+		t2 <- sum(re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i]*pa[,,i])*pg)
+		discard.value <- discard.value + t2
+	}
 	
 	# b<- seq(0, 2*bo, length=100)
 	# r<- kap*b*exp(-log(kap)*b/bo)/phi.E
@@ -175,7 +197,9 @@ function(fe=0, slim=0, dm=0.17)
 	# points(be, re, pch=20, col=3)
 	return(list(re=re, be=be, ye=ye, 
 		de=de, spr=spr, ypr=ypr, 
-		dep=be/bo, wbar.f=wbar[1], wbar.m=wbar[2]))
+		dep=be/bo, wbar.f=wbar[1], wbar.m=wbar[2], 
+		landed.value=landed.value, 
+		discard.value=discard.value))
 }
 
 .equil	<-
@@ -220,6 +244,8 @@ YE0 <- .equil("ye", dm=0)
 DE	<- .equil("de", dm=dm)
 W.F <- .equil("wbar.f", dm=dm)
 W.M <- .equil("wbar.m", dm=dm)
+LV	<- .equil("landed.value", dm=dm)
+DV	<- .equil("discard.value", dm=dm)
 
 # REPORT SECTION
 par(mfcol=c(2, 2), las=1)
@@ -238,8 +264,10 @@ E=DE
 E$Z = YE$Z/(YE$Z+DE$Z)
 plot(E, add=TRUE, col="red")
 
-par(mfcol=c(1, 2))
+par(mfcol=c(2, 2))
 plot(W.F, xlab=xl, ylab=yl, main="Mean weight of age-10 females")
 plot(W.M, xlab=xl, ylab=yl, main="Mean weight of age-10 males")
-
-
+plot(LV, xlab=xl, ylab=yl, main="Landed Value ($$)")
+X = LV
+X$Z = DV$Z/LV$Z
+plot(X, xlab=xl, ylab=yl, main="Discard Value/Landed Value")
