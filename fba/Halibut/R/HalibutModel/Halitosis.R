@@ -2,6 +2,10 @@
 # Halitosis.R
 # Written by Steve Martell,  UBC
 # Date: Jan 8, 2012
+# 
+# Feb 7, 2011.  Added multiple growth groups to allow for cumulative effects
+# of size selective fishing.  Need to show how mean weigth-at-age decreases
+# with increasing fishing mortality rates.
 # -------------------------------------------------------------------------- ##
 
 # -------------------------------------------------------------------------- ##
@@ -11,7 +15,11 @@ require(Hmisc)
 
 # Data and other constants
 A	<- 30	# maximum age.
+G	<- 11	# number of growth groups
+S	<- 2	# number of sexes
+dim	<- c(A, G, S)
 age	<- 1:A	# vector of ages
+pg	<- dnorm(seq(-3, 3, length=G), 0, 1); pg <- pg/sum(pg)
 
 # Population parameters (female, male)
 bo		<- 1.0				# unfished female spawning biomass
@@ -36,60 +44,129 @@ function(fe=0, slim=0, dm=0.17)
 {
 	# A two sex age structured model. #
 	
+	
 	# Age-schedule information
-	# Survivorship matrix lx(sex, age)
-	lx	<- sapply(age, function(age) exp(-m)^(age-1) )
-	lx[, A] <- lx[, A]/(1-exp(-m))
-	la	<- sapply(age, function(age) linf*(1-exp(-k*age)))
-	wa	<- a*la^b
+	# Survivorship array lx(A, G, S)
+	lx	<- array(0, dim)
+	la	<- array(0, dim)
+	wa	<- array(0, dim)
+	fa	<- array(0, dim)
 	ma	<- plogis(age, a50, k50)
-	fa	<- t(t(wa)*ma)
+	for(i in 1:S)
+	{
+		lx[,,i]  <- exp(-m[i])^(age-1)
+		lx[A,,i] <- lx[A,,i]/(1-exp(-m[i]))
+		
+		# growth
+		'vonb'  <- function(linf,k) len <- linf*(1-exp(-k*age))
+		dev     <- 0.3*linf[i]
+		linf.g  <- seq(linf[i]-dev, linf[i]+dev, length=G)
+		la[,,i] <- sapply(linf.g, vonb,k=k[i])
+		wa[,,i] <- a*la[,,i]^b
+		
+		# maturity (this assumes maturity at a fixed age)
+		fa[,,i] <- ma*wa[,,i]
+	}
+	
+	# lx	<- sapply(age, function(age) exp(-m)^(age-1) )
+	# lx[, A] <- lx[, A]/(1-exp(-m))
+	# la	<- sapply(age, function(age) linf*(1-exp(-k*age)))
+	# wa	<- a*la^b
+	# ma	<- plogis(age, a50, k50)
+	# fa	<- t(t(wa)*ma)
 	
 	# Derivation of S-R parameters (Ricker model)
 	# Re = Ro*[(log(kap)-log(phi.E/phi.e))/log(kap)]
 	# Assume 50:50 sex ratio at birth
 	kap		<- (5*h)^(5/4)
-	phi.E	<- as.double(lx[1, ] %*% fa[1, ])
+	phi.E	<- sum(t(t(lx[,,1]*fa[,,1])*pg))
+	#phi.E	<- as.double(lx[1, ] %*% fa[1, ])
 	ro		<- bo/phi.E
 	
-	# Length-based selectivity (convert weight-at-age to length-at-age)
-	sc	<- t(apply(la,1,plogis,location=lhat,scale=ghat))
+	# Length-based selectivity (length-based -> age-based)
+	sc	<- array(0, dim)
+	sr	<- array(0, dim)
+	sd	<- array(0, dim)
+	va	<- array(0, dim)
 	std	<- cvlm*slim+1.e-30
-	sr	<- t(apply(la,1,plogis,location=slim,scale=std))
-	sd	<- 1-sr
-	va	<- sc*(sr+sd*dm)		# age-specific probability of dying due to F
-	
-	# Age-specific total mortality, surviva, retention, and discard rate.
-	za	<- m+fe*va
-	sa	<- exp(-za)
-	qa	<- (sc*sr)*(1.-sa)/za	# fraction retained
-	da	<- (sc*sd)*(1.-sa)/za	# fraction discarded
-	
-	# Survivorship under fished conditions
-	lz	<- matrix(1, 2, A)
-	for(i in 2:A)
+	for(i in 1:S)
 	{
-		lz[, i] <- lz[, i-1]*exp(-za[, i-1])
-		if(i==A)
+		sc[,,i]  <- plogis(la[,,i],location=lhat, scale=ghat)
+		sr[,,i]  <- plogis(la[,,i],location=slim, scale=std)
+		sd[,,i]  <- 1-sr[,,i]
+		va[,,i]  <- sc[,,i]*(sr[,,i]+sd[,,i]*dm)
+	}
+	# sc	<- t(apply(la,1,plogis,location=lhat,scale=ghat))
+	# std	<- cvlm*slim+1.e-30
+	# sr	<- t(apply(la,1,plogis,location=slim,scale=std))
+	# sd	<- 1-sr
+	# va	<- sc*(sr+sd*dm)		# age-specific probability of dying due to F
+	
+	# Age-specific total mortality, survival, retention, and discard rate.
+	za	<- array(0, dim)
+	sa	<- array(0, dim)
+	qa	<- array(0, dim)
+	da	<- array(0, dim)
+	for(i in 1:S)
+	{
+		za[,,i]  <- m[i] + fe*va[,,i]
+		sa[,,i]  <- exp(-za[,,i])
+		qa[,,i]  <- (sc[,,i]*sr[,,i]) * (1-sa[,,i])/za[,,i]
+		da[,,i]  <- (sc[,,i]*sd[,,i]) * (1-sa[,,i])/za[,,i]
+	}
+	# za	<- m+fe*va
+	# sa	<- exp(-za)
+	# qa	<- (sc*sr)*(1.-sa)/za	# fraction retained
+	# da	<- (sc*sd)*(1.-sa)/za	# fraction discarded
+	
+	# Survivorship under fished conditions lz(A, G, S)
+	lz	<- array(1, dim)
+	for(i in 1:S)
+	{
+		for(j in 2:A)
 		{
-			lz[, A] <- lz[, A]/(1-exp(-za[, i-1]))
+			lz[j,,i] <- lz[j-1,,i]*exp(-za[j-1,,i])
 		}
+		lz[A,,i] <- lz[A,,i]/(1-exp(-za[A,,i]))
 	}
 	
+	# lz	<- matrix(1, 2, A)
+	# for(i in 2:A)
+	# {
+	# 	lz[, i] <- lz[, i-1]*exp(-za[, i-1])
+	# 	if(i==A)
+	# 	{
+	# 		lz[, A] <- lz[, A]/(1-exp(-za[, i-1]))
+	# 	}
+	# }
+	
 	# Incidence functions
-	phi.e	<- as.double(lz[1, ] %*% fa[1, ])
+	phi.e	<- sum( t(lz[,,1]*fa[,,1])*pg )
+	#phi.e	<- as.double(lz[1, ] %*% fa[1, ])
 	
 	# Equilibrium calculations
 	t1		<- log(phi.E/(kap*phi.e))
 	t2		<- (log(kap)*phi.e)
 	re		<- max(0, -(t1*ro*phi.E)/t2)
 	be		<- re * phi.e
-	ye		<- sum(re * fe * lz*wa*qa)
-	de		<- sum(re * fe * dm * lz*wa*da)
-	
-	# Per recruit calculations
-	ypr		<- sum(fe * lz*wa*qa)
+	ye		<- 0
+	de		<- 0
+	ypr		<- 0
+	wbar	<- rep(0, S)
+	for(i in 1:S)
+	{
+		ye  <- ye + sum( re * fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
+		de	<- de + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
+		ypr <- ypr + sum( fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
+		
+		# Average weigth of a 10-year old fish (female & male)
+		tmp		<- t(lz[,,i]*wa[,,i])*pg
+		tmpn	<- t(lz[,,i])*pg
+		wbar[i] <- weighted.mean(wa[10,,i], tmpn[,10])
+	}
 	spr		<- phi.e/phi.E
+	
+	
 	
 	# b<- seq(0, 2*bo, length=100)
 	# r<- kap*b*exp(-log(kap)*b/bo)/phi.E
@@ -98,7 +175,7 @@ function(fe=0, slim=0, dm=0.17)
 	# points(be, re, pch=20, col=3)
 	return(list(re=re, be=be, ye=ye, 
 		de=de, spr=spr, ypr=ypr, 
-		dep=be/bo))
+		dep=be/bo, wbar.f=wbar[1], wbar.m=wbar[2]))
 }
 
 .equil	<-
@@ -111,7 +188,7 @@ function(arg="ye", dm=0.17)
 		return(as.double(tmp[idx]))
 	}
 	V	<- Vectorize(fn, c("fe", "slim"))
-	fe	<- seq(0, 0.4, length=100)
+	fe	<- seq(0, 0.45, length=20)
 	sl	<- seq(60, 100, length=20)
 	Z	<- outer(fe, sl, V, dm)
 	obj	<- list(x=fe, y=sl, Z=Z)
@@ -141,7 +218,8 @@ SPR <- .equil("spr", dm=dm)
 YE  <- .equil("ye", dm=dm)
 YE0 <- .equil("ye", dm=0)
 DE	<- .equil("de", dm=dm)
-
+W.F <- .equil("wbar.f", dm=dm)
+W.M <- .equil("wbar.m", dm=dm)
 
 # REPORT SECTION
 par(mfcol=c(2, 2), las=1)
@@ -160,5 +238,8 @@ E=DE
 E$Z = YE$Z/(YE$Z+DE$Z)
 plot(E, add=TRUE, col="red")
 
+par(mfcol=c(1, 2))
+plot(W.F, xlab=xl, ylab=yl, main="Mean weight of age-10 females")
+plot(W.M, xlab=xl, ylab=yl, main="Mean weight of age-10 males")
 
 
