@@ -32,7 +32,7 @@
 // TODO: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds     //
 //                                                                           //
 //                                                                           //
-//                                                                           //
+// Hi Roberto                                                                          //
 //                                                                           //
 // ------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                           --//
@@ -1096,6 +1096,7 @@ FUNCTION calcTotalMortality
 	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
   }
+	
 	
 FUNCTION calcNumbersAtAge
   {
