@@ -82,7 +82,7 @@
 //--             - calcTotalMortality                                      --//
 //-- TODO: add catch_type to equilibrium calculations for reference points --//
 //--                                                                       --//
-//--                                                                       --//
+//-- Feb 14, 2012.  Approval for work on the halibut simulation model      --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
@@ -154,8 +154,10 @@ DATA_SECTION
 	vector age(sage,nage);
 	!! age.fill_seqadd(sage,1);
 	
-	init_int ngear;				//number of gear types with unique selectivities
+	init_int ngear;		//number of gear types with unique selectivities
+	init_int nsex;		//number of sexes
 	!! cout<<"ngear\t"<<ngear<<endl;
+	!! cout<<"nsex\t"<<nsex<<endl;
 	init_vector allocation(1,ngear);
 	init_ivector catch_type(1,ngear);
 	ivector fsh_flag(1,ngear);

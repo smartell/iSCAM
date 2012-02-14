@@ -18,6 +18,7 @@
 1           # -age of youngest age class    (sage)
 30          # -age of plus group            (nage)
 6           # -number of gears              (ngear)
+1           # -number of sexes              (nsex)
 ##
 ## ------------------------------------------------------------------------- ##
 ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
