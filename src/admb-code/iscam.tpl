@@ -71,19 +71,16 @@
 //--                                                                       --//
 //-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
 //--                                                                       --//
-<<<<<<< HEAD
 //-- Feb 5, 2012- working on two sex model for halibut.                    --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
-=======
 //-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector      --//
 //--             - modified the following routines:                        --//
 //--             - calcFisheryObservations                                 --//
 //--             - calcTotalMortality                                      --//
 //-- TODO: add catch_type to equilibrium calculations for reference points --//
->>>>>>> master
 //--                                                                       --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
@@ -1204,13 +1201,8 @@ FUNCTION calcFisheryObservations
 			//SJDM Jan 16, 2011 Modification as noted above.
 			//SJDM Jan 06, 2012 Modification as noted above.
 			if(obs_ct(k,i)>0)
-<<<<<<< HEAD
 			{/*If there is a commercial fishery, then calculate the
 			   catch-at-age (in numbers) and total catch (in weight)*/
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-				ct(k,i) = Chat(k,i)*wt_obs(i);
-=======
-			{
 				dvar_vector fa=ft(k,i)*mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 				switch(catch_type(k))
@@ -1226,7 +1218,6 @@ FUNCTION calcFisheryObservations
 						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
 					break;
 				}
->>>>>>> SOKherring
 			}
 			else
 			{/*If there is no commercial fishery the set Chat equal to 

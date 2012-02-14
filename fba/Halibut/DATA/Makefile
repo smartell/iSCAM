@@ -50,4 +50,4 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
                         system(cmd)})'
 
 clean: 
-	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
+	-rm -f iscam iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance

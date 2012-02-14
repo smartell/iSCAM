@@ -21,8 +21,13 @@
 ##
 ## ------------------------------------------------------------------------- ##
 ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
+## Type of catch: an ivector based on legend below                           ##
+##               1 = catch in weight                                         ##
+##               2 = catch in numbers                                        ##
+##               3 = catch in spawn (roe)                                    ##
 ## ------------------------------------------------------------------------- ##
 1 0 0 0 0 0
+1 1 1 1 1 1
 ##
 ## ------------------------------------------------------------------------- ##
 ## Age-schedule and population parameters                                    ##
