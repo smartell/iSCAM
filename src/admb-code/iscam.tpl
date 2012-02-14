@@ -1089,6 +1089,7 @@ FUNCTION calcTotalMortality
 	
   }
 	
+	
 FUNCTION calcNumbersAtAge
   {
 	/*
