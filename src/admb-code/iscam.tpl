@@ -21,8 +21,8 @@
 //                                                                           //
 // INDEXES:                                                                  //
 //             h -> sex                                                      //
-//             i -> age                                                      //
-//             j -> year                                                     //
+//             i -> year                                                     //
+//             j -> age                                                      //
 //             k -> gear                                                     //
 //                                                                           //
 //                                                                           //
@@ -655,12 +655,12 @@ PARAMETER_SECTION
 	
 	//matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
-	 
-	matrix N(syr,nyr+1,sage,nage);			//Numbers at age
-	matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates	3darray F(1,nsex,syr,nyr,sage,nage);			//Age-specific fishing mortality
+	matrix ft(1,ngear,syr,nyr);					//Gear specific fishing mortality rates
+	
+	3darray N(1,nsex,syr,nyr+1,sage,nage);		//Numbers at age
 	3darray M_tot(1,nsex,syr,nyr,sage,nage);	//Age-specific natural mortality
 	3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
-	3darray F(1,nsex,syr,nyr,sage,nage);
+	3darray F(1,nsex,syr,nyr,sage,nage);		//Age-specific fishing mortality
 	3darray Z(1,nsex,syr,nyr,sage,nage);
 	3darray S(1,nsex,syr,nyr,sage,nage);
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
@@ -1158,42 +1158,60 @@ FUNCTION calcNumbersAtAge
 		TODO Need to check the difference between the initialization 
 		of the numbers at age here at the margins in comparison to the
 		simulation model.
+		
+		Feb 15, 2012:  Added sex calculations N is now a 3darray
+		for 3darry N(1,nsex,syr,nyr+1,sage,nage).
+		
+		ro is now the total number of sage-recruits (female + male)
 	*/
 	
-	int i,j;
+	int h,i,j;
 	N.initialize();
 	
 	
 	if(cntrl(5)){	//If initializing in at unfished conditions
 		log_rt(syr) = log(ro);
-		for(j=sage;j<=nage;j++)
+		for(h=1;h<=nsex;h++)
 		{
-			N(syr,j)=ro*exp(-m_bar*(j-1.));
+			for(j=sage;j<=nage;j++)
+			{
+				N(h)(syr,j)=ro/nsex * exp(-m_bar(h)*(j-1.));
+			}
+			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
 		}
 	}
-	else{			//If starting at unfished conditions
+	else{			//If starting at fished conditions
 		log_rt(syr) = log_avgrec+log_rec_devs(syr);
-		N(syr,sage)=mfexp(log_rt(syr));
-		for(j=sage+1;j<=nage;j++)
+		for(h=1;h<=nsex;h++)
 		{
-			N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
+			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
+			for(j=sage+1;j<=nage;j++)
+			{
+				dvariable tmp_rt = mfexp(log_recinit+init_log_rec_devs(j));
+				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
+			}
+			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
 		}
 	}
-	N(syr,nage)/=(1.-exp(-m_bar));
+	
 	
 	
 	//initial number of sage recruits from year syr+1, nyr;
-	for(i=syr+1;i<=nyr;i++){
-		log_rt(i)=log_avgrec+log_rec_devs(i);
-		N(i,sage)=mfexp(log_rt(i));
-	}
-	N(nyr+1,sage)=mfexp(log_avgrec);
-	
-	/* Dynamic state variables */
-	for(i=syr;i<=nyr;i++)
+	for(h=1;h<=nsex;h++)
 	{
-		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1))+1.e-10;
-		N(i+1,nage)+=N(i,nage)*S(i,nage);
+		for(i=syr+1;i<=nyr;i++)
+		{
+			log_rt(i)=log_avgrec+log_rec_devs(i);
+			N(h)(i,sage)=mfexp(log_rt(i))/nsex;
+		}
+		N(h)(nyr+1,sage)=mfexp(log_avgrec)/nsex;
+	
+		/* Dynamic state variables */
+		for(i=syr;i<=nyr;i++)
+		{
+			N(h)(i+1)(sage+1,nage)=++elem_prod(N(h)(i)(sage,nage-1),S(h)(i)(sage,nage-1));
+			N(h)(i+1,nage)+=N(h)(i,nage)*S(h)(i,nage);
+		}
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
 	
@@ -2050,9 +2068,12 @@ FUNCTION void simulation_model(const long& seed)
 	N.initialize();
 	if(cntrl(5)){	//If initializing in at unfished conditions
 		log_rt(syr) = log(ro);
-		for(j=sage;j<=nage;j++)
+		for(h=1;h<=nsex;h++)
 		{
-			N(syr,j)=ro*exp(-m_bar*(j-1.));
+			for(j=sage;j<=nage;j++)
+			{
+				N(h)(syr,j)=ro/nsex*exp(-m_bar*(j-1.));
+			}
 		}
 	}
 	else{			//If starting at unfished conditions
