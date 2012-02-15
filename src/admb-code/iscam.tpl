@@ -630,8 +630,6 @@ PARAMETER_SECTION
 	number ro;					//unfished age-1 recruits
 	number bo;					//unfished spawning stock biomass
 	number kappa;				//Goodyear compensation ratio
-	number m;					//initial natural mortality rate
-	number m_bar;				//average natural mortality rate
 	number log_avgrec;			//log of average recruitment.
 	number log_recinit;			//log of initial recruitment in syr.
 	//number log_avg_f;			//log of average fishing mortality DEPRICATED
@@ -640,6 +638,8 @@ PARAMETER_SECTION
 	number so;
 	number beta;
 	
+	vector m(1,nsex);			//initial natural mortality rate
+	vector m_bar(1,nsex);		//average natural mortality rate
 	vector log_rt(syr-nage+sage,nyr);
 	vector vax(sage,nage);		//survey selectivity coefficients
 	vector q(1,nit);			//survey catchability coefficients
@@ -657,10 +657,10 @@ PARAMETER_SECTION
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	 
 	matrix N(syr,nyr+1,sage,nage);			//Numbers at age
-	3darray F(1,nsex,syr,nyr,sage,nage);			//Age-specific fishing mortality
-	3darray M_tot(1,nsex,syr,nyr,sage,nage);		//Age-specific natural mortality
-	3darray ft(1,nsex,1,ngear,syr,nyr);				//Gear specific fishing mortality rates
-	3darray log_ft(1,nsex,1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
+	matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates	3darray F(1,nsex,syr,nyr,sage,nage);			//Age-specific fishing mortality
+	3darray M_tot(1,nsex,syr,nyr,sage,nage);	//Age-specific natural mortality
+	3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
+	3darray F(1,nsex,syr,nyr,sage,nage);
 	3darray Z(1,nsex,syr,nyr,sage,nage);
 	3darray S(1,nsex,syr,nyr,sage,nage);
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
@@ -740,11 +740,13 @@ FUNCTION initParameters
 	
 	Note that you must call this routine before runnning the 
 	simulation model to generate fake data.
+	
+	Need to have a system for leading parameters to have sex based m.
 	*/
 	
 	ro          = mfexp(theta(1));
 	dvariable h = theta(2);
-	m           = mfexp(theta(3));
+	m           = mfexp(theta(3));  //FIXME: for sex-based m
 	log_avgrec  = theta(4);
 	log_recinit = theta(5);
 	rho         = theta(6);
@@ -1000,7 +1002,7 @@ FUNCTION calcSelectivities
 					//based on cubic spline interpolation
 					for(i=syr; i<=nyr; i++)
 					{
-						dvector tmp = wt_obs(h) / a(h);
+						dvector tmp = wt_obs(h)(i) / a(h);
 						dvector len = pow( tmp,1./b(h) );
 						log_sel(h)(j)(i)=cubic_spline( sel_par(j)(1), len );
 					}
@@ -1072,39 +1074,51 @@ FUNCTION calcTotalMortality
 	Feb 15, 2012 Added sex based fishing mortality.
 	The F, Z M_tot S arrays are now 3darray(1,nsex,syr,nyr,sage,nage)
 	
+	For now (Feb 15) assuming Fishign mort rate is the same for both sexs
+	and differences in Fa is due to difference in selectivity.  THis must be
+	fixed when there are sex-based selectivity parameters.  
+	Should we also be estimating fishing mortality by sex?
+	
+	FIXME: watch for obs_ct by sex in this routine. May need to be modified
+	if there is sex based fishing mortality rates.
 	*/
-	int i,k,ki;
+	int h,j,k,ki;
 	dvariable ftmp;
 	F.initialize();
 	ft.initialize();
 	log_ft.initialize();
 	
 	//Fishing mortality
-	ki=1;
-	for(k=1;k<=ngear;k++)
+	for(h=1;h<=nsex;h++)
 	{
+		ki=1;
+		for(k=1;k<=ngear;k++)
+		{
 		
-		for(i=syr;i<=nyr;i++)
-		{	
-			ftmp=0;
-			if( obs_ct(k,i)>0  )
-				ftmp = mfexp(log_ft_pars(ki++));
+			for(j=syr;j<=nyr;j++)
+			{	
+				ftmp=0;
+				if( obs_ct(k,j)>0  )
+					ftmp = mfexp(log_ft_pars(ki++));
 			
-			ft(k,i)=ftmp;
+				ft(k,j)=ftmp;
 			
-			if(catch_type(k)!=3){	//exclude roe fisheries
-				F(i)+=ftmp*mfexp(log_sel(k)(i));
-				//cout<<obs_ct(k,i)<<endl;
+				if(catch_type(k)!=3){	//exclude roe fisheries
+					F(h)(j)+=ftmp*mfexp(log_sel(h)(k)(j));
+					//cout<<obs_ct(k,i)<<endl;
+				}
 			}
 		}
+		//Natural mortality (year and age specific)
+		//M_tot(syr,nyr,sage,nage);
+		M_tot(h) = m(h);
 	}
-	
-	//Natural mortality (year and age specific)
-	//M_tot(syr,nyr,sage,nage);
-	M_tot = m;
 
 
 	// Cubic spline to interpolate log_m_devs (log_m_nodes)
+	/* Assume deviations in natural mortality rates are the 
+	   same for both sexes at this time.
+	*/
 	log_m_devs = 0.;
 	if(active(log_m_nodes))
 	{
@@ -1119,18 +1133,20 @@ FUNCTION calcTotalMortality
 	}
 	
 	// Random walk in natural mortality.
-	for(i=syr;i<=nyr;i++)
+	if(active(log_m_nodes)&&i>syr)
 	{
-		// if(active(log_m_devs)&&i>syr)
-		if(active(log_m_nodes)&&i>syr)
+		for(h=1;h<=nsex;h++)
 		{
-			M_tot(i)=M_tot(i-1)*exp(log_m_devs(i));
+			for(j=syr+1;j<=nyr;j++)
+			{
+				M_tot(h)(j)=M_tot(h)(j-1)*exp(log_m_devs(j));
+			}
+			m_bar(h) = mean(M_tot(h));
+	
+			Z(h)=M_tot(h)+F(h);
+			S(h)=mfexp(-Z(h));
 		}
 	}
-	m_bar = mean(M_tot);
-	
-	Z=M_tot+F;
-	S=mfexp(-Z);
 	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
   }
