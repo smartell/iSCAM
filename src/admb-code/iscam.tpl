@@ -93,8 +93,8 @@
 //--                                                                       --//
 //-- Feb 14, 2012.  Approval for work on the halibut simulation model      --//
 //--                                                                       --//
-//--                                                                       --//
-//--                                                                       --//
+//-- TODO: add sex-based selectivity paraemters. Currently assuming same   --//
+//--       selectivity curves for both sexes.                              --//
 //--                                                                       --//
 //--                                                                       --//
 //--                                                                       --//
@@ -575,6 +575,8 @@ PARAMETER_SECTION
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Selectivity parameters (A very complicated ragged array)
+	//Not sure how to handle this for sex dimension.
+	//Could mulitiply jsel_npar by nsex or isel_npar?.
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-15.,15.,sel_phz);
 	LOC_CALCS
 		//initial values for logistic selectivity parameters
@@ -655,12 +657,12 @@ PARAMETER_SECTION
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	 
 	matrix N(syr,nyr+1,sage,nage);			//Numbers at age
-	matrix F(syr,nyr,sage,nage);			//Age-specific fishing mortality
-	matrix M_tot(syr,nyr,sage,nage);		//Age-specific natural mortality
-	matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates
-	matrix log_ft(1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
-	matrix Z(syr,nyr,sage,nage);
-	matrix S(syr,nyr,sage,nage);
+	3darray F(1,nsex,syr,nyr,sage,nage);			//Age-specific fishing mortality
+	3darray M_tot(1,nsex,syr,nyr,sage,nage);		//Age-specific natural mortality
+	3darray ft(1,nsex,1,ngear,syr,nyr);				//Gear specific fishing mortality rates
+	3darray log_ft(1,nsex,1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
+	3darray Z(1,nsex,syr,nyr,sage,nage);
+	3darray S(1,nsex,syr,nyr,sage,nage);
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
@@ -670,7 +672,7 @@ PARAMETER_SECTION
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
-	3darray log_sel(1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
+	4darray log_sel(1,nsex,1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
 	3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
@@ -853,13 +855,19 @@ FUNCTION calcSelectivities
 		is changes in selectivity even with constant growth.  Remove the
 		random walk outside the switch statement.
 		
-		TODO: add an option for length-based selectivity.  Use inverse of
+		CHANGED: add an option for length-based selectivity.  Use inverse of
 		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
 		empirical weight-at-age data, then calculate selectivity based on 
 		mean length. 
+		
+		TODO: Add sex based selectivity for 1,nsex dimension.
+		
+		FEB 15, 2012.  Adding sex based selectivity option.
+		log_sel is now a 4darray(1,nsex,1,ngear,syr,nyr,sage,nage)
+		
 	
 	*/
-	int i,j,k;
+	int h,i,j,k;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -871,165 +879,169 @@ FUNCTION calcSelectivities
 	log_sel.initialize();
 	avg_log_sel.initialize();
 	
-	for(j=1;j<=ngear;j++)
+	for(h=1;j<=nsex;h++)
 	{
-		tmp.initialize(); tmp2.initialize();
-		dvector iy(1,yr_nodes(j));
-		dvector ia(1,age_nodes(j));
-		
-		switch(isel_type(j))
+		for(j=1;j<=ngear;j++)
 		{
-			case 1:
-				// logistic selectivity for case 1 or 6
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				for(i=syr; i<=nyr; i++)
-				{
-					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny );
-				}
-				break;
+			tmp.initialize(); tmp2.initialize();
+			dvector iy(1,yr_nodes(j));
+			dvector ia(1,age_nodes(j));
+		
+			switch(isel_type(j))
+			{
+				case 1:
+					// logistic selectivity for case 1 or 6
+					p1 = mfexp(sel_par(j,1,1));
+					p2 = mfexp(sel_par(j,1,2));
+					for(i=syr; i<=nyr; i++)
+					{
+						log_sel(h)(j)(i) = log( plogis(age,p1,p2)+tiny );
+					}
+					break;
 			
-			case 6:
-				// logistic selectivity for case 1 or 6
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				for(i=syr; i<=nyr; i++)
-				{
-					log_sel(j)(i) = log( plogis(age,p1,p2) );
-				}
-				break;
+				case 6:
+					// logistic selectivity for case 1 or 6
+					p1 = mfexp(sel_par(j,1,1));
+					p2 = mfexp(sel_par(j,1,2));
+					for(i=syr; i<=nyr; i++)
+					{
+						log_sel(h)(j)(i) = log( plogis(age,p1,p2) );
+					}
+					break;
 				
-			case 2:		
-				// age-specific selectivity coefficients
-				for(i=syr; i<=nyr; i++)
-				{
-					for(k=sage;k<=nage-1;k++)
-					log_sel(j)(i)(k) = sel_par(j)(1)(k-sage+1);
-					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
-				}
-				break;
+				case 2:		
+					// age-specific selectivity coefficients
+					for(i=syr; i<=nyr; i++)
+					{
+						for(k=sage;k<=nage-1;k++)
+						log_sel(h)(j)(i)(k) = sel_par(j)(1)(k-sage+1);
+						log_sel(h)(j)(i,nage) = log_sel(h)(j)(i,nage-1);
+					}
+					break;
 				
-			case 3:		
-				// cubic spline
-				log_sel(j)(syr)=cubic_spline( sel_par(j)(1) );
-				for(i=syr; i<nyr; i++)
-				{
-					log_sel(j)(i+1) = log_sel(j)(i);
-				}
-				break;
+				case 3:		
+					// cubic spline
+					log_sel(h)(j)(syr)=cubic_spline( sel_par(j)(1) );
+					for(i=syr; i<nyr; i++)
+					{
+						log_sel(h)(j)(i+1) = log_sel(h)(j)(i);
+					}
+					break;
 				
-			case 4:		
-				// time-varying cubic spline every year
-				for(i=syr; i<=nyr; i++)
-				{
-					log_sel(j)(i) = cubic_spline(sel_par(j)(i-syr+1));
-				}
+				case 4:		
+					// time-varying cubic spline every year
+					for(i=syr; i<=nyr; i++)
+					{
+						log_sel(h)(j)(i) = cubic_spline(sel_par(j)(i-syr+1));
+					}
 				
-				//jlog_sel(j) = cubic_spline(sel_par(j)(1));
-				//t1 = cubic_spline_matrix(sel_par(j).sub(2,jsel_npar(j)));
-				//for(i = t1.indexmin(); i <= t1.indexmax(); i++)
-				//{
-				//	tmp( syr+(i-t1.indexmin()) ) = t1(i);
-				//}
-				break;
+					//jlog_sel(j) = cubic_spline(sel_par(j)(1));
+					//t1 = cubic_spline_matrix(sel_par(j).sub(2,jsel_npar(j)));
+					//for(i = t1.indexmin(); i <= t1.indexmax(); i++)
+					//{
+					//	tmp( syr+(i-t1.indexmin()) ) = t1(i);
+					//}
+					break;
 				
-			case 5:		
-				// time-varying bicubic spline
-				ia.fill_seqadd( 0,1./(age_nodes(j)-1) );
-				iy.fill_seqadd( 0,1./(yr_nodes(j)-1) );
-				// bicubic_spline function is located in stats.cxx library
-				bicubic_spline( iy,ia,sel_par(j),tmp2 );
-				log_sel(j) = tmp2; 
-				break;
+				case 5:		
+					// time-varying bicubic spline
+					ia.fill_seqadd( 0,1./(age_nodes(j)-1) );
+					iy.fill_seqadd( 0,1./(yr_nodes(j)-1) );
+					// bicubic_spline function is located in stats.cxx library
+					bicubic_spline( iy,ia,sel_par(j),tmp2 );
+					log_sel(h)(j) = tmp2; 
+					break;
 				
-			case 7:
-				// time-varying selectivity based on deviations in weight-at-age
-				// CHANGED This is not working and should not be used. (May 5, 2011)
-				// SJDM:  I was not able to get this to run very well.
-				// AUG 5, CHANGED so it no longer has the random walk component.
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
+				case 7:
+					// time-varying selectivity based on deviations in weight-at-age
+					// CHANGED This is not working and should not be used. (May 5, 2011)
+					// SJDM:  I was not able to get this to run very well.
+					// AUG 5, CHANGED so it no longer has the random walk component.
+					p1 = mfexp(sel_par(j,1,1));
+					p2 = mfexp(sel_par(j,1,2));
 				
-				for(i = syr; i<=nyr; i++)
-				{
-					dvar_vector tmpwt=log(wt_obs(i)*1000)/mean(log(wt_obs*1000.));
-					log_sel(j)(i) = log( plogis(tmpwt,p1,p2)+tiny );
-				}	 
-				break;
+					for(i = syr; i<=nyr; i++)
+					{
+						dvar_vector tmpwt=log(wt_obs(h)(i)*1000)/mean(log(wt_obs(h)*1000.));
+						log_sel(h)(j)(i) = log( plogis(tmpwt,p1,p2)+tiny );
+					}	 
+					break;
 				
-			case 8:
-				//Alternative time-varying selectivity based on weight 
-				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
-				//p3 is the coefficient that describes variation in log_sel.
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				p3 = sel_par(j,1,3);
+				case 8:
+					//Alternative time-varying selectivity based on weight 
+					//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
+					//p3 is the coefficient that describes variation in log_sel.
+					p1 = mfexp(sel_par(j,1,1));
+					p2 = mfexp(sel_par(j,1,2));
+					p3 = sel_par(j,1,3);
 				
-				for(i=syr; i<=nyr; i++)
-				{
-					tmp2(i) = p3*wt_dev(i);
-					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
-				}
-				break;
+					for(i=syr; i<=nyr; i++)
+					{
+						tmp2(i) = p3*wt_dev(h)(i);
+						log_sel(h)(j)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
+					}
+					break;
 				
-			case 11:
-				//logistic selectivity based on mean length-at-age
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
+				case 11:
+					//logistic selectivity based on mean length-at-age
+					p1 = mfexp(sel_par(j,1,1));
+					p2 = mfexp(sel_par(j,1,2));
 				
-				for(i=syr; i<=nyr; i++)
-				{
-					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i) = log( plogis(len,p1,p2) );
-				}
-				break;
+					for(i=syr; i<=nyr; i++)
+					{
+						dvector tmp = wt_obs(h)(i) / a(h);
+						dvector len = pow( tmp,1./b(h) );
+						log_sel(h)(j)(i) = log( plogis(len,p1,p2) );
+					}
+					break;
 				
-			case 12:
-				//length-specific selectivity coefficients
-				//based on cubic spline interpolation
-				for(i=syr; i<=nyr; i++)
-				{
-					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i)=cubic_spline( sel_par(j)(1), len );
-				}
-				break;
+				case 12:
+					//length-specific selectivity coefficients
+					//based on cubic spline interpolation
+					for(i=syr; i<=nyr; i++)
+					{
+						dvector tmp = wt_obs(h) / a(h);
+						dvector len = pow( tmp,1./b(h) );
+						log_sel(h)(j)(i)=cubic_spline( sel_par(j)(1), len );
+					}
+					break;
 				
 				
-			default:
-				log_sel(j)=0;
-				break;
+				default:
+					log_sel(h)(j)=0;
+					break;
 				
-		}  // switch
+			}  // switch
 		
 
-		//log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
-		//for(i=syr;i<nyr;i++)
-		//{
-		//	log_sel(j)(i+1)(sage,nage) = log_sel(j)(i)(sage,nage)+tmp(i)+tmp2(i+1);			
-		//}
+			//log_sel(j)(syr) = jlog_sel(j)+tmp2(syr);
+			//for(i=syr;i<nyr;i++)
+			//{
+			//	log_sel(j)(i+1)(sage,nage) = log_sel(j)(i)(sage,nage)+tmp(i)+tmp2(i+1);			
+			//}
 		
-		//subtract mean to ensure mean(exp(log_sel))==1
-		//substract max to ensure exp(log_sel) ranges from 0-1
-		for(i=syr;i<=nyr;i++)
-			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
-			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
+			//subtract mean to ensure mean(exp(log_sel))==1
+			//substract max to ensure exp(log_sel) ranges from 0-1
+			for(i=syr;i<=nyr;i++)
+				log_sel(h)(j)(i) -= log( mean(mfexp(log_sel(h)(j)(i)))+tiny );
+				//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
 			
-		//cout<<"log_sel \t"<<j<<"\n"<<log_sel(j)<<"\n \n"<<endl;
-		//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
-		/*ia.fill_seqadd(0,1./(age_nodes(j)-1));
-				iy.fill_seqadd(0,1./(yr_nodes(j)-1));
-				dvar_matrix tn(1,age_nodes(j),1,yr_nodes(j));
-				tn.colfill_seqadd(1,-.5,0.1);
-				tn.colfill_seqadd(2,-.4,0.1);
-				bicubic_spline(iy,ia,tn,tmp2);
-				cout<<ia<<endl;
-				cout<<iy<<endl;
-				cout<<tn<<endl;
-				cout<<tmp2<<endl;
-				exit(1);*/
+			//cout<<"log_sel \t"<<j<<"\n"<<log_sel(j)<<"\n \n"<<endl;
+			//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
+			/*ia.fill_seqadd(0,1./(age_nodes(j)-1));
+					iy.fill_seqadd(0,1./(yr_nodes(j)-1));
+					dvar_matrix tn(1,age_nodes(j),1,yr_nodes(j));
+					tn.colfill_seqadd(1,-.5,0.1);
+					tn.colfill_seqadd(2,-.4,0.1);
+					bicubic_spline(iy,ia,tn,tmp2);
+					cout<<ia<<endl;
+					cout<<iy<<endl;
+					cout<<tn<<endl;
+					cout<<tmp2<<endl;
+					exit(1);*/
 	
+		}
 	}
-	
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
@@ -1055,7 +1067,11 @@ FUNCTION calcTotalMortality
 	
 	Jan 5, 2012 Adding catch_type to allow for catch in numbers, weight or spawn.
 	In the case of spawn on kelp (roe fisheries), the Fishing mortality does not
-	occur on the adult component.  Added if(catch_type(k)!=3) //exclude roe fisheries
+	occur on the adult component.  Added if(catch_type(k)!=3) //exclude roe fisheries.
+	
+	Feb 15, 2012 Added sex based fishing mortality.
+	The F, Z M_tot S arrays are now 3darray(1,nsex,syr,nyr,sage,nage)
+	
 	*/
 	int i,k,ki;
 	dvariable ftmp;
