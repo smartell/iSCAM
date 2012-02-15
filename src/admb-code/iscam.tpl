@@ -19,6 +19,15 @@
 //             Functions    -> lowerCamelCase                                //
 //             Variables    -> lowercase                                     //
 //                                                                           //
+// INDEXES:                                                                  //
+//             h -> sex                                                      //
+//             i -> age                                                      //
+//             j -> year                                                     //
+//             k -> gear                                                     //
+//                                                                           //
+//                                                                           //
+//                                                                           //
+//                                                                           //
 // CHANGED add option for using empirical weight-at-age data                 //
 // TODO:    add gtg options for length based fisheries                      //
 // CHANGED add time varying natural mortality rate with splines              //
@@ -32,7 +41,7 @@
 // TODO: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds     //
 //                                                                           //
 //                                                                           //
-// Hi Roberto                                                                          //
+//                                                                           //
 //                                                                           //
 // ------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                           --//
@@ -186,21 +195,27 @@ DATA_SECTION
 	//	}
 	//END_CALCS
 	
-	init_number fixed_m;		//FIXME: depricate this from data files
-	init_number linf;
-	init_number vonbk;
-	init_number to;
-	init_number a;
-	init_number b;
-	init_number ah;
-	init_number gh;
+	init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files
+	init_vector linf(1,nsex);
+	init_vector vonbk(1,nsex);
+	init_vector to(1,nsex);
+	init_vector a(1,nsex);
+	init_vector b(1,nsex);
+	init_vector ah(1,nsex);
+	init_vector gh(1,nsex);
 	
-	vector la(sage,nage);		//length-at-age
-	vector wa(sage,nage);		//weight-at-age
+	matrix la(1,nsex,sage,nage);		//length-at-age
+	matrix wa(1,nsex,sage,nage);		//weight-at-age
 	LOC_CALCS
 	  cout<<"linf\t"<<linf<<endl;
-	  la=linf*(1.-exp(-vonbk*(age-to)));
-	  wa=a*pow(la,b);
+	  int h;
+	  for(h=1;h<=nsex;h++)
+	  {
+	  	la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );
+	  	wa(h) = a(h)*pow(la(h),b(h));
+	  }
+	  //la=linf*(1.-exp(-vonbk*(age-to)));
+	  //wa=a*pow(la,b);
 	  cout<<setprecision(2);		//2 decimal places for output
 	  cout<<"la\n"<<la<<endl;
 	  cout<<"wa\n"<<wa<<endl;
@@ -264,88 +279,82 @@ DATA_SECTION
 
 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
 	
-	//Mean weight-at-age data (units are kg) (if exists)
+	//Mean weight-at-age data (units are kg) (if exists)(by sex)
 	init_int n_wt_nobs;
-	init_matrix tmp_wt_obs(1,n_wt_nobs,sage-1,nage);
+	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,sage-1,nage);
 	
-	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
-	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
-	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
-	vector avg_fec(sage,nage);				//average fecundity-at-age
+	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
+	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
+	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
+	matrix avg_fec(1,nsex,sage,nage);				//average fecundity-at-age
 	LOC_CALCS
-		int iyr;
+		int j,jyr;
 		avg_fec.initialize();
-		for(i=syr;i<=nyr+1;i++)
+		for(h=1;h<=nsex;h++)
 		{
-			wt_obs(i)=wa;			
-			fec(i)=elem_prod(plogis(age,ah,gh),wt_obs(i));
+			for(j=syr;j<=nyr+1;j++)
+			{
+				wt_obs(h)(j)=wa(h);			
+				fec(h)(j)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(j));
+			}
 		}
 		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
-		for(i=1;i<=n_wt_nobs;i++)
+		for(h=1;h<=nsex;h++)
 		{
-			iyr=tmp_wt_obs(i,sage-1);  //index for year
-			wt_obs(iyr)=tmp_wt_obs(i)(sage,nage);
-			fec(iyr)=elem_prod(plogis(age,ah,gh),wt_obs(iyr));
+			for(j=1;j<=n_wt_nobs;j++)
+			{
+				jyr=tmp_wt_obs(h)(j,sage-1);  //index for year
+				wt_obs(h)(jyr)=tmp_wt_obs(h)(j)(sage,nage);
+				fec(h)(jyr)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(jyr));
+			}
 		}
-		//CHANGED average fecundity
-		int nfec = fec.rowmax()-fec.rowmin()+1;
-		avg_fec=colsum(fec)/nfec;
-		
-		
-		//from Jake Schweigert: use mean-weight-at-age data
-		//from the last 5 years for the projected mean wt.
-		dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/6.;
-		wt_obs(nyr+1) = tmp;
+		//Average fecundity
+		for(h=1;h<=nsex;h++)
+		{
+			int nfec = fec(h).rowmax()-fec(h).rowmin()+1;
+			avg_fec(h)=colsum(fec(h))/nfec;
+			//from Jake Schweigert: use mean-weight-at-age data
+			//from the last 5 years for the projected mean wt.
+			dvector tmp=colsum(wt_obs(h).sub(nyr-5,nyr))/6.;
+			wt_obs(h)(nyr+1) = tmp;
+			//July 14, 2011 Error handler to ensure non-zero wt_obs
+			//in the data. Otherwise causes and error with weight-based
+			//selectivities.
+			if(min(wt_obs(h))==0)
+			{
+				cout<<"Cannont have a observed 0 mean weight at age\n";
+				cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
+				exit(2);
+			}
+		}
 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
 		cout<<"Ok after empiracle weight-at-age data"<<endl;
 		
-		//July 14, 2011 Error handler to ensure non-zero wt_obs
-		//in the data. Otherwise causes and error with weight-based
-		//selectivities.
-		if(min(wt_obs)==0)
-		{
-			cout<<"Cannont have a observed 0 mean weight at age\n";
-			cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
-			exit(2);
-		}
-		
-		
-		
-		//May 5, 2011 SJDM: Calculating standardized deviates
-		//in mean weights-at-age from empiracle data to use
-		//with selectivity as a function of mean weight at age.
-		//Idea borrowed from Vivian Haist in HCAM model.
-		/*
-			CHANGED: selectivity function based on average weight.
-			Based on the logistic function;
-			1) calculate a matrix of standardized deviates
-			wt_dev = (wt_obs-mean(wt_obs))/sd(wt_obs);
-			
-			Not implemented, using the version provided by Vivian.
-			
-			Aug 5, 2011, noticed that Vivian's method was implemented
-			in an awkward way where GN selectivities were a random walk
-			sel(t+1)=sel(t) + tmp(2);
+		/*	
+			FEB 14. Changed documentation regarding selectivity based
+			on deviations in mean weight-at-age.
 			
 			Trying a compromize where estimating an additional parameter
 			that attemps to explain residual variation in age-comps
 			via changes in standardized mean weights at age. This is 
 			implemented as:
 			
-			log_sel = log(plogis(age,s1,s2)) + s3*delta
-			where delta is a matrix of standardized deviations
+			log_sel = log(plogis(age,s1,s2)) + s3*wa_dev
+			where wa_dev is a matrix of standardized deviations
 			(mu=0, std=1) of weights at age.  delta is calculated
 			based on the wt_dev matrix above.
 		*/
 		wt_dev.initialize();
-		dmatrix mtmp = trans(wt_obs);
-		for(i=sage;i<=nage;i++)
+		for(h=1;h<=nsex;h++)
 		{
-			dvector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
-			mtmp(i) = wa_dev;
+			dmatrix mtmp = trans(wt_obs(h));
+			for(i=sage;i<=nage;i++)
+			{
+				dvector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
+				mtmp(i) = wa_dev;
+			}
+			wt_dev(h) = trans(mtmp);	//each column has mean=0 sd=1
 		}
-		wt_dev = trans(mtmp);	//each column has mean=0 sd=1
-		
 	END_CALCS
 	
 	//End of data file
@@ -403,6 +412,8 @@ DATA_SECTION
 	
 	// ***************************************************
 	// ** Read selectivity parameter options
+	// ** Feb 14, 2012 added index for sex.
+	// ** With nsex>1 separate table for female & male
 	// ***************************************************
 	// type 1 = logistic (2pars)
 	// type 2 = selcoffs (A-1 pars)
