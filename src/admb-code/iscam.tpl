@@ -673,7 +673,7 @@ PARAMETER_SECTION
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
 	4darray log_sel(1,nsex,1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
-	3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
+	4darray Chat(1,nsex,1,ngear,syr,nyr,sage,nage);			//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
 	
@@ -1219,26 +1219,54 @@ FUNCTION calcNumbersAtAge
 
 FUNCTION calcAgeProportions
   {
-	/*This function loops over each gear and year
+	/*
+	This function loops over each gear and year
 	and calculates the predicted proportions at age
 	sampled based on the selectivity of that gear and
-	the numbers-at-age in the population.*/
+	the numbers-at-age in the population.
 	
-	int i,k,iyr,ig;
+	Feb 16, 2012 added nsex calculations 
+	
+	**
+	The index for sex (ih) need to be added to the age-comps
+	in the data file.  The following should be used:
+	 - 0 for both sexes combined
+	 - 1 for female age comps
+	 - 2 for male age comps
+	**
+	*/
+	
+	int h,i,k,iyr,ig,ih;
 	for(k=1;k<=na_gears;k++)
 	{
 		for(i=1;i<=na_nobs(k);i++)
 		{
-			iyr=A(k,i,a_sage(k)-2);	//index for year
-			ig=A(k,i,a_sage(k)-1);	//index for gear
+			iyr = A(k,i,a_sage(k)-2);	//index for year
+			ig  = A(k,i,a_sage(k)-1);	//index for gear
+			ih  = 0; //A(k,i,a_sage(k)-3); //index for sex once in data file.
 			if(iyr>nyr)break;		//trap for retrospective analysis
 			
-			A_nu(k,i,a_sage(k)-2)=iyr;
-			A_nu(k,i,a_sage(k)-1)=ig;
-			Ahat(k,i,a_sage(k)-2)=iyr;
-			Ahat(k,i,a_sage(k)-1)=ig;
-			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
-										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
+			A_nu(k,i,a_sage(k)-2) = iyr;
+			A_nu(k,i,a_sage(k)-1) = ig;
+			Ahat(k,i,a_sage(k)-2) = iyr;
+			Ahat(k,i,a_sage(k)-1) = ig;
+			dvar_vector ctmp(a_sage(k),a_nage(k));
+			ctmp.initialize();
+			switch(ih)
+			{
+				case 0:	//add both sexes
+					for(h=1;h<=nsex;h++)
+					{
+						ctmp += Chat(h)(k)(iyr)(a_sage(k),a_nage(k));
+					}
+				break;
+				default:
+					ctmp = Chat(ih)(k)(iyr)(a_sage(k),a_nage(k));
+				break;
+			}
+			Ahat(k)(i)(a_sage(k),a_nage(k)) = ctmp / sum(ctmp);
+			//Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
+			//							/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
@@ -1257,67 +1285,61 @@ FUNCTION calcFisheryObservations
 	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
 					biomass, and harvest of roe.  
 	
+	Feb 12, 2012	Added nsex calculations 
 	*/
 	
 	/*
 		FIXED Reconcile the difference between the predicted catch 
 		here and in the simulation model.
 	*/
-	int i,k;
+	int h,i,k;
 	ct.initialize();
-	for(i=syr;i<=nyr;i++)
+	for(h=1;h<=nsex;h++)
 	{
-		for(k=1;k<=ngear;k++)
+		for(i=syr;i<=nyr;i++)
 		{
-			
-			dvar_vector log_va=log_sel(k)(i);
-			
-			
-			//SJDM Jan 16, 2011 Modification as noted above.
-			//SJDM Jan 06, 2012 Modification as noted above.
-			if(obs_ct(k,i)>0)
-			{/*If there is a commercial fishery, then calculate the
-			   catch-at-age (in numbers) and total catch (in weight)*/
-				dvar_vector fa=ft(k,i)*mfexp(log_va);
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-				switch(catch_type(k))
+			for(k=1;k<=ngear;k++)
+			{
+				dvar_vector log_va=log_sel(h)(k)(i);
+				
+				//SJDM Jan 16, 2011 Modification as noted above.
+				//SJDM Jan 06, 2012 Modification as noted above.
+				if(obs_ct(k,i)>0)
+				{	/*
+					If there is a commercial fishery, then calculate the
+					catch-at-age (in numbers) and total catch (in weight).
+				
+					Note that fa is nsex due to log_va, bt ft(k,i) is the same
+					for both sexes
+					*/
+					dvar_vector fa = ft(k,i)*mfexp(log_va);
+					dvar_vector d1 = elem_div(fa,Z(h)(i));
+					Chat(h)(k,i)   = elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
+					switch(catch_type(k))
+					{
+						case 1:	//catch in weight
+							ct(k,i) += Chat(h)(k,i)*wt_obs(h)(i);
+						break;
+						case 2:	//catch in numbers
+							ct(k,i) += sum(Chat(h)(k,i));
+						break;
+						case 3:	//catch in roe that does not contribute to SSB
+							dvariable ssb = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
+							ct(k,i) += ( 1.-mfexp(-ft(k,i)) )*ssb;
+						break;
+					}
+				}
+				else
 				{
-					case 1:	//catch in weight
-						ct(k,i) = Chat(k,i)*wt_obs(i);
-					break;
-					case 2:	//catch in numbers
-						ct(k,i) = sum(Chat(k,i));
-					break;
-					case 3:	//catch in roe that does not contribute to SSB
-						dvariable ssb = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
-					break;
+					/*
+					If there is no commercial fishery the set Chat equal to 
+					the expected proportions at age.
+					*/
+					dvar_vector fa = mfexp(log_va);
+					dvar_vector d1 = elem_div(fa,Z(h)(i));
+					Chat(h)(k,i)=elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
 				}
 			}
-			else
-			{/*If there is no commercial fishery the set Chat equal to 
-			   the expected proportions at age.*/
-				dvar_vector fa = mfexp(log_va);
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-			}
-			
-			
-			/*
-			Changed this on Jan 16, 2011 as it was preventing
-			convergence for simuation with zero error due to the tiny
-			constant added to F.
-			
-			need to add a tiny constant to deal with catch-age data 
-			for non-extractive survey age comps
-			dvar_vector fa=ft(k,i)*mfexp(log_va)+1.e-30;
-			
-			//Catch-at-age by commercial gear
-			if(fsh_flag(k))
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-			
-			//Catch weight by gear
-			//ct(k,i)=Chat(k,i)*wa;  
-			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010*/
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
