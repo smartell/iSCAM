@@ -1370,13 +1370,15 @@ FUNCTION calcSurveyObservations
 	Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
 	fishery that would remove potential spawn that would not be surveyed.
 	
+	Feb 12, 2012.  Added nsex calculations to this routine.
+	FIXME: check roe fishery calculations when nsex>1
 	*/
 	/*
 		CHANGED add capability to accomodate priors for survey q's.
 		DONE
 	*/
 	
-	int i,j,ii,k,kk;
+	int h,i,j,ii,k,kk;
 	
 	
 	//survey abudance index residuals
@@ -1393,30 +1395,40 @@ FUNCTION calcSurveyObservations
 		{
 			ii=iyr(i,j);
 			k=igr(i,j);
-			if(ii>nyr) break;	//trap for retrospective analysis.
-			dvar_vector log_va=log_sel(k)(ii);
-			//Adjust survey biomass by the fraction of the mortality that 
-			//occurred during the time of the survey.
-			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
+			// Trap for retrospective analysis.
+			if(ii>nyr) break;
 			
-			//get fishing mortality rate on spawn.
+			
+			
+			// Get fishing mortality rate on spawn.
 			dvariable ftmp = 0;
 			for(kk=1;kk<=ngear;kk++)
 				if(catch_type(kk)==3)
 					ftmp += ft(kk,ii);
-					
-			switch(survey_type(i))
+			//
+			
+			for(h=1;h<=nsex;h++)
 			{
-				case 1:
-					V(j)=elem_prod(Np,mfexp(log_va));
-				break;
-				case 2:
-					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
-				break;
-				case 3:
-					//SJDM Jan 6, 2012 Modified for roe fishery
-					V(j)=elem_prod(Np,fec(ii))*exp(-ftmp);
-				break;
+				
+				// Adjust survey biomass by the fraction of the mortality that 
+				// occurred during the time of the survey.
+				dvar_vector Np = elem_prod(N(h)(ii),exp( -Z(h)(ii)*it_timing(i,j) ));
+
+				dvar_vector log_va=log_sel(h)(k)(ii);
+				switch(survey_type(i))
+				{
+					case 1:
+						V(j) += elem_prod(Np,mfexp(log_va));
+					break;
+					case 2:
+						V(j) += elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(h)(ii));
+					break;
+					case 3:
+						//SJDM Jan 6, 2012 Modified for roe fishery
+						// If nsex > 1 the fec for males should equal 0.
+						V(j) += elem_prod(Np,fec(h)(ii))*exp(-ftmp);
+					break;
+				}
 			}
 			
 			//VB(j)=elem_prod(V(j),wt_obs(ii));		//SM Dec 6, 2010
