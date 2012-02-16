@@ -709,9 +709,9 @@ PROCEDURE_SECTION
 	
 	calcSurveyObservations();
 	
-	calc_stock_recruitment();
+	calcStockRecruitment();
 	
-	calc_objective_function();
+	calcObjectiveFunction();
 
 	sd_depletion=sbt(nyr)/bo;
 	
@@ -1480,7 +1480,7 @@ FUNCTION calcSurveyObservations
 	
   }
 	
-FUNCTION calc_stock_recruitment
+FUNCTION calcStockRecruitment
   {
 	/*
 	The following code is used to derive unfished
@@ -1506,33 +1506,57 @@ FUNCTION calc_stock_recruitment
 	
 	Jan 6, 2012.  Need to adjust stock-recruitment curvey for reductions 
 	in fecundity associated with removal of roe from a spawn on kelp fishery.
+	
+	**
+	Feb 16,2012.  Added nsex calculations to this routine.
+	
 	*/ 
-	int i,k;
-	dvariable tau = (1.-rho)/varphi;
+	int h,i,j,k;
+	
+	// Process error variance
+	dvariable tau = sqrt(1.-rho)/varphi;
+	
+	/*
+	Need to calculate the parameters of the stock recruitment 
+	function based on unfished conditions.  In the case where
+	nsex > 1, base the stock recruitment relationship on mature
+	female biomass only.
+	
+	In the case of time-varying natural mortality rate, the 
+	average natural mortality rate is used to assume unfished
+	conditions.
+	*/
 	dvar_vector tmp_rt(syr+sage,nyr);
-	dvar_vector lx(sage,nage); lx=1;
-	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
-	lx(nage)/=(1.-exp(-m_bar));
+	dvar_vector lx(sage,nage); 
+	lx = 1;
+	h  = 1;		// females only if nsex > 1
+	for(j=sage+1;j<=nage;j++)
+	{
+		lx(j)=lx(j-1)*exp(-m_bar(h));	
+	} 
+	lx(nage)/=(1.-exp(-m_bar(h)));
 	
-	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
-	dvariable so = kappa/phib;		//max recruits per spawner
+	// Average fecundity of females (h=1) only.
 	dvariable beta;
-	bo = ro*phib;  					//unfished spawning biomass
 	
-	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
-	//CHANGED adjusted spawning biomass downward by ctrl(13)
+	// Female spawning biomass per recruit	
+	dvariable phib = (lx*exp(-m_bar(h)*cntrl(13))) * avg_fec(h);
+	dvariable so   = kappa/phib;		//max recruits per spawner
+	bo             = ro*phib;  			//unfished female spawning biomass
+	
+	
 	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
 	//in the sbt calculation below.
 	for(i=syr;i<=nyr;i++)
 	{
-		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
+		sbt(i) = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
 		
-		//Adjustment to spawning biomass for roe fisheries
+		//Adjustment to female spawning biomass for roe fisheries
 		for(k=1;k<=ngear;k++)
 			if(catch_type(k)==3)
 				sbt(i) *= mfexp(-ft(k,i));
 	}
-	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
+	sbt(nyr+1) = N(h)(nyr+1)*fec(h)(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
 	//exit(1);
 	
@@ -1557,17 +1581,23 @@ FUNCTION calc_stock_recruitment
 	rt=exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
 	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
 	
-	if(verbose)cout<<"**** Ok after calc_stock_recruitment ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
   }
 	
-FUNCTION calc_objective_function
+FUNCTION calcObjectiveFunction
   {
-	//Dec 20, 2010.  SJDM added prior to survey qs.
-	/*q_prior is an ivector with current options of 0 & 1.
+	/*
+	Dec 20, 2010.  SJDM added prior to survey qs.
+	
+	q_prior is an ivector with current options of 0 & 1.
 	0 is a uniform density (ignored) and 1 is a normal
-	prior density applied to log(q).*/
-
+	prior density applied to log(q).
+	
+	Feb 16, 2012.  Added nsex calculations for the penalties on
+	log_sel.
+	
+	*/
 	/*
 	There are several components to the objective function
 	Likelihoods:
@@ -1578,7 +1608,7 @@ FUNCTION calc_objective_function
 		-5) likelihood for stock-recruitment relationship
 		-6) likelihood for fishery selectivities
 	*/
-	int i,j,k;
+	int h,i,j,k;
 	double o=1.e-10;
 
 	dvar_vector lvec(1,6); lvec.initialize();
@@ -1602,7 +1632,7 @@ FUNCTION calc_objective_function
 	//2) likelihood of the survey abundance index (retro)
 	for(k=1;k<=nit;k++)
 	{
-		dvar_vector sig = (rho/varphi)/it_wt(k);
+		dvar_vector sig = (sqrt(rho)/varphi)/it_wt(k);
 		nlvec(2,k)=dnorm(epsilon(k),sig);
 	}
 	
@@ -1649,7 +1679,7 @@ FUNCTION calc_objective_function
 	
 	
 	//4) likelihood for stock-recruitment relationship
-	dvariable tau = (1.-rho)/varphi;
+	dvariable tau = sqrt(1.-rho)/varphi;
 	if(active(theta(1)))
 		nlvec(4,1)=dnorm(delta,tau);
 	
@@ -1666,17 +1696,20 @@ FUNCTION calc_objective_function
 				isel_type(k)!=8 &&
 				isel_type(k)!=11 )  
 			{
-				for(i=syr;i<=nyr;i++)
+				for(h=1;h<=nsex;h++)
 				{
-					//curvature in selectivity parameters
-					dvar_vector df2=first_difference(first_difference(log_sel(k)(i)));
-					nlvec(5,k)+=sel_2nd_diff_wt(k)/(nage-sage+1)*norm2(df2);
+					for(i=syr;i<=nyr;i++)
+					{
+						//curvature in selectivity parameters
+						dvar_vector df2=first_difference(first_difference(log_sel(h)(k)(i)));
+						nlvec(5,k)+=sel_2nd_diff_wt(k)/(nage-sage+1)*norm2(df2);
 				
-					//penalty for dome-shapeness
-					for(j=sage;j<=nage-1;j++)
-						if(log_sel(k,i,j)>log_sel(k,i,j+1))
-							nlvec(6,k)+=sel_dome_wt(k)
-										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
+						//penalty for dome-shapeness
+						for(j=sage;j<=nage-1;j++)
+							if(log_sel(h,k,i,j)>log_sel(h,k,i,j+1))
+								nlvec(6,k)+=sel_dome_wt(k)
+											*square(log_sel(h,k,i,j)-log_sel(h,k,i,j+1));
+					}
 				}
 			}
 		}
@@ -2052,8 +2085,8 @@ FUNCTION void simulation_model(const long& seed)
 	dvector wt(syr-nage-1,nyr);			//recruitment anomalies
 	dmatrix epsilon(1,nit,1,nit_nobs);  //observation errors in survey
 	
-	double sig = value(rho/varphi);
-	double tau = value((1.-rho)/varphi);
+	double sig = value(sqrt(rho)/varphi);
+	double tau = value(sqrt(1.-rho)/varphi);
 	
 	if(seed==000)
 	{
@@ -2433,8 +2466,8 @@ REPORT_SECTION
 	double steepness=value(theta(2));
 	REPORT(steepness);
 	REPORT(m);
-	double tau = value((1.-rho)/varphi);
-	double sig = value(rho/varphi);
+	double tau = value(sqrt(1.-rho)/varphi);
+	double sig = value(sqrt(rho)/varphi);
 	REPORT(tau);
 	REPORT(sig);
 	REPORT(age_tau2);
@@ -2716,7 +2749,7 @@ FUNCTION void projection_model(const double& tac);
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*fec(nyr);//avg_fec;
 		
 		//Age-sage recruits
-		double tau = value((1.-rho)/varphi); 
+		double tau = value(sqrt(1.-rho)/varphi); 
 		double xx = randn(int(tac)+i)*tau;
 		
 		if(i>=syr+sage-1)
