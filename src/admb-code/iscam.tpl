@@ -1860,7 +1860,7 @@ FUNCTION calcObjectiveFunction
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 	//cout<<f<<endl;
 	nf++;
-	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
 	
   }
 	
@@ -1946,7 +1946,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	
   }
 	
-FUNCTION void calc_reference_points()
+FUNCTION void calcReferencePoints()
   {
 	/**
 	\file iscam.tpl
@@ -1959,19 +1959,21 @@ FUNCTION void calc_reference_points()
 	need a bias correction term to get this right.
 	
 	Modification for multiple fleets:
-		Need to pass a weighted average vector of selectivities
+	-	Need to pass a weighted average vector of selectivities
 		to the equilibrium routine, where the weights for each
 		selectivity is based on the allocation to each fleet.
 		
-		Perhaps as a default, assign an equal allocation to each
+	-	Perhaps as a default, assign an equal allocation to each
 		fleet.  Eventually,user must specify allocation in 
 		control file.
 		
-		Use selectivity in the terminal year to calculate reference
+	-	Use selectivity in the terminal year to calculate reference
 		points.
 	
+	Feb 16, 2012.  Added nsex calculations to this routine & its dependencies
+	
 	*/
-	int i,j;
+	int h,i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
 	double dye_df,ddye_df,spr;
 	fe = 1.5*value(m_bar);
@@ -2039,7 +2041,7 @@ FUNCTION void calc_reference_points()
 	}
 	//exit(1);
 	
-	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
   }
 	
 FUNCTION void simulation_model(const long& seed)
@@ -2401,7 +2403,7 @@ FUNCTION void simulation_model(const long& seed)
 	//CHANGED Fixed bug in reference points calc call from simulation model,
 	//had to calculate m_bar before running this routine.
 	
-	calc_reference_points();
+	calcReferencePoints();
 	//cout<<"	OK after reference points\n"<<fmsy<<endl;
 	//exit(1);
 	//	REPORT(fmsy);
@@ -2522,7 +2524,7 @@ REPORT_SECTION
 	REPORT(wt_obs);
 
 	if(last_phase())
-	{	calc_reference_points();
+	{	calcReferencePoints();
 		REPORT(fmsy);
 		REPORT(msy);
 		REPORT(bmsy);
@@ -2582,7 +2584,7 @@ FUNCTION mcmc_output
 	}
 	
 	// leading parameters & reference points
-	calc_reference_points();
+	calcReferencePoints();
 	// decision table output
 	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
 	double future_bt4 = sum(future_bt(4,nage));
