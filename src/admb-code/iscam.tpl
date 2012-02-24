@@ -1864,7 +1864,7 @@ FUNCTION calcObjectiveFunction
 	
   }
 	
-FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+FUNCTION void equilibrium(const double& fe, const double& ro, const double& kap, const dvector& m, const dvector& age, const dvector& wa, const dvector& fa, d3array& va, const dvector& allocation, double& re, double& ye, double& be, double& phiq, double& dphiq_df, double& dre_df)
   {
 	/*
 	This is the equilibrium age-structured model that is 
@@ -1894,18 +1894,52 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	dphiq_df	-partial of per recruit yield wrt fe
 	
 	FIXME add Ricker model to reference points calculations.
-	FIXME partial derivatives for dphif_df need to be fixed when cntrl(12)>0.
-	*/
-	int i;
+	FIXME partial derivatives for dphif_df need to be fixed when cntrl(13)>0.
 	
-	int nage=max(age);
-	int sage=min(age);
-	dvector lx=pow(exp(-m),age-double(sage));
-	lx(nage)/=(1.-exp(-m));
-	dvector lz=lx;
-	dvector za=m+fe*va;
-	dvector sa=1.-exp(-za);
-	dvector qa=elem_prod(elem_div(va,za),sa);
+	FEB 20, 2012.  Adding nsex calculations to this routine.
+	
+	- With more than 1 gear and an allocation to each of the gears, for a
+	  given fishing rate, need to figure out how to adjust fe_k to meet the
+	  allocation.  For now, just set fe_k = fe*allocation(k);
+	
+	*/
+	int h,i,j,k;
+	
+	int nage = max(age);
+	int sage = min(age);
+	int nk   = allocation.indexmax();//number of gears involved (or from allocation)
+	dvector fe_k(1,nk);
+	fe_k = fe*allocation;
+	dmatrix lx(1,nsex,sage,nage);
+	dmatrix lz(1,nsex,sage,nage);
+	dmatrix za(1,nsex,sage,nage);
+	dmatrix sa(1,nsex,sage,nage);
+	3darray qa(1,nsex,1,nk,sage,nage);
+	
+	for(h=1;h<=nsex;h++)
+	{
+		lx(h)      = pow(exp(-m(h)),age-double(sage));
+		lx(h,nage) = lx(h,nage)/(1.-exp(-m(h)));
+		
+		lz(h)      = lx(h);
+		za(h)      = m(h);
+		for(k=1;k<=nk;k++)
+		{
+			za(h) += fe_k(k)*va(h)(k);
+		}
+		sa(h)      = (1.-exp(-zh(h)));
+		for(k=1;k<=ng;k++)
+		{
+			qa(h)(k) = elem_prod(elem_div(va(h)(k),za(h)),sa(h));
+		}
+		
+	}
+	//dvector lx=pow(exp(-m),age-double(sage));
+	//lx(nage)/=(1.-exp(-m));
+	//dmatrix lz=lx;
+	//dvector za=m+fe*va;
+	//dvector sa=1.-exp(-za);
+	//dvector qa=elem_prod(elem_div(va,za),sa);
 	
 	double phie = lx*fa;		//eggs per recruit
 	double so = kap/phie;
@@ -1970,13 +2004,27 @@ FUNCTION void calcReferencePoints()
 	-	Use selectivity in the terminal year to calculate reference
 		points.
 	
-	Feb 16, 2012.  Added nsex calculations to this routine & its dependencies
+	Feb 16, 2012.  Starting to add nsex calculations to this routine 
+	& its dependencies.  If nsex > 1, now have to calculate catch of
+	each sex.  This routine needs to be over-hauled to properly account
+	for allocations among gear types.
+	
+	PSEUDO CODE
+	1) set initial guess for fe = 1.5*mean(m)
+	2) call equilibrium routine passing (theta,fe,allocation,avg_log_sel(1,ngear))
+	   where theta is a vector of biological parameters. The equilibrium routine returns
+	   the total yield and derivatives of the catch equation.
 	
 	*/
 	int h,i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
 	double dye_df,ddye_df,spr;
-	fe = 1.5*value(m_bar);
+	fe = 1.5*value(mean(m_bar));
+	
+	
+	
+	
+	/* DEPRECATE THE CODE BELOW */
 	
 	/*Calculate average vulnerability*/
 	dvector va_bar(sage,nage);
@@ -2013,6 +2061,8 @@ FUNCTION void calcReferencePoints()
 				fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 	msy=ye;
 	bmsy=be;
+	
+	/* DEPRECATE THE CODE ABOVE */
 	
 	/*TODO print this to the REPORT file for plotting.*/
 	/*SM Loop over discrete value of fe and ensure above code is 
