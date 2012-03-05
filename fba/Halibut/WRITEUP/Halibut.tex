@@ -1,0 +1,137 @@
+%
+%  Halibut
+%
+%  Created by Martell on 2012-03-05.
+%  Copyright (c) 2012 UBC Fisheries Centre. All rights reserved.
+%
+\documentclass[]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+\usepackage{fancyhdr}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% More symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Package for including code in the document
+\usepackage{listings}
+
+% If you want to generate a toc for each chapter (use with book)
+\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+%-------------------------------------------------------------------------
+%Water mark
+\usepackage{eso-pic}
+%\usepackage{graphicx}
+\usepackage{color}
+\usepackage{type1cm}
+\usepackage{float} 
+\usepackage{array}
+\makeatletter
+  \AddToShipoutPicture{%
+    \setlength{\@tempdimb}{.6\paperwidth}%
+    \setlength{\@tempdimc}{.45\paperheight}%
+    \setlength{\unitlength}{1pt}%
+    \put(\strip@pt\@tempdimb,\strip@pt\@tempdimc){%
+      \makebox(0,0){\rotatebox{45}{\textcolor[gray]{0.85}
+      {\fontsize{2.00cm}{1.75cm}\selectfont{DRAFT \today}}}}
+    }
+} \makeatother
+%-------------------------------------------------------------------------
+
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+\title{Halibut Bycatch Management Research}
+\author{ Steven J.D. Martell \\ University of British Columbia\\  2202 Main Mall, \\ Vancouver, BC\\ V6T 1Z4 }
+
+\date{2012-03-05}
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+    \maketitle \thispagestyle{empty}
+    \vfill
+    \noindent\hrulefill\\
+	Document started March 5, 2012.
+   \clearpage
+\thispagestyle{empty}
+\clearpage
+
+
+\newpage
+
+
+%% -Executive summary material------------------------------------------
+
+\pagenumbering{roman}
+\input{./EXEC_SUMMARY/execSummary.tex}
+
+\newpage
+\tableofcontents
+\addcontentsline{toc}{section}{Contents}
+\newpage
+
+\listoffigures
+\addcontentsline{toc}{section}{List of Figures}
+\newpage
+
+\listoftables
+\addcontentsline{toc}{section}{List of Table}
+\newpage
+%% -Main body of the document-------------------------------------------
+\pagenumbering{arabic}
+
+
+
+
+\section{Introduction}
+
+%% -End of main body of the document------------------------------------
+
+  %% -References
+\clearpage
+%input "Refs.bib"
+%\bibliographystyle{plainnat}
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{apalike}
+\bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+\end{document}

@@ -9,3 +9,4 @@ Use the makeproject shell script to set up a new project.
 
 Assessment Dir		Author		Details
 BC-herring-2011.    SJDM		Assessment for five major & 2 minor BC herring stocks
+Halibut				SJDM		A policy Simulation tool for Pacific Halibut bycatch management
