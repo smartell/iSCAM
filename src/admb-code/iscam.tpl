@@ -596,6 +596,7 @@ PARAMETER_SECTION
 	
 	LOC_CALCS
 		if(!SimFlag) log_ft_pars = log(0.1);
+		if(SimFlag)  log_ft_pars = -30.0;
 	END_CALCS
 	
 	
@@ -687,8 +688,7 @@ PRELIMINARY_CALCS_SECTION
     initParameters();
     calcSelectivities();
     calcTotalMortality();
-    cout<<"M\n"<<m<<endl;
-    cout<<"Z\n"<<Z<<endl;
+    simulateNumbersAtAge();
     cout<<"ok to here"<<endl;
     //simulation_model(rseed);
   }
@@ -1116,6 +1116,7 @@ FUNCTION calcTotalMortality
 		//Natural mortality (year and age specific)
 		//M_tot(syr,nyr,sage,nage);
 		M_tot(h) = m(h);
+		m_bar(h) = m(h);
 	}
 
 
@@ -1136,21 +1137,22 @@ FUNCTION calcTotalMortality
 		log_m_devs = m_spline(fm);
 	}
 	
-	// Random walk in natural mortality.
-	if(active(log_m_nodes)&&i>syr)
+	
+	for(h=1;h<=nsex;h++)
 	{
-		for(h=1;h<=nsex;h++)
+		// Random walk in natural mortality.
+		if(active(log_m_nodes))
 		{
 			for(j=syr+1;j<=nyr;j++)
 			{
 				M_tot(h)(j)=M_tot(h)(j-1)*exp(log_m_devs(j));
 			}
 			m_bar(h) = mean(M_tot(h));
-	
-			Z(h)=M_tot(h)+F(h);
-			S(h)=mfexp(-Z(h));
 		}
+		Z(h)=M_tot(h)+F(h);
+		S(h)=mfexp(-Z(h));
 	}
+	
 	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
   }
@@ -1171,7 +1173,7 @@ FUNCTION calcNumbersAtAge
 	
 	int h,i,j;
 	N.initialize();
-	
+	cout<<m_bar(1)<<endl;
 	
 	if(cntrl(5)){	//If initializing in at unfished conditions
 		log_rt(syr) = log(ro);
@@ -2504,6 +2506,76 @@ FUNCTION calcObjectiveFunction
 //	dvector res = y - (a+b*x);
 //	return(res);
 //  }
+
+FUNCTION simulateNumbersAtAge
+  {
+	/*
+		March 6, 2012.
+		Call from Preliminary Calcs Section Only
+		
+		This is a copy of calcNumbersAtAge to be used for the simulation model
+		where the total mortality rate is conditioned on the input catch data.
+		Recruitment is split equally to each of the sexes.
+		
+		MODIFICATIONS:
+		   calculate total Z based on observed catch using the numerical soln.
+		   to the Baranov Catch Equation.
+	*/
+	
+	int h,i,j;
+	N.initialize();
+	
+	
+	if(cntrl(5)){	//If initializing in at unfished conditions
+		log_rt(syr) = log(ro);
+		for(h=1;h<=nsex;h++)
+		{
+			for(j=sage;j<=nage;j++)
+			{
+				N(h)(syr,j)=ro/nsex * exp(-m_bar(h)*(j-1.));
+			}
+			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
+		}
+	}
+	else{			//If starting at fished conditions
+		log_rt(syr) = log_avgrec+log_rec_devs(syr);
+		for(h=1;h<=nsex;h++)
+		{
+			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
+			for(j=sage+1;j<=nage;j++)
+			{
+				dvariable tmp_rt = mfexp(log_recinit+init_log_rec_devs(j));
+				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
+			}
+			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
+		}
+	}
+	
+	
+	
+	//initial number of sage recruits from year syr+1, nyr;
+	for(h=1;h<=nsex;h++)
+	{
+		for(i=syr+1;i<=nyr;i++)
+		{
+			log_rt(i)=log_avgrec+log_rec_devs(i);
+			N(h)(i,sage)=mfexp(log_rt(i))/nsex;
+		}
+		N(h)(nyr+1,sage)=mfexp(log_avgrec)/nsex;
+	
+		/* Dynamic state variables */
+		for(i=syr;i<=nyr;i++)
+		{
+			N(h)(i+1)(sage+1,nage)=++elem_prod(N(h)(i)(sage,nage-1),S(h)(i)(sage,nage-1));
+			N(h)(i+1,nage)+=N(h)(i,nage)*S(h)(i,nage);
+		}
+	}
+	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
+	
+  }
+
+
+
 
 REPORT_SECTION
   {
