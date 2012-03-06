@@ -1,0 +1,51 @@
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/WRITEUP/Halibut.tex
+
+\section{Model Description} % (fold)
+\label{sec:model_description}
+
+The following detailed documentation is a description of the simulation model used to generate model output in this report.  The description is broken down into three subsections: 1) simulation model input, 2) state dynamics, and 3) model outputs.  A series of tables along with a detailed written description is used to document the model.  The tables of equations are meant to represent the logical progression of using input data to initialize the population model, simulating dynamical responses to alternative policies and deriving model outputs.
+
+% -----------------------------------------------------------------------------
+\subsection{Simulation model input} % (fold)
+\label{sub:simulation_model_input}
+
+\begin{table}
+	\caption{List of symbols, units and description of variables for the simulation model.}
+	\label{tab:ListOfSymbols}
+	\begin{center}
+	\begin{tabular}{ccl}
+		\hline
+		Symbol & Units & Description \\
+		\hline
+		$h$	& - & index for sex\\
+		$i$	& - & index for year\\
+		$j$	& - & index for age\\
+		$k$	& - & index for gear\\
+		\multicolumn{3}{l}{\underline{Input Parameters}}\\
+		$R_0$	& millions	& unfished recruitment\\
+		$h$		& -			& steepness of the stock-recruitment relationship\\
+		$M_h$	& yr$^{-1}$	& instantaneous natural mortality rate by sex \\
+		$\bar{R}$ & millions & average recruitment\\
+		$\ddot{R}$ & millions & initial recruitment\\
+		$\omega_i$ & - & annual recruitment deviation in year i\\
+		$\ddot{\omega_j}$ & - & initial recruitment deviation for age j\\
+		\hline
+	\end{tabular}
+	\end{center}
+\end{table}
+
+% subsection simulation_model_input (end)
+% -----------------------------------------------------------------------------
+\subsection{State dynamics} % (fold)
+\label{sub:state_dynamics}
+
+% subsection state_dynamics (end)
+% -----------------------------------------------------------------------------
+\subsection{Model outputs} % (fold)
+\label{sub:model_outputs}
+
+% subsection model_outputs (end)
+
+
+% section model_description (end)
+

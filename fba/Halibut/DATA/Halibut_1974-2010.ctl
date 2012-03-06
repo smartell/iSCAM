@@ -41,7 +41,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-12		11    11    11   11   11  # -selectivity type ivector(isel_type) for gear
+11		11    11    11   11   11  # -selectivity type ivector(isel_type) for gear
 70.0	65    65    65   65   65  # -Age/length at 50% selectivity (logistic)
 5.25    5     5     5    5    5   # -STD at 50% selectivity (logistic)
 0		0	  0  	0 	 0    0   # -No. of age nodes for each gear (0=ignore)

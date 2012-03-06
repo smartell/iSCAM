@@ -683,9 +683,13 @@ PRELIMINARY_CALCS_SECTION
   nf=0;
   if(SimFlag) 
   {
+    cout<<"In simulation mode"<<endl;
     initParameters();
     calcSelectivities();
     calcTotalMortality();
+    cout<<"M\n"<<m<<endl;
+    cout<<"Z\n"<<Z<<endl;
+    cout<<"ok to here"<<endl;
     //simulation_model(rseed);
   }
 

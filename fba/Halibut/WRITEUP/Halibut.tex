@@ -37,7 +37,25 @@
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
 
-%-------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+%% -math tables-
+\newcounter{saveEq}
+  \def\putEq{\setcounter{saveEq}{\value{equation}}}
+  \def\getEq{\setcounter{equation}{\value{saveEq}}}
+  \def\tableEq{ % equations in tables
+    \putEq \setcounter{equation}{0}
+    \renewcommand{\theequation}{T\arabic{table}.\arabic{equation}}
+    \vspace{-5mm}
+    }
+  \def\normalEq{ % renew normal equations
+    \getEq
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}}
+
+  \def\puthrule{ %thick rule lines for equation tables
+    \hrule \hrule \hrule \hrule \hrule}
+% -----------------------------------------------------------------------------
+
+% -----------------------------------------------------------------------------
 %Water mark
 \usepackage{eso-pic}
 %\usepackage{graphicx}
@@ -55,7 +73,7 @@
       {\fontsize{2.00cm}{1.75cm}\selectfont{DRAFT \today}}}}
     }
 } \makeatother
-%-------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
 
 
 %\newif\ifpdf
@@ -119,10 +137,10 @@
 %% -Main body of the document-------------------------------------------
 \pagenumbering{arabic}
 
+\part{Impacts of bycatch \& wastage on halibut yield}
 
+\input{./MODEL_DESCRIPTION/modelDescription}
 
-
-\section{Introduction}
 
 %% -End of main body of the document------------------------------------
 

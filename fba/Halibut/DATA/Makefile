@@ -8,7 +8,7 @@ EXEC=iscam
 prefix=../../../dist
 DAT=RUN.dat
 CTL=Halibut_1974-2010
-ARG=
+ARG=-sim 999 -noest
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
 
