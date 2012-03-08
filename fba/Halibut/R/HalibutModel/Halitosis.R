@@ -22,7 +22,7 @@ age	<- 1:A	# vector of ages
 pg	<- dnorm(seq(-3, 3, length=G), 0, 1); pg <- pg/sum(pg)
 
 # Population parameters (female, male)
-bo		<- 100.0				# unfished female spawning biomass
+bo		<- 100.0			# unfished female spawning biomass
 h		<- 0.75				# steepness
 m		<- c(0.15, 0.18)	# natural mortality rate
 dm		<- 0.17				# discard mortality rate
@@ -64,7 +64,7 @@ function(fe=0, slim=0, dm=0.17)
 		
 		# growth
 		'vonb'  <- function(linf,k) len <- linf*(1-exp(-k*age))
-		dev     <- 0.3*linf[i]
+		dev     <- linf[i]*0.3
 		linf.g  <- seq(linf[i]-dev, linf[i]+dev, length=G)
 		la[,,i] <- sapply(linf.g, vonb,k=k[i])
 		wa[,,i] <- a*la[,,i]^b
@@ -233,12 +233,13 @@ function(obj, ...)
 
 # A key question is for every pound of bycatch what is the corresponding
 # yield loss to the directed fishery. This is computed by IPHC as the 
-# yield loss ration = (Wt. of yield loss)/(Wt. of bycatch).  The wt. of 
+# yield loss ration = (Wt. of future yield loss)/(Wt. of bycatch).  The wt. of 
 # the bycatch is straight forward. The yield loss is the difference between
 # the yield obtained with discard mortality =0 and discard mortality =0.17
 
 
 SPR <- .equil("spr", dm=dm)
+SPR0<- .equil("spr", dm=0)
 YE  <- .equil("ye", dm=dm)
 YE0 <- .equil("ye", dm=0)
 DE	<- .equil("de", dm=dm)
@@ -248,17 +249,23 @@ LV	<- .equil("landed.value", dm=dm)
 DV	<- .equil("discard.value", dm=dm)
 
 # REPORT SECTION
-par(mfcol=c(2, 2), las=1)
+par(mfcol=c(1, 1), las=1)
 isolvl <- c(0.35, seq(0, 1, by=0.1))
 isolwd <- c(2, rep(1, 11))
 xl     <- "Fishing mortality"
 yl     <- "Size limit (cm)"
-plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn biomass per recruit")
+plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn potential ratio")
 plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield")
 plot(DE ,xlab=xl,ylab=yl,main="Discarded yield")
 X = DE
 X$Z = (YE0$Z-YE$Z)/(DE$Z)
 plot(X, xlab=xl,ylab=yl,main="Yield loss ratio")
+
+#The following in the spawning biomass per recruit lost per 
+#unit of discard. This should be the spawning biomass,  not SPR
+SE = DE
+SE$Z = (SPR0$Z-SPR$Z)/(DE$Z)
+plot(SE, add=TRUE, col="blue", levels=seq(0, 10, by=.25))
 
 E=DE
 E$Z = YE$Z/(YE$Z+DE$Z)

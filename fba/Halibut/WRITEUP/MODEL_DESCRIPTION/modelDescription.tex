@@ -5,11 +5,34 @@
 
 The following detailed documentation is a description of the simulation model used to generate model output in this report.  The description is broken down into three subsections: 1) simulation model input, 2) state dynamics, and 3) model outputs.  A series of tables along with a detailed written description is used to document the model.  The tables of equations are meant to represent the logical progression of using input data to initialize the population model, simulating dynamical responses to alternative policies and deriving model outputs.
 
+To summarize the following subsections that describe the model in detail, the following pseudocode represents the general order of operations (implemented as specific functions within the computer code).
+
+\noindent\underline{Pseudocode:}
+\begin{enumerate}
+	\item Read simulation model inputs, (biological data, fishery data and model parameters).
+	\item Initialize model parameters (initial age-structure, annual recruitment, etc).
+	\item Calculate length-based selectivities for each gear type for each sex.
+	\item Partition fishing mortality to each fishing sector.
+	\item Calculate age-specific total mortality rate for each year where the probability of capture and discard is a function of selectivity and size limits.
+	\item Calculate numbers-at-age each year based on annual values of $Z$.
+	\item Compute model outputs and performance measures.
+\end{enumerate}
+
 % -----------------------------------------------------------------------------
 \subsection{Simulation model input} % (fold)
 \label{sub:simulation_model_input}
 
-\begin{table}
+List of model input:
+\begin{enumerate}
+	\item Historical catch data, or fishing mortality rates.
+	\item Annual recruitment from 1996 to present.
+	\item Initial numbers-at-age by sex.
+	\item Stock parameters ($B_0$,$h$,$M$)
+	\item Selectivity parameters (length-based selectivity)
+	\item Size limit, target harvest rate, \& other policy related parameters (e.g., SUFD).
+\end{enumerate}
+
+\begin{table}[ht]
 	\caption{List of symbols, units and description of variables for the simulation model.}
 	\label{tab:ListOfSymbols}
 	\begin{center}
@@ -36,10 +59,18 @@ The following detailed documentation is a description of the simulation model us
 
 % subsection simulation_model_input (end)
 % -----------------------------------------------------------------------------
-\subsection{State dynamics} % (fold)
-\label{sub:state_dynamics}
+\subsection{Analytical description} % (fold)
+\label{sub:analytical_description}
 
-% subsection state_dynamics (end)
+% 1) Initial states
+% 2) Selectivities and joint probablity for fishing mortality & discard mortality.
+% 3) Calculating fishing mortality rates from 1994-present conditioned on catch.
+In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data are not readily available to be used in this analysis.  The sex composition of the commercial catch was approximated by applying the same fishing mortality rate to each of the sexes, where the fishing mortality rate was approximated by the historical total landings divided by the simulated exploitable biomass (both sexes combined).  This differs substantially from the methods used to apportion commercial catch to each sex \cite[see][for details]{clark2004method}.
+
+
+% 4) Calculate sex- age-specifc total mortality rates
+
+% subsection analytical_description (end)
 % -----------------------------------------------------------------------------
 \subsection{Model outputs} % (fold)
 \label{sub:model_outputs}

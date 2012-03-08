@@ -432,6 +432,8 @@ DATA_SECTION
 	init_ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
 	init_vector sel_2nd_diff_wt(1,ngear);	//Penalty weight for 2nd difference in selectivity.
 	init_vector sel_dome_wt(1,ngear);		//Penalty weight for dome-shaped selectivity.
+	init_vector sizeLimit(1,ngear);		//Size limit for specific gear.
+	init_vector discMort(1,ngear);		//Discard mortality rate for specific gear.
 	!! cout<<isel_type<<endl;
 	
 	LOC_CALCS
@@ -530,13 +532,12 @@ DATA_SECTION
 	// 12-> number of estimated nodes for deviations in natural mortality
 	// 13-> fraction of total mortality that takes place prior to spawning
 	// 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
-	// FIXME: document cntrl(14).
 	init_vector cntrl(1,14);
 	int verbose;
 	
 	init_int eofc;
 	LOC_CALCS
-		verbose = cntrl(1);
+		verbose   = cntrl(1);
 		cout<<"cntrl\n"<<cntrl<<endl;
 		cout<<"eofc\t"<<eofc<<endl;
 		if(eofc==999){
@@ -550,10 +551,10 @@ DATA_SECTION
 	int nf;
 	
 	ivector ilvec(1,6);
-	!!ilvec=ngear;			//number of fisheries
-	!!ilvec(2)=nit;			//number of surveys
-	!!ilvec(3)=na_gears;	//number of age-comps
-	!!ilvec(4)=1;
+	!!ilvec    = ngear;			//number of fisheries
+	!!ilvec(2) = nit;			//number of surveys
+	!!ilvec(3) = na_gears;		//number of age-comps
+	!!ilvec(4) = 1;
 	
 	// SM Oct 31, 2010.  Implementing retrospective analysis.
 	//Dont read in any more data below the retrospective reset of nyr
@@ -596,7 +597,7 @@ PARAMETER_SECTION
 	
 	LOC_CALCS
 		if(!SimFlag) log_ft_pars = log(0.1);
-		if(SimFlag)  log_ft_pars = -30.0;
+		if(SimFlag)  log_ft_pars = log(0.215);
 	END_CALCS
 	
 	
@@ -642,7 +643,7 @@ PARAMETER_SECTION
 	vector m(1,nsex);			//initial natural mortality rate
 	vector m_bar(1,nsex);		//average natural mortality rate
 	vector log_rt(syr-nage+sage,nyr);
-	vector vax(sage,nage);		//survey selectivity coefficients
+	//vector vax(sage,nage);		//survey selectivity coefficients
 	vector q(1,nit);			//survey catchability coefficients
 	
 	vector sbt(syr,nyr+1);		//spawning stock biomass
@@ -660,7 +661,7 @@ PARAMETER_SECTION
 	
 	3darray N(1,nsex,syr,nyr+1,sage,nage);		//Numbers at age
 	3darray M_tot(1,nsex,syr,nyr,sage,nage);	//Age-specific natural mortality
-	3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
+	//3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
 	3darray F(1,nsex,syr,nyr,sage,nage);		//Age-specific fishing mortality
 	3darray Z(1,nsex,syr,nyr,sage,nage);
 	3darray S(1,nsex,syr,nyr,sage,nage);
@@ -674,6 +675,7 @@ PARAMETER_SECTION
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
 	4darray log_sel(1,nsex,1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
+	4darray log_ret(1,nsex,1,ngear,syr,nyr,sage,nage);		//retention coefficients based on size limits.
 	4darray Chat(1,nsex,1,ngear,syr,nyr,sage,nage);			//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
@@ -687,9 +689,13 @@ PRELIMINARY_CALCS_SECTION
     cout<<"In simulation mode"<<endl;
     initParameters();
     calcSelectivities();
+    partitionFishingMortality();
     calcTotalMortality();
     simulateNumbersAtAge();
+    calcStockRecruitment();
+    cout<<sbt<<endl;
     cout<<"ok to here"<<endl;
+    model_parameters::report();
     //simulation_model(rseed);
   }
 
@@ -871,8 +877,12 @@ FUNCTION calcSelectivities
 		FEB 15, 2012.  Adding sex based selectivity option.
 		log_sel is now a 4darray(1,nsex,1,ngear,syr,nyr,sage,nage)
 		
-	
+		March 7, 2012.  Adding size-limits to selectivities.  With discard 
+		mortality rates > 0, this creats a joint probability where the age
+		specific mortality rate associated with fishing is a joint probability
+		of selectivity and retention.
 	*/
+	//cout<<"Entered calcSelectivities"<<endl;
 	int h,i,j,k;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
@@ -883,16 +893,17 @@ FUNCTION calcSelectivities
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
 	//jlog_sel.initialize();
 	log_sel.initialize();
+	log_ret.initialize();
 	avg_log_sel.initialize();
 	
-	for(h=1;j<=nsex;h++)
+	for(h=1;h<=nsex;h++)
 	{
 		for(j=1;j<=ngear;j++)
 		{
 			tmp.initialize(); tmp2.initialize();
 			dvector iy(1,yr_nodes(j));
 			dvector ia(1,age_nodes(j));
-		
+			
 			switch(isel_type(j))
 			{
 				case 1:
@@ -992,7 +1003,7 @@ FUNCTION calcSelectivities
 					//logistic selectivity based on mean length-at-age
 					p1 = mfexp(sel_par(j,1,1));
 					p2 = mfexp(sel_par(j,1,2));
-				
+					
 					for(i=syr; i<=nyr; i++)
 					{
 						dvector tmp = wt_obs(h)(i) / a(h);
@@ -1029,25 +1040,37 @@ FUNCTION calcSelectivities
 			//subtract mean to ensure mean(exp(log_sel))==1
 			//substract max to ensure exp(log_sel) ranges from 0-1
 			for(i=syr;i<=nyr;i++)
-				log_sel(h)(j)(i) -= log( mean(mfexp(log_sel(h)(j)(i)))+tiny );
-				//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
+			{
+				//log_sel(h)(j)(i) -= log( mean(mfexp(log_sel(h)(j)(i)))+tiny );
+				log_sel(h)(j)(i) -= log(max(mfexp( log_sel(h)(j)(i) )));	
+			}
 			
-			//cout<<"log_sel \t"<<j<<"\n"<<log_sel(j)<<"\n \n"<<endl;
-			//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
-			/*ia.fill_seqadd(0,1./(age_nodes(j)-1));
-					iy.fill_seqadd(0,1./(yr_nodes(j)-1));
-					dvar_matrix tn(1,age_nodes(j),1,yr_nodes(j));
-					tn.colfill_seqadd(1,-.5,0.1);
-					tn.colfill_seqadd(2,-.4,0.1);
-					bicubic_spline(iy,ia,tn,tmp2);
-					cout<<ia<<endl;
-					cout<<iy<<endl;
-					cout<<tn<<endl;
-					cout<<tmp2<<endl;
-					exit(1);*/
+			
+			/*
+				The following is a the age-specific retention probabilty
+				based on the "sizeLimit" from the control file.
+				
+				log_ret(h)(j)(i)
+				
+				FIXME: size limits should be fishery specific, for example,
+				there is no size limits for the recreational halibut fishery.
+			*/
+			if(sizeLimit(j) > 0)
+			{
+				p1 = sizeLimit(j);
+				p2 = 0.1*sizeLimit(j);
+				for(i=syr; i<=nyr; i++)
+				{
+					dvector tmp = wt_obs(h)(i) / a(h);
+					dvector len = pow( tmp,1./b(h) );
+					log_ret(h)(j)(i) = log( plogis(len,p1,p2) );
+				}
+			}
+			
+			
+		} //end of gear j
+	} //end of sex h
 	
-		}
-	}
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
@@ -1085,12 +1108,18 @@ FUNCTION calcTotalMortality
 	
 	FIXME: watch for obs_ct by sex in this routine. May need to be modified
 	if there is sex based fishing mortality rates.
+	
+	March 7, 2012  Added retention probablity and discard mortality to the
+	age-specific total mortality (Z) eqations.
 	*/
 	int h,j,k,ki;
 	dvariable ftmp;
+	dvar_vector sj(sage,nage);
+	dvar_vector rj(sage,nage);
+	dvar_vector vj(sage,nage);
 	F.initialize();
 	ft.initialize();
-	log_ft.initialize();
+	//log_ft.initialize();
 	
 	//Fishing mortality
 	for(h=1;h<=nsex;h++)
@@ -1107,8 +1136,15 @@ FUNCTION calcTotalMortality
 			
 				ft(k,j)=ftmp;
 			
-				if(catch_type(k)!=3){	//exclude roe fisheries
-					F(h)(j)+=ftmp*mfexp(log_sel(h)(k)(j));
+				//exclude roe fisheries for age-specific F
+				if(catch_type(k)!=3)
+				{
+					// Joint probability of selectivity and retention 
+					sj       = mfexp( log_sel(h)(k)(j) );
+					rj       = mfexp( log_ret(h)(k)(j) );
+					vj       = elem_prod(sj,(rj + (1.0-rj)*discMort(k)));
+					F(h)(j) += ftmp*vj;
+					//F(h)(j) += ftmp*mfexp(log_sel(h)(k)(j));
 					//cout<<obs_ct(k,i)<<endl;
 				}
 			}
@@ -1292,12 +1328,22 @@ FUNCTION calcFisheryObservations
 					biomass, and harvest of roe.  
 	
 	Feb 12, 2012	Added nsex calculations 
+	
+	Mar 07, 2012	Need to incorporate the retention & sizelimit calculations.
+					In this case age-specific fishinig mortality rate is a joint
+					probability where fa = ft*sel*ret for the retained portion of
+					the catch.  The discard portion of the dead catch is given by 
+					fa=ft*sel*(1-ret)*discMort.
+					
+	Mar 08, 2012	Need to do some work here regarding discards. A given fleet will
+					have both reported landings and associated discards.  This will
+					require both a catch and discards being associated with a single 
+					gear. The current structure associates each catch column with a 
+					unique gear type.  The input data file will have to be modified
+					to accomodate discards and landed catch.
+	
 	*/
 	
-	/*
-		FIXED Reconcile the difference between the predicted catch 
-		here and in the simulation model.
-	*/
 	int h,i,k;
 	ct.initialize();
 	for(h=1;h<=nsex;h++)
@@ -1306,7 +1352,8 @@ FUNCTION calcFisheryObservations
 		{
 			for(k=1;k<=ngear;k++)
 			{
-				dvar_vector log_va=log_sel(h)(k)(i);
+				dvar_vector va = mfexp( log_sel(h)(k)(i) );
+				dvar_vector ra = mfexp( log_ret(h)(k)(k) );
 				
 				//SJDM Jan 16, 2011 Modification as noted above.
 				//SJDM Jan 06, 2012 Modification as noted above.
@@ -1318,7 +1365,8 @@ FUNCTION calcFisheryObservations
 					Note that fa is nsex due to log_va, bt ft(k,i) is the same
 					for both sexes
 					*/
-					dvar_vector fa = ft(k,i)*mfexp(log_va);
+					//dvar_vector fa = ft(k,i)*va;
+					dvar_vector fa = ft(k,i) * elem_prod(va,ra+(1.-ra)*discMort(k));
 					dvar_vector d1 = elem_div(fa,Z(h)(i));
 					Chat(h)(k,i)   = elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
 					switch(catch_type(k))
@@ -1339,9 +1387,10 @@ FUNCTION calcFisheryObservations
 				{
 					/*
 					If there is no commercial fishery the set Chat equal to 
-					the expected proportions at age.
+					the expected proportions at age. This is required for 
+					age comps in surveys etc.
 					*/
-					dvar_vector fa = mfexp(log_va);
+					dvar_vector fa = va;
 					dvar_vector d1 = elem_div(fa,Z(h)(i));
 					Chat(h)(k,i)=elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
 				}
@@ -2507,6 +2556,48 @@ FUNCTION calcObjectiveFunction
 //	return(res);
 //  }
 
+FUNCTION partitionFishingMortality
+  {
+	/*
+		March 7, 2012.
+		This function partitions the input fishing mortatliy rate
+		into components roughly equal to the catch proportions. 
+		
+		Noting that this does not account for selectivity differences,
+		this simplification avoids having to solve the baranov catch
+		equation for multiple fleets.  The latter maybe preferable.
+		
+		At this state of the simulation, log_ft_pars has been initialized
+		with a global fishing rate (same for all years and gears). Use the
+		observed catch in each year to partition this fishing mortality rate
+		such that the sum equals the global input rate.
+	*/
+	
+	int i,j,k,ki;
+	dmatrix pp(syr,nyr,1,ngear);
+	for(i=syr;i<=nyr;i++)
+	{
+		// proportions of the total catch
+		pp(i) = column(obs_ct,i);
+		pp(i)/= sum(pp(i));
+	}
+	
+	ki = 1;
+	for(k=1;k<=ngear;k++)
+	{
+		for(i=syr;i<=nyr;i++)
+		{
+			if(obs_ct(k,i)>0)
+			{
+				double finit = exp(value(log_ft_pars(ki)));
+				log_ft_pars(ki++) = log(finit*pp(i,k));
+			}
+		}
+	}
+	
+	
+  }
+
 FUNCTION simulateNumbersAtAge
   {
 	/*
@@ -2580,7 +2671,7 @@ FUNCTION simulateNumbersAtAge
 REPORT_SECTION
   {
 	if(verbose)cout<<"Start of Report Section..."<<endl;
-	int i,j,k;
+	int h,i,j,k;
 	REPORT(ControlFile);
 	REPORT(f);
 	REPORT(nlvec);
@@ -2614,11 +2705,12 @@ REPORT_SECTION
 	REPORT(fec);
 	//Selectivity
 	report<<"log_sel"<<endl;
-	for(k=1;k<=ngear;k++)
-		for(i=syr;i<=nyr;i++)
-			report<<k<<"\t"<<log_sel(k)(i)<<endl;
+	for(h=1;j<=nsex;h++)
+		for(k=1;k<=ngear;k++)
+			for(i=syr;i<=nyr;i++)
+				report<<h<<"\t"<<k<<"\t"<<log_sel(h)(k)(i)<<endl;
 	//REPORT(log_sel);
-	REPORT(vax);
+	//REPORT(vax);
 	REPORT(obs_ct);
 	REPORT(ct);
 	REPORT(ft);
