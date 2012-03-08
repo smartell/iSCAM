@@ -18,6 +18,10 @@ To summarize the following subsections that describe the model in detail, the fo
 	\item Compute model outputs and performance measures.
 \end{enumerate}
 
+The underlying model design is and age-structured population model with an annual time step.  The population model has two periods: (1) a historical period in which the population model is initialized with numbers-at-age in the first year, and annual recruitments for each year upto the present, and (2) a projection period where the numbers-at-age are simulated 15 years into the future under alternative scenarios and harvest policy options.  Information for the initialization of the population model is based on the most recent stock assessment for Pacific Halibut (Hare 2012 citation).  At each time step in the model, total age/sex-specific mortality rates are computed as a sum of natural and fishing mortalities from each of the directed and non-directed fisheries.
+
+Each fishing gear within the 
+
 % -----------------------------------------------------------------------------
 \subsection{Simulation model input} % (fold)
 \label{sub:simulation_model_input}
