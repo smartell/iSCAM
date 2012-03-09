@@ -279,14 +279,17 @@ DATA_SECTION
 
 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
 	
-	//Mean weight-at-age data (units are kg) (if exists)(by sex)
+	//Mean weight-at-age data (units are same units as catch) (if exists)(by sex)
+	//Now treating this as a ragged object where oldest age is the plus group.
 	init_int n_wt_nobs;
-	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,sage-1,nage);
+	init_ivector sage_wt(1,n_wt_nobs);
+	init_ivector nage_wt(1,n_wt_nobs);
+	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,sage_wt-1,nage_wt);
 	
-	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
-	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
-	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
-	matrix avg_fec(1,nsex,sage,nage);				//average fecundity-at-age
+	3darray wt_obs(1,nsex,syr,nyr+1,sage_wt,nage_wt);		//weight-at-age by sex
+	3darray wt_dev(1,nsex,syr,nyr+1,sage_wt,nage_wt);		//standardized deviations in weight-at-age
+	3darray fec(1,nsex,syr,nyr+1,sage_wt,nage_wt);			//fecundity-at-age
+	matrix avg_fec(1,nsex,sage,nage);						//average fecundity-at-age
 	LOC_CALCS
 		int j,jyr;
 		avg_fec.initialize();
@@ -565,9 +568,9 @@ PARAMETER_SECTION
 	//Leading parameters
 	//theta[1]		log_ro, or log_msy
 	//theta[2]		steepness(h), or log_fmsy
-	//theta[3]		log_m
+	//theta[3]		log_m(1,nsex)
 	//theta[4]		log_avgrec
-	//theta[5]		log_recinit
+	//theta[5]		log_recinit(1,nsex)
 	//theta[6]		rho
 	//theta[7]		vartheta
 	

@@ -13,3 +13,4 @@ CODE: The code for this model is written as an R-script.
 
 FILES:  Halitosis.R  explores effects of size limits on growth and yields.
         equilAge.R   a demo to adjust Fmsy to satisfy allocation levels.
+        IPHC.R       Reading the wobblesq.rep file and create objects for simulation model.
