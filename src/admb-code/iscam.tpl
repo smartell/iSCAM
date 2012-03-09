@@ -195,6 +195,9 @@ DATA_SECTION
 	//	}
 	//END_CALCS
 	
+	// The following is now input from the control file, so
+	// this has to be moved to the PROCEDURE SECTION.
+	// 
 	init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files
 	init_vector linf(1,nsex);
 	init_vector vonbk(1,nsex);
@@ -388,13 +391,13 @@ DATA_SECTION
 	
 	
 	// ***************************************************
-	// ** Read parameter controls from ControlFile
+	// ** Read parameter controls from ControlFile      **
 	// ***************************************************
 	!! ad_comm::change_datafile_name(ControlFile);
 	
 	init_int npar;
 	init_matrix theta_control(1,npar,1,7);
-	!! cout<<theta_control<<endl;
+	!! cout<<theta_control<<endl<<endl;
 	
 	vector theta_ival(1,npar);
 	vector theta_lb(1,npar);
@@ -402,11 +405,31 @@ DATA_SECTION
 	ivector theta_phz(1,npar);
 	ivector theta_prior(1,npar);
 	LOC_CALCS
-		theta_ival = column(theta_control,1);
-		theta_lb = column(theta_control,2);
-		theta_ub = column(theta_control,3);
-		theta_phz = ivector(column(theta_control,4));
-		theta_prior=ivector(column(theta_control,5));
+		theta_ival  = column(theta_control,1);
+		theta_lb    = column(theta_control,2);
+		theta_ub    = column(theta_control,3);
+		theta_phz   = ivector(column(theta_control,4));
+		theta_prior = ivector(column(theta_control,5));
+	END_CALCS
+	
+	// ***************************************************
+	// ** Read Sex specific parameters from control file**
+	// ***************************************************
+	init_3darray phi_control(1,nsex,1,9,1,7);
+	!!cout<<phi_control<<endl<<endl;
+	
+	matrix phi_ival(1,nsex,1,9);
+	vector phi_lb(1,9);
+	vector phi_ub(1,9);
+	ivector phi_phz(1,9);
+	LOC_CALCS
+		for(h=1;h<=nsex;h++)
+		{
+			phi_ival(h) = column(phi_control(h),1);
+		}
+		phi_lb = column(phi_control(1),2);
+		phi_ub = column(phi_control(1),3);
+		phi_phz = ivector(column(phi_control(1),4));
 	END_CALCS
 	
 	
@@ -565,15 +588,26 @@ PARAMETER_SECTION
 	//Leading parameters
 	//theta[1]		log_ro, or log_msy
 	//theta[2]		steepness(h), or log_fmsy
-	//theta[3]		log_m
-	//theta[4]		log_avgrec
-	//theta[5]		log_recinit
-	//theta[6]		rho
-	//theta[7]		vartheta
+	//theta[3]		log_avgrec
+	//theta[4]		rho
+	//theta[5]		vartheta
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
+	
+	//Sex specific leading parameters
+	//init_bounded_vector_vector phi(1,9,1,nsex,phi_lb,phi_ub,phi_phz);
+	!! cout<<"Ok to here"<<endl;
+	init_bounded_vector_vector phi(1,nsex,1,9,phi_lb,phi_ub,phi_phz);
+	LOC_CALCS
+		for(int h=1;h<=nsex;h++)
+		{
+			phi(h) = phi_ival(h);
+		}
+	END_CALCS
+	!! cout<<"Ok after there"<<endl;
+	
 	
 	//Selectivity parameters (A very complicated ragged array)
 	//Not sure how to handle this for sex dimension.
@@ -633,15 +667,27 @@ PARAMETER_SECTION
 	number bo;					//unfished spawning stock biomass
 	number kappa;				//Goodyear compensation ratio
 	number log_avgrec;			//log of average recruitment.
-	number log_recinit;			//log of initial recruitment in syr.
 	//number log_avg_f;			//log of average fishing mortality DEPRICATED
 	number rho;					//proportion of the observation error
 	number varphi				//total precision in the CPUE & Rec anomalies.
 	number so;
 	number beta;
 	
+	vector log_recinit(1,nsex);	//log of initial recruitment in syr.
 	vector m(1,nsex);			//initial natural mortality rate
 	vector m_bar(1,nsex);		//average natural mortality rate
+	vector linf(1,nsex);                                                  
+	vector vonbk(1,nsex);                                                 
+	vector to(1,nsex);                                                    
+	vector a(1,nsex);                                                     
+	vector b(1,nsex);                                                     
+	vector ah(1,nsex);                                                    
+	vector gh(1,nsex);                                                    
+	
+	
+	
+	
+	
 	vector log_rt(syr-nage+sage,nyr);
 	//vector vax(sage,nage);		//survey selectivity coefficients
 	vector q(1,nit);			//survey catchability coefficients
@@ -665,6 +711,9 @@ PARAMETER_SECTION
 	3darray F(1,nsex,syr,nyr,sage,nage);		//Age-specific fishing mortality
 	3darray Z(1,nsex,syr,nyr,sage,nage);
 	3darray S(1,nsex,syr,nyr,sage,nage);
+	
+	matrix la(1,nsex,sage,nage);		//length-at-age                        
+	matrix wa(1,nsex,sage,nage);		//weight-at-age                        
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
@@ -688,13 +737,14 @@ PRELIMINARY_CALCS_SECTION
   {
     cout<<"In simulation mode"<<endl;
     initParameters();
+    calcGrowth();
     calcSelectivities();
     partitionFishingMortality();
     calcTotalMortality();
     simulateNumbersAtAge();
     calcStockRecruitment();
     cout<<sbt<<endl;
-    cout<<"ok to here"<<endl;
+    
     model_parameters::report();
     //simulation_model(rseed);
   }
@@ -753,26 +803,41 @@ FUNCTION initParameters
 	
 	Need to have a system for leading parameters to have sex based m.
 	*/
+	int h;
+	dvariable steepness;
 	
-	ro          = mfexp(theta(1));
-	dvariable h = theta(2);
-	m           = mfexp(theta(3));  //FIXME: for sex-based m
-	log_avgrec  = theta(4);
-	log_recinit = theta(5);
-	rho         = theta(6);
-	varphi      = theta(7);
+	ro         = mfexp(theta(1));
+	steepness  = theta(2);
+	log_avgrec = theta(3);
+	rho        = theta(4);
+	varphi     = theta(5);
 	
 	
 	switch(int(cntrl(2)))
 	{
 		case 1:
 			//Beverton-Holt model
-			kappa = (4.*h/(1.-h));
+			kappa = (4.*steepness/(1.-steepness));
 			break;
 		case 2:
 			//Ricker model
-			kappa = pow((5.*h),1.25);
+			kappa = pow((5.*steepness),1.25);
 		break;
+	}
+	
+	
+	// Sex specific leading parameters phi;
+	for(h=1;h<=nsex;h++)
+	{
+		log_recinit(h) = phi(h)(1);
+		m(h)           = phi(h)(2);
+		linf(h)        = phi(h)(3);
+		vonbk(h)       = phi(h)(4);
+		to(h)          = phi(h)(5);
+		a(h)           = phi(h)(6);
+		b(h)           = phi(h)(7);
+		ah(h)          = phi(h)(8);
+		gh(h)          = phi(h)(9);
 	}
 	
 	
@@ -785,6 +850,18 @@ FUNCTION initParameters
 	
   }
 	
+FUNCTION calcGrowth
+	//init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files                                                                 
+	int h;                                                                   
+	for(h=1;h<=nsex;h++)                                                     
+	{                                                                        
+		la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );                     
+		wa(h) = a(h)*pow(la(h),b(h));                                          
+	}                                                                        
+
+
+
+
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
   {
 	RETURN_ARRAYS_INCREMENT();
@@ -809,7 +886,7 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector& la)
   {
 	/*interplolation for length-based selectivity coefficeients*/
-	RETURN_ARRAYS_INCREMENT();
+	RETURN_ARRAYS_INCREMENT();                                                               
 	int nodes=size_count(spline_coffs);
 	dvector ia(1,nodes);
 	ia.fill_seqadd(0,1./(nodes-1));
@@ -1229,7 +1306,7 @@ FUNCTION calcNumbersAtAge
 			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
 			for(j=sage+1;j<=nage;j++)
 			{
-				dvariable tmp_rt = mfexp(log_recinit+init_log_rec_devs(j));
+				dvariable tmp_rt = mfexp(log_recinit(h)+init_log_rec_devs(j));
 				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
 			}
 			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
@@ -2635,7 +2712,7 @@ FUNCTION simulateNumbersAtAge
 			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
 			for(j=sage+1;j<=nage;j++)
 			{
-				dvariable tmp_rt = mfexp(log_recinit+init_log_rec_devs(j));
+				dvariable tmp_rt = mfexp(log_recinit(h)+init_log_rec_devs(j));
 				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
 			}
 			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
@@ -2678,7 +2755,7 @@ REPORT_SECTION
 	REPORT(ro);
 	double rbar=value(exp(log_avgrec));
 	REPORT(rbar);
-	double rinit=value(exp(log_recinit));
+	dvector rinit=value(exp(log_recinit));
 	REPORT(rinit);
 	REPORT(bo);
 	REPORT(kappa);
