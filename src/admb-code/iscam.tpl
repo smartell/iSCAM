@@ -198,32 +198,32 @@ DATA_SECTION
 	// The following is now input from the control file, so
 	// this has to be moved to the PROCEDURE SECTION.
 	// 
-	init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files
-	init_vector linf(1,nsex);
-	init_vector vonbk(1,nsex);
-	init_vector to(1,nsex);
-	init_vector a(1,nsex);
-	init_vector b(1,nsex);
-	init_vector ah(1,nsex);
-	init_vector gh(1,nsex);
+	//init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files
+	//init_vector linf(1,nsex);
+	//init_vector vonbk(1,nsex);
+	//init_vector to(1,nsex);
+	//init_vector a(1,nsex);
+	//init_vector b(1,nsex);
+	//init_vector ah(1,nsex);
+	//init_vector gh(1,nsex);
 	
-	matrix la(1,nsex,sage,nage);		//length-at-age
-	matrix wa(1,nsex,sage,nage);		//weight-at-age
-	LOC_CALCS
-	  cout<<"linf\t"<<linf<<endl;
-	  int h;
-	  for(h=1;h<=nsex;h++)
-	  {
-	  	la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );
-	  	wa(h) = a(h)*pow(la(h),b(h));
-	  }
-	  //la=linf*(1.-exp(-vonbk*(age-to)));
-	  //wa=a*pow(la,b);
-	  cout<<setprecision(2);		//2 decimal places for output
-	  cout<<"la\n"<<la<<endl;
-	  cout<<"wa\n"<<wa<<endl;
-	  cout<<setprecision(5);
-	END_CALCS
+	//matrix la(1,nsex,sage,nage);		//length-at-age
+	//matrix wa(1,nsex,sage,nage);		//weight-at-age
+	//LOC_CALCS
+	//  cout<<"linf\t"<<linf<<endl;
+	//  int h;
+	//  for(h=1;h<=nsex;h++)
+	//  {
+	//  	la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );
+	//  	wa(h) = a(h)*pow(la(h),b(h));
+	//  }
+	//  //la=linf*(1.-exp(-vonbk*(age-to)));
+	//  //wa=a*pow(la,b);
+	//  cout<<setprecision(2);		//2 decimal places for output
+	//  cout<<"la\n"<<la<<endl;
+	//  cout<<"wa\n"<<wa<<endl;
+	//  cout<<setprecision(5);
+	//END_CALCS
 	
 	//Time series data
 	init_matrix catch_data(syr,nyr,1,ngear+1);
@@ -286,79 +286,6 @@ DATA_SECTION
 	init_int n_wt_nobs;
 	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,sage-1,nage);
 	
-	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
-	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
-	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
-	matrix avg_fec(1,nsex,sage,nage);				//average fecundity-at-age
-	LOC_CALCS
-		int j,jyr;
-		avg_fec.initialize();
-		for(h=1;h<=nsex;h++)
-		{
-			for(j=syr;j<=nyr+1;j++)
-			{
-				wt_obs(h)(j)=wa(h);			
-				fec(h)(j)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(j));
-			}
-		}
-		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
-		for(h=1;h<=nsex;h++)
-		{
-			for(j=1;j<=n_wt_nobs;j++)
-			{
-				jyr=tmp_wt_obs(h)(j,sage-1);  //index for year
-				wt_obs(h)(jyr)=tmp_wt_obs(h)(j)(sage,nage);
-				fec(h)(jyr)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(jyr));
-			}
-		}
-		//Average fecundity
-		for(h=1;h<=nsex;h++)
-		{
-			int nfec = fec(h).rowmax()-fec(h).rowmin()+1;
-			avg_fec(h)=colsum(fec(h))/nfec;
-			//from Jake Schweigert: use mean-weight-at-age data
-			//from the last 5 years for the projected mean wt.
-			dvector tmp=colsum(wt_obs(h).sub(nyr-5,nyr))/6.;
-			wt_obs(h)(nyr+1) = tmp;
-			//July 14, 2011 Error handler to ensure non-zero wt_obs
-			//in the data. Otherwise causes and error with weight-based
-			//selectivities.
-			if(min(wt_obs(h))==0)
-			{
-				cout<<"Cannont have a observed 0 mean weight at age\n";
-				cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
-				exit(2);
-			}
-		}
-		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
-		cout<<"Ok after empiracle weight-at-age data"<<endl;
-		
-		/*	
-			FEB 14. Changed documentation regarding selectivity based
-			on deviations in mean weight-at-age.
-			
-			Trying a compromize where estimating an additional parameter
-			that attemps to explain residual variation in age-comps
-			via changes in standardized mean weights at age. This is 
-			implemented as:
-			
-			log_sel = log(plogis(age,s1,s2)) + s3*wa_dev
-			where wa_dev is a matrix of standardized deviations
-			(mu=0, std=1) of weights at age.  delta is calculated
-			based on the wt_dev matrix above.
-		*/
-		wt_dev.initialize();
-		for(h=1;h<=nsex;h++)
-		{
-			dmatrix mtmp = trans(wt_obs(h));
-			for(i=sage;i<=nage;i++)
-			{
-				dvector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
-				mtmp(i) = wa_dev;
-			}
-			wt_dev(h) = trans(mtmp);	//each column has mean=0 sd=1
-		}
-	END_CALCS
 	
 	//End of data file
 	init_int eof;	
@@ -423,6 +350,7 @@ DATA_SECTION
 	vector phi_ub(1,9);
 	ivector phi_phz(1,9);
 	LOC_CALCS
+		int h;
 		for(h=1;h<=nsex;h++)
 		{
 			phi_ival(h) = column(phi_control(h),1);
@@ -597,8 +525,6 @@ PARAMETER_SECTION
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Sex specific leading parameters
-	//init_bounded_vector_vector phi(1,9,1,nsex,phi_lb,phi_ub,phi_phz);
-	!! cout<<"Ok to here"<<endl;
 	init_bounded_vector_vector phi(1,nsex,1,9,phi_lb,phi_ub,phi_phz);
 	LOC_CALCS
 		for(int h=1;h<=nsex;h++)
@@ -606,7 +532,6 @@ PARAMETER_SECTION
 			phi(h) = phi_ival(h);
 		}
 	END_CALCS
-	!! cout<<"Ok after there"<<endl;
 	
 	
 	//Selectivity parameters (A very complicated ragged array)
@@ -647,11 +572,18 @@ PARAMETER_SECTION
 	//!! int ii;
 	//!! ii=syr-nage+sage;
 	//!! if(cntrl(5)) ii = syr;  //if initializing with ro
-	//init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
+	// March 12, 2012. Change init_log_rec_devs to 
+	// init_bounded_vector_vector(1,nsex,sage+1,nage)
 	
-	!! int init_dev_phz = 2;
+	!! ivector init_dev_phz(1,nsex);
+	!! init_dev_phz = 2;
 	!! if(cntrl(5)) init_dev_phz = -1;
-	init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
+	
+	//init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
+	// trick to assign constants to indexs for vector_vector
+	!! const int csage=sage+1;
+	!! const int cnage=nage;
+	init_bounded_vector_vector init_log_rec_devs(1,nsex,csage,cnage,-15.,15,init_dev_phz);
 	init_bounded_vector log_rec_devs(syr,nyr,-15.,15.,2);
 	
 	//Deviations for natural mortality
@@ -712,14 +644,18 @@ PARAMETER_SECTION
 	3darray Z(1,nsex,syr,nyr,sage,nage);
 	3darray S(1,nsex,syr,nyr,sage,nage);
 	
-	matrix la(1,nsex,sage,nage);		//length-at-age                        
-	matrix wa(1,nsex,sage,nage);		//weight-at-age                        
+	matrix la(1,nsex,sage,nage);			//length-at-age                        
+	matrix wa(1,nsex,sage,nage);			//weight-at-age                        
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
+	matrix avg_fec(1,nsex,sage,nage);		//average fecundity-at-age
 	
-
+	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
+	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
+	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
+	
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
@@ -737,13 +673,20 @@ PRELIMINARY_CALCS_SECTION
   {
     cout<<"In simulation mode"<<endl;
     initParameters();
+
     calcGrowth();
+
     calcSelectivities();
+
     partitionFishingMortality();
+
     calcTotalMortality();
+    
     simulateNumbersAtAge();
+    cout<<"Initial recruits\n"<<column(N(1),sage)<<endl;
+
     calcStockRecruitment();
-    cout<<sbt<<endl;
+    cout<<"Simulated spawn biomass\n"<<sbt<<endl;
     
     model_parameters::report();
     //simulation_model(rseed);
@@ -756,7 +699,9 @@ RUNTIME_SECTION
 
 PROCEDURE_SECTION
 	initParameters();
-
+	
+	calcGrowth();
+	
 	calcSelectivities();
 	
 	calcTotalMortality();
@@ -830,7 +775,7 @@ FUNCTION initParameters
 	for(h=1;h<=nsex;h++)
 	{
 		log_recinit(h) = phi(h)(1);
-		m(h)           = phi(h)(2);
+		m(h)           = mfexp( phi(h)(2) );
 		linf(h)        = phi(h)(3);
 		vonbk(h)       = phi(h)(4);
 		to(h)          = phi(h)(5);
@@ -852,14 +797,57 @@ FUNCTION initParameters
 	
 FUNCTION calcGrowth
 	//init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files                                                                 
-	int h;                                                                   
+	int h,i,j,iyr;               
+	avg_fec.initialize();	
+	wt_obs.initialize();
+	wt_dev.initialize();
+	
+	//cout<<"Entered calcGrowth"<<endl;
 	for(h=1;h<=nsex;h++)                                                     
 	{                                                                        
 		la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );                     
-		wa(h) = a(h)*pow(la(h),b(h));                                          
-	}                                                                        
-
-
+		wa(h) = a(h)*pow(la(h),b(h));
+		
+		for(i=syr;i<=nyr+1;i++)
+		{
+			wt_obs(h)(i)=wa(h);			
+			fec(h)(i)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(i));
+		}
+		
+		for(i=1;i<=n_wt_nobs;i++)
+		{
+			iyr=tmp_wt_obs(h)(i,sage-1);  //index for year
+			wt_obs(h)(iyr)=tmp_wt_obs(h)(i)(sage,nage);
+			fec(h)(iyr)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(iyr));
+		}
+		
+		//Average fecundity
+		int nfec = fec(h).rowmax()-fec(h).rowmin()+1;
+		avg_fec(h)=colsum(fec(h))/nfec;	
+		
+		//Weight in nyr+1 based on average weight in the past 5 years.
+		dvar_vector tmp=colsum(wt_obs(h).sub(nyr-5,nyr))/6.;
+		wt_obs(h)(nyr+1) = tmp;		                                          
+		//Weight deviations for selectivity as a function of length.
+		if(n_wt_nobs > 0)
+		{
+			dvar_matrix mtmp = trans(wt_obs(h));
+			for(i=sage;i<=nage;i++)
+			{
+				dvar_vector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
+				mtmp(i) = wa_dev;
+			}
+			wt_dev(h) = trans(mtmp);	//each column has mean=0 sd=1			
+		}
+		
+		// Error trap
+		if(n_wt_nobs>0 && min(tmp_wt_obs(h))==0)
+		{
+			cout<<"Cannont have a observed 0 mean weight at age\n";
+			cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
+			exit(2);
+		}
+	}  // end of h loop                                                                    
 
 
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
@@ -882,6 +870,20 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 		exit(1);*/
 	return(ffa(fa));
   }
+
+FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvar_vector& la)
+  {
+	/*interplolation for length-based selectivity coefficeients*/
+	RETURN_ARRAYS_INCREMENT();                                                               
+	int nodes=size_count(spline_coffs);
+	dvector ia(1,nodes);
+	ia.fill_seqadd(0,1./(nodes-1));
+	dvar_vector fa = (la-min(la))/(max(la)-min(la));
+	vcubic_spline_function ffa(ia,spline_coffs);
+	RETURN_ARRAYS_DECREMENT();
+	return(ffa(fa));
+  }
+
 
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector& la)
   {
@@ -1083,8 +1085,8 @@ FUNCTION calcSelectivities
 					
 					for(i=syr; i<=nyr; i++)
 					{
-						dvector tmp = wt_obs(h)(i) / a(h);
-						dvector len = pow( tmp,1./b(h) );
+						dvar_vector tmp = wt_obs(h)(i) / a(h);
+						dvar_vector len = pow( tmp,1./b(h) );
 						log_sel(h)(j)(i) = log( plogis(len,p1,p2) );
 					}
 					break;
@@ -1094,8 +1096,8 @@ FUNCTION calcSelectivities
 					//based on cubic spline interpolation
 					for(i=syr; i<=nyr; i++)
 					{
-						dvector tmp = wt_obs(h)(i) / a(h);
-						dvector len = pow( tmp,1./b(h) );
+						dvar_vector tmp = wt_obs(h)(i) / a(h);
+						dvar_vector len = pow( tmp,1./b(h) );
 						log_sel(h)(j)(i)=cubic_spline( sel_par(j)(1), len );
 					}
 					break;
@@ -1129,7 +1131,7 @@ FUNCTION calcSelectivities
 				
 				log_ret(h)(j)(i)
 				
-				FIXME: size limits should be fishery specific, for example,
+				CHANGED: size limits should be fishery specific, for example,
 				there is no size limits for the recreational halibut fishery.
 			*/
 			if(sizeLimit(j) > 0)
@@ -1138,8 +1140,8 @@ FUNCTION calcSelectivities
 				p2 = 0.1*sizeLimit(j);
 				for(i=syr; i<=nyr; i++)
 				{
-					dvector tmp = wt_obs(h)(i) / a(h);
-					dvector len = pow( tmp,1./b(h) );
+					dvar_vector tmp = wt_obs(h)(i) / a(h);
+					dvar_vector len = pow( tmp,1./b(h) );
 					log_ret(h)(j)(i) = log( plogis(len,p1,p2) );
 				}
 			}
@@ -1230,6 +1232,8 @@ FUNCTION calcTotalMortality
 		//M_tot(syr,nyr,sage,nage);
 		M_tot(h) = m(h);
 		m_bar(h) = m(h);
+		
+		cout<<"F"<<m(h)<<endl<<"End of F(h)"<<endl;
 	}
 
 
@@ -1306,7 +1310,7 @@ FUNCTION calcNumbersAtAge
 			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
 			for(j=sage+1;j<=nage;j++)
 			{
-				dvariable tmp_rt = mfexp(log_recinit(h)+init_log_rec_devs(j));
+				dvariable tmp_rt = mfexp(log_recinit(h)+init_log_rec_devs(h)(j));
 				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
 			}
 			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
@@ -1961,14 +1965,22 @@ FUNCTION calcObjectiveFunction
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(9));
 		//Penalty for log_rec_devs (large variance here)
 		pvec(4) = dnorm(log_rec_devs,2.0);
-		pvec(5) = dnorm(init_log_rec_devs,2.0);
+		for(h=1;h<=nsex;h++)
+		{
+			pvec(5) += dnorm(init_log_rec_devs(h),2.0);	
+		}
+		
 	}
 	else
 	{
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(8));
 		//Penalty for log_rec_devs (CV ~ 0.0707) in early phases
 		pvec(4)=100.*norm2(log_rec_devs);
-		pvec(5)=100.*norm2(init_log_rec_devs);
+		for(h=1;h<=nsex;h++)
+		{
+			pvec(5) += 100.*norm2(init_log_rec_devs(h));	
+		}
+		
 	}
 	
 	//Priors for deviations in natural mortality rates
@@ -2644,7 +2656,7 @@ FUNCTION partitionFishingMortality
 		this simplification avoids having to solve the baranov catch
 		equation for multiple fleets.  The latter maybe preferable.
 		
-		At this state of the simulation, log_ft_pars has been initialized
+		At this state of the simulation, log_ft_pars have been initialized
 		with a global fishing rate (same for all years and gears). Use the
 		observed catch in each year to partition this fishing mortality rate
 		such that the sum equals the global input rate.
@@ -2712,8 +2724,8 @@ FUNCTION simulateNumbersAtAge
 			N(h)(syr,sage)=mfexp(log_rt(syr))/nsex;
 			for(j=sage+1;j<=nage;j++)
 			{
-				dvariable tmp_rt = mfexp(log_recinit(h)+init_log_rec_devs(j));
-				N(h)(syr,j)      = tmp_rt/nsex * exp(-m_bar(h)*(j-sage));
+				dvariable tmp_rt = mfexp( log_recinit(h)+init_log_rec_devs(h)(j) );
+				N(h)(syr,j)      = tmp_rt * exp(-m_bar(h)*(j-sage));
 			}
 			N(h)(syr,nage)/=(1.-exp(-m_bar(h)));
 		}
@@ -3106,8 +3118,9 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include "stats.cxx"
-	#include "baranov.cxx"
+	//#include "stats.cxx"
+	//#include "baranov.cxx"
+	#include <statsLib.h>
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
