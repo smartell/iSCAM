@@ -76,8 +76,8 @@
 ## ------------------------------------------------------------------------- ##
 ##comm  sprt  pers  o32b  032w  u32b  u32w     
   11    11    11    11    11    11    11       # -selectivity type ivector(isel_type) for gear
-  65    65    65    65    82.3  82.3  82.3     # -Age/length at 50% selectivity (logistic)
-  5     5     5     5     0.01  0.01  0.01     # -STD at 50% selectivity (logistic)
+  97.13 97.13 97.13 97.13 97.13 97.13 97.13    # -Age/length at 50% selectivity (logistic)
+  6     6     6     6     6     6     6        # -STD at 50% selectivity (logistic)
   0     0     0     0     0     0     0        # -No. of age nodes for each gear (0=ignore)
   0     0     0     0     0     0     0        # -No. of year nodes for 2d spline(0=ignore)
   -2    -2    -2    -2    -2    -2    -2       # -Phase of estimation (-1 for fixed)
