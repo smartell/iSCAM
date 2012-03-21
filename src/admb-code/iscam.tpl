@@ -284,8 +284,13 @@ DATA_SECTION
 	
 	//Mean weight-at-age data (units are kg) (if exists)(by sex)
 	init_int n_wt_nobs;
-	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,sage-1,nage);
-	
+	init_int nc_wt_nobs;
+	init_ivector sage_wt_obs(1,n_wt_nobs);
+	init_ivector nage_wt_obs(1,n_wt_nobs);
+	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,1,nc_wt_nobs);
+	!! cout<<sage_wt_obs<<endl<<endl;
+	!! cout<<nage_wt_obs<<endl;
+	!! cout<<"tmp_wt_obs(1)\n"<<tmp_wt_obs(1)<<endl;
 	
 	//End of data file
 	init_int eof;	
@@ -520,7 +525,7 @@ PARAMETER_SECTION
 	//theta[4]		rho
 	//theta[5]		vartheta
 	
-	
+		!! cout<<"OK TO HERE"<<endl;
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
 	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
@@ -655,6 +660,10 @@ PARAMETER_SECTION
 	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
 	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
+	!! cout<<"OK BUD"<<endl;
+	3darray catch_wt(1,nsex,syr,nyr,1,nc_wt_nobs);
+	//!! cout<<catch_wt<<endl;
+	!! exit(1);
 	
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
@@ -796,7 +805,22 @@ FUNCTION initParameters
   }
 	
 FUNCTION calcGrowth
-	//init_vector fixed_m(1,nsex);		//FIXME: depricate this from data files                                                                 
+	/*
+	This routine first calculates the mean length-weight at age based on 
+	parameters (time invariant) specified in the initial parameters (phi).
+	
+	If empirical weight at age data are available for certain years, these 
+	data are then used to over-write the wt_obs matrix.
+	
+	Fecundity is assumed to be a function of weight at age, where a maturity
+	ojive (based on a logistic function) is used to calculate maturity at age.
+	
+	The ast part of the routine calculates annual deviations in the weight
+	at age to allow for age-specific selectivity to change (sel_type==7) 
+	in cases where there have been significant changes in length/weight-at-age.
+	*/
+	
+	
 	int h,i,j,iyr;               
 	avg_fec.initialize();	
 	wt_obs.initialize();
@@ -814,6 +838,7 @@ FUNCTION calcGrowth
 			fec(h)(i)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(i));
 		}
 		
+		// read empirical data into appropriate arrays
 		for(i=1;i<=n_wt_nobs;i++)
 		{
 			iyr=tmp_wt_obs(h)(i,sage-1);  //index for year
@@ -3114,6 +3139,9 @@ GLOBALS_SECTION
 	#else
 		const char* PLATFORM = "Linux";
 	#endif
+	
+	// define symbolic constants
+	# define NA -99.0 // Missing data or prediction.
 
 	#include <admodel.h>
 	#include <time.h>
