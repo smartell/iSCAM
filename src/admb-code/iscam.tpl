@@ -165,8 +165,15 @@ DATA_SECTION
 	
 	init_int ngear;		//number of gear types with unique selectivities
 	init_int nsex;		//number of sexes
+	
+	init_ivector j_sage(syr,nyr); //vector of first ages for calculating biomass units
+	init_ivector j_nage(syr,nyr); //vector of plus group ages for calculating biomass units
+	
 	!! cout<<"ngear\t"<<ngear<<endl;
 	!! cout<<"nsex\t"<<nsex<<endl;
+	!! cout<<"j_sage\n"<<j_sage<<endl;
+	!! cout<<"j_nage\n"<<j_nage<<endl;
+	
 	init_vector allocation(1,ngear);
 	init_ivector catch_type(1,ngear);
 	ivector fsh_flag(1,ngear);
@@ -283,14 +290,19 @@ DATA_SECTION
 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
 	
 	//Mean weight-at-age data (units are kg) (if exists)(by sex)
+	//Note that -99 is missing data in the dat file for weight at age
 	init_int n_wt_nobs;
 	init_int nc_wt_nobs;
-	init_ivector sage_wt_obs(1,n_wt_nobs);
-	init_ivector nage_wt_obs(1,n_wt_nobs);
+	init_int age_min_wt;
 	init_3darray tmp_wt_obs(1,nsex,1,n_wt_nobs,1,nc_wt_nobs);
-	!! cout<<sage_wt_obs<<endl<<endl;
-	!! cout<<nage_wt_obs<<endl;
 	!! cout<<"tmp_wt_obs(1)\n"<<tmp_wt_obs(1)<<endl;
+	
+	
+	//Mean length-at-age data (units are cm)
+	init_int n_lt_nobs;
+	init_int nc_lt_nobs;
+	init_int age_min_lt;
+	init_3darray tmp_lt_obs(1,nsex,1,n_lt_nobs,1,nc_lt_nobs);
 	
 	//End of data file
 	init_int eof;	
@@ -378,6 +390,9 @@ DATA_SECTION
 	// type 5 = bicubic spline with age_nodes adn yr_nodes
 	// type 6 = fixed logistic by turning sel_phz to (-ve)
 	// type 7 = logistic (3pars) as a function of body weight.
+	// type 11= logistic function of length-at-age.
+	// type 12= length-based coeffs with bicubic spline interpolation
+	// type 13= piece-wise linear interoplation of length-based coeffs
 	init_ivector isel_type(1,ngear);  	//Switch for selectivity
 	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
 	ivector jsel_npar(1,ngear);			//ivector for the number of rows for time-varying selectivity.
@@ -457,6 +472,11 @@ DATA_SECTION
 					isel_npar(i) = (nage-sage);
 					break;
 					
+				case 13:
+					// Piece-wise linear interpolation based on length coeffs Sex specific
+					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = nsex;
+					break;
 				default: break;
 			}
 		}
@@ -548,7 +568,7 @@ PARAMETER_SECTION
 		//set phase to -1 for fixed selectivity.
 		for(int k=1;k<=ngear;k++)
 		{
-			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)>=7 )
+			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)==7 || isel_type(k)==8 )
 			{
 				sel_par(k,1,1) = log(ahat(k));
 				sel_par(k,1,2) = log(ghat(k));
@@ -657,13 +677,14 @@ PARAMETER_SECTION
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
 	matrix avg_fec(1,nsex,sage,nage);		//average fecundity-at-age
 	
+	3darray lt_obs(1,nsex,syr,nyr+1,sage,nage);		//mean length-at-age by sex
 	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
 	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
-	!! cout<<"OK BUD"<<endl;
+	
 	3darray catch_wt(1,nsex,syr,nyr,1,nc_wt_nobs);
 	//!! cout<<catch_wt<<endl;
-	!! exit(1);
+	
 	
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
@@ -673,7 +694,7 @@ PARAMETER_SECTION
 	4darray Chat(1,nsex,1,ngear,syr,nyr,sage,nage);			//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
-	
+
 	
 PRELIMINARY_CALCS_SECTION
   //Run the model with input parameters to simulate real data.
@@ -681,16 +702,19 @@ PRELIMINARY_CALCS_SECTION
   if(SimFlag) 
   {
     cout<<"In simulation mode"<<endl;
-    initParameters();
+	/*Initialize estimated parameters*/
+    initParameters();  
 
+	/*Set length, weight, fecundity at age*/
     calcGrowth();
 
+	/*Set up Selectivities for each fleet/sex*/
     calcSelectivities();
 
-    partitionFishingMortality();
+    //partitionFishingMortality();  //Depricate this function, use fishing rates from wobblesq report.
 
     calcTotalMortality();
-    
+
     simulateNumbersAtAge();
     cout<<"Initial recruits\n"<<column(N(1),sage)<<endl;
 
@@ -821,58 +845,72 @@ FUNCTION calcGrowth
 	*/
 	
 	
-	int h,i,j,iyr;               
-	avg_fec.initialize();	
+	int h,i,j,iyr,al,au,k;               
+	avg_fec.initialize();
+	lt_obs.initialize();	
 	wt_obs.initialize();
 	wt_dev.initialize();
+	fec.initialize();
+	dvar_matrix ma(1,nsex,sage,nage);
 	
 	//cout<<"Entered calcGrowth"<<endl;
-	for(h=1;h<=nsex;h++)                                                     
-	{                                                                        
-		la(h) = linf(h)*( 1.-exp(-vonbk(h)*(age-to(h))) );                     
-		wa(h) = a(h)*pow(la(h),b(h));
+	// calculate parametric growth
+	for(h=1;h<=nsex;h++)
+	{
+		la(h) = linf(h) * ( 1.-exp(-vonbk(h)*(age-to(h))) );
+		wa(h) = a(h) * pow(la(h),b(h));
+		ma(h) = plogis(age,ah(h),gh(h));
 		
-		for(i=syr;i<=nyr+1;i++)
+		// now fill wt_obs array from j_sage, to j_nage for each year
+		// using either the parametric growth or empirical data
+		for(i=syr;i<=nyr;i++)
 		{
-			wt_obs(h)(i)=wa(h);			
-			fec(h)(i)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(i));
+			al = j_sage(i);
+			au = j_nage(i);
+			wt_obs(h)(i)(al,au) = wa(h)(al,au);
+			lt_obs(h)(i)(al,au) = la(h)(al,au);
+			fec   (h)(i)(al,au) = elem_prod(ma(h)(al,au),wt_obs(h)(i)(al,au));
 		}
 		
-		// read empirical data into appropriate arrays
-		for(i=1;i<=n_wt_nobs;i++)
+		// if empirical weight data exists then overwrite wt_obs with that data
+		if(n_wt_nobs)
 		{
-			iyr=tmp_wt_obs(h)(i,sage-1);  //index for year
-			wt_obs(h)(iyr)=tmp_wt_obs(h)(i)(sage,nage);
-			fec(h)(iyr)=elem_prod(plogis(age,ah(h),gh(h)),wt_obs(h)(iyr));
-		}
-		
-		//Average fecundity
-		int nfec = fec(h).rowmax()-fec(h).rowmin()+1;
-		avg_fec(h)=colsum(fec(h))/nfec;	
-		
-		//Weight in nyr+1 based on average weight in the past 5 years.
-		dvar_vector tmp=colsum(wt_obs(h).sub(nyr-5,nyr))/6.;
-		wt_obs(h)(nyr+1) = tmp;		                                          
-		//Weight deviations for selectivity as a function of length.
-		if(n_wt_nobs > 0)
-		{
-			dvar_matrix mtmp = trans(wt_obs(h));
-			for(i=sage;i<=nage;i++)
+			for(i=1;i<=n_wt_nobs;i++)
 			{
-				dvar_vector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
-				mtmp(i) = wa_dev;
+				iyr = tmp_wt_obs(h)(i,1);
+				al  = j_sage(iyr);
+				au  = j_nage(iyr);
+				k   = al - age_min_wt + 2;
+				for(j=al;j<=au;j++)
+				{
+					wt_obs(h,iyr,j) = tmp_wt_obs(h)(i)(k++);
+					fec   (h,iyr,j) = ma(h,j)*wt_obs(h,iyr,j);
+				}
+				
+				// annual deviations in weight at age for selectivity if sel_type==8
+				wt_dev(h)(iyr) = ( wt_obs(h)(iyr) - mean(wt_obs(h)(iyr)) ) / sqrt(var(wt_obs(h)(iyr)));
 			}
-			wt_dev(h) = trans(mtmp);	//each column has mean=0 sd=1			
 		}
 		
-		// Error trap
-		if(n_wt_nobs>0 && min(tmp_wt_obs(h))==0)
+		// if empirical length data exists the overwrite lt_obs with that data
+		if(n_lt_nobs)
 		{
-			cout<<"Cannont have a observed 0 mean weight at age\n";
-			cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
-			exit(2);
-		}
-	}  // end of h loop                                                                    
+			for(i=1;i<=n_lt_nobs;i++)
+			{
+				iyr = tmp_lt_obs(h)(i,1);
+				al  = j_sage(iyr);
+				au  = nage;
+				k   = al - age_min_lt + 2;
+				for(j=al;j<=au;j++)
+				{
+					lt_obs(h,iyr,j) = tmp_lt_obs(h)(i)(k++);
+				}
+			}
+		}// end of if
+		
+	}  // end of h loop
+
+	//cout<<"\n Exiting calcGrowth"<<endl;
 
 
 FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
@@ -942,6 +980,7 @@ FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
   }
 
 
+
 FUNCTION calcSelectivities
   {
 	/*
@@ -960,6 +999,7 @@ FUNCTION calcSelectivities
 		   weights at age (3 estimated parameters).
 		11) logistic selectivity with 2 parameters based on mean length
 		12) length-based selectivity using cubic spline interpolation
+		13) piece-wise linear interpolation for halibut simuation model
 		
 		Following the initialization of the selectivity curves, time-varying 
 		considerations are implemented.
@@ -989,6 +1029,7 @@ FUNCTION calcSelectivities
 	//cout<<"Entered calcSelectivities"<<endl;
 	int h,i,j,k;
 	double tiny=1.e-10;
+
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
 	dvar_matrix t1;
@@ -1127,6 +1168,21 @@ FUNCTION calcSelectivities
 					}
 					break;
 				
+				case 13:
+					//piece-wise liner interpolation using approx function from IPHC
+					//sex based ( sex in sel_par(j)(row) and nodes in sel_par(j)(row)(cols) )
+					cout<<"Lenth Selex"<<endl;
+					ia.fill_seqadd(60,10);
+					cout<<"sel_par\n"<<sel_par(j)(h)<<endl;
+					cout<<ia<<endl;
+					for(i=syr;i<=nyr; i++)
+					for(k=sage;k<=nage;k++)
+					{
+						log_sel(h)(j)(i)(k) = approx(ia, sel_par(j)(h), lt_obs(h)(i)(k), 0);
+					}
+					cout<<"CSel"<<endl;
+					cout<<log_sel(h)(j)<<endl<<endl;
+					break;
 				
 				default:
 					log_sel(h)(j)=0;
@@ -3149,6 +3205,7 @@ GLOBALS_SECTION
 	//#include "stats.cxx"
 	//#include "baranov.cxx"
 	#include <statsLib.h>
+	# include "../../fba/Halibut/IPHCcode/approx.cpp"
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;

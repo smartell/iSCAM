@@ -74,17 +74,17 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-##comm  sprt  pers  o32b  032w  u32b  u32w     
-  11    11    11    11    11    11    11       # -selectivity type ivector(isel_type) for gear
-  97.13 97.13 97.13 97.13 97.13 97.13 97.13    # -Age/length at 50% selectivity (logistic)
-  6     6     6     6     6     6     6        # -STD at 50% selectivity (logistic)
-  0     0     0     0     0     0     0        # -No. of age nodes for each gear (0=ignore)
-  0     0     0     0     0     0     0        # -No. of year nodes for 2d spline(0=ignore)
-  -2    -2    -2    -2    -2    -2    -2       # -Phase of estimation (-1 for fixed)
-  2     2     2     2     2     2     2        # -Penalty wt for 2nd differences w=1/(2*sig^2)
-  3     3     3     3     3     3     3        # -Penalty wt for dome-shaped w=1/(2*sig^2)
-  81.3  0     0     0     0     0     0        # -Size limit (cm)
-  0.17  0     0     0     0.17  0     0.17     # -Discard mortality rate
+##CatchWt  DiscardWt BycatchWt SportCatchWt PersUseWt     
+  13    11    11    11    11                # -selectivity type ivector(isel_type) for gear
+  97.13 97.13 97.13 97.13 97.133            # -Age/length at 50% selectivity (logistic)
+  6     6     6     6     6                 # -STD at 50% selectivity (logistic)
+  8     0     0     0     0                 # -No. of age/length nodes for each gear (0=ignore)
+  0     0     0     0     0                 # -No. of year nodes for 2d spline(0=ignore)
+  -2    -2    -2    -2    -2                # -Phase of estimation (-1 for fixed)
+  2     2     2     2     2                 # -Penalty wt for 2nd differences w=1/(2*sig^2)
+  3     3     3     3     3                 # -Penalty wt for dome-shaped w=1/(2*sig^2)
+  81.3  0     0     0     0                 # -Size limit (cm)
+  0.17  0     0     0     0.17              # -Discard mortality rate
 ## ------------------------------------------------------------------------- ##
 ##
 ##
