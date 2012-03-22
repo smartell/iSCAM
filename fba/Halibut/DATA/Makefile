@@ -8,7 +8,7 @@ EXEC=iscam
 prefix=../../../dist
 DAT=RUN.dat
 CTL=Halibut_1974-2010
-ARG=-sim 999 -noest
+ARG=-sim 999 -noest -ainp Halibut_2Sex_develop.pin
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
 

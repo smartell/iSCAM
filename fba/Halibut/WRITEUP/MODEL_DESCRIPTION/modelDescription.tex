@@ -20,11 +20,13 @@ To summarize the following subsections that describe the model in detail, the fo
 
 The underlying model design is and age-structured population model with an annual time step.  The population model has two periods: (1) a historical period in which the population model is initialized with numbers-at-age in the first year, and annual recruitments for each year upto the present, and (2) a projection period where the numbers-at-age are simulated 15 years into the future under alternative scenarios and harvest policy options.  Information for the initialization of the population model is based on the most recent stock assessment for Pacific Halibut (Hare 2012 citation).  At each time step in the model, total age/sex-specific mortality rates are computed as a sum of natural and fishing mortalities from each of the directed and non-directed fisheries.
 
-Each fishing gear within the 
+Permitted bycatch mortality in BSAI groundfish fisheries in 2012 are 900 mt for the fixed gear and 3,525 mt for the trawl gear.  The accounting system for trawl by catch is that 80\% of the net halibut weight landed is assumed to die, and in the case of the pollock fishery a 90\% discard mortality is assumed.
 
 % -----------------------------------------------------------------------------
 \subsection{Simulation model input} % (fold)
 \label{sub:simulation_model_input}
+
+Input data for the simulation model was provided by Steve Hare from the IPHC in the form of the report file from the assessment model presented at the 2012 annual meeting \citep{Hare2012Rara}.  
 
 List of model input:
 \begin{enumerate}
@@ -67,6 +69,38 @@ List of model input:
 \label{sub:analytical_description}
 
 % 1) Initial states
+\subsubsection{Initial states} % (fold)
+\label{ssub:initial_states}
+The simulation model is initialized using the model estimates of numbers-at-age and annual recruitment produced by the IPHC 2011 halibut stock assessment \citep{Hare2012Rara}.  
+
+\begin{table}
+	\caption{Analytical description of the sex-based age-structured model used for simulation projections.}
+	\label{tab:model_description}
+	\begin{center}
+		\tableEq
+		\begin{align}
+			\hline \nonumber\\
+			&\mbox{Model parameters} \nonumber\\
+			\Theta &= \{R_0,\bar{R},h,\omega_{i}\} \\
+			\Phi   &= \{\ddot{R}_h,M_h,\ddot{\omega}_{h,j}\} \\
+			%
+			&\mbox{Input data} \nonumber\\
+			&C_{i,k}\\
+			%
+			&\mbox{Initialize state variables }\nonumber\\
+			N_{h,i,j} &= 
+			\begin{cases}
+				\ddot{R_h}\exp(\ddot{\omega}_{h,j}), & \mbox{for $2<j<30$}\\
+				0.5 R_h\exp(\omega_{i}), & \mbox{for $1996<i<2026$}\\
+			\end{cases}\\
+			\hline \nonumber
+		\end{align}
+		\normalEq
+	\end{center}
+\end{table}
+
+
+% subsubsection initial_states (end)
 % 2) Selectivities and joint probablity for fishing mortality & discard mortality.
 % 3) Calculating fishing mortality rates from 1994-present conditioned on catch.
 In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data are not readily available to be used in this analysis.  The sex composition of the commercial catch was approximated by applying the same fishing mortality rate to each of the sexes, where the fishing mortality rate was approximated by the historical total landings divided by the simulated exploitable biomass (both sexes combined).  This differs substantially from the methods used to apportion commercial catch to each sex \cite[see][for details]{clark2004method}.

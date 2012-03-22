@@ -30,6 +30,8 @@
 
 % Package for including code in the document
 \usepackage{listings}
+\usepackage{alltt}
+\usepackage{url}
 
 % If you want to generate a toc for each chapter (use with book)
 \usepackage{minitoc}
@@ -151,5 +153,14 @@
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
 \bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+
+%% Appendices
+\appendix
+
+\addtocounter{section}{0}
+\renewcommand{\thetable}{A-\arabic{table}}
+\setcounter{table}{0}
+\input{./APPENDIX_A/AppendixA}
 
 \end{document}
