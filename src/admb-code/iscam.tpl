@@ -581,7 +581,7 @@ PARAMETER_SECTION
 	
 	LOC_CALCS
 		if(!SimFlag) log_ft_pars = log(0.1);
-		if(SimFlag)  log_ft_pars = log(0.215);
+		//if(SimFlag)  log_ft_pars = log(0.215);
 	END_CALCS
 	
 	
@@ -711,13 +711,13 @@ PRELIMINARY_CALCS_SECTION
 	/*Set up Selectivities for each fleet/sex*/
     calcSelectivities();
 
-    //partitionFishingMortality();  //Depricate this function, use fishing rates from wobblesq report.
-
+	/*Calculate age-specific total mortality rates by sex*/
     calcTotalMortality();
 
+	/*Initialize numbers at age and recruitment and update numbers-at-age matrix*/
     simulateNumbersAtAge();
-    cout<<"Initial recruits\n"<<column(N(1),sage)<<endl;
-
+    
+	/*Call this routine to get spawning biomass only*/
     calcStockRecruitment();
     cout<<"Simulated spawn biomass\n"<<sbt<<endl;
     
@@ -1266,6 +1266,9 @@ FUNCTION calcTotalMortality
 	
 	March 7, 2012  Added retention probablity and discard mortality to the
 	age-specific total mortality (Z) eqations.
+	
+	March 22, 2012.  No longer need the retention probablity here b/c have the 
+	halibut model set up the same as the IPHC
 	*/
 	int h,j,k,ki;
 	dvariable ftmp;
@@ -1309,9 +1312,8 @@ FUNCTION calcTotalMortality
 		M_tot(h) = m(h);
 		m_bar(h) = m(h);
 		
-		cout<<"F"<<m(h)<<endl<<"End of F(h)"<<endl;
+		
 	}
-
 
 	// Cubic spline to interpolate log_m_devs (log_m_nodes)
 	/* Assume deviations in natural mortality rates are the 
@@ -2721,47 +2723,7 @@ FUNCTION calcObjectiveFunction
 //	return(res);
 //  }
 
-FUNCTION partitionFishingMortality
-  {
-	/*
-		March 7, 2012.
-		This function partitions the input fishing mortatliy rate
-		into components roughly equal to the catch proportions. 
-		
-		Noting that this does not account for selectivity differences,
-		this simplification avoids having to solve the baranov catch
-		equation for multiple fleets.  The latter maybe preferable.
-		
-		At this state of the simulation, log_ft_pars have been initialized
-		with a global fishing rate (same for all years and gears). Use the
-		observed catch in each year to partition this fishing mortality rate
-		such that the sum equals the global input rate.
-	*/
-	
-	int i,j,k,ki;
-	dmatrix pp(syr,nyr,1,ngear);
-	for(i=syr;i<=nyr;i++)
-	{
-		// proportions of the total catch
-		pp(i) = column(obs_ct,i);
-		pp(i)/= sum(pp(i));
-	}
-	
-	ki = 1;
-	for(k=1;k<=ngear;k++)
-	{
-		for(i=syr;i<=nyr;i++)
-		{
-			if(obs_ct(k,i)>0)
-			{
-				double finit = exp(value(log_ft_pars(ki)));
-				log_ft_pars(ki++) = log(finit*pp(i,k));
-			}
-		}
-	}
-	
-	
-  }
+
 
 FUNCTION simulateNumbersAtAge
   {
