@@ -1171,17 +1171,12 @@ FUNCTION calcSelectivities
 				case 13:
 					//piece-wise liner interpolation using approx function from IPHC
 					//sex based ( sex in sel_par(j)(row) and nodes in sel_par(j)(row)(cols) )
-					cout<<"Lenth Selex"<<endl;
 					ia.fill_seqadd(60,10);
-					cout<<"sel_par\n"<<sel_par(j)(h)<<endl;
-					cout<<ia<<endl;
 					for(i=syr;i<=nyr; i++)
 					for(k=sage;k<=nage;k++)
 					{
-						log_sel(h)(j)(i)(k) = approx(ia, sel_par(j)(h), lt_obs(h)(i)(k), 0);
+						log_sel(h)(j)(i)(k) = log(approx(ia, sel_par(j)(h), lt_obs(h)(i)(k), 0)+tiny);
 					}
-					cout<<"CSel"<<endl;
-					cout<<log_sel(h)(j)<<endl<<endl;
 					break;
 				
 				default:
@@ -1202,7 +1197,7 @@ FUNCTION calcSelectivities
 			for(i=syr;i<=nyr;i++)
 			{
 				//log_sel(h)(j)(i) -= log( mean(mfexp(log_sel(h)(j)(i)))+tiny );
-				log_sel(h)(j)(i) -= log(max(mfexp( log_sel(h)(j)(i) )));	
+				//log_sel(h)(j)(i) -= log(max(mfexp( log_sel(h)(j)(i) )));	
 			}
 			
 			
@@ -2875,7 +2870,7 @@ REPORT_SECTION
 	REPORT(fec);
 	//Selectivity
 	report<<"log_sel"<<endl;
-	for(h=1;j<=nsex;h++)
+	for(h=1;h<=nsex;h++)
 		for(k=1;k<=ngear;k++)
 			for(i=syr;i<=nyr;i++)
 				report<<h<<"\t"<<k<<"\t"<<log_sel(h)(k)(i)<<endl;

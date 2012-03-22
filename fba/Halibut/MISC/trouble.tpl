@@ -2078,7 +2078,7 @@ FUNCTION Compute_selectivity_at_age
               { // Use sex-specific mean length at age.
               CSel(y,b,s) = approx(SLptList, CSelLy(s), SurvLTrue(y,b,s), 0);
               DSel(y,b,s) = approx(SLptList,     DSelL, SurvLTrue(y,b,s), 0);
-              FSel(y,b,s) = approx(SLptList,     FSelL, SurvLTrue(y,b,s), 0);
+              FSel(y,b,s) = approx(SLptList,     	, SurvLTrue(y,b,s), 0);
               SSel(y,b,s) = approx(SLptList, SSelLy(s), SurvLTrue(y,b,s), 0);
               } else
               { // Use overall mean length at age for both sexes.
