@@ -113,6 +113,7 @@ DATA_SECTION
 
 	init_adstring DataFile;
 	init_adstring ControlFile;
+	init_adstring SimulationFile;
 	
 	
 	!! BaseFileName=stripExtension(ControlFile);
@@ -538,6 +539,8 @@ DATA_SECTION
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
+	!! ad_comm::change_datafile_name(SimulationFile);
+	init_int nyr_proj;	//number of years (e.g., 10 years) to simulate into the future
 	
 PARAMETER_SECTION
 	//Leading parameters
@@ -665,7 +668,7 @@ PARAMETER_SECTION
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	matrix ft(1,ngear,syr,nyr);					//Gear specific fishing mortality rates
 	
-	3darray N(1,nsex,syr,nyr+1,sage,nage);		//Numbers at age
+	3darray N(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//Numbers at age
 	3darray M_tot(1,nsex,syr,nyr,sage,nage);	//Age-specific natural mortality
 	//3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
 	3darray F(1,nsex,syr,nyr,sage,nage);		//Age-specific fishing mortality
@@ -724,6 +727,10 @@ PRELIMINARY_CALCS_SECTION
     calcStockRecruitment();
     cout<<"Simulated spawn biomass\n"<<sbt<<endl;
     
+	/*Project stock into the future*/
+	runStockProjectionModel();
+	
+
     model_parameters::report();
     //simulation_model(rseed);
   }
@@ -884,6 +891,7 @@ FUNCTION calcGrowth
 				al  = j_sage(iyr);
 				au  = j_nage(iyr);
 				k   = al - age_min_wt + 2;
+				
 				for(j=al;j<=au;j++)
 				{
 					wt_obs(h,iyr,j) = tmp_wt_obs(h)(i)(k++);
@@ -1727,6 +1735,9 @@ FUNCTION calcStockRecruitment
 	**
 	Feb 16,2012.  Added nsex calculations to this routine.
 	
+	Mar 23,2012.  Change spawning biomass calculation to include variable
+	              plus group age.
+	
 	*/ 
 	int h,i,j,k;
 	
@@ -1764,9 +1775,18 @@ FUNCTION calcStockRecruitment
 	
 	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
 	//in the sbt calculation below.
+	
 	for(i=syr;i<=nyr;i++)
 	{
-		sbt(i) = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
+		// Spawning biomass with variable plus group age.
+		int al = j_sage(i);
+		int au = j_nage(i);
+		dvar_vector tmpN = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)));
+		dvar_vector aN   = tmpN(al,au);
+		if(au < nage) aN(au) += sum(tmpN(au+1,nage));
+		
+		sbt(i) = aN * fec(h)(i)(al,au);
+		//sbt(i) = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
 		
 		//Adjustment to female spawning biomass for roe fisheries
 		for(k=1;k<=ngear;k++)
@@ -1802,6 +1822,22 @@ FUNCTION calcStockRecruitment
 	
   }
 	
+	
+
+FUNCTION runStockProjectionModel
+  {
+	/*
+	This function was written specifically for the Halibut simulation model.
+	Use nyr_proj to dimension variables into the future.
+	
+	
+	*/
+	
+	
+	
+  }
+
+
 FUNCTION calcObjectiveFunction
   {
 	/*

@@ -1,0 +1,9 @@
+window name=hcamView title="HALIBUT BYCATCH SIMULATION MODEL"
+
+
+
+# Model dimensions
+grid 2 1 toptitle="Model Dimensions" relief="groove" pady=2 padx=5
+	spinbox name=spnNyrs label="Number of simulation years" from=1 to=25 by=1 value=15 width=5
+	type=button text="Run simulation" font="" fg="black" bg="" disablefg=NULL \
+	width=0 name=runSimulation function=.runSimulation action="button" sticky="E"
