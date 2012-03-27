@@ -3,7 +3,11 @@ window name=hcamView title="HALIBUT BYCATCH SIMULATION MODEL"
 
 
 # Model dimensions
-grid 2 1 toptitle="Model Dimensions" relief="groove" pady=2 padx=5
+grid 3 1 toptitle="Model Dimensions" relief="groove" pady=2 padx=5
 	spinbox name=spnNyrs label="Number of simulation years" from=1 to=25 by=1 value=15 width=5
+	
+	grid 1 1 toptitle="Harvest Policy (million pounds)" relief="raised" pady=2
+		object name=hpFile pady=2 padx=5 sticky=W font="Courier 10" rowshow=8 rowlabels=FALSE width="5 5 5" sticky=W
+		
 	type=button text="Run simulation" font="" fg="black" bg="" disablefg=NULL \
 	width=0 name=runSimulation function=.runSimulation action="button" sticky="E"

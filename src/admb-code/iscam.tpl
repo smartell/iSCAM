@@ -541,6 +541,21 @@ DATA_SECTION
 	
 	!! ad_comm::change_datafile_name(SimulationFile);
 	init_int nyr_proj;	//number of years (e.g., 10 years) to simulate into the future
+	int nareas; 
+	!! nareas=8;
+	init_matrix sim_cntrl(1,2+ngear,1,nareas);
+	vector sim_hr(1,nareas);
+	vector sim_app(1,nareas);
+	matrix sim_ct_share(1,ngear,1,nareas);
+	LOC_CALCS
+		sim_app = sim_cntrl(1);
+		sim_hr  = sim_cntrl(2);
+		for(k=1;k<=ngear;k++)
+		{
+			sim_ct_share(k) = sim_cntrl(2+k)*1e6;
+		}
+		cout<<"Catch share\n"<<sim_ct_share<<endl;
+	END_CALCS
 	
 PARAMETER_SECTION
 	//Leading parameters
@@ -584,7 +599,7 @@ PARAMETER_SECTION
 	
 	//Fishing mortality rate parameters
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
-	
+	init_bounded_matrix FMX(1,ngear,1,nsex,0,10,1);
 	LOC_CALCS
 		if(!SimFlag) log_ft_pars = log(0.1);
 		//if(SimFlag)  log_ft_pars = log(0.215);
@@ -651,12 +666,12 @@ PARAMETER_SECTION
 	
 	
 	
-	vector log_rt(syr-nage+sage,nyr);
+	vector log_rt(syr-nage+sage,nyr+nyr_proj);
 	//vector vax(sage,nage);		//survey selectivity coefficients
 	vector q(1,nit);			//survey catchability coefficients
 	
-	vector sbt(syr,nyr+1);		//spawning stock biomass
-	vector rt(syr+sage,nyr); 	//predicted sage recruits from S-R curve
+	vector sbt(syr,nyr+nyr_proj+1);		//spawning stock biomass
+	vector rt(syr+sage,nyr+nyr_proj); 	//predicted sage recruits from S-R curve
 	
 	vector delta(syr+sage,nyr);	//residuals for stock recruitment
 	vector avg_log_sel(1,ngear);//conditional penalty for objective function
@@ -666,14 +681,14 @@ PARAMETER_SECTION
 	
 	//matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
-	matrix ft(1,ngear,syr,nyr);					//Gear specific fishing mortality rates
+	3darray ft(1,nsex,1,ngear,syr,nyr+nyr_proj);		//Gear specific fishing mortality rates
 	
 	3darray N(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//Numbers at age
-	3darray M_tot(1,nsex,syr,nyr,sage,nage);	//Age-specific natural mortality
+	3darray M_tot(1,nsex,syr,nyr+nyr_proj,sage,nage);	//Age-specific natural mortality
 	//3darray log_ft(1,nsex,1,ngear,syr,nyr);		//Gear specific log fishing mortlity rates
-	3darray F(1,nsex,syr,nyr,sage,nage);		//Age-specific fishing mortality
-	3darray Z(1,nsex,syr,nyr,sage,nage);
-	3darray S(1,nsex,syr,nyr,sage,nage);
+	3darray F(1,nsex,syr,nyr+nyr_proj,sage,nage);		//Age-specific fishing mortality
+	3darray Z(1,nsex,syr,nyr+nyr_proj,sage,nage);
+	3darray S(1,nsex,syr,nyr+nyr_proj,sage,nage);
 	
 	matrix la(1,nsex,sage,nage);			//length-at-age                        
 	matrix wa(1,nsex,sage,nage);			//weight-at-age                        
@@ -683,10 +698,10 @@ PARAMETER_SECTION
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
 	matrix avg_fec(1,nsex,sage,nage);		//average fecundity-at-age
 	
-	3darray lt_obs(1,nsex,syr,nyr+1,sage,nage);		//mean length-at-age by sex
-	3darray wt_obs(1,nsex,syr,nyr+1,sage,nage);		//weight-at-age by sex
+	3darray lt_obs(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//mean length-at-age by sex
+	3darray wt_obs(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//weight-at-age by sex
 	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
-	3darray fec(1,nsex,syr,nyr+1,sage,nage);		//fecundity-at-age
+	3darray fec(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//fecundity-at-age
 	
 	3darray catch_wt(1,nsex,syr,nyr,1,nc_wt_nobs);
 	//!! cout<<catch_wt<<endl;
@@ -695,11 +710,15 @@ PARAMETER_SECTION
 	3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
 	3darray A_nu(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//residuals for age proportions by gear & year
 	
-	4darray log_sel(1,nsex,1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
-	4darray log_ret(1,nsex,1,ngear,syr,nyr,sage,nage);		//retention coefficients based on size limits.
+	4darray log_sel(1,nsex,1,ngear,syr,nyr+nyr_proj,sage,nage);		//selectivity coefficients for each gear type.
+	4darray log_ret(1,nsex,1,ngear,syr,nyr+nyr_proj,sage,nage);		//retention coefficients based on size limits.
 	4darray Chat(1,nsex,1,ngear,syr,nyr,sage,nage);			//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
+	
+	
+	//Variables used in runStockProjectionModel
+	vector EBio(syr,nyr+nyr_proj);
 
 	
 PRELIMINARY_CALCS_SECTION
@@ -723,12 +742,13 @@ PRELIMINARY_CALCS_SECTION
 	/*Initialize numbers at age and recruitment and update numbers-at-age matrix*/
     simulateNumbersAtAge();
     
+	/*Project stock into the future*/
+	runStockProjectionModel();
+	
 	/*Call this routine to get spawning biomass only*/
     calcStockRecruitment();
     cout<<"Simulated spawn biomass\n"<<sbt<<endl;
     
-	/*Project stock into the future*/
-	runStockProjectionModel();
 	
 
     model_parameters::report();
@@ -881,6 +901,8 @@ FUNCTION calcGrowth
 			lt_obs(h)(i)(al,au) = la(h)(al,au);
 			fec   (h)(i)(al,au) = elem_prod(ma(h)(al,au),wt_obs(h)(i)(al,au));
 		}
+		avg_fec(h) = colsum(fec(h))/(nyr-syr+1);
+		
 		
 		// if empirical weight data exists then overwrite wt_obs with that data
 		if(n_wt_nobs)
@@ -918,6 +940,14 @@ FUNCTION calcGrowth
 				}
 			}
 		}// end of if
+		
+		// fill wt_obs(h)(nyr+1,nyr+nyr_proj+1)
+		for(i=nyr+1;i<=nyr+nyr_proj;i++)
+		{
+			wt_obs(h)(i) = wt_obs(h)(i-1); 
+			lt_obs(h)(i) = lt_obs(h)(i-1);
+			fec   (h)(i) = elem_prod(ma(h),wt_obs(h)(i));
+		}
 		
 	}  // end of h loop
 
@@ -1183,7 +1213,7 @@ FUNCTION calcSelectivities
 					//piece-wise liner interpolation using approx function from IPHC
 					//sex based ( sex in sel_par(j)(row) and nodes in sel_par(j)(row)(cols) )
 					ia.fill_seqadd(60,10);
-					for(i=syr;i<=nyr; i++)
+					for(i=syr;i<=nyr+nyr_proj; i++)
 					for(k=sage;k<=nage;k++)
 					{
 						log_sel(h)(j)(i)(k) = log(approx(ia, sel_par(j)(h), lt_obs(h)(i)(k), 0)+tiny);
@@ -1301,9 +1331,9 @@ FUNCTION calcTotalMortality
 			{	
 				ftmp=0;
 				if( obs_ct(k,j)>0  )
-					ftmp = mfexp(log_ft_pars(ki++));
-			
-				ft(k,j)=ftmp;
+					ftmp = mfexp(log_ft_pars(ki++))* FMX(k,h);
+				
+				ft(h)(k,j)=ftmp;  //multiply this by FMX for each gear. set ==1 for U32 and O32 bycatch/discard
 			
 				//exclude roe fisheries for age-specific F
 				if(catch_type(k)!=3)
@@ -1355,6 +1385,7 @@ FUNCTION calcTotalMortality
 			}
 			m_bar(h) = mean(M_tot(h));
 		}
+		cout<<"OK TO THERE"<<endl;
 		Z(h)=M_tot(h)+F(h);
 		S(h)=mfexp(-Z(h));
 	}
@@ -1379,7 +1410,6 @@ FUNCTION calcNumbersAtAge
 	
 	int h,i,j;
 	N.initialize();
-	cout<<m_bar(1)<<endl;
 	
 	if(cntrl(5)){	//If initializing in at unfished conditions
 		log_rt(syr) = log(ro);
@@ -1536,7 +1566,7 @@ FUNCTION calcFisheryObservations
 					for both sexes
 					*/
 					//dvar_vector fa = ft(k,i)*va;
-					dvar_vector fa = ft(k,i) * elem_prod(va,ra+(1.-ra)*discMort(k));
+					dvar_vector fa = ft(h)(k,i) * elem_prod(va,ra+(1.-ra)*discMort(k));
 					dvar_vector d1 = elem_div(fa,Z(h)(i));
 					Chat(h)(k,i)   = elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
 					switch(catch_type(k))
@@ -1549,7 +1579,7 @@ FUNCTION calcFisheryObservations
 						break;
 						case 3:	//catch in roe that does not contribute to SSB
 							dvariable ssb = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
-							ct(k,i) += ( 1.-mfexp(-ft(k,i)) )*ssb;
+							ct(k,i) += ( 1.-mfexp(-ft(h)(k,i)) )*ssb;
 						break;
 					}
 				}
@@ -1629,7 +1659,7 @@ FUNCTION calcSurveyObservations
 			dvariable ftmp = 0;
 			for(kk=1;kk<=ngear;kk++)
 				if(catch_type(kk)==3)
-					ftmp += ft(kk,ii);
+					ftmp += ft(1)(kk,ii);
 			//
 			
 			for(h=1;h<=nsex;h++)
@@ -1771,7 +1801,10 @@ FUNCTION calcStockRecruitment
 	dvariable phib = (lx*exp(-m_bar(h)*cntrl(13))) * avg_fec(h);
 	dvariable so   = kappa/phib;		//max recruits per spawner
 	bo             = ro*phib;  			//unfished female spawning biomass
-	
+	cout<<"Ro\t"<<ro<<endl;
+	cout<<"phib\t"<<phib<<endl;
+	cout<<"mbar_h\t"<<m_bar<<endl;
+	cout<<"Bo\t"<<bo<<endl;
 	
 	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
 	//in the sbt calculation below.
@@ -1791,7 +1824,7 @@ FUNCTION calcStockRecruitment
 		//Adjustment to female spawning biomass for roe fisheries
 		for(k=1;k<=ngear;k++)
 			if(catch_type(k)==3)
-				sbt(i) *= mfexp(-ft(k,i));
+				sbt(i) *= mfexp(-ft(h)(k,i));
 	}
 	sbt(nyr+1) = N(h)(nyr+1)*fec(h)(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
@@ -1815,8 +1848,8 @@ FUNCTION calcStockRecruitment
 	}
 	
 	//residuals in stock-recruitment curve
-	rt=exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
-	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
+	rt(syr+sage,nyr)=exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
+	delta(syr+sage,nyr) = log(rt(syr+sage,nyr))-log(tmp_rt(syr+sage,nyr))+0.5*tau*tau;
 	
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
@@ -1830,13 +1863,186 @@ FUNCTION runStockProjectionModel
 	This function was written specifically for the Halibut simulation model.
 	Use nyr_proj to dimension variables into the future.
 	
+	FIXME: Variable plus group age.
+	
+	PSEUDOCODE
+		1) Initialize future recruitment vector based on recruitment scenario
+		2) Project future weight at age based on growth scenario  (done in calcGrowth)
+		3) Future selectivity continues to be a function of length (done in calcSelectivities)
+		4) Loop from nyr to nyr+nyr_proj
+		5) Calculate Ebio at the start of the year (Ebio = N * sel * wa)
+		6) Apportion Ebio to management areas based on 2011 assessment
+		7) Calculate management area CEY as 0.215*EBio
+		8) Calculate the corresponding fishing rate (F_{h,i,k})
+		9) Calculate Z and update total mortality.
+		10) Update numbers at age
 	
 	*/
+	cout<<"Entering runStockProjectionModel"<<endl;
+	int h,i,j,k;
+	int au = j_nage(nyr);
+	int al = j_sage(nyr);
+	dvar_vector tN(al,au);
+	dvar_vector EBio_A(1,nareas);
+	dvar_vector CEY_A(1,nareas);
 	
 	
+	EBio.initialize();
+	// 0) Initialize EBio
+	for(h=1;h<=nsex;h++)
+	{
+		for(i=syr;i<=nyr;i++)
+		{
+			au      = j_nage(i);
+			al      = j_sage(i);
+			tN      = N(h)(i)(al,au);
+			tN(au) += sum(N(h)(i)(au+1,nage));
+			EBio(i)+= tN *elem_prod( exp(log_sel(h)(1)(i)(al,au)) , wt_obs(h)(i)(al,au) );
+		}
+	}
 	
+	
+	// 1) Future recruitment
+	log_rt(nyr+1,nyr+nyr_proj) = log_avgrec;  //FIXME: add noise here for Monte Carlo
+	for(h=1;h<=nsex;h++)
+	{
+		for(i=nyr+1;i<=nyr+nyr_proj;i++)
+		{
+			N(h)(i,sage) = exp(log_rt(i))/nsex;
+		}
+		
+	}
+	
+	for(i=nyr+1;i<=nyr+nyr_proj;i++)
+	{
+		// 5) Calculate EBio and sbt as the start of the year
+		for(h=1;h<=nsex;h++)
+		{
+			
+			tN       = N(h)(i)(al,au);
+			tN(au)  += sum(N(h)(i)(au+1,nage));
+			EBio(i) += tN * elem_prod( exp(log_sel(h)(1)(i)(al,au)) , wt_obs(h)(i)(al,au) );
+			if(h==1)
+			{
+				dvar_vector tmpN = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)));
+				dvar_vector aN   = tmpN(al,au);
+				if(au < nage) aN(au) += sum(tmpN(au+1,nage));
+
+				sbt(i) = aN * fec(h)(i)(al,au);
+				
+			}
+		}	
+		
+		// 6) Apportion EBio to each management area.
+		EBio_A  = sim_app*EBio(i);
+		//cout<<i<<"\t"<<EBio_A<<endl;
+		
+		// 7) Calculate area sepcific CEY's as sim_hr * EBio_A
+		CEY_A   = elem_prod(sim_hr, EBio_A);
+		// Get commercial setline allocation in the following function
+		getSetLineCatch(value(CEY_A),sim_ct_share);
+		
+		// 8) Calculate the corresponding fishing mortality rate by sex/gear
+		//    given CEY_A is harvested.  This is going to be tough, b/c have too 
+		//    loop over both gears and sexes to get the total catch.
+		//    call multifleet get_ft from baranov.cxx to solve catch equation for ft.
+		//    - I think I have this right now, ended up partitioning catch into female:male
+		//    where the vulnerable biomass-at-age/sex is used to partition catch.
+		dvector ctmp = rowsum(sim_ct_share)/1.e6;
+		d3_array vtmp(1,nsex,1,ngear,sage,nage);
+		dmatrix ba(1,nsex,sage,nage);
+		for(h=1;h<=nsex;h++)
+		{
+			for(k=1;k<=ngear;k++)
+			{
+				vtmp(h)(k)(sage,nage)=exp(value(log_sel(h)(k)(i)(sage,nage)));
+			}
+			dvector tmpwa(sage,nage);
+			tmpwa=0;
+			tmpwa(al,au) = value(wt_obs(h)(i)(al,au));
+			tmpwa(au+1,nage) = tmpwa(au);
+			
+			ba(h) = value(elem_prod(N(h)(i),tmpwa))/1.e6;
+			
+		}
+		
+		//get_ft_bysex(dvector& ct,const dvector& m, const d3_array& V,const dmatrix& ba)
+		dmatrix sim_ft = get_ft_bysex(ctmp,value(m_bar),vtmp,ba);
+		
+		// 9) Calculate total mortality rate.
+		dvar_vector sj(sage,nage);
+		dvar_vector rj(sage,nage);
+		dvar_vector vj(sage,nage);
+		for(h=1;h<=nsex;h++)
+		{
+			for(k=1;k<=ngear;k++)
+			{
+				ft(h)(k,i) = sim_ft(h,k);
+				//exclude roe fisheries for age-specific F
+				if(catch_type(k)!=3)
+				{
+					
+					// Joint probability of selectivity and retention 
+					sj       = mfexp( log_sel(h)(k)(i) );
+					rj       = mfexp( log_ret(h)(k)(i) );
+					vj       = elem_prod(sj,(rj + (1.0-rj)*discMort(k)));
+					
+					F(h)(i) += ft(h)(k,i)*vj;
+					//F(h)(j) += ftmp*mfexp(log_sel(h)(k)(j));
+					//cout<<obs_ct(k,i)<<endl;
+				}
+			}
+			Z(h)(i)=M_tot(h)(i)+F(h)(i);
+			S(h)(i)=mfexp(-Z(h)(i));
+		}
+		
+		
+		// 10) Update numbers at age.
+		for(h=1;h<=nsex;h++)
+		{
+			N(h)(i+1)(sage+1,nage)=++elem_prod(N(h)(i)(sage,nage-1),S(h)(i)(sage,nage-1));
+			N(h)(i+1,nage)+=N(h)(i,nage)*S(h)(i,nage);			
+		}
+		
+		
+		
+		
+	}
+	
+	cout<<"EBio\n"<<EBio<<endl;
   }
 
+FUNCTION void getSetLineCatch(const dvector& cey,dmatrix sim_ct_share)
+	/*
+	Apply catch limit recommendations.
+	Row 1 of sim_ct_share is modified to include setline fishery catch limit
+	setLineCt = CEY- 'other removals'
+	Area 2B has a 88% commercial 22% Sport allocation
+	*/
+	int k;
+	int n=size_count(cey);
+	dvector other_removals(1,n);
+	other_removals = colsum(sim_ct_share.sub(2,ngear));
+	for(k=1;k<=n;k++)
+	{
+		sim_ct_share(1,k) = cey(k) - other_removals(k);
+		/*
+		In Area 2B sport gets 12% and commercial gets 88% of Fishery CEY
+		*/
+		if(k==2)
+		{
+			other_removals(k) -= sim_ct_share(4,k);
+			sim_ct_share(1,k) = 0.88*(cey(k)-other_removals(k));
+			sim_ct_share(4,k) = 0.12*(cey(k)-other_removals(k));
+		}
+	}
+	
+	if(min(sim_ct_share)<0)
+	{
+		cout<<"Error, removing more catch than is available"<<endl;
+		exit(1);
+	}
+	
 
 FUNCTION calcObjectiveFunction
   {
@@ -2880,6 +3086,7 @@ REPORT_SECTION
 	REPORT(obs_ct);
 	REPORT(ct);
 	REPORT(ft);
+	REPORT(sbt);
 	/*FIXED small problem here with array bounds if using -retro option*/
 	//report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
 	//report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
@@ -3199,7 +3406,7 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	//#include "stats.cxx"
-	//#include "baranov.cxx"
+	#include "halibut.cxx"
 	#include <statsLib.h>
 	# include "../../fba/Halibut/IPHCcode/approx.cpp"
 	time_t start,finish;

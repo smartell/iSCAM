@@ -15,13 +15,9 @@
 ## npar
 5
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   15.9          -5.0    15      4       0       -5.0    15     #log_ro      ##
-   0.75         0.2     1.0     4       3       1.01    1.01    #steepness   ##
-#  -0.824       -3.0    2.0     -1      1       -1.74   0.1     #log_m_f     ##
-#  -0-869       -3.0    2.0     -1      1       -1.74   0.1     #log_m_m     ##
+   16.8452      -5.0    15      1       0       -5.0    15      #log_ro      ##
+   0.75         0.2     1.0     1       3       1.01    1.01    #steepness   ##
    17.93703     -5.0    15      1       0       -5.0    15      #log_avgrec  ##
-#  15.18892     -5.0    15      1       0       -5.0    15      #log_recinit ##
-#  15.56507     -5.0    15      1       0       -5.0    15      #log_recinit ##
    0.5          0.01    0.99    -3      3       1.01    1.01    #rho         ##
    0.8          0.01    5.0     -3      4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
@@ -106,7 +102,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

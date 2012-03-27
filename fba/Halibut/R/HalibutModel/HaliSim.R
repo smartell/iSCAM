@@ -6,8 +6,10 @@
 # A GUI INTERFACE FOR THE HALIBUT SIMULATION MODEL FOR BYCATCH RESEARCH      ##
 #                                                                            ##
 # -------------------------------------------------------------------------- ##
-.MODEL_DIRECTORY <- "../../DATA/"
-.SIMULATION_FILE <- "Halibut_2sex_develop.sim"
+.WDIR               <- '/Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/R/HalibutModel'
+.MODEL_DIRECTORY    <- "/Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/DATA/"
+.SIMULATION_FILE    <- "Halibut_2sex_develop.sim"
+.HARVESTPOLICY_FILE <- "iphcHP.txt"
 .TONNES2LBS      <- 2204.62262
 
 
@@ -19,9 +21,13 @@ guiView	<- function()
 
 .guiSetUp	<- function()
 {
+	setwd(.WDIR)
+	
 	#Required libraries
 	require(PBSmodelling)
 	
+	#Read Harvest Policy controls
+	hpFile <- read.table(.HARVESTPOLICY_FILE, header=TRUE)
 	
 	#Close any open graphics devices
 	graphics.off()
@@ -55,6 +61,9 @@ guiView	<- function()
 		
 		write("# Controls for Halibut simulation model from R-GUI ", fn)
 		write(spnNyrs, fn,  append=TRUE);
+		
+		write("# Area based harvest policy from R-GUI", fn, append=TRUE)
+		write.table(t(hpFile[, -1]), fn, append=TRUE, row.names=FALSE, col.names=FALSE)
 	})
 }
 
