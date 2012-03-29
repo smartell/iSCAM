@@ -1895,12 +1895,11 @@ FUNCTION runStockProjectionModel
 		{
 			au      = j_nage(i);
 			al      = j_sage(i);
-			tN      = N(h)(i)(al,au);
-			tN(au) += sum(N(h)(i)(au+1,nage));
-			EBio(i)+= tN *elem_prod( exp(log_sel(h)(1)(i)(al,au)) , wt_obs(h)(i)(al,au) );
+			dvar_vector tmp = N(h)(i)(al,au);
+			tmp(au) += sum(N(h)(i)(au+1,nage));
+			EBio(i)+= tmp *elem_prod( exp(log_sel(h)(1)(i)(al,au)) , wt_obs(h)(i)(al,au) );
 		}
 	}
-	
 	
 	// 1) Future recruitment
 	log_rt(nyr+1,nyr+nyr_proj) = log_avgrec;  //FIXME: add noise here for Monte Carlo
