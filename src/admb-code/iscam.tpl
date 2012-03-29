@@ -692,7 +692,7 @@ PARAMETER_SECTION
 	
 	matrix la(1,nsex,sage,nage);			//length-at-age                        
 	matrix wa(1,nsex,sage,nage);			//weight-at-age                        
-	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
+	matrix ct(1,ngear,syr,nyr+nyr_proj);				//predicted catch biomass
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
@@ -712,7 +712,7 @@ PARAMETER_SECTION
 	
 	4darray log_sel(1,nsex,1,ngear,syr,nyr+nyr_proj,sage,nage);		//selectivity coefficients for each gear type.
 	4darray log_ret(1,nsex,1,ngear,syr,nyr+nyr_proj,sage,nage);		//retention coefficients based on size limits.
-	4darray Chat(1,nsex,1,ngear,syr,nyr,sage,nage);			//predicted catch-at-age
+	4darray Chat(1,nsex,1,ngear,syr,nyr+nyr_proj,sage,nage);			//predicted catch-at-age
 	
 	sdreport_number sd_depletion;
 	
@@ -744,6 +744,9 @@ PRELIMINARY_CALCS_SECTION
     
 	/*Project stock into the future*/
 	runStockProjectionModel();
+	
+	/*Update Fishery Observations*/
+	calcFisheryObservations();
 	
 	/*Call this routine to get spawning biomass only*/
     calcStockRecruitment();
@@ -1542,22 +1545,25 @@ FUNCTION calcFisheryObservations
 					unique gear type.  The input data file will have to be modified
 					to accomodate discards and landed catch.
 	
+	Mar 28, 2012	Increased year dimension to include future simulated catch.
 	*/
+	if(verbose) cout<<"entering calcFisheryObservations"<<endl;
 	
 	int h,i,k;
 	ct.initialize();
 	for(h=1;h<=nsex;h++)
 	{
-		for(i=syr;i<=nyr;i++)
+		for(i=syr;i<=nyr+nyr_proj;i++)
 		{
 			for(k=1;k<=ngear;k++)
 			{
 				dvar_vector va = mfexp( log_sel(h)(k)(i) );
-				dvar_vector ra = mfexp( log_ret(h)(k)(k) );
+				dvar_vector ra = mfexp( log_ret(h)(k)(i) );
 				
 				//SJDM Jan 16, 2011 Modification as noted above.
 				//SJDM Jan 06, 2012 Modification as noted above.
-				if(obs_ct(k,i)>0)
+				//SJDM Mar 28, 2012 Modification as noted above.
+				if(i<=nyr && obs_ct(k,i)>0)
 				{	/*
 					If there is a commercial fishery, then calculate the
 					catch-at-age (in numbers) and total catch (in weight).
@@ -1566,6 +1572,7 @@ FUNCTION calcFisheryObservations
 					for both sexes
 					*/
 					//dvar_vector fa = ft(k,i)*va;
+					
 					dvar_vector fa = ft(h)(k,i) * elem_prod(va,ra+(1.-ra)*discMort(k));
 					dvar_vector d1 = elem_div(fa,Z(h)(i));
 					Chat(h)(k,i)   = elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
@@ -1583,16 +1590,41 @@ FUNCTION calcFisheryObservations
 						break;
 					}
 				}
-				else
+				else if(i<=nyr && obs_ct(k,i)==0)
 				{
 					/*
 					If there is no commercial fishery the set Chat equal to 
 					the expected proportions at age. This is required for 
 					age comps in surveys etc.
+					
+					
 					*/
 					dvar_vector fa = va;
 					dvar_vector d1 = elem_div(fa,Z(h)(i));
 					Chat(h)(k,i)=elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
+				}
+				//SJDM Mar 28, 2012.  Modification as noted above for i>nyr simulations.
+				if(i>nyr)
+				{
+					
+					dvar_vector fa = ft(h)(k,i) * elem_prod(va,ra+(1.-ra)*discMort(k));
+					dvar_vector d1 = elem_div(fa,Z(h)(i));
+					Chat(h)(k,i)   = elem_prod(elem_prod(d1,1.-S(h)(i)),N(h)(i));
+
+					switch(catch_type(k))
+					{
+						case 1:	//catch in weight
+							ct(k,i) += Chat(h)(k,i)*wt_obs(h)(i);
+						break;
+						case 2:	//catch in numbers
+							ct(k,i) += sum(Chat(h)(k,i));
+						break;
+						//case 3:	//catch in roe that does not contribute to SSB
+						//	dvariable ssb = elem_prod(N(h)(i),exp(-Z(h)(i)*cntrl(13)))*fec(h)(i);
+						//	ct(k,i) += ( 1.-mfexp(-ft(h)(k,i)) )*ssb;
+						//break;
+					}
+
 				}
 			}
 		}
@@ -1977,6 +2009,12 @@ FUNCTION runStockProjectionModel
 			for(k=1;k<=ngear;k++)
 			{
 				ft(h)(k,i) = sim_ft(h,k);
+				if(ft(h)(k,i)<0){
+					cout<<"Year "<<i<<" Gear "<<k<<endl;
+					cout<<"ctmp\n"<<ctmp<<endl;
+					cout<<"Simulated fishing mortality rate is negative... oops\n";
+					exit(1);
+				}
 				//exclude roe fisheries for age-specific F
 				if(catch_type(k)!=3)
 				{
@@ -2025,6 +2063,12 @@ FUNCTION void getSetLineCatch(const dvector& cey,dmatrix sim_ct_share)
 	for(k=1;k<=n;k++)
 	{
 		sim_ct_share(1,k) = cey(k) - other_removals(k);
+		if(sim_ct_share(1,k)<0)
+		{
+			cout<<"Error, removing more catch than is available.\n Rescaling setline CEY"<<endl;
+			sim_ct_share(1,k) = 1;
+			//exit(1);
+		}
 		/*
 		In Area 2B sport gets 12% and commercial gets 88% of Fishery CEY
 		*/
@@ -2035,12 +2079,7 @@ FUNCTION void getSetLineCatch(const dvector& cey,dmatrix sim_ct_share)
 			sim_ct_share(4,k) = 0.12*(cey(k)-other_removals(k));
 		}
 	}
-	
-	if(min(sim_ct_share)<0)
-	{
-		cout<<"Error, removing more catch than is available"<<endl;
-		exit(1);
-	}
+
 	
 
 FUNCTION calcObjectiveFunction
@@ -3064,11 +3103,14 @@ REPORT_SECTION
 	
 	ivector yr(syr,nyr);
 	ivector yrs(syr,nyr+1);
+	ivector yrsim(syr,nyr+nyr_proj);
 	yr.fill_seqadd(syr,1); 
 	yrs.fill_seqadd(syr,1); 
+	yrsim.fill_seqadd(syr,1);
 	REPORT(ngear);
 	REPORT(yr);
 	REPORT(yrs);
+	REPORT(yrsim);
 	REPORT(iyr);
 	REPORT(age);
 	REPORT(la);
@@ -3083,9 +3125,11 @@ REPORT_SECTION
 	//REPORT(log_sel);
 	//REPORT(vax);
 	REPORT(obs_ct);
+	ct /=1.e6;
 	REPORT(ct);
 	REPORT(ft);
 	REPORT(sbt);
+	REPORT(EBio);
 	/*FIXED small problem here with array bounds if using -retro option*/
 	//report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
 	//report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
@@ -3373,7 +3417,7 @@ FUNCTION dvector age3_recruitment(const dvector& rt, const double& wt,const doub
 
 TOP_OF_MAIN_SECTION
 	time(&start);
-	arrmblsize = 50000000;
+	arrmblsize = 500000000;
 	gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7);
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
@@ -3458,19 +3502,20 @@ FINAL_SECTION
 	
 	//CHANGED only copy over the mcmc files if in mceval_phase()
 	
-	if(last_phase() && PLATFORM =="Linux" && !retro_yrs)
+	//if(last_phase() && PLATFORM =="Linux" && !retro_yrs)
+	if( PLATFORM =="Linux" && !retro_yrs)
 	{
-		adstring bscmd = "cp iscam.rep " +ReportFileName;
+		adstring bscmd = "cp iscam.r01 " +ReportFileName;
 		system(bscmd);
 		
-		bscmd = "cp iscam.par " + BaseFileName + ".par";
-		system(bscmd); 
-		
-		bscmd = "cp iscam.std " + BaseFileName + ".std";
-		system(bscmd);
-		
-		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
-		system(bscmd);
+		/*bscmd = "cp iscam.par " + BaseFileName + ".par";
+				system(bscmd); 
+				
+				bscmd = "cp iscam.std " + BaseFileName + ".std";
+				system(bscmd);
+				
+				bscmd = "cp iscam.cor " + BaseFileName + ".cor";
+				system(bscmd);*/
 		
 		if( mcmcPhase )
 		{

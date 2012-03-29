@@ -9,9 +9,12 @@
 .WDIR               <- '/Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/R/HalibutModel'
 .MODEL_DIRECTORY    <- "/Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/DATA/"
 .SIMULATION_FILE    <- "Halibut_2sex_develop.sim"
+.FILE_PREFIX        <- "Halibut_2sex_develop"
 .HARVESTPOLICY_FILE <- "iphcHP.txt"
-.TONNES2LBS      <- 2204.62262
+.TONNES2LBS         <- 2204.62262
 
+# DEPENDENCIES
+source("../read.admb.R")
 
 
 guiView	<- function()
@@ -52,6 +55,10 @@ guiView	<- function()
 	arg <- "make"
 	setwd(wdir)
 	system(arg)
+	
+	guiInfo$plotType="ebio"
+	setWinVal(guiInfo)
+	.mpdView()
 }
 
 .writeSimulationFile	<- function(gI)
@@ -68,8 +75,37 @@ guiView	<- function()
 }
 
 
+.mpdView	<- function()
+{
+	print(".mpdView")
+	
+	# Get the guiPerf parameters so that plot controls available.
+	guiInfo <- getWinVal(scope="L")
+	
+	# List of gui changes
+	guiChanges <- list()
+	
+	# Read input & output files
+	repfn   <- paste(.MODEL_DIRECTORY, .FILE_PREFIX,".rep",  sep="")
+	repObj  <- read.rep(repfn)
+	
+	if ( plotType=="ebio" )
+	{
+		.plotEBio( repObj, annotate=TRUE )
+	}
+}
 
-
+.plotEBio	<- function( repObj, annotate=FALSE )
+{
+	#plot total biomass & spawning biomass 
+	with(repObj, {
+		xx=yrsim; names(xx)="Year"
+		yy=EBio/1e6;  names(yy)="Expoitable biomass (million pounds net)"
+		
+		plot(xx, yy, type="line", xlab=names(xx), ylab=names(yy), ylim=c(0, 1.2*max(yy)) )
+		
+	})	
+}
 
 
 
