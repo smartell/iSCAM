@@ -34,6 +34,7 @@ solver <- function(fn, theta, hess=TRUE)
 par(mfrow=c(2, 2), las=1, mar=c(4.6,  4.1,  2.1,  2.1))
 # Females
 l_f  <- data.frame(t(rbind(iage, A$lt_obs[1:16, ])))
+w_f  <- data.frame(t(rbind(iage, A$wt_obs[1:16, ])))
 ml_f <- melt(l_f, id.var=1)
 age  <- ml_f[, 1]
 lobs <- ml_f[, 3]

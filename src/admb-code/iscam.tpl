@@ -1949,7 +1949,7 @@ FUNCTION runStockProjectionModel
 		/*Linf vector for density-dependent growth*/
 		dvector xr  = value(log_rt(2007,nyr+nyr_proj)-log_avgrec);
 		dvector px  = 2.*plogis(xr,0.,0.75) -1.;
-		linf_sim(h) = linf(h) - ddgrowth_rate*px*linf(h);  //FIXME: the 0.1 here should be on the GUI 0 for Density indpendent
+		linf_sim(h) = linf(h) - ddgrowth_rate*px*linf(h);  
 		
 		for(i=2007;i<=nyr+nyr_proj;i++)
 		{
