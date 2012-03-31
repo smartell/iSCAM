@@ -67,7 +67,8 @@ guiView	<- function()
 	with(gI, {
 		
 		write("# Controls for Halibut simulation model from R-GUI ", fn)
-		write(spnNyrs, fn,  append=TRUE);
+		write(spnNyrs, fn, append=TRUE);
+		write(spnDdgr, fn, append=TRUE);
 		
 		write("# Area based harvest policy from R-GUI", fn, append=TRUE)
 		write.table(t(hpFile[, -1]), fn, append=TRUE, row.names=FALSE, col.names=FALSE)

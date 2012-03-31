@@ -3,8 +3,9 @@ window name=hcamView title="HALIBUT BYCATCH SIMULATION MODEL"
 
 
 # Model dimensions
-grid 1 1 toptitle="Model Dimensions" relief="groove" pady=2 padx=5
-	spinbox name=spnNyrs label="Number of simulation years" from=1 to=25 by=1 value=15 width=5
+grid 2 1 toptitle="Simulation Controls" relief="groove" pady=2 padx=5
+	spinbox name=spnNyrs label="Number of simulation years" from=1 to=25 by=1 value=15 width=7
+	spinbox name=spnDdgr  label="Density dependent growth" from=-1.0 to=1.0 by=0.1 value=0 width=7
 
 # Harvest Policy
 grid 1 1 toptitle="Harvest Policy (million pounds)" relief="raised" pady=2

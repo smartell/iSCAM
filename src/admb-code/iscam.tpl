@@ -539,8 +539,12 @@ DATA_SECTION
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
+	
+	//*******************************************************************//
 	!! ad_comm::change_datafile_name(SimulationFile);
+	//*******************************************************************//
 	init_int nyr_proj;	//number of years (e.g., 10 years) to simulate into the future
+	init_number ddgrowth_rate;  //-1.0 to 1.0 rate of density dependent growth for simulations.
 	int nareas; 
 	!! nareas=8;
 	init_matrix sim_cntrl(1,2+ngear,1,nareas);
@@ -1912,6 +1916,7 @@ FUNCTION runStockProjectionModel
 	*/
 	cout<<"Entering runStockProjectionModel"<<endl;
 	int h,i,j,k;
+	int ayr;
 	int au = j_nage(nyr);
 	int al = j_sage(nyr);
 	dvar_vector tN(al,au);
@@ -1933,17 +1938,42 @@ FUNCTION runStockProjectionModel
 		}
 	}
 	
-	// 1) Future recruitment
-	log_rt(nyr+1,nyr+nyr_proj) = log_avgrec;  //FIXME: add noise here for Monte Carlo
+	// 1) Future recruitment (start in 2007)
+	double w25 = -0.2928;
+	double w50 =  0.1020;
+	double w75 =  0.2399;
+	dvar_matrix linf_sim(1,nsex,2007,nyr+nyr_proj);
+	log_rt(2007,nyr+nyr_proj) = log_avgrec + w25;  //FIXME: add noise here for Monte Carlo
 	for(h=1;h<=nsex;h++)
 	{
-		for(i=nyr+1;i<=nyr+nyr_proj;i++)
+		/*Linf vector for density-dependent growth*/
+		dvector xr  = value(log_rt(2007,nyr+nyr_proj)-log_avgrec);
+		dvector px  = 2.*plogis(xr,0.,0.75) -1.;
+		linf_sim(h) = linf(h) - ddgrowth_rate*px*linf(h);  //FIXME: the 0.1 here should be on the GUI 0 for Density indpendent
+		
+		for(i=2007;i<=nyr+nyr_proj;i++)
 		{
 			N(h)(i,sage) = exp(log_rt(i))/nsex;
+			
+			if(i<=nyr)
+			{
+				N(h)(i+1)(sage+1,nage)=++elem_prod(N(h)(i)(sage,nage-1),S(h)(i)(sage,nage-1));
+				N(h)(i+1,nage)+=N(h)(i,nage)*S(h)(i,nage);
+			}
+			
+			/*
+			Start keeping track of growth based on cohort density.
+			See relationships developed in HalibutGrowth.R
+			
+			*/
+			ayr = (i-2007)+sage;
+			lt_obs(h)(i)(sage,ayr) = linf_sim(h)(i)*(1.-exp(-vonbk(h)*age(sage,ayr)));
+			wt_obs(h)(i)(sage,ayr) = a(h)*pow(lt_obs(h)(i)(sage,ayr),b(h));
+			//cout<<"i="<<i<<lt_obs(h)(i)(sage,ayr)<<endl;
 		}
 		
 	}
-	
+
 	for(i=nyr+1;i<=nyr+nyr_proj;i++)
 	{
 		// 5) Calculate EBio and sbt as the start of the year
@@ -3116,6 +3146,7 @@ REPORT_SECTION
 	REPORT(la);
 	REPORT(wa);
 	REPORT(fec);
+
 	//Selectivity
 	report<<"log_sel"<<endl;
 	for(h=1;h<=nsex;h++)
@@ -3156,6 +3187,7 @@ REPORT_SECTION
 	REPORT(A_nu);
 	REPORT(N);
 	REPORT(wt_obs);
+	REPORT(lt_obs);
 
 //	if(last_phase())
 //	{	calcReferencePoints();

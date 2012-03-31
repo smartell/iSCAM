@@ -1,0 +1,41 @@
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/WRITEUP/Halibut.tex
+
+
+\begin{quote}
+\textbf{Overarching objective:} Investigate the effects of halibut bycatch and wastage in the GOA and BSAI fisheries on halibut yield and spawning biomass.	
+\end{quote}
+
+
+\section{Introduction} % (fold)
+\label{cha:introduction}
+
+To examine the effect of halibut bycatch and wastage in the Gulf of Alaska (GOA) and Bering Sea Aleutian Island (BSAI) fisheries, a sex- and age-structured simulation model was developed to simulate halibut exploitable biomass, spawning biomass, yield and wastage in the directed fishery in response to alternative bycatch limits in all other fisheries that incidentally harvest halibut.  The simulation model is conditioned on the output of the IPHC annual assessment model (wobblesq) and the model structure is very similar in the components of catch that are removed from the system.  
+
+\subsection{Overview of total mortality in the IPHC model} % (fold)
+\label{sub:overview_of_the_iphc_model}
+
+Key to understanding the simulation model developed for this report is understand how the various components of the age-specific total mortality rate are set up in the IPHC assessment model.  The IPHC model is set up such that total instantaneous sex- age-specific total mortality rates are used to propogate the estimated numbers-at-age over time.  Specifically, the sex- age-specific mortality rate is set up as follows:
+\begin{align*}
+	Z_{h,i,j} &= M_h + \sum_k F_{h,i,j,k}\\
+	Z_{h,i,j} &= M_h + \sum_k f_{h,i,k} s_{h,i,j,k}
+\end{align*}
+where $h$ is an index for sex, $i$ is an index for year, $j$ is an index for age, and $k$ is an index for fishing fleet.  This is a separable model for sex- age-specific total mortality where the year effect (fishing mortality $f_{h,i,k}$) is estimated for each gear in each year, and the age effect (selectivity $s_{h,i,j,k}$) is a piece-wise linear function of average length-at-age. The natural mortality rates $M_h$ are assumed to be independent of age and does not vary over time.  For each fishing gear there is a total of $I$+1 fishing mortality parameters and  16 estimated selectivity parameters.  These are determined by fitting the model to catch-at-age data.
+
+The are five  specific fishing fleets (i.e., $k=5$) in the model and the corresponding catch is aggregated:
+\begin{enumerate}
+	\item Commercial setline  and IPHC research,
+	\item U32 bycatch and wastage,
+	\item O32 bycatch and wastage,
+	\item recreational sport fishery,
+	\item personal use (subsistence fishery).
+\end{enumerate}
+The U32 and O32 bycatch and wastage are not broken down into specific gear types for specific areas, and to the best of my knowledge, all of this aggregation of the catch data and age-composition is done through a pre-processing of the available data.
+
+In order to accurately represent the age-specific total mortality rates in the simulation model, the annual age/sex specific fishing mortality rate parameters for each gear and the length-based selectivity parameters were used to calculate the total mortality rates in the simulation model.  These model parameters were made available by the IPHC commission staff.
+
+
+Another key component to the IPHC assessment model is the mean length-at-age and mean weight-at-age data. Estimates of exploitable biomass (EBio) and spawning biomass (SBio) from the model is the product of the estimated numbers-at-age (sex) and the empirical weight-at-age that is vulnerable to the coast-wide selectivity in the setline fishery.  These empirical data were made available for use in this simulation model herein.  In addition to selectivity, weight- and length-at-age data, the calculation of EBio also involves the use of an age-misclassification matrix (smearing).  The algorithm for this age-smearing was made available, but was not implemented due to time constraints.
+
+% subsection overview_of_the_iphc_model (end)
+% section introduction (end)
+

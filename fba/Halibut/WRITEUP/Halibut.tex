@@ -4,7 +4,7 @@
 %  Created by Martell on 2012-03-05.
 %  Copyright (c) 2012 UBC Fisheries Centre. All rights reserved.
 %
-\documentclass[]{article}
+\documentclass[]{report}
 \usepackage[round]{natbib}
 % Use utf-8 encoding for foreign characters
 \usepackage[utf8]{inputenc}
@@ -93,11 +93,16 @@
 \fi
 
 \title{Halibut Bycatch Management Research}
-\author{ Steven J.D. Martell \\ University of British Columbia\\  2202 Main Mall, \\ Vancouver, BC\\ V6T 1Z4 }
+\author{ Steven J.D. Martell \\ University of British Columbia\\  2202 Main Mall, \\ Vancouver, BC\\ V6T 1Z4\\
+%
+\noindent\hrulefill\\
+Document started March 5, 2012.
+ }
 
 \date{2012-03-05}
 
 \begin{document}
+
 
 \ifpdf
 \DeclareGraphicsExtensions{.pdf, .jpg, .tif}
@@ -106,12 +111,7 @@
 \fi
 
 \pagenumbering{roman}
-\setcounter{page}{1}
-    \maketitle \thispagestyle{empty}
-    \vfill
-    \noindent\hrulefill\\
-	Document started March 5, 2012.
-   \clearpage
+	\maketitle \thispagestyle{empty}
 \thispagestyle{empty}
 \clearpage
 
@@ -139,14 +139,19 @@
 %% -Main body of the document-------------------------------------------
 \pagenumbering{arabic}
 
-\part{Impacts of bycatch \& wastage on halibut yield}
-\textbf{Objective:} investigate the effects of halibut bycatch and wastage in the GOA and BASI groundfish fisheries.
 
+
+\part{Impacts of bycatch \& wastage on halibut yield}
+\setcounter{chapter}{1}
+\input{./PART1/Introduction}
+\input{./PART1/Methods.tex}
 
 \part{Effects of reduced minimum-size limits on yield, spawning biomass, and wastage.}
+\setcounter{chapter}{2}
+
 \textbf{Objective:} investigate the short-term and long-term consequences of adopting a smaller (26 inch or 66 cm) size limit on halibut spawning biomass, exploitable biomass, yield, and wastage.
 
-\input{./MODEL_DESCRIPTION/modelDescription}
+
 
 
 %% -End of main body of the document------------------------------------
@@ -166,6 +171,8 @@
 \addtocounter{section}{0}
 \renewcommand{\thetable}{A-\arabic{table}}
 \setcounter{table}{0}
+\setcounter{chapter}{1}
 \input{./APPENDIX_A/AppendixA}
-
+\setcounter{chapter}{2}
+\input{./MODEL_DESCRIPTION/modelDescription}
 \end{document}
