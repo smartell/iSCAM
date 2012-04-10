@@ -12,9 +12,16 @@ grid 1 1 toptitle="Harvest Policy (million pounds)" relief="raised" pady=2
 	object name=hpFile pady=2 padx=5 sticky=W font="Courier 10" rowshow=8 rowlabels=FALSE width="5 5 5" sticky=W
 
 # Available plots
-grid 2 1 toptitle="Select graphical output" sticky=W relief="sunken" padx=5
-	radio name=plotType value=catch         text="Catch"             function=.mpdView mode=character sticky=W
+grid 9 1 toptitle="Select graphical output" sticky=W relief="sunken" padx=5
 	radio name=plotType value=ebio          text="EBio"              function=.mpdView mode=character sticky=W
+	radio name=plotType value=enum          text="ENum"              function=.mpdView mode=character sticky=W
+	radio name=plotType value=n8plus        text="N 8+"              function=.mpdView mode=character sticky=W
+	radio name=plotType value=agesel        text="Selectivity"       function=.mpdView mode=character sticky=W
+	radio name=plotType value=catch         text="Catch"             function=.mpdView mode=character sticky=W
+	radio name=plotType value=waste         text="Wastage"           function=.mpdView mode=character sticky=W
+	radio name=plotType value=yieldloss     text="Yield Loss"        function=.mpdView mode=character sticky=W
+	radio name=plotType value=ylr           text="Yield Loss Ratio"  function=.mpdView mode=character sticky=W
+	radio name=plotType value=catchage      text="Catch-at-age"      function=.mpdView mode=character sticky=W
 
 
 # Run Button

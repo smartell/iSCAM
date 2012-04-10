@@ -17,10 +17,14 @@
 2011        # -last year of data            (nyr)
 1           # -age of youngest age class    (sage)
 30          # -age of plus group            (nage)
+40          # -minimum length               (slen)
+140         # -maximum length               (nlen)
+21          # -number of length bins        (nlbin)
 5           # -number of gears              (ngear)
 2           # -number of sexes              (nsex)
 6  6  6  6  6  6  6  6  6  6  6  6  6  6  6  6   # vector of firstAge(j_sage)##
-20 20 20 20 20 20 25 25 25 25 25 25 25 25 25 25  # vector of plusAge (j_nage)##
+#20 20 20 20 20 20 25 25 25 25 25 25 25 25 25 25  # vector of plusAge (j_nage)##
+25 25 25 25 25 25 25 25 25 25 25 25 25 25 25 25  # vector of plusAge (j_nage)##  Overwrote the wt_obs with a*pow(length-age,b)
 # (j_nage)
 ##
 ## ------------------------------------------------------------------------- ##

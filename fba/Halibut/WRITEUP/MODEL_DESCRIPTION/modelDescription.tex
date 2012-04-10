@@ -113,28 +113,39 @@ The simulation model is initialized using the model estimates of numbers-at-age 
 			&C_{i,k}, l_{h,i,j},w_{h,i,j} \label{T1.3}\\
 			%
 			&\mbox{Initialize state variables }\nonumber\\
-			\nu_{h,i,j} &= s_{h,l}^{(0)}+ \frac{ (l_{h,i,j}-l^{(0)})s_{h,l}^{(1)} - (l_{h,i,j}-l^{(0)})s_{h,l}^{(0)} }
-			{ l^{(1)}-l^{(0)} },& \mbox{where} \quad l^{(0)} \leq l_{h,i,j} \leq l^{(1)} \label{T1.4}\\
-			F_{h,i,j,k} &= \exp(f_{h,i} + \nu_{h,i,j}) \label{T1.5}\\
+			\nu_{h,i,j} &= s_{h,l}^{(0)}+ 
+			\frac{ (l_{h,i,j}-l^{(0)})s_{h,l}^{(1)} - (l_{h,i,j}-l^{(0)})s_{h,l}^{(0)} }
+			{ l^{(1)}-l^{(0)} }, \quad \mbox{where}
+			\quad  l^{(0)} \leq l_{h,i,j} \leq l^{(1)} \label{T1.4}\\
+			F_{h,i,j,k} &= \exp(f_{h,i,k} + \nu_{h,i,j,k}) \label{T1.5}\\
 			Z_{h,i,j} & = M_h + \sum_k F_{h,i,j,k} \label{T1.6} \\
 			&\mbox{Numbers at age}\nonumber\\
 			N_{h,i,j} &= 
 			\begin{cases}
 				\ddot{R}_{h}\exp(\ddot{\omega}_{h,j}-M_h (j-1)), & \mbox{for $2<j<30$}\\
-				0.5 R_h\exp(\omega_{i}), & \mbox{for $1996<i<2026$}\\
+				0.5 R_h\exp(\omega_{i}), \quad \mbox{for $1996<i<2026$}\\
 			\end{cases} \label{T1.7}\\
 			%
-			N_{h,i+1,j+1} &= N_{h,i,j} \exp(-Z_{h,i,j}), & \mbox{for 1$<j<$ 30}\label{T1.8}\\
-			N_{h,i+1,j} &= N_{h,i,j-1}+N_{h,i,j} \exp(-Z_{h,i,j}) , & \mbox{for $j =$30}\label{T1.9}\\
-			 %
-			SB_{i} &= \sum_{j=6}^{j=20,25} N_{h,i,j}\exp(-0.5Z_{h,i,j}) p_{h,j} w_{h,i,j},& \mbox{where $h=1$}\label{T1.10}\\
+			N_{h,i+1,j+1} &= N_{h,i,j} \exp(-Z_{h,i,j}), \quad \mbox{for 1$<j<$ 30}\label{T1.8}\\
+			N_{h,i+1,j} &= N_{h,i,j-1}+N_{h,i,j} \exp(-Z_{h,i,j}) , 
+			\quad \mbox{for $j =$30}\label{T1.9}\\
+			%
+			&\mbox{Spawning biomass ($h=1$), total catch, and exploitable biomass}\nonumber\\
+			%
+			SB_{i} &= \sum_{j=6}^{j=30} N_{h,i,j}\exp(-0.5Z_{h,i,j}) p_{h,j} w_{h,i,j},
+			\quad \mbox{where $h=1$}\label{T1.10}\\
+			%
+			C_{i,k} &=\sum_h \sum_j \frac{N_{h,i,j} w_{h,i,j} f_{h,i,k} s_{h,i,j}
+			(1-\exp(-Z_{h,i,j}))}{Z_{h,i,j}}\label{T1.11}\\
+			%
+			EB_{i} &= \sum_h \sum_{j=6}^{j=30} N_{h,i,j} w_{h,i,j} \exp(\nu_{h,i,j,k=1})\\
 			\hline \nonumber
 		\end{align}
 		\normalEq
 	\end{center}
 \end{table}
 
-The numbers-at-age by sex are initialized using \eqref{T1.7} and are updated using \eqref{T1.8} and \eqref{T1.9} for the plus group.  Female spawning biomass each year is calculated as the product of the number of females surviving half the $Z$ in a given year, the proportion mature-at-age, and the observed average catch weight-at-age $w_{h,i,j}$ in a given year.  Prior to 2001, aging data ranged from age-6 to age-20, and post 2001 break and burn methods were used to age halibut upto age-25, where 25 is the new plus group.  This calculation \eqref{T1.10} of spawning biomass differs slightly from the IPHC code, where the numbers-at-age each year are smeared by an aging error matrix, and the average weight at age from the survey was used.
+The numbers-at-age by sex are initialized using \eqref{T1.7} and are updated using \eqref{T1.8} and \eqref{T1.9} for the plus group.  Female spawning biomass each year is calculated as the product of the number of females surviving half the $Z$ in a given year, the proportion mature-at-age, and the observed average catch weight-at-age $w_{h,i,j}$ in a given year.  Prior to 2001, aging data ranged from age-6 to age-20, and post 2001 break and burn methods were used to age halibut upto age-25, where 25 is the new plus group.  This calculation \eqref{T1.10} of spawning biomass differs slightly from the IPHC code, where the numbers-at-age each year are smeared by an aging error matrix, and the average weight at age from the survey was used. The predicted catch in year $i$ for gear $k$ is given by \eqref{T1.11}, which is the sum over the catch-at-age by sex.
 
 % subsubsection initial_states (end)
 % 2) Selectivities and joint probablity for fishing mortality & discard mortality.
