@@ -121,13 +121,16 @@ guiView	<- function()
 	if ( plotType=="ebio" )	
 	{
 		.plotEBio( RF,xarg="yrsim", yarg="EBio",  yscale=1e6, ylim=c(0, 1200), lwd=5, lty=1 )
+		# Wobbleseq references
+		lines(RF[[1]]$yrs,WSQ$EBio,lwd=15, col=colr("grey", 0.5))
 		grid(col="grey", lwd=2 )
 	}
 	if ( plotType=="sbio" )	
 	{
-		.plotEBio( RF,xarg="yrsim", yarg="SBio",  yscale=1e6, ylim=c(0, 1200), lwd=5, lty=1, 
+		.plotEBio( RF,xarg="yrsim", yarg="SBio",  yscale=1e6, ylim=c(0, 800), lwd=5, lty=1, 
 		ylab="Spawning biomass (million lb)" )
 		grid(col="grey", lwd=2 )
+		abline(h=0.3*RF[[1]]$bo/1e6, lwd=14, col=colr("grey", 0.5))
 	}
 	if ( plotType=="enum" )
 	{
@@ -426,10 +429,9 @@ function( object,
 		matplot (xx, yy, type="l", xlab=xlab, ylab=ylab, col=.iCLR, ...)
 		
 		mu <- round(mean(yy[25:30, ]), 0)
-		text(1996, 800, paste(mu) , cex=3.5, pos=4)
+		text(1996, mu, paste(mu) , cex=3.5, pos=4)
 	}
-	# Wobbleseq references
-	lines(repObj[[1]]$yrs,WSQ$EBio,lwd=15, col=colr("grey", 0.5))
+	
 }
 
 .plotWaste	<- function( repObj,yarg=NULL , ...)
