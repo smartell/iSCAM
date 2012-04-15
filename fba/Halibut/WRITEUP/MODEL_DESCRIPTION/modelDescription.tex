@@ -130,7 +130,7 @@ The simulation model is initialized using the model estimates of numbers-at-age 
 			N_{h,i+1,j} &= N_{h,i,j-1}+N_{h,i,j} \exp(-Z_{h,i,j}) , 
 			\quad \mbox{for $j =$30}\label{T1.9}\\
 			%
-			&\mbox{Spawning biomass ($h=1$), total catch, and exploitable biomass}\nonumber\\
+			&\mbox{Model outputs}\nonumber\\
 			%
 			SB_{i} &= \sum_{j=6}^{j=30} N_{h,i,j}\exp(-0.5Z_{h,i,j}) p_{h,j} w_{h,i,j},
 			\quad \mbox{where $h=1$}\label{T1.10}\\
@@ -138,7 +138,22 @@ The simulation model is initialized using the model estimates of numbers-at-age 
 			C_{i,k} &=\sum_h \sum_j \frac{N_{h,i,j} w_{h,i,j} f_{h,i,k} s_{h,i,j}
 			(1-\exp(-Z_{h,i,j}))}{Z_{h,i,j}}\label{T1.11}\\
 			%
-			EB_{i} &= \sum_h \sum_{j=6}^{j=30} N_{h,i,j} w_{h,i,j} \exp(\nu_{h,i,j,k=1})\\
+			EB_{i} &= \sum_h \sum_{j=6}^{j=30} N_{h,i,j} w_{h,i,j} \exp(\nu_{h,i,j,k=1}) \label{T1.12}\\
+			%
+			YBio_i &= \sum_h \sum_j \frac{N_{h,i,j}w_{h,i,j}f_{h,i,k=1}s_{h,i,j,k=1} r_{h,i,j,k=1}(1-\exp(-Z_{h,i,j}))}
+			{Z_{h,i,j}}\label{T1.13}\\
+			%
+			WBio_i &= \sum_h \sum_j
+			\frac{N_{h,i,j}w_{h,i,j}f_{h,i,k=1}s_{h,i,j,k=1}(1-r_{h,i,j,k=1})d_{k=1}(1-\exp(-Z_{h,i,j}))}
+			{Z_{h,i,j}} \label{T1.14}\\
+			%
+			LBio_i &= YBio_i^{(f_{k=2,3}=0)} - YBio_i \label{T1.15}\\
+			%
+			BBio_i &= \sum_h \sum_j \sum_{k=2}^{k=3}
+			\frac{N_{h,i,j}w_{h,i,j}f_{h,i,k}s_{h,i,j,k} r_{h,i,j,k}(1-\exp(-Z_{h,i,j}))}
+			{Z_{h,i,j}}\label{T1.16}\\
+			%
+			YLR_i & = \frac{LBio_i}{BBio_i}\label{T1.17}\\
 			\hline \nonumber
 		\end{align}
 		\normalEq
@@ -151,20 +166,40 @@ The numbers-at-age by sex are initialized using \eqref{T1.7} and are updated usi
 % 2) Selectivities and joint probablity for fishing mortality & discard mortality.
 \subsubsection{Joint probability model for fishing \& discard mortality} % (fold)
 \label{ssub:joint_probability_for_fishing_&_discard_mortality}
-For the future simulations ($i\geq$ 2012), the directed setline fishery for halibut 
+For the future simulations ($i\geq$ 2012), the directed setline fishery for halibut is based on the probability of capturing a fish of age $j$ times the probability of retaining a fish of age $j$.  This joint probability is represented by the age-selectivity of the fishing gear (which is a length-based function) and variation in growth of male and female halibut.  The age-based selectivity is based on \eqref{T1.4}.  The probability of retaining a fish of age $j$ is the based on the probability of an age $j$ fish being larger than the size limit. This integral was approximated using a logistic function of the mean length-at-age and assuming a coefficient of variation of 0.1 in length-at-age such that the standard deviation in length-at-age $\sigma_j$ increases as a linear function of length:
+\[
+p(r)_j = \frac{1}{1+\exp(-(l_j-\mathrm{MSL})/\sigma_j)}
+ \] 
+The probability of discarding a fish of age $j$ is defined as $1-p(r)_j$.  Figure \ref{fig:FIGURES_SIZELIMIT_SelRetA} shows how retention and discarding probabilities vary with age with a 32 inch size limit in place.  Note that when the mean length-at-age gets smaller, this retention probability shifts to the right (older ages) and fish recruit to the fishing gear later in life.
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[height=3in]{../FIGURES/SIZELIMIT/SelRetA.pdf}
+	\caption{Probability of retention and discarding a  halibut with a 32 inch size limit in place.}
+	\label{fig:FIGURES_SIZELIMIT_SelRetA}
+\end{figure}
 
 % subsubsection joint_probability_for_fishing_&_discard_mortality (end)
 
 % 3) Calculating fishing mortality rates from 1994-present conditioned on catch.
-In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data are not readily available to be used in this analysis.  The sex composition of the commercial catch was approximated by applying the same fishing mortality rate to each of the sexes, where the fishing mortality rate was approximated by the historical total landings divided by the simulated exploitable biomass (both sexes combined).  This differs substantially from the methods used to apportion commercial catch to each sex \cite[see][for details]{clark2004method}.
-
-
-% 4) Calculate sex- age-specifc total mortality rates
+In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data were not available to be used in this analysis. For the 1996 to 2011 period, fishing mortality rates were taken from the IPHC assessment model.  For the projection period ($i>2011$), fishing mortality rates were based on the projected catches for each of the five gears (commercial, U32, O32, recreational, personal). Sex-specific fishing mortality rates were determined using a numerical procedure to solve the Baranov catch equation \eqref{T1.11}.  An initial guess for the sex-specific fishing rate $f_{h,i,k}$ for gear $k$ in year $i$, followed by the use of Newtons' root finding method to find the appropriate values of $f_{h,i,k}$ such that the sum of the predicted female and male catches for each gear was equivalent to the catch allocated to that gear.  The following piece of C++ code accomplishes this task rather efficiently.
 
 % subsection analytical_description (end)
 % -----------------------------------------------------------------------------
 \subsection{Model outputs} % (fold)
 \label{sub:model_outputs}
+Simulation model outputs of interest for this study are:
+\begin{enumerate}
+	\item Exploitable biomass,  EBio defined by \eqref{T1.12}.
+	\item Female spawning biomass, SBio defined by \eqref{T1.10}.
+	\item Commercial Yield, YBio defined by \eqref{T1.13}.
+	\item Wastage from the commercial fishery, WBio defined by \eqref{T1.14}.
+	\item Lost yield due to bycatch from non-directed fisheries, LBio defined by \eqref{T1.15}.
+	\item Bycatch from non-directed fisheries, BBio defined by \eqref{T1.16}.
+	\item The yield loss ratio, YLR defined by \eqref{T1.17}.
+\end{enumerate}
+
+Not that in order to calculate the lost yield \eqref{T1.15}, the model was run as if there were no bycatch of halibut in other fisheries, and all of the available CEY for each area was allocated to the commercial gear.  The lost yield simply the difference between the yield obtained with no bycatch and the yield obtained with bycatch allotments in place.
+
 
 % subsection model_outputs (end)
 

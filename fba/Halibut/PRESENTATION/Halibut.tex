@@ -24,6 +24,7 @@
 \setbeamertemplate{navigation symbols}{} 
 %
 \usepackage{graphicx}
+\usepackage{array}
 %\usepackage{bm}         % For typesetting bold math (not \mathbold)
 %\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
 %
@@ -67,7 +68,7 @@
 }
 %end of table of contents
 
-\title[\iscam]{Size limit effects on halibut CEY, spawning biomass, and wastage.}
+\title[\iscam]{Impacts of halibut bycatch and wastage on halibut coast-wide yield and spawning biomass}
 \author{Steve Martell}
 \institute[UBC]
 {
@@ -85,66 +86,281 @@ University of British Columbia \\
 \titlepage
 \end{frame}
 %
-\begin{frame}[t]\frametitle{IPHC model is fit to}
+\section{Introduction} % (fold)
+\label{sec:introduction}
+\begin{frame}[t]\frametitle{Objectives}
+Provide an alternative investigation into the effects of halibut bycatch and wastage in the GOA and BSAI groundfish fisheries.\\
+\pause \bigskip
+\underline{Research Question:}\\
+What are the impacts of \underline{bycatch} reductions on future estimates of halibut \textbf{biomass}, \textbf{yield}, \textbf{spawning biomass} and \textbf{wastage} by age--size categories over a fifteen year time horizon?\\
+\pause \bigskip
+\underline{To answer this question:}\\
+Developed a deterministic sex/age-structured simulation model using IPHC assessment outputs to parameterize the model.
+\end{frame}
+% section introduction (end)
+
+\section{Simulation model} % (fold)
+\label{sec:simulation_model}
+\begin{frame}[t,shrink]\frametitle{Simulation model overview}
 	\begin{itemize}
-		\item<+->  WPUE from setline survey
-		\item<+->  Age-composition
+		\item<+-| alert@+> 2 genders, 30 age-classes, 1996--2026 (or longer).
+		\item<+-| alert@+> Inputs: IPHC initial age-composition, natural mortality (by sex), annual recruits, fishing mortality rates, size-selectivity, survey mean length-at-age.
+		\item<+-| alert@+> Not used: empirical catch weight-at-age, age-smearing.
+		\item<+-| alert@+> Exploitable biomass based on vulnerable biomass in commercial fishery.
+		\item<+-| alert@+> Wastage based on joint probability: P(capture)*(1-P(retention))*$M_d$.
+		\item<+-| alert@+> Apportionment based on 2011 apportionment.
+		\item<+-| alert@+> Area based CEY's based area specific harvest rate.
+		\item<+-| alert@+> Commercial fishery share: CEY - (other removals).
+		\item<+-| alert@+> \alert{Reduction in bycatch translates to increase in commercial catch.}
 	\end{itemize}
 \end{frame}
 
-
-\begin{frame}
-\frametitle{Motivation}
-\begin{block}
-{Why Beamer?}
-Does anybody need an introduction to Beamer? I don't think so.
-\end{block}
+\begin{frame}[t]\frametitle{Model outputs}
+	\underline{Exploitable Biomass (EBio)}:\\
+	Start of year biomass vulnerable to the commercial gear.\\
+	\pause \medskip
+	\underline{Spawning Biomass (SBio):}\\
+	Start of year female mature biomass.\\
+	\pause \medskip
+	\underline{Commercial Yield (YBio):}\\
+	Weight of commercial landings (excluding wastage).\\
+	\pause \medskip
+	\underline{Wastage (WBio):}\\
+	Weight of dead discarded undersized fish in commercial fishery.\\
+	\pause \medskip
+	\underline{Lost Yield (LBio):}\\
+	Difference between YBio with \emph{no} bycatch \& \emph{with} bycatch.\\
+	\pause \medskip
+	\underline{Yield Loss Ratio (YLR):}\\
+	Ratio between the yield loss and the bycatch.\\
+\end{frame}
+% section simulation_model (end)
+\section{Scenarios} % (fold)
+\label{sec:scenarios}
+\begin{frame}[m]\frametitle{Growth \& Recruitment Scenarios (states of nature)}
+	\begin{enumerate}
+		\item<1> Poor (60\% below average recruitment)
+		\item<1> Average
+		\item<1> Good (60\% above average recruitment)
+	\end{enumerate}
+	Growth: 
+	\begin{enumerate}
+		\item<2> Density-independent (using 2011 average length-at-age)
+		\item<2> Density dependent. 
+	\end{enumerate}
 \end{frame}
 %
-\begin{frame}
-\frametitle{Example of a Theorem}
-\begin{theorem}
-The quick brown fox jumps over the lazy dog.
-\end{theorem}
+\begin{frame}[m]\frametitle{Policy Scenarios}
+	Three alternative policies:
+	\begin{enumerate}
+		\item Status quo: 2011 BSAI bycatch levels
+		\item 50\% Reduction in BSAI bycatch (4ABCDE)
+		 \begin{itemize}
+		 	\item decrease from 5.535 million lb to 2.765 million lb.
+		 \end{itemize}
+		\item 50\% Reduction in GULF bycatch (3AB)
+		\begin{itemize}
+			\item decrease from 5.752 million lb to 2.876 million lb.
+		\end{itemize}
+	\end{enumerate}
 \end{frame}
 %
-\begin{frame}[fragile] % Notice the [fragile] option %
-\frametitle{Verbatim}
-\begin{example}[Putting Verbatim]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Outline}
-\begin{block}
-{Why Beamer?}
-Does anybody need an introduction to Beamer?
-I don't think so.
-\end{block}
-% Extra carriage return causes problem with verbatim %
-\end{frame}\end{verbatim} 
-\end{example}
+\begin{frame}[t]\frametitle{Summary plots}
+	\centering
+	\pgfimage[height=0.8\textheight]{../FIGURES/EBioDemo}
 \end{frame}
- 
+%
+% section scenarios (end)
+\section{Results} % (fold)
+\label{sec:results}
+\subsection{EBio} % (fold)
+\label{sub:ebio}
+\begin{frame}[m]\frametitle{Decision table: EBio}
+	Effect of bycatch reduction on Exploitable Biomass\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+		\hline
+		Policy & Status quo & 50\% BSAI  & 50\% GULF  \\
+		\hline
+		%
+		DI Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DI_EBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DI_EBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DI_EBio} \\
+		\hline
+		%
+		DD Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DD_EBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DD_EBio} & 
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DD_EBio} \\
+		\hline
+		%
+		Average & 633 & 631.5 & 631 \\
+		\hline
+	\end{tabular}
+\end{frame}
+% subsection ebio (end)
+%
+\subsection{SBio} % (fold)
+\label{sub:sbio}
+\begin{frame}[m]\frametitle{Decision table: SBio}
+	Effect of bycatch reduction on Female Spawning Biomass\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+		\hline
+		Policy & Status quo & 50\% BSAI  & 50\% GULF  \\
+		\hline
+		%
+		DI Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DI_SBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DI_SBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DI_SBio} \\
+		\hline
+		%
+		DD Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DD_SBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DD_SBio} & 
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DD_SBio} \\
+		\hline
+		%
+		Average & 446 & 444 & 443.5 \\
+		\hline
+	\end{tabular}
+\end{frame}
+% subsection sbio (end)
+%
+\subsection{YBio} % (fold)
+\label{sub:ybio}
+\begin{frame}[m]\frametitle{Decision table: Commercial Yield}
+	Effect of bycatch reduction on Commercial Yield\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+		\hline
+		Policy & Status quo & 50\% BSAI  & 50\% GULF  \\
+		\hline
+		%
+		DI Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DI_YBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DI_YBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DI_YBio} \\
+		\hline
+		%
+		DD Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DD_YBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DD_YBio} & 
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DD_YBio} \\
+		\hline
+		%
+		Average & 101 & 103 & 103 \\
+		\hline
+	\end{tabular}
+\end{frame}
+% subsection ybio (end)
+\subsection{Wastage} % (fold)
+\label{sub:wastage}
+\begin{frame}[m]\frametitle{Decision table: Comm. Wastage}
+	Effect of bycatch reduction on Commercial Wastage\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+		\hline
+		Policy & Status quo & 50\% BSAI  & 50\% GULF  \\
+		\hline
+		%
+		DI Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DI_WBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DI_WBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DI_WBio} \\
+		\hline
+		%
+		DD Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_SQUO_DD_WBio} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_BSAI_DD_WBio} & 
+		\pgfimage[width=0.25\textwidth]{../FIGURES/fig_GULF_DD_WBio} \\
+		\hline
+		%
+		Average & 2.494 & 2.581 & 2.589 \\
+		\hline
+	\end{tabular}
+\end{frame}
 
+% subsection wastage (end)
+\subsection{Yield Loss Ratio} % (fold)
+\label{sub:yield_loss_ratio}
+\begin{frame}[m]\frametitle{Decision table: Yield Loss Ratio}
+	Effect of bycatch reduction on Yield Loss Ratio\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+		\hline
+		Policy & Status quo & 50\% BSAI  & 50\% GULF  \\
+		\hline
+		%
+		DI Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_SQUO_DI_ylr} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_BSAI_DI_ylr} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_GULF_DI_ylr} \\
+		\hline
+		%
+		DD Growth &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_SQUO_DD_ylr} &
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_BSAI_DD_ylr} & 
+		\pgfimage[width=0.25\textwidth]{../FIGURES/YLR/fig_GULF_DD_ylr} \\
+		\hline
+		%
+		Average & 2.494 & 2.581 & 2.589 \\
+		\hline
+	\end{tabular}
+\end{frame}
 
-\begin{frame}[fragile]  % notice the fragile option, since the body
-			% contains a verbatim command
-Example of the \verb|\cite| command to give a reference is below:
-Example of citation using \cite{key1} follows on.
+% subsection yield_loss_ratio (end)
+% section results (end)
+
+\section{Summary} % (fold)
+\label{sec:summary}
+\begin{frame}[m,shrink]\frametitle{Summary}
+	\begin{itemize}
+		\item<+-| alert@+> 	Density-dependent growth dominates the scale of EBio in comparison to recruitment trends.\\
+		\item<+-| alert@+>	Exploitable and spawning coastwide biomass are largely insensitive to BSAI and GULF bycatch.\\
+		\item<+-| alert@+>	Fishing mortality is dominated by the directed commercial fishery.\\
+		\item<+-| alert@+>	Reducing bycatch in BSAI or Gulf by 50\% ($\approx$ 2.7 million lb) results in a $\approx$ 2 million lb yr$^{-1}$ increase in the directed fishery.\\
+	\end{itemize}
+	\vspace{-1.5cm}
+	\onslide<3>{
+		\pgfimage[width=\textwidth]{../FIGURES/fig:FishRate.pdf}
+	}
+		
 \end{frame}
- 
-\begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99}
- \bibitem[Label1, 2010]{key1} Author's name (1987)
- \newblock Title of the paper.
- \newblock \emph{Journal Name} 55(4), 765 -- 799.
-\end{thebibliography}
-}
-\end{frame}
- 
-\begin{frame}
-\centerline{The End}
+% section summary (end)
+\begin{frame}[m]\frametitle{Acknowledgments}
+	IPHC staff\\
+	At-sea Processors Association\\
+	United Catcher Boats\\
+	Pacific Seafood Processors Association\\
+	Alaska Groundfish Data Bank\\
+	Marine Conservation Alliance\\
+	Groundfish Fourm\\
+	Alaska Whitefish Trawlers\\
 \end{frame}
 % End of slides
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

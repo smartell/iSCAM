@@ -702,9 +702,14 @@ PARAMETER_SECTION
 	3darray S(1,nsex,syr,nyr+nyr_proj,sage,nage);
 	
 	matrix la(1,nsex,sage,nage);			//length-at-age                        
-	matrix wa(1,nsex,sage,nage);			//weight-at-age                        
+	matrix wa(1,nsex,sage,nage);			//weight-at-age
+	matrix ma(1,nsex,sage,nage);			//maturity-at-age                        
 	matrix ct(1,ngear,syr,nyr+nyr_proj);	//predicted catch biomass
 	matrix ht(1,ngear,syr,nyr+nyr_proj);	//predicted waste biomass
+	matrix dt(1,ngear,syr,nyr+nyr_proj);	//predicted discard biomass
+	matrix val_ct(1,ngear,syr,nyr+nyr_proj);	//predicted landed value.
+	matrix val_ht(1,ngear,syr,nyr+nyr_proj);	//value of discarded wasteage that dies
+	matrix val_dt(1,ngear,syr,nyr+nyr_proj);	//value of all fish thrown over-board
 	matrix yieldLoss(1,ngear,syr,nyr+nyr_proj); //yield loss
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
@@ -713,6 +718,7 @@ PARAMETER_SECTION
 	
 	3darray lt_obs(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//mean length-at-age by sex
 	3darray wt_obs(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//weight-at-age by sex
+	3darray price(1,nsex,syr,nyr+nyr_proj+1,sage,nage);			//average price.
 	3darray wt_dev(1,nsex,syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	3darray fec(1,nsex,syr,nyr+nyr_proj+1,sage,nage);		//fecundity-at-age
 	
@@ -736,6 +742,8 @@ PARAMETER_SECTION
 	vector EBio(syr,nyr+nyr_proj);
 	vector ENum(syr,nyr+nyr_proj);
 	vector N8plus(syr,nyr+nyr_proj);
+	vector EVal(syr,nyr+nyr_proj);		//value of the exploitable biomass.
+	vector LVal(syr,nyr+nyr_proj);		//landed value from the commercial fishery.
 	
 PRELIMINARY_CALCS_SECTION
   //Run the model with input parameters to simulate real data.
@@ -916,6 +924,13 @@ FUNCTION calcGrowth
 	The ast part of the routine calculates annual deviations in the weight
 	at age to allow for age-specific selectivity to change (sel_type==7) 
 	in cases where there have been significant changes in length/weight-at-age.
+	
+	April 11, 2012.	Added price per pound (price(1,nsex,syr,nyr+nyr_proj+1,sage,nage))
+	For halibut this is based on prices in Homer Alaska (road Premium)
+	5 -10  0.00/lb
+	10-20  6.75/lb
+	20-40  7.30/lb
+	40+    7.50/lb
 	*/
 	
 	
@@ -924,8 +939,9 @@ FUNCTION calcGrowth
 	lt_obs.initialize();	
 	wt_obs.initialize();
 	wt_dev.initialize();
+	price.initialize();
 	fec.initialize();
-	dvar_matrix ma(1,nsex,sage,nage);
+	//dvar_matrix ma(1,nsex,sage,nage);
 	
 	//cout<<"Entered calcGrowth"<<endl;
 	// calculate parametric growth
@@ -944,6 +960,16 @@ FUNCTION calcGrowth
 			wt_obs(h)(i)(al,au) = wa(h)(al,au);
 			lt_obs(h)(i)(al,au) = la(h)(al,au);
 			fec   (h)(i)(al,au) = elem_prod(ma(h)(al,au),wt_obs(h)(i)(al,au));
+			
+			/*loop over ages and set price*/
+			for(j=al;j<=au;j++)
+			{
+				if( wt_obs(h)(i)(j)<10 ) 						price(h)(i)(j) = 0.00;
+				if( wt_obs(h)(i)(j)>=10 && wt_obs(h)(i)(j)<20 ) price(h)(i)(j) = 6.75;
+				if( wt_obs(h)(i)(j)>=20 && wt_obs(h)(i)(j)<40 ) price(h)(i)(j) = 7.30;
+				if( wt_obs(h)(i)(j)>=40 )						price(h)(i)(j) = 7.50;
+			}
+			
 		}
 		avg_fec(h) = colsum(fec(h))/(nyr-syr+1);
 		
@@ -992,10 +1018,18 @@ FUNCTION calcGrowth
 			wt_obs(h)(i) = wt_obs(h)(i-1); 
 			lt_obs(h)(i) = lt_obs(h)(i-1);
 			fec   (h)(i) = elem_prod(ma(h),wt_obs(h)(i));
+			
+			/*loop over ages and set price*/
+			for(j=sage;j<=nage;j++)
+			{
+				if( wt_obs(h)(i)(j)>=4.83&& wt_obs(h)(i)(j)<10 ) price(h)(i)(j) = 5.00;
+				if( wt_obs(h)(i)(j)>=10 && wt_obs(h)(i)(j)<20 ) price(h)(i)(j) = 6.75;
+				if( wt_obs(h)(i)(j)>=20 && wt_obs(h)(i)(j)<40 ) price(h)(i)(j) = 7.30;
+				if( wt_obs(h)(i)(j)>=40 )					price(h)(i)(j) = 7.50;
+			}
 		}
 		
 	}  // end of h loop
-
 	//cout<<"\n Exiting calcGrowth"<<endl;
 
 
@@ -1305,6 +1339,7 @@ FUNCTION calcSelectivities
 					for(k=sage;k<=nage;k++)
 					{
 						dvariable len       = lt_obs(h)(i)(k);
+						p2                  = 0.1*len+0.01;
 						log_ret(h)(j)(i)(k) = log( plogis(len,p1,p2) );
 					}
 				}
@@ -1591,12 +1626,18 @@ FUNCTION calcFisheryObservations
 	Mar 28, 2012	Increased year dimension to include future simulated catch.
 	Apr 05, 2012	Added wastage What calculation and ht
 	Apr 06, 2012	Added catch-at-length (4darray Clen) using ageLengthKey from statsLib.h
+	
+	Apr 11, 2012	Added value of catch by age (should be done by length for price premiums). (vt)
 	*/
 	if(verbose) cout<<"entering calcFisheryObservations"<<endl;
 	
 	int h,i,k;
 	ct.initialize();
 	ht.initialize();
+	dt.initialize();
+	val_ct.initialize();
+	val_ht.initialize();
+	val_dt.initialize();
 	Chat.initialize();
 	What.initialize();
 	
@@ -1632,11 +1673,21 @@ FUNCTION calcFisheryObservations
 					dvar_vector fd = ft(h)(k,i) * elem_prod(va,(1.-ra)*discMort(k));
 					dvar_vector d2 = elem_div(fd,Z(h)(i));
 					What(h)(k,i)   = elem_prod(elem_prod(d2,1.-S(h)(i)),N(h)(i));
+					
+					//Total discards based on size limit
+					dvar_vector ftd  = ft(h)(k,i) * elem_prod(va,(1.-ra));
+					dvar_vector d3   = elem_div(ftd,Z(h)(i));
+					dvar_vector Dhat = elem_prod(elem_prod(d3,1.-S(h)(i)),N(h)(i));
+					
 					switch(catch_type(k))
 					{
 						case 1:	//catch in weight
 							ct(k,i) += Chat(h)(k,i)*wt_obs(h)(i);
 							ht(k,i) += What(h)(k,i)*wt_obs(h)(i);
+							dt(k,i) += sum(Dhat)/sum(Chat(h)(k,i));
+							val_ct(k,i) += Chat(h)(k,i)*elem_prod(wt_obs(h)(i),price(h)(i));
+							val_ht(k,i) += What(h)(k,i)*elem_prod(wt_obs(h)(i),price(h)(i));
+							val_dt(k,i) += Dhat * elem_prod(wt_obs(h)(i),price(h)(i));
 						break;
 						case 2:	//catch in numbers
 							ct(k,i) += sum(Chat(h)(k,i));
@@ -1674,11 +1725,20 @@ FUNCTION calcFisheryObservations
 					dvar_vector d2 = elem_div(fd,Z(h)(i));
 					What(h)(k,i)   = elem_prod(elem_prod(d2,1.-S(h)(i)),N(h)(i));
 
+					//Total discards based on size limit
+					dvar_vector ftd  = ft(h)(k,i) * elem_prod(va,(1.-ra));
+					dvar_vector d3   = elem_div(ftd,Z(h)(i));
+					dvar_vector Dhat = elem_prod(elem_prod(d3,1.-S(h)(i)),N(h)(i));
+
 					switch(catch_type(k))
 					{
 						case 1:	//catch in weight
 							ct(k,i) += Chat(h)(k,i)*wt_obs(h)(i);
 							ht(k,i) += What(h)(k,i)*wt_obs(h)(i);
+							dt(k,i) += sum(Dhat)/sum(Chat(h)(k,i));
+							val_ct(k,i) += Chat(h)(k,i)*elem_prod(wt_obs(h)(i),price(h)(i));
+							val_ht(k,i) += What(h)(k,i)*elem_prod(wt_obs(h)(i),price(h)(i));
+							val_dt(k,i) += Dhat * elem_prod(wt_obs(h)(i),price(h)(i));
 						break;
 						case 2:	//catch in numbers
 							ct(k,i) += sum(Chat(h)(k,i));
@@ -1962,7 +2022,7 @@ FUNCTION dvariable calcSBio(const int& iyr)
 	dvar_vector tmpN  = elem_prod(N(h)(iyr),exp(-Z(h)(iyr)*cntrl(13)));
 	dvar_vector tmpNZ = tmpN(al,au);
 	if(al<nage) tmpNZ(au) += sum(tmpN(au+1,nage));
-	dvar_vector tmpF  = fec(h)(iyr)(al,au);
+	dvar_vector tmpF  = elem_prod(wt_obs(h)(iyr)(al,au),ma(h)(al,au));//fec(h)(iyr)(al,au);
 	SBio              = tmpNZ * tmpF;
 	return(SBio);
   }
@@ -2010,6 +2070,31 @@ FUNCTION dvariable calcEBio(const int& iyr)
 	return(EBio);
   }
 
+	/*FUNCTION dvariable calcEVal(cons int& iyr)
+	  {
+		
+		// Calculate the value of the exploitable biomass coast wide.
+		
+		int h,jj;
+		int al,au;
+		dvariable VBio=0;
+		for(h=1;h<=nsex;h++)
+		{
+			if(iyr>nyr)jj=nyr; else jj=iyr;
+			al = j_sage(jj);
+			au = j_nage(jj);
+			dvar_vector tmpN = N(h)(iyr)(al,au);
+			dvar_vector tmpS = exp( log_sel(h)(1)(iyr)(al,au) );
+			dvar_vector tmpW = wt_obs(h)(iyr)(al,au);
+			dvar_vector tmpP = price(h)(iyr)(al,au);
+			VBio            += tmpN * elem_prod(tmpS,elem_prod(tmpW,tmpP));
+		}
+		
+		return(VBio);
+		
+	  }*/
+
+
 FUNCTION void runStockProjectionModel(const double& wdev,const int& flagYieldLoss)
   {
 	/*
@@ -2029,6 +2114,9 @@ FUNCTION void runStockProjectionModel(const double& wdev,const int& flagYieldLos
 		8) Calculate the corresponding fishing rate (F_{h,i,k})
 		9) Calculate Z and update total mortality.
 		10) Update numbers at age
+	
+	
+	April 11, added Value of CEY_a
 	
 	*/
 	cout<<"Entering runStockProjectionModel"<<endl;
@@ -2071,7 +2159,7 @@ FUNCTION void runStockProjectionModel(const double& wdev,const int& flagYieldLos
 				N(h)(i+1,nage)+=N(h)(i,nage)*S(h)(i,nage);
 			}
 			
-			// 2) Growth
+			// 2) Growth  & Fecundity
 			ayr = (i-2007)+sage;
 			lt_obs(h)(i)(sage,ayr) = linf_sim(h)(i)*(1.-exp(-vonbk(h)*age(sage,ayr)));
 			wt_obs(h)(i)(sage,ayr) = a(h)*pow(lt_obs(h)(i)(sage,ayr),b(h));
@@ -2095,6 +2183,8 @@ FUNCTION void runStockProjectionModel(const double& wdev,const int& flagYieldLos
 		
 		// 7) Calculate area sepcific CEY's as sim_hr * EBio_A
 		CEY_A   = elem_prod(sim_hr, EBio_A);
+		
+		
 		// Get commercial setline allocation in the following function
 		dmatrix ctmp_mat=getSetLineCatch(value(CEY_A),sim_ct_share,flagYieldLoss);
 		
@@ -3262,7 +3352,7 @@ REPORT_SECTION
 	ivector yr(syr,nyr);
 	ivector yrs(syr,nyr+1);
 	ivector yrsim(syr,nyr+nyr_proj);
-	ivector yrsims(syr,nyr+nyr_proj+1);
+	ivector yrsims	(syr,nyr+nyr_proj+1);
 	yr.fill_seqadd(syr,1); 
 	yrs.fill_seqadd(syr,1); 
 	yrsim.fill_seqadd(syr,1);
@@ -3300,8 +3390,19 @@ REPORT_SECTION
 	REPORT(ht);
 	yieldLoss /= 1.e6;
 	REPORT(yieldLoss);
+	
+	REPORT(dt);      //fraction of the number of fish discarded to landed.
+	val_ct /=1.e6;
+	REPORT(val_ct);  //landed value in millions of dollars
+	val_ht /=1.e6;
+	REPORT(val_ht);  //value of discarded fish that die.
+	val_dt /=1.e6;
+	REPORT(val_dt);  //value of all discared fish (dead or alive).
 	REPORT(ft);
 	REPORT(sbt);
+	dvector SBio(syr,nyr+nyr_proj);
+	SBio=value(sbt(syr,nyr+nyr_proj));
+	REPORT(SBio);
 	REPORT(EBio);
 	REPORT(ENum);
 	N8plus.initialize();

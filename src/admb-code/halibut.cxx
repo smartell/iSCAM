@@ -61,7 +61,6 @@ dmatrix get_ft_bysex(dvector& ct,const dvector& m, const d3_array& V,const dmatr
 	//ct=ctmp;	//don't do this for the differentiable version.
 	
 	
-	// March 26, Still working here trying to solve the catch equation for sex and gears.
 	// Need to calculate total catch by sex to get newton step right.
 	
 	//now solve baranov catch equation iteratively.

@@ -3,26 +3,33 @@ window name=hcamView title="HALIBUT BYCATCH SIMULATION MODEL"
 
 
 # Model dimensions
-grid 2 1 toptitle="Simulation Controls" relief="groove" pady=2 padx=5
-	spinbox name=spnNyrs label="Number of simulation years" from=1 to=25 by=1 value=15 width=7
-	spinbox name=spnDdgr  label="Density dependent growth" from=-1.0 to=1.0 by=0.1 value=0 width=7
+grid 4 1 toptitle="Simulation Controls" relief="groove" pady=2 padx=5
+	spinbox name=spnNyrs label="Number of simulation years" from=1    to=25 by=1     value=15 width=7 sticky=E
+	spinbox name=spnDdgr label="Density dependent growth"   from=0    to=1.0 by=0.1  value=0  width=7 sticky=E
+	spinbox name=spnBSAI label="BSAI Bycatch Reduction"     from=0    to=1.0 by=0.05 value=1  width=7 sticky=E
+	spinbox name=spnGULF label="GULF Bycatch Reduction"     from=0    to=1.0 by=0.05 value=1  width=7 sticky=E
 
 # Harvest Policy
 grid 1 1 toptitle="Harvest Policy (million pounds)" relief="raised" pady=2
 	object name=hpFile pady=2 padx=5 sticky=W font="Courier 10" rowshow=8 rowlabels=FALSE width="5 5 5" sticky=W
 
 # Available plots
-grid 9 1 toptitle="Select graphical output" sticky=W relief="sunken" padx=5
-	radio name=plotType value=ebio          text="EBio"              function=.mpdView mode=character sticky=W
-	radio name=plotType value=enum          text="ENum"              function=.mpdView mode=character sticky=W
-	radio name=plotType value=n8plus        text="N 8+"              function=.mpdView mode=character sticky=W
-	radio name=plotType value=agesel        text="Selectivity"       function=.mpdView mode=character sticky=W
-	radio name=plotType value=catch         text="Catch"             function=.mpdView mode=character sticky=W
-	radio name=plotType value=waste         text="Wastage"           function=.mpdView mode=character sticky=W
-	radio name=plotType value=yieldloss     text="Yield Loss"        function=.mpdView mode=character sticky=W
-	radio name=plotType value=ylr           text="Yield Loss Ratio"  function=.mpdView mode=character sticky=W
-	radio name=plotType value=catchage      text="Catch-at-age"      function=.mpdView mode=character sticky=W
-
+grid 5 3 toptitle="Select graphical output" sticky=W relief="sunken" padx=5
+	radio name=plotType value=ebio          text="EBio"               function=.mpdView mode=character sticky=W
+	radio name=plotType value=sbio          text="SBio"               function=.mpdView mode=character sticky=W
+	radio name=plotType value=enum          text="ENum"               function=.mpdView mode=character sticky=W
+	radio name=plotType value=n8plus        text="N 8+"               function=.mpdView mode=character sticky=W
+	radio name=plotType value=agesel        text="Selectivity"        function=.mpdView mode=character sticky=W
+	radio name=plotType value=catch         text="Catch"              function=.mpdView mode=character sticky=W
+	radio name=plotType value=waste         text="Wastage"            function=.mpdView mode=character sticky=W
+	radio name=plotType value=yieldloss     text="Yield Loss"         function=.mpdView mode=character sticky=W
+	radio name=plotType value=ylr           text="Yield Loss Ratio"   function=.mpdView mode=character sticky=W
+	radio name=plotType value=catchage      text="Catch-at-age"       function=.mpdView mode=character sticky=W
+	radio name=plotType value=valcatch      text="Landed Value"       function=.mpdView mode=character sticky=W
+	radio name=plotType value=valwaste      text="Value of Wastage"   function=.mpdView mode=character sticky=W
+	radio name=plotType value=valdisc       text="Value of Discards"  function=.mpdView mode=character sticky=W
+	radio name=plotType value=discfrac      text="Fraction discarded" function=.mpdView mode=character sticky=W
+	radio name=plotType value=fishrate      text="Fishing Mortality"  function=.mpdView mode=character sticky=W
 
 # Run Button
 grid 1 1	

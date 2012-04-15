@@ -79,8 +79,8 @@
   -2    -2    -2    -2    -2                # -Phase of estimation (-1 for fixed)
   2     2     2     2     2                 # -Penalty wt for 2nd differences w=1/(2*sig^2)
   3     3     3     3     3                 # -Penalty wt for dome-shaped w=1/(2*sig^2)
-  81.28 0     0     0     0                 # -Size limit (cm) 81.28 for halibut
-  0.17  0     0     0     0.17              # -Discard mortality rate
+  81.28 0     0     0     0                 # -Size limit (cm) 81.28 for halibut or 26in (66.04cm) 73.66
+  0.16  0     0     0     0.16              # -Discard mortality rate
 ## ------------------------------------------------------------------------- ##
 ##
 ##

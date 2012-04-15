@@ -119,16 +119,19 @@ dev.copy2pdf(file="../../FIGURES/figLengthAtAgeFit.pdf")
 
 
 par(mfcol=c(1, 2))
+par(bg="white", cex.lab=1.5, cex.axis=1.2, mar=c(5.1,  4.6,  4.1,  2.1))
 x=seq(-3, 3, length=100)
 px = 2*plogis(x,0, 0.75)-1
 linf_f=fit_f$par[1]
 linf_m=fit_m$par[1]
-plot(x,linf_f +0.1*px*linf_f,type="l", xlab="Relative cohort density", ylab="Asymptotic length (cm)", ylim=c(90, 170) )
-lines(x,linf_f -0.1*px*linf_f, lty=2);segments(-3, linf_f, 3, linf_f, lty=3)
+plot(x,linf_f -0.25*px*linf_f,type="l", xlab="Relative cohort density", ylab="Asymptotic length (cm)", ylim=c(80, 200) )
+#lines(x,linf_f +0.1*px*linf_f, lty=2);
+segments(-3, linf_f, 3, linf_f, lty=3)
 gletter(1)
-plot(x,linf_m +0.1*px*linf_m,type="l", xlab="Relative cohort density", ylab="Asymptotic length (cm)", ylim=c(90, 170) )
-lines(x,linf_m -0.1*px*linf_m, lty=2);segments(-3, linf_m, 3, linf_m, lty=3)
+plot(x,linf_m -0.25*px*linf_m,type="l", xlab="Relative cohort density", ylab="Asymptotic length (cm)", ylim=c(80, 200) )
+#lines(x,linf_m -0.1*px*linf_m, lty=2);
+segments(-3, linf_m, 3, linf_m, lty=3)
 gletter(2)
-dev.copy2pdf(file="../../FIGURES/figLinf.pdf", height=4, width=8)
+dev.copy2pdf(file="../../FIGURES/fig:pres:Linf.pdf", height=4, width=8)
 
 
