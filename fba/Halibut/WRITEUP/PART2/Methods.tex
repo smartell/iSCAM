@@ -1,0 +1,18 @@
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/fba/Halibut/WRITEUP/Halibut.tex
+\section{Methods} % (fold)
+\label{sec:methods}
+
+Details of the simulation model are documented in Appendix \ref{sec:model_description}.  In short, the simulation model is a sex- and age-structured population dynamics model were the initial 1996 age-structure and age-1 recruits from 1996-2006 is based on the IPHC assessment conducted by \cite{Hare2012Rara}.  Total mortality rates for the 1996-2011 period were based on the same values estimated in the IPHC assessment and historical and simulated weight-at-age data is based on the mean length-at-age data  for males and females  in the setline survey.  
+
+Future projections were based on poor, average, and good recruitment (defined as $\pm$60\% in average recruitment).  Growth was modelled either as density-independent, or density-dependent where the asymptotic length of halibut would decrease with increasing cohort density, and vice versa.  It was assumed that selectivity in the directed commercial fishery remained unchanged in all future simulations.  Selectivity is a function of length, and therefore, with decreasing mean size-at-age the fishery would target older fish.  The length-based selectivity function was based on the same piece-wise linear function where fish less than 60 cm have a selectivity of 0 and fish greater than 120 cm were fully vulnerable.  
+
+Additional model assumptions include a fixed natural mortality rate for each sex, the coefficient of variation in length-at-age is 0.1, the discard mortality rate in the directed fishery is 0.17 per year, and all future catches are based on the constand harvest rate policy (0.215, or 0.16 depending on area).  Area specific biomass apportionment is based on the 2011 apportionment values, and discard rates for O32 and U32 fish are carried forward from the 2011 realized values. The price per pound is based on prices in Homer Alaska, 10-20lbs at \$6.75, 20-40lbs at \$7.35 and 40+lbs at \$7.50.  An assumed price of \$5.00 per for fish in the length interval of 66cm to 81cm was adopted to calculate the value of the wastage or value of fish less than 81.28 cm.  The definition of wastage for this simulation is the amount of fish (in lbs) that is caught but is less than the minimum size limit.
+
+\subsection{Joint probability model for retention} % (fold)
+\label{sub:joint_probability_model_for_retention}
+The probability of capturing a fish in a given size interval $x$ is a property of the selectivity of the fishing gear and the number of available fish in the size interval ($x$).  This simulation model, and the IPHC assessment model, does not model the number of fish at length explicitly; rather, the accounting system is based on the numbers-at-age.  The estimated selectivity function is based on length, and the probability of capturing a fish of a given age is approximated by the mean length-at-age in a given year.  
+
+
+% subsection joint_probability_model_for_retention (end)
+
+% section methods (end)
