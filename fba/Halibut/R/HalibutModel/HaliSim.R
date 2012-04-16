@@ -333,7 +333,7 @@ guiView	<- function()
 			#gears <- c("Setline", "U32", "O32", "Recreational", "Personal")
 			#legend("top", gears, lty=1:5, col=1:5, lwd=2, ncol=2, bty="n")
 			if(ii==2)
-			text(1996, 100, paste(round(mean(ct[1, 25:30]), 0)), cex=3.5, pos=4)
+			text(1996, 100, paste(round(mean(ct[1, 25:30]), 1)), cex=3.5, pos=4)
 		})
 				
 	}
