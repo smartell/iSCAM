@@ -344,14 +344,14 @@ guiView	<- function()
 {
 	# plot first row of age-selectivity for each sex/gear
 	opar<- par(no.readonly=TRUE)
-	par(mfcol=c(5, 2), mar=c(2, 2.5, 1, 1), oma=c(2, 2, 1, 1), las=1)
+	par(mfcol=c(4, 2), mar=c(2, 2.5, 1, 1), oma=c(2, 2, 1, 1), las=1)
 	with(repObj, {
 		hsex <- unique(log_sel[, 1])
 		str_sex=c("Female", "Male")
 		for(h in hsex)
 		{
 			D     <- subset(log_sel, log_sel[, 1]==h)
-			kgear <- unique(D[, 2])
+			kgear <- 1:4 #unique(D[, 2])
 			
 			for(k in kgear)
 			{

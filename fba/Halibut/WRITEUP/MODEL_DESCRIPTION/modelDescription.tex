@@ -34,11 +34,11 @@ Input data for the simulation model was provided by Steve Hare from the IPHC in 
 
 List of model input:
 \begin{enumerate}
-	\item Model dimensions (i.e., years, number of gears, number of age-classes)
+	\item Model dimensions (i.e., years, number of gears, number of age-classes).
 	\item Historical catch data and fishing mortality rates for 5 gear types.
 	\item Annual recruitment from 1996 to present.
 	\item Initial numbers-at-age (2-30) by sex.
-	\item Selectivity parameters (length-based selectivity)
+	\item Selectivity parameters (length-based selectivity).
 	\item Size limit, target harvest rate, \& other policy related parameters (e.g., SUFD).
 \end{enumerate}
 
@@ -47,7 +47,7 @@ The model dimensions are consistent with the IPHC assessment model where the mod
 	\item the setline fishery (including the IPHC research catch),
 	\item the sublegal discards (including U32 wastage and U32 bycatch),
 	\item the fully recruited by catch (O32 wastage and bycatch),
-	\item the recreational sport fishery,
+	\item the recreational sport fishery, and
 	\item and the personal use (subsistence fishery).
 \end{enumerate}
 Each of these `gears' have there own length-based selectivity coefficients and fishing mortality rates that are based on the most recent assessment model output.  The historical catch data for each of these gears are also given in the input data, but are not used to calculate total mortality rates in anyway.  
@@ -96,7 +96,7 @@ Each of these `gears' have there own length-based selectivity coefficients and f
 % 1) Initial states
 \subsubsection{Initial states ($i$=1996:2011)} % (fold)
 \label{ssub:initial_states}
-The simulation model is initialized using the model estimates of numbers-at-age and annual recruitment produced by the IPHC 2011 halibut stock assessment \citep{Hare2012Rara}.  Two parameter vectors, $\Theta$ and $\Phi$ are used to categorize population parameters as sex independent and dependent, respectively.  Components of these two vectors are defined in \eqref{T1.1} and \eqref{T1.2}, where $R_0$ and $h$ define the unfished age-1 recruits and steepness of the stock recruitment relationship.  Note that these terms ($R_0,h$) are not of interest in this simulation model, because we do not use a stock recruitment relationship to simulate future recruitment.  The average recruitment $\bar{R}$ and annual deviations $\omega_i$ are used to initialize age-1 recruits from 1996 to 2011 \eqref{T1.7}, where these values were obtained from the IPHC assessment report file.  The sex-specific parameters $\Phi$ consists of the initial average recruitment $\ddot{R}_{h}$ and cohort specific deviations $\ddot{\omega}_{j}$ which makes up the initial numbers at age in 1996 \eqref{T1.7}.  Sex-specific natural mortality $M_h$ rates were set at 0.15 and 0.135 for females and males, respectively.  The annual fishing mortality rates $f_{h,i,k}$ (on a log scale) for sex, year, and gear were taken from the IPHC assessment along with the selectivity coefficients $s_{h,l,k}$ (also on a log scale) for sex, length, and gear.  Age-specific selectivities for each gear, year, and sex ($\nu_{h,i,j}$) were based on a piece-wise liner interpolation \eqref{T1.4} of the length-based selectivity coefficients $S_{h,i,k}$ and the mean length-at-age $l_{h,i,j}$ in the annual IPHC setline survey \eqref{T1.3}.  In \eqref{T1.4} the $l^{(0)}$ and $l^{(1)}$ terms correspond to the length intervals on either side of the current $l_{h,i,j}$ values (Note that this function in equivalent to the \texttt{approx} function implemented in the R-scripting  \citep{R-Development-Core-Team:2009fk} language).  Annual sex- age-specific fishing mortality rates are based on \eqref{T1.5} for each gear $k$, and the total mortality is the sum of natural and fishing mortalities \eqref{T1.6}.
+The simulation model is initialized using the model estimates of numbers-at-age and annual recruitment produced by the IPHC 2011 halibut stock assessment \citep{Hare2012Rara}.  Two parameter vectors, $\Theta$ and $\Phi$ are used to categorize population parameters as sex independent and dependent, respectively.  Components of these two vectors are defined in \eqref{T1.1} and \eqref{T1.2}, where $R_0$ and $h$ define the unfished age-1 recruits and steepness of the stock recruitment relationship.  Note that these terms ($R_0,h$) are not of interest in this simulation model, because we do not use a stock recruitment relationship to simulate future recruitment.  The average recruitment $\bar{R}$ and annual deviations $\omega_i$ are used to initialize age-1 recruits from 1996 to 2011 \eqref{T1.7}, where these values were obtained from the IPHC assessment report file.  The sex-specific parameters $\Phi$ consists of the initial average recruitment $\ddot{R}_{h}$ and cohort specific deviations $\ddot{\omega}_{j}$ which makes up the initial numbers at age in 1996 \eqref{T1.7}.  Sex-specific natural mortality $M_h$ rates were set at 0.15 and 0.135 for females and males, respectively.  The annual fishing mortality rates $f_{h,i,k}$ (on a log scale) for sex, year, and gear were taken from the IPHC assessment along with the selectivity coefficients $s_{h,l,k}$ (also on a log scale) for sex, length, and gear.  Age-specific selectivities for each gear, year, and sex ($\nu_{h,i,j}$) were based on a piece-wise liner interpolation \eqref{T1.4} of the length-based selectivity coefficients $S_{h,i,k}$ and the mean length-at-age $l_{h,i,j}$ in the annual IPHC setline survey \eqref{T1.3}.  In \eqref{T1.4} the $l^{(0)}$ and $l^{(1)}$ terms correspond to the length intervals on either side of the current $l_{h,i,j}$ values (Note that this function is equivalent to the \texttt{approx} function implemented in the R-scripting  \citep{R-Development-Core-Team:2009fk} language).  Annual sex- age-specific fishing mortality rates are based on \eqref{T1.5} for each gear $k$, and the total mortality is the sum of natural and fishing mortalities \eqref{T1.6}.
 
 \begin{table}
 	\caption{Analytical description of the sex-based age-structured model used for simulation projections.}
@@ -181,8 +181,7 @@ The probability of discarding a fish of age $j$ is defined as $1-p(r)_j$.  Figur
 % subsubsection joint_probability_for_fishing_&_discard_mortality (end)
 
 % 3) Calculating fishing mortality rates from 1994-present conditioned on catch.
-In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data were not available to be used in this analysis. For the 1996 to 2011 period, fishing mortality rates were taken from the IPHC assessment model.  For the projection period ($i>2011$), fishing mortality rates were based on the projected catches for each of the five gears (commercial, U32, O32, recreational, personal). Sex-specific fishing mortality rates were determined using a numerical procedure to solve the Baranov catch equation \eqref{T1.11}.  An initial guess for the sex-specific fishing rate $f_{h,i,k}$ for gear $k$ in year $i$, followed by the use of Newtons' root finding method to find the appropriate values of $f_{h,i,k}$ such that the sum of the predicted female and male catches for each gear was equivalent to the catch allocated to that gear.  The following piece of C++ code accomplishes this task rather efficiently.
-
+In the more recent stock assessment models, the age/sex/size composition of the commercial landings are estimated externally to the model.  These data were not available to be used in this analysis. For the 1996 to 2011 period, fishing mortality rates were taken from the IPHC assessment model.  For the projection period ($i>2011$), fishing mortality rates were based on the projected catches for each of the five gears (commercial, U32, O32, recreational, personal). Sex-specific fishing mortality rates were determined using a numerical procedure to solve the Baranov catch equation \eqref{T1.11}.  An initial guess for the sex-specific fishing rate $f_{h,i,k}$ for gear $k$ in year $i$, followed by the use of Newtons' root finding method to find the appropriate values of $f_{h,i,k}$ such that the sum of the predicted female and male catches for each gear was equivalent to the catch allocated to that gear.  
 % subsection analytical_description (end)
 % -----------------------------------------------------------------------------
 \subsection{Model outputs} % (fold)
@@ -198,7 +197,7 @@ Simulation model outputs of interest for this study are:
 	\item The yield loss ratio, YLR defined by \eqref{T1.17}.
 \end{enumerate}
 
-Not that in order to calculate the lost yield \eqref{T1.15}, the model was run as if there were no bycatch of halibut in other fisheries, and all of the available CEY for each area was allocated to the commercial gear.  The lost yield simply the difference between the yield obtained with no bycatch and the yield obtained with bycatch allotments in place.
+Note that in order to calculate the lost yield \eqref{T1.15}, the model was run as if there were no bycatch of halibut in other fisheries, and all of the available CEY for each area was allocated to the commercial gear.  The lost yield is the difference between the yield obtained with no bycatch and the yield obtained with bycatch allotments in place.
 
 
 % subsection model_outputs (end)

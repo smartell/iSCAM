@@ -3,7 +3,18 @@ require(ggplot2); require(hacks)
 source("../Read.ADMB.R")
 
 #Careful if you uncomment this, will use the allometric relationship for weight at age
-#A=read.rep("../../DATA/Halibut_2sex_develop.rep")
+A=read.rep("../../DATA/Halibut_2sex_develop.rep")
+wt.f = read.table("../../DATA/Halibut_2sex_develop.dat", skip=155, nrow=16)
+lt.f = read.table("../../DATA/Halibut_2sex_develop.dat", skip=196, nrow=16)
+wt.f = wt.f[, -1]
+lt.f = lt.f[, c(-1:-6,-27:-31)]
+
+wt.m = read.table("../../DATA/Halibut_2sex_develop.dat", skip=172, nrow=16)
+lt.m = read.table("../../DATA/Halibut_2sex_develop.dat", skip=213, nrow=16)
+wt.m = wt.m[, -1]
+lt.m = lt.m[, c(-1:-6,-27:-31)]
+
+
 iage=1:30
 
 theta <- c(linf=155, k=0.1, sig=1/5)
@@ -43,6 +54,7 @@ fage <- ml_f[, 1]
 lobs <- ml_f[, 3]
 
 ii = which(lobs!=0)
+xll=lobs[ii]
 plot(fage[ii], lobs[ii], xlim=c(0, 30), ylim=c(0, 160), pch=20, col=colr(2, 0.5), xlab="Age", ylab="Length (cm)")
 age=fage
 fit_f <- solver(fn, theta)
@@ -66,6 +78,11 @@ plot(xx, yy, xlab="Length (in)", ylab="Weight (lb)", xlim=c(0, max(xx)), ylim=c(
 #x3 <- xx^3
 #gf <- glm(yy~xx+x2+x3)
 #points(xx,gf$fitted.values,col=2,pch=19)
+owt = as.vector(as.matrix(wt.f))
+olt = as.vector(as.matrix(lt.f))
+ii = which(owt>0)
+points(olt[ii], owt[ii])
+tru
 xx=seq(0, max(xx))
 yy=(9.321e-6*xx^3.16)
 points(xx, yy, pch=19, col=2)
@@ -102,12 +119,17 @@ yy = subset(wt, wt!=0)
 
 
 xx = (xx); yy = (yy)
-plot(xx, yy, xlab="log Length (in)", ylab="Weight (lb)", xlim=c(0, max(xx)), ylim=c(0, max(yy)))
+plot(xx, yy, xlab="Length (in)", ylab="Weight (lb)", xlim=c(0, max(xx)), ylim=c(0, max(yy)))
 #x2 <- xx^2
 #x3 <- xx^3
 #gf <- glm(yy~xx+x2+x3)
 #points(xx,gf$fitted.values,col=4,pch=19)
 #y2<-predict(gff,data.frame(xx=xx,x2=x2,x3=x3))
+owt = as.vector(as.matrix(wt.m))
+olt = as.vector(as.matrix(lt.m))
+ii = which(owt>0)
+points(olt[ii], owt[ii])
+
 xx=seq(0, max(xx))
 yy=(9.321e-6*xx^3.16)
 points(xx,yy,col=4,pch=19)

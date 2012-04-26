@@ -6,78 +6,78 @@ A detailed analytical description of the simulation model is provided in Appendi
 
 \subsection{Overview of the simulation model} % (fold)
 \label{sub:overview_of_the_simulation_model}
- Running a single realization of the simulation model consists of several steps that can be broken down into two periods: (1) initializing the model from 1996:2011, (2) future projections from 2012:2026.  Refer to Appendix \ref{sec:model_description} for detailed information on step (1).  Future projections in step (2) consists roughly 10 steps described by the following psuedo code:
+ Running a single realization of the simulation model consists of several steps that can be broken down into two periods: (1) initializing the model from 1996:2011, (2) future projections from 2012:2026.  Refer to Appendix \ref{sec:model_description} for detailed information on step (1).  Future projections in step (2) consist roughly 10 steps described by the following psuedo code:
 \begin{enumerate}
 	\item	Initialize future recruitment vector based on recruitment scenario
 	\item	Project future weight at age based on growth scenario  (done in calcGrowth)
 	\item	Future selectivity continues to be a function of length (done in calcSelectivities)
 	\item	Loop from nyr to nyr+nyr\_proj
-	\item	Calculate Ebio at the start of the year (EBio = N * sel * wa)
-	\item	Apportion Ebio to management areas ($l$) based on 2011 apportionments
+	\item	Calculate EBio at the start of the year (EBio = N * sel * wa)
+	\item	Apportion EBio to management areas ($l$) based on 2011 apportionments
 	\item	Calculate management area CEY as 0.215*EBio$_l$ or 0.16*EBio$_l$
 	\item	Calculate the corresponding fishing rate ($f_{h,i,k}$)
 	\item	Calculate Z and update total mortality.
 	\item	Update numbers at age and return to 4) until end of projection years.
 \end{enumerate}
 
-Future recruitment is actually initialized in the year 2007, as halibut are roughly 6 years of age before they recruit to the fishery. 
+Future recruitment is actually initialized in the year 2007, as halibut are roughly 6 years of age before they recruit to the exploitable biomass based on the setline fishery selectivity. 
 %Recruitment scenarios 
 %lnRbar =17.93703
 %w25 = -0.2928
 %w50 =  0.1020
 %w75 =  0.2399
-To approximate future growth for each sex, a von Bertalanffy growth model was fit to the IPHC survey mean length-at-age data collected between 1996 and 2011 (Figure \ref{fig:FIGURES_figLengthAtAgeFit} a,b).    
+To approximate future growth for each sex, a von Bertalanffy growth model was fit to the IPHC survey mean length-at-age data collected between 1996 and 2011 (Figure \ref{fig:FIGURES_figLengthAtAgeFit} a,c).    
 
-Converting numbers-at-age to weight-at-age, the allometric relationship $w_j= a l_j^b$ was used.  The scaling and power parameters ($a=9.321x10^{-6}$ and $b=3.16$) were taken from \cite{courcellesre}.  Note that the empirical weight-at-age data from the commercial catch versus the length-at-age data from the IPHC setline survey used in the IPHC assessment model are also plotted on Figures \ref{fig:FIGURES_figLengthAtAgeFit}cd. For the most part empirical weight-at-age is larger than the predicted weight-at-age from \cite{courcellesre}.  Attempts were made to estimate the corresponding allometric parameters from the empirical data; however, there was difficulty obtaining reasonable estimates from these two separate sources of information.  Log-log plots of these data do not reveal a linear relationship between the log-length and log-weight.  In fact, the male appear to shrink from 14 pounds at age-6 to less than 14 pounds at ages 7-10.  Therefore, all weight-at-age data in the simulation model are based on the allometric relationship from the \cite{courcellesre} study.
+Converting numbers-at-age to weight-at-age, the allometric relationship $w_j= a l_j^b$ was used.  The scaling and power parameters ($a=9.321x10^{-6}$ and $b=3.16$) were taken from \cite{courcellesre} and assumed to be the same for females and males (Figure \ref{fig:FIGURES_figLengthAtAgeFit} b,d).    Attempts were made to estimate the corresponding allometric parameters from the empirical survey length-at-age and commercial catch weight-at-age data; however, there was difficulty obtaining reasonable estimates from these two separate sources of information.  Log-log plots of these data did not reveal a linear relationship between the log-length and log-weight (estimates of the exponent $b$ were much less than 3 and there was a strong pattern in the residuals).  In fact, the empirical weight-at-age data for males shrink from 14 pounds at age-6 to less than 14 pounds at ages 7-10.  Therefore, all weight-at-age data in the simulation model are based on the allometric relationship from the \cite{courcellesre} study.
    
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.9\textwidth]{../FIGURES/figLengthAtAgeFit.pdf}
-	\caption{Observed mean length-at-age for female (a) and male (b) halibut in the IPHC research surveys between 1996 and 2011. Fitted lines are the von Bertalanffy growth model with the boundaries based on a 10\% coefficient of variation in the asymptotic length. Estimated parameters for females are $L_\infty=148.06$, $k=0.0915$, and for males $L_\infty=105.73$, $k=0.1275$. Panels c  (female) and d (male) show the length-weight relationship used in the model, along with the empirical catch weight-at-age data used in the IPHC assessment.}
+		\includegraphics[width=\textwidth]{../FIGURES/figLengthAtAgeFit.pdf}
+	\caption{Observed mean length-at-age for female (a) and male (c) halibut in the IPHC research surveys between 1996 and 2011. Fitted lines are the von Bertalanffy growth model with the boundaries based on a 10\% coefficient of variation in the asymptotic length. Estimated parameters for females are $L_\infty=148.06$, $k=0.0915$, and for males $L_\infty=105.73$, $k=0.1275$. Panels b  (female) and d (male) show the length-weight relationship used in the model, along with the empirical catch weight-at-age data used in the IPHC assessment (open circles).}
 	\label{fig:FIGURES_figLengthAtAgeFit}
 \end{figure}
 
 
 
-Selectivity in the simulation model is the exact same length-based selectivity that is used in the IPHC assessment.  The same piece-wise linear function that is used to convert mean length-at-age to age-based selectivity for the five different harvest categories in the simulation model (Firgure \ref{fig:FIGURES_fig:AgeSel}).  Overall males recruit to the various gears at much older ages due to slower growth of male halibut.
+Selectivity in the simulation model is the exact same length-based selectivity that is used in the IPHC assessment.  The same piece-wise linear function that is used in the IPHC assessment model to convert mean length-at-age to age-based selectivity for the five different harvest categories is also used in this simulation model (Figure \ref{fig:FIGURES_fig:AgeSel}).  Overall, males recruit to the various gears at much older ages due to slower growth of male halibut.
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.8\textwidth]{../FIGURES/fig:AgeSel.pdf}
-	\caption{Age-based selectivity coefficients for female and male halibut for the setline fishery (a), U32 (b), O32 (c), the recreational and personal use fisheries (d,e).}
+		\includegraphics[width=\textwidth]{../FIGURES/fig:AgeSel.pdf}
+	\caption{Age-based selectivity coefficients for female and male halibut for the setline fishery (a), U32 (b), O32 (c), the recreational and personal use fisheries (d).}
 	\label{fig:FIGURES_fig:AgeSel}
 \end{figure}
 
-Simulated exploitable biomass each year is based on the sum of products between the numbers-at-age,  weight-at-age, and selectivity-at-age for both sexes combined.  Apportionment of this coast-wide exploitable biomass to each of the statistical areas is based on the same apportionment scheme used by the IPHC staff in 2011.  The constant exploitable yield ($\mathrm{CEY}_{i,l}$) in year $i$ for  management area $l$ was based on the application of area-specific harvest rate of 0.215 (areas 2A-3A) and 0.161 (areas 3B-4CDE).
+Simulated exploitable biomass each year is based on the sum of products between the numbers-at-age,  weight-at-age, and selectivity-at-age in the commercial gear for both sexes combined.  Apportionment of this coast-wide exploitable biomass to each of the statistical areas is based on the same apportionment scheme used by the IPHC staff in 2011.  The constant exploitable yield ($\mathrm{CEY}_{i,l}$) in year $i$ for  management area $l$ was based on the application of area-specific harvest rate of 0.215 (areas 2A-3A) and 0.161 (areas 3B-4CDE).
 % subsection overview_of_the_simulation_model (end)
-\subsection{Calculating setline fishery allocation} % (fold)
+\subsection{Calculating setline fishery catch share} % (fold)
 \label{sub:calculating_setline_fishery_allocation}
 Annual allocations to the directed setline fishery in each of the areas are determined by first subtracting the expected bycatch/wastage from the area CEY.  To simulate the same procedure for each statistical area, annual directed setline allocation was calculated as:
 \[ C_{i,k=1} = \mathrm{CEY}_{i,l} - \sum_{k=2}^{k=5} C_{i,k}, \]
-where the catch allocations for gears other than the setline fishery ($k>1$) are determined \emph{a priori}.  The rule differes slightly for area $l$=2B where 88\% and 12\% of the allocation is given to the commercial and recreational fisheries, respectively.
+where the catch allocations for gears other than the setline fishery ($k>1$) are determined \emph{a priori}.  The rule differs slightly for area $l$=2B where 88\% and 12\% of the allocation is given to the commercial and recreational fisheries, respectively.  A key component to the calculation of setline fishery catch share is that mandated reductions in bycatch levels are given entirely to the commercial fishery, with the exception of area 2B where the recreational fishery would also receive a corresponding increase.
 
 
 % subsection calculating_setline_fishery_allocation (end)
 \subsection{Calculating area specific fishing mortality rates} % (fold)
 \label{sub:calculating_area_specific_fishing_mortality_rates}
-A critical component of the simulation model is calculating the sex/age-specific fishing mortality rates from each of the major fisheries that target halibut or intercept them as bycatch.  The IPHC uses two terms to for the non-targeted mortality: (1) wastage, which is the catch of undersize fish, lost skates and loss at the rail of halibut in the directed fishery, and (2) bycatch which is the interception of halibut in non-targeted fishery including groundfish trawl, longline, trap, and pelagic trawl.
+A critical component of the simulation model is calculating the sex/age-specific fishing mortality rates from each of the major fisheries that target halibut or intercept them as bycatch.  The IPHC uses two terms for the non-targeted mortality: (1) wastage, which is the catch of undersize fish, lost skates and loss at the rail of halibut in the directed fishery, and (2) bycatch, which is the interception of halibut in non-targeted fishery including groundfish trawl, longline, trap, and pelagic trawl.
 
 The catch equation used in the IPHC assessment model and in this simulation model assumes that both natural mortality and fishing mortality occur simultaneously.  This equation, also known as the Baranov catch equation, is given by:
 \[
  C_{i,k} =\sum_h \sum_j \frac{N_{h,i,j} w_{h,i,j} f_{h,i,k} s_{h,i,j} (1-\exp(-Z_{h,i,j}))}{Z_{h,i,j}}
 \]
-For a given catch allocation $C_{i,k}$, the annual fishing mortality rate ($f_{h,i,k}$) for gear $k$ is solved for using an iterative method where it is assumed that the sex ratio of the catch is the same as the ratio of female:male vulnerable biomass.  This approach differs from the approach used in the IPHC assessment, where annual fishing mortality rates for females are treated as  latent variables and the male fishing mortality rate is proportional to the female fishing mortality rate.  The latter method could not be used in the simulation model  because it would require a catch allocation by sex.
+In this simulation model, the annual fishing mortality rate ($f_{h,i,k}$) for gear $k$ is solved for using an iterative method where it is assumed that the sex ratio of the catch is the same as the ratio of female:male vulnerable biomass.  This approach differs from the approach used in the IPHC assessment, where annual fishing mortality rates for females are treated as  latent variables, and the male fishing mortality rate is assumed to be proportional to the female fishing mortality rate.  The latter method could not be used in the simulation model  because it would require a catch allocation by sex.
 
-For the directed setline fishery, the wastage component from this fishery is a combination of undersized fish and legal sized fish that are lost at the rail, or died.  To simulate this process, a joint probability model was developed to account for the wastage of undersized fish. The joint probability model is defined as:
+For the directed setline fishery, the wastage component from this fishery is a combination of undersized fish and legal sized fish that are lost at the rail, or died.  To simulate this process, a joint probability model was developed to account for the wastage of undersized fish only. The joint probability model is defined as:
 \[
  v_{h,i,j,k} = s_{h,i,j,k}(r_{h,i,j,k}+(1-r_{h,i,j,k})d_{k}),
 \]
-where $v_{h,i,j,k}$ is the sex/age specific vulnerability to fishing from gear $k$ in year $i$, $s_{h,i,j,k}$ is the probability of capturing a fish of age $j$, $r_{h,i,j,k}$ is the retention probability (i.e., the probability of being greater than the size limit for a given age), and $d_{k}$ is the discard mortality rate associated with gear $k$.
+where $v_{h,i,j,k}$ is the sex/age specific vulnerability to fishing from gear $k$ in year $i$, $s_{h,i,j,k}$ is the probability of capturing a fish of age $j$, $r_{h,i,j,k}$ is the retention probability (i.e., the probability of being greater than the size limit for a given age), and $d_{k}$ is the discard mortality rate associated with gear $k$.  See section \ref{sub:joint_probability_model_for_retention} for more details on the development of retention probability model.
 % subsection calculating_area_specific_fishing_mortality_rates (end)
 
 \subsection{Model outputs} % (fold)
 \label{sub:model_outputs}
 
-Summary equations for the simulated model output are presented in Table \ref{table:ModelOutputs}.  The simulated exploitable biomass ($EBio_i$) is the vulnerable biomass available to the commercial fishery \eqref{eqOutput:T1.1}, where $k=1$ denotes the selectivity for the commercial setline gear.  Annual spawning stock biomass ($SBio_i$) is based on the female component only ($h=1$) and the empirical weight-at-age data and the proportion mature $p_{h,j}$, \eqref{eqOutput:T1.2}.  Note that for both the exploitable biomass  in the IPHC assessment is based on the empirical weight-at-age data from the commercial catches and ranges from ages 6:20 from 1996:2001, and ages 6:25 in 2001:2011 period.  The commercial wastage in the simulation model is based only on the undersized fish that are discarded \eqref{eqOutput:T1.3}, where $s_{h,i,j,k=1}$ is the commercial age-specific selectivity (a function of fish length), $r_{h,k,j,k=1}$ is age-specific retention probability, and $d_{k=1}$ is the discard mortality rate for the commercial fishery and is assumed to be 0.17 for this study.  The commercial yield of legal sized fish is given by \eqref{eqOutput:T1.4}.
+Summary equations for the simulated model output are presented in Table \ref{table:ModelOutputs}.  The simulated exploitable biomass ($EBio_i$) is the vulnerable biomass available to the commercial fishery \eqref{eqOutput:T1.1}, where $k=1$ denotes the selectivity for the commercial setline gear.  Annual spawning stock biomass ($SBio_i$) is based on the female component only ($h=1$) and the empirical weight-at-age data and the proportion mature $p_{h,j}$, \eqref{eqOutput:T1.2}.  Note that the exploitable biomass  in the IPHC assessment is based on the empirical weight-at-age data from the commercial catches and ranges from ages 6:20 from 1996:2001, and ages 6:25 in 2001:2011 period.  The commercial wastage in the simulation model is based only on the undersized fish that are discarded \eqref{eqOutput:T1.3}, where $s_{h,i,j,k=1}$ is the commercial age-specific selectivity (a function of fish length), $r_{h,k,j,k=1}$ is age-specific retention probability, and $d_{k=1}$ is the discard mortality rate for the commercial fishery and is assumed to be 0.17 for this study.  The commercial yield of legal sized fish is given by \eqref{eqOutput:T1.4}.
 
 \begin{table}
 	\caption{Summary calculations for model output}
@@ -119,9 +119,9 @@ Summary equations for the simulated model output are presented in Table \ref{tab
 		\end{footnotesize}
 \end{table}
 
-To calculate the yield loss due to bycatch in non-directed fisheries, the simulation model was projected forward in time where the only source of fishing mortality is the directed fishery (including deaths from wastage) and  recreational and personal use.  To do this,  bycatch allocations for the U32 and 032 fisheries were set to 0 and the corresponding fishing rates for these two gears are also determined to be 0 for all future projection years.  This simulation run is denoted as $YBio_i^{(f_{k=2,3}=0)}$.  The lost yield due to bycatch is the difference between the commercial yields with and without bycatch fishing mortality \eqref{eqOutput:T1.5}.  Note also, that with no bycatch fishing mortality, the annual allocation to the commercial fishery is the Constant Exploitable Yield ($\mathrm{CEY}_{i,l}$) minus the recreational and personal use allocations:
+To calculate the yield loss due to bycatch in non-directed fisheries, the simulation model was projected forward in time where the only source of fishing mortality is the directed fishery (including deaths from wastage),  recreational, and personal use.  To do this,  bycatch allocations for the U32 and 032 fisheries were set to 0 and the corresponding fishing rates for these two gears are also determined to be 0 for all future projection years.  This simulation run is denoted as $YBio_i^{(f_{k=2,3}=0)}$.  The lost yield due to bycatch is the difference between the commercial yields with and without bycatch fishing mortality \eqref{eqOutput:T1.5}.  Note also, that with no bycatch fishing mortality, the annual allocation to the commercial fishery is the Constant Exploitable Yield ($\mathrm{CEY}_{i,l}$) minus the recreational and personal use allocations:
 \[ C_{i,k=1} = \mathrm{CEY}_{i,l} - \sum_{k=4}^{k=5} C_{i,k}. \]
-
+In other words, in the scenario with no bycatch, the commercial fishery allocation increases by the amount normally set assigned for bycatch.
 % subsection model_outputs (end)
 
 % section simulation_model (end)
@@ -129,22 +129,22 @@ To calculate the yield loss due to bycatch in non-directed fisheries, the simula
 \section{Simulation Scenarios} % (fold)
 \label{sec:simulation_scenarios}
 
-The simulations performed in this study are just simple deterministic simulations with a range of recruitment and growth options that roughly correspond to the ranges of observed growth and recruitment between 1996 and 2011.  Ideally, future projections of this nature would include a stochastic component for recruitment based on a historical distribution of realized recruits and Monte Carlo procedures would be used to construct plausible ranges of future scenarios. This was not done in this simulation due to time limitations.  As an alternative, the deterministic simulations were used to span a wide range of recruitment and growth hypotheses.
+The simulations performed in this study are deterministic with a range of recruitment and growth options that roughly correspond to the ranges of observed growth and recruitment between 1996 and 2011.  Ideally, future projections of this nature would include a stochastic component for recruitment based on a historical distribution of realized recruits and Monte Carlo procedures would be used to construct plausible ranges of future scenarios. This was not done in this simulation due to time limitations.  As an alternative, the deterministic simulations were used to span a wide range of recruitment and growth hypotheses.
 
 
 Three alternative future recruitment scenarios are explored, where future recruitment is based on the average recruitment estimated between 1996 and 2006 and $\pm$60\% average recruitment.  These scenarios are denoted as poor, average, and good recruitment.  The definition of recruitment in this simulation model is an age-1 halibut, so future recruitment was simulated by altering the number of age-1 fish starting in the year 2007. In this case, the first simulated cohort would enter the fishery in 2012 at age 6.
 
 
-Two alternative scenarios were also used to project future growth of halibut beyond 2011.  To simulate alternative states of future growth a density-dependent relationship between cohort strength and the asymptotic length of males and females was developed.  Growth varied by adjusting the asymptotic length of each cohort as a function of recruitment density. For example, if recruitment is roughly 2.7 times larger than the average recruitment, the the asymptotic length would decrease from 148 cm to 139 cm under density-dependent growth, and it would increase to 157 cm under inverse density-dependent growth (Figure \ref{fig:FIGURES_figLinf}).  The other alternative state was to assume that the 2011 mean length-at-age data from the setline survey was the new growth paradigm and remained constant well into the future. 
+Two alternative scenarios were used to project future growth of halibut beyond 2011.  To simulate alternative states of future growth a density-dependent relationship between cohort strength and the asymptotic length of males and females was developed.  Growth varied by adjusting the asymptotic length of each cohort as a function of recruitment density. For example, if recruitment is roughly 2.7 times larger than the average recruitment, the the asymptotic length would decrease from 148 cm to 139 cm under density-dependent growth (Figure \ref{fig:FIGURES_figLinf}).  The other alternative state was to assume that the 2011 mean length-at-age data from the setline survey was the new growth paradigm and remained constant well into the future. 
 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.8\textwidth]{../FIGURES/fig:pres:Linf.pdf}
-	\caption{Relationship between asymptotic length $l_\infty^{(h)}$ for females (a) and males (b) and cohort density. Under density-dependent growth, $l_\infty^{(h)}$ decreases with increasing density (dashed line), inverse density-dependent (solid line), and density independent (dotted line).  }
+	\caption{Relationship between asymptotic length $l_\infty^{(h)}$ for females (a) and males (b) and cohort density. Under density-dependent growth, $l_\infty^{(h)}$ decreases with increasing density (solid line) and density independent growth (dotted line).  }
 	\label{fig:FIGURES_figLinf}
 \end{figure}
 
-A key component of the density dependent growth model and the three alternative hypotheses about future recruitment is that it allows for growth to continue to decline under scenarios with increasing recruitment.  The opposite case occurs with below average recruitment; growth rates increase with low cohort densities.  
+A key component of the density-dependent growth model and the three alternative hypotheses about future recruitment is that it allows for growth to continue to decline under scenarios with increasing recruitment.  The opposite case occurs with below average recruitment; growth rates increase with low cohort densities.  
 
 
 
@@ -178,7 +178,7 @@ Area &  Apportionment & Harvest Rate &    Comm. & U32&  O32 & Sport & Personal\\
 	\end{center}
 \end{table}
 
-For each of the alternative policies, the simulation model was run with a combination of poor, average, and good recruitment with density-independent and density dependent growth (a total of 6 model runs for each policy).  Each of these alternative hypotheses were assumed to be equally plausible and a single score was developed to compare alternative policy options.  For each of the model outputs (e.g., Exploitable biomass, spawning biomass, yield, etc.)  the average simulated value between the years 2020 and 2025 were arbitrarily selected for policy comparison.
+For each of the alternative policies, the simulation model was run with a combination of poor, average, and good recruitment with density-independent and density dependent growth (a total of 6 model runs for each policy).  Each of these alternative hypotheses were assumed to be equally plausible and a single score was developed to compare alternative policy options.  For each of the model outputs (e.g., exploitable biomass, spawning biomass, yield, etc.)  the average simulated value between the years 2020 and 2025 were arbitrarily selected for policy comparison.
 
 
 

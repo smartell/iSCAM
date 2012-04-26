@@ -1,0 +1,505 @@
+\documentclass{beamer}
+
+%% STEP 1) SELECT THE THEM YOU WISH TO USE
+
+\usetheme{Goettingen} % My favorite!
+%\usetheme{PaloAlto}
+%\usetheme{Hannover}
+%\usetheme{Madrid} 
+%\usetheme{Boadilla} % Pretty neat, soft color.
+%\usetheme{default}
+%\usetheme{Warsaw}
+%\usetheme{Bergen} % This template has nagivation on the left
+%\usetheme{Frankfurt} % Similar to the default 
+%with an extra region at the top.
+%\usecolortheme{seahorse} % Simple and clean template
+%\usetheme{Darmstadt} % not so good
+% Uncomment the following line if you want %
+% page numbers and using Warsaw theme%
+% \setbeamertemplate{footline}[page number]
+%\setbeamercovered{transparent}
+\setbeamercovered{invisible}
+% To remove the navigation symbols from 
+% the bottom of slides%
+\setbeamertemplate{navigation symbols}{} 
+%
+\usepackage{graphicx}
+\usepackage{array}
+
+%\usepackage{bm}         % For typesetting bold math (not \mathbold)
+%\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
+%
+
+%Custom Color theme
+\usepackage{color}
+\definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
+\definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
+\setbeamerfont{title}{size=\Huge}
+\setbeamercolor{structure}{fg=white}
+\setbeamertemplate{frametitle}[default][center]
+
+\setbeamercolor{normal text}{bg=black, fg=white}
+\setbeamertemplate{background canvas}[vertical shading]
+[bottom=bottomcolour, middle=middlecolour, top=black]
+
+\setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
+\setbeamerfont{frametitle}{size=\huge}
+
+
+%end of color theme
+
+%iscam logo
+\newcommand{\iscam}{
+	\raisebox{0.75ex}{$i$}%
+	\textcolor{red}{\raisebox{0.25ex}{S}}%
+	\textcolor{green}{\raisebox{0.00ex}{C}}%
+	\textcolor{blue}{\raisebox{-.25ex}{A}}%
+	\raisebox{-.50ex}{M}%
+	}
+\logo{\iscam}
+%end of iscam logo
+
+%Table of contents at begining of each section
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}
+%end of table of contents
+
+\title[\iscam]{Effects of reduced minimum-size limits on halibut biomass, yield, and wastage}
+\author{Steven Martell}
+\institute[UBC]
+{
+University of British Columbia \\
+\medskip
+{\emph{martell.steve@gmail.com}}
+}
+\date{\today}
+% \today will show current date. 
+% Alternatively, you can specify a date.
+%
+\begin{document}
+%
+\begin{frame}
+\titlepage
+\end{frame}
+%
+\section{Objective} % (fold)
+\label{sec:objective}
+
+
+\begin{frame}
+\frametitle{Motivation for MSL}
+
+Purpose of MSL is to prevent growth over-fishing.\\
+\bigskip
+FACT:  Halibut are getting smaller!\\
+\bigskip \pause
+\alert{Is this a fishing effect, environment, or both?}\\
+\bigskip
+\alert{Should MSL change with changes in growth?}\\
+\end{frame}
+%
+\begin{frame}[m]\frametitle{Objective}
+	What are the short-term and long-term consequences of adopting a smaller size limit (26 inches or 66 cm) on the halibut spawning and exploitable biomass, yield, and wastage?\\
+	\bigskip
+\underline{To answer this question:}\\
+Use a deterministic sex/age structured simulation model based on the IPHC assessment results to forecast biomass, harvest, and wastage using 26 and 32 inch MSL.\\
+\medskip
+\emph{Using 2011 halibut prices from Homer Alaska, calculate the landed and discarded value in millions of dollars.}\\
+\end{frame}
+% section objective (end)
+%
+\section{Simulation Model} % (fold)
+\label{sec:simulation_model}
+\begin{frame}[t]\frametitle{Model Setup \& Assumptions}
+	\begin{itemize}
+		\item<1->\alert<1> {Constant natural mortality rate.}
+		\item<1->\alert<2> {Selectivity remains constant over time.}
+		\item<1->\alert<3> {Selectivity is a fixed function of length.}
+		\item<1->\alert<4> {Fixed growth or density dependent growth.}
+		\item<1->\alert<5> {Coefficient of variation in length-at-age is 0.1}
+		\item<1->\alert<6> {Price is fixed with premiums for larger sizes (Homer).}
+		\item<1->\alert<6> {Price for 5-10lb set at \$5.00 lb$^{-1}$ (66cm-81cm)}
+		\item<1->\alert<7> {Discard mortality rate in commercial fishery is 0.17}
+		\item<1->\alert<8> {Future catch based on current HR policy}
+		\item<1->\alert<8> {Future O32 \& U32 bycatch based on 2011 values.}
+	\end{itemize}
+\end{frame}
+%
+\begin{frame}[t]\frametitle{Age-based selectivity 1996}
+	\pgfimage[width=\textwidth,height=0.85\textheight]{../../FIGURES/SIZELIMIT/Selectivity}
+\end{frame}
+%
+\begin{frame}[t]\frametitle{Age-based selectivity 2011}
+	\pgfimage[width=\textwidth,height=0.85\textheight]{../../FIGURES/SIZELIMIT/Selectivity2011}
+\end{frame}
+%
+\begin{frame}[t,shrink]\frametitle{Capture \& Retention}
+	Probability of capturing a fish of a given size $x$:
+	\[
+	 P(x) = S(x)\cdot N(x)
+	\]
+	Where $S(x)$ is the size selectivity of the gear, and $N(x)$ is the number of individuals in length interval $x$\\
+	\medskip \pause
+	This is approximated as the probability of capturing a fish age $j$ using the average size-at-age and length-based selectivity.
+	\[
+	P(j) = v(j) \cdot N(j)
+	\]
+	\pause
+	The probability of retaining a fish of age $j$ is function of the mean length-at-age and variance in length-at-age.\\
+	Approximate the integral using a logistic function:
+	\[
+	P(r) = \frac{1}{1+\exp[-(l_a-\mathrm{MSL})/\sigma_a]}
+	\]
+	where MSL is the minimum size limit, $l_a$ and $\sigma_a$ are the mean length and standard deviation at age.
+\end{frame}
+\begin{frame}[m]\frametitle{Joint probability model}
+	Probability of capturing and retaining a fish age $j$ is given by:
+	\[
+	P(c_j)=P(j)\cdot P(r)
+	\]
+	\pause
+	Probability of discarding a fish of age $j$:
+	\[
+	P(d_j)=P(j)\cdot (1-P(r))
+	\]
+	\pause
+	Probability of an age $j$ fish dying due to commercial fishing:
+	\[
+	P(h_j)=P(j)\cdot [P(r)\cdot(1-P(r))d]
+	\]
+	where $d$ is the discard mortality rate.
+\end{frame}
+% section simulation_model (end)
+\section{Scenarios} % (fold)
+\label{sec:scenarios}
+\begin{frame}[t]\frametitle{Scenarios}
+	Three size limit options:
+	\begin{enumerate}
+		\item<1> Size limit is 32 inches (81.28cm)
+		\item<1> Size limit is 29 inches (73.66cm)
+		\item<1> Size limit is 26 inches (66.04cm)
+	\end{enumerate}
+	\begin{center}
+	\begin{tabular}{ccc}
+		32'' MSL & 29'' MSL & 26'' MSL\\
+		\pgfimage[width=0.28\textwidth]{../../FIGURES/SIZELIMIT/SelRetA} &
+		\pgfimage[width=0.28\textwidth]{../../FIGURES/SIZELIMIT/SelRetC} &
+		\pgfimage[width=0.28\textwidth]{../../FIGURES/SIZELIMIT/SelRetB} \\
+	\end{tabular}
+	\end{center}	
+\end{frame}
+%
+\begin{frame}[t]\frametitle{Assumed states of nature}
+	Recruitment:
+	\begin{enumerate}
+		\item<1> Poor (60\% below average recruitment)
+		\item<1> Average
+		\item<1> Good (60\% above average recruitment)
+	\end{enumerate}
+	Growth: 
+	\begin{enumerate}
+		\item<2> Density-independent (using 2011 average length-at-age)
+		\item<2> Density dependent. 
+	\end{enumerate}
+	\only<2>
+	{
+	\begin{center}
+		\pgfimage[width=0.75\textwidth]{../../FIGURES/fig:pres:Linf} \\
+	\end{center}
+	}
+\end{frame}
+% section scenarios (end)
+\section{Results} % (fold)
+\label{sec:results}
+\subsection{EBio} % (fold)
+\label{sub:ebio}
+\begin{frame}[m]\frametitle{Decision Table: EBio}
+	Size limit impacts on exploitable biomass.\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_EBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_EBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_EBio} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_EBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_EBio} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_EBio} \\
+	 		\hline
+	 		%
+	 		Average & 633 & 634 & 635 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+% subsection ebio (end)
+\subsection{Yield} % (fold)
+\label{sub:yield}
+\begin{frame}[m]\frametitle{Decision Table: Yield}
+	Size limit impacts on commercial yield.\\ \medskip
+	%RE-RUN b/c average yield were not computed properly.
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_YBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_YBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_YBio} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_YBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_YBio} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_YBio} \\
+	 		\hline
+	 		%
+	 		Average & 101 & 101.25 & 101.4 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+% subsection yield (end)
+\subsection{Wastage} % (fold)
+\label{sub:wastage}
+\begin{frame}[m]\frametitle{Decision Table: Comm. wastage}
+	Size limit impacts on Wastage.\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_WBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_WBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_WBio} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_WBio} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_WBio} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_WBio} \\
+	 		\hline
+	 		%
+	 		Average & 2.494 & 0.925 & 0.260 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+% subsection wastage (end)
+\subsection{Landed Value} % (fold)
+\label{sub:landed_value}
+\begin{frame}[m]\frametitle{Decision Table: Landed Value}
+	Size limit impacts on Landed value in the directed fishery.\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_LVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_LVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_LVal} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_LVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_LVal} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_LVal} \\
+	 		\hline
+	 		%
+	 		Average & 684.7 & 683.6 & 683 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+% subsection landed_value (end)
+\subsection{Wastage Value} % (fold)
+\label{sub:wastage_value}
+\begin{frame}[m]\frametitle{Decision Table: Value of Wastage}
+	Size limit impacts on value of commercial fishery wastage.\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_WVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_WVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_WVal} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_WVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_WVal} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_WVal} \\
+	 		\hline
+	 		%
+	 		Average & 15.5 & 5.6 & 1.55 \\
+	 		\hline
+	\end{tabular}
+\end{frame}
+% subsection wastage_value (end)
+\subsection{Discard Value} % (fold)
+\label{sub:discard_value}
+\begin{frame}[m]\frametitle{Decision Table: Value all discards}
+	Value of all fish less than MSL thrown overboard.\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_DVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_DVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_DVal} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_DVal} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_DVal} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_DVal} \\
+	 		\hline
+	 		%
+	 		Average & 91 & 33 & 9 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+% subsection discard_val (end)
+\subsection{Size-limit Impacts} % (fold)
+\label{sub:size_limit_impacts}
+\begin{frame}[m]\frametitle{Summary Table}
+	\onslide<2-> {A proximate measure of efficiency: \\ 1-(Discard value)/(Landed Value)}\\\medskip
+	\begin{tabular}{r|c|c|c}
+		\hline
+		\multicolumn{1}{l}{{Response (million lb)}} & {32'' MSL} & {29'' MSL}  & {26'' MSL } \\
+		\hline
+		EBio       & 633     & 634      & 635    \\
+		Yield      & 101     & 101.25   & 101.4  \\
+		Wastage      & \alert{2.494}   & \alert{0.925}    & \alert{0.260}  \\
+		\hline
+		\multicolumn{4}{l}{{Response (million)}}\\
+		\hline
+		Landed Value     & \$684.7 & \$683.6  & \$683  \\
+		\alert{Waste Value\footnote{Money you cannot recover in the future} }
+		 & \alert{\$15.5}&\alert{\$5.6} &\alert{\$1.55} \\
+		Discard Value\footnote{Extra cost incurred to throw away these fish.}
+		& \$91 & \$33 & \$9\\
+		\hline \pause \pause
+		Efficiency & 86.7\%  & 95.2\% & 98.7\% \\
+		\hline
+	\end{tabular}
+\end{frame}
+% subsection size_limit_impacts (end)
+\subsection{Efficiency} % (fold)
+\label{sub:efficiency}
+\begin{frame}[t]\frametitle{Handling efficiency}
+	What fraction of the catch is below the MSL?\\ \medskip
+	\begin{tabular}{| b{1.1cm} |c|c|c|}
+	 		\hline
+	 		Policy & 32'' MSL & 29'' MSL  & 26'' MSL  \\
+	 		\hline
+	 		%
+	 		DI Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DI_dt} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DI_dt} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DI_dt} \\
+	 		\hline
+	 		%
+	 		DD Growth &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_32_DD_dt} &
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_29_DD_dt} & 
+	 		\pgfimage[width=0.25\textwidth]{../../FIGURES/SIZELIMIT/fig_26_DD_dt} \\
+	 		\hline
+	 		%
+	 		Average & 60/100 & 33/100 & 9/100 \\
+	 		\hline
+	\end{tabular}
+	
+\end{frame}
+\begin{frame}[m]\frametitle{Summary Table}
+	%\onslide<2-> {A proximate measure of efficiency: \\ 1-(Discard value)/(Landed Value)}
+	Handling efficiency: (percent of fish kept)\\ \medskip
+	\begin{tabular}{r|c|c|c}
+		\hline
+		\multicolumn{1}{l}{{Response (million lb)}} & {32'' MSL} & {29'' MSL}  & {26'' MSL } \\
+		\hline
+		EBio       & 633     & 634      & 635    \\
+		Yield      & 101     & 101.25   & 101.4  \\
+		Wastage      & \alert{2.494}   & \alert{0.925}    & \alert{0.260}  \\
+		\hline
+		\multicolumn{4}{l}{{Response (million)}}\\
+		\hline
+		Landed Value     & \$684.7 & \$683.6  & \$683  \\
+		\alert{Waste Value\footnote{Money you cannot recover in the future} }
+		 & \alert{\$15.5}&\alert{\$5.6} &\alert{\$1.55} \\
+		Discard Value\footnote{Extra cost incurred to throw away these fish.}
+		& \$91 & \$33 & \$9\\
+		\hline 
+		Efficiency & 86.7\%  & 95.2\% & 98.7\% \\
+		Handling Efficiency & 40\% & 66\%  & 91\%\\
+		\hline
+	\end{tabular}
+\end{frame}
+% subsection efficiency (end)
+% section results (end)
+
+\section{Summary} % (fold)
+\label{sec:summary}
+\begin{frame}[t]\frametitle{Summary}
+	\begin{itemize}
+		\item<+-> Lowering the size limit will not change the landed value of the fishery.
+		\item<+-> No appreciable conservation concern with a lower size limit under the \underline{strict assumption} that selectivity does not change. 
+		\item<+-> A lower size limit reduces waste and increases economic rent via lower operational costs (increased efficiency). 
+	\end{itemize}
+\end{frame}
+% section summary (end)
+\begin{frame}[m]\frametitle{Acknowledgments}
+	IPHC staff\\
+	At-sea Processors Association\\
+	United Catcher Boats\\
+	Pacific Seafood Processors Association\\
+	Alaska Groundfish Data Bank\\
+	Marine Conservation Alliance\\
+	Groundfish Fourm\\
+	Alaska Whitefish Trawlers\\
+\end{frame}
+% End of slides
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

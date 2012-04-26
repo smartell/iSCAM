@@ -9,19 +9,19 @@
 \section{Introduction} % (fold)
 \label{cha:introduction}
 
-To examine the effect of halibut bycatch and wastage in the Gulf of Alaska (GOA) and Bering Sea Aleutian Island (BSAI) fisheries, a sex- and age-structured simulation model was developed to simulate halibut exploitable biomass, spawning biomass, yield and wastage in the directed fishery in response to alternative bycatch limits in all other fisheries that incidentally harvest halibut.  The simulation model is conditioned on the output of the IPHC annual assessment model (wobblesq) and the model structure is very similar in the components of catch that are removed from the system.  
+To examine the effect of halibut bycatch and wastage in the Gulf of Alaska (GOA) and Bering Sea Aleutian Island (BSAI) fisheries, a sex- and age-structured simulation model was developed to simulate halibut exploitable biomass, spawning biomass, yield and wastage in the directed fishery in response to alternative bycatch limits in all other fisheries that incidentally harvest halibut.  The simulation model is conditioned on the output of the IPHC annual assessment model (wobblesq) and the model structure is very similar in the components of catch that are removed from the system. In the IPHC assessment model, coastwide removals are aggregated into 5 catch categories that represent the commercial and IPHC research catches, bycatch and wastage in two size categories (U32 and O32), recreational fisheries, and personal use including subsistence harvest.  
 
 \subsection{Overview of total mortality in the IPHC model} % (fold)
 \label{sub:overview_of_the_iphc_model}
 
-Key to understanding the simulation model developed for this report is understand how the various components of the age-specific total mortality rate are set up in the IPHC assessment model.  The IPHC model is set up such that total instantaneous sex- age-specific total mortality rates are used to propogate the estimated numbers-at-age over time.  Specifically, the sex- age-specific mortality rate is set up as follows:
+Key to understanding the simulation model developed for this report are the various components of the age-specific total mortality rate that are set up in the IPHC assessment model.  The IPHC model is set up such that total instantaneous sex- age-specific total mortality rates are used to propagate the estimated numbers-at-age over time.  Specifically, the sex- age-specific mortality rate is set up as follows:
 \begin{align*}
 	Z_{h,i,j} &= M_h + \sum_k F_{h,i,j,k}\\
 	Z_{h,i,j} &= M_h + \sum_k f_{h,i,k} s_{h,i,j,k}
 \end{align*}
-where $h$ is an index for sex, $i$ is an index for year, $j$ is an index for age, and $k$ is an index for fishing fleet.  This is a separable model for sex- age-specific total mortality where the year effect (fishing mortality $f_{h,i,k}$) is estimated for each gear in each year, and the age effect (selectivity $s_{h,i,j,k}$) is a piece-wise linear function of average length-at-age. The natural mortality rates $M_h$ are assumed to be independent of age and does not vary over time.  For each fishing gear there is a total of $I$+1 fishing mortality parameters and  16 estimated selectivity parameters.  These are determined by fitting the model to catch-at-age data.
+where $h$ is an index for sex, $i$ is an index for year, $j$ is an index for age, and $k$ is an index for fishing fleet.  This is a separable model for sex- age-specific total mortality where the year effect (fishing mortality $f_{h,i,k}$) is estimated for each gear in each year, and the age effect (selectivity $s_{h,i,j,k}$) is a piece-wise linear function of average length-at-age. The natural mortality rates $M_h$ are assumed to be independent of age and do not vary over time.  For each fishing gear there is a total of $I$+1 fishing mortality parameters and  16 estimated selectivity parameters.  These are determined by fitting the model to catch-at-age data.
 
-The are five  specific fishing fleets (i.e., $k=5$) in the model and the corresponding catch is aggregated:
+There are five  specific fishing fleets (i.e., $k=5$) in the model and the corresponding catch is aggregated (in some cases disaggregated by sex):
 \begin{enumerate}
 	\item Commercial setline  and IPHC research,
 	\item U32 bycatch and wastage,
