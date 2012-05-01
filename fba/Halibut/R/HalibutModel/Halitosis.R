@@ -6,11 +6,20 @@
 # Feb 7, 2011.  Added multiple growth groups to allow for cumulative effects
 # of size selective fishing.  Need to show how mean weigth-at-age decreases
 # with increasing fishing mortality rates.
+# 
+# April 30, 2012.  With lower growth rates the yield loss ratio and spawning
+# biomass loss ratio are much less.  These numbers would have to be revised
+# in situations where growth rates have declined over time.  This assumes
+# that selectivity has not changed over time.
+# 
+# May 1, 2012.  On git equilribrium branch to make a figure for Ed and HBWG
 # -------------------------------------------------------------------------- ##
 
 # -------------------------------------------------------------------------- ##
 # Libraries
 require(Hmisc)
+require(ggplot2)
+require(hacks)
 # -------------------------------------------------------------------------- ##
 
 # Data and other constants
@@ -25,13 +34,15 @@ pg	<- dnorm(seq(-3, 3, length=G), 0, 1); pg <- pg/sum(pg)
 bo		<- 100.0			# unfished female spawning biomass
 h		<- 0.75				# steepness
 m		<- c(0.15, 0.18)	# natural mortality rate
-dm		<- 0.17				# discard mortality rate
+dm		<- 0.16				# discard mortality rate
 a50		<- 10.91			# age at 50% maturity
 k50		<- 1.406			# std at 50% maturity
-a		<- 6.92e-6			# length-weight allometry
-b		<- 3.24				# length-weight allometry
-linf	<- c(145, 110)		# Range female 145-190, male 110-155 (cm)
-k		<- c(0.1, 0.12)		# eyeballed growth pars from Clark & Hare 2002.
+a		<- 9.321e-6			# length-weight allometry
+b		<- 3.16				# length-weight allometry
+#linf	<- c(145, 110)		# Range female 145-190, male 110-155 (cm)
+#k		<- c(0.1, 0.12)		# eyeballed growth pars from Clark & Hare 2002.
+linf	<- c(148.0627, 105.7311) 
+k		<- c(0.09154536, 0.1275141)
 
 # Selectivity parameters (cm)
 lhat	<- 97.132
@@ -64,7 +75,7 @@ function(fe=0, slim=0, dm=0.17)
 		
 		# growth
 		'vonb'  <- function(linf,k) len <- linf*(1-exp(-k*age))
-		dev     <- linf[i]*0.3
+		dev     <- linf[i]*0.5
 		linf.g  <- seq(linf[i]-dev, linf[i]+dev, length=G)
 		la[,,i] <- sapply(linf.g, vonb,k=k[i])
 		wa[,,i] <- a*la[,,i]^b
@@ -74,7 +85,8 @@ function(fe=0, slim=0, dm=0.17)
 	}
 	
 	# price premiums based on fish weight
-	pa[wa<10]  <- 0
+	pa[wa<5  ] <- 0.00
+	pa[wa>=5 ] <- 3.00
 	pa[wa>=10] <- 6.75
 	pa[wa>=20] <- 7.30
 	pa[wa>=40] <- 7.50
@@ -99,11 +111,11 @@ function(fe=0, slim=0, dm=0.17)
 	sr	<- array(0, dim)
 	sd	<- array(0, dim)
 	va	<- array(0, dim)
-	std	<- cvlm*slim+1.e-30
+	std	<- cvlm*la+1.e-30
 	for(i in 1:S)
 	{
 		sc[,,i]  <- plogis(la[,,i],location=lhat, scale=ghat)
-		sr[,,i]  <- plogis(la[,,i],location=slim, scale=std)
+		sr[,,i]  <- plogis(la[,,i],location=slim, scale=std[,,i])
 		sd[,,i]  <- 1-sr[,,i]
 		va[,,i]  <- sc[,,i]*(sr[,,i]+sd[,,i]*dm)
 	}
@@ -159,7 +171,7 @@ function(fe=0, slim=0, dm=0.17)
 	t1		<- log(phi.E/(kap*phi.e))
 	t2		<- (log(kap)*phi.e)
 	re		<- max(0, -(t1*ro*phi.E)/t2)
-	be		<- re * phi.e
+	be		<- 0.5*re * phi.e
 	ye		<- 0
 	de		<- 0
 	ypr		<- 0
@@ -170,10 +182,10 @@ function(fe=0, slim=0, dm=0.17)
 		de	<- de + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
 		ypr <- ypr + sum( fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 		
-		# Average weigth of a 10-year old fish (female & male)
+		# Average weigth of a 15-year old fish (female & male)
 		tmp		<- t(lz[,,i]*wa[,,i])*pg
 		tmpn	<- t(lz[,,i])*pg
-		wbar[i] <- weighted.mean(wa[10,,i], tmpn[,10])
+		wbar[i] <- weighted.mean(wa[15,,i], tmpn[,15])
 	}
 	spr		<- phi.e/phi.E
 	
@@ -212,8 +224,8 @@ function(arg="ye", dm=0.17)
 		return(as.double(tmp[idx]))
 	}
 	V	<- Vectorize(fn, c("fe", "slim"))
-	fe	<- seq(0, 0.45, length=20)
-	sl	<- seq(60, 100, length=20)
+	fe	<- seq(0, 0.45, length=25)
+	sl	<- seq(60, 100, length=25)
 	Z	<- outer(fe, sl, V, dm)
 	obj	<- list(x=fe, y=sl, Z=Z)
 	class(obj) <- "isopleth"
@@ -237,44 +249,63 @@ function(obj, ...)
 # the bycatch is straight forward. The yield loss is the difference between
 # the yield obtained with discard mortality =0 and discard mortality =0.17
 
-
-SPR <- .equil("spr", dm=dm)
-SPR0<- .equil("spr", dm=0)
+if(!exists("YE"))
+{
+#SPR <- .equil("spr", dm=dm)
+#SPR0<- .equil("spr", dm=0)
 YE  <- .equil("ye", dm=dm)
 YE0 <- .equil("ye", dm=0)
+BE  <- .equil("be", dm=dm)
+BE0 <- .equil("be", dm=0)
 DE	<- .equil("de", dm=dm)
-W.F <- .equil("wbar.f", dm=dm)
-W.M <- .equil("wbar.m", dm=dm)
-LV	<- .equil("landed.value", dm=dm)
-DV	<- .equil("discard.value", dm=dm)
+#W.F <- .equil("wbar.f", dm=dm)
+#W.M <- .equil("wbar.m", dm=dm)
+#LV	<- .equil("landed.value", dm=dm)
+#DV	<- .equil("discard.value", dm=dm)
+}
 
 # REPORT SECTION
-par(mfcol=c(1, 1), las=1)
+par(mfrow=c(2, 2), las=1)
 isolvl <- c(0.35, seq(0, 1, by=0.1))
 isolwd <- c(2, rep(1, 11))
 xl     <- "Fishing mortality"
 yl     <- "Size limit (cm)"
-plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn potential ratio")
-plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield")
-plot(DE ,xlab=xl,ylab=yl,main="Discarded yield")
+
 X = DE
 X$Z = (YE0$Z-YE$Z)/(DE$Z)
-plot(X, xlab=xl,ylab=yl,main="Yield loss ratio")
+plot(X ,ylab=yl,main="Yield loss ratio")
+abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
+grid()
 
-#The following in the spawning biomass per recruit lost per 
-#unit of discard. This should be the spawning biomass,  not SPR
-SE = DE
-SE$Z = (SPR0$Z-SPR$Z)/(DE$Z)
-plot(SE, add=TRUE, col="blue", levels=seq(0, 10, by=.25))
+SE = BE
+SE$Z = (BE0$Z-BE$Z)/(DE$Z)
+plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,  main="Spawning biomass loss ratio")
+abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
+grid()
 
-E=DE
-E$Z = YE$Z/(YE$Z+DE$Z)
-plot(E, add=TRUE, col="red")
 
-par(mfcol=c(2, 2))
-plot(W.F, xlab=xl, ylab=yl, main="Mean weight of age-10 females")
-plot(W.M, xlab=xl, ylab=yl, main="Mean weight of age-10 males")
-plot(LV, xlab=xl, ylab=yl, main="Landed Value ($$)")
-X = LV
-X$Z = DV$Z/LV$Z
-plot(X, xlab=xl, ylab=yl, main="Discard Value/Landed Value")
+# plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn potential ratio")
+# plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield", levels=seq(0, 10, by=0.25))
+# plot(DE ,xlab=xl,ylab=yl,main="Discarded yield")
+# X = DE
+# X$Z = (YE0$Z-YE$Z)/(DE$Z)
+# plot(X, xlab=xl,ylab=yl,main="Yield loss ratio")
+# grid()
+# 
+# #The following in the spawning biomass per recruit lost per 
+# #unit of discard. This should be the spawning biomass,  not SPR
+# SE = BE
+# SE$Z = (BE0$Z-BE$Z)/(DE$Z)
+# plot(SE, add=TRUE, col="blue", levels=seq(0, 10, by=.5))
+# 
+# E=DE
+# E$Z = YE$Z/(YE$Z+DE$Z)
+# plot(E, add=TRUE, col="red")
+# 
+# par(mfcol=c(2, 2))
+# plot(W.F, xlab=xl, ylab=yl, main="Mean weight of age-15 females")
+# plot(W.M, xlab=xl, ylab=yl, main="Mean weight of age-15 males")
+# plot(LV, xlab=xl, ylab=yl, main="Landed Value ($$)", levels=seq(20, 60, by=1))
+# X = LV
+# X$Z = DV$Z/LV$Z
+# plot(X, xlab=xl, ylab=yl, main="Discard Value/Landed Value")
