@@ -242,6 +242,8 @@ SPR <- .equil("spr", dm=dm)
 SPR0<- .equil("spr", dm=0)
 YE  <- .equil("ye", dm=dm)
 YE0 <- .equil("ye", dm=0)
+BE  <- .equil("be", dm=dm)
+BE0 <- .equil("be", dm=0)
 DE	<- .equil("de", dm=dm)
 W.F <- .equil("wbar.f", dm=dm)
 W.M <- .equil("wbar.m", dm=dm)
@@ -264,7 +266,7 @@ plot(X, xlab=xl,ylab=yl,main="Yield loss ratio")
 #The following in the spawning biomass per recruit lost per 
 #unit of discard. This should be the spawning biomass,  not SPR
 SE = DE
-SE$Z = (SPR0$Z-SPR$Z)/(DE$Z)
+SE$Z = (BE0$Z-BE$Z)/(DE$Z)
 plot(SE, add=TRUE, col="blue", levels=seq(0, 10, by=.25))
 
 E=DE
