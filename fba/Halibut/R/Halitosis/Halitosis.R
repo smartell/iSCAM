@@ -170,8 +170,8 @@ function(fe=0, slim=0, dm=0.17)
 	# Equilibrium calculations
 	t1		<- log(phi.E/(kap*phi.e))
 	t2		<- (log(kap)*phi.e)
-	re		<- max(0, -(t1*ro*phi.E)/t2)
-	be		<- 0.5*re * phi.e
+	re		<- 0.5* max(0, -(t1*ro*phi.E)/t2)
+	be		<- re * phi.e
 	ye		<- 0
 	de		<- 0
 	ypr		<- 0
@@ -265,7 +265,7 @@ DE	<- .equil("de", dm=dm)
 }
 
 # REPORT SECTION
-par(mfrow=c(2, 2), las=1)
+par(mfrow=c(2, 2), las=1, mar=c(4, 4, 1, 1))
 isolvl <- c(0.35, seq(0, 1, by=0.1))
 isolwd <- c(2, rep(1, 11))
 xl     <- "Fishing mortality"
@@ -280,6 +280,28 @@ grid()
 SE = BE
 SE$Z = (BE0$Z-BE$Z)/(DE$Z)
 plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,  main="Spawning biomass loss ratio")
+abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
+grid()
+
+# 20% smaller asymptotic lengths
+linf <- 0.8* linf
+if(!exists("YE.30"))
+{
+	YE.30  <- .equil("ye", dm=dm)
+	YE0.30 <- .equil("ye", dm=0)
+	BE.30  <- .equil("be", dm=dm)
+	BE0.30 <- .equil("be", dm=0)
+	DE.30	<- .equil("de", dm=dm)
+}
+X = DE.30
+X$Z = (YE0.30$Z-YE.30$Z)/(DE.30$Z)
+plot(X ,ylab=yl,xlab=xl)
+abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
+grid()
+
+SE = BE.30
+SE$Z = (BE0.30$Z-BE.30$Z)/(DE.30$Z)
+plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,xlab=xl)
 abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
 grid()
 
