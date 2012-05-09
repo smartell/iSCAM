@@ -75,7 +75,7 @@ function(fe=0, slim=0, dm=0.17)
 		
 		# growth
 		'vonb'  <- function(linf,k) len <- linf*(1-exp(-k*age))
-		dev     <- linf[i]*0.5
+		dev     <- linf[i]*0.197
 		linf.g  <- seq(linf[i]-dev, linf[i]+dev, length=G)
 		la[,,i] <- sapply(linf.g, vonb,k=k[i])
 		wa[,,i] <- a*la[,,i]^b
@@ -115,7 +115,8 @@ function(fe=0, slim=0, dm=0.17)
 	for(i in 1:S)
 	{
 		sc[,,i]  <- plogis(la[,,i],location=lhat, scale=ghat)
-		sr[,,i]  <- plogis(la[,,i],location=slim, scale=std[,,i])
+		#sr[,,i]  <- plogis(la[,,i],location=slim, scale=std[,,i])
+		sr[,,i]  <- pnorm(la[,,i],mean=slim, sd=std[,,i])
 		sd[,,i]  <- 1-sr[,,i]
 		va[,,i]  <- sc[,,i]*(sr[,,i]+sd[,,i]*dm)
 	}
@@ -215,7 +216,7 @@ function(fe=0, slim=0, dm=0.17)
 }
 
 .equil	<-
-function(arg="ye", dm=0.17)
+function(arg="ye", dm=0.16)
 {
 	fn	<- function(fe=0, slim=0, dm=dm)
 	{
@@ -274,14 +275,14 @@ yl     <- "Size limit (cm)"
 X = DE
 X$Z = (YE0$Z-YE$Z)/(DE$Z)
 plot(X ,ylab=yl,main="Yield loss ratio")
-abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
-grid()
+abline(h=c(81.3, 66.04), v=c(0.16, 0.215), col=colr("salmon", 0.5), lwd=5)
+grid(); gletter(1)
 
 SE = BE
 SE$Z = (BE0$Z-BE$Z)/(DE$Z)
 plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,  main="Spawning biomass loss ratio")
-abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
-grid()
+abline(h=c(81.3, 66.04), v=c(0.16, 0.215), col=colr("salmon", 0.5), lwd=5)
+grid(); gletter(2)
 
 # 20% smaller asymptotic lengths
 linf <- 0.8* linf
@@ -296,14 +297,14 @@ if(!exists("YE.30"))
 X = DE.30
 X$Z = (YE0.30$Z-YE.30$Z)/(DE.30$Z)
 plot(X ,ylab=yl,xlab=xl)
-abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
-grid()
+abline(h=c(81.3, 66.04), v=c(0.16, 0.215), col=colr("salmon", 0.5), lwd=5)
+grid(); gletter(3)
 
 SE = BE.30
 SE$Z = (BE0.30$Z-BE.30$Z)/(DE.30$Z)
 plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,xlab=xl)
-abline(h=c(81.3, 66.04), v=0.215, col=colr("salmon", 0.5), lwd=5)
-grid()
+abline(h=c(81.3, 66.04), v=c(0.16, 0.215), col=colr("salmon", 0.5), lwd=5)
+grid(); gletter(4)
 
 
 # plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn potential ratio")
