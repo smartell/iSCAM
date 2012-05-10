@@ -1196,12 +1196,6 @@ FUNCTION calcFisheryObservations
 			//SJDM Jan 16, 2011 Modification as noted above.
 			//SJDM Jan 06, 2012 Modification as noted above.
 			if(obs_ct(k,i)>0)
-<<<<<<< HEAD
-			{/*If there is a commercial fishery, then calculate the
-			   catch-at-age (in numbers) and total catch (in weight)*/
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-				ct(k,i) = Chat(k,i)*wt_obs(i);
-=======
 			{
 				dvar_vector fa=ft(k,i)*mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
@@ -1218,7 +1212,6 @@ FUNCTION calcFisheryObservations
 						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
 					break;
 				}
->>>>>>> SOKherring
 			}
 			else
 			{/*If there is no commercial fishery the set Chat equal to 
@@ -2665,7 +2658,8 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include "stats.cxx"
+	#include <statsLib.h>
+	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
