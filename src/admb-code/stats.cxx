@@ -60,9 +60,6 @@ dvariable dgamma(const dvariable &x, const double a, const double b)
 {
 	//E(x)=a/b;
 	//V(x)=a/b^2
-	//a=E(x)^2/V(x)
-	//b=E(x)/V(x)
-	
 	return -a*log(b)+gammln(a)-(a-1)*log(x)+b*x;
 }
 
