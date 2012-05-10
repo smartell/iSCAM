@@ -212,7 +212,9 @@ function(fe=0, slim=0, dm=0.17)
 		de=de, spr=spr, ypr=ypr, 
 		dep=be/bo, wbar.f=wbar[1], wbar.m=wbar[2], 
 		landed.value=landed.value, 
-		discard.value=discard.value))
+		discard.value=discard.value, 
+		la=la, wa=wa, fa=fa, sc=sc, sr=sr, sd=sd, 
+		lx=lx, lz=lz))
 }
 
 .equil	<-
@@ -294,6 +296,7 @@ if(!exists("YE.30"))
 	BE0.30 <- .equil("be", dm=0)
 	DE.30	<- .equil("de", dm=dm)
 }
+linf <- 1.2* linf
 X = DE.30
 X$Z = (YE0.30$Z-YE.30$Z)/(DE.30$Z)
 plot(X ,ylab=yl,xlab=xl)
@@ -306,6 +309,32 @@ plot(SE, col="blue", levels=seq(0, 10, by=.5),ylab=yl,xlab=xl)
 abline(h=c(81.3, 66.04), v=c(0.16, 0.215), col=colr("salmon", 0.5), lwd=5)
 grid(); gletter(4)
 
+
+fig1 <- function()
+{
+	A <- tsasm(fe=0.215)
+	
+	#plot age-specific variables
+	par(mfrow=c(3, 2))
+	
+	#length-at-age
+	yl=c(0, 160)
+	matplot(A$la[, , 1], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Length (cm)")
+	matplot(A$la[, , 2], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Length (cm)")
+	
+	#weight-at-age
+	yl=c(0, 90)
+	matplot(A$wa[, , 1], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Weight (lb)")
+	abline(h=a*82.18^b, lty=3)
+	matplot(A$wa[, , 2], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Weight (lb)")
+	abline(h=a*82.18^b, lty=3)
+	#mature weight-at-age
+	yl=c(0, 90)
+	matplot(A$fa[, , 1], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Mature weight (lb)", xlab="Age")
+	matplot(A$fa[, , 2], type="l", lty=1, col=grey(1-(pg/max(pg))^0.3), ylim=yl, ylab="Mature weight (lb)", xlab="Age")
+	
+	dev.copy2pdf(file="Halibut:AgeSchedules.pdf")
+}
 
 # plot(SPR,xlab=xl,ylab=yl,levels=isolvl,lwd=isolwd,main="Spawn potential ratio")
 # plot(YE ,xlab=xl,ylab=yl,main="Equilibrium yield", levels=seq(0, 10, by=0.25))
