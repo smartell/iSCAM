@@ -35,11 +35,14 @@
 ##      5) a time varying bicubic spline with age & year nodes.              ##
 ##      6) fixed logistic (set isel_type=6, and estimation phase to -1)      ##
 ##      7) logistic function of body weight.                                 ##
+##      8) logistic with weight deviations (3 parameters)                    ##
+##      11) logistic selectivity with 2 parameters based on mean length      ##
+##      12) length-based selectivity coefficients with spline interpolation  ##
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
 2                               # -selectivity type ivector(isel_type) for gear
-4.0                             # -Age at 50% selectivity (logistic)
+4.0                             # -Age/length at 50% selectivity (logistic)
 0.25                            # -STD at 50% selectivity (logistic)
 0								# -No. of age nodes for each gear (0=ignore)
 0								# -No. of year nodes for 2d spline(0=ignore)
