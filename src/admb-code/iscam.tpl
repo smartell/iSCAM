@@ -501,6 +501,8 @@ DATA_SECTION
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
+INITIALIZATION_SECTION
+ theta theta_ival;
 	
 PARAMETER_SECTION
 	//Leading parameters
@@ -514,7 +516,7 @@ PARAMETER_SECTION
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
-	!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
+	//!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Selectivity parameters (A very complicated ragged array)
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-15.,15.,sel_phz);
@@ -2571,7 +2573,8 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include "stats.cxx"
+	#include <statsLib.h>
+	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
