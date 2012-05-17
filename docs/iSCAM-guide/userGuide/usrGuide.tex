@@ -1,0 +1,124 @@
+%
+%  usrGuide
+%
+%  Created by Steven James Dean Martell on 2011-12-13.
+%  Copyright (c) 2011 UBC Fisheries Centre. All rights reserved.
+%
+\documentclass[10pt,letterpaper]{article}
+
+% Use utf-8 encoding for foreign characters
+\usepackage[utf8]{inputenc}
+
+% Setup for fullpage use
+\usepackage{fullpage}
+\usepackage{lscape}
+
+% Uncomment some of the following if you use the features
+%
+% Running Headers and footers
+\usepackage{fancyhdr}
+
+% Multipart figures
+%\usepackage{subfigure}
+
+% Multicols
+\usepackage{multicol}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\columnsep}{15pt}
+
+% More symbols
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+
+% Surround parts of graphics with box
+\usepackage{boxedminipage}
+
+% Longtables
+\usepackage{longtable}
+
+% Package for including code in the document
+\usepackage{listings}
+\usepackage{alltt}
+
+% If you want to generate a toc for each chapter (use with book)
+\usepackage{minitoc}
+
+% This is now the recommended way for checking for PDFLaTeX:
+\usepackage{ifpdf}
+
+% Natbib
+\usepackage[round]{natbib}
+
+% Hyperref
+\usepackage[colorlinks,bookmarks,citecolor=magenta]{hyperref}
+
+% This is a custom iscamx package with the logo defs and fancyhdr
+\usepackage{iscamx}
+
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%\pdffalse % we are not running PDFLaTeX
+%\else
+%\pdfoutput=1 % we are running PDFLaTeX
+%\pdftrue
+%\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+\title{
+\includegraphics[height=2.53in]{iscamlogo}
+\vfill
+\iscam\ Users Guide\\
+Version 1.0\\
+\vfill}
+
+\author{Steven Martell\\
+University of British Columbia\\
+Fisheries Centre\\
+2202 Main Mall\\
+Vancouver, BC\\
+V6T 1Z4\\
+Canada\\ 
+\texttt{s.martell@fisheries.ubc.ca}}
+
+\date{\small{$^\copyright$  Copyright Steven Martell, \today.  All rights reserved.}}
+
+
+\begin{document}
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+\maketitle
+
+\newpage
+\tableofcontents
+\addcontentsline{toc}{subsection}{Contents}
+
+	\input{./Introduction/Introduction}
+	\input{./InputFiles/InputFiles}
+	\input{./ModelAPI/ModelDocumentation}
+	\input{./Examples/Example}
+
+%% -References
+\clearpage
+%input "Refs.bib"
+%\bibliographystyle{plainnat}
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{apalike}
+\bibliography{$HOME/Documents/ARTICLES/Articles-1}
+
+%% -Appendix material Model Description --------------------------------
+\newpage
+\appendix
+	\input{Stats}
+
+
+\end{document}

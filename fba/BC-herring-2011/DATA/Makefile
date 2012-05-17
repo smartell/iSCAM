@@ -4,6 +4,7 @@
 
 ## Macros
 SUBDIR = CC PRD QCI SOG WCVI AREA27 AREA2W
+##SUBDIR = SOKeg
 TARGET = 
 
 .PHONY: default $(SUBDIR) mcmc

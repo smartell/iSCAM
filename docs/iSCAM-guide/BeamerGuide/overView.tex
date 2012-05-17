@@ -1,0 +1,157 @@
+%
+%  overView
+%
+%  Created by Steven James Dean Martell on 2011-11-12.
+%  Copyright (c) 2011 UBC Fisheries Centre. All rights reserved.
+%
+\documentclass[sans]{beamer}
+%\usetheme{Madrid} % My favorite!
+%\usetheme{PaloAlto}
+\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Boadilla} % Pretty neat, soft color.
+%\usetheme{default}
+%\usetheme{Warsaw}
+%\usetheme{Bergen} % This template has nagivation on the left
+%\usetheme{Frankfurt} % Similar to the default 
+%with an extra region at the top.
+%\usecolortheme{seahorse} % Simple and clean template
+%\usecolortheme{beaver}
+%\usetheme{Darmstadt} % not so good
+% Uncomment the following line if you want %
+% page numbers and using Warsaw theme%
+% \setbeamertemplate{footline}[page number]
+%\setbeamercovered{transparent}
+\setbeamercovered{invisible}
+% To remove the navigation symbols from 
+% the bottom of slides%
+\setbeamertemplate{navigation symbols}{} 
+%
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{listings}
+%\usepackage{bm}         % For typesetting bold math (not \mathbold)
+%\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
+%
+
+%Custom Color theme
+\definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
+\definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
+\setbeamerfont{title}{size=\Huge}
+\setbeamercolor{structure}{fg=white}
+\setbeamertemplate{frametitle}[default][center]
+
+\setbeamercolor{normal text}{bg=black, fg=white}
+\setbeamertemplate{background canvas}[vertical shading]
+[bottom=bottomcolour, middle=middlecolour, top=black]
+
+\setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
+\setbeamerfont{frametitle}{size=\huge}
+%end of color theme
+
+%code block
+\newtheorem{code}{Code}
+
+%Table of contents at begining of each section
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}
+
+
+%iscam logo
+\usepackage{color}%
+
+\newcommand{\iscam}{$i$SC$\forall$M}%
+	% \raisebox{0.75ex}{$i$}%
+	% \textcolor{red}{\raisebox{0.25ex}{S}}%
+	% \textcolor{green}{\raisebox{0.00ex}{C}}%
+	% \textcolor{blue}{\raisebox{-.25ex}{A}}%
+	% \raisebox{-.50ex}{M}%
+	% }%
+
+
+\title[\iscam]{An Introduction to \iscam}
+\author{Steven Martell}
+\institute[UBC Fisheries Centre]
+{
+University of British Columbia \\
+\medskip
+{\emph{s.martell@fisheries.ubc.ca}}
+}
+\date{\today}
+% \today will show current date. 
+% Alternatively, you can specify a date.
+%
+\begin{document}
+
+%
+\begin{frame}
+\titlepage
+\end{frame}
+%
+
+
+\include{./Installation/Installation}
+\include{./Compiling/Compiling}
+\include{./RunningDemo/RunningDemo}
+% 
+% 
+% 
+% \begin{frame}
+% \frametitle{Motivation}
+% \begin{block}
+% {Why Beamer?}
+% Does anybody need an introduction to Beamer? I don't think so.
+% \end{block}
+% \end{frame}
+% %
+% \begin{frame}
+% \frametitle{Example of a Theorem}
+% \begin{theorem}
+% The quick brown fox jumps over the lazy dog.
+% \end{theorem}
+% \end{frame}
+% %
+% \begin{frame}[fragile] % Notice the [fragile] option %
+% \frametitle{Verbatim}
+% \begin{example}[Putting Verbatim]
+% \begin{verbatim}
+% \begin{frame}
+% \frametitle{Outline}
+% \begin{block}
+% {Why Beamer?}
+% Does anybody need an introduction to Beamer?
+% I don't think so.
+% \end{block}
+% % Extra carriage return causes problem with verbatim %
+% \end{frame}\end{verbatim} 
+% \end{example}
+% \end{frame}
+%  
+% \begin{frame}[fragile]  % notice the fragile option, since the body
+% 			% contains a verbatim command
+% Example of the \verb|\cite| command to give a reference is below:
+% Example of citation using \cite{key1} follows on.
+% \end{frame}
+%  
+% \begin{frame}
+% \frametitle{References}
+% \footnotesize{
+% \begin{thebibliography}{99}
+%  \bibitem[Label1, 2010]{key1} Author's name (1987)
+%  \newblock Title of the paper.
+%  \newblock \emph{Journal Name} 55(4), 765 -- 799.
+% \end{thebibliography}
+% }
+% \end{frame}
+%  
+% \begin{frame}
+% \centerline{The End}
+% \end{frame}
+% End of slides
+\end{document}
+
