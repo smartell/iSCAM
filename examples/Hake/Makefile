@@ -6,7 +6,7 @@
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
 prefix=../../dist
-DAT=Hake.dat
+DAT=-ind Hake.dat
 CTL=NamibianHake
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
@@ -19,25 +19,27 @@ else
 endif
 
 all: $(EXEC) $(EXEC).rep
+	@echo $(CTL)
 
-$(EXEC): $(DIST)
+$(EXEC):
 	cp $(DIST) $@
 
-$(EXEC).rep: $(DIST) $(CTL).ctl
-	./$(EXEC) -ind $(DAT) $(ARG)
+$(EXEC).rep:
+	./$(EXEC) $(DAT) $(ARG)
 
 run:  $(EXEC)
-	./$(EXEC) -ind $(DAT) $(ARG)
+	./$(EXEC) $(DAT) $(ARG)
 
 mcmc: $(EXEC) $(EXEC).psv
-	./$(EXEC) -ind $(DAT) -mceval
+	./$(EXEC) $(DAT) -mceval
 
-$(EXEC).psv: $(CTL).ctl
-	./$(EXEC) -ind $(DAT) $(MCFLAG) $(ARG)
+$(EXEC).psv:
+	./$(EXEC) $(DAT) $(MCFLAG) $(ARG)
 
 mceval: $(EXEC)
 	cp $(CTL).psv $(EXEC).psv
-	./$(EXEC) -ind $(DAT) -mceval
+	./$(EXEC) $(DAT) -mceval
+
 
 retro: $(EXEC) $(EXEC).ret1
 
@@ -46,7 +48,7 @@ $(EXEC).ret1:
 
 RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
             sapply(args,\
-            function(a){ cmd=paste("./$(EXEC)","-ind $(DAT)",a);\
+            function(a){ cmd=paste("./$(EXEC)","$(DAT)",a);\
                         system(cmd)})'
 
 clean: 

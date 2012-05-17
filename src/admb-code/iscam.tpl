@@ -29,10 +29,10 @@
 //        of bounds.                                                         //
 // TODO: write a projection routine and verify equilibrium calcs             //
 // TODO: add DIC calculation for MCMC routines (in -mcveal phase)            //
-// TODO: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds     //
 //                                                                           //
 //                                                                           //
-// Hi Roberto                                                                          //
+// FIXME: Steve I need help with this keg of beer.                           //
+//                                                                           //
 //                                                                           //
 // ------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                           --//
@@ -63,20 +63,6 @@
 //--              either "Windows" or "Linux"                              --//
 //--                                                                       --//
 //-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning           --//
-//--                                                                       --//
-//--                                                                       --//
-//-- Dec 11, 2011- added halibut branch to local git repository aim is to  --//
-//--               add gender dimension and stock dimension.               --//
-//--               This was created on the "twosex" branch in git merged   --//
-//--                                                                       --//
-//-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
-//--                                                                       --//
-//-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector      --//
-//--             - modified the following routines:                        --//
-//--             - calcFisheryObservations                                 --//
-//--             - calcTotalMortality                                      --//
-//-- TODO: add catch_type to equilibrium calculations for reference points --//
-//--                                                                       --//
 //--                                                                       --//
 // ------------------------------------------------------------------------- //
 
@@ -140,7 +126,6 @@ DATA_SECTION
 	init_int ngear;				//number of gear types with unique selectivities
 	!! cout<<"ngear\t"<<ngear<<endl;
 	init_vector allocation(1,ngear);
-	init_ivector catch_type(1,ngear);
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		//If allocation >0 then set fish flag =1 else 0
@@ -201,7 +186,7 @@ DATA_SECTION
 		for(k=1;k<=ngear;k++)
 		{	
 			for(i=syr;i<=nyr;i++)
-				if( obs_ct(k,i)>0 ) ft_count++;
+				if(obs_ct(k,i)>0) ft_count++;
 		}
 		cout<<"ft_count\n"<<ft_count<<endl;
 		cout<<"last row of catch \n"<<catch_data(nyr)<<endl;
@@ -209,7 +194,6 @@ DATA_SECTION
 	END_CALCS
 	
 	init_int nit;
-	!! cout<<"Number of surveys "<<nit<<endl;
 	init_ivector nit_nobs(1,nit);
 	//#survey type 
 	//## 1 = survey is proportional to vulnerable numbers
@@ -458,17 +442,6 @@ DATA_SECTION
 					// Alternative logistic selectivity with wt_dev coefficients.
 					isel_npar(i) = 3;
 					break;
-					
-				case 11:
-					// Logistic length-based selectivity.
-					isel_npar(i) = 2;
-					break;
-					
-				case 12:
-					// Length-based selectivity coeffs with cubic spline interpolation
-					isel_npar(i) = (nage-sage);
-					break;
-					
 				default: break;
 			}
 		}
@@ -497,9 +470,8 @@ DATA_SECTION
 	// 9 -> standard deviation of mean F penalty in last phase.
 	// 10-> phase for estimating deviations in natural mortality.
 	// 11-> std in natural mortality deviations.
-	// 12-> number of estimated nodes for deviations in natural mortality
-	// 13-> fraction of total mortality that takes place prior to spawning
-	// 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// 12-> fraction of total mortality that takes place prior to spawning
+	// 13-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	// FIXME: document cntrl(14).
 	init_vector cntrl(1,14);
 	int verbose;
@@ -538,7 +510,7 @@ PARAMETER_SECTION
 	//theta[4]		log_avgrec
 	//theta[5]		log_recinit
 	//theta[6]		rho
-	//theta[7]		vartheta
+	//theta[7]		kappa
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
@@ -597,7 +569,7 @@ PARAMETER_SECTION
     
 	number ro;					//unfished age-1 recruits
 	number bo;					//unfished spawning stock biomass
-	number kappa;				//Goodyear compensation ratio
+	number kappa;
 	number m;					//initial natural mortality rate
 	number m_bar;				//average natural mortality rate
 	number log_avgrec;			//log of average recruitment.
@@ -675,7 +647,7 @@ PROCEDURE_SECTION
 	
 	calcAgeProportions();
 	
-	calcSurveyObservations();
+	calc_survey_observations();
 	
 	calc_stock_recruitment();
 	
@@ -710,15 +682,8 @@ FUNCTION initParameters
 	simulation model to generate fake data.
 	*/
 	
-	ro          = mfexp(theta(1));
+	ro = mfexp(theta(1));
 	dvariable h = theta(2);
-	m           = mfexp(theta(3));
-	log_avgrec  = theta(4);
-	log_recinit = theta(5);
-	rho         = theta(6);
-	varphi      = theta(7);
-	
-	
 	switch(int(cntrl(2)))
 	{
 		case 1:
@@ -735,7 +700,12 @@ FUNCTION initParameters
 	//TODO Alternative parameterization using MSY and FMSY as leading parameters
 	
 	
-
+	m = mfexp(theta(3));
+	log_avgrec = theta(4);
+	log_recinit = theta(5);
+	
+	rho=theta(6);
+	varphi=theta(7);
 	
 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
@@ -759,19 +729,6 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 		vcubic_spline_function test_ffa(ia,spline_nodes);
 		cout<<test_ffa(fa)<<endl;
 		exit(1);*/
-	return(ffa(fa));
-  }
-
-FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector& la)
-  {
-	/*interplolation for length-based selectivity coefficeients*/
-	RETURN_ARRAYS_INCREMENT();
-	int nodes=size_count(spline_coffs);
-	dvector ia(1,nodes);
-	ia.fill_seqadd(0,1./(nodes-1));
-	dvector fa = (la-min(la))/(max(la)-min(la));
-	vcubic_spline_function ffa(ia,spline_coffs);
-	RETURN_ARRAYS_DECREMENT();
 	return(ffa(fa));
   }
 
@@ -808,25 +765,16 @@ FUNCTION calcSelectivities
 		5) Time varying bicubic spline (2d version)
 		6) Fixed logistic
 		7) logistic selectivity based on relative changes in mean weight at age
-		8) Time varying selectivity based on logistic with deviations in 
-		   weights at age (3 estimated parameters).
-		11) logistic selectivity with 2 parameters based on mean length
-		12) length-based selectivity using cubic spline interpolation
 		
-		Following the initialization of the selectivity curves, time-varying 
+		Following the initializatoin of the selectivity curves, time-varying 
 		considerations are implemented.
 		
-		CHANGED: Add penality (10.*square(avg_log_sel)) to objective function 
+		TODO: Add penality (10.*square(avg_log_sel)) to objective function 
 		in cases where estimating sel_coffs to mimic an init_bounded_dev vector.
 		
 		CHANGED: Problem with case 7: turns out to be a random walk, so there
 		is changes in selectivity even with constant growth.  Remove the
 		random walk outside the switch statement.
-		
-		TODO: add an option for length-based selectivity.  Use inverse of
-		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
-		empirical weight-at-age data, then calculate selectivity based on 
-		mean length. 
 	
 	*/
 	int i,j,k;
@@ -871,6 +819,7 @@ FUNCTION calcSelectivities
 				
 			case 2:		
 				// age-specific selectivity coefficients
+				if(verbose) cout<<"age-specific sel"<<endl;
 				for(i=syr; i<=nyr; i++)
 				{
 					for(k=sage;k<=nage-1;k++)
@@ -928,8 +877,8 @@ FUNCTION calcSelectivities
 				break;
 				
 			case 8:
-				//Alternative time-varying selectivity based on weight 
-				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
+				//Alternative time-varying selectivity based on weight deviations (wt_dev)
+				//wt_dev is a matrix(syr,nyr+1,sage,nage)
 				//p3 is the coefficient that describes variation in log_sel.
 				p1 = mfexp(sel_par(j,1,1));
 				p2 = mfexp(sel_par(j,1,2));
@@ -938,32 +887,9 @@ FUNCTION calcSelectivities
 				for(i=syr; i<=nyr; i++)
 				{
 					tmp2(i) = p3*wt_dev(i);
-					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
+					log_sel(j)(i) = log( plogis(age,p1,p2)+ tiny ) + tmp2(i);
 				}
 				break;
-				
-			case 11:
-				//logistic selectivity based on mean length-at-age
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				
-				for(i=syr; i<=nyr; i++)
-				{
-					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i) = log( plogis(len,p1,p2) );
-				}
-				break;
-				
-			case 12:
-				//length-specific selectivity coefficients
-				//based on cubic spline interpolation
-				for(i=syr; i<=nyr; i++)
-				{
-					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i)=cubic_spline( sel_par(j)(1), len );
-				}
-				break;
-				
 				
 			default:
 				log_sel(j)=0;
@@ -1022,10 +948,6 @@ FUNCTION calcTotalMortality
 	SJDM.  Dec 24, 2010.  Adding time-varying natural mortality
 	
 	CHANGED May 20, 2011  Add cubic spline to the time-varying natural mortality
-	
-	Jan 5, 2012 Adding catch_type to allow for catch in numbers, weight or spawn.
-	In the case of spawn on kelp (roe fisheries), the Fishing mortality does not
-	occur on the adult component.  Added if(catch_type(k)!=3) //exclude roe fisheries
 	*/
 	int i,k,ki;
 	dvariable ftmp;
@@ -1039,17 +961,21 @@ FUNCTION calcTotalMortality
 	{
 		
 		for(i=syr;i<=nyr;i++)
-		{	
+		//for(i=f_syr(k);i<=f_nyr(k);i++)
+		{
+			/*if(i==0) break;
+						if(active(log_avg_f(k)))
+							log_ft(k,i)=log_avg_f(k)+log_ft_devs(k,i);
+						else log_ft(k,i)=-70.;*/	
+			
 			ftmp=0;
-			if( obs_ct(k,i)>0  )
+			if(obs_ct(k,i)>0)
 				ftmp = mfexp(log_ft_pars(ki++));
 			
 			ft(k,i)=ftmp;
 			
-			if(catch_type(k)!=3){	//exclude roe fisheries
-				F(i)+=ftmp*mfexp(log_sel(k)(i));
-				//cout<<obs_ct(k,i)<<endl;
-			}
+			//F(i)+=mfexp(log_ft(k,i)+log_sel(k)(i));
+			F(i)+=ftmp*mfexp(log_sel(k)(i));			
 		}
 	}
 	
@@ -1089,7 +1015,6 @@ FUNCTION calcTotalMortality
 	
   }
 	
-	
 FUNCTION calcNumbersAtAge
   {
 	/*
@@ -1127,7 +1052,19 @@ FUNCTION calcNumbersAtAge
 	}
 	N(nyr+1,sage)=mfexp(log_avgrec);
 	
-	/* Dynamic state variables */
+	/*
+	for(j=sage;j<=nage;j++) 
+	{
+		if(cntrl(5))  //if starting at unfished state
+		{
+			N(syr,j)=ro*exp(-m_bar*(j-1));
+		}
+		else{
+			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
+			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
+		}
+	}*/
+	
 	for(i=syr;i<=nyr;i++)
 	{
 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1))+1.e-10;
@@ -1173,15 +1110,10 @@ FUNCTION calcFisheryObservations
 				
 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
 					computing the age-comps in calc_fisheries_observations
-	
-	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
-					biomass, and harvest of roe.  
-	
 	*/
 	
 	/*
-		FIXED Reconcile the difference between the predicted catch 
-		here and in the simulation model.
+		FIXED Reconcile the difference between the predicted catch here and in the simulation model.
 	*/
 	int i,k;
 	ct.initialize();
@@ -1190,33 +1122,22 @@ FUNCTION calcFisheryObservations
 		for(k=1;k<=ngear;k++)
 		{
 			
-			dvar_vector log_va=log_sel(k)(i);
+			dvar_vector log_va=log_sel(k)(i);// - log(mean(mfexp(log_sel(k)(i))));
+			//dvar_vector fa=mfexp(log_ft(k,i)+log_va);
 			
 			
 			//SJDM Jan 16, 2011 Modification as noted above.
-			//SJDM Jan 06, 2012 Modification as noted above.
+			dvar_vector fa=ft(k,i)*mfexp(log_va);
 			if(obs_ct(k,i)>0)
-			{
-				dvar_vector fa=ft(k,i)*mfexp(log_va);
-				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-				switch(catch_type(k))
-				{
-					case 1:	//catch in weight
-						ct(k,i) = Chat(k,i)*wt_obs(i);
-					break;
-					case 2:	//catch in numbers
-						ct(k,i) = sum(Chat(k,i));
-					break;
-					case 3:	//catch in roe that does not contribute to SSB
-						dvariable ssb = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
-					break;
-				}
+			{/*If there is a commercial fishery, then calculate the
+			   catch-at-age (in numbers) and total catch (in weight)*/
+				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));//+1.e-10;
+				ct(k,i) = Chat(k,i)*wt_obs(i);
 			}
 			else
 			{/*If there is no commercial fishery the set Chat equal to 
 			   the expected proportions at age.*/
-				dvar_vector fa = mfexp(log_va);
+				fa = mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
 			}
 			
@@ -1243,7 +1164,7 @@ FUNCTION calcFisheryObservations
 
   }	
 	
-FUNCTION calcSurveyObservations
+FUNCTION calc_survey_observations
   {
 	/*This code needs to be modified to accomodate
 	multiple surveys or block changes in survey q.
@@ -1264,16 +1185,13 @@ FUNCTION calcSurveyObservations
 	than the spawning biomass in the stock-recruitment routine. (Based on fecundity which
 	changes with time when given empirical weight-at-age data.)
 	
-	Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
-	fishery that would remove potential spawn that would not be surveyed.
-	
 	*/
 	/*
 		CHANGED add capability to accomodate priors for survey q's.
 		DONE
 	*/
 	
-	int i,j,ii,k,kk;
+	int i,j,ii,k;
 	
 	
 	//survey abudance index residuals
@@ -1295,13 +1213,7 @@ FUNCTION calcSurveyObservations
 			//Adjust survey biomass by the fraction of the mortality that 
 			//occurred during the time of the survey.
 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
-			
-			//get fishing mortality rate on spawn.
-			dvariable ftmp = 0;
-			for(kk=1;kk<=ngear;kk++)
-				if(catch_type(kk)==3)
-					ftmp += ft(kk,ii);
-					
+			//V(j)=elem_prod(N(ii),mfexp(log_va));
 			switch(survey_type(i))
 			{
 				case 1:
@@ -1311,8 +1223,7 @@ FUNCTION calcSurveyObservations
 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
 				break;
 				case 3:
-					//SJDM Jan 6, 2012 Modified for roe fishery
-					V(j)=elem_prod(Np,fec(ii))*exp(-ftmp);
+					V(j)=elem_prod(Np,fec(ii));
 				break;
 			}
 			
@@ -1361,7 +1272,7 @@ FUNCTION calcSurveyObservations
 	
 	
 	
-	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
+	if(verbose)cout<<"**** Ok after calc_survey_observations ****"<<endl;
 	
   }
 	
@@ -1388,11 +1299,8 @@ FUNCTION calc_stock_recruitment
 	
 	CHANGED Need to adjust spawning biomass to post fishery numbers.
 	CHANGED Need to adjust spawners per recruit (phib) to average fecundity.
-	
-	Jan 6, 2012.  Need to adjust stock-recruitment curvey for reductions 
-	in fecundity associated with removal of roe from a spawn on kelp fishery.
 	*/ 
-	int i,k;
+	int i;
 	dvariable tau = (1.-rho)/varphi;
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector lx(sage,nage); lx=1;
@@ -1405,17 +1313,10 @@ FUNCTION calc_stock_recruitment
 	bo = ro*phib;  					//unfished spawning biomass
 	
 	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
-	//CHANGED adjusted spawning biomass downward by ctrl(13)
-	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
-	//in the sbt calculation below.
+	//CHANGED adjusted spawning biomass downward by ctrl(12)
 	for(i=syr;i<=nyr;i++)
 	{
 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-		
-		//Adjustment to spawning biomass for roe fisheries
-		for(k=1;k<=ngear;k++)
-			if(catch_type(k)==3)
-				sbt(i) *= mfexp(-ft(k,i));
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
@@ -1546,10 +1447,7 @@ FUNCTION calc_objective_function
 		if(active(sel_par(k))){
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
-			if( isel_type(k)!=1 && 
-				isel_type(k)!=7 && 
-				isel_type(k)!=8 &&
-				isel_type(k)!=11 )  
+			if( isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )  
 			{
 				for(i=syr;i<=nyr;i++)
 				{
@@ -1560,8 +1458,7 @@ FUNCTION calc_objective_function
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,i,j)>log_sel(k,i,j+1))
-							nlvec(6,k)+=sel_dome_wt(k)
-										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
+							nlvec(6,k)+=sel_dome_wt(k)*square(log_sel(k,i,j)-log_sel(k,i,j+1));
 				}
 			}
 		}
@@ -1574,11 +1471,7 @@ FUNCTION calc_objective_function
 	
 	for(k=1;k<=ngear;k++)
 	{
-		if( active(sel_par(k)) &&
-			isel_type(k)!=1 &&
-			isel_type(k)!=7 &&
-			isel_type(k)!=8 &&
-			isel_type(k)!=11 )
+		if( active(sel_par(k)) && isel_type(k)!=1 && isel_type(k)!=7 && isel_type(k)!=8 )
 		{
 			dvariable s=0;
 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
@@ -1590,9 +1483,7 @@ FUNCTION calc_objective_function
 					lvec(1)+=1000.*s*s;
 				}
 			}
-			if( isel_type(k)==4 ||
-			 	isel_type(k)==3 || 
-				isel_type(k)==12 )
+			if(isel_type(k)==4 || isel_type(k)==3)
 			{
 				dvar_matrix tmp = sel_par(k);
 				for(j=1;j<=tmp.rowmax();j++)
@@ -1604,7 +1495,31 @@ FUNCTION calc_objective_function
 		}
 	}
 	
-	
+	/*if(active(spline_coffs)||active(spline2_coffs))
+		{   
+			//lvec(6)=1.*norm2(spline2_coffs);
+			for(i=syr;i<=nyr;i++)
+			{
+				//curvature in selectivity parameters
+				dvar_vector df2=first_difference(first_difference(log_sel(i)));
+				lvec(6)+=50.0/(nyr-syr+1)*norm2(df2);
+				
+				//penalty for dome-shapeness
+				for(j=sage;j<=nage-2;j++)
+					if(log_sel(i,j)>log_sel(i,j+1))
+						lvec(6)+=3.125*square(log_sel(i,j)-log_sel(i,j+1));
+			}
+			//penalty for random walk in age-changes
+			for(j=sage;j<=nage;j++){
+				lvec(6)+=0.*norm2(first_difference(trans(log_sel)(j)));
+			}
+		}
+		else
+		{
+			dvar_vector df2=first_difference(first_difference(log_sel(syr)));
+			lvec(6)=50./(nyr-syr+1)*norm2(df2);
+		}*/
+	 
 	/*
 	PRIORS for estimated model parameters from the control file.
 	*/
@@ -1772,7 +1687,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 		if(i>sage) dlz_df=dlz_df*exp(-za[i-1]) - lz[i-1]*va[i-1]*exp(-za[i-1]);
 		if(i==nage){ //6/11/2007 added plus group.
 					lz[i]/=(1.-mfexp(-za[i]));
-					
+					//dlz_df=dlz_df*mfexp(-za[i-1]) - lz[i-1]*va[i-1]*mfexp(-za[i-1])/(1.-mfexp(-za[i]))
 					dlz_df=dlz_df/(1.-mfexp(-za[i]))
 							-lz[i-1]*mfexp(-za[i-1])*va[i]*mfexp(-za[i])
 					/((1.-mfexp(-za[i]))*(1.-mfexp(-za[i])));
@@ -2312,8 +2227,6 @@ REPORT_SECTION
 	REPORT(rinit);
 	REPORT(bo);
 	REPORT(kappa);
-	double steepness=value(theta(2));
-	REPORT(steepness);
 	REPORT(m);
 	double tau = value((1.-rho)/varphi);
 	double sig = value(rho/varphi);
@@ -2658,8 +2571,7 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include <statsLib.h>
-	//#include "stats.cxx"
+	#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;

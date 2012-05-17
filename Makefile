@@ -1,5 +1,4 @@
 ## Makefile for building distribtion folder for iscam
-## TODO add verify target to run example models.
 .PHONY: dist clean
 
 
