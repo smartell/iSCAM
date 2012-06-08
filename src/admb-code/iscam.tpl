@@ -1819,7 +1819,7 @@ FUNCTION void calc_reference_points()
 		
 		Perhaps as a default, assign an equal allocation to each
 		fleet.  Eventually,user must specify allocation in 
-		control file.
+		control file.  DONE
 		
 		Use selectivity in the terminal year to calculate reference
 		points.
@@ -1849,6 +1849,11 @@ FUNCTION void calc_reference_points()
 	
 	/*CHANGED Changed equilibrium calculations based on average m */
 	//FIXME: change Bmsy calculations to be based on average fecundity & weight at age. 
+	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
+	           and average fecundity-at-age.
+	*/
+	dvector wt_bar(sage,nage);
+	dvector fec_bra(sage,nage);
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
@@ -2433,8 +2438,12 @@ FUNCTION decision_table
 	2) P(U_{t+1} > 1/2 Fmsy)
 	3) P(U_{t+1} > 2/3 Fmsy)
 	
-	
+	Key to the harvest metrix is the definition of Umsy and allocation to fleets.
 	*/
+	
+	// Calculate reference pionts.
+	calc_reference_points();
+	
   }
 	
 FUNCTION mcmc_output
