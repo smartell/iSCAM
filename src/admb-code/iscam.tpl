@@ -32,7 +32,6 @@
 // CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds  //
 //                                                                           //
 //                                                                           //
-// Hi Roberto                                                                          //
 //                                                                           //
 // ------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                           --//
@@ -253,6 +252,7 @@ DATA_SECTION
 	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
 	vector avg_fec(sage,nage);				//average fecundity-at-age
+	vector avg_wt(sage,nage);				//average weight-at-age
 	LOC_CALCS
 		int iyr;
 		avg_fec.initialize();
@@ -273,10 +273,16 @@ DATA_SECTION
 		avg_fec=colsum(fec)/nfec;
 		
 		
+		
 		//from Jake Schweigert: use mean-weight-at-age data
 		//from the last 5 years for the projected mean wt.
 		dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/6.;
 		wt_obs(nyr+1) = tmp;
+		
+		/*June 8, 2012, average wt at age for all years*/
+		tmp = colsum(wt_obs.sub(syr,nyr))/(nyr-syr+1.);
+		avg_wt = tmp;
+		
 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
 		cout<<"Ok after empiracle weight-at-age data"<<endl;
 		
@@ -1824,6 +1830,11 @@ FUNCTION void calc_reference_points()
 		Use selectivity in the terminal year to calculate reference
 		points.
 	
+	June 8, 2012.  SJDM.  Made the following changes to this routine.
+		1) changed reference points calculations to use the average
+		   weight-at-age and fecundity-at-age.
+		2) change equilibrium calculations to use the catch allocation
+		   for multiple gear types. Not the average vulnerablity... this was wrong.
 	*/
 	int i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
@@ -1841,6 +1852,7 @@ FUNCTION void calc_reference_points()
 	
 	/*CHANGED Allow for user to specify allocation among gear types.*/
 	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
+	/*DEPRECATED June 8, 2012*/
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
@@ -1852,13 +1864,15 @@ FUNCTION void calc_reference_points()
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
 	*/
-	dvector wt_bar(sage,nage);
-	dvector fec_bra(sage,nage);
+
 	for(i=1;i<=20;i++)
 	{
 		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-					fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+		//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
+					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		
 		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
 		ddye_df = phiq*dre_df + re*dphiq_df;
 		fe = fe - dye_df/ddye_df;
