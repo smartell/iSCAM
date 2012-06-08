@@ -1744,6 +1744,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	wa	-mean weight at age
 	fa	-mean fecundity at age
 	va	-mean vulnerablity at age for fe gear.
+	ak	-allocation of total ye to gear k.
 	
 	Modified args:
 	re	-steady state recruitment
@@ -1754,7 +1755,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	dphiq_df	-partial of per recruit yield wrt fe
 	
 	FIXME add Ricker model to reference points calculations.
-	FIXME partial derivatives for dphif_df need to be fixed when cntrl(12)>0.
+	CHANGED partial derivatives for dphif_df need to be fixed when cntrl(13)>0.
 	*/
 	int i;
 	
@@ -1880,8 +1881,8 @@ FUNCTION void calc_reference_points()
 		if(sfabs(dye_df)<1.e-5)break;
 	}
 	fmsy=fe;
-	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-				fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
+				avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 	msy=ye;
 	bmsy=be;
 	
