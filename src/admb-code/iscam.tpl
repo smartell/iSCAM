@@ -2415,6 +2415,28 @@ REPORT_SECTION
 	
   }
 	
+FUNCTION decision_table
+  {
+	/*
+	This function takes a vector of projected catches and computes the following
+	Reference points: Bmsy, Bo, Fmsy, Umsy.
+	
+	Biomass Metrics for the decision table:
+	1) P(SB_{t+1} > SB_{t})
+	2) P(SB_{t+1} < 0.25 B_{0})
+	3) P(SB_{t+1} > 0.75 B_{0})
+	4) P(SB_{t+1} < 0.40 B_{MSY})
+	5) P(SB_{t+1} > 0.80 B_{MSY})
+	
+	Harvest Metrics for the decision table:
+	1) P(U_{t+1} > Target harvest rate)
+	2) P(U_{t+1} > 1/2 Fmsy)
+	3) P(U_{t+1} > 2/3 Fmsy)
+	
+	
+	*/
+  }
+	
 FUNCTION mcmc_output
   {
 	if(nf==1){
