@@ -1723,6 +1723,101 @@ FUNCTION calc_objective_function
 	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
   }
+
+FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+  {
+	/*
+	Equilibrium age-structured model used to determin Fmsy and MSY based reference points.
+	Author: Steven Martell
+	
+	Comments: 
+	This code uses a numerical approach to determine a vector of fe_multipliers
+	to ensure that the allocation is met for each gear type.
+	
+	args:
+	fe	-steady state fishing mortality
+	ak	-allocation of total ye to gear k.
+	ro	-unfished sage recruits
+	kap	-recruitment compensation ration
+	m	-instantaneous natural mortality rate
+	age	-vector of ages
+	wa	-mean weight at age
+	fa	-mean fecundity at age
+	va	-mean vulnerablity at age for fe gear.
+
+	
+	Modified args:
+	re	-steady state recruitment
+	ye	-steady state yield
+	be	-steady state spawning biomass
+	phiq		-per recruit yield
+	dre_df		-partial of recruitment wrt fe
+	dphiq_df	-partial of per recruit yield wrt fe
+	*/
+	int i,j,k;
+	int nage    = max(age);
+	int sage    = min(age);
+	dvector lx(sage,nage);
+	dvector lz(sage,nage);
+	dvector lambda(1,ngear);        //F-multiplier
+	dvector phiq(1,ngear);
+	dvector yek(1,ngear);
+	dmatrix qa(1,ngear,sage,nage);
+	
+	lx          = pow(exp(-m),age-double(sage));
+	lx(nage)   /=(1.-exp(-m));
+	double phie = lx*fa;		//eggs per recruit
+	double so   = kap/phie;
+	double beta = (kap-1.)/(ro*phie);
+	lambda      = ak/sum(ak);
+	
+	for(int iter=1;iter<=10;iter++)
+	{
+	/* Survivorship under fished conditions */
+		lz(sage)    = 1.0;
+		dvector za  = m + (fe*lambda)*va;
+		dvector sa  = mfexp(-za);
+		dvector oa  = 1.0 - sa;
+	
+		double dlz_df = 0, dphif_df = 0;
+		for(j=sage;j<=nage;j++)
+		{
+			if(j>sage) lz(j) = lz(j-1) * sa(j-1);
+			//if(j>sage) dlz_df=dlz_df*sa(j-1) - lz(j-1)*va[i-1]*sa(j-1);
+			if(j==nage)
+			{
+				lz(j) = lz(j) / oa(j);
+			}
+		}
+		double phif = elem_prod(lz,exp(-za*cntrl(13)))*fa;
+		re=ro*(kap-phie/phif)/(kap-1.);
+		if(re<=0) re=0;
+	
+		/* Equilibrium yield */
+		for(k=1;k<=ngear;k++)
+		{
+			qa(k) = elem_prod(elem_div(va(k),za),oa);
+			phiq(k)=sum(elem_prod(elem_prod(lz,wa),qa(k)));
+			yek(k) = fe*lambda(k)*re*phiq(k);
+		}
+		
+		/* Iterative soln for lambda */
+		dvector pk = yek/sum(yek);
+		lambda = lambda + (ak - pk);
+		cout<<"phiq\n"<<lz<<endl;
+		cout<<"ak-pk\n"<<ak-pk<<endl;
+		cout<<"ye_k\n"<<yek<<endl;
+	}
+	//cout<<"fe\n"<<fe<<endl;
+	//cout<<"m\n"<<m<<endl;
+	//cout<<"va\n"<<va<<endl;
+	
+	//cout<<"za\n"<<za<<endl;
+	//cout<<"qa\n"<<qa<<endl;
+	//cout<<"ye_k\n"<<yek<<endl;
+	cout<<"END OF NEW EQUILIBRIUM CODE"<<endl;
+	exit(1);
+  }
 	
 FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
   {
@@ -1755,7 +1850,7 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	dphiq_df	-partial of per recruit yield wrt fe
 	
 	FIXME add Ricker model to reference points calculations.
-	CHANGED partial derivatives for dphif_df need to be fixed when cntrl(13)>0.
+	FIXME partial derivatives for dphif_df need to be fixed when cntrl(13)>0.
 	*/
 	int i;
 	
@@ -1849,7 +1944,7 @@ FUNCTION void calc_reference_points()
 	in the data file.  Used to be fsh_flag, but now is an allocation for gear k*/
 	//dvector allocation(1,ngear);
 	//allocation = dvector(fsh_flag/sum(fsh_flag));
-	
+	dmatrix va(1,ngear,sage,nage);
 	
 	/*CHANGED Allow for user to specify allocation among gear types.*/
 	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
@@ -1858,6 +1953,7 @@ FUNCTION void calc_reference_points()
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
 		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
+		va(j) = value(exp(log_sel(j)(nyr)));
 	}
 	
 	/*CHANGED Changed equilibrium calculations based on average m */
@@ -1865,6 +1961,10 @@ FUNCTION void calc_reference_points()
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
 	*/
+	
+	equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+				avg_fec,va,re,ye,be,phiq,dphiq_df,dre_df);
+	
 
 	for(i=1;i<=20;i++)
 	{
@@ -2453,7 +2553,13 @@ FUNCTION decision_table
 	2) P(U_{t+1} > 1/2 Fmsy)
 	3) P(U_{t+1} > 2/3 Fmsy)
 	
-	Key to the harvest metrix is the definition of Umsy and allocation to fleets.
+	Key to the harvest metric is the definition of Umsy and allocation to fleets.
+	
+	Pseudocode:
+		1) Calculate reference points
+		2) Evaluate biomass metrics for each posterior sample
+		3) Evaluate harvest metrics for each posterior sample
+	
 	*/
 	
 	// Calculate reference pionts.
@@ -2735,6 +2841,16 @@ GLOBALS_SECTION
 		}
 		return fileName;
 	}
+	
+	class Model
+	{
+		public:
+			int    m_sage;
+			int    m_nage;
+			double m_ro;
+			double m_m;
+			double m_kap;
+	};
 	
 	
 FINAL_SECTION
