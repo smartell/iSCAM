@@ -1724,7 +1724,7 @@ FUNCTION calc_objective_function
 	
   }
 
-FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
+FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& dye_df,double& d2ye_df2)//,double& phiq,double& dphiq_df, double& dre_df)
   {
 	/*
 	Equilibrium age-structured model used to determin Fmsy and MSY based reference points.
@@ -1753,71 +1753,111 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	phiq		-per recruit yield
 	dre_df		-partial of recruitment wrt fe
 	dphiq_df	-partial of per recruit yield wrt fe
+	
+	LUCIE'S RULE: the dirivative of a sum is the sum of its derivatives.
+	Lucie says: there is some nasty calculus in here daddy, are you sure
+	you've got it right?
+	
+	I've got it pretty close. 
+	
 	*/
 	int i,j,k;
 	int nage    = max(age);
 	int sage    = min(age);
+	double  dre_df;
+	double  phif;
 	dvector lx(sage,nage);
 	dvector lz(sage,nage);
 	dvector lambda(1,ngear);        //F-multiplier
 	dvector phiq(1,ngear);
+	dvector dphiq_df(1,ngear);
+	dvector dyek_df(1,ngear);
+	dvector d2yek_df2(1,ngear);
 	dvector yek(1,ngear);
 	dmatrix qa(1,ngear,sage,nage);
 	
 	lx          = pow(exp(-m),age-double(sage));
 	lx(nage)   /=(1.-exp(-m));
-	double phie = lx*fa;		//eggs per recruit
+	double phie = lx*fa;		// eggs per recruit
 	double so   = kap/phie;
 	double beta = (kap-1.)/(ro*phie);
-	lambda      = ak/sum(ak);
+	lambda      = ak/mean(ak);	// multiplier for fe for each gear
 	
-	for(int iter=1;iter<=10;iter++)
+	
+	/* Must iteratively solve for f-multilier */
+	for(int iter=1;iter<=30;iter++)
 	{
-	/* Survivorship under fished conditions */
+		/* Survivorship under fished conditions */
 		lz(sage)    = 1.0;
-		dvector za  = m + (fe*lambda)*va;
+		lambda     /= mean(lambda);
+		dvector fk  = fe*lambda;
+		dvector ra  = lambda*va;
+		dvector za  = m + fe*ra;
 		dvector sa  = mfexp(-za);
 		dvector oa  = 1.0 - sa;
-	
+		
+		
+		for(k=1;k<=ngear;k++)
+		{
+			qa(k) = elem_prod(elem_div(lambda(k)*va(k),za),oa);
+		}
+		
 		double dlz_df = 0, dphif_df = 0;
+		dphiq_df.initialize();
+		dre_df   = 0;
 		for(j=sage;j<=nage;j++)
 		{
-			if(j>sage) lz(j) = lz(j-1) * sa(j-1);
-			//if(j>sage) dlz_df=dlz_df*sa(j-1) - lz(j-1)*va[i-1]*sa(j-1);
+			if(j>sage) lz(j)  = lz(j-1) * sa(j-1);
+			if(j>sage) dlz_df = dlz_df  * sa(j-1) - lz(j-1)*ra(j-1)*sa(j-1);
+			
 			if(j==nage)
 			{
-				lz(j) = lz(j) / oa(j);
+				lz(j)  = lz(j) / oa(j);
+				
+				double t4 = (-ra(j-1)+ra(j))*sa(j)+ra(j-1);
+				dlz_df = dlz_df/oa(j) - (lz(j-1)*sa(j-1)*t4) / square(oa(j));
+			}
+			
+			dphif_df   = dphif_df+fa(j)*dlz_df;
+			for(k=1;k<=ngear;k++)
+			{
+				double t1   = lambda(k) * wa(j) *va(k,j) * ra(j) * lz(j);
+				double t3   = -1. + (1.+za(j)) * sa(j);
+				double t9   = square(za(j));
+				dphiq_df(k)+= wa(j)*qa(k,j)*dlz_df + t1 * t3 / t9; 
 			}
 		}
-		double phif = elem_prod(lz,exp(-za*cntrl(13)))*fa;
-		re=ro*(kap-phie/phif)/(kap-1.);
-		if(re<=0) re=0;
-	
+		
+		phif   = elem_prod(lz,exp(-za*cntrl(13)))*fa;
+		re     = ro*(kap-phie/phif)/(kap-1.);
+		dre_df = ro/(kap-1.0)*phie/square(phif)*dphif_df;
+		
 		/* Equilibrium yield */
 		for(k=1;k<=ngear;k++)
 		{
-			qa(k) = elem_prod(elem_div(va(k),za),oa);
-			phiq(k)=sum(elem_prod(elem_prod(lz,wa),qa(k)));
-			yek(k) = fe*lambda(k)*re*phiq(k);
+			phiq(k)      = sum(elem_prod(elem_prod(lz,wa),qa(k)));
+			yek(k)       = fe*re*phiq(k);
+			dyek_df(k)   = re*phiq(k) + fe*phiq(k)*dre_df + fe*re*dphiq_df(k);
+			d2yek_df2(k) = phiq(k)*dre_df + re*dphiq_df(k);
 		}
 		
 		/* Iterative soln for lambda */
 		dvector pk = yek/sum(yek);
-		lambda = lambda + (ak - pk);
-		cout<<"phiq\n"<<lz<<endl;
-		cout<<"ak-pk\n"<<ak-pk<<endl;
-		cout<<"ye_k\n"<<yek<<endl;
+		dvector t1 = elem_div(ak,pk+1.e-30);
+		lambda     = elem_prod(lambda,t1);
+		if(abs(sum(ak-pk))<1.e-6) break;
 	}
-	//cout<<"fe\n"<<fe<<endl;
-	//cout<<"m\n"<<m<<endl;
-	//cout<<"va\n"<<va<<endl;
-	
-	//cout<<"za\n"<<za<<endl;
-	//cout<<"qa\n"<<qa<<endl;
-	//cout<<"ye_k\n"<<yek<<endl;
-	cout<<"END OF NEW EQUILIBRIUM CODE"<<endl;
-	exit(1);
+	be       = re*phif;
+	ye       = sum(yek);
+	dye_df   = sum(dyek_df);
+	d2ye_df2 = sum(d2yek_df2);
+
+	cout<<"EQUILIBRIUM CODE "<<setprecision(4)<<setw(2)<<fe<<setw(3)<<" "
+	<<ye<<setw(5)<<" "<<dye_df<<"  "<<dyek_df(1,3)<<endl;
   }
+
+
+
 	
 FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
   {
@@ -1934,55 +1974,64 @@ FUNCTION void calc_reference_points()
 	*/
 	int i,j;
 	double re,ye,be,phiq,dphiq_df,dre_df,fe;
-	double dye_df,ddye_df,spr;
-	fe = 1.5*value(m_bar);
+	double dye_df,ddye_df,d2ye_df2,spr;
+	
+	/* Initial guess for fmsy */
+	fe = 1.0*value(m_bar);
 	
 	/*Calculate average vulnerability*/
+	dmatrix va(1,ngear,sage,nage);
 	dvector va_bar(sage,nage);
 	va_bar.initialize();
-	/*CHANGED user now specifies allocation for MSY based reference points 
-	in the data file.  Used to be fsh_flag, but now is an allocation for gear k*/
-	//dvector allocation(1,ngear);
-	//allocation = dvector(fsh_flag/sum(fsh_flag));
-	dmatrix va(1,ngear,sage,nage);
+	
 	
 	/*CHANGED Allow for user to specify allocation among gear types.*/
 	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
-	/*DEPRECATED June 8, 2012*/
+	
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
-		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
 		va(j) = value(exp(log_sel(j)(nyr)));
 	}
 	
-	/*CHANGED Changed equilibrium calculations based on average m */
-	//FIXME: change Bmsy calculations to be based on average fecundity & weight at age. 
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
 	*/
-	
-	equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-				avg_fec,va,re,ye,be,phiq,dphiq_df,dre_df);
-	
-
-	for(i=1;i<=20;i++)
-	{
-		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-		//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
-					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	#if defined(USE_NEW_EQUILIBRIUM)
+		/* Newton-Raphson method to determine MSY-based reference points. */
+		for(i=1;i<=15;i++)
+		{
+			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+					avg_fec,va,re,ye,be,dye_df,d2ye_df2);
 		
-		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
-		ddye_df = phiq*dre_df + re*dphiq_df;
-		fe = fe - dye_df/ddye_df;
-		if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
-		if(sfabs(dye_df)<1.e-5)break;
-	}
-	fmsy=fe;
-	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
-				avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+			fe = fe - dye_df/d2ye_df2;
+			if(fabs(dye_df)<1e-6)break;
+		}
+		fmsy=fe;
+		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+				avg_fec,va,re,ye,be,dye_df,d2ye_df2);
+	#endif
+	
+	#if !defined(USE_NEW_EQUILIBRIUM)
+		for(i=1;i<=20;i++)
+		{
+			//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
+			//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+			//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
+						avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+		
+			dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
+			ddye_df = phiq*dre_df + re*dphiq_df;
+			fe = fe - dye_df/ddye_df;
+			if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
+			if(sfabs(dye_df)<1.e-5)break;
+		}
+		fmsy=fe;
+		equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
+					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	#endif
+	
 	msy=ye;
 	bmsy=be;
 	
@@ -2000,8 +2049,15 @@ FUNCTION void calc_reference_points()
 		fe = 0; i=0;
 		while(i < 1500)
 		{
+			#if !defined(USE_NEW_EQUILIBRIUM)
 			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
 						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+			#endif
+			
+			#if defined(USE_NEW_EQUILIBRIUM)
+			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+					avg_fec,va,re,ye,be,dye_df,d2ye_df2);
+			#endif
 			if(re<=0)break;
 			
 			double spr = value(-ro/((kappa-1)*re-ro*kappa));
@@ -2556,14 +2612,26 @@ FUNCTION decision_table
 	Key to the harvest metric is the definition of Umsy and allocation to fleets.
 	
 	Pseudocode:
-		1) Calculate reference points
-		2) Evaluate biomass metrics for each posterior sample
-		3) Evaluate harvest metrics for each posterior sample
+		1) Calculate reference points (Fmsy, Bmsy)
+		2) Loop over vector of proposed catches
+		3) Evaluate biomass metrics for each posterior sample
+		4) Evaluate harvest metrics for each posterior sample
 	
 	*/
-	
-	// Calculate reference pionts.
+	int i;
+	// 1) Calculate reference pionts.
 	calc_reference_points();
+	
+	// 2) Loop over vector of proposed catches
+	dvector f_ct(1,ngear);
+	dvector tac(1,11);
+	tac.fill_seqadd(0,5);
+	
+	int n = size_count(tac);
+	for(i=1;i<=n;i++)
+	{
+		projection_model(tac(i))
+	}
 	
   }
 	
@@ -2604,12 +2672,19 @@ FUNCTION mcmc_output
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<rt<<endl;
 	
+	/* June 12, 2012.  SJDM Call decision table. */
+	decision_table();  
+	
+	
+	// DEPRECATED	
 	// Projection model.
-	for(int i=0;i<=10;i++)
-	{
-		double tac = double(i)/10. * 1.5*msy;
-		projection_model(tac);
-	}
+
+	
+	//for(int i=0;i<=10;i++)
+	//{
+	//	double tac = double(i)/10. * 1.5*msy;
+	//	projection_model(tac);
+	//}
 	
 	// Deviance Information Criterion
 	/*
@@ -2633,7 +2708,7 @@ FUNCTION mcmc_output
 	sum_y = sum_y + y;
 	cout<<y(1,3)<<endl;
 	cout<<sum_y(1,3)<<endl;
-	get_monte_carlo_value(nvar,y);
+	double fi = get_monte_carlo_value(nvar,y);
 	if(nf==2)exit(1);
 	*/
 	
@@ -2686,26 +2761,34 @@ FUNCTION void projection_model(const double& tac);
 	theta(6) = rho
 	theta(7) = vartheta
 	
+	** NOTES **
+	* Projections are based on average natural mortality and fecundity.
+	* Selectivity is based on selectivity in terminal year.
+	* Average weight-at-age is based on mean weight in the last 5 years.
 	*/
 	
 	int i,j,k;
 	int pyr = nyr+2;	//projection year.
 	
 	// --derive stock recruitment parameters
-	dvector lx(sage,nage); lx=1;
-	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-value(m_bar));
+	dvector lx(sage,nage); 
+	lx(sage) = 1;
+	for(i=sage+1; i<=nage; i++) 
+	{
+		lx(i)=lx(i-1)*exp(-value(m_bar));
+	}
 	lx(nage)/=(1.-exp(-value(m_bar)));
 	
-	double phib = lx*fec(nyr);//(lx*exp(-value(m_bar))) * fec(nyr);//avg_fec;  
-	double so = value(kappa)/phib;		//max recruits per spawner
+	double phib = lx*avg_fec; 
+	double so   = value(kappa)/phib;
+	double bo   = value(ro)*phib;
 	double beta;
-	double bo = value(ro)*phib;  				//unfished spawning biomass	
 	switch(int(cntrl(2)))
 	{
-		case 1:
+		case 1:  // Beverton-Holt
 			beta = (value(kappa)-1.)/bo;
 		break;
-		case 2:
+		case 2:  // Ricker
 			beta = log(value(kappa))/bo;
 		break;
 	}
@@ -2718,24 +2801,20 @@ FUNCTION void projection_model(const double& tac);
 	dmatrix p_Z(syr,pyr,sage,nage);
 	p_N.initialize();
 	p_N.sub(syr,nyr+1) = value(N.sub(syr,nyr+1));
-	p_sbt(syr,nyr)=value(sbt(syr,nyr));
-	p_Z.sub(syr,nyr) = value(Z.sub(syr,nyr));
+	p_sbt(syr,nyr)     = value(sbt(syr,nyr));
+	p_Z.sub(syr,nyr)   = value(Z.sub(syr,nyr));
 	
-	//selecticity
-	/*CHANGED User to specifies allocation among gear types in data file.*/
+	/* Selectivity and allocation to gears */
 	dmatrix va_bar(1,ngear,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
-		//va_bar+=allocation(k)*value(exp(log_sel(k)(nyr)));
-		/*cout<<exp(log_sel(j)(nyr))<<endl;*/
 		p_ct(k)   = allocation(k)*tac;
 		va_bar(k) = exp(value(log_sel(k)(nyr)));
 	}
 		
-	
+	/* Simulate population into the future under constant tac policy. */
 	for(i = nyr+1; i<=pyr; i++)
 	{
-		
 		//get_ft is defined in the Baranov.cxx file
 		//(wt_obs(nyr+1) is the average wt at age in the last 5 years)
 		p_ft(i) = get_ft(p_ct,value(m_bar),va_bar,p_N(i),wt_obs(nyr+1));
@@ -2749,7 +2828,7 @@ FUNCTION void projection_model(const double& tac);
 		
 		
 		//Spawning biomass
-		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*fec(nyr);//avg_fec;
+		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*avg_fec;
 		
 		//Age-sage recruits
 		double tau = value((1.-rho)/varphi); 
@@ -2769,11 +2848,14 @@ FUNCTION void projection_model(const double& tac);
 		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
 		
 	}
+	
+	/* Write output to *.proj file for constructing decision tables. */
 	if(nf==1)
 	{
 		ofstream ofs(BaseFileName + ".proj");
 		ofs<<"TAC\t PSC\t PSS\t Ut"<<endl;
 	}
+	
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<<tac<<"\t"
 	<<0.25*bo/p_sbt(pyr)<<"\t"
@@ -2793,6 +2875,9 @@ TOP_OF_MAIN_SECTION
 	
 
 GLOBALS_SECTION
+	#define USE_NEW_EQUILIBRIUM
+	typedef double DP;
+	#include <dfridr.cpp>
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.
@@ -2803,7 +2888,7 @@ GLOBALS_SECTION
 	#undef COUT
 	#define COUT(object) cout << #object "\n" << object <<endl;
 
-	#if defined(WIN32) && !defined(__linux__)
+	#if defined(_WIN32) && !defined(__linux__)
 		const char* PLATFORM = "Windows";
 	#else
 		const char* PLATFORM = "Linux";
@@ -2842,14 +2927,9 @@ GLOBALS_SECTION
 		return fileName;
 	}
 	
-	class Model
+	class Selex
 	{
-		public:
-			int    m_sage;
-			int    m_nage;
-			double m_ro;
-			double m_m;
-			double m_kap;
+		
 	};
 	
 	
