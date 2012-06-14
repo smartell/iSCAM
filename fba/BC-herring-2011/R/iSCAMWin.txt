@@ -164,7 +164,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 			function=.plotPriors
 	
 	#-- widget 4
-	grid 3 2 padx=2 relief="groove" borderwidth=5 toptitle="Latex Tables" topfont="Courier 10 underline"
+	grid 4 2 padx=2 relief="groove" borderwidth=5 toptitle="Latex Tables" topfont="Courier 10 underline"
 	#radio buttons for tables
 	radio name=tableType value=catch		text="Reported catch"		function=.iscamTable mode=character sticky=W
 	radio name=tableType value=survey		text="Relative abundance"	function=.iscamTable mode=character sticky=W
@@ -172,3 +172,5 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 	radio name=tableType value=forecast		text="Catch forecast"		function=.iscamTable mode=character sticky=W
 	radio name=tableType value=likelihoods	text="Likelihoods"	    	function=.iscamTable mode=character sticky=W
 	radio name=tableType value=decision		text="Decision table"		function=.iscamTable mode=character sticky=W
+	null
+	radio name=tableType value=risk 		text="New Decision table"	function=.iscamTable mode=character sticky=W

@@ -352,6 +352,8 @@ DATA_SECTION
 	number fmsy;					//Fishing mortality rate at Fmsy
 	number msy;						//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
+	number Umsy;					//Exploitation rate at MSY
+	number Vmsy;					//Vulnerable biomass at MSY
 	vector age_tau2(1,na_gears);	//MLE estimate of the variance for the age comps
 	//catch-age for simulation model (could be declared locally 3d_array)
 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
@@ -535,6 +537,8 @@ DATA_SECTION
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
+	
+	
 INITIALIZATION_SECTION
  theta theta_ival;
 	
@@ -707,6 +711,8 @@ PROCEDURE_SECTION
 	//dvariable a=3.0;
 	//cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 	
+
+
 FUNCTION initParameters
   {
 	/*
@@ -1724,7 +1730,7 @@ FUNCTION calc_objective_function
 	
   }
 
-FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& dye_df,double& d2ye_df2)//,double& phiq,double& dphiq_df, double& dre_df)
+FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& ve,double& dye_df,double& d2ye_df2)//,double& phiq,double& dphiq_df, double& dre_df)
   {
 	/*
 	Equilibrium age-structured model used to determin Fmsy and MSY based reference points.
@@ -1769,12 +1775,14 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	dvector lx(sage,nage);
 	dvector lz(sage,nage);
 	dvector lambda(1,ngear);        //F-multiplier
+	dvector phix(1,ngear);
 	dvector phiq(1,ngear);
 	dvector dphiq_df(1,ngear);
 	dvector dyek_df(1,ngear);
 	dvector d2yek_df2(1,ngear);
 	dvector yek(1,ngear);
 	dmatrix qa(1,ngear,sage,nage);
+	dmatrix xa(1,ngear,sage,nage);  //vulnerable numbers per recruit
 	
 	lx          = pow(exp(-m),age-double(sage));
 	lx(nage)   /=(1.-exp(-m));
@@ -1800,6 +1808,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 		for(k=1;k<=ngear;k++)
 		{
 			qa(k) = elem_prod(elem_div(lambda(k)*va(k),za),oa);
+			xa(k) = elem_prod(elem_div(va(k),za),oa);
 		}
 		
 		double dlz_df = 0, dphif_df = 0;
@@ -1835,6 +1844,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 		/* Equilibrium yield */
 		for(k=1;k<=ngear;k++)
 		{
+			phix(k)      = sum(elem_prod(elem_prod(lz,wa),xa(k)));
 			phiq(k)      = sum(elem_prod(elem_prod(lz,wa),qa(k)));
 			yek(k)       = fe*re*phiq(k);
 			dyek_df(k)   = re*phiq(k) + fe*phiq(k)*dre_df + fe*re*dphiq_df(k);
@@ -1847,13 +1857,14 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 		lambda     = elem_prod(lambda,t1);
 		if(abs(sum(ak-pk))<1.e-6) break;
 	}
+	ve       = re*sum(elem_prod(ak,phix));
 	be       = re*phif;
 	ye       = sum(yek);
 	dye_df   = sum(dyek_df);
 	d2ye_df2 = sum(d2yek_df2);
 
-	cout<<"EQUILIBRIUM CODE "<<setprecision(4)<<setw(2)<<fe<<setw(3)<<" "
-	<<ye<<setw(5)<<" "<<dye_df<<"  "<<dyek_df(1,3)<<endl;
+	// cout<<"EQUILIBRIUM CODE "<<setprecision(4)<<setw(2)<<fe<<setw(3)<<" "
+	// <<ye<<setw(5)<<" "<<dye_df<<"  "<<dyek_df(1,3)<<endl;
   }
 
 
@@ -1973,7 +1984,7 @@ FUNCTION void calc_reference_points()
 		   for multiple gear types. Not the average vulnerablity... this was wrong.
 	*/
 	int i,j;
-	double re,ye,be,phiq,dphiq_df,dre_df,fe;
+	double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
 	double dye_df,ddye_df,d2ye_df2,spr;
 	
 	/* Initial guess for fmsy */
@@ -2002,14 +2013,14 @@ FUNCTION void calc_reference_points()
 		for(i=1;i<=15;i++)
 		{
 			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-					avg_fec,va,re,ye,be,dye_df,d2ye_df2);
+					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 		
 			fe = fe - dye_df/d2ye_df2;
 			if(fabs(dye_df)<1e-6)break;
 		}
 		fmsy=fe;
 		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-				avg_fec,va,re,ye,be,dye_df,d2ye_df2);
+				avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 	#endif
 	
 	#if !defined(USE_NEW_EQUILIBRIUM)
@@ -2034,40 +2045,43 @@ FUNCTION void calc_reference_points()
 	
 	msy=ye;
 	bmsy=be;
+	Vmsy=be;
+	Umsy=msy/Vmsy;
 	
 	/*TODO print this to the REPORT file for plotting.*/
 	/*SM Loop over discrete value of fe and ensure above code is 
 	finding the correct value of msy.*/
 	
-	
-	ofstream report_file("iscam.eql");
-	
-	if(report_file.is_open())
+	if(!mceval_phase())
 	{
-		report_file<<"index\t fe \t ye \t be \t re \t spr\n";
-		
-		fe = 0; i=0;
-		while(i < 1500)
+		ofstream report_file("iscam.eql");
+	
+		if(report_file.is_open())
 		{
-			#if !defined(USE_NEW_EQUILIBRIUM)
-			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-			#endif
+			report_file<<"index\t fe \t ye \t be \t ve \t re \t spr\n";
+		
+			fe = 0; i=0;
+			while(i < 1500)
+			{
+				#if !defined(USE_NEW_EQUILIBRIUM)
+				equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+							fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+				#endif
 			
-			#if defined(USE_NEW_EQUILIBRIUM)
-			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-					avg_fec,va,re,ye,be,dye_df,d2ye_df2);
-			#endif
-			if(re<=0)break;
+				#if defined(USE_NEW_EQUILIBRIUM)
+				equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+						avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
+				#endif
+				if(re<=0)break;
 			
-			double spr = value(-ro/((kappa-1)*re-ro*kappa));
-			report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t";
-			report_file<<re<<"\t"<<spr<<endl;
+				double spr = value(-ro/((kappa-1)*re-ro*kappa));
+				report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t"<<ve<<"\t";
+				report_file<<re<<"\t"<<spr<<endl;
 			
-			fe += 0.01;
+				fe += 0.01;
+			}
 		}
-	}
-	//exit(1);
+	}//exit(1);
 	
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
   }
@@ -2553,6 +2567,8 @@ REPORT_SECTION
 		REPORT(fmsy);
 		REPORT(msy);
 		REPORT(bmsy);
+		REPORT(Umsy);
+		REPORT(Vmsy);
 	}
 		
 	//Parameter controls
@@ -2630,9 +2646,8 @@ FUNCTION decision_table
 	int n = size_count(tac);
 	for(i=1;i<=n;i++)
 	{
-		projection_model(tac(i))
+		projection_model(tac(i));
 	}
-	
   }
 	
 FUNCTION mcmc_output
@@ -2766,7 +2781,8 @@ FUNCTION void projection_model(const double& tac);
 	* Selectivity is based on selectivity in terminal year.
 	* Average weight-at-age is based on mean weight in the last 5 years.
 	*/
-	
+	static int runNo=0;
+	runNo ++;
 	int i,j,k;
 	int pyr = nyr+2;	//projection year.
 	
@@ -2832,7 +2848,7 @@ FUNCTION void projection_model(const double& tac);
 		
 		//Age-sage recruits
 		double tau = value((1.-rho)/varphi); 
-		double xx = randn(int(tac)+i)*tau;
+		double xx = randn(nf+i)*tau;
 		
 		if(i>=syr+sage-1)
 		{
@@ -2849,18 +2865,54 @@ FUNCTION void projection_model(const double& tac);
 		
 	}
 	
-	/* Write output to *.proj file for constructing decision tables. */
-	if(nf==1)
+	/* 
+	  Write output to *.proj file for constructing decision tables. 
+	
+	  Biomass Metrics for the decision table:
+	  1) P(SB_{t+1} < SB_{t})
+	  2) P(SB_{t+1} < 0.25 B_{0})
+	  3) P(SB_{t+1} < 0.75 B_{0})
+	  4) P(SB_{t+1} < 0.40 B_{MSY})
+	  5) P(SB_{t+1} < 0.80 B_{MSY})
+	  
+	  Harvest Metrics for the decision table:
+	  1) P(U_{t+1} > Umsy)
+	  2) P(U_{t+1} > 1/2 Umsy)
+	  3) P(U_{t+1} > 2/3 Umsy)
+	  
+	  Defn: Stock status is based on spawning biomass
+	  Defn: Removal rate is based on removals/spawning biomass
+	  Defn: Harvest rate    : U_{t+1}=TAC/SBio
+	  Defn: MSY harvest rate: Umsy=MSY/SBmsy
+	  
+	
+	*/
+	if(nf==1 && runNo==1)
 	{
 		ofstream ofs(BaseFileName + ".proj");
-		ofs<<"TAC\t PSC\t PSS\t Ut"<<endl;
+		ofs<<"tac   \t";
+		ofs<<"P(SB1)\t"; 
+		ofs<<"P(SB2)\t";
+		ofs<<"P(SB3)\t";
+		ofs<<"P(SB4)\t";
+		ofs<<"P(SB5)\t";
+		ofs<<"P(U1) \t";
+		ofs<<"P(U2) \t";
+		ofs<<"P(U3) \n";
 	}
 	
+	double ut = tac / p_sbt(pyr-1);
 	ofstream ofs(BaseFileName + ".proj",ios::app);
-	ofs<<tac<<"\t"
-	<<0.25*bo/p_sbt(pyr)<<"\t"
-	<<p_sbt(pyr-1)/p_sbt(pyr)<<"\t"
-	<<(tac/(p_N(pyr-1)(3,nage)*wt_obs(nyr+1)(3,nage)))<<endl;
+	ofs<< setprecision(4)<<setw(4) 
+	   << tac                           <<"\t"
+	   << p_sbt(pyr-1)/p_sbt(pyr)       <<"\t"
+	   << 0.25*bo/p_sbt(pyr)            <<"\t"
+	   << 0.75*bo/p_sbt(pyr)            <<"\t"
+	   << 0.40*bmsy/p_sbt(pyr)          <<"\t"
+	   << 0.80*bmsy/p_sbt(pyr)          <<"\t"
+	   << ut/Umsy                       <<"\t"
+	   << ut/(0.5*Umsy)                 <<"\t"
+	   << ut/(2./3.*Umsy)               <<endl;
 	
   }
 

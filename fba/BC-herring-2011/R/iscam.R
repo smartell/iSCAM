@@ -44,7 +44,7 @@ source("read.admb.R")
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/MinorAreas/"
+.TABLEDIR <- "../TABLES/"
 
 
 
@@ -143,6 +143,10 @@ guiView	<- function()
 	if ( tableType == "decision" )
 	{
 		.tableDecisionTable( hdr )
+	}
+	if ( tableType == "risk" )
+	{
+		.plotRisk( hdr )
 	}
 }
 
@@ -284,15 +288,39 @@ guiView	<- function()
 			, size="small")
 	
 	cat("Latex table saved as", fn)
-	.plotRisk( hdr )
+	#.plotRisk( hdr )
 }
 
 .plotRisk<-function( hdr )
 {
 	nRuns <-nrow(hdr)
-	probs <-seq(0.05, 0.95, by=0.05)
-	logit <-log(probs/(1-probs))
-	TAC   <-NULL
+	TACprobs   <-NULL
+	
+	plot.risk <- function(obj, ...)
+	{
+		#obj is a class object with x & y vectors
+		with(obj, {
+			tmp.x       <- jitter(x)
+			tmp.y       <- y
+			tmp.y[y<=1] <- 0
+			tmp.y[y> 1] <- 1
+			glm.fit     <- glm(tmp.y~tmp.x, family=binomial(logit))
+			
+			plot(tmp.x, tmp.y, pch=".", xlab="Catch option", ...)
+			lines(sort(tmp.x), sort(glm.fit$fitted.values), col=2, lwd=2)
+			
+			# Now append to the obj with probabilities for each tac
+			tac <- unique(x)
+			ab  <- coef(glm.fit)
+			xx  <- ab[1]+ab[2]*tac
+			py  <- exp(xx)/(1+exp(xx))
+			obj$py  <- py
+			obj$tac <- tac
+			return(obj)
+		})
+	}
+	
+	
 	for(i in 1:nRuns)
 	{
 		repObj <- read.admb(hdr$Control.File[i])
@@ -307,51 +335,44 @@ guiView	<- function()
 			
 		print(head(repObj$proj))
 		with(repObj, {
-			tac <- proj$TAC
-			psc <- proj$PSC; psc[psc<1]=0; psc[psc>=1]=1
-			pss <- proj$PSS; pss[pss<1]=0; pss[pss>=1]=1
-			ut  <- proj$Ut; ut[ut<=0.2]=0; ut[ut>0]=1
+			ylbls <- c(
+				"P(SB decline)", 
+				"P(SB < 0.25 B0)", 
+				"P(SB < 0.75 B0)", 
+				"P(SB < 0.40 Bmsy)", 
+				"P(SB < 0.80 Bmsy)", 
+				"P(U > Umsy)", 
+				"P(U > 1/2 Umsy)", 
+				"P(U > 2/3 Umsy)")
 			
-			fit.sc <- glm(psc~tac, family=binomial(logit))
-			fit.ss <- glm(pss~tac, family=binomial(logit))
-			fit.ut <- glm(ut~tac, family=binomial(logit))
+			par(mfcol=c(4, 2), las=2, mar=c(4, 4, 1, 1))
 			
-			plot(tac, psc, pch=".", xlab="Catch option", ylab="P(SBt<Cutoff)")
-			lines(sort(tac), sort(fit.sc$fitted.values), lwd=2, col=2)
+			# Decision table for Report
+			tac  <- unique(proj$tac)
+			TACprobs = c(tac, TACprobs)
+			for(j in 2:9)
+			{
+				O   <- list()
+				O$x <- proj$tac
+				O$y <- proj[[j]]
+				class(O) <- "risk"
+				O   <- plot(O, ylab=ylbls[j-1])
+				print(cbind(O$tac, O$py))
+				TACprobs = cbind(TACprobs, round(O$py, 3))
+			}
+			colnames(TACprobs)=c("TAC", ylbls)
+			print(TACprobs)			
 			
-			plot(tac, pss, pch=".", xlab="Catch option", ylab="P(SB2013<SB2012)")
-			lines(sort(tac), sort(fit.ss$fitted.values), lwd=2, col=3)
-			
-			plot(tac, ut, pch=".", xlab="Catch option", ylab="P(Ut>0.2)")
-			lines(sort(tac), sort(fit.ut$fitted.values), lwd=2, col=4)
-			
-			mtext(hdr$Stock[i], outer=TRUE,line=-1)
-			
-			#Decision table
-			cof.sc <- coef(fit.sc)
-			tac.sc <- round((logit-cof.sc[1])/cof.sc[2]*1000,0); tac.sc[tac.sc<0]=0
-			cof.ss <- coef(fit.ss)
-			tac.ss <- round((logit-cof.ss[1])/cof.ss[2]*1000,0); tac.ss[tac.ss<0]=0
-			cof.ut <- coef(fit.ut)
-			tac.ut <- round((logit-cof.ut[1])/cof.ut[2]*1000,0); tac.ut[tac.ut<0]=0
-			TAC <- cbind(probs, prettyNum(tac.sc,","), prettyNum(tac.ss,","), prettyNum(tac.ut,","))
-			colnames(TAC)=c("Risk level","$P(SB_{2013})<$Cutoff",
-			"$P(SB_{2013}<SB_{2012})$","$P(U_{2012}<0.2)$")
-			fn=paste(.TABLEDIR, "tableRisk",hdr$Stock[i],".tex", sep="")
-			cap <-paste("Decision table for", hdr$Stock[i],"where the risk 
-			level represents the probability of exceeding the quantities specified
-			in the headers of each column.  Three performance measures are considered:
-			the probability of the spawning stock biomass in 2013 falling below the cutoff
-			level,  the probability of the spawning stock biomass in 2013 declining from 2012, 
-			and the probability of 2012 exploitation rate exceeding the 20\\% level that is
-			used in the harvest control rule. To use this table, first determine the 
-			appropriate level of risk (e.g. 0.25 or 25\\% chance),  then choose the appropriate
-			management quantity (e.g. spawning biomass falling below the cutoff), and then read
-			off the recommended catch (e.g.,", TAC[5, 2], "tonnes).")
-			tmp <- latex(TAC, file=fn,title="Risk",  longtable=FALSE
+			fn=paste(.TABLEDIR, "table:Risk",hdr$Stock[i],".tex", sep="")
+			cap <- paste("Decision table for", hdr$Stock[i], "where tac is the total
+			allowable catch (row),  and each of the columns referst to the probability
+			of an undesirable outcome (e.g.,  P(SB decline) corresponds to the probability
+			of the spawning stock biomass declining from 2012 to 2013).")
+			tmp <- latex(TACprobs, file=fn,title="Risk",  longtable=FALSE
 				, landscape=FALSE, cgroup=NULL, n.cgroup=NULL
 				, caption=cap, label=paste("Table:Risk",hdr$Stock[i], sep="")
 				, na.blank=TRUE, vbar=FALSE)
+			 
 		})
 	}
 }
@@ -989,7 +1010,7 @@ guiView	<- function()
   {
 	xMean <- mean( x,na.rm=T )
     yMean <- mean( y,na.rm=T )
-	ii = sample(1:length(x), 200, F)
+	ii = sample(1:length(x), min(c(200,0.2*length(x))), F)
 	points( x[ii],y[ii],pch=19,cex=0.75,col=colr("black", 0.25) )
 	abline( h=yMean,v=xMean,col="blue",lty=3 )
 	points( xMean,yMean, bg="cyan", pch=21,cex=1.25 )
