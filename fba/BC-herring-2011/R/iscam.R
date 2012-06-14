@@ -343,14 +343,15 @@ guiView	<- function()
 				"P(SB < 0.80 Bmsy)", 
 				"P(U > Umsy)", 
 				"P(U > 1/2 Umsy)", 
-				"P(U > 2/3 Umsy)")
+				"P(U > 2/3 Umsy)", 
+				"P(U3+ > 20%)")
 			
-			par(mfcol=c(4, 2), las=2, mar=c(4, 4, 1, 1))
+			par(mfcol=c(3, 3), las=2, mar=c(4, 4, 1, 1))
 			
 			# Decision table for Report
 			tac  <- unique(proj$tac)
 			TACprobs = c(tac, TACprobs)
-			for(j in 2:9)
+			for(j in 2:10)
 			{
 				O   <- list()
 				O$x <- proj$tac
