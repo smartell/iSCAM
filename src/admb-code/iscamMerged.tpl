@@ -86,6 +86,11 @@ DATA_SECTION
 
 	init_adstring DataFile;
 	init_adstring ControlFile;
+	init_adstring ProjectFileControl;
+	
+	!! ad_comm::change_datafile_name(ProjectFileControl);
+	init_int n_tac;
+	init_vector tac(1,n_tac);
 	
 	
 	!! BaseFileName=stripExtension(ControlFile);
@@ -2579,16 +2584,17 @@ FUNCTION decision_table
 	Reference points: Bmsy, Bo, Fmsy, Umsy.
 	
 	Biomass Metrics for the decision table:
-	1) P(SB_{t+1} > SB_{t})
+	1) P(SB_{t+1} < SB_{t})
 	2) P(SB_{t+1} < 0.25 B_{0})
-	3) P(SB_{t+1} > 0.75 B_{0})
+	3) P(SB_{t+1} < 0.75 B_{0})
 	4) P(SB_{t+1} < 0.40 B_{MSY})
-	5) P(SB_{t+1} > 0.80 B_{MSY})
+	5) P(SB_{t+1} < 0.80 B_{MSY})
 	
 	Harvest Metrics for the decision table:
 	1) P(U_{t+1} > Target harvest rate)
 	2) P(U_{t+1} > 1/2 Fmsy)
 	3) P(U_{t+1} > 2/3 Fmsy)
+	4) P(tac/2+  > 20%)
 	
 	Key to the harvest metric is the definition of Umsy and allocation to fleets.
 	
@@ -2604,12 +2610,8 @@ FUNCTION decision_table
 	calc_reference_points();
 	
 	// 2) Loop over vector of proposed catches
-	dvector f_ct(1,ngear);
-	dvector tac(1,11);
-	tac.fill_seqadd(0,5);
-	
-	int n = size_count(tac);
-	for(i=1;i<=n;i++)
+	//    This vector should is now read in from the projection file control (pfc).
+	for(i=1;i<=n_tac;i++)
 	{
 		projection_model(tac(i));
 	}
@@ -2844,6 +2846,7 @@ FUNCTION void projection_model(const double& tac);
 	  1) P(U_{t+1} > Umsy)
 	  2) P(U_{t+1} > 1/2 Umsy)
 	  3) P(U_{t+1} > 2/3 Umsy)
+	  4) P(tac/2+  > 20%)
 	  
 	  Defn: Stock status is based on spawning biomass
 	  Defn: Removal rate is based on removals/spawning biomass
@@ -2863,10 +2866,12 @@ FUNCTION void projection_model(const double& tac);
 		ofs<<"P(SB5)\t";
 		ofs<<"P(U1) \t";
 		ofs<<"P(U2) \t";
-		ofs<<"P(U3) \n";
+		ofs<<"P(U3) \t";
+		ofs<<"P(U4) \n";
 	}
 	
 	double ut = tac / p_sbt(pyr-1);
+	double u20 = tac / ( p_N(pyr-1)(3,nage)*wt_obs(nyr+1)(3,nage) );
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<< setprecision(4)<<setw(4) 
 	   << tac                           <<"\t"
@@ -2877,7 +2882,8 @@ FUNCTION void projection_model(const double& tac);
 	   << 0.80*bmsy/p_sbt(pyr)          <<"\t"
 	   << ut/Umsy                       <<"\t"
 	   << ut/(0.5*Umsy)                 <<"\t"
-	   << ut/(2./3.*Umsy)               <<endl;
+	   << ut/(2./3.*Umsy)               <<"\t"
+	   << u20/0.2                       <<endl;
 	
   }
 
