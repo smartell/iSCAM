@@ -1840,7 +1840,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 				double t9   = square(za(j));
 				dphiq_df(k)+= wa(j)*qa(k,j)*dlz_df + t1 * t3 / t9; 
 			}
-		}
+		} // end of iter
 		
 		phif   = elem_prod(lz,exp(-za*cntrl(13)))*fa;
 		re     = ro*(kap-phie/phif)/(kap-1.);

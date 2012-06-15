@@ -1,4 +1,5 @@
-%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-project/svn/docs/iSCAM-guide/userGuide/usrGuide.tex
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
+
 
 \section{Running \iscam: input files \& command line options} % (fold)
 \label{sec:running_iscam_input_files_&_command_line_options}
@@ -6,39 +7,48 @@
 \begin{multicols}{2}
 
 
-There are three required input files for \iscam: the \verb"iscam.dat" file, the \verb"datafile", and the \verb"controlfile".  By default when \iscam runs, the first file it looks for is the \verb"iscam.dat" file, unless otherwise specified by using the command line option \verb"-ind".  The following subsections explains the details of each of the data files.
+There are four required input files for \iscam: the \verb"iscam.dat" file, the \verb"datafile",  the \verb"controlfile", and the \verb"projectionfile".  By default when \iscam runs, the first file it looks for is the \verb"iscam.dat" file, unless otherwise specified by using the command line option \verb"-ind".  The following subsections explains the details of each of the data files.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The \texttt{iscam.dat} file}
 What is required in the \verb"iscam.dat" file is just the name of the data file and the control file, in that order.  An example is given below for the \texttt{PHake2010.dat} and \texttt{Phake2010.ctl} data and control files.
 \begin{verbatim}
-PHake2010.dat		#Data file name
-PHake2010.ctl		#Control file name
+PHake2010.dat       #Data file name
+PHake2010.ctl       #Control file name
+PHake2010.pfc       #Projection file name
 \end{verbatim}
-Note that it is necessary to have the \verb"*.dat", and \verb"*.ctl" extensions, as \iscam\ will read in the entire filename including the extension.  Also note that the \verb"#" symbol acts as a comment line, and \iscam\ will ignore the contents of the remaining line when reading in data.
+Note that it is necessary to have the \verb"*.dat", and \verb"*.ctl" extensions, as \iscam\ will read in the entire filename including the extension.  Also note that the \verb"#" symbol acts as a comment line, and \iscam\ will ignore the contents of the remaining line when reading in data. Lastly, the order of the files is always data file, control file, and projection file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The data file}
+\subsection{The Data File} % (fold)
+\label{sub:the_data_file}
+
+
+
+
 \emph{The data file and how it is set up is very important in ensuring that \iscam\ works correctly.}  In this section I have broken down the description of the data file into several blocks that deal with model dimensions, age-schedule information, removal data from each commercial and sampling gears, relative abundance information that may come from one or all of the gears,  a description of the age composition, and finally empirical weight-at-age data.  There are some data elements that are \emph{mandatory} (e.g., dimensions, age-schedule information, removals for each gear) and some optional data.  For example it is not necessary to have relative abundance information for each of the gear-type each year, or even any information on relative abundance.  Nor is it necessary to have age-composition each and every year for every gear type; in fact, it's not necessary to have any age-composition data, but in such cases selectivity parameters will have to be fixed.
 
 
-The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these required sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears (including gear that samples fish in surveys is two, and last line is an integer vector that specifies if the gear is a fishery, or a survey (using 1 or 0, respectively).  For each gear you must specify 1 (a commercial fishery) or 0 (a fisheries independent survey).  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.  The following is an example of the model dimensions section:
+The data file is composed of several required sections (required in the sense that they must be defined, but do not necessarily have to have data).  The first of these required sections is the model dimensions.  Below is an example where the model starts in 1977 and the last year is 2009, the youngest age-group is 1 years old, and the oldest age-group is 15 years old and older (i.e., a plus group).  The total number of unique gears, including survey gears or gears that harvest roe products such as a spawn on kelp fishery.  For each of the gears an allocation of the total annual TAC for commercial fisheries must be specified in order to properly determine the MSY-based reference points for 2 or more fleets.  Again the \verb"#" is a comment character and \iscam\ will ignore the contents after this character.  The following is an example of the model dimensions section with 3 gear types, and the allocation is given 40\% to gear 1, 60\% to gear 2, and 0\% for gear three (in this case a biological survey):
+\end{multicols}
 \begin{verbatim}
-##________________________
-##____Model Dimensions____
-1977		#first year of data
-2009		#last year of data
-1			#age of youngest age class
-15			#age of plus group
-2			#number of gears (ngear)
-## flags for gears 
-## fishery (1) or 
-## survey (0) in ngears
-1	0
-##________________________
+    ## ------------------------------------------------------------------------- ##
+    ## MODEL DIMENSIONS                                                          ##
+    ## ------------------------------------------------------------------------- ##
+    1968        # -first year of data           (syr)
+    1979        # -last year of data            (nyr)
+    3           # -age of youngest age class    (sage)
+    9           # -age of plus group            (nage)
+    3           # -number of gears              (ngear)
+    ##
+    ## ------------------------------------------------------------------------- ##
+    ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
+    ## ------------------------------------------------------------------------- ##
+    0.4   0.6   0.0
+    ##
 \end{verbatim}
-
+\begin{multicols}{2}
 The next required section is the age-schedule information pertaining to natural mortality, growth and maturity-at-age. For now, natural mortality is assumed to be age-independent.
 \begin{verbatim}
 ## ________________________
@@ -187,11 +197,14 @@ The last component of the data file is an end of file ``eof'' marker, which is s
 \end{landscape}
 
 
-
+% subsection the_data_file (end)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{multicols}{2}
-\subsection{The control file (still under development)}
+\subsection{The Control File} % (fold)
+\label{sub:the_control_file}
+
+
 The first section of the control file pertains to the leading parameter vector which is summarized in Table \ref{Table.parameter.controls}.  For now, there are 6 leading parameters for which the initial values (ival) lower (lb) and upper bounds (ub) and estimation phase must be specified.  Each of these parameters also have parameters for the corresponding prior distributions defined by the prior\_type, and parameters p1 and p2.
 
 \begin{tablehere}\caption{Controls for estimated parameters in the control file.}\label{Table.parameter.controls}
@@ -379,6 +392,14 @@ The following is an ordered list of controls that turn various switches on and o
 ## ------------------------------------------------------------------------- ##
 \end{verbatim}
 \end{tiny}
+
+% subsection the_control_file (end)
+
+
+\subsection{Projection file} % (fold)
+\label{sub:projection_file}
+TBD
+% subsection projection_file (end)
 
 
 \end{multicols}

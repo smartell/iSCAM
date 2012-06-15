@@ -1,4 +1,4 @@
-%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-project/svn/docs/iSCAM-guide/userGuide/usrGuide.tex
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
 \section{Model Documentation} % (fold)
 \label{sec:model_documentation}
 
@@ -177,18 +177,18 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
 \subsubsection{MSY based reference points} % (fold)
 \label{ssub:msy_based_reference_points}
 
-\iscam\ calculates \fmsy\ based reference points by finding the value of $F_e$ that results in the zero derivative of \eqref{T2.14}.  This is accomplished numerically using a Newton-Raphson method where an initial guess for \fmsy\ is set equal to 1.5$M$, then use \eqref{eq1.1} to iteratively find \fmsy.  Note that the partial derivatives in \eqref{eq1.1} can be found in Table~\ref{tab:partial_derivatives}.
+In the case of a single fishery \iscam\ calculates \fmsy\ based reference points by finding the value of $F_e$ that results in the zero derivative of \eqref{T2.14}.  This is accomplished numerically using a Newton-Raphson method where an initial guess for \fmsy\ is set equal to 1.0$M$, then use \eqref{eq1.1} to iteratively find \fmsy.  Note that the partial derivatives in \eqref{eq1.1} can be found in Table~\ref{tab:partial_derivatives}.
 
 \begin{align}\label{eq1.1}
     F_{e+1}&=F_e - 
     \dfrac{ \dfrac{\partial C_e}{\partial F_e}}
-    { \dfrac{\partial^2 C_e}{\partial F_e}}\\
+    { \dfrac{\partial^2 C_e}{\partial F_e^2}}\\
     \mbox{where}\nonumber\\
      \frac{\partial C_e}{\partial F_e} &=
     R_e \phi_q
     + F_e \phi_q \dfrac{\partial R_e}{\partial F_e}
     + F_e R_e \dfrac{\partial \phi_q}{\partial F_e} \nonumber\\
-    \frac{\partial^2 C_e}{\partial F_e} &=
+    \frac{\partial^2 C_e}{\partial F_e^2} &=
     \phi_q \dfrac{\partial R_e}{\partial F_e}
    +  R_e \dfrac{\partial \phi_q}{\partial F_e}\nonumber
 %    \frac{R_e \phi_q
@@ -200,7 +200,6 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
 
 The algorithm usually converges in less than 10 iterations depending on how close the initial guess of \fmsy\ is to the true value.  A maximum of 20 iterations are allowed in \iscam, however, if $\frac{\partial C_e}{\partial F_e}<1e-5$ the algorithm stops.  Note also, that this is only performed on data type variables and not differentiable variables within AD Model Builder.
  
- Given an estimate of \fmsy, other reference points such as MSY are calculated use the equations in Table~\ref{tab:equilibrium_model} where each of the expressions is evaluated at \fmsy.  A graphical representation of MSY based reference points for two alternative values of the recruitment compensation parameter $\kappa$ is show in Figure \ref{fig:iscamFigs_Fig1Quadplot}.
 
 \begin{figurehere}
     \centering
@@ -215,6 +214,7 @@ The algorithm usually converges in less than 10 iterations depending on how clos
     \label{fig:iscamFigs_Fig1Quadplot}
 \end{figurehere}
 
+Given an estimate of \fmsy, other reference points such as MSY are calculated use the equations in Table-\ref{tab:equilibrium_model} where each of the expressions is evaluated at \fmsy.  A graphical representation of MSY based reference points for two alternative values of the recruitment compensation parameter $\kappa$ is show in Figure \ref{fig:iscamFigs_Fig1Quadplot}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,8 +273,36 @@ The algorithm usually converges in less than 10 iterations depending on how clos
 \end{tablehere}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{multicols}
+
 % subsubsection msy_based_reference_points (end)
+
+\subsubsection{Reference points for multiple fisheries} % (fold)
+\label{ssub:reference_points_for_multiple_fisheries}
+It is common that a single stock of fish is prosecuted by many different types of fishing gears that have differing selectivities.  In such cases, the definition of MSY is based on the sum of catches from each of the participating fleets and how much of the total catch is taken, or allocated, to specific sectors.  For such cases, it is still possible to calculate MSY-based reference points provided that allocation to each of the gear types is specified \emph{a priori}.
+
+To determine MSY-based reference points for 2 or more gear types (e.g.,  purse seine and gillnet fisheries for Pacific herring in British Columbia), \iscam\ requires an allocation for each of the defined fleets.  Allocation is specified in the data file (see sub section \ref{sub:the_data_file}).  This allocation is initially used set a series of F-multipliers ($\lambda_k$) for each gear and \eqref{T2.14} becomes a vector of catches:
+\begin{align}
+	C_{e,k} &= F_e \lambda_k R_e \phi_{q,k} \label{eq:12} \\
+	&\mbox{where the per-recruit yield for gear $k$ is:} \nonumber \\
+	Z_a &= M+F_e\sum_k \lambda_kv_{k,a}\label{eq:13}\\
+	\phi_{q,k}&=\sum_{a=1}^\infty
+        \frac{ \hat{\iota}_a \lambda_k w_a v_{k,a}}{Z_a}
+        \left(1-e^{Z_a}\right)\label{eq:14}\\
+    &\mbox{with the added constraint} \nonumber\\
+    \sum_k \lambda_k &= N \label{eq:15}\quad \mbox{where $N$ is the number of gears.}
+\end{align}
+
+The constraint in \eqref{eq:15} defines $F_e\lambda_k$ as the fishing mortality rate for gear $k$ where $\lambda_k$ is a multiple of the average fishing mortality rate of all gears.  To ensure that each gear achieves the specified allocation for a given average fishing mortality rate $F_e$, the multipliers are determined iteratively where $\lambda_k$ is updated using:
+\begin{align}
+	\lambda_k^{(i+1)} &= \lambda_k^{(i)} \frac{a_k}{p_k} \label{eq:16}\\
+	&\mbox{where $a_k$ is the allocation for gear $k$, and:}\nonumber\\
+	p_k &= \frac{C_{e,k}}{\sum_k C_{e,k}}\label{eq:17}
+\end{align}
+Depending on the differences in selectivities and allocations between the gear types, this algorithm converges roughly 7-15 iterations.  From here the same Newton-Raphson algorithm is used to determine the average fishing mortality rate $F_e$ that would maximize the sum of catches over the multiple gears.  
+% subsubsection reference_points_for_multiple_fisheries (end)
+\end{multicols}
+
+
 
 \subsection{Analytic methods: state-dynamics} % (fold)
 \label{sub:analytic_methods_state_dynamics}
