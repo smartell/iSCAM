@@ -25,8 +25,9 @@ function( M, ... )
 			colnames(mm)	<- c("Year","Gear","It")
 			mm	<- na.omit(mm)
 			mm[, 2] <- factor(mm[, 2])
-			p	<- ggplot(mm, aes(x=Year, y=It))
-			p	<- p + geom_line() + facet_wrap(~Gear, scale="free_y")
+			p	<- ggplot(mm, aes(x=Year, y=It)) + labs(x="Year", y="Relative Abundance")
+			p	<- p + geom_point() + theme_iscam()
+			p	<- p + facet_wrap(~Gear, scale="free_y")
 			print(p)
 		}	
 		

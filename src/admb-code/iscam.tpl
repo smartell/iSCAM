@@ -2555,6 +2555,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(it);
 	REPORT(pit);
+	REPORT(it_wt);
 	REPORT(epsilon);
 	REPORT(F);
 	REPORT(M_tot);

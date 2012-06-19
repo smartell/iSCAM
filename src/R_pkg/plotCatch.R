@@ -26,10 +26,13 @@ function( M, ... )
 	}
 	
 	names(mm) <- c("Model", "Year", "Gear", "Catch")
-	print(mm)
 	
-	p	<- ggplot(mm,  aes(x=Year, y=Catch, fill=Gear))
-	p	<- p + geom_area() + facet_wrap(~Model, scales="free")
+	
+	p	<- ggplot(mm,  aes(factor(Year),Catch, fill=Gear)) 
+	p	<- p + geom_bar() + guides(fill=FALSE) + labs(x="Year", y="Catch (t)")
+	p	<- p + theme_iscam()
+	p	<- p + facet_wrap(~Model, scales="free")
+	
 	print(p)
 }
 
