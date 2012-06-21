@@ -1,11 +1,11 @@
 # Default plot theme for iscam in ggplot2
 
-theme_iscam <- function (base_size = 10, base_family = "") 
+theme_iscam <- function (base_size = 12, base_family = "") 
 {
     structure(list(
         axis.line         = theme_blank(),
-        axis.text.x       = theme_text(size = base_size * 0.8, lineheight = 0.9, colour = "grey80", hjust = 1, angle = 90),
-        axis.text.y       = theme_text(size = base_size * 0.8, lineheight = 0.9, colour = "grey80", hjust = 1, angle = 00),
+        axis.text.x       = theme_text(size = base_size * 0.8, lineheight = 0.9, colour = "black", vjust = 1, angle = 00),
+        axis.text.y       = theme_text(size = base_size * 0.8, lineheight = 0.9, colour = "black", hjust = 1, angle = 00),
         axis.ticks        = theme_segment(colour = "grey50"),
         axis.title.x      = theme_text(size = base_size, colour = "grey50", face="bold"),
         axis.title.y      = theme_text(size = base_size, colour = "grey50", face="bold", angle = 90),

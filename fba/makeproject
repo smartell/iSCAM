@@ -28,3 +28,4 @@ cp ../scripts/ADMB_Makefile $1/DATA/Makefile
 cp ../scripts/RUN.dat	$1/DATA/RUN.dat
 cp ../scripts/DATATemplate.dat $1/DATA/DataTemplate.dat
 cp ../scripts/ControlTemplate.ctl $1/DATA/ControlTemplate.ctl
+cp ../scripts/ProjectionTemplate.pfc $1/DATA/ProjectionTemplate.pfc
