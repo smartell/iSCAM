@@ -106,6 +106,14 @@ function()
 		urate={
 			print("urate")
 			.plot_bt(M, "ut")
+		}, 
+		ct_res={
+			print("ct_res")
+			.plot_resid(M, "eta")
+		}, 
+		it_res={
+			print("it_res")
+			.plot_resid(M, "epsilon")
 		}
 		)
 	

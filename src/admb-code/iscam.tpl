@@ -649,6 +649,7 @@ PARAMETER_SECTION
 	matrix Z(syr,nyr,sage,nage);
 	matrix S(syr,nyr,sage,nage);
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
+	matrix eta(1,ngear,syr,nyr);			//residuals for catch
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
@@ -1196,6 +1197,8 @@ FUNCTION calcFisheryObservations
 	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
 					biomass, and harvest of roe.  
 	
+	Jun 22, 2012.	added eta variable for catch residuals.
+	
 	*/
 	
 	/*
@@ -1204,6 +1207,7 @@ FUNCTION calcFisheryObservations
 	*/
 	int i,k;
 	ct.initialize();
+	eta.initialize();
 	for(i=syr;i<=nyr;i++)
 	{
 		for(k=1;k<=ngear;k++)
@@ -1231,6 +1235,7 @@ FUNCTION calcFisheryObservations
 						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
 					break;
 				}
+				eta(k,i) = log(obs_ct(k,i))-log(ct(k,i));
 			}
 			else
 			{/*If there is no commercial fishery the set Chat equal to 
@@ -1496,7 +1501,8 @@ FUNCTION calc_objective_function
 		for(i=syr;i<=nyr;i++)
 		{
 			if(obs_ct(k,i)!=0)
-				nlvec(1,k)+=dnorm(log(ct(k,i)),log(obs_ct(k,i)),sig_c);
+				nlvec(1,k)+=dnorm(eta(k,i),0.0,sig_c);
+				//nlvec(1,k)+=dnorm(log(ct(k,i)),log(obs_ct(k,i)),sig_c);
 		}
 		//if(active(log_ft_pars))
 		//	nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
@@ -2539,6 +2545,7 @@ REPORT_SECTION
 	REPORT(vax);
 	REPORT(obs_ct);
 	REPORT(ct);
+	REPORT(eta);
 	REPORT(ft);
 	/*FIXED small problem here with array bounds if using -retro option*/
 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
@@ -2798,9 +2805,11 @@ FUNCTION void projection_model(const double& tac);
 	}
 	lx(nage)/=(1.-exp(-value(m_bar)));
 	
-	double phib = lx*avg_fec; 
+	//double phib = lx*avg_fec; // Vivian Haist found this inconsistency in how bo' is calculated.
+	double phib = (lx*exp(-value(m_bar)*cntrl(13))) * avg_fec; 
 	double so   = value(kappa)/phib;
 	double bo   = value(ro)*phib;
+	
 	double beta;
 	switch(int(cntrl(2)))
 	{
@@ -2904,6 +2913,7 @@ FUNCTION void projection_model(const double& tac);
 		ofs<<"P(U2) \t";
 		ofs<<"P(U3) \t";
 		ofs<<"P(U4) \n";
+		cout<<"Bo when nf==1 \t"<<bo<<endl;
 	}
 	
 	double ut = tac / p_sbt(pyr-1);

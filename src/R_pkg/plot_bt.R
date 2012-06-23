@@ -25,7 +25,7 @@ function( M, which="bt", ... )
 	mm	<- NULL
 	for( i in 1:n )
 	{
-		idx <-  match(which,names(M[[i]]$rep))
+		idx <- match(which,names(M[[i]]$rep))
 		x	<- unlist(M[[i]]$rep$yrs)
 		y	<- unlist(M[[i]]$rep[idx])
 		

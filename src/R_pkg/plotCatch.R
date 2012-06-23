@@ -30,7 +30,7 @@ function( M, ... )
 	
 	p	<- ggplot(mm,  aes(factor(Year),Catch, fill=Gear)) 
 	p	<- p + geom_bar() + guides(fill=FALSE) + labs(x="Year", y="Catch (t)")
-	p	<- p + theme_iscam()
+	p	<- p + theme_iscam(xlas=90)
 	p	<- p + facet_wrap(~Model, scales="free")
 	
 	print(p)

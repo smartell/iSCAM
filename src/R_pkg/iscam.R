@@ -9,7 +9,7 @@
 ##  - read.admb.R          - working                                         ##
 ##  - summary.R            - working                                         ##
 ##  - plot.ft.R                                                              ##
-##  - plot.resid.R                                                           ##
+##  - plot_resid.R                                                           ##
 ##  - iscamView.R          - working           - fix x-axis labels           ##
 ##  - plotCatch.R                                                            ##
 ##  - plotAgeComs.R                                                          ##
@@ -42,7 +42,7 @@
   source("summary.R")
   source("plot_bt.R")
   source("plot.ft.R")
-  source("plot.resid.R")
+  source("plot_resid.R")
   source("iscamView.R")
   source("plotCatch.R")
   source("plotAgeComps.R")
