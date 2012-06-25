@@ -648,6 +648,7 @@ PARAMETER_SECTION
 	matrix Z(syr,nyr,sage,nage);
 	matrix S(syr,nyr,sage,nage);
 	matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
+	matrix eta(1,ngear,syr,nyr);			//residuals for catch
 	matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 	matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
@@ -1191,6 +1192,12 @@ FUNCTION calcFisheryObservations
 				
 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
 					computing the age-comps in calc_fisheries_observations
+	
+	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
+					biomass, and harvest of roe.  
+	
+	Jun 22, 2012.	added eta variable for catch residuals.
+	
 	*/
 	
 	/*
@@ -1199,6 +1206,7 @@ FUNCTION calcFisheryObservations
 	*/
 	int i,k;
 	ct.initialize();
+	eta.initialize();
 	for(i=syr;i<=nyr;i++)
 	{
 		for(k=1;k<=ngear;k++)
@@ -2504,6 +2512,7 @@ REPORT_SECTION
 	REPORT(vax);
 	REPORT(obs_ct);
 	REPORT(ct);
+	REPORT(eta);
 	REPORT(ft);
 	/*FIXED small problem here with array bounds if using -retro option*/
 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
@@ -2520,6 +2529,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(it);
 	REPORT(pit);
+	REPORT(it_wt);
 	REPORT(epsilon);
 	REPORT(F);
 	REPORT(M_tot);
@@ -2751,7 +2761,7 @@ FUNCTION void projection_model(const double& tac);
 	static int runNo=0;
 	runNo ++;
 	int i,j,k;
-	int pyr = nyr+2;	//projection year.
+	int pyr = nyr+1;	//projection year.
 	
 	// --derive stock recruitment parameters
 	dvector lx(sage,nage); 
@@ -2762,9 +2772,11 @@ FUNCTION void projection_model(const double& tac);
 	}
 	lx(nage)/=(1.-exp(-value(m_bar)));
 	
-	double phib = lx*avg_fec; 
+	//double phib = lx*avg_fec; // Vivian Haist found this inconsistency in how bo' is calculated.
+	double phib = (lx*exp(-value(m_bar)*cntrl(13))) * avg_fec; 
 	double so   = value(kappa)/phib;
 	double bo   = value(ro)*phib;
+	
 	double beta;
 	switch(int(cntrl(2)))
 	{
@@ -2868,10 +2880,11 @@ FUNCTION void projection_model(const double& tac);
 		ofs<<"P(U2) \t";
 		ofs<<"P(U3) \t";
 		ofs<<"P(U4) \n";
+		cout<<"Bo when nf==1 \t"<<bo<<endl;
 	}
 	
-	double ut = tac / p_sbt(pyr-1);
-	double u20 = tac / ( p_N(pyr-1)(3,nage)*wt_obs(nyr+1)(3,nage) );
+	double ut = tac / p_sbt(pyr);
+	double u20 = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* wt_obs(nyr+1)(3,nage) );
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<< setprecision(4)<<setw(4) 
 	   << tac                           <<"\t"
