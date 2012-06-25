@@ -16,14 +16,28 @@ notebook tabs="Figures Tables Tools" name=nbtab width=520 height=600
 ## ------------------------------------------------------------------------- ##
 ## FIGURES TAB                                                               ##
 ## ------------------------------------------------------------------------- ##
-	## RADIO BUTTONS FOR PLOTTING DATA
-	grid 2 3 toptitle="Data" relief="sunken" pady=5
-	radio name=plotType mode=character value=catch		text="Catch"	function=.viewPlot	sticky=W
-	radio name=plotType mode=character value=survey		text="Survey"	function=.viewPlot	sticky=W
-	radio name=plotType mode=character value=agecomp	text="Age Comps (bubble)"	function=.viewPlot	sticky=W
-	radio name=plotType mode=character value=agehist	text="Age Comps (histogram)"	function=.viewPlot	sticky=W
-	radio name=plotType mode=character value=meanwt		text="Mean weight-at-age" 	function=.viewPlot	sticky=W
-	null
+	## Grid of controls
+	grid 2 1	
+		## RADIO BUTTONS FOR PLOTTING DATA
+		grid 2 3 toptitle="Data" relief="sunken" pady=5
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=catch   text="Catch"                    
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=survey  text="Survey"                    
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=agecomp text="Age Comps (bubble)"        
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=agehist text="Age Comps (histogram)"    
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=meanwt  text="Mean weight-at-age"         
+		null
+		
+		## RADIO BUTTONS FOR PLOTTING MLE RESULTS
+		grid 3 3 toptitle="Maximum Likelihood Estimates (MLE)" relief="sunken" pady=5
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=vbio    text="Biomass"                      
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=ct_res  text="Catch residuals"              
+		null
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=sbio    text="Spawn biomass"                
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=it_res  text="Relative abundance residuals"              
+		null
+		radio name=plotType mode=character function=.viewPlot  sticky=W  value=urate   text="Exploitation rate (ct/bt)"    
+		null
+		null
 
 ## ------------------------------------------------------------------------- ##
 ## TABLES TAB                                                                ##

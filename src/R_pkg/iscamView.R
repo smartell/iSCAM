@@ -27,7 +27,7 @@ function( winName )
 	
 	# Close any open graphics devices or X11 devices
 	graphics.off()
-	closeWin()
+	#closeWin()
 	
 	# Check for global .VIEWTRCK and read header files
 	trckExists <- file.exists( .VIEWTRCK )
@@ -72,7 +72,6 @@ function()
 	fn	<- hdr$Control.File
 	M	<- lapply(fn, read.admb)
 	names(M) <- hdr$Model
-	print(names(M))
 	
 	# use plotType to determine which function to call.
 	switch(plotType, 
@@ -95,9 +94,31 @@ function()
 		meanwt={
 			print("meanwt")
 			.plotMeanWt(M)
+		}, 
+		vbio={
+			print("vbio")
+			.plot_bt(M, "bt")
+		}, 
+		sbio={
+			print("sbio")
+			.plot_bt(M, "sbt")
+		}, 
+		urate={
+			print("urate")
+			.plot_bt(M, "ut")
+		}, 
+		ct_res={
+			print("ct_res")
+			.plot_resid(M, "eta")
+		}, 
+		it_res={
+			print("it_res")
+			.plot_resid(M, "epsilon")
 		}
 		)
 	
+	# Return a global model object that are in play
+	iMod <<- M
 }
 
 

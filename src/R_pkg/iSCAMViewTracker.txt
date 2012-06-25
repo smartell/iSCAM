@@ -3,7 +3,8 @@
 "Select","Model","Description","Control File"
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
-TRUE, DEM1, "Flack Lake Trout",../../examples/DEMO/DATA/ControlTemplate
-TRUE, SOG, "SOG Herring",../../fba/BC-Herring-2011/DATA/SOG/SOGHerring2011qprior
-#TRUE, DEM3, "Flack Lake Trout",../../examples/DEMO/DATA/ControlTemplate
+TRUE,  DEM1, "Flack Lake Trout"    ,../../examples/DEMO/DATA/ControlTemplate
+TRUE,  HAKE, "Namibian Hake"       ,../../examples/ECODETECTIVE/DATA/NamibianHake
+FALSE, SOG,  "SOG Herring"         ,../../fba/BC-Herring-2011/DATA/SOG/SOGHerring2011qprior
+#TRUE,  DEM3,  "Flack Lake Trout"     ,../../examples/DEMO/DATA/ControlTemplate
 
