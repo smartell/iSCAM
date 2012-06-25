@@ -2794,7 +2794,7 @@ FUNCTION void projection_model(const double& tac);
 	static int runNo=0;
 	runNo ++;
 	int i,j,k;
-	int pyr = nyr+2;	//projection year.
+	int pyr = nyr+1;	//projection year.
 	
 	// --derive stock recruitment parameters
 	dvector lx(sage,nage); 
@@ -2916,8 +2916,8 @@ FUNCTION void projection_model(const double& tac);
 		cout<<"Bo when nf==1 \t"<<bo<<endl;
 	}
 	
-	double ut = tac / p_sbt(pyr-1);
-	double u20 = tac / ( (p_N(pyr-1)(3,nage)*exp(-value(M_tot(nyr,3))))* wt_obs(nyr+1)(3,nage) );
+	double ut = tac / p_sbt(pyr);
+	double u20 = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* wt_obs(nyr+1)(3,nage) );
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<< setprecision(4)<<setw(4) 
 	   << tac                           <<"\t"
