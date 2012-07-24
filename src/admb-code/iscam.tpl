@@ -1846,7 +1846,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 				double t9   = square(za(j));
 				dphiq_df(k)+= wa(j)*qa(k,j)*dlz_df + t1 * t3 / t9; 
 			}
-		} // end of iter
+		} 
 		
 		phif   = elem_prod(lz,exp(-za*cntrl(13)))*fa;
 		re     = ro*(kap-phie/phif)/(kap-1.);
@@ -1867,7 +1867,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 		dvector t1 = elem_div(ak,pk+1.e-30);
 		lambda     = elem_prod(lambda,t1);
 		if(abs(sum(ak-pk))<1.e-6) break;
-	}
+	} // end of iter
 	ve       = re*sum(elem_prod(ak,phix));
 	be       = re*phif;
 	ye       = sum(yek);
@@ -2968,7 +2968,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include <statsLib.h>
 	//#include "stats.cxx"
-	#include "baranov.cxx"
+	//#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
