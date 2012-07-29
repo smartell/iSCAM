@@ -276,7 +276,7 @@ Given an estimate of \fmsy, other reference points such as MSY are calculated us
 
 % subsubsection msy_based_reference_points (end)
 
-\subsubsection{Reference points for multiple fisheries} % (fold)
+\subsubsection{Reference points for multiple fisheries with fixed allocation} % (fold)
 \label{ssub:reference_points_for_multiple_fisheries}
 It is common that a single stock of fish is prosecuted by many different types of fishing gears that have differing selectivities.  In such cases, the definition of MSY is based on the sum of catches from each of the participating fleets and how much of the total catch is taken, or allocated, to specific sectors.  For such cases, it is still possible to calculate MSY-based reference points provided that allocation to each of the gear types is specified \emph{a priori}.
 
@@ -300,6 +300,10 @@ The constraint in \eqref{eq:15} defines $F_e\lambda_k$ as the fishing mortality 
 \end{align}
 Depending on the differences in selectivities and allocations between the gear types, this algorithm converges roughly 7-15 iterations.  From here the same Newton-Raphson algorithm is used to determine the average fishing mortality rate $F_e$ that would maximize the sum of catches over the multiple gears.  
 % subsubsection reference_points_for_multiple_fisheries (end)
+\end{multicols}
+
+\begin{multicols}{2}
+\input{./ModelAPI/MultipleFleetMSYReferencePoints.tex}	
 \end{multicols}
 
 

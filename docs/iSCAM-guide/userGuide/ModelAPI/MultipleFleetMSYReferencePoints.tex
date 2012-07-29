@@ -1,0 +1,15 @@
+%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
+
+\subsection{MSY-based reference points for multiple fisheries} % (fold)
+\label{sub:msy_based_reference_points_for_multiple_fisheries}
+
+In cases where there are two or more fishing fleets that harvest the same stock (intentionally or taken as bycatch), the differences in selectivity among these gears will ultimately affect the fishing mortality rates associated with long-term sustainable yields or MSY for each of the participating fleets.  For example, global tuna fisheries are taken primarily by two gear types, pelagic longlines which harvest larger/older tuna, and purse seine's which harvest younger tuna usually aggregated around Fish Aggregating Devices (FADs).  The longline fishery has been in operation since the 1950s (even longer, but the available data date back to the 1950s), and the industrial purse seine fishery developed in the 1980s.  If in fact the longline fishery was fully utilized by the 1980s, then the impacts of increased mortality on younger tuna from the purse seine fleet would reduce the available surplus for the longline fishery.
+
+To estimate what the appropriate MSY-based fishing mortality rates for two or more fishing gears that harvest the same stock of fish, the catch equations for each fleet must be simultaneously solved in order to find the appropriate vector of fishing mortality rates that that maximizes the yields for each fleet.  The steady-state, or equilibrium, catch equation for a given fishing gear $k$ is given by:
+\begin{equation}\label{eq:equilYield}
+	 Y_{k} = \sum_j\frac{N_j F_k v_{k,j} w_j (1-\exp(-M-\sum_k F_k v_{k,j}))} {M + \sum_k F_k v_{k,j}},
+\end{equation}
+where $F_k$ is the fishing mortality rate imposed by gear $k$, M is the instantaneous natural mortality rate, $v_{k,j}$ is the age-specific selectivity for gear $k$ and age$j$, and $w_j$ and $N_j$ are the average weight-at-age and numbers-at-age, respectively.  Note that if $k>1$, then \eqref{eq:equilYield} represents of system of nonlinear equations where the roots of these equations $\left(\frac{\partial Y_k}{\partial F_k}=0\right)$ are found with Newton-Raphson.
+
+% subsection msy_based_reference_points_for_multiple_fisheries (end)
+
