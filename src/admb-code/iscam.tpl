@@ -1993,6 +1993,12 @@ FUNCTION void calc_reference_points()
 		   weight-at-age and fecundity-at-age.
 		2) change equilibrium calculations to use the catch allocation
 		   for multiple gear types. Not the average vulnerablity... this was wrong.
+	
+	July 29, 2012.  SJDM Issue1.  New routine for calculating reference points
+	for multiple fleets. In this case, finds a vector of Fmsy's that simultaneously 
+	maximizes the total catch for each of the fleets respectively.  See
+	iSCAMequil_soln.R for an example.
+	
 	*/
 	int i,j;
 	double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
@@ -2016,6 +2022,20 @@ FUNCTION void calc_reference_points()
 		va(j) = value(exp(log_sel(j)(nyr)));
 	}
 	
+	dvector fk(1,ngear);
+	fk = 0.6*value(m_bar);
+	
+	params theta;
+	theta.ro     = value(ro);
+	theta.kappa  = value(kappa);
+	theta.m      = value(m_bar);
+	theta.fe     = fk;
+	theta.wa     = avg_wt;
+	theta.fa     = avg_fec;
+	theta.V      = va;
+	cout<<"mbar"<<m_bar<<endl<<theta.m<<endl;
+	calcEquilibrium(theta);
+	exit(1);
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
 	*/
@@ -2027,7 +2047,7 @@ FUNCTION void calc_reference_points()
 					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 		
 			fe = fe - dye_df/d2ye_df2;
-			if(fabs(dye_df)<1e-6)break;
+			if(square(dye_df)<1e-12)break;
 		}
 		fmsy=fe;
 		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
@@ -2967,6 +2987,7 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	#include <statsLib.h>
+	#include "refpoints.cpp"
 	//#include "stats.cxx"
 	//#include "baranov.cxx"
 	time_t start,finish;
