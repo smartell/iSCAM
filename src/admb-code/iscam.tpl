@@ -2000,7 +2000,7 @@ FUNCTION void calc_reference_points()
 	iSCAMequil_soln.R for an example.
 	
 	*/
-	int i,j;
+	int i,j,k;
 	double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
 	double dye_df,ddye_df,d2ye_df2,spr;
 	
@@ -2008,6 +2008,14 @@ FUNCTION void calc_reference_points()
 	fe = 1.0*value(m_bar);
 	
 	/*Calculate average vulnerability*/
+	int nfleet = int(sum(fsh_flag));
+	ivector ifleet(1,nfleet);
+	j=1;
+	for(k=1; k<=ngear;k++)
+	{
+		if(fsh_flag(k)) ifleet(j++) = k;
+	}
+	cout<<"ifleet index\t"<<ifleet<<endl;
 	dmatrix va(1,ngear,sage,nage);
 	dvector va_bar(sage,nage);
 	va_bar.initialize();
@@ -2015,26 +2023,31 @@ FUNCTION void calc_reference_points()
 	
 	/*CHANGED Allow for user to specify allocation among gear types.*/
 	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
-	
 	for(j=1;j<=ngear;j++)
 	{
 		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
 		va(j) = value(exp(log_sel(j)(nyr)));
 	}
 	
-	dvector fk(1,ngear);
+	dvector fk(1,ngear-2);
 	fk = 0.6*value(m_bar);
 	
-	params theta;
-	theta.ro     = value(ro);
-	theta.kappa  = value(kappa);
-	theta.m      = value(m_bar);
-	theta.fe     = fk;
-	theta.wa     = avg_wt;
-	theta.fa     = avg_fec;
-	theta.V      = va;
-	cout<<"mbar"<<m_bar<<endl<<theta.m<<endl;
-	calcEquilibrium(theta);
+	/*cout<<fk(fsh_flag)<<endl;
+		params theta;
+		theta.ro     = value(ro);
+		theta.kappa  = value(kappa);
+		theta.m      = value(m_bar);
+		theta.fe     = fk;
+		theta.wa     = avg_wt;
+		theta.fa     = avg_fec;
+		theta.V      = va;
+		cout<<"mbar"<<m_bar<<endl<<theta.m<<endl;
+		getReferencePoints(theta);
+		cout<<"fmsy"<<theta.fmsy<<endl;*/
+	double h = value(theta(2));
+	Msy cMSY(value(ro),h,value(m_bar),avg_wt,avg_fec,va);
+	fk = cMSY.get_fmsy(fk);
+	cout<<"Fmsy\t"<<fk<<endl;
 	exit(1);
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
@@ -2987,7 +3000,8 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	#include <statsLib.h>
-	#include "refpoints.cpp"
+	//#include "refpoints.cpp"
+	#include "msy.cpp"
 	//#include "stats.cxx"
 	//#include "baranov.cxx"
 	time_t start,finish;

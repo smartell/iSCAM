@@ -13,10 +13,10 @@ m     <- 1.5*vbk
 theta <- c(ro=ro, h=h, vbk=vbk, m=m)
 
 # FISHING FLEET PARAMETERS
-ngear  <- 7
+ngear  <- 2
 lambda <- rep(1/ngear, length=ngear)		# allocation to each fleet
 ah     <- rep(3,ngear)
-ah     <- rlnorm(ngear, log(log(3)/m), 0.3)
+#ah     <- rlnorm(ngear, log(log(3)/m), 0.3)
 gh     <- 0.5*ah
 V      <- sapply(age, plogis, location=ah, scale=gh)
 matplot(age, t(V), type="o")
@@ -43,8 +43,8 @@ equil <- function(theta, fe=0)
 		ddlz.df   <- matrix(0, nrow=ngear, ncol=A)
 		dphif.df  <- rep(0, ngear)
 		ddphif.df <- rep(0, ngear)
-		dphiq.df  <- rep(0, ngear)
-		ddphiq.df <- rep(0, ngear)
+		dphiq.df  <- wa[1]*V[,1]/za[1]*(sa[1]-oa[1]/za[1])
+		ddphiq.df <- -wa[1]*V[,1]^3*sa[1]/za[1] - 2*wa[1]*V[,1]^3*sa[1]/za[1]^2 + 2*wa[1]*V[,1]^3*oa[1]/za[1]^3
 		for(i in 2:A)
 		{
 			lz[i]   <- lz[i-1]*sa[i-1]
@@ -54,9 +54,7 @@ equil <- function(theta, fe=0)
 			if(i==A)
 			{
 				lz[i]   <- lz[i]/oa[i]
-				#dlz.df[,i]  <- dlz.df[,i-1]*sa[i-1]/oa[i]  - lz[i-1]*V[,i-1]*sa[i-1]/oa[i] 
-				dlz.df[,i]  <- dlz.df[,i]/oa[i]
-				               - lz[i-1]*sa[i-1]*V[,i]*sa[i]/(oa[i])^2
+				dlz.df[,i]  <- dlz.df[,i]/oa[i] - lz[i-1]*sa[i-1]*V[,i]*sa[i]/oa[i]^2
 				
 				ddlz.df[,i] <- ddlz.df[,i]/oa[i] + 2*lz[i-1]*V[,i-1]^2*sa[i-1]/oa[i]
 				               + 2*lz[i-1]*V[,i-1]*sa[i-1]*V[,i]*sa[i]/oa[i]^2
@@ -65,11 +63,15 @@ equil <- function(theta, fe=0)
 			}
 			dphif.df  <- dphif.df  + fa[i]*dlz.df[,i]
 			ddphif.df <- ddphif.df + fa[i]*ddlz.df[,i]
-			dphiq.df  <- dphiq.df  + qa[i]*dlz.df[,i] + lz[i]*wa[i]*V[,i]/za[i]*(sa[i]-oa[i])/za[i]
-			ddphiq.df <- ddphiq.df + ddlz.df[,i]*wa[i]*V[,i]*oa[i]/za[i] + 2*dlz.df[,i]*wa[i]*V[,i]^2*sa[i]/za[i]
+			
+			dphiq.df  <- dphiq.df  + qa[,i]*dlz.df[,i] + lz[i]*wa[i]*V[,i]/za[i]*(sa[i]-oa[i]/za[i])
+			
+			ddphiq.df <- ddphiq.df + ddlz.df[,i]*qa[,i] + 2*dlz.df[,i]*wa[i]*V[,i]^2*sa[i]/za[i]
 			             - 2*dlz.df[,i]*wa[i]*V[,i]^2*oa[i]/za[i]^2 - lz[i]*wa[i]*V[,i]^3*sa[i]/za[i]
 			             - 2*lz[i]*wa[i]*V[,i]^3*sa[i]/za[i]^2 + 2*lz[i]*wa[i]*V[,i]^3*oa[i]/za[i]^3
 		}
+		
+		
 		phif    <- sum(lz*fa)
 		phiq    <- colSums(lz*t(qa))
 		dre.df  <- ro/(reck-1)*phie/phif^2*dphif.df
@@ -91,12 +93,18 @@ equil <- function(theta, fe=0)
 		#cat(dye.df, "\t")
 		#browser()
 		print(sqrt(sum(dye.df^2)))
+		cat("dye\n", dye.df, "\n")
+		#cat("Jacobian\n", J, "\n")
+		browser()
 		return(fe+delta)
 	})
 }
 
-f <- rep(0.6*m, ngear)
-for(iter in 1:100)
-{
-	f <- as.vector(equil(theta, f))
-}
+f<-rep(0.2, ngear)
+equil(theta, f)
+
+# f <- rep(0.6*m, ngear)
+# for(iter in 1:100)
+# {
+# 	f <- as.vector(equil(theta, f))
+# }

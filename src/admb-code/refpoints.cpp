@@ -5,6 +5,7 @@
 
 #include <admodel.h>
 
+
 typedef struct {
 	double ro;       // Unfished recruits
 	double kappa;    // Recruitment compensation of the stock-recruitment function
@@ -13,12 +14,31 @@ typedef struct {
 	dvector wa;      // Average weight-at-age
 	dvector fa;      // Average fecundity-at-age
 	dmatrix V;       // Selectivity for each gear (rows) at age (col)
+	dvector fmsy;    // Vector of fishing mortality rates at Fmsy
+	dvector dye;     // First derivative of the catch equation.
 	} params;
 
-void calcEquilibrium(params theta)
+void getReferencePoints(params& theta);
+void calcEquilibrium(params& theta);
+
+
+void getReferencePoints(params& theta)
 {
-	cout<<"in calcEquilibrium"<<endl;
-	cout<<theta.m<<endl;
+	int ngear = theta.V.rowmax();
+	dvector f = theta.fe;
+	theta.fmsy = f;
+	do
+	{
+		calcEquilibrium(theta);
+		f = theta.fmsy;
+	}
+	while(norm(theta.dye)>1.e-12);
+	
+	
+}
+
+void calcEquilibrium(params& theta)
+{
 	// Calculate the equilibrium values to determine MSY-based reference points.
 	int i,j,k;
 	int sage,nage,ngear;
@@ -132,8 +152,10 @@ void calcEquilibrium(params theta)
 	// Equilibrium calculations
 	double re;
 	dvector   ye(1,ngear);
+	dvector fstp(1,ngear);
 	dvector  dye(1,ngear);
 	dmatrix d2ye(1,ngear,1,ngear);
+	dmatrix invJ(1,ngear,1,ngear);
 	
 	re   = ro*(theta.kappa-phie/phif)/km1;
 	ye   = re*elem_prod(fe,phiq);
@@ -152,9 +174,16 @@ void calcEquilibrium(params theta)
 		} 
 	
 	}
+	invJ = -inv(d2ye);
+	fstp = invJ * dye;
+	
 	cout<<"Re\n"<<re<<endl;
 	cout<<"Ye\n"<<ye<<endl;
 	cout<<"dYe\n"<<dye<<endl;
-	cout<<"Jacobian\n"<<d2ye<<endl;
-	cout<<"Inv(J)\n"<<-inv(d2ye)<<endl;
+	cout<<"Jacobian\n"<<invJ<<endl;
+	cout<<"fstp\n"<<fstp<<endl;
+	
+	theta.fmsy = fe + fstp;
+	theta.dye  = dye;
+	
 }
