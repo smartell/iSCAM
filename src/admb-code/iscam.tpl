@@ -142,6 +142,7 @@ DATA_SECTION
 	!! age.fill_seqadd(sage,1);
 	
 	init_int ngear;				//number of gear types with unique selectivities
+	int nfleet;
 	!! cout<<"ngear\t"<<ngear<<endl;
 	init_vector allocation(1,ngear);
 	init_ivector catch_type(1,ngear);
@@ -157,6 +158,17 @@ DATA_SECTION
 			else
 				fsh_flag(k)=0;
 		}
+		nfleet = sum(fsh_flag);
+	END_CALCS
+	
+	ivector ifleet(1,nfleet);
+	LOC_CALCS	
+		int j=1;
+		for(k=1; k<=ngear;k++)
+		{
+			if(fsh_flag(k)) ifleet(j++) = k;
+		}
+		cout<<"ifleet index\t"<<ifleet<<endl;
 	END_CALCS
 	
 	//The following code has been deprecated
@@ -354,8 +366,8 @@ DATA_SECTION
 	
 	
 	
-	number fmsy;					//Fishing mortality rate at Fmsy
-	number msy;						//Maximum sustainable yield
+	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
+	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 	number Umsy;					//Exploitation rate at MSY
 	number Vmsy;					//Vulnerable biomass at MSY
@@ -1426,7 +1438,7 @@ FUNCTION calc_stock_recruitment
 	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
-	bo = ro*phib;  					//unfished spawning biomass
+	bo = ro*phib;  					//unfished spawning biomass at spawning time
 	
 	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
 	//CHANGED adjusted spawning biomass downward by ctrl(13)
@@ -1771,7 +1783,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	dre_df		-partial of recruitment wrt fe
 	dphiq_df	-partial of per recruit yield wrt fe
 	
-	LUCIE'S RULE: the dirivative of a sum is the sum of its derivatives.
+	LUCIE'S RULE: the derivative of a sum is the sum of its derivatives.
 	Lucie says: there is some nasty calculus in here daddy, are you sure
 	you've got it right?
 	
@@ -1999,134 +2011,193 @@ FUNCTION void calc_reference_points()
 	maximizes the total catch for each of the fleets respectively.  See
 	iSCAMequil_soln.R for an example.
 	
+	August 1, 2012.  SJDM, In response to Issue1. A major overhaul of this routine.
+	Now using the new Msy class to calculate reference points. This greatly simplifies
+	the code in this routine and makes other routines (equilibrium) redundant.  Also
+	the new Msy class does a much better job in the case of multiple fleets.
+	
+	The algorithm is as follows:
+		(1) Determine which of ngears are directed fishing fleets (fsh_flag==1)
+		(2) Construct a matrix of selectivities for the directed fleets.
+		(3) Instantiate an Msy class object and get_fmsy.
 	*/
 	int i,j,k;
-	double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
-	double dye_df,ddye_df,d2ye_df2,spr;
+	//double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
+	//double dye_df,ddye_df,d2ye_df2,spr;
 	
 	/* Initial guess for fmsy */
-	fe = 1.0*value(m_bar);
+	//fe = 1.0*value(m_bar);
 	
-	/*Calculate average vulnerability*/
-	int nfleet = int(sum(fsh_flag));
-	ivector ifleet(1,nfleet);
-	j=1;
-	for(k=1; k<=ngear;k++)
+	/* (1) Determine which fleets are directed fishing fleets. */
+	/* This is done in the data section. */
+	
+	
+	/* (2) Matrix of selectivities for directed fleets */
+	dmatrix d_V(1,nfleet,sage,nage);
+	dvector d_ak(1,nfleet);
+	for(k = 1; k<= nfleet; k++)
 	{
-		if(fsh_flag(k)) ifleet(j++) = k;
-	}
-	cout<<"ifleet index\t"<<ifleet<<endl;
-	dmatrix va(1,ngear,sage,nage);
-	dvector va_bar(sage,nage);
-	va_bar.initialize();
-	
-	
-	/*CHANGED Allow for user to specify allocation among gear types.*/
-	/*FIXME:  this allocation should be on the catch on the vulnerabilities*/
-	for(j=1;j<=ngear;j++)
-	{
-		va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
-		va(j) = value(exp(log_sel(j)(nyr)));
+		j    = ifleet(k);
+		d_V(k) = value(exp(log_sel(j)(nyr)));
+		d_ak(k)= allocation(j);
 	}
 	
-	dvector fk(1,ngear-2);
-	fk = 0.6*value(m_bar);
+	/* (3) Instantiate an Msy class object and get_fmsy */
+	double  d_ro = value(ro);
+	double  d_h  = value(theta(2));
+	double  d_m  = value(m_bar);
+	dvector d_wa = (avg_wt);
+	dvector d_fa = (avg_fec);
 	
-	/*cout<<fk(fsh_flag)<<endl;
-		params theta;
-		theta.ro     = value(ro);
-		theta.kappa  = value(kappa);
-		theta.m      = value(m_bar);
-		theta.fe     = fk;
-		theta.wa     = avg_wt;
-		theta.fa     = avg_fec;
-		theta.V      = va;
-		cout<<"mbar"<<m_bar<<endl<<theta.m<<endl;
-		getReferencePoints(theta);
-		cout<<"fmsy"<<theta.fmsy<<endl;*/
-	double h = value(theta(2));
-	Msy cMSY(value(ro),h,value(m_bar),avg_wt,avg_fec,va);
-	fk = cMSY.get_fmsy(fk);
-	cout<<"Fmsy\t"<<fk<<endl;
-	exit(1);
+	fmsy = 0.6*d_m;	// initial guess for Fmsy
+	
+	Msy cMSY(d_ro,d_h,d_m,d_wa,d_fa,d_V);
+	cMSY.get_fmsy(fmsy);
+	bmsy = cMSY.getBmsy();
+	msy  = cMSY.getMsy();
+	bo   = cMSY.getBo();
+	
+	
+	cout<<"Fmsy\t"<<fmsy<<endl;
+	cout<<"MSY \t"<<msy<<endl;
+	cout<<"Bo  \t"<<bo<<endl;
+	cout<<"Bmsy\t"<<bmsy<<endl;
+	
+	/* (4) Now do it with allocation */
+	cout<<"Allocation"<<allocation(ifleet)<<endl;
+	cMSY.get_fmsy(fmsy,d_ak);
+	cout<<"Fk\t"<<fmsy<<" Msy "<<cMSY.getMsy()<<endl;
+	
+	//dmatrix va(1,ngear,sage,nage);
+	//dvector va_bar(sage,nage);
+	//va_bar.initialize();
+	//
+	//
+	///*CHANGED Allow for user to specify allocation among gear types.*/
+	///*FIXME:  this allocation should be on the catch on the vulnerabilities*/
+	//for(j=1;j<=ngear;j++)
+	//{
+	//	va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
+	//	va(j) = value(exp(log_sel(j)(nyr)));
+	//}
+	//dmatrix V(1,ngear-2,sage,nage);
+	//dvector fk(1,ngear-2);
+	//fk = 0.6*value(m_bar);
+	//for(j=1;j<=ngear-2;j++)
+	//{
+	//	V(j) = value(exp(log_sel(j)(nyr)));
+	//}
+	//
+	//double h = value(theta(2));
+	//cout<<"Declaring class"<<endl;
+	//Msy cMSY(value(ro),h,value(m_bar),avg_wt,avg_fec,V);
+	//cout<<"About to call get_fmsy"<<endl;
+	//fk = cMSY.get_fmsy(fk);
+	
 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
 	           and average fecundity-at-age.
 	*/
-	#if defined(USE_NEW_EQUILIBRIUM)
-		/* Newton-Raphson method to determine MSY-based reference points. */
-		for(i=1;i<=15;i++)
-		{
-			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-		
-			fe = fe - dye_df/d2ye_df2;
-			if(square(dye_df)<1e-12)break;
-		}
-		fmsy=fe;
-		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-				avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-	#endif
 	
-	#if !defined(USE_NEW_EQUILIBRIUM)
-		for(i=1;i<=20;i++)
-		{
-			//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-			//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-			//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
-						avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-		
-			dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
-			ddye_df = phiq*dre_df + re*dphiq_df;
-			fe = fe - dye_df/ddye_df;
-			if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
-			if(sfabs(dye_df)<1.e-5)break;
-		}
-		fmsy=fe;
-		equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
-					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-	#endif
+	//#if defined(USE_NEW_EQUILIBRIUM)
+	//	/* Newton-Raphson method to determine MSY-based reference points. */
+	//	for(i=1;i<=15;i++)
+	//	{
+	//		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+	//				avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
+	//	
+	//		fe = fe - dye_df/d2ye_df2;
+	//		if(square(dye_df)<1e-12)break;
+	//	}
+	//	fmsy=fe;
+	//	equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+	//			avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
+	//#endif
+	//
+	//#if !defined(USE_NEW_EQUILIBRIUM)
+	//	for(i=1;i<=20;i++)
+	//	{
+	//		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
+	//		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+	//		//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	//		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
+	//					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	//	
+	//		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
+	//		ddye_df = phiq*dre_df + re*dphiq_df;
+	//		fe = fe - dye_df/ddye_df;
+	//		if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
+	//		if(sfabs(dye_df)<1.e-5)break;
+	//	}
+	//	fmsy=fe;
+	//	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
+	//				avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	//#endif
 	
-	msy=ye;
-	bmsy=be;
-	Vmsy=be;
-	Umsy=msy/Vmsy;
+	//msy=ye;
+	//bmsy=be;
+	//Vmsy=be;
+	//Umsy=msy/Vmsy;
 	
 	/*TODO print this to the REPORT file for plotting.*/
 	/*SM Loop over discrete value of fe and ensure above code is 
 	finding the correct value of msy.*/
 	
+	//if(!mceval_phase())
+	//{
+	//	ofstream report_file("iscam.eql");
+	//
+	//	if(report_file.is_open())
+	//	{
+	//		report_file<<"index\t fe \t ye \t be \t ve \t re \t spr\n";
+	//	
+	//		fe = 0; i=0;
+	//		while(i < 1500)
+	//		{
+	//			#if !defined(USE_NEW_EQUILIBRIUM)
+	//			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+	//						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
+	//			#endif
+	//		
+	//			#if defined(USE_NEW_EQUILIBRIUM)
+	//			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+	//					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
+	//			#endif
+	//			if(re<=0)break;
+	//		
+	//			double spr = value(-ro/((kappa-1)*re-ro*kappa));
+	//			report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t"<<ve<<"\t";
+	//			report_file<<re<<"\t"<<spr<<endl;
+	//		
+	//			fe += 0.01;
+	//		}
+	//	}
+	//}//exit(1);
 	if(!mceval_phase())
 	{
+		double fmult;
+		dvector fe(1,nfleet);
+		dvector fadj(1,nfleet);
+		
 		ofstream report_file("iscam.eql");
-	
 		if(report_file.is_open())
 		{
-			report_file<<"index\t fe \t ye \t be \t ve \t re \t spr\n";
-		
-			fe = 0; i=0;
-			while(i < 1500)
+			report_file<<"nfleet\n"<<nfleet<<endl;
+			report_file<<"index\t fe\t ye\t be\t re\t spr\t"<<endl;
+			fmult = 0; i=1;
+			while(i<1500)
 			{
-				#if !defined(USE_NEW_EQUILIBRIUM)
-				equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
-							fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-				#endif
-			
-				#if defined(USE_NEW_EQUILIBRIUM)
-				equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-						avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-				#endif
-				if(re<=0)break;
-			
-				double spr = value(-ro/((kappa-1)*re-ro*kappa));
-				report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t"<<ve<<"\t";
-				report_file<<re<<"\t"<<spr<<endl;
-			
-				fe += 0.01;
+				fe = fmult*fmsy;
+				cMSY.calc_equilibrium(fe);
+				report_file<<i++<<"\t"<<elem_div(fe,fmsy)<<cMSY.getYe()<<"\t";
+				report_file<<cMSY.getBe()<<"\t";
+				report_file<<cMSY.getRe()<<"\t";
+				report_file<<cMSY.getSpr()<<endl;
+				
+				fmult += 0.01;
 			}
 		}
-	}//exit(1);
-	
+	}
+	exit(1);
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
   }
 	

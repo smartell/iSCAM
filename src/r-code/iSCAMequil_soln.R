@@ -95,7 +95,7 @@ equil <- function(theta, fe=0)
 		print(sqrt(sum(dye.df^2)))
 		cat("dye\n", dye.df, "\n")
 		#cat("Jacobian\n", J, "\n")
-		browser()
+		#browser()
 		return(fe+delta)
 	})
 }
@@ -103,8 +103,8 @@ equil <- function(theta, fe=0)
 f<-rep(0.2, ngear)
 equil(theta, f)
 
-# f <- rep(0.6*m, ngear)
-# for(iter in 1:100)
-# {
-# 	f <- as.vector(equil(theta, f))
-# }
+f <- rep(0.6*m, ngear)
+for(iter in 1:100)
+{
+	f <- as.vector(equil(theta, f))
+}

@@ -17,6 +17,7 @@
 #define _MSY_H_
 
 #include <admodel.h>
+#include <fvar.hpp>
 
 class Msy{
 private:
@@ -41,6 +42,9 @@ private:
 	double m_re;
 	double m_spr;
 	
+	double m_dYe;
+	double m_d2Ye;
+	
 	
 public:
 	
@@ -50,19 +54,23 @@ public:
 		m_h  = 0.75;
 		m_M  = 0.3;
 	}
-	Msy(double& ro, double& h, double& m, dvector& wa, dvector& fa, dmatrix& V);
+	Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V);
 	
 	~Msy(){}	// destructor
 	
 	// Getters
-	double    getRo() { return m_ro;      }
-	double  getPhie() { return m_phie;    }
-	dvector getFmsy() { return m_fmsy;    }
-	double  getBmsy() { return m_bmsy;    }
-	double  getRmsy() { return m_rmsy;    }
-	dvector  getMsy() { return m_msy;     }
-	double   getspr() { return m_spr_msy; }
-	double    getBo() { return m_bo;      }
+	double     getRo() { return m_ro;      }
+	double   getPhie() { return m_phie;    }
+	dvector  getFmsy() { return m_fmsy;    }
+	double   getBmsy() { return m_bmsy;    }
+	double   getRmsy() { return m_rmsy;    }
+	dvector   getMsy() { return m_msy;     }
+	dvector    getYe() { return m_ye;      }
+	double getSprMsy() { return m_spr_msy; }
+	double     getBo() { return m_bo;      }
+	double     getBe() { return m_be;      }
+	double     getRe() { return m_re;      }
+	double    getSpr() { return m_spr;     }
 	
 	// Setters
 	void set_ro(double ro)   { m_ro = ro; }
@@ -73,26 +81,19 @@ public:
 	void set_fa(dmatrix& V)  { m_V  = V;  }
 	
 	// Member functions
-	void set_memberVariables(double& ro, double& h, double& m, dvector& wa, dvector& fa, dmatrix& V);
 	void calc_phie();
 	void calc_phie(double& _m, dvector& _fa);
 	void calc_bo(double& _m, dvector& _va);
 	void calc_equilibrium(dvector& fe);
 	
-	dvector get_fmsy(dvector& fe);
+	void get_fmsy(dvector& fe);
+	void get_fmsy(dvector& fe, dvector& ak);
 };
 
 #endif
 
 // Constructor with arguments (most likely way user will create an Msy object)
-Msy::Msy(double& ro, double& h, double& m, dvector& wa, dvector& fa, dmatrix& V)
-{
-	set_memberVariables(ro,h,m,wa,fa,V);
-	calc_phie();
-}
-
-// Set private memeber variables for constructor
-void Msy::set_memberVariables(double& ro, double& h, double& m, dvector& wa, dvector& fa, dmatrix& V)
+Msy::Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V)
 {
 	m_ro = ro;
 	m_h  = h;
@@ -100,30 +101,82 @@ void Msy::set_memberVariables(double& ro, double& h, double& m, dvector& wa, dve
 	m_wa = wa;
 	m_fa = fa;
 	m_V  = V;
+	
+	
+	calc_phie();
 }
 
 // Use Newton-Raphson method to get Fmsy
-dvector Msy::get_fmsy(dvector& fe)
+void Msy::get_fmsy(dvector& fe)
 {
 	/*
 		Iteratively solve the derivative of the catch equation
 		to find values of fe that correspond to dYe.df=0
 	*/
-	int iter;
+	int iter = 0;
 	m_delta = 1.0;
 	do
 	{
 		calc_equilibrium(fe);
 		fe += m_delta;
-		//cout<<"norm(delta) ="<<norm(m_delta)<<endl;
+		iter++;
+		//cout<<iter<<"norm(delta) ="<<norm(m_delta)<<endl;
 	}
-	while (norm(m_delta)>1.e-12);
+	while ( norm(m_delta)>1.e-12 && iter < 100 );
 	m_fmsy= fe;
 	m_msy = m_ye;
 	m_bmsy = m_be; 
 	m_rmsy = m_re;
 	m_spr_msy = m_spr;
-	return(fe);
+	
+}
+
+// calculate msy value given an allocation for each gear type.
+void Msy::get_fmsy(dvector& fe, dvector& ak)
+{
+	/*
+		This algorithm iteratively solves for a vector fe that will
+		maximize the sum of catches over all fleets where the catch 
+		is allocated (ak, where sum ak=1) to each fleet.
+		
+		How it works:
+		 - Run the model with all fleets having the same Fe
+		 - Then calculate fmultiplier (lambda) as the ratio 
+		   allocation:yield/sum(yield) and correct Fe's down or up
+		   such that the yield proportions matches the allocation.
+		 - Run the equilibrium model again to get the derivative 
+		   information for the total yield and use Newton-Rhaphson to
+		   update the estimate of fbar.
+		 - Repeat above steps until derivative for the total yield 
+		   approaches zero (1.e-12).
+		
+	*/
+	
+	int iter =1;
+	ak             = ak/sum(ak);
+	double    fbar = mean(fe);
+	dvector lambda = ak/mean(ak);
+	dvector     fk = elem_prod(fe,lambda);
+	
+	do
+	{
+		// Run the model with constant fk = fbar to get
+		// lambda multipliers.
+		fk     = fbar;
+		calc_equilibrium(fk);
+		lambda = elem_div(ak,m_ye/sum(m_ye));
+		
+		// Run the model with fk = lambda*fbar to get
+		// derivatives of the total catch equation to update fbar;
+		fk     = fbar*lambda;
+		calc_equilibrium(fk);
+		
+		fbar   = fbar - m_dYe/m_d2Ye;
+		iter++;
+		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<endl;
+	}
+	while ( sqrt(square(m_dYe)) >1.e-12 && iter < 100 );
+	fe = fk;
 }
 
 // calculate survivorship under fished conditions
@@ -149,18 +202,17 @@ void Msy::calc_equilibrium(dvector& fe)
 	dvector lz(sage,nage);
 	dmatrix dlz(1,ngear,sage,nage);
 	dmatrix d2lz(1,ngear,sage,nage);
-	dmatrix V = m_V;
 	dlz.initialize();
 	d2lz.initialize();
-	dvector wa = m_wa;
-	dvector za = m_M + fe * V;
+
+	dvector za = m_M + fe * m_V;
 	dvector sa = exp(-za);
 	dvector oa = 1.-sa;
 	dmatrix qa(1,ngear,sage,nage);
 	
 	for(k=1;k<=ngear;k++)
 	{
-		qa(k)        = elem_div(elem_prod(elem_prod(V(k),wa),oa),za);
+		qa(k)        = elem_div(elem_prod(elem_prod(m_V(k),m_wa),oa),za);
 		dlz(k,sage)  = 0;
 		d2lz(k,sage) = 0;
 	}
@@ -176,15 +228,15 @@ void Msy::calc_equilibrium(dvector& fe)
 		
 		for(k=1; k<=ngear; k++)
 		{
-			dlz(k)(j)  = sa(j-1) * ( dlz(k)(j-1) - lz(j-1)*V(k)(j-1) );
-			d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*V(k)(j-1)*V(k)(j-1) );
+			dlz(k)(j)  = sa(j-1) * ( dlz(k)(j-1) - lz(j-1)*m_V(k)(j-1) );
+			d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*m_V(k)(j-1)*m_V(k)(j-1) );
 			
 			if( j==nage ) // + group derivatives
 			{
-				dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*V(k)(j)*sa(j)/square(oa(j));
+				dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*m_V(k)(j)*sa(j)/square(oa(j));
 				
-				double V1  = V(k)(j-1);
-				double V2  = V(k)(j);
+				double V1  = m_V(k)(j-1);
+				double V2  = m_V(k)(j);
 				double oa2 = oa(j)*oa(j);
 				
 				d2lz(k)(j) = d2lz(k)(j)/oa(j) 
@@ -218,22 +270,22 @@ void Msy::calc_equilibrium(dvector& fe)
 		// per recruit yield
 		phiq(k)    = lz * qa(k);
 		
-		dvector t1 = elem_div(elem_prod(elem_prod(lz,wa),V(k)),za);
+		dvector t1 = elem_div(elem_prod(elem_prod(lz,m_wa),m_V(k)),za);
 		dvector t0 = elem_div(oa,za);
 		dvector t3 = sa-t0;
 		dphiq(k)   = qa(k)*dlz(k) + t1 * t3;
 		
 		// 2nd derivative for per recruit yield (nasty)
 		dvector t2  = 2. * dlz(k);
-		dvector V2  = elem_prod(V(k),V(k));
-		dvector t5  = elem_div(elem_prod(wa,V2),za);
-		dvector t7  = elem_div(V(k),za);
+		dvector V2  = elem_prod(m_V(k),m_V(k));
+		dvector t5  = elem_div(elem_prod(m_wa,V2),za);
+		dvector t7  = elem_div(m_V(k),za);
 		dvector t9  = elem_prod(t5,sa);
 		dvector t11 = elem_prod(t5,t0);
 		dvector t13 = elem_prod(lz,t5);
-		dvector t14 = elem_prod(V(k),sa);
+		dvector t14 = elem_prod(m_V(k),sa);
 		dvector t15 = elem_prod(t7,sa);
-		dvector t17 = elem_prod(V(k),t0);
+		dvector t17 = elem_prod(m_V(k),t0);
 		dvector t18 = elem_div(t17,za);
 		d2phiq(k)  =  d2lz(k)*qa(k) + t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 + 2.*t13*t18;
 		
@@ -276,9 +328,9 @@ void Msy::calc_equilibrium(dvector& fe)
 	m_re    = re;
 	m_be    = re*phif;
 	m_spr   = phif/m_phie;
-	//cout<<"phie\n"<<m_phie<<endl;
-	//cout<<"d2lz\n"<<d2lz<<endl;
-	//cout<<"Jacobian\n"<<d2ye<<endl;
+	m_dYe   = sum(dye);
+	m_d2Ye  = sum(diagonal(d2ye));
+	
 }
 
 // calculate unfished Eggs per recruit
@@ -312,7 +364,7 @@ void Msy::calc_phie(double& _m, dvector& _fa)
 		lx(i) = exp( -m_M*(i-sage) );
 		if(i==nage) lx(i)/=1.-exp(-m_M);
 	}
-	m_phie = lx*m_fa;
+	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }
 
