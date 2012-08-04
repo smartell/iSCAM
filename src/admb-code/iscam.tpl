@@ -2048,25 +2048,36 @@ FUNCTION void calc_reference_points()
 	double  d_m  = value(m_bar);
 	dvector d_wa = (avg_wt);
 	dvector d_fa = (avg_fec);
-	
-	fmsy = 0.6*d_m;	// initial guess for Fmsy
+	static dvector ftry = d_m*d_ak;
+	fmsy = ftry;	// initial guess for Fmsy
 	
 	Msy cMSY(d_ro,d_h,d_m,d_wa,d_fa,d_V);
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
 	bo   = cMSY.getBo();
-	
-	
-	cout<<"Fmsy\t"<<fmsy<<endl;
-	cout<<"MSY \t"<<msy<<endl;
-	cout<<"Bo  \t"<<bo<<endl;
-	cout<<"Bmsy\t"<<bmsy<<endl;
+	if(nf==1) ftry = fmsy;
+	cout<<"------------------------"<<endl;
+	cout<<"Ftry      \t"<<ftry<<endl;
+	cout<<"Fmsy      \t"<<fmsy<<endl;
+	cout<<"MSY       \t"<<msy<<endl;
+	cout<<"Bo        \t"<<bo<<endl;
+	cout<<"Bmsy      \t"<<bmsy<<endl;
+	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
+	cout<<"------------------------"<<endl;
 	
 	/* (4) Now do it with allocation */
-	cout<<"Allocation"<<allocation(ifleet)<<endl;
+	cout<<"\nAllocation"<<allocation(ifleet)<<endl;
+	fmsy = ftry;
 	cMSY.get_fmsy(fmsy,d_ak);
-	cout<<"Fk\t"<<fmsy<<" Msy "<<cMSY.getMsy()<<endl;
+	cout<<"Fk        \t"<<fmsy<<endl;
+	cout<<"Yield     \t"<<cMSY.getYe()<<endl;
+	cout<<"Be        \t"<<cMSY.getBe()<<endl;
+	cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
+	cout<<"------------------------"<<endl;
+	
+	//The following code should be deprecated, along with the two equilibrium functions
+	//as this reference point material is now hanlded by the Msy class.
 	
 	//dmatrix va(1,ngear,sage,nage);
 	//dvector va_bar(sage,nage);
@@ -2188,7 +2199,7 @@ FUNCTION void calc_reference_points()
 			{
 				fe = fmult*fmsy;
 				cMSY.calc_equilibrium(fe);
-				report_file<<i++<<"\t"<<elem_div(fe,fmsy)<<cMSY.getYe()<<"\t";
+				report_file<<i++<<"\t"<<fe<<cMSY.getYe()<<"\t";
 				report_file<<cMSY.getBe()<<"\t";
 				report_file<<cMSY.getRe()<<"\t";
 				report_file<<cMSY.getSpr()<<endl;
@@ -2197,7 +2208,7 @@ FUNCTION void calc_reference_points()
 			}
 		}
 	}
-	exit(1);
+	//exit(1);
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
   }
 	

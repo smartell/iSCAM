@@ -16,34 +16,39 @@
 #ifndef _MSY_H_
 #define _MSY_H_
 
+#define STPMX 100
 #include <admodel.h>
 #include <fvar.hpp>
+//#include <lnsrch.cpp>
 
 class Msy{
 private:
-	double m_ro;
-	double m_h;
-	double m_M;
+	double  m_ro;
+	double  m_h;
+	double  m_M;
 	dvector m_wa;
 	dvector m_fa;
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
 	
-	double m_phie;
-	dvector m_delta; // Newton-Raphson step for iteratively solving for Fmsy
+	double  m_phie;
 	dvector m_fmsy;
 	dvector m_msy;
-	double m_bmsy;
-	double m_rmsy;
-	double m_spr_msy;
-	double m_bo;
+	double  m_bmsy;
+	double  m_rmsy;
+	double  m_spr_msy;
+	double  m_bo;
 	
 	dvector m_ye;
-	double m_be;
-	double m_re;
-	double m_spr;
+	double  m_be;
+	double  m_re;
+	double  m_spr;
 	
 	double m_dYe;
 	double m_d2Ye;
+	
+	double  m_f;	// value of the function to minimize (norm(p))
+	dvector m_g;	// gradient
+	dvector m_p;	// Newton-Raphson step for iteratively solving for Fmsy
 	
 	
 public:
@@ -88,6 +93,7 @@ public:
 	
 	void get_fmsy(dvector& fe);
 	void get_fmsy(dvector& fe, dvector& ak);
+	
 };
 
 #endif
@@ -112,17 +118,36 @@ void Msy::get_fmsy(dvector& fe)
 	/*
 		Iteratively solve the derivative of the catch equation
 		to find values of fe that correspond to dYe.df=0
+		
+		Use Newtons method to interatively solve for fe in the range
+		of x1 to x2.  If fe is outside the range of x1--x2, then use
+		a simple bisection method to reduce the step size m_p.
 	*/
+	int i;
 	int iter = 0;
-	m_delta = 1.0;
+	int n    = size_count(fe);
+	double x1, x2;
+	x1 = 1.0e-5;
+	x2 = 3.0e02;
+	m_p      = 1.0;
 	do
 	{
 		calc_equilibrium(fe);
-		fe += m_delta;
+		fe += m_p;
 		iter++;
-		//cout<<iter<<"norm(delta) ="<<norm(m_delta)<<endl;
+		
+		// check boundary conditions
+		for(i = 1; i<=n; i++)
+		{
+			if( (x1-fe[i])*(fe[i]-x2) < 0.0 )
+			{                                 // backtrack 95% of the newton step.
+				fe[i] -= 0.98*m_p[i];         // if outside the boundary conditions.
+			}
+		}
+		
 	}
-	while ( norm(m_delta)>1.e-12 && iter < 100 );
+	while ( norm(m_p)>1.e-7 && iter < 200 );
+
 	m_fmsy= fe;
 	m_msy = m_ye;
 	m_bmsy = m_be; 
@@ -130,6 +155,7 @@ void Msy::get_fmsy(dvector& fe)
 	m_spr_msy = m_spr;
 	
 }
+
 
 // calculate msy value given an allocation for each gear type.
 void Msy::get_fmsy(dvector& fe, dvector& ak)
@@ -151,12 +177,17 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		   approaches zero (1.e-12).
 		
 	*/
-	
+	int i;
+	int n = size_count(fe);
 	int iter =1;
 	ak             = ak/sum(ak);
 	double    fbar = mean(fe);
 	dvector lambda = ak/mean(ak);
 	dvector     fk = elem_prod(fe,lambda);
+	dvector p(1,n);
+	double x1, x2;
+	x1 = 1.0e-5;
+	x2 = 3.0e02;
 	
 	do
 	{
@@ -170,12 +201,20 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		// derivatives of the total catch equation to update fbar;
 		fk     = fbar*lambda;
 		calc_equilibrium(fk);
+		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
 		
 		fbar   = fbar - m_dYe/m_d2Ye;
 		iter++;
-		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<endl;
+		
+		// Check boundary conditions and reduce step size if necessary.
+		if( (x1-fbar)*(fbar-x2)<0.0 )
+		{
+			cout<<"Outside bounds in get_fmsy(fe,ak)"<<endl;
+			exit(1);
+		}
+ 		
 	}
-	while ( sqrt(square(m_dYe)) >1.e-12 && iter < 100 );
+	while ( sqrt(square(m_dYe)) >1.e-12 && iter < 200 );
 	fe = fk;
 }
 
@@ -321,15 +360,17 @@ void Msy::calc_equilibrium(dvector& fe)
 		} 
 	}
 	
-	invJ    = -inv(d2ye);
-	fstp    = invJ * dye;  //Newton-Raphson step.
-	m_delta = fstp;
-	m_ye    = ye;
-	m_re    = re;
-	m_be    = re*phif;
-	m_spr   = phif/m_phie;
-	m_dYe   = sum(dye);
-	m_d2Ye  = sum(diagonal(d2ye));
+	invJ   = -inv(d2ye);
+	fstp   = invJ * dye;  //Newton-Raphson step.
+	m_p    = fstp;
+	m_ye   = ye;
+	m_re   = re;
+	m_be   = re*phif;
+	m_spr  = phif/m_phie;
+	m_dYe  = sum(dye);
+	m_d2Ye = sum(diagonal(d2ye));
+	m_g    = dye;		  //Gradient vector
+	m_f    = norm(m_g);   //Value of the function to minimize
 	
 }
 
@@ -372,3 +413,4 @@ void Msy::calc_bo(double& _m, dvector& _fa)
 {
 	calc_phie(_m,_fa);
 }
+
