@@ -26,6 +26,7 @@ private:
 	double  m_ro;
 	double  m_h;
 	double  m_M;
+	double  m_zfrac;
 	dvector m_wa;
 	dvector m_fa;
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
@@ -59,7 +60,7 @@ public:
 		m_h  = 0.75;
 		m_M  = 0.3;
 	}
-	Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V);
+	Msy(double ro, double h, double m, double zfrac, dvector wa, dvector fa, dmatrix V);
 	
 	~Msy(){}	// destructor
 	
@@ -71,11 +72,13 @@ public:
 	double   getRmsy() { return m_rmsy;    }
 	dvector   getMsy() { return m_msy;     }
 	dvector    getYe() { return m_ye;      }
+	dvector   getdYe() { return m_g;       }
 	double getSprMsy() { return m_spr_msy; }
 	double     getBo() { return m_bo;      }
 	double     getBe() { return m_be;      }
 	double     getRe() { return m_re;      }
 	double    getSpr() { return m_spr;     }
+	
 	
 	// Setters
 	void set_ro(double ro)   { m_ro = ro; }
@@ -99,14 +102,15 @@ public:
 #endif
 
 // Constructor with arguments (most likely way user will create an Msy object)
-Msy::Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V)
+Msy::Msy(double ro, double h, double m, double zfrac, dvector wa, dvector fa, dmatrix V)
 {
-	m_ro = ro;
-	m_h  = h;
-	m_M  = m;
-	m_wa = wa;
-	m_fa = fa;
-	m_V  = V;
+	m_ro    = ro;
+	m_h     = h;
+	m_M     = m;
+	m_zfrac = zfrac;
+	m_wa    = wa;
+	m_fa    = fa;
+	m_V     = V;
 	
 	
 	calc_phie();
@@ -121,7 +125,7 @@ void Msy::get_fmsy(dvector& fe)
 		
 		Use Newtons method to interatively solve for fe in the range
 		of x1 to x2.  If fe is outside the range of x1--x2, then use
-		a simple bisection method to reduce the step size m_p.
+		a simple bactrace method method to reduce the step size m_p.
 	*/
 	int i;
 	int iter = 0;
@@ -130,6 +134,9 @@ void Msy::get_fmsy(dvector& fe)
 	x1 = 1.0e-5;
 	x2 = 3.0e02;
 	m_p      = 1.0;
+	// Spawning biomass per recruit for unfished conditions
+	calc_phie(m_M,m_fa);
+	
 	do
 	{
 		calc_equilibrium(fe);
@@ -145,13 +152,14 @@ void Msy::get_fmsy(dvector& fe)
 			}
 		}
 		
+		//cout<<iter<<" fe "<<fe<<" g "<<m_g<<endl;
 	}
-	while ( norm(m_p)>1.e-7 && iter < 200 );
-
-	m_fmsy= fe;
-	m_msy = m_ye;
-	m_bmsy = m_be; 
-	m_rmsy = m_re;
+	while ( m_f>1.e-12 && iter < 200 );
+	
+	m_fmsy    = fe;
+	m_msy     = m_ye;
+	m_bmsy    = m_be; 
+	m_rmsy    = m_re;
 	m_spr_msy = m_spr;
 	
 }
@@ -188,6 +196,8 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	double x1, x2;
 	x1 = 1.0e-5;
 	x2 = 3.0e02;
+	// Spawning biomass per recruit for unfished conditions
+	calc_phie(m_M,m_fa);
 	
 	do
 	{
@@ -236,6 +246,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	sage  = m_wa.indexmin();
 	nage  = m_wa.indexmax();
 	ngear = m_V.rowmax();
+	
 	
 	// Survivorship for fished conditions.
 	dvector lz(sage,nage);
@@ -292,6 +303,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	double   kappa = 4.0*m_h/(1.0-m_h);  // Beverton-Holt model
 	double     km1 = kappa-1.0;
 	double    phif = lz * m_fa;
+	//double    phif = elem_prod(lz,exp(-za*m_zfrac)) * m_fa;
 	double   phif2 = phif*phif;
 	dvector  dphif(1,ngear);
 	dvector d2phif(1,ngear);
@@ -300,6 +312,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	dvector d2phiq(1,ngear);
 	dvector    dre(1,ngear);
 	dvector   d2re(1,ngear);
+	dvector     t1(sage,nage);
 	
 	for(k=1; k<=ngear; k++)
 	{
@@ -308,8 +321,16 @@ void Msy::calc_equilibrium(dvector& fe)
 		
 		// per recruit yield
 		phiq(k)    = lz * qa(k);
-		
-		dvector t1 = elem_div(elem_prod(elem_prod(lz,m_wa),m_V(k)),za);
+		if(ngear==1)
+		{
+			// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
+			t1 = elem_div(elem_prod(elem_prod(lz,m_wa),square(m_V(k))),za);
+		}
+		else
+		{
+			// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
+			t1 = elem_div(elem_prod(elem_prod(lz,m_wa),m_V(k)),za);
+		}
 		dvector t0 = elem_div(oa,za);
 		dvector t3 = sa-t0;
 		dphiq(k)   = qa(k)*dlz(k) + t1 * t3;
@@ -330,7 +351,8 @@ void Msy::calc_equilibrium(dvector& fe)
 		
 		
 		// 1st & 2nd partial derivatives for recruitment
-		dre(k)      = ro/km1*m_phie/(phif2)*dphif(k);
+		//dre(k)      = ro/km1*m_phie/(phif2)*dphif(k);
+		dre(k)      = ro*m_phie*dphif(k)/(phif2*km1);
 		d2re(k)     = -2.*ro*m_phie*dphif(k)*dphif(k)/(phif2*phif*km1) 
 					+ ro*m_phie*d2phif(k)/(phif2*km1);
 	}
@@ -343,7 +365,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	dmatrix d2ye(1,ngear,1,ngear);
 	dmatrix invJ(1,ngear,1,ngear);
 	
-	re   = ro*(kappa-m_phie/phif)/km1;
+	re   = ro*(kappa-m_phie/phif) / km1;
 	ye   = re*elem_prod(fe,phiq);
 	dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
 	
@@ -362,6 +384,8 @@ void Msy::calc_equilibrium(dvector& fe)
 	
 	invJ   = -inv(d2ye);
 	fstp   = invJ * dye;  //Newton-Raphson step.
+	
+	// Set private members
 	m_p    = fstp;
 	m_ye   = ye;
 	m_re   = re;
@@ -372,6 +396,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	m_g    = dye;		  //Gradient vector
 	m_f    = norm(m_g);   //Value of the function to minimize
 	
+	// cout<<"fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
 }
 
 // calculate unfished Eggs per recruit
@@ -386,10 +411,9 @@ void Msy::calc_phie()
 		lx(i) = exp( -m_M*(i-sage) );
 		if(i==nage) lx(i)/=1.-exp(-m_M);
 	}
-	m_phie = lx*m_fa;
+	//m_phie = lx*exp(-m_M * m_zfrac)   * m_fa;
+	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
-	//cout<<"This is lx "<<lx<<endl;
-	//cout<<"This is phie "<<m_phie<<endl;
 }
 
 void Msy::calc_phie(double& _m, dvector& _fa)
@@ -405,6 +429,7 @@ void Msy::calc_phie(double& _m, dvector& _fa)
 		lx(i) = exp( -m_M*(i-sage) );
 		if(i==nage) lx(i)/=1.-exp(-m_M);
 	}
+	//m_phie = lx*exp(-m_M * m_zfrac)   * m_fa;
 	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }

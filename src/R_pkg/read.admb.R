@@ -110,3 +110,11 @@ function(fn, nsamples=10000)
 	close(filen)
 	return(mcmc)
 }
+# A simple function for creating transparent colors
+# Author: Nathan Stephens (hacks package)
+colr <- 
+function(col.pal=1,a=1)
+{
+    col.rgb<-col2rgb(col.pal)/255
+    rgb(t(col.rgb),alpha=a)
+}

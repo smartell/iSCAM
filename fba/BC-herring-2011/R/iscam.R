@@ -28,8 +28,9 @@
 #                                                                               #
 #-------------------------------------------------------------------------------#
 
-require(hacks)	#transparent colors using the function colr("color",tranparency)
+#require(hacks)	#transparent colors using the function colr("color",tranparency) deprecated
 require(Riscam)	#custom library built specifically for iscam.
+require(reshape)
 require(Hmisc)
 require(ggplot2)
 source("read.admb.R")
@@ -928,10 +929,10 @@ guiView	<- function()
 	op=par(no.readonly=T)
 	with(admbObj, {
 		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
-		par(mfcol=c(2, 2))
-		for(i in 8:11)
+		par(mfcol=c(3, 3))
+		for(i in 8:15)
 		{
-			ps=mcmc[, i]
+			ps=mcmc[mcmc[, i]>0, i]
 			xl=range(ps)
 			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
 				main="", ylab="",
@@ -963,7 +964,6 @@ guiView	<- function()
 			yl = "Spawning biomass depletion"
 		}
 			
-
 		matplot(xx, yy, type="n", xlab="Year", 
 			ylab=yl, axes=FALSE, 
 			ylim=c(0, 1.0*max(yy)), main=paste(stock) )
@@ -1198,7 +1198,7 @@ guiView	<- function()
 		
 		#Marginals for q
 		n=dim(mcmc)[2]
-		for(i in 17:18)
+		for(i in 21:22)
 		{
 			ps = mcmc[, i]  #posterior samples
 			xl=c(-2, 1)#range(ps)

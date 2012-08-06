@@ -2046,30 +2046,38 @@ FUNCTION void calc_reference_points()
 	double  d_ro = value(ro);
 	double  d_h  = value(theta(2));
 	double  d_m  = value(m_bar);
+	double  d_zf = cntrl(13) * 0;
 	dvector d_wa = (avg_wt);
 	dvector d_fa = (avg_fec);
 	static dvector ftry = d_m*d_ak;
 	fmsy = ftry;	// initial guess for Fmsy
 	
-	Msy cMSY(d_ro,d_h,d_m,d_wa,d_fa,d_V);
+	Msy cMSY(d_ro,d_h,d_m,d_zf,d_wa,d_fa,d_V);
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
-	bo   = cMSY.getBo();
+	bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
+	cout<<"Bo from cMSY   "<<bo<<endl;
+	cout<<"Bmsy from cMSY "<<bmsy<<endl;
 	if(nf==1) ftry = fmsy;
+	
 	cout<<"------------------------"<<endl;
 	cout<<"Ftry      \t"<<ftry<<endl;
 	cout<<"Fmsy      \t"<<fmsy<<endl;
 	cout<<"MSY       \t"<<msy<<endl;
+	cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
 	cout<<"Bo        \t"<<bo<<endl;
 	cout<<"Bmsy      \t"<<bmsy<<endl;
 	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
 	cout<<"------------------------"<<endl;
 	
 	/* (4) Now do it with allocation */
-	cout<<"\nAllocation"<<allocation(ifleet)<<endl;
+	//cout<<"\nAllocation"<<allocation(ifleet)<<endl;
 	fmsy = ftry;
 	cMSY.get_fmsy(fmsy,d_ak);
+	
+	Umsy = sum(cMSY.getYe())/cMSY.getBe();
+	cout<<"------------------------"<<endl;
 	cout<<"Fk        \t"<<fmsy<<endl;
 	cout<<"Yield     \t"<<cMSY.getYe()<<endl;
 	cout<<"Be        \t"<<cMSY.getBe()<<endl;
@@ -2183,8 +2191,18 @@ FUNCTION void calc_reference_points()
 	//		}
 	//	}
 	//}//exit(1);
+	
+	
+	//cout<<"Ro     "<<d_ro<<endl;
+	//cout<<"h      "<<d_h<<endl;
+	//cout<<"m      "<<d_m<<endl;
+	//cout<<"Zf     "<<d_zf<<endl;
+	//cout<<"wa     "<<d_wa<<endl;
+	//cout<<"fa     "<<d_fa<<endl;
+	//cout<<"V      "<<d_V<<endl;
 	if(!mceval_phase())
 	{
+		Msy cRFP(d_ro,d_h,d_m,d_zf,d_wa,d_fa,d_V);
 		double fmult;
 		dvector fe(1,nfleet);
 		dvector fadj(1,nfleet);
@@ -2192,18 +2210,29 @@ FUNCTION void calc_reference_points()
 		ofstream report_file("iscam.eql");
 		if(report_file.is_open())
 		{
-			report_file<<"nfleet\n"<<nfleet<<endl;
-			report_file<<"index\t fe\t ye\t be\t re\t spr\t"<<endl;
+			report_file<<"      index";
+			for(k=1;k<=nfleet;k++) report_file<<"        fe"<<k;
+			for(k=1;k<=nfleet;k++) report_file<<"        ye"<<k;
+			for(k=1;k<=nfleet;k++) report_file<<"       dye"<<k;
+			report_file<<"         be";
+			report_file<<"         re";
+			report_file<<"        spr";
+			report_file<<endl;
+			
 			fmult = 0; i=1;
-			while(i<1500)
+			while(i<300)
 			{
 				fe = fmult*fmsy;
-				cMSY.calc_equilibrium(fe);
-				report_file<<i++<<"\t"<<fe<<cMSY.getYe()<<"\t";
-				report_file<<cMSY.getBe()<<"\t";
-				report_file<<cMSY.getRe()<<"\t";
-				report_file<<cMSY.getSpr()<<endl;
-				
+				cRFP.calc_equilibrium(fe);
+				report_file<<setw(11)<<i++;
+				report_file<<setw(10)<<fe;
+				report_file<<setw(10)<<cRFP.getYe();
+				report_file<<setw(10)<<cRFP.getdYe();
+				report_file<<setw(11)<<cRFP.getBe();
+				report_file<<setw(11)<<cRFP.getRe();
+				report_file<<setw(11)<<cRFP.getSpr();
+				report_file<<endl;
+
 				fmult += 0.01;
 			}
 		}
@@ -2599,28 +2628,14 @@ FUNCTION void simulation_model(const long& seed)
 	//exit(1);
   }
 	
-FUNCTION dvector cis(const dvector& na)
-  {
-	//Cohort Influenced Selectivity
-	//This function returns a vector of residuals from a
-	//linear regression of log(pa)= a+b*age+res that can be
-	//used to modify age-based selectivity according to relative
-	//cohort strengths.
-	
-	//SM  Currently not used at all in iscam and should be deprecated.
-	dvector y = log(na);
-	dvector x = age;
-	double b = sum(elem_prod(x-mean(x),y-mean(y)))/sum(square(x-mean(x)));
-	double a = mean(y)-b*mean(x);
-	dvector res = y - (a+b*x);
-	return(res);
-  }
 
 REPORT_SECTION
   {
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	int i,j,k;
-	REPORT(ControlFile);
+	report<<DataFile<<endl;
+	report<<ControlFile<<endl;
+	report<<ProjectFileControl<<endl;
 	REPORT(f);
 	REPORT(nlvec);
 	REPORT(ro);
@@ -2691,7 +2706,8 @@ REPORT_SECTION
 	REPORT(wt_obs);
 
 	if(last_phase())
-	{	calc_reference_points();
+	{
+		calc_reference_points();
 		REPORT(fmsy);
 		REPORT(msy);
 		REPORT(bmsy);
@@ -2704,7 +2720,7 @@ REPORT_SECTION
 	REPORT(ctrl);
 	
 	
-	//if(last_phase()) projection_model(0);
+	if(last_phase()) decision_table();
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -2765,7 +2781,7 @@ FUNCTION decision_table
 	*/
 	int i;
 	// 1) Calculate reference pionts.
-	calc_reference_points();
+	//calc_reference_points();  //redundant b/c its called in mcmc_output?
 	
 	// 2) Loop over vector of proposed catches
 	//    This vector should is now read in from the projection file control (pfc).
@@ -2778,14 +2794,26 @@ FUNCTION decision_table
 FUNCTION mcmc_output
   {
 	if(nf==1){
-		adstring str_q;
-		str_q="lnq";
 		ofstream ofs("iscam.mcmc");
-		ofs<<"log.ro\t h\t log.m\t log.rbar\t log.rinit\t rho\t vartheta\t";
-		ofs<<"bo\t bmsy\t msy\t fmsy\t";
-		ofs<<"SSB\t Age-4\t Poor\t Average\t Good\t";
-		for(int i=1;i<=nit;i++)ofs<<str_q<<i<<"\t";
-		ofs<<"f\t"<<endl;
+		ofs<<"     log.ro";
+		ofs<<"      log.h";
+		ofs<<"      log.m";
+		ofs<<"   log.rbar";
+		ofs<<"  log.rinit";
+		ofs<<"        rho";
+		ofs<<"   vartheta";
+		ofs<<"         bo";
+		ofs<<"       bmsy";
+		for(int k=1;k<=nfleet;k++) ofs<<"       msy"<<k;
+		for(int k=1;k<=nfleet;k++) ofs<<"      fmsy"<<k;
+		ofs<<"        SSB";
+		ofs<<"      Age-4";
+		ofs<<"       Poor";
+		ofs<<"    Average";
+		ofs<<"       Good";
+		for(int i=1;i<=nit;i++) ofs<<"       lnq"<<i;
+		ofs<<"          f";
+		ofs<<endl;
 		
 		ofstream of1("sbt.mcmc");
 		ofstream of2("rt.mcmc");
@@ -2799,18 +2827,25 @@ FUNCTION mcmc_output
 	double future_bt4 = sum(future_bt(4,nage));
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	ofstream ofs("iscam.mcmc",ios::app);
-	ofs<<theta;
-	ofs<<" "<<bo<<" "<<bmsy<<" "<<msy<<" "<<fmsy<<"\t\t";
-	ofs<<sbt(nyr)<<" "<<future_bt4<<" "<<future_bt4+rt3<<"\t\t";
-	ofs<<log(q)<<" "<<f<<endl;
+	ofs<<setw(10)<<theta;
+	ofs<<setw(11)<< bo;
+	ofs<<setw(11)<< bmsy;
+	ofs<<setw(10)<< msy;
+	ofs<<setw(10)<< fmsy;
+	ofs<<setw(11)<< sbt(nyr);
+	ofs<<setw(11)<< future_bt4;
+	ofs<<setw(10)<< future_bt4+rt3;
+	ofs<<setw(10)<< log(q);
+	ofs<<setw(11)<< f;
+	ofs<<endl;
 	
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);
-	of1<<sbt(syr,nyr)<<endl;
+	of1<<setw(10)<<sbt(syr,nyr)<<endl;
 	
 	// output age-1 recruits
 	ofstream of2("rt.mcmc",ios::app);
-	of2<<rt<<endl;
+	of2<<setw(10)<<rt<<endl;
 	
 	/* June 12, 2012.  SJDM Call decision table. */
 	decision_table();  
@@ -2959,8 +2994,7 @@ FUNCTION void projection_model(const double& tac);
 	for(i = nyr+1; i<=pyr; i++)
 	{
 		//get_ft is defined in the Baranov.cxx file
-		//(wt_obs(nyr+1) is the average wt at age in the last 5 years)
-		p_ft(i) = get_ft(p_ct,value(m_bar),va_bar,p_N(i),wt_obs(nyr+1));
+		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
 		
 		//Calculate mortality
 		p_Z(i) = value(m_bar);
@@ -2974,7 +3008,7 @@ FUNCTION void projection_model(const double& tac);
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*avg_fec;
 		
 		//Age-sage recruits
-		double tau = value((1.-rho)/varphi); 
+		double tau = value((1.-rho)/varphi) * 0; 
 		double xx = randn(nf+i)*tau;
 		
 		if(i>=syr+sage-1)
@@ -2990,7 +3024,15 @@ FUNCTION void projection_model(const double& tac);
 		p_N(i+1)(sage+1,nage)=++elem_prod(p_N(i)(sage,nage-1),exp(-p_Z(i)(sage,nage-1)));
 		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
 		
-	}
+		//Predicted catch for checking calculations
+		//for(k=1;k<=nfleet;k++)
+		//{
+		//	dvector ba = elem_prod(p_N(i),avg_wt);
+		//	cout<<k<<" tac = "<<tac<<"\t ct = ";
+		//	cout<<sum(elem_div(elem_prod(elem_prod(ba,p_ft(i,k)*va_bar(k)),1.-exp(-p_Z(i))),p_Z(i)));
+		//	cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
+		//}
+	}	
 	
 	/* 
 	  Write output to *.proj file for constructing decision tables. 
@@ -3082,10 +3124,9 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	#include <statsLib.h>
-	//#include "refpoints.cpp"
 	#include "msy.cpp"
 	//#include "stats.cxx"
-	//#include "baranov.cxx"
+	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
