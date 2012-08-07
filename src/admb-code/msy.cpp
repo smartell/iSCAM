@@ -26,7 +26,6 @@ private:
 	double  m_ro;
 	double  m_h;
 	double  m_M;
-	double  m_zfrac;
 	dvector m_wa;
 	dvector m_fa;
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
@@ -60,7 +59,7 @@ public:
 		m_h  = 0.75;
 		m_M  = 0.3;
 	}
-	Msy(double ro, double h, double m, double zfrac, dvector wa, dvector fa, dmatrix V);
+	Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V);
 	
 	~Msy(){}	// destructor
 	
@@ -82,32 +81,30 @@ public:
 	
 	// Setters
 	void set_ro(double ro)   { m_ro = ro; }
-	void set_m(double m)     { m_M  = m;  }
-	void set_h(double& h)    { m_h  = h;  }
+	void  set_m(double m)    { m_M  = m;  }
+	void  set_h(double& h)   { m_h  = h;  }
 	void set_fa(dvector& fa) { m_fa = fa; }
 	void set_wa(dvector& wa) { m_wa = wa; }
 	void set_fa(dmatrix& V)  { m_V  = V;  }
 	
 	// Member functions
-	void calc_phie();
-	void calc_phie(double& _m, dvector& _fa);
-	void calc_bo(double& _m, dvector& _va);
+	void        calc_phie();
+	void        calc_phie(double& _m, dvector& _fa);
+	void          calc_bo(double& _m, dvector& _va);
 	void calc_equilibrium(dvector& fe);
-	
-	void get_fmsy(dvector& fe);
-	void get_fmsy(dvector& fe, dvector& ak);
+	void         get_fmsy(dvector& fe);
+	void         get_fmsy(dvector& fe, dvector& ak);
 	
 };
 
 #endif
 
 // Constructor with arguments (most likely way user will create an Msy object)
-Msy::Msy(double ro, double h, double m, double zfrac, dvector wa, dvector fa, dmatrix V)
+Msy::Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V)
 {
 	m_ro    = ro;
 	m_h     = h;
 	m_M     = m;
-	m_zfrac = zfrac;
 	m_wa    = wa;
 	m_fa    = fa;
 	m_V     = V;
@@ -303,7 +300,6 @@ void Msy::calc_equilibrium(dvector& fe)
 	double   kappa = 4.0*m_h/(1.0-m_h);  // Beverton-Holt model
 	double     km1 = kappa-1.0;
 	double    phif = lz * m_fa;
-	//double    phif = elem_prod(lz,exp(-za*m_zfrac)) * m_fa;
 	double   phif2 = phif*phif;
 	dvector  dphif(1,ngear);
 	dvector d2phif(1,ngear);
@@ -411,7 +407,7 @@ void Msy::calc_phie()
 		lx(i) = exp( -m_M*(i-sage) );
 		if(i==nage) lx(i)/=1.-exp(-m_M);
 	}
-	//m_phie = lx*exp(-m_M * m_zfrac)   * m_fa;
+	
 	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }
@@ -429,7 +425,7 @@ void Msy::calc_phie(double& _m, dvector& _fa)
 		lx(i) = exp( -m_M*(i-sage) );
 		if(i==nage) lx(i)/=1.-exp(-m_M);
 	}
-	//m_phie = lx*exp(-m_M * m_zfrac)   * m_fa;
+	
 	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }

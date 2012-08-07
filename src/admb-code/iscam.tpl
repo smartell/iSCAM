@@ -367,6 +367,7 @@ DATA_SECTION
 	
 	
 	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
+	vector fall(1,nfleet);			//Fishing mortality based on allocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 	number Umsy;					//Exploitation rate at MSY
@@ -1435,7 +1436,8 @@ FUNCTION calc_stock_recruitment
 	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
 	lx(nage)/=(1.-exp(-m_bar));
 	
-	dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
+	//dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
+	dvariable phib = lx * avg_fec;
 	dvariable so = kappa/phib;		//max recruits per spawner
 	dvariable beta;
 	bo = ro*phib;  					//unfished spawning biomass at spawning time
@@ -1450,8 +1452,14 @@ FUNCTION calc_stock_recruitment
 		
 		//Adjustment to spawning biomass for roe fisheries
 		for(k=1;k<=ngear;k++)
+		{
 			if(catch_type(k)==3)
+			{
 				sbt(i) *= mfexp(-ft(k,i));
+			}
+				
+		}
+			
 	}
 	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
 	//cout<<"sbt\n"<<sbt<<endl;
@@ -1463,19 +1471,18 @@ FUNCTION calc_stock_recruitment
 	{
 		case 1:
 			//Beverton-Holt model
-			beta = (kappa-1.)/bo;
-			tmp_rt=elem_div(so*tmp_st,1.+beta*tmp_st);
+			beta   = (kappa-1.)/bo;
+			tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
 			break;
 		case 2:
 			//Ricker model
-			//dvariable so=kappa/phib;
-			beta=log(kappa)/bo;
-			tmp_rt=elem_prod(so*tmp_st,exp(-beta*tmp_st));
+			beta   = log(kappa)/bo;
+			tmp_rt = elem_prod(so*tmp_st,exp(-beta*tmp_st));
 		break;
 	}
 	
 	//residuals in stock-recruitment curve
-	rt=exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
+	rt    = exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
 	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
 	
 	if(verbose)cout<<"**** Ok after calc_stock_recruitment ****"<<endl;
@@ -1789,6 +1796,8 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	
 	I've got it pretty close. 
 	
+	DEPRECATE THIS FUNCTION.  NOW DONE IN THE MSY CLASS
+	
 	*/
 	int i,j,k;
 	int nage    = max(age);
@@ -2046,13 +2055,12 @@ FUNCTION void calc_reference_points()
 	double  d_ro = value(ro);
 	double  d_h  = value(theta(2));
 	double  d_m  = value(m_bar);
-	double  d_zf = cntrl(13) * 0;
 	dvector d_wa = (avg_wt);
 	dvector d_fa = (avg_fec);
 	static dvector ftry = d_m*d_ak;
 	fmsy = ftry;	// initial guess for Fmsy
 	
-	Msy cMSY(d_ro,d_h,d_m,d_zf,d_wa,d_fa,d_V);
+	Msy cMSY(d_ro,d_h,d_m,d_wa,d_fa,d_V);
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
@@ -2073,12 +2081,12 @@ FUNCTION void calc_reference_points()
 	
 	/* (4) Now do it with allocation */
 	//cout<<"\nAllocation"<<allocation(ifleet)<<endl;
-	fmsy = ftry;
-	cMSY.get_fmsy(fmsy,d_ak);
+	fall = ftry;
+	cMSY.get_fmsy(fall,d_ak);
 	
 	Umsy = sum(cMSY.getYe())/cMSY.getBe();
 	cout<<"------------------------"<<endl;
-	cout<<"Fk        \t"<<fmsy<<endl;
+	cout<<"Fall      \t"<<fall<<endl;
 	cout<<"Yield     \t"<<cMSY.getYe()<<endl;
 	cout<<"Be        \t"<<cMSY.getBe()<<endl;
 	cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
@@ -2196,13 +2204,16 @@ FUNCTION void calc_reference_points()
 	//cout<<"Ro     "<<d_ro<<endl;
 	//cout<<"h      "<<d_h<<endl;
 	//cout<<"m      "<<d_m<<endl;
-	//cout<<"Zf     "<<d_zf<<endl;
 	//cout<<"wa     "<<d_wa<<endl;
 	//cout<<"fa     "<<d_fa<<endl;
 	//cout<<"V      "<<d_V<<endl;
+	/*
+		TODO Need to rethink this, should call equibrium with calc_equilirbium(fe,allocation)
+		Then loop over values of F and return fe=lambda*F to satisfy allocation scheme.
+	*/
 	if(!mceval_phase())
 	{
-		Msy cRFP(d_ro,d_h,d_m,d_zf,d_wa,d_fa,d_V);
+		Msy cRFP(d_ro,d_h,d_m,d_wa,d_fa,d_V);
 		double fmult;
 		dvector fe(1,nfleet);
 		dvector fadj(1,nfleet);
@@ -2460,7 +2471,7 @@ FUNCTION void simulation_model(const long& seed)
 		}
 		
 		
-		//CHANGED definition of spawning biomass based on ctrl(12)
+		//CHANGED definition of spawning biomass based on ctrl(13)
 		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(13)))*fec(i));
 		
 		//Update numbers at age
@@ -2944,7 +2955,7 @@ FUNCTION void projection_model(const double& tac);
 	static int runNo=0;
 	runNo ++;
 	int i,j,k;
-	int pyr = nyr+1;	//projection year.
+	int pyr = nyr+100;	//projection year.
 	
 	// --derive stock recruitment parameters
 	dvector lx(sage,nage); 
@@ -2955,8 +2966,8 @@ FUNCTION void projection_model(const double& tac);
 	}
 	lx(nage)/=(1.-exp(-value(m_bar)));
 	
-	//double phib = lx*avg_fec; // Vivian Haist found this inconsistency in how bo' is calculated.
-	double phib = (lx*exp(-value(m_bar)*cntrl(13))) * avg_fec; 
+	double phib = lx*avg_fec; // Vivian Haist found this inconsistency in how bo' is calculated.
+	//double phib = (lx*exp(-value(m_bar)*cntrl(13))) * avg_fec; 
 	double so   = value(kappa)/phib;
 	double bo   = value(ro)*phib;
 	
@@ -2974,7 +2985,7 @@ FUNCTION void projection_model(const double& tac);
 	
 	dvector p_sbt(syr,pyr);
 	dvector p_ct(1,ngear);
-	dmatrix p_ft(nyr+1,pyr);
+	dmatrix p_ft(nyr+1,pyr,1,ngear);
 	dmatrix p_N(syr,pyr+1,sage,nage);
 	dmatrix p_Z(syr,pyr,sage,nage);
 	p_N.initialize();
@@ -2995,7 +3006,8 @@ FUNCTION void projection_model(const double& tac);
 	{
 		//get_ft is defined in the Baranov.cxx file
 		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
-		
+		p_ft(i)(1,nfleet) = fmsy(1,nfleet);
+
 		//Calculate mortality
 		p_Z(i) = value(m_bar);
 		for(k=1;k<=ngear;k++)
@@ -3025,15 +3037,17 @@ FUNCTION void projection_model(const double& tac);
 		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
 		
 		//Predicted catch for checking calculations
-		//for(k=1;k<=nfleet;k++)
-		//{
-		//	dvector ba = elem_prod(p_N(i),avg_wt);
-		//	cout<<k<<" tac = "<<tac<<"\t ct = ";
-		//	cout<<sum(elem_div(elem_prod(elem_prod(ba,p_ft(i,k)*va_bar(k)),1.-exp(-p_Z(i))),p_Z(i)));
-		//	cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
-		//}
+		for(k=1;k<=nfleet;k++)
+		{
+			dvector ba = elem_prod(p_N(i),avg_wt);
+			cout<<k<<" tac = "<<tac<<"\t ct = ";
+			cout<<sum(elem_div(elem_prod(elem_prod(ba,p_ft(i,k)*va_bar(k)),1.-exp(-p_Z(i))),p_Z(i)));
+			cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
+		}
 	}	
 	
+	cout<<"Spawning biomass\n"<<p_sbt<<endl;
+	exit(1);
 	/* 
 	  Write output to *.proj file for constructing decision tables. 
 	
