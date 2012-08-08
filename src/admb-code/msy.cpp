@@ -16,16 +16,17 @@
 #ifndef _MSY_H_
 #define _MSY_H_
 
-#define STPMX 100
+
 #include <admodel.h>
 #include <fvar.hpp>
-//#include <lnsrch.cpp>
+
 
 class Msy{
 private:
 	double  m_ro;
 	double  m_h;
 	double  m_M;
+	double  m_rho;  // Fraction of total mortality that occurs before spawning.
 	dvector m_wa;
 	dvector m_fa;
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
@@ -59,7 +60,7 @@ public:
 		m_h  = 0.75;
 		m_M  = 0.3;
 	}
-	Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V);
+	Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmatrix V);
 	
 	~Msy(){}	// destructor
 	
@@ -100,11 +101,12 @@ public:
 #endif
 
 // Constructor with arguments (most likely way user will create an Msy object)
-Msy::Msy(double ro, double h, double m, dvector wa, dvector fa, dmatrix V)
+Msy::Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmatrix V)
 {
 	m_ro    = ro;
 	m_h     = h;
 	m_M     = m;
+	m_rho   = rho;
 	m_wa    = wa;
 	m_fa    = fa;
 	m_V     = V;
@@ -246,15 +248,23 @@ void Msy::calc_equilibrium(dvector& fe)
 	
 	
 	// Survivorship for fished conditions.
-	dvector lz(sage,nage);
-	dmatrix dlz(1,ngear,sage,nage);
+	dvector   lz(sage,nage);
+	dvector   lw(sage,nage);
+	dmatrix  dlz(1,ngear,sage,nage);
 	dmatrix d2lz(1,ngear,sage,nage);
+	dmatrix  dlw(1,ngear,sage,nage);
+	dmatrix d2lw(1,ngear,sage,nage);
 	dlz.initialize();
 	d2lz.initialize();
+	dlw.initialize();
+	d2lw.initialize();
 
-	dvector za = m_M + fe * m_V;
-	dvector sa = exp(-za);
-	dvector oa = 1.-sa;
+	dvector za  = m_M + fe * m_V;
+	dvector pza = m_rho*za;
+	dvector sa  = exp(-za);
+	dvector psa = exp(-pza);
+	dvector oa  = 1.-sa;
+	dvector poa = 1.-elem_prod(sa,psa);
 	dmatrix qa(1,ngear,sage,nage);
 	
 	for(k=1;k<=ngear;k++)
@@ -262,25 +272,38 @@ void Msy::calc_equilibrium(dvector& fe)
 		qa(k)        = elem_div(elem_prod(elem_prod(m_V(k),m_wa),oa),za);
 		dlz(k,sage)  = 0;
 		d2lz(k,sage) = 0;
+		dlw(k,sage)  = -psa(sage)*m_rho*m_V(k)(sage);
+		d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_V(k)(sage));
 	}
 	
 	lz(sage) = 1.0;
+	lw(sage) = 1.0 * psa(sage);
 	for(j=sage+1; j<=nage; j++)
 	{
-		lz(j)   = lz(j-1)  * sa(j-1);
+		lz(j)   = lz(j-1) * sa(j-1);
+		lw(j)   = lz(j)   * psa(j);
 		if( j==nage )
 		{
 			lz(j) = lz(j)/oa(j);
+			lw(j) = lz(j-1)*sa(j-1)*psa(j)/oa(j);
 		}
 		
 		for(k=1; k<=ngear; k++)
 		{
+			// derivatives for survivorship
 			dlz(k)(j)  = sa(j-1) * ( dlz(k)(j-1) - lz(j-1)*m_V(k)(j-1) );
 			d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*m_V(k)(j-1)*m_V(k)(j-1) );
+			
+			// derivatives for spawning survivorship
+			dlw(k)(j)  = -lz(j)*m_rho*m_V(k)(j)*psa(j); 
+			d2lw(k)(j) =  lz(j)*square(m_rho)*square(m_V(k)(j))*psa(j);
 			
 			if( j==nage ) // + group derivatives
 			{
 				dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*m_V(k)(j)*sa(j)/square(oa(j));
+				
+				dlw(k)(j)  = -lz(j-1)*sa(j-1)*m_rho*m_V(k)(j)/oa(j)
+							- lz(j-1)*psa(j)*m_V(k)(j)*sa(j)/square(oa(j));
 				
 				double V1  = m_V(k)(j-1);
 				double V2  = m_V(k)(j);
@@ -290,16 +313,32 @@ void Msy::calc_equilibrium(dvector& fe)
 							+ 2*lz(j-1)*V1*sa(j-1)*V2*sa(j)/oa2
 							+ 2*lz(j-1)*sa(j-1)*V2*V2*sa(j)*sa(j)/(oa(j)*oa2)
 							+ lz(j-1)*sa(j-1)*V2*V2*sa(j)/oa2;
+				
+				d2lw(k)(j) = lz(j-1)*square(m_rho)*square(V2)*psa(j)/oa(j)
+							+ 2*lz(j-1)*m_rho*square(V2)*psa(j)*sa(j)/oa2
+							+ 2*lz(j-1)*psa(j)*square(V2)*square(sa(j))/(oa(j)*oa2)
+							+ lz(j-1)*psa(j)*square(V2)*sa(j)/oa2;
 			}
 		}// gear
 		
 	}// age
 	
+	//cout<<"lz\n"<<lz<<endl;
+	//cout<<"lw\n"<<lw<<endl;
+	//
+	//cout<<"dlz\n"<<dlz<<endl;
+	//cout<<"dlw\n"<<dlw<<endl;
+	//cout<<"d2lz\n"<<d2lz<<endl;
+	//cout<<"d2lw\n"<<d2lw<<endl;
+	
+
+	
 	// Incidence functions and associated derivatives
 	double      ro = m_ro;
 	double   kappa = 4.0*m_h/(1.0-m_h);  // Beverton-Holt model
 	double     km1 = kappa-1.0;
-	double    phif = lz * m_fa;
+	//double    phif = lz * m_fa;
+	double    phif = lw * m_fa;
 	double   phif2 = phif*phif;
 	dvector  dphif(1,ngear);
 	dvector d2phif(1,ngear);
@@ -314,6 +353,8 @@ void Msy::calc_equilibrium(dvector& fe)
 	{
 		dphif(k)   = dlz(k)  * m_fa;
 		d2phif(k)  = d2lz(k) * m_fa;
+		//dphif(k)   = dlw(k)  * m_fa;
+		//d2phif(k)  = d2lw(k) * m_fa;
 		
 		// per recruit yield
 		phiq(k)    = lz * qa(k);
@@ -347,7 +388,6 @@ void Msy::calc_equilibrium(dvector& fe)
 		
 		
 		// 1st & 2nd partial derivatives for recruitment
-		//dre(k)      = ro/km1*m_phie/(phif2)*dphif(k);
 		dre(k)      = ro*m_phie*dphif(k)/(phif2*km1);
 		d2re(k)     = -2.*ro*m_phie*dphif(k)*dphif(k)/(phif2*phif*km1) 
 					+ ro*m_phie*d2phif(k)/(phif2*km1);
@@ -404,10 +444,10 @@ void Msy::calc_phie()
 	dvector lx(sage,nage);
 	for(i=sage; i<=nage; i++)
 	{
-		lx(i) = exp( -m_M*(i-sage) );
-		if(i==nage) lx(i)/=1.-exp(-m_M);
+		lx(i) = exp( -m_M*(i-sage) -m_rho*m_M );
+		if(i==nage) 
+			lx(i) /= 1.0 - exp( -m_M );
 	}
-	
 	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }
@@ -422,10 +462,10 @@ void Msy::calc_phie(double& _m, dvector& _fa)
 	dvector lx(sage,nage);
 	for(i=sage; i<=nage; i++)
 	{
-		lx(i) = exp( -m_M*(i-sage) );
-		if(i==nage) lx(i)/=1.-exp(-m_M);
+		lx(i) = exp( -m_M*(i-sage) -m_rho*m_M );
+		if(i==nage) 
+			lx(i) /= 1.0 - exp( -m_M );
 	}
-	
 	m_phie = lx   * m_fa;
 	m_bo   = m_ro * m_phie;
 }

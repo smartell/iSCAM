@@ -1433,8 +1433,14 @@ FUNCTION calc_stock_recruitment
 	dvariable tau = (1.-rho)/varphi;
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector lx(sage,nage); lx=1;
-	for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
-	lx(nage)/=(1.-exp(-m_bar));
+	//for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
+	//lx(nage)/=(1.-exp(-m_bar));
+	for(i=sage; i<=nage; i++)
+	{
+		lx(i) = exp( -m_bar*(i-sage) -cntrl(13)*i*m_bar );
+		if(i==nage) 
+			lx(i) /= 1.0 - exp( -m_bar -cntrl(13)*m_bar );
+	}
 	
 	//dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
 	dvariable phib = lx * avg_fec;
@@ -2052,15 +2058,16 @@ FUNCTION void calc_reference_points()
 	}
 	
 	/* (3) Instantiate an Msy class object and get_fmsy */
-	double  d_ro = value(ro);
-	double  d_h  = value(theta(2));
-	double  d_m  = value(m_bar);
-	dvector d_wa = (avg_wt);
-	dvector d_fa = (avg_fec);
+	double  d_ro  = value(ro);
+	double  d_h   = value(theta(2));
+	double  d_m   = value(m_bar);
+	double  d_rho = cntrl(13);
+	dvector d_wa  = (avg_wt);
+	dvector d_fa  = (avg_fec);
 	static dvector ftry = d_m*d_ak;
 	fmsy = ftry;	// initial guess for Fmsy
 	
-	Msy cMSY(d_ro,d_h,d_m,d_wa,d_fa,d_V);
+	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
@@ -2213,7 +2220,7 @@ FUNCTION void calc_reference_points()
 	*/
 	if(!mceval_phase())
 	{
-		Msy cRFP(d_ro,d_h,d_m,d_wa,d_fa,d_V);
+		Msy cRFP(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 		double fmult;
 		dvector fe(1,nfleet);
 		dvector fadj(1,nfleet);
@@ -3007,7 +3014,7 @@ FUNCTION void projection_model(const double& tac);
 		//get_ft is defined in the Baranov.cxx file
 		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
 		p_ft(i)(1,nfleet) = fmsy(1,nfleet);
-
+		
 		//Calculate mortality
 		p_Z(i) = value(m_bar);
 		for(k=1;k<=ngear;k++)
@@ -3037,17 +3044,17 @@ FUNCTION void projection_model(const double& tac);
 		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
 		
 		//Predicted catch for checking calculations
-		for(k=1;k<=nfleet;k++)
-		{
-			dvector ba = elem_prod(p_N(i),avg_wt);
-			cout<<k<<" tac = "<<tac<<"\t ct = ";
-			cout<<sum(elem_div(elem_prod(elem_prod(ba,p_ft(i,k)*va_bar(k)),1.-exp(-p_Z(i))),p_Z(i)));
-			cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
-		}
+		//for(k=1;k<=nfleet;k++)
+		//{
+		//	dvector ba = elem_prod(p_N(i),avg_wt);
+		//	cout<<k<<" tac = "<<tac<<"\t ct = ";
+		//	cout<<sum(elem_div(elem_prod(elem_prod(ba,p_ft(i,k)*va_bar(k)),1.-exp(-p_Z(i))),p_Z(i)));
+		//	cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
+		//}
 	}	
 	
 	cout<<"Spawning biomass\n"<<p_sbt<<endl;
-	exit(1);
+	//exit(1);
 	/* 
 	  Write output to *.proj file for constructing decision tables. 
 	
