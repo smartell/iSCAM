@@ -15,7 +15,8 @@
 
 #ifndef _MSY_H_
 #define _MSY_H_
-#define MAXITER 300
+#define MAXITER 200
+#define TOL 1.e-09
 
 #include <admodel.h>
 #include <fvar.hpp>
@@ -47,7 +48,7 @@ private:
 	double m_dYe;
 	double m_d2Ye;
 	
-	double  m_f;	// value of the function to minimize (norm(p))
+	dvector m_f;	// value of the function to minimize (norm(p))
 	dvector m_g;	// gradient
 	dvector m_p;	// Newton-Raphson step for iteratively solving for Fmsy
 	
@@ -95,6 +96,7 @@ public:
 	void calc_equilibrium(dvector& fe);
 	void         get_fmsy(dvector& fe);
 	void         get_fmsy(dvector& fe, dvector& ak);
+	void    get_fmsy_safe(dvector& fe, double x1, double x2);
 	
 };
 
@@ -146,14 +148,14 @@ void Msy::get_fmsy(dvector& fe)
 		for(i = 1; i<=n; i++)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 )
-			{                                 // backtrack 95% of the newton step.
+			{                                 // backtrack 98% of the newton step.
 				fe[i] -= 0.98*m_p[i];         // if outside the boundary conditions.
 			}
 		}
 		
 		//cout<<iter<<" fe "<<fe<<" g "<<m_g<<endl;
 	}
-	while ( m_f>1.e-12 && iter < MAXITER );
+	while ( norm(m_f) > TOL && iter < MAXITER );
 	
 	m_fmsy    = fe;
 	m_msy     = m_ye;
@@ -163,8 +165,115 @@ void Msy::get_fmsy(dvector& fe)
 	
 }
 
+// Use combination of Newton-Raphson and bisection method to get Fmsy
+// This did not work in multidimensional space.
+void Msy::get_fmsy_safe(dvector& fe, double x1, double x2)
+{
+	/*
+		Iteratively solve for the derivative of the catch equation to find
+		values of fe that correspond to dye.df = 0.
+		
+		This safe routine uses a combination of the bisection method and 
+		Newton-Rahpson to find the root function bracketed between x1 and x2.
+	*/
+	int i;
+	int iter;
+	int n    = size_count(fe);
+	dvector    xl(1,n);
+	dvector    xh(1,n);
+	dvector     f(1,n);
+	dvector    fl(1,n);
+	dvector    fh(1,n);
+	dvector    df(1,n);
+	dvector   rts(1,n);
+	dvector    dx(1,n);
+	dvector dxold(1,n);
+	
+	// Lower bracket
+	rts = x1;
+	calc_equilibrium(rts);
+	fl  = m_f;
+	df  = m_g;
+	
+	// Upper bracket
+	rts = x2;
+	calc_equilibrium(rts);
+	fh  = m_f;
+	df  = m_g;
+	
+	// Orient search so f(x1) < 0
+	for(i=1; i<=n; i++)
+	{
+		if( fl(i) <0 )
+		{
+			xl(i) = x1;
+			xh(i) = x2;
+		}
+		else
+		{
+			xl(i) = x2;
+			xh(i) = x1;
+		}
+	}
+	
+	// Initial guess for roots (rts)
+	rts   = 0.5*(x1+x2);
+	dxold = fabs(x2-x1);
+	dx    = dxold;
+	calc_equilibrium(rts);
+	f     = m_f;
+	df    = m_g;
+	
+	// Loop over iterations and bisect or Newton-step
+	for(iter=1; iter<=MAXITER; iter++)
+	{
+		for(i=1;i<=n;i++)
+		{
+			// Bisect if out of range or slow convergence
+			if( ((rts(i)-xh(i))*df(i)-f(i))*((rts(i)-xl(i))*df(i)-f(i)) > 0.0
+			 	|| (fabs(2.*f(i)) > fabs(dxold(i)*df(i))) )
+			{
+				dxold(i) = dx(i);
+				dx(i)    = 0.5*(xh(i)-xl(i));
+				rts(i)   = xl(i)+dx(i);
+				cout<<"in Bisect"<<endl;
+			}
+			else
+			{
+				dxold(i) = dx(i);
+				dx(i)    = f(i)/df(i);
+				rts(i)  -= dx(i);
+			}
+		}
+		if(norm(f) < TOL) break;
+		calc_equilibrium(rts);
+		f  = m_f;
+		df = m_g;
+		cout<<iter <<" gradient "<<f<<endl;
+		// Update brackets on the root
+		for(i=1;i<=n;i++)
+		{
+			if(f(i) < 0.0)
+			{
+				xl(i) = rts(i);
+			}
+			else
+			{
+				xh(i) = rts(i);
+			}
+		}
+	}
+	fe  = rts;
+	m_fmsy    = fe;
+	m_msy     = m_ye;
+	m_bmsy    = m_be; 
+	m_rmsy    = m_re;
+	m_spr_msy = m_spr;
+	
+}
 
-// calculate msy value given an allocation for each gear type.
+
+// Calculate msy value given an allocation for each gear type.
 void Msy::get_fmsy(dvector& fe, dvector& ak)
 {
 	/*
@@ -224,7 +333,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		}
  		
 	}
-	while ( sqrt(square(m_dYe)) >1.e-12 && iter < MAXITER );
+	while ( sqrt(square(m_dYe)) >TOL && iter < MAXITER );
 	fe = fk;
 }
 
@@ -424,8 +533,8 @@ void Msy::calc_equilibrium(dvector& fe)
 	m_spr  = phif/m_phie;
 	m_dYe  = sum(dye);
 	m_d2Ye = sum(diagonal(d2ye));
-	m_g    = dye;		  //Gradient vector
-	m_f    = norm(m_g);   //Value of the function to minimize
+	m_g    = diagonal(d2ye);		//Gradient vector
+	m_f    = dye;   				//Value of the function to minimize
 	
 	// cout<<"fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
 }

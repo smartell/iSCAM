@@ -2814,24 +2814,24 @@ FUNCTION mcmc_output
   {
 	if(nf==1){
 		ofstream ofs("iscam.mcmc");
-		ofs<<"     log.ro";
-		ofs<<"      log.h";
-		ofs<<"      log.m";
-		ofs<<"   log.rbar";
-		ofs<<"  log.rinit";
-		ofs<<"        rho";
-		ofs<<"   vartheta";
-		ofs<<"         bo";
-		ofs<<"       bmsy";
-		for(int k=1;k<=nfleet;k++) ofs<<"       msy"<<k;
-		for(int k=1;k<=nfleet;k++) ofs<<"      fmsy"<<k;
-		ofs<<"        SSB";
-		ofs<<"      Age-4";
-		ofs<<"       Poor";
-		ofs<<"    Average";
-		ofs<<"       Good";
-		for(int i=1;i<=nit;i++) ofs<<"       lnq"<<i;
-		ofs<<"          f";
+		ofs<<"       log.ro";
+		ofs<<"        log.h";
+		ofs<<"        log.m";
+		ofs<<"     log.rbar";
+		ofs<<"    log.rinit";
+		ofs<<"          rho";
+		ofs<<"     vartheta";
+		ofs<<"           bo";
+		ofs<<"         bmsy";
+		for(int k=1;k<=nfleet;k++) ofs<<"         msy"<<k;
+		for(int k=1;k<=nfleet;k++) ofs<<"        fmsy"<<k;
+		ofs<<"          SSB";
+		ofs<<"        Age-4";
+		ofs<<"         Poor";
+		ofs<<"      Average";
+		ofs<<"         Good";
+		for(int i=1;i<=nit;i++) ofs<<"         lnq"<<i;
+		ofs<<"            f";
 		ofs<<endl;
 		
 		ofstream of1("sbt.mcmc");
@@ -2846,16 +2846,16 @@ FUNCTION mcmc_output
 	double future_bt4 = sum(future_bt(4,nage));
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	ofstream ofs("iscam.mcmc",ios::app);
-	ofs<<setw(10)<<theta;
-	ofs<<setw(11)<< bo;
-	ofs<<setw(11)<< bmsy;
-	ofs<<setw(10)<< msy;
-	ofs<<setw(10)<< fmsy;
-	ofs<<setw(11)<< sbt(nyr);
-	ofs<<setw(11)<< future_bt4;
-	ofs<<setw(10)<< future_bt4+rt3;
-	ofs<<setw(10)<< log(q);
-	ofs<<setw(11)<< f;
+	ofs<<setw(12)<<theta;
+	ofs<<setw(13)<< bo;
+	ofs<<setw(13)<< bmsy;
+	ofs<<setw(12)<< msy;
+	ofs<<setw(12)<< fmsy;
+	ofs<<setw(13)<< sbt(nyr);
+	ofs<<setw(13)<< future_bt4;
+	ofs<<setw(12)<< future_bt4+rt3;
+	ofs<<setw(12)<< log(q);
+	ofs<<setw(13)<< f;
 	ofs<<endl;
 	
 	// output spawning stock biomass
@@ -2926,7 +2926,7 @@ FUNCTION void projection_model(const double& tac);
 	static int runNo=0;
 	runNo ++;
 	int i,j,k;
-	int pyr = nyr+100;	//projection year.
+	int pyr = nyr+1;	//projection year.
 	
 	// --derive stock recruitment parameters
 	// --survivorship of spawning biomass
@@ -3090,7 +3090,7 @@ TOP_OF_MAIN_SECTION
 GLOBALS_SECTION
 	#define USE_NEW_EQUILIBRIUM
 	typedef double DP;
-	#include <dfridr.cpp>
+	//#include <dfridr.cpp>
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.
