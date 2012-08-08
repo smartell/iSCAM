@@ -1437,9 +1437,9 @@ FUNCTION calc_stock_recruitment
 	//lx(nage)/=(1.-exp(-m_bar));
 	for(i=sage; i<=nage; i++)
 	{
-		lx(i) = exp( -m_bar*(i-sage) -cntrl(13)*i*m_bar );
+		lx(i) = exp( -m_bar*(i-sage) -cntrl(13)*m_bar );
 		if(i==nage) 
-			lx(i) /= 1.0 - exp( -m_bar -cntrl(13)*m_bar );
+			lx(i) /= 1.0 - exp( -m_bar );
 	}
 	
 	//dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
@@ -2083,6 +2083,7 @@ FUNCTION void calc_reference_points()
 	cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
 	cout<<"Bo        \t"<<bo<<endl;
 	cout<<"Bmsy      \t"<<bmsy<<endl;
+	cout<<"Be        \t"<<cMSY.getBe()<<endl;
 	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
 	cout<<"------------------------"<<endl;
 	
@@ -2868,43 +2869,6 @@ FUNCTION mcmc_output
 	/* June 12, 2012.  SJDM Call decision table. */
 	decision_table();  
 	
-	
-	// DEPRECATED	
-	// Projection model.
-
-	
-	//for(int i=0;i<=10;i++)
-	//{
-	//	double tac = double(i)/10. * 1.5*msy;
-	//	projection_model(tac);
-	//}
-	
-	// Deviance Information Criterion
-	/*
-		DIC = pd + Dbar, where:
-		pd is the effective number of parameters,
-		Dbar is the expected (average deviance)
-		
-		Dbar = mean(D(theta))
-		pd = Dbar - D(mean(theta))
-		Agorithm:
-			-for each sample compute Dtotal += 2*f;
-			-compute a running Dbar = Dtotal/nf;
-			
-			
-	
-	//cout<<initial_params::nvarcalc()<<endl;
-	int nvar = initial_params::nvarcalc();
-	dvector y(1,nvar);
-	static dvector sum_y(1,nvar);
-	initial_params::xinit(y);
-	sum_y = sum_y + y;
-	cout<<y(1,3)<<endl;
-	cout<<sum_y(1,3)<<endl;
-	double fi = get_monte_carlo_value(nvar,y);
-	if(nf==2)exit(1);
-	*/
-	
   }
 
 FUNCTION dvector age3_recruitment(const dvector& rt, const double& wt,const double& M)
@@ -2965,16 +2929,18 @@ FUNCTION void projection_model(const double& tac);
 	int pyr = nyr+100;	//projection year.
 	
 	// --derive stock recruitment parameters
-	dvector lx(sage,nage); 
-	lx(sage) = 1;
-	for(i=sage+1; i<=nage; i++) 
+	// --survivorship of spawning biomass
+	dvector lx(sage,nage);
+	double m_M   = value(m_bar); 
+	double m_rho = cntrl(13);
+	lx(sage)     = 1;
+	for(i=sage; i<=nage; i++)
 	{
-		lx(i)=lx(i-1)*exp(-value(m_bar));
-	}
-	lx(nage)/=(1.-exp(-value(m_bar)));
-	
-	double phib = lx*avg_fec; // Vivian Haist found this inconsistency in how bo' is calculated.
-	//double phib = (lx*exp(-value(m_bar)*cntrl(13))) * avg_fec; 
+		lx(i) = exp( -m_M*(i-sage) -m_rho*m_M );
+		if(i==nage) 
+			lx(i) /= 1.0 - exp( -m_M );
+	}	
+	double phib = lx*avg_fec;
 	double so   = value(kappa)/phib;
 	double bo   = value(ro)*phib;
 	
@@ -2991,10 +2957,10 @@ FUNCTION void projection_model(const double& tac);
 	
 	
 	dvector p_sbt(syr,pyr);
-	dvector p_ct(1,ngear);
-	dmatrix p_ft(nyr+1,pyr,1,ngear);
-	dmatrix p_N(syr,pyr+1,sage,nage);
-	dmatrix p_Z(syr,pyr,sage,nage);
+	dvector  p_ct(1,ngear);
+	dmatrix  p_ft(nyr+1,pyr,1,ngear);
+	dmatrix   p_N(syr,pyr+1,sage,nage);
+	dmatrix   p_Z(syr,pyr,sage,nage);
 	p_N.initialize();
 	p_N.sub(syr,nyr+1) = value(N.sub(syr,nyr+1));
 	p_sbt(syr,nyr)     = value(sbt(syr,nyr));
@@ -3013,7 +2979,7 @@ FUNCTION void projection_model(const double& tac);
 	{
 		//get_ft is defined in the Baranov.cxx file
 		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
-		p_ft(i)(1,nfleet) = fmsy(1,nfleet);
+		//p_ft(i)(1,nfleet) = fmsy(1,nfleet);
 		
 		//Calculate mortality
 		p_Z(i) = value(m_bar);
@@ -3027,7 +2993,7 @@ FUNCTION void projection_model(const double& tac);
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*avg_fec;
 		
 		//Age-sage recruits
-		double tau = value((1.-rho)/varphi) * 0; 
+		double tau = value((1.-rho)/varphi); 
 		double xx = randn(nf+i)*tau;
 		
 		if(i>=syr+sage-1)
@@ -3052,8 +3018,8 @@ FUNCTION void projection_model(const double& tac);
 		//	cout<<" fmsy = "<<fmsy<<" ft = "<<p_ft(i,k)<<endl;
 		//}
 	}	
-	
-	cout<<"Spawning biomass\n"<<p_sbt<<endl;
+	//cout<<"fmsy\n"<<fmsy<<endl;
+	//cout<<"Spawning biomass\n"<<p_sbt<<endl;
 	//exit(1);
 	/* 
 	  Write output to *.proj file for constructing decision tables. 

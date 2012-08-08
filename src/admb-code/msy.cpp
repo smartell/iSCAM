@@ -15,7 +15,7 @@
 
 #ifndef _MSY_H_
 #define _MSY_H_
-
+#define MAXITER 300
 
 #include <admodel.h>
 #include <fvar.hpp>
@@ -153,7 +153,7 @@ void Msy::get_fmsy(dvector& fe)
 		
 		//cout<<iter<<" fe "<<fe<<" g "<<m_g<<endl;
 	}
-	while ( m_f>1.e-12 && iter < 200 );
+	while ( m_f>1.e-12 && iter < MAXITER );
 	
 	m_fmsy    = fe;
 	m_msy     = m_ye;
@@ -218,12 +218,13 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		// Check boundary conditions and reduce step size if necessary.
 		if( (x1-fbar)*(fbar-x2)<0.0 )
 		{
-			cout<<"Outside bounds in get_fmsy(fe,ak)"<<endl;
-			exit(1);
+			cout<<"get_fmsy:: reducing Newton-step"<<endl;
+			fbar += 0.98 * m_dYe/m_d2Ye;
+			//exit(1);
 		}
  		
 	}
-	while ( sqrt(square(m_dYe)) >1.e-12 && iter < 200 );
+	while ( sqrt(square(m_dYe)) >1.e-12 && iter < MAXITER );
 	fe = fk;
 }
 
@@ -237,6 +238,10 @@ void Msy::calc_equilibrium(dvector& fe)
 		derivative information such that this info can be used to compute 
 		the corresponding MSY-based reference points (Fmsy, MSY, Bmsy).
 		
+		There are two different survivorship calculations inside this routine:
+		lz is the survivorship of the total numbers, and lw is the survivorship
+		upto the time of spawning.  The spawning biomass per recruit (phif) depends
+		on the survivorship up to the time of spawning.
 	*/
 	
 	// Indexes for dimensions
@@ -322,16 +327,6 @@ void Msy::calc_equilibrium(dvector& fe)
 		}// gear
 		
 	}// age
-	
-	//cout<<"lz\n"<<lz<<endl;
-	//cout<<"lw\n"<<lw<<endl;
-	//
-	//cout<<"dlz\n"<<dlz<<endl;
-	//cout<<"dlw\n"<<dlw<<endl;
-	//cout<<"d2lz\n"<<d2lz<<endl;
-	//cout<<"d2lw\n"<<d2lw<<endl;
-	
-
 	
 	// Incidence functions and associated derivatives
 	double      ro = m_ro;
