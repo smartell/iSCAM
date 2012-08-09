@@ -2064,7 +2064,7 @@ FUNCTION void calc_reference_points()
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	static dvector ftry = d_m*d_ak;
+	static dvector ftry = d_m*d_h/0.8*d_ak;
 	fmsy = ftry;	// initial guess for Fmsy
 	
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
@@ -2072,8 +2072,7 @@ FUNCTION void calc_reference_points()
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
 	bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
-	cout<<"Bo from cMSY   "<<bo<<endl;
-	cout<<"Bmsy from cMSY "<<bmsy<<endl;
+	
 	if(nf==1) ftry = fmsy;
 	
 	cout<<"------------------------"<<endl;
@@ -2083,7 +2082,7 @@ FUNCTION void calc_reference_points()
 	cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
 	cout<<"Bo        \t"<<bo<<endl;
 	cout<<"Bmsy      \t"<<bmsy<<endl;
-	cout<<"Be        \t"<<cMSY.getBe()<<endl;
+	cout<<"Bi        \t"<<cMSY.getBi()<<endl;
 	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
 	cout<<"------------------------"<<endl;
 	
@@ -2092,12 +2091,19 @@ FUNCTION void calc_reference_points()
 	fall = ftry;
 	cMSY.get_fmsy(fall,d_ak);
 	
-	Umsy = sum(cMSY.getYe())/cMSY.getBe();
+	/* 
+	I've defined Umsy as the sum of catches divided 
+	by spawning biomass at the start of the year.
+	*/
+	Umsy = sum(cMSY.getYe())/cMSY.getBi();
+	
+	
 	cout<<"------------------------"<<endl;
 	cout<<"Fall      \t"<<fall<<endl;
 	cout<<"Yield     \t"<<cMSY.getYe()<<endl;
 	cout<<"Be        \t"<<cMSY.getBe()<<endl;
 	cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
+	cout<<"Umsy      \t"<<Umsy<<endl;
 	cout<<"------------------------"<<endl;
 	
 	//The following code should be deprecated, along with the two equilibrium functions
@@ -2845,19 +2851,26 @@ FUNCTION mcmc_output
 	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
 	double future_bt4 = sum(future_bt(4,nage));
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
-	ofstream ofs("iscam.mcmc",ios::app);
-	ofs<<setw(12)<<theta;
-	ofs<<setw(13)<< bo;
-	ofs<<setw(13)<< bmsy;
-	ofs<<setw(12)<< msy;
-	ofs<<setw(12)<< fmsy;
-	ofs<<setw(13)<< sbt(nyr);
-	ofs<<setw(13)<< future_bt4;
-	ofs<<setw(12)<< future_bt4+rt3;
-	ofs<<setw(12)<< log(q);
-	ofs<<setw(13)<< f;
-	ofs<<endl;
 	
+	
+	if( bmsy > 0 && min(fmsy) >= 0 )
+	{
+		ofstream ofs("iscam.mcmc",ios::app);
+		ofs<<setw(12)<<theta;
+		ofs<<setw(13)<< bo;
+		ofs<<setw(13)<< bmsy;
+		ofs<<setw(12)<< msy;
+		ofs<<setw(12)<< fmsy;
+		ofs<<setw(13)<< sbt(nyr);
+		ofs<<setw(13)<< future_bt4;
+		ofs<<setw(12)<< future_bt4+rt3;
+		ofs<<setw(12)<< log(q);
+		ofs<<setw(13)<< f;
+		ofs<<endl;
+		
+		/* June 12, 2012.  SJDM Call decision table. */
+		decision_table();  
+	}
 	// output spawning stock biomass
 	ofstream of1("sbt.mcmc",ios::app);
 	of1<<setw(10)<<sbt(syr,nyr)<<endl;
@@ -2866,8 +2879,6 @@ FUNCTION mcmc_output
 	ofstream of2("rt.mcmc",ios::app);
 	of2<<setw(10)<<rt<<endl;
 	
-	/* June 12, 2012.  SJDM Call decision table. */
-	decision_table();  
 	
   }
 
@@ -3047,32 +3058,33 @@ FUNCTION void projection_model(const double& tac);
 	if(nf==1 && runNo==1)
 	{
 		ofstream ofs(BaseFileName + ".proj");
-		ofs<<"tac   \t";
-		ofs<<"P(SB1)\t"; 
-		ofs<<"P(SB2)\t";
-		ofs<<"P(SB3)\t";
-		ofs<<"P(SB4)\t";
-		ofs<<"P(SB5)\t";
-		ofs<<"P(U1) \t";
-		ofs<<"P(U2) \t";
-		ofs<<"P(U3) \t";
-		ofs<<"P(U4) \n";
+		ofs<<" tac";
+		ofs<<"      P(SB1)"; 
+		ofs<<"      P(SB2)";
+		ofs<<"      P(SB3)";
+		ofs<<"      P(SB4)";
+		ofs<<"      P(SB5)";
+		ofs<<"       P(U1)";
+		ofs<<"       P(U2)";
+		ofs<<"       P(U3)";
+		ofs<<"       P(U4)";
+		ofs<<endl;
 		cout<<"Bo when nf==1 \t"<<bo<<endl;
 	}
 	
 	double ut = tac / p_sbt(pyr);
 	double u20 = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* wt_obs(nyr+1)(3,nage) );
 	ofstream ofs(BaseFileName + ".proj",ios::app);
-	ofs<< setprecision(4)<<setw(4) 
-	   << tac                           <<"\t"
-	   << p_sbt(pyr-1)/p_sbt(pyr)       <<"\t"
-	   << 0.25*bo/p_sbt(pyr)            <<"\t"
-	   << 0.75*bo/p_sbt(pyr)            <<"\t"
-	   << 0.40*bmsy/p_sbt(pyr)          <<"\t"
-	   << 0.80*bmsy/p_sbt(pyr)          <<"\t"
-	   << ut/Umsy                       <<"\t"
-	   << ut/(0.5*Umsy)                 <<"\t"
-	   << ut/(2./3.*Umsy)               <<"\t"
+	ofs<< setprecision(4)               <<setw(4) 
+	   << tac                           <<setw(12)
+	   << p_sbt(pyr-1)/p_sbt(pyr)       <<setw(12)
+	   << 0.25*bo/p_sbt(pyr)            <<setw(12)
+	   << 0.75*bo/p_sbt(pyr)            <<setw(12)
+	   << 0.40*bmsy/p_sbt(pyr)          <<setw(12)
+	   << 0.80*bmsy/p_sbt(pyr)          <<setw(12)
+	   << ut/Umsy                       <<setw(12)
+	   << ut/(0.5*Umsy)                 <<setw(12)
+	   << ut/(2./3.*Umsy)               <<setw(12)
 	   << u20/0.2                       <<endl;
 	
   }
@@ -3088,9 +3100,6 @@ TOP_OF_MAIN_SECTION
 	
 
 GLOBALS_SECTION
-	#define USE_NEW_EQUILIBRIUM
-	typedef double DP;
-	//#include <dfridr.cpp>
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.

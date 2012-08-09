@@ -89,7 +89,12 @@ $\eta_t$        &   & residual error in predicted catch\\
 \label{sub:analytic_methods_equilibrium_considerations}
 
 \begin{multicols}{2}
-For the steady-state conditions represented in Table~\ref{tab:equilibrium_model}, we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown and would eventually be estimated by fitting \iscam\ to time series data.  For a given set of growth parameters and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow von Bertalanffy \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
+\subsubsection{A steady-state age-structured model} % (fold)
+\label{ssub:a_steady_state_age_structured_model}
+
+% subsubsection a_steady_state_age_structured_model (end)
+
+For the steady-state conditions represented in Table~\ref{tab:equilibrium_model}, we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown and would eventually be estimated by fitting \iscam\ to data.  For a given set of growth parameters and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow von Bertalanffy \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
 
 Survivorship for unfished and fished populations is defined by \eqref{T2.8} and \eqref{T2.9}, respectively.  It is assumed that all individuals ages $A$ and older (i.e., the plus group) have the same total mortality rate.  The incidence functions refer to the life-time or per-recruit quantities such as spawning biomass per recruit ($\phi_E$) or vulnerable biomass per recruit ($\phi_b$).  Note that upper and lower case subscripts denote unfished and fished conditions, respectively.  Spawning biomass per recruit is given by \eqref{T2.10}, the vulnerable biomass per recruit is given by \eqref{T2.11} and the per recruit yield to the fishery is given by \eqref{T2.11b}.  Unfished recruitment is given by \eqref{T2.12} and the steady-state equilibrium recruitment  for a given fishing mortality rate $F_e$ is given by \eqref{T2.13}.  Note that in \eqref{T2.13} we assume that recruitment follows either a  Beverton-Holt or a Ricker model in the forms:
 \[
@@ -173,138 +178,12 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
  
 
 % subsection sub:analytic_methods_equilibrium_considerations (end)
-
-\subsubsection{MSY based reference points} % (fold)
-\label{ssub:msy_based_reference_points}
-
-In the case of a single fishery \iscam\ calculates \fmsy\ based reference points by finding the value of $F_e$ that results in the zero derivative of \eqref{T2.14}.  This is accomplished numerically using a Newton-Raphson method where an initial guess for \fmsy\ is set equal to 1.0$M$, then use \eqref{eq1.1} to iteratively find \fmsy.  Note that the partial derivatives in \eqref{eq1.1} can be found in Table~\ref{tab:partial_derivatives}.
-
-\begin{align}\label{eq1.1}
-    F_{e+1}&=F_e - 
-    \dfrac{ \dfrac{\partial C_e}{\partial F_e}}
-    { \dfrac{\partial^2 C_e}{\partial F_e^2}}\\
-    \mbox{where}\nonumber\\
-     \frac{\partial C_e}{\partial F_e} &=
-    R_e \phi_q
-    + F_e \phi_q \dfrac{\partial R_e}{\partial F_e}
-    + F_e R_e \dfrac{\partial \phi_q}{\partial F_e} \nonumber\\
-    \frac{\partial^2 C_e}{\partial F_e^2} &=
-    \phi_q \dfrac{\partial R_e}{\partial F_e}
-   +  R_e \dfrac{\partial \phi_q}{\partial F_e}\nonumber
-%    \frac{R_e \phi_q
-%    + F_e \phi_q \dfrac{\partial R_e}{\partial F_e}
-%    + F_e R_e \dfrac{\partial \phi_q}{\partial F_e}}
-%    {\phi_q \dfrac{\partial R_e}{\partial F_e}
-%    +  R_e \dfrac{\partial \phi_q}{\partial F_e}}.
-\end{align}
-
-The algorithm usually converges in less than 10 iterations depending on how close the initial guess of \fmsy\ is to the true value.  A maximum of 20 iterations are allowed in \iscam, however, if $\frac{\partial C_e}{\partial F_e}<1e-5$ the algorithm stops.  Note also, that this is only performed on data type variables and not differentiable variables within AD Model Builder.
- 
-
-\begin{figurehere}
-    \centering
-        \includegraphics[height=3in]{iscamFigs/Fig1Quadplot.pdf}
-    \caption{Equilibrium yield (a), recruits (b), biomass (c) and
-       spawner per recruit ($\phi_e/\phi_E$) (d) versus instantaneous
-       fishing mortality $F_e$ for two different values of the recruitment
-       compensation ratio ($\kappa=12$ solid lines, $\kappa=4$ dashed
-       lines). Vertical lines in each panel correspond to \fmsy\ and
-       horizontal lines correspond to various reference points that would
-       achieve MSY.}
-    \label{fig:iscamFigs_Fig1Quadplot}
-\end{figurehere}
-
-Given an estimate of \fmsy, other reference points such as MSY are calculated use the equations in Table-\ref{tab:equilibrium_model} where each of the expressions is evaluated at \fmsy.  A graphical representation of MSY based reference points for two alternative values of the recruitment compensation parameter $\kappa$ is show in Figure \ref{fig:iscamFigs_Fig1Quadplot}.
+\input{ModelAPI/msyBasedReferencePoints.tex}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{tablehere}
-  \centering
-\caption{Partial derivatives, based on components in Table
-\ref{tab:equilibrium_model}, required for the numerical calculation of \fmsy\ using \eqref{eq1.1}.}\label{tab:partial_derivatives} \tableEq
-    \begin{gather}
-        \hline
-        \mbox{Mortality \& Survival} \nonumber \\
-        Z_{a}=M_a+F_ev_a                                \label{T3.1} \\
-        S_{a}=1-e^{-Z_a}                                \label{T3.2}\\[1ex]
-        %%
-        %%
-        \mbox{Partial for survivorship} \nonumber \\
-        \frac{\partial \hat{\iota}_a}{\partial F_e} =
-        \begin{cases}
-          0,& a=1                                       \label{T3.3}\\
-          e^{-Z_{a-1}}\left(\dfrac{\partial \hat{\iota}_{a-1}}{\partial F_e}
-           -\hat{\iota}_{a-1}v_{a-1}\right),& 1<a<A\\
-           \dfrac{\dfrac{\partial \hat{\iota}_{a-1}}{\partial F_e}}
-           {1-e^{-Z_a}} -
-           \dfrac{\hat{\iota}_{a-1} e^{-Z_{a-1}} v_a e^{-Z_a}}
-           {(1-e^{-Z_a})^2}, &a=A
-        \end{cases} \\[1ex]
-%%        \frac{\partial \hat{\iota}_a}{\partial F_e} =
-%%        \begin{cases}
-%%          0,& a=1 \label{T3.3}\\
-%%          e^{-Z_{a-1}}\left(\dfrac{\partial \hat{\iota}_{a-1}}{\partial F_e}
-%%           -\hat{\iota}_{a-1}v_{a-1}\right),& a>1
-%%        \end{cases} \\[1ex]
-        %%
-        %%
-        \mbox{Partials for incidence functions} \nonumber \\
-        \frac{\partial \phi_e}{\partial F_e}=
-            \sum_{a=1}^\infty f_a \frac{\partial \hat{\iota}_a}{\partial
-            F_e}                                        \label{T3.4}\\
-        %%
-        %%
-        \frac{\partial \phi_q}{\partial F_e}=
-            \sum_{a=1}^\infty \frac{w_av_a S_a}{Z_a}
-             \frac{\partial \hat{\iota}_a}{\partial F_e}
-             +\frac{\hat{\iota}_a w_av_a^2}{Z_a}\left(e^{-Z_a}-\frac{S_a}{Z_a} \right)
-                                                            \label{T3.5}\\[1ex]
-        %%
-        %%
-        \mbox{Partial for recruitment} \nonumber\\
-        \frac{\partial R_e}{\partial F_e}=\frac{R_o}{\kappa-1}
-        \frac{\phi_E}{\phi_e^2} \frac{\partial \phi_e}{\partial
-        F_e}                                                \label{T3.6}\\[1ex]
-        \hline \hline \nonumber
-    \end{gather}
 
-    \normalEq
-\end{tablehere}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% subsubsection msy_based_reference_points (end)
-
-\subsubsection{Reference points for multiple fisheries with fixed allocation} % (fold)
-\label{ssub:reference_points_for_multiple_fisheries}
-It is common that a single stock of fish is prosecuted by many different types of fishing gears that have differing selectivities.  In such cases, the definition of MSY is based on the sum of catches from each of the participating fleets and how much of the total catch is taken, or allocated, to specific sectors.  For such cases, it is still possible to calculate MSY-based reference points provided that allocation to each of the gear types is specified \emph{a priori}.
-
-To determine MSY-based reference points for 2 or more gear types (e.g.,  purse seine and gillnet fisheries for Pacific herring in British Columbia), \iscam\ requires an allocation for each of the defined fleets.  Allocation is specified in the data file (see sub section \ref{sub:the_data_file}).  This allocation is initially used set a series of F-multipliers ($\lambda_k$) for each gear and \eqref{T2.14} becomes a vector of catches:
-\begin{align}
-	C_{e,k} &= F_e \lambda_k R_e \phi_{q,k} \label{eq:12} \\
-	&\mbox{where the per-recruit yield for gear $k$ is:} \nonumber \\
-	Z_a &= M+F_e\sum_k \lambda_kv_{k,a}\label{eq:13}\\
-	\phi_{q,k}&=\sum_{a=1}^\infty
-        \frac{ \hat{\iota}_a \lambda_k w_a v_{k,a}}{Z_a}
-        \left(1-e^{Z_a}\right)\label{eq:14}\\
-    &\mbox{with the added constraint} \nonumber\\
-    \sum_k \lambda_k &= N \label{eq:15}\quad \mbox{where $N$ is the number of gears.}
-\end{align}
-
-The constraint in \eqref{eq:15} defines $F_e\lambda_k$ as the fishing mortality rate for gear $k$ where $\lambda_k$ is a multiple of the average fishing mortality rate of all gears.  To ensure that each gear achieves the specified allocation for a given average fishing mortality rate $F_e$, the multipliers are determined iteratively where $\lambda_k$ is updated using:
-\begin{align}
-	\lambda_k^{(i+1)} &= \lambda_k^{(i)} \frac{a_k}{p_k} \label{eq:16}\\
-	&\mbox{where $a_k$ is the allocation for gear $k$, and:}\nonumber\\
-	p_k &= \frac{C_{e,k}}{\sum_k C_{e,k}}\label{eq:17}
-\end{align}
-Depending on the differences in selectivities and allocations between the gear types, this algorithm converges roughly 7-15 iterations.  From here the same Newton-Raphson algorithm is used to determine the average fishing mortality rate $F_e$ that would maximize the sum of catches over the multiple gears.  
-% subsubsection reference_points_for_multiple_fisheries (end)
 \end{multicols}
 
-\begin{multicols}{2}
-\input{./ModelAPI/MultipleFleetMSYReferencePoints.tex}	
-\end{multicols}
 
 
 

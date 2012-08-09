@@ -42,6 +42,7 @@ private:
 	
 	dvector m_ye;
 	double  m_be;
+	double  m_bi;	// spawning biomass at the start of the year.
 	double  m_re;
 	double  m_spr;
 	
@@ -73,10 +74,11 @@ public:
 	double   getRmsy() { return m_rmsy;    }
 	dvector   getMsy() { return m_msy;     }
 	dvector    getYe() { return m_ye;      }
-	dvector   getdYe() { return m_g;       }
+	dvector   getdYe() { return m_f;       }
 	double getSprMsy() { return m_spr_msy; }
 	double     getBo() { return m_bo;      }
 	double     getBe() { return m_be;      }
+	double     getBi() { return m_bi;      }
 	double     getRe() { return m_re;      }
 	double    getSpr() { return m_spr;     }
 	
@@ -96,7 +98,6 @@ public:
 	void calc_equilibrium(dvector& fe);
 	void         get_fmsy(dvector& fe);
 	void         get_fmsy(dvector& fe, dvector& ak);
-	void    get_fmsy_safe(dvector& fe, double x1, double x2);
 	
 };
 
@@ -132,17 +133,19 @@ void Msy::get_fmsy(dvector& fe)
 	int iter = 0;
 	int n    = size_count(fe);
 	double x1, x2;
+	dvector fold(1,n);
 	x1 = 1.0e-5;
-	x2 = 3.0e02;
+	x2 = 1.0e02;
 	m_p      = 1.0;
 	// Spawning biomass per recruit for unfished conditions
 	calc_phie(m_M,m_fa);
-	
+	calc_equilibrium(fe);
 	do
 	{
-		calc_equilibrium(fe);
-		fe += m_p;
 		iter++;
+		fold = m_f;
+		calc_equilibrium(fe);
+		fe  += m_p;
 		
 		// check boundary conditions
 		for(i = 1; i<=n; i++)
@@ -152,118 +155,10 @@ void Msy::get_fmsy(dvector& fe)
 				fe[i] -= 0.98*m_p[i];         // if outside the boundary conditions.
 			}
 		}
-		
-		//cout<<iter<<" fe "<<fe<<" g "<<m_g<<endl;
+		// cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
 	
-	m_fmsy    = fe;
-	m_msy     = m_ye;
-	m_bmsy    = m_be; 
-	m_rmsy    = m_re;
-	m_spr_msy = m_spr;
-	
-}
-
-// Use combination of Newton-Raphson and bisection method to get Fmsy
-// This did not work in multidimensional space.
-void Msy::get_fmsy_safe(dvector& fe, double x1, double x2)
-{
-	/*
-		Iteratively solve for the derivative of the catch equation to find
-		values of fe that correspond to dye.df = 0.
-		
-		This safe routine uses a combination of the bisection method and 
-		Newton-Rahpson to find the root function bracketed between x1 and x2.
-	*/
-	int i;
-	int iter;
-	int n    = size_count(fe);
-	dvector    xl(1,n);
-	dvector    xh(1,n);
-	dvector     f(1,n);
-	dvector    fl(1,n);
-	dvector    fh(1,n);
-	dvector    df(1,n);
-	dvector   rts(1,n);
-	dvector    dx(1,n);
-	dvector dxold(1,n);
-	
-	// Lower bracket
-	rts = x1;
-	calc_equilibrium(rts);
-	fl  = m_f;
-	df  = m_g;
-	
-	// Upper bracket
-	rts = x2;
-	calc_equilibrium(rts);
-	fh  = m_f;
-	df  = m_g;
-	
-	// Orient search so f(x1) < 0
-	for(i=1; i<=n; i++)
-	{
-		if( fl(i) <0 )
-		{
-			xl(i) = x1;
-			xh(i) = x2;
-		}
-		else
-		{
-			xl(i) = x2;
-			xh(i) = x1;
-		}
-	}
-	
-	// Initial guess for roots (rts)
-	rts   = 0.5*(x1+x2);
-	dxold = fabs(x2-x1);
-	dx    = dxold;
-	calc_equilibrium(rts);
-	f     = m_f;
-	df    = m_g;
-	
-	// Loop over iterations and bisect or Newton-step
-	for(iter=1; iter<=MAXITER; iter++)
-	{
-		for(i=1;i<=n;i++)
-		{
-			// Bisect if out of range or slow convergence
-			if( ((rts(i)-xh(i))*df(i)-f(i))*((rts(i)-xl(i))*df(i)-f(i)) > 0.0
-			 	|| (fabs(2.*f(i)) > fabs(dxold(i)*df(i))) )
-			{
-				dxold(i) = dx(i);
-				dx(i)    = 0.5*(xh(i)-xl(i));
-				rts(i)   = xl(i)+dx(i);
-				cout<<"in Bisect"<<endl;
-			}
-			else
-			{
-				dxold(i) = dx(i);
-				dx(i)    = f(i)/df(i);
-				rts(i)  -= dx(i);
-			}
-		}
-		if(norm(f) < TOL) break;
-		calc_equilibrium(rts);
-		f  = m_f;
-		df = m_g;
-		cout<<iter <<" gradient "<<f<<endl;
-		// Update brackets on the root
-		for(i=1;i<=n;i++)
-		{
-			if(f(i) < 0.0)
-			{
-				xl(i) = rts(i);
-			}
-			else
-			{
-				xh(i) = rts(i);
-			}
-		}
-	}
-	fe  = rts;
 	m_fmsy    = fe;
 	m_msy     = m_ye;
 	m_bmsy    = m_be; 
@@ -530,6 +425,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	m_ye   = ye;
 	m_re   = re;
 	m_be   = re*phif;
+	m_bi   = re*(lz*m_fa);
 	m_spr  = phif/m_phie;
 	m_dYe  = sum(dye);
 	m_d2Ye = sum(diagonal(d2ye));
