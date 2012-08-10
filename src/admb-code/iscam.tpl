@@ -92,6 +92,22 @@ DATA_SECTION
 	init_int n_tac;
 	init_vector tac(1,n_tac);
 	
+	// Documentation for projection control file pf_cntrl
+	// 1) start year for m_bar calculation
+	// 2) end year for m_bar calculation
+	init_int n_pfcntrl;
+	init_vector pf_cntrl(1,n_pfcntrl);
+	
+	init_int eof_pf;
+	LOC_CALCS
+		if(eof_pf!=-999)
+		{
+			cout<<"Error reading projection file."<<endl;
+			cout<<"Last integer read is "<<eof_pf<<endl;
+			exit(1);
+		}
+	END_CALCS
+	
 	
 	!! BaseFileName=stripExtension(ControlFile);
 	!! cout<<BaseFileName<<endl;
@@ -268,6 +284,7 @@ DATA_SECTION
 	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
 	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
 	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
+	vector fa_bar(sage,nage);				//average fecundity-at-age for all years.
 	vector avg_fec(sage,nage);				//average fecundity-at-age
 	vector avg_wt(sage,nage);				//average weight-at-age
 	LOC_CALCS
@@ -275,30 +292,45 @@ DATA_SECTION
 		avg_fec.initialize();
 		for(i=syr;i<=nyr+1;i++)
 		{
-			wt_obs(i)=wa;			
-			fec(i)=elem_prod(plogis(age,ah,gh),wt_obs(i));
+			wt_obs(i) = wa;			
+			fec(i)    = elem_prod(plogis(age,ah,gh),wt_obs(i));
 		}
 		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
 		for(i=1;i<=n_wt_nobs;i++)
 		{
-			iyr=tmp_wt_obs(i,sage-1);  //index for year
-			wt_obs(iyr)=tmp_wt_obs(i)(sage,nage);
-			fec(iyr)=elem_prod(plogis(age,ah,gh),wt_obs(iyr));
+			iyr         = tmp_wt_obs(i,sage-1);  //index for year
+			wt_obs(iyr) = tmp_wt_obs(i)(sage,nage);
+			fec(iyr)    = elem_prod(plogis(age,ah,gh),wt_obs(iyr));
 		}
-		//CHANGED average fecundity
-		int nfec = fec.rowmax()-fec.rowmin()+1;
-		avg_fec=colsum(fec)/nfec;
+		//CHANGED SM Deprecated Aug 9, 2012 for new projection file control.
+		//int nfec = fec.rowmax()-fec.rowmin()+1;
+		//avg_fec=colsum(fec)/nfec;
 		
+		// SM Aug 9, 2012 calculate averge weight-at-age and
+		// fecundity-at-age based on years specificed in the
+		// projection control file (pf_cntrl(3-4)). Also set
+		// the average weight-at-age in nyr+1 to the same.
+		// Deprecate the 5-year average that Jake suggested.
+		avg_wt   = colsum(wt_obs.sub(pf_cntrl(3),pf_cntrl(4)));
+		avg_wt  /= pf_cntrl(4)-pf_cntrl(3)+1;
+		wt_obs(nyr+1) = avg_wt;
 		
+		avg_fec  = colsum(fec.sub(pf_cntrl(3),pf_cntrl(4)));
+		avg_fec /= pf_cntrl(4)-pf_cntrl(3)+1;
 		
+		fa_bar   = colsum(fec.sub(syr,nyr))/(nyr-syr+1);
+		cout<<avg_wt<<endl;
+		cout<<"avg_fec\n"<<avg_fec<<endl;
+		cout<<"fa_bar\n"<<fa_bar<<endl;
+		//DEPRECATED SM AUG 9, 2012
 		//from Jake Schweigert: use mean-weight-at-age data
 		//from the last 5 years for the projected mean wt.
-		dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/6.;
-		wt_obs(nyr+1) = tmp;
-		
-		/*June 8, 2012, average wt at age for all years*/
-		tmp = colsum(wt_obs.sub(syr,nyr))/(nyr-syr+1.);
-		avg_wt = tmp;
+		//dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/6.;
+		//wt_obs(nyr+1) = tmp;
+		//
+		///*June 8, 2012, average wt at age for all years*/
+		//tmp = colsum(wt_obs.sub(syr,nyr))/(nyr-syr+1.);
+		//avg_wt = tmp;
 		
 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
 		cout<<"Ok after empiracle weight-at-age data"<<endl;
@@ -626,7 +658,8 @@ PARAMETER_SECTION
 	objective_function_value f;
     
 	number ro;					//unfished age-1 recruits
-	number bo;					//unfished spawning stock biomass
+	number bo;					//unfished spawning stock biomass (reference point)
+	number sbo;					//unfished spawning biomass at time of spawning from SR curve
 	number kappa;				//Goodyear compensation ratio
 	number m;					//initial natural mortality rate
 	number m_bar;				//average natural mortality rate
@@ -708,11 +741,11 @@ PROCEDURE_SECTION
 	
 	calcSurveyObservations();
 	
-	calc_stock_recruitment();
+	calcStockRecruitment();
 	
 	calc_objective_function();
 
-	sd_depletion=sbt(nyr)/bo;
+	sd_depletion=sbt(nyr)/sbo;
 	
 	if(mc_phase())
 	{
@@ -1114,7 +1147,7 @@ FUNCTION calcTotalMortality
 			M_tot(i)=M_tot(i-1)*exp(log_m_devs(i));
 		}
 	}
-	m_bar = mean(M_tot);
+	m_bar = mean( M_tot.sub(pf_cntrl(1),pf_cntrl(2)) );
 	
 	Z=M_tot+F;
 	S=mfexp(-Z);
@@ -1126,32 +1159,48 @@ FUNCTION calcTotalMortality
 FUNCTION calcNumbersAtAge
   {
 	/*
-		TODO Need to check the difference between the initialization 
-		of the numbers at age here at the margins in comparison to the
-		simulation model.
+		Aug 9, 2012.  Made a change here to initialize the numbers
+		at age in syr using the natural mortality rate at age in syr. 
+		Prior to this the average (m_bar) rate was used, since this 
+		has now changed with new projection control files.  Should only
+		affect models that were using time varying natural mortality.
 	*/
 	
 	int i,j;
 	N.initialize();
+	dvariable avg_M = mean(M_tot);
+	dvar_vector lx(sage,nage);
+	lx(sage)=1;
+	for( j=sage+1; j<=nage;j++) 
+	{
+		lx(j) = lx(j-1)*exp(-avg_M);
+	}
+	lx(nage) /= (1.-exp(-avg_M));
 	
-	
-	if(cntrl(5)){	//If initializing in at unfished conditions
+	if(cntrl(5))    //If initializing in at unfished conditions
+	{	
 		log_rt(syr) = log(ro);
-		for(j=sage;j<=nage;j++)
-		{
-			N(syr,j)=ro*exp(-m_bar*(j-1.));
-		}
+		N(syr)      = ro * lx;
+		//SM Deprecated Aug 9, 2012
+		//for(j=sage;j<=nage;j++)
+		//{
+		//	N(syr,j)=ro*exp(-m_bar*(j-1.));    
+		//}
 	}
-	else{			//If starting at unfished conditions
-		log_rt(syr) = log_avgrec+log_rec_devs(syr);
-		N(syr,sage)=mfexp(log_rt(syr));
-		for(j=sage+1;j<=nage;j++)
-		{
-			N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
-		}
+	else            //If starting at unfished conditions
+	{
+		log_rt(syr)         = log_avgrec+log_rec_devs(syr);
+		N(syr,sage)         = mfexp(log_rt(syr));
+		dvar_vector tmpr    = mfexp(log_recinit + init_log_rec_devs(sage+1,nage));
+		N(syr)(sage+1,nage) = elem_prod(tmpr,lx(sage+1,nage));
+		//SM Deprecated Aug 9, 2012
+		//for(j=sage+1;j<=nage;j++)
+		//{
+		//	N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
+		//}
 	}
-	N(syr,nage)/=(1.-exp(-m_bar));
-	
+	// SM Depreceated Aug 9, 2012
+	//N(syr,nage)/=(1.-exp(-m_bar));
 	
 	//initial number of sage recruits from year syr+1, nyr;
 	for(i=syr+1;i<=nyr;i++){
@@ -1402,7 +1451,7 @@ FUNCTION calcSurveyObservations
 	
   }
 	
-FUNCTION calc_stock_recruitment
+FUNCTION calcStockRecruitment
   {
 	/*
 	The following code is used to derive unfished
@@ -1426,36 +1475,53 @@ FUNCTION calc_stock_recruitment
 	CHANGED Need to adjust spawning biomass to post fishery numbers.
 	CHANGED Need to adjust spawners per recruit (phib) to average fecundity.
 	
-	Jan 6, 2012.  Need to adjust stock-recruitment curvey for reductions 
+	Jan 6, 2012.  Need to adjust stock-recruitment curve for reductions 
 	in fecundity associated with removal of roe from a spawn on kelp fishery.
+	
+	Aug 9, 2012. Revised routine so that the slope of the stock recruitment
+	relationship is based on all of the average fecundity over the whole series.
+	Bo is no longer calculated in this routine. This is in response to recent 
+	issue with the herring assessment, where reference points (Bo included) are 
+	based on recent trends in mean weight-at-age/fecundity-at-age.
+	
+	Psuedocode:
+		-1) Get average natural mortality rate at age.
+		-2) Calculate survivorship to time of spawning.
+		-3) Calculate unfished spawning biomass per recruit.
+		-4) Compute spawning biomass vector & substract roe fishery
+		-5) Project spawning biomass to nyr+1 under natural mortality.
+		-6) Calculate stock recruitment parameters (so, beta);
+		-7) Calculate predicted recruitment
+		-8) Compute residuals from estimated recruitments.
+	
 	*/ 
-	int i,k;
-	dvariable tau = (1.-rho)/varphi;
+	int i,j,k;
+	
+	dvariable   phib,so,beta;
+	dvariable   tau = (1.-rho)/varphi;
+	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
-	dvar_vector lx(sage,nage); lx=1;
-	//for(i=sage+1;i<=nage;i++) lx(i)=lx(i-1)*exp(-m_bar);
-	//lx(nage)/=(1.-exp(-m_bar));
-	for(i=sage; i<=nage; i++)
+	dvar_vector     lx(sage,nage); lx(sage) = 1.0;
+
+	
+	// -steps (1),(2),(3)
+	dvar_matrix t_M_tot = trans(M_tot);
+	for(j=sage; j<=nage;j++)
 	{
-		lx(i) = exp( -m_bar*(i-sage) -cntrl(13)*m_bar );
-		if(i==nage) 
-			lx(i) /= 1.0 - exp( -m_bar );
+		ma(j) = mean(t_M_tot(j));
+		if(j>sage)
+		{
+			lx(j) = lx(j-1)*mfexp(-ma(j-1));
+		} 
+		lx(j) *= mfexp(-ma(j)*cntrl(13));
 	}
-	
-	//dvariable phib = (lx*exp(-m_bar*cntrl(13))) * avg_fec;	//SM Dec 6, 2010
-	dvariable phib = lx * avg_fec;
-	dvariable so = kappa/phib;		//max recruits per spawner
-	dvariable beta;
-	bo = ro*phib;  					//unfished spawning biomass at spawning time
-	
-	//sbt=rowsum(elem_prod(N,fec));			//SM Dec 6, 2010
-	//CHANGED adjusted spawning biomass downward by ctrl(13)
-	//SJDM Jan 6, 2012 Need to adjust sbt to reflect roe fishery 
-	//in the sbt calculation below.
+	lx(nage) /= 1.0 - mfexp(-ma(nage));
+	phib      = lx * fa_bar;
+
+	// step (4)
 	for(i=syr;i<=nyr;i++)
 	{
 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-		
 		//Adjustment to spawning biomass for roe fisheries
 		for(k=1;k<=ngear;k++)
 		{
@@ -1463,35 +1529,34 @@ FUNCTION calc_stock_recruitment
 			{
 				sbt(i) *= mfexp(-ft(k,i));
 			}
-				
 		}
 			
 	}
-	sbt(nyr+1) = N(nyr+1)*fec(nyr+1);
-	//cout<<"sbt\n"<<sbt<<endl;
-	//exit(1);
-	
+	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
+	sbo = ro*phib;
+	// steps (6),(7)
+	so = kappa/phib;			//max recruits per spawner
 	switch(int(cntrl(2)))
 	{
 		case 1:
 			//Beverton-Holt model
-			beta   = (kappa-1.)/bo;
+			beta   = (kappa-1.)/sbo;
 			tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
 			break;
 		case 2:
 			//Ricker model
-			beta   = log(kappa)/bo;
+			beta   = log(kappa)/sbo;
 			tmp_rt = elem_prod(so*tmp_st,exp(-beta*tmp_st));
 		break;
 	}
 	
-	//residuals in stock-recruitment curve
-	rt    = exp(log_rt(syr+sage,nyr));//trans(N)(1)(syr+1,nyr);
+	// step (8) residuals in stock-recruitment curve
+	rt    = mfexp(log_rt(syr+sage,nyr));
 	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
 	
-	if(verbose)cout<<"**** Ok after calc_stock_recruitment ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
   }
 	
@@ -2056,18 +2121,23 @@ FUNCTION void calc_reference_points()
 		d_V(k) = value(exp(log_sel(j)(nyr)));
 		d_ak(k)= allocation(j);
 	}
+	d_ak /= sum(d_ak);
 	
 	/* (3) Instantiate an Msy class object and get_fmsy */
 	double  d_ro  = value(ro);
 	double  d_h   = value(theta(2));
-	double  d_m   = value(m_bar);
+	double  d_m   = value(m);
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	static dvector ftry = d_m*d_h/0.8*d_ak;
+	static dvector ftry(1,nfleet);
+	ftry = d_m*d_h/0.8;
 	fmsy = ftry;	// initial guess for Fmsy
 	
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
+	fall = ftry;
+	cMSY.get_fmsy(fall,d_ak);
+	fmsy = fall;
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
@@ -2355,24 +2425,38 @@ FUNCTION void simulation_model(const long& seed)
 		for(j=sage+1;j<=nage;j++)
 			N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
 		*/
-	
 	N.initialize();
-	if(cntrl(5)){	//If initializing in at unfished conditions
+	if(cntrl(5))    //If initializing in at unfished conditions
+	{	
 		log_rt(syr) = log(ro);
-		for(j=sage;j<=nage;j++)
-		{
-			N(syr,j)=ro*exp(-m_bar*(j-1.));
-		}
+		N(syr)      = ro * lx;
 	}
-	else{			//If starting at unfished conditions
-		log_rt(syr) = log_avgrec;
-		N(syr,sage)=mfexp(log_rt(syr));
-		for(j=sage+1;j<=nage;j++)
-		{
-			N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
-		}
+	else            //If starting at unfished conditions
+	{
+		log_rt(syr)         = log_avgrec+log_rec_devs(syr);
+		N(syr,sage)         = mfexp(log_rt(syr));
+		dvar_vector tmpr    = log_recinit + init_log_rec_devs(sage+1,nage);
+		N(syr)(sage+1,nage) = elem_prod(tmpr,lx(sage+1,nage));
 	}
-	N(syr,nage)/=(1.-exp(-m_bar));
+	
+	
+	/* SM Deprecated Aug 9, 2012 */
+	//if(cntrl(5)){	//If initializing in at unfished conditions
+	//	log_rt(syr) = log(ro);
+	//	for(j=sage;j<=nage;j++)
+	//	{
+	//		N(syr,j)=ro*exp(-m_bar*(j-1.));
+	//	}
+	//}
+	//else{			//If starting at unfished conditions
+	//	log_rt(syr) = log_avgrec;
+	//	N(syr,sage)=mfexp(log_rt(syr));
+	//	for(j=sage+1;j<=nage;j++)
+	//	{
+	//		N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
+	//	}
+	//}
+	//N(syr,nage)/=(1.-exp(-m_bar));
 	
 	//log_rt=log_avgrec+log_rec_devs;
 	//log_rt(syr) = log(ro);
@@ -2668,7 +2752,7 @@ REPORT_SECTION
 	REPORT(rbar);
 	double rinit=value(exp(log_recinit));
 	REPORT(rinit);
-	REPORT(bo);
+	REPORT(sbo);
 	REPORT(kappa);
 	double steepness=value(theta(2));
 	REPORT(steepness);
@@ -2733,6 +2817,7 @@ REPORT_SECTION
 	if(last_phase())
 	{
 		calc_reference_points();
+		REPORT(bo);
 		REPORT(fmsy);
 		REPORT(msy);
 		REPORT(bmsy);
