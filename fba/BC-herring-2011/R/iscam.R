@@ -1229,7 +1229,7 @@ guiView	<- function()
 		xx = sbt[1:(length(yr)-min(age))]
 		yy = rt
 		
-		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
+		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,sbo)), 
 			xlab="Spawning biomass (t)", 
 			ylab=paste("Age-",min(age)," recruits\n", "(numbers)", sep=""), 
 			main=paste(stock))
@@ -1240,21 +1240,27 @@ guiView	<- function()
 		
 		abline(h=quantile(yy, probs=c(0.33, 0.66)), col=c("salmon","green"))
 		
-		st=seq(0, max(sbt, bo), length=100)
-		if(rectype==1)
+		plot.curve <- function(sbo, clr)
 		{
-			#Beverton-Holt
-			rrt=kappa*ro*st/(bo+(kappa-1)*st)*exp(-0.5*tau^2)  
+			st=seq(0, max(sbt, sbo), length=100)
+			if(rectype==1)
+			{
+				#Beverton-Holt
+				rrt=kappa*ro*st/(sbo+(kappa-1)*st)*exp(-0.5*tau^2)  
+			}
+			if(rectype==2)
+			{
+				#Ricker
+				rrt=kappa*ro*st*exp(-log(kappa)*st/sbo)/sbo *exp(-0.5*tau^2) 
+			}
+			lines(st, rrt, col=clr)
+			ro=ro*exp(-0.5*tau^2)
+			points(sbo, ro, pch="O", col=clr, cex=1.25)
+			points(sbo, ro, pch="+", col=clr, cex=1.25)
 		}
-		if(rectype==2)
-		{
-			#Ricker
-			rrt=kappa*ro*st*exp(-log(kappa)*st/bo)/bo *exp(-0.5*tau^2) 
-		}
-		lines(st, rrt)
-		ro=ro*exp(-0.5*tau^2)
-		points(bo, ro, pch="O", col=2)
-		points(bo, ro, pch="+", col=2)
+		plot.curve(sbo, clr=3);
+		plot.curve(bo, clr=4);
+		
 		grid()
 		h <- round( kappa/(4+kappa), 2 )
 		legend("topright", paste("h=",h, sep=""), bty="n")
@@ -1628,7 +1634,7 @@ guiView	<- function()
 	#plot the spawning biomass depletion level & reference points
 	with(repObj, {
 		xx=yr
-		yy=sbt[1:length(xx)]/bo
+		yy=sbt[1:length(xx)]/sbo
 		yrange=c(0,1.1*max(yy, na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
@@ -1642,7 +1648,7 @@ guiView	<- function()
 		axis( side=1 )
 		axis( side=2, las=.VIEWLAS )
 		box()
-		#grid()
+		grid()
 		
 		if ( annotate )
 		{
@@ -1653,9 +1659,9 @@ guiView	<- function()
 			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
 			
 			#Delinate critical zone,  cautious zone, healthy zone.
-			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/bo,col=colr("red",0.1), border=NA)
-			rect(min(xx)-5,0.4*bmsy/bo,max(xx)+5,0.8*bmsy/bo,col=colr("yellow",0.1),border=NA)
-			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,3.0,col=colr("green",0.1), border=NA)
+			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/sbo,col=colr("red",0.1), border=NA)
+			rect(min(xx)-5,0.4*bmsy/sbo,max(xx)+5,0.8*bmsy/sbo,col=colr("yellow",0.1),border=NA)
+			rect(min(xx)-5,0.8*bmsy/sbo,max(xx)+5,3.0,col=colr("green",0.1), border=NA)
 		}
 		abline(h=c(0.25, 0.4), lty=3, lwd=0.5)
 	})

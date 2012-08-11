@@ -1168,7 +1168,7 @@ FUNCTION calcNumbersAtAge
 	
 	int i,j;
 	N.initialize();
-	dvariable avg_M = mean(M_tot);
+	dvariable avg_M = mean(M_tot(syr));
 	dvar_vector lx(sage,nage);
 	lx(sage)=1;
 	for( j=sage+1; j<=nage;j++) 
@@ -1502,6 +1502,7 @@ FUNCTION calcStockRecruitment
 	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector     lx(sage,nage); lx(sage) = 1.0;
+	dvar_vector     lw(sage,nage); lw(sage) = 1.0;
 
 	
 	// -steps (1),(2),(3)
@@ -1513,11 +1514,13 @@ FUNCTION calcStockRecruitment
 		{
 			lx(j) = lx(j-1)*mfexp(-ma(j-1));
 		} 
-		lx(j) *= mfexp(-ma(j)*cntrl(13));
+		lw(j) = lx(j) * mfexp(-ma(j)*cntrl(13));
 	}
 	lx(nage) /= 1.0 - mfexp(-ma(nage));
-	phib      = lx * fa_bar;
-
+	lw(nage) /= 1.0 - mfexp(-ma(nage));
+	phib      = lw * fa_bar;
+	
+	
 	// step (4)
 	for(i=syr;i<=nyr;i++)
 	{
@@ -2126,12 +2129,11 @@ FUNCTION void calc_reference_points()
 	/* (3) Instantiate an Msy class object and get_fmsy */
 	double  d_ro  = value(ro);
 	double  d_h   = value(theta(2));
-	double  d_m   = value(m);
+	double  d_m   = value(m_bar);
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	static dvector ftry(1,nfleet);
-	ftry = d_m*d_h/0.8;
+	static dvector ftry = d_m*d_h/0.8*d_ak;
 	fmsy = ftry;	// initial guess for Fmsy
 	
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
@@ -2154,6 +2156,7 @@ FUNCTION void calc_reference_points()
 	cout<<"Bmsy      \t"<<bmsy<<endl;
 	cout<<"Bi        \t"<<cMSY.getBi()<<endl;
 	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
+	cout<<"phiB      \t"<<cMSY.getPhie()<<endl;
 	cout<<"------------------------"<<endl;
 	
 	/* (4) Now do it with allocation */
@@ -3153,12 +3156,16 @@ FUNCTION void projection_model(const double& tac);
 		ofs<<"       P(U2)";
 		ofs<<"       P(U3)";
 		ofs<<"       P(U4)";
+		ofs<<"       P(D5)";
 		ofs<<endl;
 		cout<<"Bo when nf==1 \t"<<bo<<endl;
 	}
 	
-	double ut = tac / p_sbt(pyr);
-	double u20 = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* wt_obs(nyr+1)(3,nage) );
+	double  ut  = tac / p_sbt(pyr);
+	double u20  = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* avg_wt(3,nage) );
+	double dSb5 = mean(log(p_sbt(pyr-5,pyr)) - log(p_sbt(pyr-6,pyr-1).shift(pyr-5)));
+	cout<<"P(decline) "<<dSb5<<endl;
+	
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<< setprecision(4)               <<setw(4) 
 	   << tac                           <<setw(12)
@@ -3170,7 +3177,8 @@ FUNCTION void projection_model(const double& tac);
 	   << ut/Umsy                       <<setw(12)
 	   << ut/(0.5*Umsy)                 <<setw(12)
 	   << ut/(2./3.*Umsy)               <<setw(12)
-	   << u20/0.2                       <<endl;
+	   << u20/0.2                       <<setw(12)
+	   << dSb5                          <<endl;
 	
   }
 
