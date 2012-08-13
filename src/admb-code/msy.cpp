@@ -135,7 +135,7 @@ void Msy::get_fmsy(dvector& fe)
 	double x1, x2;
 	dvector fold(1,n);
 	x1 = 1.0e-5;
-	x2 = 3.0e02;
+	x2 = 3.0e01;
 	m_p      = 1.0;
 	// Spawning biomass per recruit for unfished conditions
 	calc_phie(m_M,m_fa);
@@ -198,7 +198,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	dvector p(1,n);
 	double x1, x2;
 	x1 = 1.0e-5;
-	x2 = 3.0e02;
+	x2 = 3.0e01;
 	// Spawning biomass per recruit for unfished conditions
 	calc_phie(m_M,m_fa);
 	
