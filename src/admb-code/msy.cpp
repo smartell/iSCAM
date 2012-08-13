@@ -15,7 +15,7 @@
 
 #ifndef _MSY_H_
 #define _MSY_H_
-#define MAXITER 200
+#define MAXITER 300
 #define TOL 1.e-09
 
 #include <admodel.h>
@@ -152,10 +152,10 @@ void Msy::get_fmsy(dvector& fe)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 )
 			{                                 // backtrack 98% of the newton step.
-				fe[i] -= 0.95*m_p[i];         // if outside the boundary conditions.
+				fe[i] -= 0.98*m_p[i];         // if outside the boundary conditions.
 			}
 		}
-		 cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
 	

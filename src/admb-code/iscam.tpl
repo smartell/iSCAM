@@ -2112,7 +2112,7 @@ FUNCTION void calc_reference_points()
 	//fe = 1.0*value(m_bar);
 	
 	/* (1) Determine which fleets are directed fishing fleets. */
-	/* This is done in the data section. */
+	/* This is done in the data section with nfeet and ifleet. */
 	
 	
 	/* (2) Matrix of selectivities for directed fleets */
@@ -2133,19 +2133,23 @@ FUNCTION void calc_reference_points()
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	static dvector ftry = d_m*d_h/0.8*d_ak;
+	//static dvector ftry = d_m*d_h/0.8*d_ak;
+	dvector ftry = ("{1.0,1.0,5.0}");
 	fmsy = ftry;	// initial guess for Fmsy
+	
+	//cout<< rowsum(ft)<<endl;
+	//exit(1);
 	
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	fall = ftry;
-	cMSY.get_fmsy(fall,d_ak);
-	fmsy = fall;
+	
+	//fmsy = fall;
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
 	msy  = cMSY.getMsy();
 	bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
 	
-	if(nf==1) ftry = fmsy;
+	//if(nf==1) ftry = fmsy;
 	
 	cout<<"------------------------"<<endl;
 	cout<<"Ftry      \t"<<ftry<<endl;
@@ -2163,6 +2167,9 @@ FUNCTION void calc_reference_points()
 	//cout<<"\nAllocation"<<allocation(ifleet)<<endl;
 	fall = ftry;
 	cMSY.get_fmsy(fall,d_ak);
+	//bmsy = cMSY.getBmsy();
+	//msy  = cMSY.getMsy();
+	//bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
 	
 	/* 
 	I've defined Umsy as the sum of catches divided 
