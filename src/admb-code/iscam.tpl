@@ -2134,7 +2134,7 @@ FUNCTION void calc_reference_points()
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
 	//static dvector ftry = d_m*d_h/0.8*d_ak;
-	dvector ftry = ("{1.0,1.0,5.0}");
+	dvector ftry = ("{1.0,1.0,3.0}");
 	fmsy = ftry;	// initial guess for Fmsy
 	
 	//cout<< rowsum(ft)<<endl;
@@ -3142,6 +3142,9 @@ FUNCTION void projection_model(const double& tac);
 	  2) P(U_{t+1} > 1/2 Umsy)
 	  3) P(U_{t+1} > 2/3 Umsy)
 	  4) P(tac/2+  > 20%)
+	
+	  Metric for spawning depletion and spawning trends:
+	  1) P(5-year decline)
 	  
 	  Defn: Stock status is based on spawning biomass
 	  Defn: Removal rate is based on removals/spawning biomass
@@ -3171,7 +3174,7 @@ FUNCTION void projection_model(const double& tac);
 	double  ut  = tac / p_sbt(pyr);
 	double u20  = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* avg_wt(3,nage) );
 	double dSb5 = mean(log(p_sbt(pyr-5,pyr)) - log(p_sbt(pyr-6,pyr-1).shift(pyr-5)));
-	cout<<"P(decline) "<<dSb5<<endl;
+	
 	
 	ofstream ofs(BaseFileName + ".proj",ios::app);
 	ofs<< setprecision(4)               <<setw(4) 
@@ -3185,7 +3188,8 @@ FUNCTION void projection_model(const double& tac);
 	   << ut/(0.5*Umsy)                 <<setw(12)
 	   << ut/(2./3.*Umsy)               <<setw(12)
 	   << u20/0.2                       <<setw(12)
-	   << dSb5                          <<endl;
+	   << dSb5+1                        <<setw(12)
+	   << endl;
 	
   }
 

@@ -149,6 +149,11 @@ guiView	<- function()
 	{
 		.plotRisk( hdr )
 	}
+	if ( tableType == "herringrisk")
+	{
+		source("HerringRiskTable.R", echo = FALSE)
+		.plotHerringRisk( hdr )
+	}
 }
 
 .tableLogLikelihoods <- function( hdr )
