@@ -69,7 +69,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		radio name=plotType value=refpoints     text="Reference points" 		function=.mpdView mode=character sticky=W
 		radio name=plotType value=sbmcmc        text="Spawning stock biomass" 	function=.mpdView mode=character sticky=W
 		radio name=plotType value=depletionmcmc text="Spawning depletion"	 	function=.mpdView mode=character sticky=W
-		radio name=plotType value=kobeplot      text="Stock status (KOBE)" 		function=.mpdView mode=character sticky=W
+		radio name=plotType value=kobeplot      text="Stock status "	 		function=.mpdView mode=character sticky=W
 		label text="MCMC diagnostics" font="Courier bold 10" sticky=W
 		radio name=plotType value=traceplot     text="Trace plots" 				function=.mpdView mode=character sticky=W
 		radio name=plotType value=mcmcpairs     text="Pairs plots" 				function=.mpdView mode=character sticky=W
@@ -172,5 +172,5 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 	radio name=tableType value=forecast		text="Catch forecast"		function=.iscamTable mode=character sticky=W
 	radio name=tableType value=likelihoods	text="Likelihoods"	    	function=.iscamTable mode=character sticky=W
 	radio name=tableType value=decision		text="Decision table"		function=.iscamTable mode=character sticky=W
-	null
+	radio name=tableType value=herringrisk 	text="Herring risk table"	function=.iscamTable mode=character sticky=W
 	radio name=tableType value=risk 		text="New Decision table"	function=.iscamTable mode=character sticky=W

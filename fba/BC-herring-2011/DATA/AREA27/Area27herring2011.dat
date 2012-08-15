@@ -6,9 +6,19 @@
 2           #age of youngest age class
 10          #age of plus group
 5           #number of gears (ngear)
-## flags for fishery (1) or survey (0) in ngears
-#1  1   1   0   0
-0.100 0.405 0.495 0.0 0.0
+##
+## ------------------------------------------------------------------------- ##
+## Allocation for each gear in (ngear), use 0 for survey gears.              ##
+## ------------------------------------------------------------------------- ##
+0.0 0.5 0.5 0.0 0.0
+##
+## Type of catch: an ivector based on legend below                           ##
+##               1 = catch in weight                                         ##
+##               2 = catch in numbers                                        ##
+##               3 = catch in spawn (roe)                                    ##
+## ------------------------------------------------------------------------- ##
+1       1       1       1       1
+##
 ## ________________________
 ## ________________________
 #Age-schedule and population parameters

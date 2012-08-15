@@ -1,11 +1,3 @@
-#../../fba/BC-herring-2011/DATA/AREA2W/Area2wHerring2011.dat
-#../../fba/BC-herring-2011/DATA/AREA2W/Area2wHerring2011.ctl
-
-
 Area2wHerring2011.dat
-#Area2wHerring2011.ctl
 Area2wHerring2011qprior.ctl
-
-#Area2wHerring2011.dat
-#Area2wHerring2011qfix.ctl
-#Area2wHerring2011q1.ctl
+Area2wHerring2011qprior.pfc
