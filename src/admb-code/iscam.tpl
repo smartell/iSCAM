@@ -443,7 +443,6 @@ DATA_SECTION
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 	number Umsy;					//Exploitation rate at MSY
-	number Vmsy;					//Vulnerable biomass at MSY
 	vector age_tau2(1,na_gears);	//MLE estimate of the variance for the age comps
 	//catch-age for simulation model (could be declared locally 3d_array)
 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
@@ -2298,7 +2297,6 @@ FUNCTION void calc_reference_points()
 	
 	//msy=ye;
 	//bmsy=be;
-	//Vmsy=be;
 	//Umsy=msy/Vmsy;
 	
 	/*TODO print this to the REPORT file for plotting.*/
@@ -2874,7 +2872,6 @@ REPORT_SECTION
 		REPORT(msy);
 		REPORT(bmsy);
 		REPORT(Umsy);
-		REPORT(Vmsy);
 	}
 		
 	//Parameter controls
