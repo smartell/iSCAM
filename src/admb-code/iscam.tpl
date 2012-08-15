@@ -1,100 +1,120 @@
-// ------------------------------------------------------------------------- //
-//         integrated Statistical Catch Age Model (iSCAM)                    //
-//                                                                           //
-//                           VERSION 1.1                                     //
-//               Tue Jul 19 22:23:58 PDT 2011                                //
-//                                                                           //
-//                                                                           //
-//           Created by Steven Martell on 2010-04-09                         //
-//           Copyright (c) 2010. All rights reserved.                        //
-//                                                                           //
-// AUTHORS: SJDM Steven Martell                                              //
-//                                                                           //
-// CONVENTIONS: Formatting conventions are based on the The                  //
-//               Elements of C++ Style (Misfeldt et al. 2004)                //
-//                                                                           //
-// NAMING CONVENTIONS:                                                       //
-//             Macros       -> UPPERCASE                                     //
-//             Constants    -> UpperCamelCase                                //
-//             Functions    -> lowerCamelCase                                //
-//             Variables    -> lowercase                                     //
-//                                                                           //
-// CHANGED add option for using empirical weight-at-age data                 //
-// TODO:    add gtg options for length based fisheries                      //
-// CHANGED add time varying natural mortality rate with splines              //
-// TODO:    add cubic spline interpolation for time varying M               //
-// CHANGED  Fix the type 6 selectivity implementation. not working.          //
-// TODO:  fix cubic spline selectivity for only years when data avail        //
-// CHANGED: fixed a bug in the simulation model log_ft_pars goes out         //
-//        of bounds.                                                         //
-// TODO: write a projection routine and verify equilibrium calcs             //
-// TODO: add DIC calculation for MCMC routines (in -mcveal phase)            //
-// CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds  //
-//                                                                           //
-//                                                                           //
-//                                                                           //
-// ------------------------------------------------------------------------- //
-//-- CHANGE LOG:                                                           --//
-//--  Nov 30, 2010 -modified survey biomass by the fraction of total       --//
-//--                mortality that occurred during the time of the         --//
-//--                survey. User specifies this fraction (0-1) in the      --//
-//--                data file as the last column of the relative           --//
-//--                abundance index.                                       --//
-//--                                                                       --//
-//--  Dec 6, 2010 -modified the code to allow for empiracle weight-        --//
-//--               at-age data to be used.                                 --//
-//--              -rescaled catch and relative abundance /1000, this       --//
-//--               should be done in the data file and not here.           --//
-//--                                                                       --//
-//--  Dec 20, 2010-added prior to survey q's in control file               --//
-//--                                                                       --//
-//--  Dec 24, 2010-added random walk for natural mortality.                --//
-//--                                                                       --//
-//--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting      --//
-//--               the naming conventions in The Elements of C++           --//
-//--               style to keep my mind busy.                             --//
-//--                                                                       --//
-//-- May 5, 2011- added logistic selectcitivty as a fucntion of            --//
-//--              mean body weight.  3 parameter logistic.                 --//
-//--              NOT WORKING YET                                          --//
-//--                                                                       --//
-//-- May 6, 2011- added pre-processor commands to determin PLATFORM        --//
-//--              either "Windows" or "Linux"                              --//
-//--                                                                       --//
-//-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning           --//
-//--                                                                       --//
-//--                                                                       --//
-//-- Dec 11, 2011- added halibut branch to local git repository aim is to  --//
-//--               add gender dimension and stock dimension.               --//
-//--               This was created on the "twosex" branch in git merged   --//
-//--                                                                       --//
-//-- Dec 30, 2011- working on length-based selectivity for halibut.        --//
-//--                                                                       --//
-//-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector      --//
-//--             - modified the following routines:                        --//
-//--             - calcFisheryObservations                                 --//
-//--             - calcTotalMortality                                      --//
-//-- TODO: add catch_type to equilibrium calculations for reference points --//
-//--                                                                       --//
-//--                                                                       --//
-// ------------------------------------------------------------------------- //
+// ----------------------------------------------------------------------------- //
+//         integrated Statistical Catch Age Model (iSCAM)                        //
+//                                                                               //
+//                           VERSION 1.1                                         //
+//               Tue Jul 19 22:23:58 PDT 2011                                    //
+//                                                                               //
+//                                                                               //
+//           Created by Steven Martell on 2010-04-09                             //
+//           Copyright (c) 2010. All rights reserved.                            //
+//                                                                               //
+// AUTHORS: SJDM Steven Martell                                                  //
+//                                                                               //
+// CONVENTIONS: Formatting conventions are based on the The                      //
+//               Elements of C++ Style (Misfeldt et al. 2004)                    //
+//                                                                               //
+// NAMING CONVENTIONS:                                                           //
+//             Macros       -> UPPERCASE                                         //
+//             Constants    -> UpperCamelCase                                    //
+//             Functions    -> lowerCamelCase                                    //
+//             Variables    -> lowercase                                         //
+//                                                                               //
+// CHANGED add option for using empirical weight-at-age data                     //
+// TODO:    add gtg options for length based fisheries                          //
+// CHANGED add time varying natural mortality rate with splines                  //
+// TODO:    add cubic spline interpolation for time varying M                   //
+// CHANGED  Fix the type 6 selectivity implementation. not working.              //
+// TODO:  fix cubic spline selectivity for only years when data avail            //
+// CHANGED: fixed a bug in the simulation model log_ft_pars goes out             //
+//        of bounds.                                                             //
+// TODO: write a projection routine and verify equilibrium calcs                 //
+// TODO: add DIC calculation for MCMC routines (in -mcveal phase)                //
+// CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds      //
+//                                                                               //
+//                                                                               //
+//                                                                               //
+// ----------------------------------------------------------------------------- //
+//-- CHANGE LOG:                                                               --//
+//--  Nov 30, 2010 -modified survey biomass by the fraction of total           --//
+//--                mortality that occurred during the time of the             --//
+//--                survey. User specifies this fraction (0-1) in the          --//
+//--                data file as the last column of the relative               --//
+//--                abundance index.                                           --//
+//--                                                                           --//
+//--  Dec 6, 2010 -modified the code to allow for empiracle weight-            --//
+//--               at-age data to be used.                                     --//
+//--              -rescaled catch and relative abundance /1000, this           --//
+//--               should be done in the data file and not here.               --//
+//--                                                                           --//
+//--  Dec 20, 2010-added prior to survey q's in control file                   --//
+//--                                                                           --//
+//--  Dec 24, 2010-added random walk for natural mortality.                    --//
+//--                                                                           --//
+//--  Jan 23, 2011-in Penticton Hospital with my mom in ICU, adopting          --//
+//--               the naming conventions in The Elements of C++               --//
+//--               style to keep my mind busy.                                 --//
+//--                                                                           --//
+//-- May 5, 2011- added logistic selectcitivty as a fucntion of                --//
+//--              mean body weight.  3 parameter logistic.                     --//
+//--              NOT WORKING YET                                              --//
+//--                                                                           --//
+//-- May 6, 2011- added pre-processor commands to determin PLATFORM            --//
+//--              either "Windows" or "Linux"                                  --//
+//--                                                                           --//
+//-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning               --//
+//--                                                                           --//
+//--                                                                           --//
+//-- Dec 11, 2011- added halibut branch to local git repository aim is to      --//
+//--               add gender dimension and stock dimension.                   --//
+//--               This was created on the "twosex" branch in git merged       --//
+//--                                                                           --//
+//-- Dec 30, 2011- working on length-based selectivity for halibut.            --//
+//--                                                                           --//
+//-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector          --//
+//--             - modified the following routines:                            --//
+//--             - calcFisheryObservations                                     --//
+//--             - calcTotalMortality                                          --//
+//-- TODO: add catch_type to equilibrium calculations for reference points     --//
+//--                                                                           --//
+//--                                                                           --//
+// ----------------------------------------------------------------------------- //
 
 
 DATA_SECTION
+	// ------------------------------------------------------------------------- //
+	// In the DATA_SECTION 3 separate files are read in:                         //
+	// 1) ProjectFileControl.pfc (used for stock projections under TAC)          //
+	// 2) DataFile.dat           (data to condition the assessment model on)     //
+	// 3) ControlFile.ctl        (controls for phases, selectivity options )     //
+	//                                                                           //
+	// NOTES:                                                                    //
+	//                                                                           //
+	// ------------------------------------------------------------------------- //
+
 	!! cout<<"iSCAM has detected that you are on a "<<PLATFORM<<" box"<<endl;
 	
-
+	// ------------------------------------------------------------------------- //
+	// STRINGS FOR INPUT FILES                                                   //
+	// ------------------------------------------------------------------------- //
 	init_adstring DataFile;
 	init_adstring ControlFile;
 	init_adstring ProjectFileControl;
 	
+	
+	// ------------------------------------------------------------------------- //
+	// READ IN PROJECTION FILE CONTROLS                                          //
+	// ------------------------------------------------------------------------- //	
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	init_int n_tac;
 	init_vector tac(1,n_tac);
 	
 	// Documentation for projection control file pf_cntrl
 	// 1) start year for m_bar calculation
-	// 2) end year for m_bar calculation
+	// 2)   end year for m_bar calculation
+	// 3) start year for average fecundity/weight-at-age
+	// 4)   end year for average fecundity/weight-at-age
+	// 5) start year for recruitment period (not implemented yet)
+	// 6)   end year for recruitment period (not implemented yet)
 	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
 	
@@ -104,6 +124,7 @@ DATA_SECTION
 		{
 			cout<<"Error reading projection file."<<endl;
 			cout<<"Last integer read is "<<eof_pf<<endl;
+			cout<<"The file should end with -999.\n Aborting!"<<endl;
 			exit(1);
 		}
 	END_CALCS
@@ -113,7 +134,7 @@ DATA_SECTION
 	!! cout<<BaseFileName<<endl;
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	
-	!! ad_comm::change_datafile_name(DataFile);
+	
 	
 	int SimFlag;
 	int rseed;
@@ -143,25 +164,44 @@ DATA_SECTION
 			cout<<"______________________________________________________"<<endl;
 		}
 	END_CALCS
+
+	// ************************************************************************* //
+	// ** READ IN MODEL DATA FROM  DataFile                                   ** //
+	// ************************************************************************* //
+	!! ad_comm::change_datafile_name(DataFile);
+
 	
-	//Read in objects from data file using the init_ prefix
+	// ------------------------------------------------------------------------- //
+	// MODEL DIMENSIONS                                                          //
+	// ------------------------------------------------------------------------- //
 	init_int syr;
-	init_int nyr;
-	!! cout<<"syr\t"<<syr<<endl;
-	!! cout<<"nyr\t"<<nyr<<endl;
-	
+	init_int nyr;	
 	init_int sage;
 	init_int nage;
-	!! cout<<"sage\t"<<sage<<endl;
-	!! cout<<"nage\t"<<nage<<endl;
 	vector age(sage,nage);
 	!! age.fill_seqadd(sage,1);
 	
-	init_int ngear;				//number of gear types with unique selectivities
-	int nfleet;
-	!! cout<<"ngear\t"<<ngear<<endl;
+	//number of gear types with unique selectivities
+	init_int ngear;	
+	
+	LOC_CALCS
+		cout<<"** __MODEL DIMENSION__ **"<<endl;
+		cout<<"  syr\t"<<syr<<endl;
+		cout<<"  nyr\t"<<nyr<<endl;
+		cout<<"  sage\t"<<sage<<endl;
+		cout<<"  nage\t"<<nage<<endl;
+		cout<<"  ngear\t"<<ngear<<endl;
+		cout<<"** ___________________ **"<<endl;
+	END_CALCS
+	
+	
+	
+	// ------------------------------------------------------------------------- //
+	// Allocation for each gear in (ngear), use 0 for survey gears.              //
+	// ------------------------------------------------------------------------- //
 	init_vector allocation(1,ngear);
 	init_ivector catch_type(1,ngear);
+	int nfleet;
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		//If allocation >0 then set fish flag =1 else 0
@@ -418,7 +458,7 @@ DATA_SECTION
 	
 	
 	// ***************************************************
-	// ** Read parameter controls from ControlFile
+	// ** Read parameter controls from ControlFile      **
 	// ***************************************************
 	!! ad_comm::change_datafile_name(ControlFile);
 	
@@ -2100,22 +2140,19 @@ FUNCTION void calc_reference_points()
 	the new Msy class does a much better job in the case of multiple fleets.
 	
 	The algorithm is as follows:
-		(1) Determine which of ngears are directed fishing fleets (fsh_flag==1)
 		(2) Construct a matrix of selectivities for the directed fleets.
-		(3) Instantiate an Msy class object and get_fmsy.
+		(3) Come up with a reasonable guess for fmsy for each gear.
+		(4) Instantiate an Msy class object and get_fmsy.
+		(5) Use Msy object to get reference points.
 	*/
 	int i,j,k;
-	//double re,ye,be,ve,phiq,dphiq_df,dre_df,fe;
-	//double dye_df,ddye_df,d2ye_df2,spr;
-	
-	/* Initial guess for fmsy */
-	//fe = 1.0*value(m_bar);
 	
 	/* (1) Determine which fleets are directed fishing fleets. */
 	/* This is done in the data section with nfeet and ifleet. */
 	
 	
 	/* (2) Matrix of selectivities for directed fleets */
+	cout<<"stat of calc_reference_points"<<endl;
 	dmatrix d_V(1,nfleet,sage,nage);
 	dvector d_ak(1,nfleet);
 	for(k = 1; k<= nfleet; k++)
@@ -2126,23 +2163,33 @@ FUNCTION void calc_reference_points()
 	}
 	d_ak /= sum(d_ak);
 	
-	/* (3) Instantiate an Msy class object and get_fmsy */
+	/* (3) Come up with a reasonable estimate of Fmsy */
+	dvector vb(1,nfleet);
+	dvariable sp
+	for(k=1;k<=nfleet;k++)
+	{
+		vb(k) = d_V(k)/max(d_V(k)) * avg_wt;
+	}
+	cout<<vb<<endl;
+	exit(1);
+	
+	/* (4) Instantiate an Msy class object and get_fmsy */
 	double  d_ro  = value(ro);
 	double  d_h   = value(theta(2));
 	double  d_m   = value(m_bar);
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	//static dvector ftry = d_m*d_h/0.8*d_ak;
-	dvector ftry = ("{1.0,1.0,3.0}");
+	static dvector ftry = d_m*d_h/0.8*d_ak;
+	//dvector ftry = ("{1.0,1.0,3.0}");
 	fmsy = ftry;	// initial guess for Fmsy
 	
 	//cout<< rowsum(ft)<<endl;
 	//exit(1);
-	
+	cout<<"About to declare MSY object"<<endl;
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	fall = ftry;
-	
+		cout<<"Ok to here"<<endl;
 	//fmsy = fall;
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
