@@ -2163,15 +2163,15 @@ FUNCTION void calc_reference_points()
 	}
 	d_ak /= sum(d_ak);
 	
-	/* (3) Come up with a reasonable estimate of Fmsy */
-	dvector vb(1,nfleet);
-	dvariable sp
-	for(k=1;k<=nfleet;k++)
-	{
-		vb(k) = d_V(k)/max(d_V(k)) * avg_wt;
-	}
-	cout<<vb<<endl;
-	exit(1);
+	/* 
+	(3) Come up with a reasonable estimate of Fmsy 
+	In practice seems to  work best if start with 
+	extreme low values.
+	*/
+	dvector ftry(1,nfleet);
+	ftry = 0.01;    // initial guess for Fmsy
+	fmsy = ftry;
+	
 	
 	/* (4) Instantiate an Msy class object and get_fmsy */
 	double  d_ro  = value(ro);
@@ -2180,10 +2180,7 @@ FUNCTION void calc_reference_points()
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-	static dvector ftry = d_m*d_h/0.8*d_ak;
-	//dvector ftry = ("{1.0,1.0,3.0}");
-	fmsy = ftry;	// initial guess for Fmsy
-	
+		
 	//cout<< rowsum(ft)<<endl;
 	//exit(1);
 	cout<<"About to declare MSY object"<<endl;
