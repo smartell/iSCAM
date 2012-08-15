@@ -2143,6 +2143,12 @@ FUNCTION void calc_reference_points()
 		(3) Come up with a reasonable guess for fmsy for each gear.
 		(4) Instantiate an Msy class object and get_fmsy.
 		(5) Use Msy object to get reference points.
+		
+		
+	Aug 11, 2012.
+	For the Pacific herring branch omit the get_fmsy calculations and use only the 
+	Bo calculuation for the reference points.  As there are no MSY based reference
+	points required for the descision table. 
 	*/
 	int i,j,k;
 	
@@ -2178,54 +2184,60 @@ FUNCTION void calc_reference_points()
 	double  d_rho = cntrl(13);
 	dvector d_wa  = (avg_wt);
 	dvector d_fa  = (avg_fec);
-		
-	//cout<< rowsum(ft)<<endl;
-	//exit(1);
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
-	fall = ftry;
 	
-	//fmsy = fall;
-	cMSY.get_fmsy(fmsy);
-	bmsy = cMSY.getBmsy();
-	msy  = cMSY.getMsy();
-	bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
+	bo   = cMSY.getBo();
 	
-	//if(nf==1) ftry = fmsy;
+	cout<<"|------------------------------------------|"<<endl;
+	cout<<"| Bo = "<<setw(10)<<bo                        <<endl;
+	cout<<"|------------------------------------------|"<<endl;
 	
-	cout<<"------------------------"<<endl;
-	cout<<"Ftry      \t"<<ftry<<endl;
-	cout<<"Fmsy      \t"<<fmsy<<endl;
-	cout<<"MSY       \t"<<msy<<endl;
-	cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
-	cout<<"Bo        \t"<<bo<<endl;
-	cout<<"Bmsy      \t"<<bmsy<<endl;
-	cout<<"Bi        \t"<<cMSY.getBi()<<endl;
-	cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
-	cout<<"phiB      \t"<<cMSY.getPhie()<<endl;
-	cout<<"------------------------"<<endl;
 	
-	/* (4) Now do it with allocation */
-	//cout<<"\nAllocation"<<allocation(ifleet)<<endl;
-	fall = ftry;
-	cMSY.get_fmsy(fall,d_ak);
+	
+	//fall = ftry;
+	//
+	////fmsy = fall;
+	//cMSY.get_fmsy(fmsy);
 	//bmsy = cMSY.getBmsy();
 	//msy  = cMSY.getMsy();
 	//bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
-	
-	/* 
-	I've defined Umsy as the sum of catches divided 
-	by spawning biomass at the start of the year.
-	*/
-	Umsy = sum(cMSY.getYe())/cMSY.getBi();
-	
-	
-	cout<<"------------------------"<<endl;
-	cout<<"Fall      \t"<<fall<<endl;
-	cout<<"Yield     \t"<<cMSY.getYe()<<endl;
-	cout<<"Be        \t"<<cMSY.getBe()<<endl;
-	cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
-	cout<<"Umsy      \t"<<Umsy<<endl;
-	cout<<"------------------------"<<endl;
+	//
+	////if(nf==1) ftry = fmsy;
+	//
+	//cout<<"------------------------"<<endl;
+	//cout<<"Ftry      \t"<<ftry<<endl;
+	//cout<<"Fmsy      \t"<<fmsy<<endl;
+	//cout<<"MSY       \t"<<msy<<endl;
+	//cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
+	//cout<<"Bo        \t"<<bo<<endl;
+	//cout<<"Bmsy      \t"<<bmsy<<endl;
+	//cout<<"Bi        \t"<<cMSY.getBi()<<endl;
+	//cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
+	//cout<<"phiB      \t"<<cMSY.getPhie()<<endl;
+	//cout<<"------------------------"<<endl;
+	//
+	///* (4) Now do it with allocation */
+	////cout<<"\nAllocation"<<allocation(ifleet)<<endl;
+	//fall = ftry;
+	//cMSY.get_fmsy(fall,d_ak);
+	////bmsy = cMSY.getBmsy();
+	////msy  = cMSY.getMsy();
+	////bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
+	//
+	///* 
+	//I've defined Umsy as the sum of catches divided 
+	//by spawning biomass at the start of the year.
+	//*/
+	//Umsy = sum(cMSY.getYe())/cMSY.getBi();
+	//
+	//
+	//cout<<"------------------------"<<endl;
+	//cout<<"Fall      \t"<<fall<<endl;
+	//cout<<"Yield     \t"<<cMSY.getYe()<<endl;
+	//cout<<"Be        \t"<<cMSY.getBe()<<endl;
+	//cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
+	//cout<<"Umsy      \t"<<Umsy<<endl;
+	//cout<<"------------------------"<<endl;
 	
 	//The following code should be deprecated, along with the two equilibrium functions
 	//as this reference point material is now hanlded by the Msy class.
@@ -2928,7 +2940,7 @@ FUNCTION decision_table
 	1) P(U_{t+1} > Target harvest rate)
 	2) P(U_{t+1} > 1/2 Fmsy)
 	3) P(U_{t+1} > 2/3 Fmsy)
-	4) P(tac/2+  > 20%)
+	4) P(tac/3+  > 20%)
 	
 	Key to the harvest metric is the definition of Umsy and allocation to fleets.
 	
@@ -2963,9 +2975,9 @@ FUNCTION mcmc_output
 		ofs<<"          rho";
 		ofs<<"     vartheta";
 		ofs<<"           bo";
-		ofs<<"         bmsy";
-		for(int k=1;k<=nfleet;k++) ofs<<"         msy"<<k;
-		for(int k=1;k<=nfleet;k++) ofs<<"        fmsy"<<k;
+		//ofs<<"         bmsy";
+		//for(int k=1;k<=nfleet;k++) ofs<<"         msy"<<k;
+		//for(int k=1;k<=nfleet;k++) ofs<<"        fmsy"<<k;
 		ofs<<"          SSB";
 		ofs<<"        Age-4";
 		ofs<<"         Poor";
@@ -2988,14 +3000,14 @@ FUNCTION mcmc_output
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	
 	
-	if( bmsy > 0 && min(fmsy) >= 0 )
+	//if( bmsy > 0 && min(fmsy) >= 0 )
 	{
 		ofstream ofs("iscam.mcmc",ios::app);
 		ofs<<setw(12)<<theta;
 		ofs<<setw(13)<< bo;
-		ofs<<setw(13)<< bmsy;
-		ofs<<setw(12)<< msy;
-		ofs<<setw(12)<< fmsy;
+		//ofs<<setw(13)<< bmsy;
+		//ofs<<setw(12)<< msy;
+		//ofs<<setw(12)<< fmsy;
 		ofs<<setw(13)<< sbt(nyr);
 		ofs<<setw(13)<< future_bt4;
 		ofs<<setw(12)<< future_bt4+rt3;
