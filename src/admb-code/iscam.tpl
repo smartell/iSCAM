@@ -2152,7 +2152,6 @@ FUNCTION void calc_reference_points()
 	
 	
 	/* (2) Matrix of selectivities for directed fleets */
-	cout<<"stat of calc_reference_points"<<endl;
 	dmatrix d_V(1,nfleet,sage,nage);
 	dvector d_ak(1,nfleet);
 	for(k = 1; k<= nfleet; k++)
@@ -2183,10 +2182,9 @@ FUNCTION void calc_reference_points()
 		
 	//cout<< rowsum(ft)<<endl;
 	//exit(1);
-	cout<<"About to declare MSY object"<<endl;
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	fall = ftry;
-		cout<<"Ok to here"<<endl;
+	
 	//fmsy = fall;
 	cMSY.get_fmsy(fmsy);
 	bmsy = cMSY.getBmsy();
@@ -2867,7 +2865,7 @@ REPORT_SECTION
 	REPORT(A_nu);
 	REPORT(N);
 	REPORT(wt_obs);
-
+	
 	if(last_phase())
 	{
 		calc_reference_points();
@@ -2885,6 +2883,7 @@ REPORT_SECTION
 	
 	
 	if(last_phase()) decision_table();
+	cout<<"OK to Here"<<endl;
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -3129,6 +3128,7 @@ FUNCTION void projection_model(const double& tac);
 	{
 		//get_ft is defined in the Baranov.cxx file
 		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
+		
 		//p_ft(i)(1,nfleet) = fmsy(1,nfleet);
 		
 		//Calculate mortality

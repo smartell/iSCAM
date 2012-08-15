@@ -14,7 +14,9 @@ written by Steve Martell. This software was originally
 developed for the BC herring stock assessments in 2011.
 
 The project started in the fall of 2010 and is hosted on 
-an svn server: http://code.google.com/p/iscam-project/
+an svn server: http://code.google.com/p/iscam-project/ . This
+site is no longer an svn repository, it was converted to
+at Git repository in December (6) of 2011.
 
 Additional information about the software can also be obtained
 from a website: https://sites.google.com/site/iscamproject/
@@ -110,7 +112,7 @@ Setting up a new project in fba:
 
 To Do List:
 ==========
-TODO Convert version control system from Subversion to Git
+CHANGED Convert version control system from Subversion to Git
 TODO Add make verify target for testing example models to root Makefile
 
 CHANGED Add Makefile's to the makeproject script.
