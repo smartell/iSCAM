@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>src/admb-code/iscam.tpl</string>
+	<string>fba/BC-herring-2011/R/iscam.R</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -205,7 +205,35 @@
 			<key>firstVisibleLine</key>
 			<integer>23</integer>
 		</dict>
+		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.mcmc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1836</integer>
+		</dict>
 		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.par</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.proj</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -269,6 +297,20 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/BC-herring-2011/R/iscam.R</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>81</integer>
+				<key>line</key>
+				<integer>17</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -396,14 +438,44 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>3151</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>3134</integer>
+		</dict>
+		<key>src/admb-code/msy.cpp</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>162</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>52</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>162</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>162</integer>
+			</dict>
 		</dict>
 		<key>src/r-code/iscam-Rpackage/DESCRIPTION</key>
 		<dict>
@@ -437,6 +509,10 @@
 	<key>openDocuments</key>
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
+		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.proj</string>
+		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.mcmc</string>
+		<string>fba/BC-herring-2011/R/iscam.R</string>
+		<string>src/admb-code/msy.cpp</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -455,7 +531,38 @@
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
-					<dict/>
+					<dict>
+						<key>BC-herring-2011</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict>
+								<key>DATA</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict>
+										<key>SOG</key>
+										<dict>
+											<key>isExpanded</key>
+											<true/>
+											<key>subItems</key>
+											<dict/>
+										</dict>
+									</dict>
+								</dict>
+								<key>R</key>
+								<dict>
+									<key>isExpanded</key>
+									<true/>
+									<key>subItems</key>
+									<dict/>
+								</dict>
+							</dict>
+						</dict>
+					</dict>
 				</dict>
 			</dict>
 		</dict>
