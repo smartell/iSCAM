@@ -1,0 +1,42 @@
+-----------------------------------------------
+Terms of reference for the Halibut Bycatch Management Research Project.
+
+Paraphrased from Ed Richardsons TOR.
+Feb 4, 2012
+-----------------------------------------------
+
+THREE COMPONENTS:
+1) Effects of bycatch & wastage in GOA & BSAI fisheries on halibut yield and SSB.
+
+2) Effects of reduced minimum size limits on halibut biomass, yield, SSB and wastage.
+
+3) Presentation April 24-25, Crown Plaza Hotel, in Seattle WA.
+-----------------------------------------------
+
+MODEL SPECIFICATION & ANALYTICS
+
+- An age- sex-structured size-based model will be constructed to represent the coast-wide stock assessment model.
+
+-----------------------------------------------
+QUESTIONS TO BE ADDRESSED
+
+COMPONENT 1:
+ - What is the yield loss ratio from halibut bycatch and wastage?  Or, for every pound of bycatch taken in non-directed fisheries, how much potential yield is lost in the directed fishery?
+
+COMPONENT 2:
+ - What are the implications of reducing the size limit from 32 inches to 26 inches on the estimates of SSB, yield and wastage?
+
+COMPONENT 3:
+ - Prepare presentations for a workshop in Seattle.
+
+-----------------------------------------------
+BUDGET:
+  DESCRIPTION              DAYS       COST
+  -model development       7          $7000
+  -bycatch analysis        7          $7000
+  -size limit analysis     5          $5000
+  -write up & presenation  5          $5000
+  -workshop (OGG <-> SEA)  -          $700
+  -Hotel & per diem        -          $900
+  -Seattle Housing         -          $5100
+                               TOTAL  $30,700

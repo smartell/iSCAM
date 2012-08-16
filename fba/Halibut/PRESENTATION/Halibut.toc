@@ -1,0 +1,11 @@
+\beamer@endinputifotherversion {3.10pt}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@sectionintoc {2}{Simulation model}{6}{0}{2}
+\beamer@sectionintoc {3}{Scenarios}{22}{0}{3}
+\beamer@sectionintoc {4}{Results}{27}{0}{4}
+\beamer@subsectionintoc {4}{1}{EBio}{28}{0}{4}
+\beamer@subsectionintoc {4}{2}{SBio}{29}{0}{4}
+\beamer@subsectionintoc {4}{3}{YBio}{30}{0}{4}
+\beamer@subsectionintoc {4}{4}{Wastage}{31}{0}{4}
+\beamer@subsectionintoc {4}{5}{Yield Loss Ratio}{32}{0}{4}
+\beamer@sectionintoc {5}{Summary}{33}{0}{5}

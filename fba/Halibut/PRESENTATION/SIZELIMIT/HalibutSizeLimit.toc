@@ -1,0 +1,14 @@
+\beamer@endinputifotherversion {3.10pt}
+\beamer@sectionintoc {1}{Objective}{2}{0}{1}
+\beamer@sectionintoc {2}{Simulation Model}{6}{0}{2}
+\beamer@sectionintoc {3}{Scenarios}{23}{0}{3}
+\beamer@sectionintoc {4}{Results}{27}{0}{4}
+\beamer@subsectionintoc {4}{1}{EBio}{28}{0}{4}
+\beamer@subsectionintoc {4}{2}{Yield}{29}{0}{4}
+\beamer@subsectionintoc {4}{3}{Wastage}{30}{0}{4}
+\beamer@subsectionintoc {4}{4}{Landed Value}{31}{0}{4}
+\beamer@subsectionintoc {4}{5}{Wastage Value}{32}{0}{4}
+\beamer@subsectionintoc {4}{6}{Discard Value}{33}{0}{4}
+\beamer@subsectionintoc {4}{7}{Size-limit Impacts}{34}{0}{4}
+\beamer@subsectionintoc {4}{8}{Efficiency}{37}{0}{4}
+\beamer@sectionintoc {5}{Summary}{39}{0}{5}

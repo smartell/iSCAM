@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2011)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: usrGuide.aux
+The style file: apalike.bst
+Database file #1: /Users/stevenmartell/Documents/ARTICLES/Articles-1.bib
+Warning--entry type for "ADMB2009" isn't style-file defined
+--line 1048 of file /Users/stevenmartell/Documents/ARTICLES/Articles-1.bib
+You've used 11 entries,
+            1935 wiz_defined-function locations,
+            545 strings with 5560 characters,
+and the built_in function-call counts, 4133 in all, are:
+= -- 416
+> -- 135
+< -- 9
++ -- 44
+- -- 42
+* -- 354
+:= -- 719
+add.period$ -- 32
+call.type$ -- 11
+change.case$ -- 74
+chr.to.int$ -- 11
+cite$ -- 11
+duplicate$ -- 150
+empty$ -- 307
+format.name$ -- 65
+if$ -- 801
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 12
+newline$ -- 57
+num.names$ -- 33
+pop$ -- 55
+preamble$ -- 1
+purify$ -- 76
+quote$ -- 0
+skip$ -- 116
+stack$ -- 0
+substring$ -- 351
+swap$ -- 10
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 62
+warning$ -- 0
+while$ -- 37
+width$ -- 0
+write$ -- 141
+(There was 1 warning)

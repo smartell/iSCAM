@@ -1,0 +1,28 @@
+% latex.default(TACprobs, file = fn, title = "Risk", longtable = FALSE,      landscape = FALSE, cgroup = NULL, n.cgroup = NULL, caption = cap,      label = paste("Table:Risk", hdr$Stock[i], sep = ""), na.blank = TRUE,      vbar = FALSE) 
+%
+\begin{table}[!tbp]
+\caption{Decision table for SOG where tac is the total
+			allowable catch (row),  and each of the columns referst to the probability
+			of an undesirable outcome (e.g.,  P(SB decline) corresponds to the probability
+			of the spawning stock biomass declining from 2012 to 2013).\label{Table:RiskSOG}} 
+\begin{center}
+\begin{tabular}{rrrrrrrrrr}
+\hline\hline
+\multicolumn{1}{c}{TAC}&\multicolumn{1}{c}{P(SB decline)}&\multicolumn{1}{c}{P(SB \textless  0.25 B0)}&\multicolumn{1}{c}{P(SB \textless  0.75 B0)}&\multicolumn{1}{c}{P(SB \textless  0.40 Bmsy)}&\multicolumn{1}{c}{P(SB \textless  0.80 Bmsy)}&\multicolumn{1}{c}{P(U \textgreater  Umsy)}&\multicolumn{1}{c}{P(U \textgreater  1/2 Umsy)}&\multicolumn{1}{c}{P(U \textgreater  2/3 Umsy)}&\multicolumn{1}{c}{P(U3+ \textgreater  20%)}\tabularnewline
+\hline
+$ 0$&$0.155$&$0$&$0.012$&$0$&$0$&$0$&$0$&$0$&$0.003$\tabularnewline
+$ 5$&$0.212$&$0$&$0.017$&$0$&$0$&$1$&$1$&$1$&$0.008$\tabularnewline
+$ 9$&$0.268$&$0$&$0.022$&$0$&$0$&$1$&$1$&$1$&$0.017$\tabularnewline
+$10$&$0.283$&$0$&$0.024$&$0$&$0$&$1$&$1$&$1$&$0.020$\tabularnewline
+$14$&$0.349$&$0$&$0.031$&$0$&$0$&$1$&$1$&$1$&$0.043$\tabularnewline
+$15$&$0.367$&$0$&$0.033$&$0$&$0$&$1$&$1$&$1$&$0.051$\tabularnewline
+$20$&$0.459$&$0$&$0.046$&$0$&$0$&$1$&$1$&$1$&$0.124$\tabularnewline
+$25$&$0.554$&$0$&$0.064$&$0$&$0$&$1$&$1$&$1$&$0.270$\tabularnewline
+$27$&$0.592$&$0$&$0.073$&$0$&$0$&$1$&$1$&$1$&$0.352$\tabularnewline
+$30$&$0.646$&$0$&$0.088$&$0$&$0$&$1$&$1$&$1$&$0.492$\tabularnewline
+$35$&$0.728$&$0$&$0.119$&$0$&$0$&$1$&$1$&$1$&$0.718$\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+

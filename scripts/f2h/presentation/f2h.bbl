@@ -1,0 +1,77 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{%
+Clark%
+}{%
+Clark%
+}{%
+{\protect\APACyear{1991}}%
+}]{%
+clark1991groundfish}%
+\APACinsertmetastar{%
+clark1991groundfish}%
+Clark, W.%
+%
+\unskip\
+\newblock
+\APACrefYearMonthDay{1991}{}{}.
+\newblock
+\BBOQ{}\APACrefatitle{Groundfish exploitation rates based on life history
+  parameters}{Groundfish exploitation rates based on life history
+  parameters}.\BBCQ{}
+\newblock
+\APACjournalVolNumPages{Canadian Journal of Fisheries and Aquatic
+  Sciences}{48}{5}{734--750}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem[\protect\citeauthoryear{%
+Clark%
+}{%
+Clark%
+}{%
+{\protect\APACyear{2002}}%
+}]{%
+clark2002f}%
+\APACinsertmetastar{%
+clark2002f}%
+Clark, W.%
+%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2002}{}{}.
+\newblock
+\BBOQ{}\APACrefatitle{{F 35\% revisited ten years later}}{{F 35\% revisited ten
+  years later}}.\BBCQ{}
+\newblock
+\APACjournalVolNumPages{North American Journal of Fisheries
+  Management}{22}{1}{251--257}.
+\PrintBackRefs{\CurrentBib}
+
+\bibitem[\protect\citeauthoryear{%
+Martell%
+, Pine%
+\BCBL{}\ \BBA{} Walters%
+}{%
+Martell%
+\ \protect\BOthers{.}}{%
+{\protect\APACyear{2008}}%
+}]{%
+Martell2008pam}%
+\APACinsertmetastar{%
+Martell2008pam}%
+Martell, S\BPBI J\BPBI D.%
+, Pine, W\BPBI E.%
+\BCBL{}\ \BBA{} Walters, C\BPBI J.%
+%
+\unskip\
+\newblock
+\APACrefYearMonthDay{2008}{}{}.
+\newblock
+\BBOQ{}\APACrefatitle{Parameterizing age-structured models from a fisheries
+  management perspective}{Parameterizing age-structured models from a fisheries
+  management perspective}.\BBCQ{}
+\newblock
+\APACjournalVolNumPages{Can. J. Fish. Aquat. Sci.}{65}{}{1586--1600}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}

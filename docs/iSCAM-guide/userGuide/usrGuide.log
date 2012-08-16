@@ -1,0 +1,1693 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  9 AUG 2012 10:56
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**usrGuide.tex
+(./usrGuide.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/preprint/fullpage.sty
+Package: fullpage 1999/02/23 1.1 (PWD)
+\FP@margin=\skip43
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+)))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip44
+\f@ncyO@elh=\skip45
+\f@ncyO@erh=\skip46
+\f@ncyO@olh=\skip47
+\f@ncyO@orh=\skip48
+\f@ncyO@elf=\skip49
+\f@ncyO@erf=\skip50
+\f@ncyO@olf=\skip51
+\f@ncyO@orf=\skip52
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
+\c@tracingmulticols=\count88
+\mult@box=\box26
+\multicol@leftmargin=\dimen103
+\c@unbalance=\count89
+\c@collectmore=\count90
+\doublecol@number=\count91
+\multicoltolerance=\count92
+\multicolpretolerance=\count93
+\full@width=\dimen104
+\page@free=\dimen105
+\premulticols=\dimen106
+\postmulticols=\dimen107
+\multicolsep=\skip53
+\multicolbaselineskip=\skip54
+\partial@page=\box27
+\last@line=\box28
+\mult@rightbox=\box29
+\mult@grightbox=\box30
+\mult@gfirstbox=\box31
+\mult@firstbox=\box32
+\@tempa=\box33
+\@tempa=\box34
+\@tempa=\box35
+\@tempa=\box36
+\@tempa=\box37
+\@tempa=\box38
+\@tempa=\box39
+\@tempa=\box40
+\@tempa=\box41
+\@tempa=\box42
+\@tempa=\box43
+\@tempa=\box44
+\@tempa=\box45
+\@tempa=\box46
+\@tempa=\box47
+\@tempa=\box48
+\@tempa=\box49
+\c@columnbadness=\count94
+\c@finalcolumnbadness=\count95
+\last@try=\dimen108
+\multicolovershoot=\dimen109
+\multicolundershoot=\dimen110
+\mult@nat@firstbox=\box50
+\colbreak@box=\box51
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip55
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks16
+\ex@=\dimen111
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen112
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count96
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count97
+\leftroot@=\count98
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count99
+\DOTSCASE@=\count100
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box52
+\strutbox@=\box53
+\big@size=\dimen113
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count101
+\c@MaxMatrixCols=\count102
+\dotsspace@=\muskip10
+\c@parentequation=\count103
+\dspbrk@lvl=\count104
+\tag@help=\toks17
+\row@=\count105
+\column@=\count106
+\maxfields@=\count107
+\andhelp@=\toks18
+\eqnshift@=\dimen114
+\alignsep@=\dimen115
+\tagshift@=\dimen116
+\tagwidth@=\dimen117
+\totwidth@=\dimen118
+\lineht@=\dimen119
+\@envbody=\toks19
+\multlinegap=\skip56
+\multlinetaggap=\skip57
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/boxedminipage/boxedminipage.sty)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip58
+\LTright=\skip59
+\LTpre=\skip60
+\LTpost=\skip61
+\LTchunksize=\count108
+\LTcapwidth=\dimen120
+\LT@head=\box54
+\LT@firsthead=\box55
+\LT@foot=\box56
+\LT@lastfoot=\box57
+\LT@cols=\count109
+\LT@rows=\count110
+\c@LT@tables=\count111
+\c@LT@chunks=\count112
+\LT@p@ftn=\toks21
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks22
+)
+\lst@mode=\count113
+\lst@gtempboxa=\box58
+\lst@token=\toks23
+\lst@length=\count114
+\lst@currlwidth=\dimen121
+\lst@column=\count115
+\lst@pos=\count116
+\lst@lostspace=\dimen122
+\lst@width=\dimen123
+\lst@newlines=\count117
+\lst@lineno=\count118
+\lst@maxwidth=\dimen124
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count119
+\lst@skipnumbers=\count120
+\lst@framebox=\box59
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/minitoc.sty
+Package: minitoc 2008/07/16 v60 Package minitoc (JPFD)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/mtcmess.sty
+Package: mtcmess 2006/03/14
+)
+Package minitoc Info: I0001
+(minitoc)             *** minitoc package, version 60 ***.
+\tf@mtc=\write3
+\mtcindent=\skip62
+\mtcskipamount=\skip63
+Package minitoc Info: I0005
+(minitoc)             compatible with hyperref.
+Package minitoc Info: I0023
+(minitoc)             part level macros available.
+Package minitoc Info: I0004
+(minitoc)             chapter level macros NOT available.
+Package minitoc Info: I0028
+(minitoc)             section level macros available.
+\mtc@toks=\toks24
+\mtc@strutbox=\box60
+\mtc@hstrutbox=\box61
+Package minitoc Info: I0002
+(minitoc)             Autoconfiguration of extensions.
+\openout3 = `usrGuide.mtc0'.
+
+\openout3 = `usrGuide.mtc'.
+
+
+(./usrGuide.mtc0)
+Package minitoc Info: I0012
+(minitoc)             Long extensions (Unix-like) will be used.
+Package minitoc Info: I0031
+(minitoc)             ==> this version is configured for UNIX-like 
+(minitoc)                 (long extensions) file names.
+\openout3 = `usrGuide.mtc'.
+
+\openout3 = `usrGuide.mtc0'.
+
+\c@ptc=\count121
+\c@parttocdepth=\count122
+\ptcindent=\skip64
+\c@stc=\count123
+\c@secttocdepth=\count124
+\stcindent=\skip65
+Package minitoc Info: I0010
+(minitoc)             The english language is selected.
+(minitoc)              on input line 4910.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/english.mld
+File: english.mld 2006/01/13
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/english.mld
+File: english.mld 2006/01/13
+))
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip66
+\bibsep=\skip67
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count125
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2011/04/17 v6.82g Hypertext links for LaTeX
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2011/04/23 v1.4 Bundle oberdiek, subset hyperref (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2011/04/23 v1.4 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2011/04/23 v1.4 Subsetting bundle oberdiek (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2010/03/01 v1.5 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+Package hobsub Info: Skipping package `ifpdf' (already loaded).
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2011/04/04 v1.12 Provides string conversions (HO)
+Package: bigintcalc 2011/01/30 v1.2 Expandable big integer calculations (HO)
+Package: bitset 2011/01/30 v1.1 Data type bit set (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provides unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2011/01/30 v1.0 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/04/23 v1.7 Hooks at very end of document (HO)
+Package atveryend Info: \enddocument detected (standard).
+Package: atbegshi 2011/01/30 v1.15 At begin shipout hook (HO)
+Package: refcount 2010/12/01 v3.2 Data extraction from references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options of hyperref/bookmark (HO)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
+)
+\@linkdim=\dimen125
+\Hy@linkcounter=\count126
+\Hy@pagecounter=\count127
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2011/04/17 v6.82g Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+\Hy@SavedSpaceFactor=\count128
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 3905.
+Package hyperref Info: Option `bookmarks' set `true' on input line 3905.
+Package hyperref Info: Hyper figures OFF on input line 4026.
+Package hyperref Info: Link nesting OFF on input line 4031.
+Package hyperref Info: Hyper index ON on input line 4034.
+Package hyperref Info: Plain pages OFF on input line 4041.
+Package hyperref Info: Backreferencing OFF on input line 4046.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4264.
+\c@Hy@tempcnt=\count129
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip11
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4617.
+\Fld@menulength=\count130
+\Field@Width=\dimen126
+\Fld@charsize=\dimen127
+Package hyperref Info: Hyper figures OFF on input line 5701.
+Package hyperref Info: Link nesting OFF on input line 5706.
+Package hyperref Info: Hyper index ON on input line 5709.
+Package hyperref Info: backreferencing OFF on input line 5716.
+Package hyperref Info: Link coloring ON on input line 5719.
+Package hyperref Info: Link coloring with OCG OFF on input line 5726.
+Package hyperref Info: PDF/A mode OFF on input line 5731.
+LaTeX Info: Redefining \ref on input line 5771.
+LaTeX Info: Redefining \pageref on input line 5775.
+\Hy@abspage=\count131
+\c@Item=\count132
+\c@Hfootnote=\count133
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2011/04/17 v6.82g Hyperref driver for pdfTeX
+\Fld@listcount=\count134
+\c@bookmark@seq@number=\count135
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip68
+)
+(./iscamx.sty
+Package: iscamx 
+ (/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+\c@saveEq=\count136
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+\Gin@req@height=\dimen128
+\Gin@req@width=\dimen129
+)
+(./usrGuide.aux)
+\openout1 = `usrGuide.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 91.
+LaTeX Font Info:    ... okay on input line 91.
+
+(/usr/local/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count137
+\scratchdimen=\dimen130
+\scratchbox=\box62
+\nofMPsegments=\count138
+\nofMParguments=\count139
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count140
+\MPscratchDim=\dimen131
+\MPnumerator=\count141
+\makeMPintoPDFobject=\count142
+\everyMPtoPDFconversion=\toks26
+) (/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\c@lstlisting=\count143
+Package minitoc(hints) Info: I0049
+(minitoc(hints))             ==> You requested the hints option. 
+(minitoc(hints))             Some hints are eventually given below.
+
+
+Package minitoc(hints) Warning: W0030
+(minitoc(hints))                --- The \part command is altered 
+(minitoc(hints))                after minitoc.
+
+
+Package minitoc(hints) Warning: W0023
+(minitoc(hints))                --- It may be the consequence 
+(minitoc(hints))                of loading the ``hyperref'' package.
+
+
+Package minitoc(hints) Warning: W0039
+(minitoc(hints))                --- The \section command is altered 
+(minitoc(hints))                after minitoc.
+
+
+Package minitoc(hints) Warning: W0023
+(minitoc(hints))                --- It may be the consequence 
+(minitoc(hints))                of loading the ``hyperref'' package.
+
+\AtBeginShipoutBox=\box63
+Package hyperref Info: Link coloring ON on input line 91.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count144
+)
+LaTeX Info: Redefining \ref on input line 91.
+LaTeX Info: Redefining \pageref on input line 91.
+LaTeX Info: Redefining \nameref on input line 91.
+
+(./usrGuide.out) (./usrGuide.out)
+\@outlinefile=\write4
+\openout4 = `usrGuide.out'.
+
+ <iscamlogo.pdf, id=180, 433.62pt x 216.81pt>
+File: iscamlogo.pdf Graphic file (type pdf)
+
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 100.
+(pdftex.def)             Requested size: 365.70718pt x 182.843pt.
+LaTeX Font Info:    Try loading font information for U+msa on input line 100.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 100.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for U+lasy on input line 100.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 100.
+
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 100.
+ [1
+
+{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./iscam
+logo.pdf>]
+(./usrGuide.toc)
+\tf@toc=\write5
+\openout5 = `usrGuide.toc'.
+
+ (./Introduction/Introduction.tex
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 2.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [2]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\forall' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 25.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 25.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 25.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\forall' on input line 25.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 25.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 27--28
+\OT1/cmr/m/n/10 code repos-i-tory [][]$\OT1/cmtt/m/n/10 http : / / code . googl
+e . com / p /
+ []
+
+) (./InputFiles/InputFiles.tex
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\forall' on input line 4.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 4.
+
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 14.
+File: iscamlogo.pdf Graphic file (type pdf)
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 31.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [3]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 82.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [4]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 124.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [5]
+File: iscamlogo.pdf Graphic file (type pdf)
+
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 141.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [6]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 197.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [7]
+<iscamFigs/betaPriors.pdf, id=290, 556.0775pt x 459.7175pt>
+File: iscamFigs/betaPriors.pdf Graphic file (type pdf)
+
+<use iscamFigs/betaPriors.pdf>
+Package pdftex.def Info: iscamFigs/betaPriors.pdf used on input line 275.
+(pdftex.def)             Requested size: 227.3775pt x 187.98033pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 317.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [8
+
+
+ <./iscamFigs/betaPriors.pdf>]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 362.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [9]) (./ModelAPI/ModelDocumentation.tex
+File: iscamlogo.pdf Graphic file (type pdf)
+
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 6.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [10]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 92.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [11]
+Overfull \hbox (3.53682pt too wide) in paragraph at lines 173--173
+[] 
+ []
+
+File: iscamlogo.pdf Graphic file (type pdf)
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 173.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [12] (./ModelAPI/msyBasedReferencePoints.tex
+<iscamFigs/Fig1Quadplot.pdf, id=385, 505.89pt x 505.89pt>
+File: iscamFigs/Fig1Quadplot.pdf Graphic file (type pdf)
+
+<use iscamFigs/Fig1Quadplot.pdf>
+Package pdftex.def Info: iscamFigs/Fig1Quadplot.pdf used on input line 38.
+(pdftex.def)             Requested size: 216.81056pt x 216.81pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 45.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [13pdfTeX warning (ext4): destination with the same identifier (name{equation.
+3.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.45        achieve MSY.}
+                         ]pdfTeX warning (ext4): destination with the same iden
+tifier (name{equation.3.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.102     \end{gather}
+                      
+Overfull \hbox (7.30705pt too wide) in paragraph at lines 102--102
+ [] 
+ []
+
+File: iscamlogo.pdf Graphic file (type pdf)
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 115.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [14 <./iscamFigs/Fig1Quadplot.pdf>]pdfTeX warning (ext4): destination with the
+ same identifier (name{equation.3.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.124 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.124 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.124 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.129 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.129 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.129 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.129 \begin{equation}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{equation.3.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.152 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.152 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.8}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.152 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.152 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.159 \end{align}
+                 pdfTeX warning (ext4): destination with the same identifier (n
+ame{equation.3.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.159 \end{align}
+                 
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 169.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [15]pdfTeX warning (ext4): destination with the same identifier (name{equation
+.3.12}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.171 \begin{equation}
+                      \label{eq:equilYield}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.3.12}) has been already used, duplicate 
+ignored
+<to be read again> 
+                   \relax 
+l.171 \begin{equation}
+                      \label{eq:equilYield}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.3.12}) has been already used, duplicate 
+ignored
+<to be read again> 
+                   \relax 
+l.171 \begin{equation}
+                      \label{eq:equilYield}pdfTeX warning (ext4): destination w
+ith the same identifier (name{equation.3.12}) has been already used, duplicate 
+ignored
+<to be read again> 
+                   \relax 
+l.171 \begin{equation}
+                      \label{eq:equilYield}
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 176.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 176.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 176.
+
+)
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 218.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [16]pdfTeX warning (ext4): destination with the same identifier (name{equation
+.3.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.2}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.3}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.5}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.7}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.8}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.9}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.10}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.12}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.13}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     pdfTeX warning (ext4): destination with the same identifie
+r (name{equation.3.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271     \end{align}
+                     
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 282.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 282.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 282.
+
+File: iscamlogo.pdf Graphic file (type pdf)
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 311.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [17]
+Package epstopdf Info: Source file: <iscamFigs/SplineEg.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 4020 bytes
+(epstopdf)             Output file: <iscamFigs/SplineEg-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 5671 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/SplineEg-eps-con
+verted-to.pdf iscamFigs/SplineEg.eps>
+(epstopdf)             \includegraphics on input line 323.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/SplineEg-eps-converted-to.pdf, id=460, 505.89pt x 505.89pt>
+File: iscamFigs/SplineEg-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/SplineEg-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/SplineEg-eps-converted-to.pdf used on input 
+line 323.
+(pdftex.def)             Requested size: 227.3775pt x 227.3782pt.
+Package epstopdf Info: Source file: <iscamFigs/BicubicEg.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 104830 bytes
+(epstopdf)             Output file: <iscamFigs/BicubicEg-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 30185 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/BicubicEg-eps-co
+nverted-to.pdf iscamFigs/BicubicEg.eps>
+(epstopdf)             \includegraphics on input line 336.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/BicubicEg-eps-converted-to.pdf, id=462, 811.03pt x 488.82625pt>
+File: iscamFigs/BicubicEg-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/BicubicEg-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/BicubicEg-eps-converted-to.pdf used on input
+ line 336.
+(pdftex.def)             Requested size: 422.77664pt x 254.8251pt.
+pdfTeX warning (ext4): destination with the same identifier (name{equation.3.13
+}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.347 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.13}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.347 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.13}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.347 \begin{equation}
+                      \label{eq2}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.13}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.347 \begin{equation}
+                      \label{eq2}
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 351.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [18 <./iscamFigs/SplineEg-eps-converted-to.pdf>]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 351.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [19 <./iscamFigs/BicubicEg-eps-converted-to.pdf>]pdfTeX warning (ext4): destin
+ation with the same identifier (name{equation.3.14}) has been already used, dup
+licate ignored
+<to be read again> 
+                   \relax 
+l.351 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.351 \begin{equation}
+                      \label{eq3}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.15}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.359 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.15}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.359 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.15}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.359 \begin{equation}
+                      \label{eq4}pdfTeX warning (ext4): destination with the sa
+me identifier (name{equation.3.15}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.359 \begin{equation}
+                      \label{eq4}
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 396.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [20])
+(./Examples/Example.tex
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 81.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [21]
+(../../../Examples/Hake/NamibianHake.ctl)
+(../../../Examples/Hake/NamibianHake.dat
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 29.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [22])
+Package epstopdf Info: Source file: <iscamFigs/NhakeFigs.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 6805 bytes
+(epstopdf)             Output file: <iscamFigs/NhakeFigs-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 03:05:18
+(epstopdf)                    size: 9019 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/NhakeFigs-eps-co
+nverted-to.pdf iscamFigs/NhakeFigs.eps>
+(epstopdf)             \includegraphics on input line 114.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/NhakeFigs-eps-converted-to.pdf, id=546, 289.08pt x 578.16pt>
+File: iscamFigs/NhakeFigs-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/NhakeFigs-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/NhakeFigs-eps-converted-to.pdf used on input
+ line 114.
+(pdftex.def)             Requested size: 204.63835pt x 409.27022pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 120.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [23 <./iscamFigs/NhakeFigs-eps-converted-to.pdf>]
+<iscamFigs/nHakeparameters.pdf, id=562, 556.0775pt x 459.7175pt>
+File: iscamFigs/nHakeparameters.pdf Graphic file (type pdf)
+
+<use iscamFigs/nHakeparameters.pdf>
+Package pdftex.def Info: iscamFigs/nHakeparameters.pdf used on input line 131.
+(pdftex.def)             Requested size: 204.63835pt x 169.1809pt.
+
+<iscamFigs/nHakerefpoints.pdf, id=565, 556.0775pt x 459.7175pt>
+File: iscamFigs/nHakerefpoints.pdf Graphic file (type pdf)
+
+<use iscamFigs/nHakerefpoints.pdf>
+Package pdftex.def Info: iscamFigs/nHakerefpoints.pdf used on input line 145.
+(pdftex.def)             Requested size: 204.63835pt x 169.1809pt.
+
+<iscamFigs/NhakeKobeplot.pdf, id=566, 556.0775pt x 459.7175pt>
+File: iscamFigs/NhakeKobeplot.pdf Graphic file (type pdf)
+
+<use iscamFigs/NhakeKobeplot.pdf>
+Package pdftex.def Info: iscamFigs/NhakeKobeplot.pdf used on input line 156.
+(pdftex.def)             Requested size: 204.63835pt x 169.1809pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 160.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [24 <./iscamFigs/nHakeparameters.pdf> <./iscamFigs/nHakerefpoints.pdf> <./isca
+mFigs/NhakeKobeplot.pdf>]
+Package epstopdf Info: Source file: <iscamFigs/phakefig15.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 7428 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig15-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2012-05-17 03:05:18
+(epstopdf)                    size: 6569 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig15-eps-c
+onverted-to.pdf iscamFigs/phakefig15.eps>
+(epstopdf)             \includegraphics on input line 176.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig15-eps-converted-to.pdf, id=592, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig15-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig15-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig15-eps-converted-to.pdf used on inpu
+t line 176.
+(pdftex.def)             Requested size: 181.9027pt x 181.9008pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 183--186
+
+ []
+
+(../../../Examples/PacificHake/PHake2010.ctl
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 79.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [25 <./iscamFigs/phakefig15-eps-converted-to.pdf>])
+Package epstopdf Info: Source file: <iscamFigs/phakefig2.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 5060 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig2-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 03:05:19
+(epstopdf)                    size: 6602 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig2-eps-co
+nverted-to.pdf iscamFigs/phakefig2.eps>
+(epstopdf)             \includegraphics on input line 211.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig2-eps-converted-to.pdf, id=612, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig2-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig2-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig2-eps-converted-to.pdf used on input
+ line 211.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+Package epstopdf Info: Source file: <iscamFigs/phakefig14.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 5004 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig14-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2012-05-17 03:05:20
+(epstopdf)                    size: 6016 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig14-eps-c
+onverted-to.pdf iscamFigs/phakefig14.eps>
+(epstopdf)             \includegraphics on input line 218.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig14-eps-converted-to.pdf, id=613, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig14-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig14-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig14-eps-converted-to.pdf used on inpu
+t line 218.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+Package epstopdf Info: Source file: <iscamFigs/phakefig8.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 5963 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig8-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 03:05:20
+(epstopdf)                    size: 7261 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig8-eps-co
+nverted-to.pdf iscamFigs/phakefig8.eps>
+(epstopdf)             \includegraphics on input line 226.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig8-eps-converted-to.pdf, id=615, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig8-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig8-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig8-eps-converted-to.pdf used on input
+ line 226.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 227.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [26 <./iscamFigs/phakefig2-eps-converted-to.pdf> <./iscamFigs/phakefig14-eps-c
+onverted-to.pdf>]
+Package epstopdf Info: Source file: <iscamFigs/phakefig11.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 10267 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig11-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2012-05-17 03:05:21
+(epstopdf)                    size: 9265 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig11-eps-c
+onverted-to.pdf iscamFigs/phakefig11.eps>
+(epstopdf)             \includegraphics on input line 236.
+Package epstopdf Info: Output file is already uptodate.
+ <iscamFigs/phakefig11-eps-converted-to.pdf, id=635, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig11-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig11-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig11-eps-converted-to.pdf used on inpu
+t line 236.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 245.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [27 <./iscamFigs/phakefig8-eps-converted-to.pdf> <./iscamFigs/phakefig11-eps-c
+onverted-to.pdf>]
+Package epstopdf Info: Source file: <iscamFigs/phakefig9a.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 58646 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig9a-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2012-05-17 03:05:22
+(epstopdf)                    size: 20630 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig9a-eps-c
+onverted-to.pdf iscamFigs/phakefig9a.eps>
+(epstopdf)             \includegraphics on input line 248.
+Package epstopdf Info: Output file is already uptodate.
+ <iscamFigs/phakefig9a-eps-converted-to.pdf, id=656, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig9a-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig9a-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig9a-eps-converted-to.pdf used on inpu
+t line 248.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+Package epstopdf Info: Source file: <iscamFigs/phakefig13a.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 56682 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig13a-eps-converted-to.pdf
+>
+(epstopdf)                    date: 2012-05-17 03:05:22
+(epstopdf)                    size: 59052 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig13a-eps-
+converted-to.pdf iscamFigs/phakefig13a.eps>
+(epstopdf)             \includegraphics on input line 255.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig13a-eps-converted-to.pdf, id=657, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig13a-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig13a-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig13a-eps-converted-to.pdf used on inp
+ut line 255.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+Package epstopdf Info: Source file: <iscamFigs/phakefig5.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 22214 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig5-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-05-17 03:05:23
+(epstopdf)                    size: 12767 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig5-eps-co
+nverted-to.pdf iscamFigs/phakefig5.eps>
+(epstopdf)             \includegraphics on input line 277.
+Package epstopdf Info: Output file is already uptodate.
+
+<iscamFigs/phakefig5-eps-converted-to.pdf, id=662, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig5-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig5-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig5-eps-converted-to.pdf used on input
+ line 277.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 278.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [28 <./iscamFigs/phakefig9a-eps-converted-to.pdf> <./iscamFigs/phakefig13a-eps
+-converted-to.pdf>] (./iscamTables/iscam.Table1.tex
+Overfull \hbox (3.61073pt too wide) in paragraph at lines 9--30
+ [] 
+ []
+
+)
+Package epstopdf Info: Source file: <iscamFigs/phakefig12.eps>
+(epstopdf)                    date: 2012-05-17 02:54:11
+(epstopdf)                    size: 5615 bytes
+(epstopdf)             Output file: <iscamFigs/phakefig12-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2012-05-17 03:05:23
+(epstopdf)                    size: 7332 bytes
+(epstopdf)             Command: <repstopdf --outfile=iscamFigs/phakefig12-eps-c
+onverted-to.pdf iscamFigs/phakefig12.eps>
+(epstopdf)             \includegraphics on input line 293.
+Package epstopdf Info: Output file is already uptodate.
+ <iscamFigs/phakefig12-eps-converted-to.pdf, id=682, 578.16pt x 578.16pt>
+File: iscamFigs/phakefig12-eps-converted-to.pdf Graphic file (type pdf)
+
+<use iscamFigs/phakefig12-eps-converted-to.pdf>
+Package pdftex.def Info: iscamFigs/phakefig12-eps-converted-to.pdf used on inpu
+t line 293.
+(pdftex.def)             Requested size: 204.63835pt x 204.6351pt.
+ (./iscamTables/iscam.Table2.tex) (../../../Examples/PacificHake/PHake2010.dat
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 6.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [29 <./iscamFigs/phakefig5-eps-converted-to.pdf> <./iscamFigs/phakefig12-eps-c
+onverted-to.pdf>]
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 107.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [30]))
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 111.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [31] (./usrGuide.bbl)
+File: iscamlogo.pdf Graphic file (type pdf)
+
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 119.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [32
+
+] (./Stats.tex
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 57.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [33]
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 80.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstlang2.sty
+File: lstlang2.sty 2004/09/05 1.3 listings language file
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstlang3.sty
+File: lstlang3.sty 2004/09/05 1.3 listings language file
+)
+(../../../src/r-code/read.admb.R
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 1.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/bx/n' in size <7> not available
+(Font)              Font shape `OML/cmm/b/it' tried instead on input line 1.
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <7> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 3.
+File: iscamlogo.pdf Graphic file (type pdf)
+
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 17.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [34]
+LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <7> not available
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 45.
+LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <7> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 57.
+LaTeX Font Info:    Font shape `OMS/cmr/m/it' in size <7> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 57.
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <7> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 76.
+File: iscamlogo.pdf Graphic file (type pdf)
+ <use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 92.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [35]))
+Package minitoc Info: I0009
+(minitoc)             Listing minitoc auxiliary files. 
+(minitoc)             Creating the usrGuide.maf file.
+\openout3 = `usrGuide.maf'.
+
+
+
+Package minitoc(hints) Warning: W0024
+(minitoc(hints))                Some hints have been written 
+(minitoc(hints))                in the usrGuide.log file.
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 124.
+File: iscamlogo.pdf Graphic file (type pdf)
+<use iscamlogo.pdf>
+Package pdftex.def Info: iscamlogo.pdf used on input line 124.
+(pdftex.def)             Requested size: 65.04019pt x 32.52127pt.
+ [36]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 124.
+ (./usrGuide.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 124.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 124.
+Package rerunfilecheck Info: File `usrGuide.out' has not changed.
+(rerunfilecheck)             Checksum: 241CB56E883248446CEB21E1FB5F7196;3536.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 124.
+ ) 
+Here is how much of TeX's memory you used:
+ 11536 strings out of 493633
+ 159527 string characters out of 3143378
+ 386328 words of memory out of 3000000
+ 14079 multiletter control sequences out of 15000+200000
+ 19261 words of font info for 81 fonts, out of 3000000 for 9000
+ 831 hyphenation exceptions out of 8191
+ 38i,19n,44p,1895b,2553s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy
+7.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10
+.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
+pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pf
+b></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb>
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pf
+b></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb>
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></
+usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></us
+r/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb>
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
+usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></us
+r/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/
+local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/loc
+al/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/
+texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/tex
+live/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texliv
+e/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
+/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2
+011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/201
+1/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2011/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2011/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/local/texlive/2011/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2011/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2011/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/2011/texmf-d
+ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on usrGuide.pdf (36 pages, 935999 bytes).
+PDF statistics:
+ 1024 PDF objects out of 1200 (max. 8388607)
+ 913 compressed objects within 10 object streams
+ 294 named destinations out of 1000 (max. 500000)
+ 443 words of extra memory for PDF output out of 10000 (max. 10000000)
+

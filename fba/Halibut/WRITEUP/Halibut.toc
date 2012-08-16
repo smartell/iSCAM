@@ -1,0 +1,44 @@
+\contentsline {section}{Executive Summary}{i}
+\contentsline {section}{Acknowledgements}{i}
+\contentsline {section}{Contents}{iv}
+\contentsline {section}{List of Figures}{vii}
+\contentsline {section}{List of Table}{viii}
+\contentsline {part}{I\hspace {1em}Impacts of bycatch \& wastage on halibut yield}{1}
+\contentsline {xpart}{Impacts of bycatch \& wastage on halibut yield}{2}
+\contentsline {section}{\numberline {1.1}Introduction}{2}
+\contentsline {subsection}{\numberline {1.1.1}Overview of total mortality in the IPHC model}{2}
+\contentsline {section}{\numberline {1.2}Simulation Model}{3}
+\contentsline {subsection}{\numberline {1.2.1}Overview of the simulation model}{3}
+\contentsline {subsection}{\numberline {1.2.2}Calculating setline fishery catch share}{7}
+\contentsline {subsection}{\numberline {1.2.3}Calculating area specific fishing mortality rates}{7}
+\contentsline {subsection}{\numberline {1.2.4}Model outputs}{8}
+\contentsline {section}{\numberline {1.3}Simulation Scenarios}{9}
+\contentsline {section}{\numberline {1.4}Alternative policy options}{10}
+\contentsline {section}{\numberline {1.5}Results}{10}
+\contentsline {subsection}{\numberline {1.5.1}Effects of bycatch reduction on EBio}{13}
+\contentsline {subsection}{\numberline {1.5.2}Effects of bycath reduction on Spawning biomass}{13}
+\contentsline {subsection}{\numberline {1.5.3}Effects of bycatch reduction on commercial yield}{15}
+\contentsline {subsection}{\numberline {1.5.4}Effects of bycatch reduction on commercial wastage}{15}
+\contentsline {section}{\numberline {1.6}Discussion}{16}
+\contentsline {part}{II\hspace {1em}Effects of reduced minimum-size limits on yield, spawning biomass, and wastage.}{19}
+\contentsline {xpart}{Effects of reduced minimum-size limits on yield, spawning biomass, and wastage.}{20}
+\contentsline {section}{\numberline {2.1}Introduction}{20}
+\contentsline {section}{\numberline {2.2}Methods}{21}
+\contentsline {subsection}{\numberline {2.2.1}Joint probability model for retention}{21}
+\contentsline {subsection}{\numberline {2.2.2}Simulation scenarios}{22}
+\contentsline {section}{\numberline {2.3}Results}{23}
+\contentsline {subsection}{\numberline {2.3.1}Impacts of MSL on exploitable biomass}{23}
+\contentsline {subsection}{\numberline {2.3.2}Impacts of MSL on commercial yield}{23}
+\contentsline {subsection}{\numberline {2.3.3}Impacts of MSL on commercial wastage}{24}
+\contentsline {subsection}{\numberline {2.3.4}Impacts of MSL on economic value}{24}
+\contentsline {section}{\numberline {2.4}Discussion}{28}
+\contentsline {section}{References}{30}
+\contentsline {part}{III\hspace {1em}Appendices}{31}
+\contentsline {xpart}{Appendices}{32}
+\contentsline {section}{\numberline {A.1}Input files for the Simulation Model}{32}
+\contentsline {section}{\numberline {B.2}Model Description}{37}
+\contentsline {subsection}{\numberline {B.2.1}Simulation model input}{38}
+\contentsline {subsection}{\numberline {B.2.2}Analytical description}{39}
+\contentsline {subsubsection}{Initial states ($i$=1996:2011)}{39}
+\contentsline {subsubsection}{Joint probability model for fishing \& discard mortality}{40}
+\contentsline {subsection}{\numberline {B.2.3}Model outputs}{42}

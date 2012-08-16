@@ -1,0 +1,44 @@
+\BOOKMARK [2][-]{section*.1}{Contents}{}% 1
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 2
+\BOOKMARK [2][-]{subsection.1.1}{Overview of iSCM}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.2}{Obtaining iSCM}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{Running iSCM: input files \046 command line options}{}% 5
+\BOOKMARK [2][-]{subsection.2.1}{The iscam.dat file}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.2}{The Data File}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.3}{The Control File}{section.2}% 8
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Prior type distributions}{subsection.2.3}% 9
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Selectivity controls}{subsection.2.3}% 10
+\BOOKMARK [3][-]{subsubsection.2.3.3}{Priors for survey catchability}{subsection.2.3}% 11
+\BOOKMARK [3][-]{subsubsection.2.3.4}{Other miscellaneous controls}{subsection.2.3}% 12
+\BOOKMARK [2][-]{subsection.2.4}{Projection file}{section.2}% 13
+\BOOKMARK [2][-]{subsection.2.5}{Command line options}{section.2}% 14
+\BOOKMARK [3][-]{subsubsection.2.5.1}{Running the simulation model}{subsection.2.5}% 15
+\BOOKMARK [1][-]{section.3}{Model Documentation}{}% 16
+\BOOKMARK [2][-]{subsection.3.1}{List of symbols}{section.3}% 17
+\BOOKMARK [2][-]{subsection.3.2}{Analytic methods: equilibrium considerations}{section.3}% 18
+\BOOKMARK [3][-]{subsubsection.3.2.1}{A steady-state age-structured model}{subsection.3.2}% 19
+\BOOKMARK [3][-]{subsubsection.3.2.2}{MSY based reference points: single fleet}{subsection.3.2}% 20
+\BOOKMARK [3][-]{subsubsection.3.2.3}{MSY Based Reference Points: two or more fleets}{subsection.3.2}% 21
+\BOOKMARK [3][-]{subsubsection.3.2.4}{Reference points for multiple fisheries with fixed allocation}{subsection.3.2}% 22
+\BOOKMARK [2][-]{subsection.3.3}{MSY-based reference points for multiple fisheries}{section.3}% 23
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Algorithm for estimating FMSY for multiple fleets}{subsection.3.3}% 24
+\BOOKMARK [2][-]{subsection.3.4}{Analytic methods: state-dynamics}{section.3}% 25
+\BOOKMARK [3][-]{subsubsection.3.4.1}{Options for selectivity \(vk,t,a\)}{subsection.3.4}% 26
+\BOOKMARK [2][-]{subsection.3.5}{Residuals, likelihoods \046 objective function value components}{section.3}% 27
+\BOOKMARK [3][-]{subsubsection.3.5.1}{Catch data}{subsection.3.5}% 28
+\BOOKMARK [3][-]{subsubsection.3.5.2}{Relative abundance data}{subsection.3.5}% 29
+\BOOKMARK [3][-]{subsubsection.3.5.3}{Age composition data}{subsection.3.5}% 30
+\BOOKMARK [3][-]{subsubsection.3.5.4}{Stock-recruitment}{subsection.3.5}% 31
+\BOOKMARK [1][-]{section.4}{Example Assessment: the Namibian hake case study}{}% 32
+\BOOKMARK [2][-]{subsection.4.1}{Maximum likelihood estimates of the model parameters}{section.4}% 33
+\BOOKMARK [2][-]{subsection.4.2}{Bayesian analysis of model parameters \046 policy parameters}{section.4}% 34
+\BOOKMARK [1][-]{section.5}{Example Assessment: the Pacific hake fishery}{}% 35
+\BOOKMARK [2][-]{subsection.5.1}{Data \046 assumptions}{section.5}% 36
+\BOOKMARK [2][-]{subsection.5.2}{Maximum likelihood estimates}{section.5}% 37
+\BOOKMARK [2][-]{subsection.5.3}{Time-varying selectivity}{section.5}% 38
+\BOOKMARK [2][-]{subsection.5.4}{Bayesian implementation}{section.5}% 39
+\BOOKMARK [1][-]{table.8}{References}{}% 40
+\BOOKMARK [1][-]{appendix.A}{Statistical functions \046 probability distributions}{}% 41
+\BOOKMARK [1][-]{appendix.B}{Scripts}{}% 42
+\BOOKMARK [2][-]{subsection.B.1}{Bash script for creating the iscamArchive.zip \046 .tar.gz files}{appendix.B}% 43
+\BOOKMARK [1][-]{appendix.C}{R-code for figures and Tables}{}% 44

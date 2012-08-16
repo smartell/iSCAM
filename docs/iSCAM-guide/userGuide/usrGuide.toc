@@ -1,0 +1,53 @@
+\contentsline {subsection}{Contents}{3}{section*.1}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {subsection}{\numberline {1.1}Overview of $i$SC$\forall $M}{3}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Obtaining $i$SC$\forall $M}{3}{subsection.1.2}
+\contentsline {section}{\numberline {2}Running $i$SC$\forall $M: input files \& command line options}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}The \texttt {iscam.dat} file}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}The Data File}{4}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}The Control File}{8}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Prior type distributions}{8}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}Selectivity controls}{8}{subsubsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.3}Priors for survey catchability}{9}{subsubsection.2.3.3}
+\contentsline {subsubsection}{\numberline {2.3.4}Other miscellaneous controls}{9}{subsubsection.2.3.4}
+\contentsline {subsection}{\numberline {2.4}Projection file}{10}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Command line options}{10}{subsection.2.5}
+\contentsline {subsubsection}{\numberline {2.5.1}Running the simulation model}{10}{subsubsection.2.5.1}
+\contentsline {section}{\numberline {3}Model Documentation}{10}{section.3}
+\contentsline {subsection}{\numberline {3.1}List of symbols}{11}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Analytic methods: equilibrium considerations}{12}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}A steady-state age-structured model}{12}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}MSY based reference points: single fleet}{13}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.3}MSY Based Reference Points: two or more fleets}{14}{subsubsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.4}Reference points for multiple fisheries with fixed allocation}{15}{subsubsection.3.2.4}
+\contentsline {subsection}{\numberline {3.3}MSY-based reference points for multiple fisheries}{15}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Algorithm for estimating F$_{\textnormal {MSY}}$\ for multiple fleets}{16}{subsubsection.3.3.1}
+\contentsline {subsection}{\numberline {3.4}Analytic methods: state-dynamics}{16}{subsection.3.4}
+\contentsline {subsubsection}{\numberline {3.4.1}Options for selectivity ($v_{k,t,a}$)}{17}{subsubsection.3.4.1}
+\contentsline {paragraph}{\relax Logistic selectivity}{17}{section*.2}
+\contentsline {paragraph}{\relax Age-specific selectivity coefficients}{17}{section*.3}
+\contentsline {paragraph}{\relax Cubic spline interpolation}{18}{section*.4}
+\contentsline {paragraph}{\relax Time-varying selectivity with cubic spline interpolation}{18}{section*.5}
+\contentsline {paragraph}{\relax Bicubic spline to interpolate over time and ages}{18}{section*.6}
+\contentsline {subsection}{\numberline {3.5}Residuals, likelihoods \& objective function value components}{18}{subsection.3.5}
+\contentsline {subsubsection}{\numberline {3.5.1}Catch data}{18}{subsubsection.3.5.1}
+\contentsline {subsubsection}{\numberline {3.5.2}Relative abundance data}{20}{subsubsection.3.5.2}
+\contentsline {subsubsection}{\numberline {3.5.3}Age composition data}{20}{subsubsection.3.5.3}
+\contentsline {subsubsection}{\numberline {3.5.4}Stock-recruitment}{21}{subsubsection.3.5.4}
+\contentsline {section}{\numberline {4}Example Assessment: the Namibian hake case study}{21}{section.4}
+\contentsline {subsection}{\numberline {4.1}Maximum likelihood estimates of the model parameters}{23}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Bayesian analysis of model parameters \& policy parameters}{23}{subsection.4.2}
+\contentsline {section}{\numberline {5}Example Assessment: the Pacific hake fishery}{25}{section.5}
+\contentsline {subsection}{\numberline {5.1}Data \& assumptions}{25}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Maximum likelihood estimates}{26}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Time-varying selectivity}{27}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Bayesian implementation}{28}{subsection.5.4}
+\contentsline {section}{References}{32}{table.8}
+\contentsline {section}{\numberline {A}Statistical functions \& probability distributions}{33}{appendix.A}
+\contentsline {paragraph}{\relax dbeta}{33}{section*.8}
+\contentsline {paragraph}{\relax dgamma}{33}{section*.9}
+\contentsline {paragraph}{\relax dnorm}{33}{section*.10}
+\contentsline {paragraph}{\relax dlnorm}{34}{section*.11}
+\contentsline {section}{\numberline {B}Scripts}{34}{appendix.B}
+\contentsline {subsection}{\numberline {B.1}Bash script for creating the iscamArchive.zip \& .tar.gz files}{34}{subsection.B.1}
+\contentsline {section}{\numberline {C}R-code for figures and Tables}{34}{appendix.C}

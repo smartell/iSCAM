@@ -1,0 +1,1682 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  26 APR 2012 07:41
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**Halibut.tex
+(./Halibut.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip43
+\bibsep=\skip44
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count88
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/preprint/fullpage.sty
+Package: fullpage 1999/02/23 1.1 (PWD)
+\FP@margin=\skip45
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip46
+\f@ncyO@elh=\skip47
+\f@ncyO@erh=\skip48
+\f@ncyO@olh=\skip49
+\f@ncyO@orh=\skip50
+\f@ncyO@elf=\skip51
+\f@ncyO@erf=\skip52
+\f@ncyO@olf=\skip53
+\f@ncyO@orf=\skip54
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip55
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks16
+\ex@=\dimen103
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen104
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count89
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count90
+\leftroot@=\count91
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count92
+\DOTSCASE@=\count93
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count94
+\c@MaxMatrixCols=\count95
+\dotsspace@=\muskip10
+\c@parentequation=\count96
+\dspbrk@lvl=\count97
+\tag@help=\toks17
+\row@=\count98
+\column@=\count99
+\maxfields@=\count100
+\andhelp@=\toks18
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks19
+\multlinegap=\skip56
+\multlinetaggap=\skip57
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/boxedminipage/boxedminipage.sty)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+\lst@mode=\count101
+\lst@gtempboxa=\box28
+\lst@token=\toks22
+\lst@length=\count102
+\lst@currlwidth=\dimen112
+\lst@column=\count103
+\lst@pos=\count104
+\lst@lostspace=\dimen113
+\lst@width=\dimen114
+\lst@newlines=\count105
+\lst@lineno=\count106
+\lst@maxwidth=\dimen115
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count107
+\lst@skipnumbers=\count108
+\lst@framebox=\box29
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip11
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/minitoc.sty
+Package: minitoc 2008/07/16 v60 Package minitoc (JPFD)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/mtcmess.sty
+Package: mtcmess 2006/03/14
+)
+Package minitoc Info: I0001
+(minitoc)             *** minitoc package, version 60 ***.
+\tf@mtc=\write3
+\mtcindent=\skip58
+\mtcskipamount=\skip59
+Package minitoc Info: I0005
+(minitoc)             compatible with hyperref.
+Package minitoc Info: I0023
+(minitoc)             part level macros available.
+Package minitoc Info: I0003
+(minitoc)             chapter level macros available.
+\mtc@toks=\toks23
+\mtc@strutbox=\box30
+\mtc@hstrutbox=\box31
+Package minitoc Info: I0002
+(minitoc)             Autoconfiguration of extensions.
+\openout3 = `Halibut.mtc0'.
+
+\openout3 = `Halibut.mtc'.
+
+
+(./Halibut.mtc0)
+Package minitoc Info: I0012
+(minitoc)             Long extensions (Unix-like) will be used.
+Package minitoc Info: I0031
+(minitoc)             ==> this version is configured for UNIX-like 
+(minitoc)                 (long extensions) file names.
+\openout3 = `Halibut.mtc'.
+
+\openout3 = `Halibut.mtc0'.
+
+\c@mtc=\count109
+\c@minitocdepth=\count110
+\c@ptc=\count111
+\c@parttocdepth=\count112
+\ptcindent=\skip60
+Package minitoc Info: I0010
+(minitoc)             The english language is selected.
+(minitoc)              on input line 4910.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/english.mld
+File: english.mld 2006/01/13
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/minitoc/english.mld
+File: english.mld 2006/01/13
+))
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+\c@saveEq=\count113
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2010/10/06 v2.0c eso-pic (RN)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2011/01/30 v1.15 At begin shipout hook (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+\Gread@gobject=\count114
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/type1cm/type1cm.sty
+Package: type1cm 2002/09/05 v0.04 BlueSky/Y&Y Type1 CM font definitions (DPC, p
+atched RF)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count115
+\float@exts=\toks24
+\float@box=\box32
+\@float@everytoks=\toks25
+\@floatcapt=\box33
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen116
+\extrarowheight=\dimen117
+\NC@list=\toks26
+\extratabsurround=\skip61
+\backup@length=\skip62
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+)
+\Gin@req@height=\dimen118
+\Gin@req@width=\dimen119
+)
+(./Halibut.aux
+
+LaTeX Warning: Label `sec:results' multiply defined.
+
+
+LaTeX Warning: Label `sec:discussion' multiply defined.
+
+
+LaTeX Warning: Label `fig:FIGURES_SIZELIMIT_SelRetA' multiply defined.
+
+
+LaTeX Warning: Label `sub:model_outputs' multiply defined.
+
+)
+\openout1 = `Halibut.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 104.
+LaTeX Font Info:    ... okay on input line 104.
+\c@lstlisting=\count116
+Package minitoc(hints) Info: I0049
+(minitoc(hints))             ==> You requested the hints option. 
+(minitoc(hints))             Some hints are eventually given below.
+\AtBeginShipoutBox=\box34
+ (/usr/local/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count117
+\scratchdimen=\dimen120
+\scratchbox=\box35
+\nofMPsegments=\count118
+\nofMParguments=\count119
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count120
+\MPscratchDim=\dimen121
+\MPnumerator=\count121
+\makeMPintoPDFobject=\count122
+\everyMPtoPDFconversion=\toks28
+) (/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+[1
+
+{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(./EXEC_SUMMARY/execSummary.tex [1
+
+]) [2] (./Halibut.toc [3
+
+])
+\tf@toc=\write4
+\openout4 = `Halibut.toc'.
+
+ [4] (./Halibut.lof
+Overfull \hbox (8.46507pt too wide) in paragraph at lines 8--8
+ [][] []\OT1/cmr/m/n/12 Simulated coast-wide fe-male spawn-ing biomass un-der t
+he as-sump-tions of density- 
+ []
+
+
+Overfull \hbox (30.13707pt too wide) in paragraph at lines 9--9
+ [][] []\OT1/cmr/m/n/12 Simulated coast-wide com-mer-cial yield un-der the as-s
+ump-tions of density-independent 
+ []
+
+[5
+
+]
+Overfull \hbox (15.7665pt too wide) in paragraph at lines 15--15
+ [][] []\OT1/cmr/m/n/12 Effects of MSL on com-mer-cial yield un-der the as-sump
+-tions of density-independent 
+ []
+
+[6])
+\tf@lof=\write5
+\openout5 = `Halibut.lof'.
+
+ [7] (./Halibut.lot)
+\tf@lot=\write6
+\openout6 = `Halibut.lot'.
+
+ [8
+
+] [1
+
+] (./PART1/Introduction.tex [2])
+(./PART1/Methods.tex [3]
+<../FIGURES/figLengthAtAgeFit.pdf, id=48, 556.0775pt x 459.7175pt>
+File: ../FIGURES/figLengthAtAgeFit.pdf Graphic file (type pdf)
+
+<use ../FIGURES/figLengthAtAgeFit.pdf>
+Package pdftex.def Info: ../FIGURES/figLengthAtAgeFit.pdf used on input line 35
+.
+(pdftex.def)             Requested size: 469.75502pt x 388.36269pt.
+
+<../FIGURES/fig:AgeSel.pdf, id=49, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig:AgeSel.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig:AgeSel.pdf>
+Package pdftex.def Info: ../FIGURES/fig:AgeSel.pdf used on input line 45.
+(pdftex.def)             Requested size: 469.75502pt x 388.36269pt.
+ [4] [5 <../FIGURES/figLengthAtAgeFit.pdf>]
+[6 <../FIGURES/fig:AgeSel.pdf>] [7] [8]
+<../FIGURES/fig:pres:Linf.pdf, id=90, 578.16pt x 289.08pt>
+File: ../FIGURES/fig:pres:Linf.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig:pres:Linf.pdf>
+Package pdftex.def Info: ../FIGURES/fig:pres:Linf.pdf used on input line 142.
+(pdftex.def)             Requested size: 375.80544pt x 187.89977pt.
+ [9]) (./PART1/Results.tex [10 <../FIGURES/fig:pres:Linf.pdf>] <../FIGURES/EBio
+Demo.pdf, id=105, 556.0775pt x 459.7175pt>
+File: ../FIGURES/EBioDemo.pdf Graphic file (type pdf)
+
+<use ../FIGURES/EBioDemo.pdf>
+Package pdftex.def Info: ../FIGURES/EBioDemo.pdf used on input line 10.
+(pdftex.def)             Requested size: 262.25587pt x 216.81pt.
+
+<../FIGURES/fig:growth.pdf, id=106, 599.23875pt x 313.17pt>
+File: ../FIGURES/fig:growth.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig:growth.pdf>
+Package pdftex.def Info: ../FIGURES/fig:growth.pdf used on input line 21.
+(pdftex.def)             Requested size: 414.87416pt x 216.81pt.
+ [11] [12 <../FIGURES/EBioDemo.pdf> <../FIGURES/fig:growth.pdf>]
+<../FIGURES/fig_SQUO_DI_EBio.pdf, id=129, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DI_EBio.pdf used on input line 35.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DI_EBio.pdf, id=130, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DI_EBio.pdf used on input line 36.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DI_EBio.pdf, id=131, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DI_EBio.pdf used on input line 37.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_SQUO_DD_EBio.pdf, id=132, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DD_EBio.pdf used on input line 39.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DD_EBio.pdf, id=133, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DD_EBio.pdf used on input line 40.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DD_EBio.pdf, id=134, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DD_EBio.pdf used on input line 41.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_SQUO_DI_SBio.pdf, id=135, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DI_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DI_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DI_SBio.pdf used on input line 54.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DI_SBio.pdf, id=136, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DI_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DI_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DI_SBio.pdf used on input line 55.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DI_SBio.pdf, id=137, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DI_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DI_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DI_SBio.pdf used on input line 56.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_SQUO_DD_SBio.pdf, id=138, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DD_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DD_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DD_SBio.pdf used on input line 58.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DD_SBio.pdf, id=139, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DD_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DD_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DD_SBio.pdf used on input line 59.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DD_SBio.pdf, id=140, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DD_SBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DD_SBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DD_SBio.pdf used on input line 60.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+Overfull \hbox (2.416pt too wide) in paragraph at lines 51--64
+\OT1/cmr/m/n/12 density-independent growth sce-nar-ios, re-spec-tively. The im-
+pacts of density-dependent growth
+ []
+
+[13 <../FIGURES/fig_SQUO_DI_EBio.pdf> <../FIGURES/fig_BSAI_DI_EBio.pdf> <../FIG
+URES/fig_GULF_DI_EBio.pdf> <../FIGURES/fig_SQUO_DD_EBio.pdf> <../FIGURES/fig_BS
+AI_DD_EBio.pdf> <../FIGURES/fig_GULF_DD_EBio.pdf>] [14 <../FIGURES/fig_SQUO_DI_
+SBio.pdf> <../FIGURES/fig_BSAI_DI_SBio.pdf> <../FIGURES/fig_GULF_DI_SBio.pdf> <
+../FIGURES/fig_SQUO_DD_SBio.pdf> <../FIGURES/fig_BSAI_DD_SBio.pdf> <../FIGURES/
+fig_GULF_DD_SBio.pdf>]
+<../FIGURES/fig_SQUO_DI_YBio.pdf, id=226, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DI_YBio.pdf used on input line 75.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DI_YBio.pdf, id=227, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DI_YBio.pdf used on input line 76.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DI_YBio.pdf, id=228, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DI_YBio.pdf used on input line 77.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_SQUO_DD_YBio.pdf, id=229, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DD_YBio.pdf used on input line 79.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DD_YBio.pdf, id=230, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DD_YBio.pdf used on input line 80.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DD_YBio.pdf, id=231, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DD_YBio.pdf used on input line 81.
+
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_SQUO_DI_ylr.pdf, id=232, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_SQUO_DI_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_SQUO_DI_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_SQUO_DI_ylr.pdf used on input line 
+90.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_BSAI_DI_ylr.pdf, id=233, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_BSAI_DI_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_BSAI_DI_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_BSAI_DI_ylr.pdf used on input line 
+91.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_GULF_DI_ylr.pdf, id=234, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_GULF_DI_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_GULF_DI_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_GULF_DI_ylr.pdf used on input line 
+92.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_SQUO_DD_ylr.pdf, id=235, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_SQUO_DD_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_SQUO_DD_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_SQUO_DD_ylr.pdf used on input line 
+94.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_BSAI_DD_ylr.pdf, id=236, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_BSAI_DD_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_BSAI_DD_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_BSAI_DD_ylr.pdf used on input line 
+95.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/YLR/fig_GULF_DD_ylr.pdf, id=237, 556.0775pt x 459.7175pt>
+File: ../FIGURES/YLR/fig_GULF_DD_ylr.pdf Graphic file (type pdf)
+
+<use ../FIGURES/YLR/fig_GULF_DD_ylr.pdf>
+Package pdftex.def Info: ../FIGURES/YLR/fig_GULF_DD_ylr.pdf used on input line 
+96.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+ [15 <../FIGURES/fig_SQUO_DI_YBio.pdf> <../FIGURES/fig_BSAI_DI_YBio.pdf> <../FI
+GURES/fig_GULF_DI_YBio.pdf> <../FIGURES/fig_SQUO_DD_YBio.pdf> <../FIGURES/fig_B
+SAI_DD_YBio.pdf> <../FIGURES/fig_GULF_DD_YBio.pdf>]
+<../FIGURES/fig_SQUO_DI_WBio.pdf, id=295, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DI_WBio.pdf used on input line 110
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DI_WBio.pdf, id=296, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DI_WBio.pdf used on input line 111
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DI_WBio.pdf, id=297, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DI_WBio.pdf used on input line 112
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_SQUO_DD_WBio.pdf, id=298, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_SQUO_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_SQUO_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_SQUO_DD_WBio.pdf used on input line 114
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_BSAI_DD_WBio.pdf, id=299, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_BSAI_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_BSAI_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_BSAI_DD_WBio.pdf used on input line 115
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/fig_GULF_DD_WBio.pdf, id=300, 556.0775pt x 459.7175pt>
+File: ../FIGURES/fig_GULF_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/fig_GULF_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/fig_GULF_DD_WBio.pdf used on input line 116
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+) (./PART1/Discussion.tex [16 <../FIGURES/YLR/fig_SQUO_DI_ylr.pdf> <../FIGURES/
+YLR/fig_BSAI_DI_ylr.pdf> <../FIGURES/YLR/fig_GULF_DI_ylr.pdf> <../FIGURES/YLR/f
+ig_SQUO_DD_ylr.pdf> <../FIGURES/YLR/fig_BSAI_DD_ylr.pdf> <../FIGURES/YLR/fig_GU
+LF_DD_ylr.pdf>] [17 <../FIGURES/fig_SQUO_DI_WBio.pdf> <../FIGURES/fig_BSAI_DI_W
+Bio.pdf> <../FIGURES/fig_GULF_DI_WBio.pdf> <../FIGURES/fig_SQUO_DD_WBio.pdf> <.
+./FIGURES/fig_BSAI_DD_WBio.pdf> <../FIGURES/fig_GULF_DD_WBio.pdf>]) [18] [19
+
+] (./PART2/Introduction.tex)
+(./PART2/Methods.tex [20] [21]
+<../FIGURES/SIZELIMIT/SelRetA.pdf, id=381, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/SelRetA.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/SelRetA.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/SelRetA.pdf used on input line 36
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/SelRetC.pdf, id=382, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/SelRetC.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/SelRetC.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/SelRetC.pdf used on input line 37
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/SelRetB.pdf, id=383, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/SelRetB.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/SelRetB.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/SelRetB.pdf used on input line 38
+.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+) (./PART2/Results.tex [22 <../FIGURES/SIZELIMIT/SelRetA.pdf> <../FIGURES/SIZEL
+IMIT/SelRetC.pdf> <../FIGURES/SIZELIMIT/SelRetB.pdf>]
+<../FIGURES/SIZELIMIT/fig_32_DI_EBio.pdf, id=403, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_EBio.pdf used on input 
+line 14.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_EBio.pdf, id=404, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_EBio.pdf used on input 
+line 15.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_EBio.pdf, id=405, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_EBio.pdf used on input 
+line 16.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_EBio.pdf, id=406, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_EBio.pdf used on input 
+line 18.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_EBio.pdf, id=407, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_EBio.pdf used on input 
+line 19.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_EBio.pdf, id=408, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_EBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_EBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_EBio.pdf used on input 
+line 20.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DI_YBio.pdf, id=409, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_YBio.pdf used on input 
+line 33.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_YBio.pdf, id=410, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_YBio.pdf used on input 
+line 34.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_YBio.pdf, id=411, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_YBio.pdf used on input 
+line 35.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_YBio.pdf, id=412, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_YBio.pdf used on input 
+line 37.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_YBio.pdf, id=413, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_YBio.pdf used on input 
+line 38.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_YBio.pdf, id=414, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_YBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_YBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_YBio.pdf used on input 
+line 39.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+ [23 <../FIGURES/SIZELIMIT/fig_32_DI_EBio.pdf> <../FIGURES/SIZELIMIT/fig_29_DI_
+EBio.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_EBio.pdf> <../FIGURES/SIZELIMIT/fig_3
+2_DD_EBio.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_EBio.pdf> <../FIGURES/SIZELIMIT/
+fig_26_DD_EBio.pdf>]
+<../FIGURES/SIZELIMIT/fig_32_DI_WBio.pdf, id=461, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_WBio.pdf used on input 
+line 52.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_WBio.pdf, id=462, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_WBio.pdf used on input 
+line 53.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_WBio.pdf, id=463, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_WBio.pdf used on input 
+line 54.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_WBio.pdf, id=464, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_WBio.pdf used on input 
+line 56.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_WBio.pdf, id=465, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_WBio.pdf used on input 
+line 57.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_WBio.pdf, id=466, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_WBio.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_WBio.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_WBio.pdf used on input 
+line 58.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DI_dt.pdf, id=467, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_dt.pdf used on input li
+ne 65.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_dt.pdf, id=468, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_dt.pdf used on input li
+ne 66.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_dt.pdf, id=469, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_dt.pdf used on input li
+ne 67.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_dt.pdf, id=470, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_dt.pdf used on input li
+ne 69.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_dt.pdf, id=471, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_dt.pdf used on input li
+ne 70.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_dt.pdf, id=472, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_dt.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_dt.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_dt.pdf used on input li
+ne 71.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+ [24 <../FIGURES/SIZELIMIT/fig_32_DI_YBio.pdf> <../FIGURES/SIZELIMIT/fig_29_DI_
+YBio.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_YBio.pdf> <../FIGURES/SIZELIMIT/fig_3
+2_DD_YBio.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_YBio.pdf> <../FIGURES/SIZELIMIT/
+fig_26_DD_YBio.pdf>] [25 <../FIGURES/SIZELIMIT/fig_32_DI_WBio.pdf> <../FIGURES/
+SIZELIMIT/fig_29_DI_WBio.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_WBio.pdf> <../FIG
+URES/SIZELIMIT/fig_32_DD_WBio.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_WBio.pdf> <.
+./FIGURES/SIZELIMIT/fig_26_DD_WBio.pdf> <../FIGURES/SIZELIMIT/fig_32_DI_dt.pdf>
+ <../FIGURES/SIZELIMIT/fig_29_DI_dt.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_dt.pdf
+> <../FIGURES/SIZELIMIT/fig_32_DD_dt.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_dt.pd
+f> <../FIGURES/SIZELIMIT/fig_26_DD_dt.pdf>]
+<../FIGURES/SIZELIMIT/fig_32_DI_LVal.pdf, id=569, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_LVal.pdf used on input 
+line 88.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_LVal.pdf, id=570, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_LVal.pdf used on input 
+line 89.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_LVal.pdf, id=571, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_LVal.pdf used on input 
+line 90.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_LVal.pdf, id=572, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_LVal.pdf used on input 
+line 92.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_LVal.pdf, id=573, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_LVal.pdf used on input 
+line 93.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_LVal.pdf, id=574, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_LVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_LVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_LVal.pdf used on input 
+line 94.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DI_WVal.pdf, id=575, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_WVal.pdf used on input 
+line 101.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_WVal.pdf, id=576, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_WVal.pdf used on input 
+line 102.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_WVal.pdf, id=577, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_WVal.pdf used on input 
+line 103.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_WVal.pdf, id=578, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_WVal.pdf used on input 
+line 105.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_WVal.pdf, id=579, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_WVal.pdf used on input 
+line 106.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_WVal.pdf, id=580, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_WVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_WVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_WVal.pdf used on input 
+line 107.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DI_DVal.pdf, id=581, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DI_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DI_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DI_DVal.pdf used on input 
+line 118.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DI_DVal.pdf, id=582, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DI_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DI_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DI_DVal.pdf used on input 
+line 119.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DI_DVal.pdf, id=583, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DI_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DI_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DI_DVal.pdf used on input 
+line 120.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_32_DD_DVal.pdf, id=584, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_32_DD_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_32_DD_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_32_DD_DVal.pdf used on input 
+line 122.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_29_DD_DVal.pdf, id=585, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_29_DD_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_29_DD_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_29_DD_DVal.pdf used on input 
+line 123.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+
+<../FIGURES/SIZELIMIT/fig_26_DD_DVal.pdf, id=586, 556.0775pt x 459.7175pt>
+File: ../FIGURES/SIZELIMIT/fig_26_DD_DVal.pdf Graphic file (type pdf)
+
+<use ../FIGURES/SIZELIMIT/fig_26_DD_DVal.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/fig_26_DD_DVal.pdf used on input 
+line 124.
+(pdftex.def)             Requested size: 131.12793pt x 108.405pt.
+ [26 <../FIGURES/SIZELIMIT/fig_32_DI_LVal.pdf> <../FIGURES/SIZELIMIT/fig_29_DI_
+LVal.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_LVal.pdf> <../FIGURES/SIZELIMIT/fig_3
+2_DD_LVal.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_LVal.pdf> <../FIGURES/SIZELIMIT/
+fig_26_DD_LVal.pdf>] [27 <../FIGURES/SIZELIMIT/fig_32_DI_WVal.pdf> <../FIGURES/
+SIZELIMIT/fig_29_DI_WVal.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_WVal.pdf> <../FIG
+URES/SIZELIMIT/fig_32_DD_WVal.pdf> <../FIGURES/SIZELIMIT/fig_29_DD_WVal.pdf> <.
+./FIGURES/SIZELIMIT/fig_26_DD_WVal.pdf> <../FIGURES/SIZELIMIT/fig_32_DI_DVal.pd
+f> <../FIGURES/SIZELIMIT/fig_29_DI_DVal.pdf> <../FIGURES/SIZELIMIT/fig_26_DI_DV
+al.pdf> <../FIGURES/SIZELIMIT/fig_32_DD_DVal.pdf> <../FIGURES/SIZELIMIT/fig_29_
+DD_DVal.pdf> <../FIGURES/SIZELIMIT/fig_26_DD_DVal.pdf>]) (./PART2/Discussion.te
+x [28]) [29] (./Halibut.bbl)
+[30
+
+
+] [31
+
+] (./APPENDIX_A/AppendixA.tex (../DATA/Halibut_2sex_develop.dat
+[32] [33]
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 197--197
+[]\OT1/cmtt/m/n/6 1996   -99.0 -99.0 -99.0 -99.0 -99.0  69.9  74.6  80.0  85.5 
+ 91.4  97.6 103.7 109.0 113.8 118.5 122.6 126.4 129.4 132.5 135.4 137.6 139.3 1
+41.0 142.4 143.8 145.2 146.6 147.6 149.0 150.1[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 198--198
+[]\OT1/cmtt/m/n/6 1997   -99.0 -99.0 -99.0 -99.0 -99.0  69.9  74.6  80.0  85.5 
+ 91.4  97.6 103.7 109.0 113.8 118.5 122.6 126.4 129.4 132.5 135.4 137.6 139.3 1
+41.0 142.4 143.8 145.2 146.6 147.6 149.0 150.1[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 199--199
+[]\OT1/cmtt/m/n/6 1998   -99.0 -99.0 -99.0 -99.0 -99.0  70.0  74.4  79.4  84.8 
+ 90.7  97.2 103.5 108.8 113.5 118.1 121.9 125.5 128.3 131.1 133.8 135.8 137.7 1
+39.5 141.0 142.5 144.0 145.4 146.6 148.0 149.2[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 200--200
+[]\OT1/cmtt/m/n/6 1999   -99.0 -99.0 -99.0 -99.0 -99.0  70.0  74.2  78.8  83.9 
+ 89.7  96.1 102.3 107.5 111.9 116.2 119.9 123.2 125.9 128.6 131.2 133.2 135.0 1
+36.8 138.3 139.8 141.2 142.7 143.8 145.3 146.4[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 201--201
+[]\OT1/cmtt/m/n/6 2000   -99.0 -99.0 -99.0 -99.0 -99.0  70.0  74.0  78.4  83.2 
+ 88.5  94.3  99.9 104.8 109.0 113.2 116.7 120.0 122.8 125.4 128.1 130.1 131.8 1
+33.5 134.9 136.3 137.7 139.1 140.2 141.6 142.6[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 202--202
+[]\OT1/cmtt/m/n/6 2001   -99.0 -99.0 -99.0 -99.0 -99.0  70.0  74.0  78.0  82.4 
+ 87.2  92.2  97.2 101.6 105.7 109.7 113.2 116.5 119.2 122.0 124.6 126.6 128.3 1
+29.9 131.2 132.5 133.8 135.2 136.1 137.5 138.4[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 203--203
+[]\OT1/cmtt/m/n/6 2002   -99.0 -99.0 -99.0 -99.0 -99.0  69.8  74.8  80.4  85.0 
+ 89.4  93.6  97.7 101.6 105.4 109.1 112.7 116.2 119.6 123.0 126.3 129.4 132.4 1
+35.4 136.1 136.9 137.6 138.4 138.4 138.4 138.4[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 204--204
+[]\OT1/cmtt/m/n/6 2003   -99.0 -99.0 -99.0 -99.0 -99.0  69.8  74.8  79.7  84.4 
+ 88.9  93.2  97.2 101.0 104.8 108.3 111.6 114.7 117.8 120.8 123.9 126.7 129.5 1
+32.2 133.4 134.7 136.0 137.3 137.3 137.3 137.3[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 205--205
+[]\OT1/cmtt/m/n/6 2004   -99.0 -99.0 -99.0 -99.0 -99.0  68.8  73.9  79.0  83.9 
+ 88.5  92.9  97.1 101.0 104.7 108.0 111.0 113.8 116.5 119.2 121.9 124.5 127.1 1
+29.5 131.2 132.8 134.5 136.2 136.2 136.2 136.2[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 206--206
+[]\OT1/cmtt/m/n/6 2005   -99.0 -99.0 -99.0 -99.0 -99.0  67.7  73.0  78.2  83.2 
+ 88.0  92.5  96.9 100.9 104.5 107.7 110.5 113.0 115.4 117.9 120.3 122.7 125.3 1
+27.1 129.8 131.6 133.3 135.1 135.1 135.1 135.1[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 207--207
+[]\OT1/cmtt/m/n/6 2006   -99.0 -99.0 -99.0 -99.0 -99.0  66.7  72.0  77.3  82.4 
+ 87.3  91.9  96.5 100.7 104.4 107.6 110.3 112.6 114.9 117.2 119.4 121.4 123.5 1
+25.0 128.6 130.4 132.2 134.0 134.0 134.0 134.0[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 208--208
+[]\OT1/cmtt/m/n/6 2007   -99.0 -99.0 -99.0 -99.0 -99.0  65.7  71.1  76.3  81.5 
+ 86.3  90.9  95.4  99.6 103.3 106.6 109.4 112.0 114.3 116.4 118.4 120.2 121.8 1
+23.3 127.5 129.3 131.1 132.9 132.9 132.9 132.9[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 209--209
+[]\OT1/cmtt/m/n/6 2008   -99.0 -99.0 -99.0 -99.0 -99.0  64.7  70.1  75.3  80.4 
+ 85.2  89.8  94.2  98.3 102.0 105.4 108.3 111.0 113.3 115.3 117.2 118.8 120.3 1
+21.6 126.4 128.2 130.0 131.8 131.8 131.8 131.8[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 210--210
+[]\OT1/cmtt/m/n/6 2009   -99.0 -99.0 -99.0 -99.0 -99.0  63.8  69.2  74.3  79.3 
+ 84.1  88.7  93.0  97.1 100.9 104.2 107.2 109.8 112.1 114.1 115.9 117.5 118.9 1
+21.6 125.8 127.4 129.0 130.7 130.7 130.7 130.7[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 211--211
+[]\OT1/cmtt/m/n/6 2010   -99.0 -99.0 -99.0 -99.0 -99.0  62.9  68.3  73.4  78.4 
+ 83.1  87.6  91.9  96.0  99.7 103.0 106.0 108.7 111.1 113.1 115.9 117.5 118.9 1
+21.6 125.5 126.8 128.2 129.6 129.6 129.6 129.6[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 212--212
+[]\OT1/cmtt/m/n/6 2011   -99.0 -99.0 -99.0 -99.0 -99.0  62.9  68.3  72.6  77.6 
+ 82.3  86.8  91.0  95.0  98.7 102.0 105.0 107.7 110.1 113.1 115.9 117.5 118.9 1
+21.6 125.2 126.3 127.4 128.5 128.5 128.5 128.5[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 214--214
+[]\OT1/cmtt/m/n/6 1996   -99.0 -99.0 -99.0 -99.0 -99.0  63.3  67.0  70.4  74.0 
+ 77.4  80.7  84.0  86.8  89.3  91.7  93.8  95.9  97.7  99.5 101.3 102.7 103.9 1
+05.1 106.1 107.1 108.1 109.1 109.8 110.8 111.5[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 215--215
+[]\OT1/cmtt/m/n/6 1997   -99.0 -99.0 -99.0 -99.0 -99.0  63.3  67.0  70.4  74.0 
+ 77.4  80.7  84.0  86.8  89.3  91.7  93.8  95.9  97.7  99.5 101.3 102.7 103.9 1
+05.1 106.1 107.1 108.1 109.1 109.8 110.8 111.5[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 216--216
+[]\OT1/cmtt/m/n/6 1998   -99.0 -99.0 -99.0 -99.0 -99.0  63.6  67.2  70.7  74.1 
+ 77.3  80.5  83.5  86.1  88.3  90.4  92.4  94.3  96.0  97.8  99.7 101.3 102.9 1
+04.6 105.9 107.3 108.6 109.9 110.9 112.2 113.2[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 217--217
+[]\OT1/cmtt/m/n/6 1999   -99.0 -99.0 -99.0 -99.0 -99.0  63.6  67.2  71.0  74.3 
+ 77.3  80.2  83.0  85.4  87.6  89.8  91.7  93.6  95.3  97.1  98.9 100.3 101.5 1
+02.7 103.7 104.7 105.6 106.6 107.3 108.3 109.0[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 218--218
+[]\OT1/cmtt/m/n/6 2000   -99.0 -99.0 -99.0 -99.0 -99.0  63.8  67.3  70.9  74.0 
+ 77.0  79.7  82.4  84.8  86.9  89.1  91.0  92.9  94.7  96.4  98.1  99.3 100.1 1
+00.9 101.5 102.0 102.6 103.2 103.7 104.3 104.7[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 219--219
+[]\OT1/cmtt/m/n/6 2001   -99.0 -99.0 -99.0 -99.0 -99.0  63.8  67.3  70.0  73.1 
+ 76.0  78.7  81.4  83.7  85.8  87.9  89.7  91.6  93.3  95.1  97.0  98.3  99.3 1
+00.2 101.0 101.8 102.5 103.3 103.9 104.6 105.2[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 220--220
+[]\OT1/cmtt/m/n/6 2002   -99.0 -99.0 -99.0 -99.0 -99.0  64.2  67.5  71.0  73.8 
+ 76.4  78.7  80.9  82.9  84.9  86.8  88.5  90.2  92.0  93.8  95.6  97.5  99.4 1
+01.4 103.1 104.8 106.6 108.3 108.3 108.3 108.3[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 221--221
+[]\OT1/cmtt/m/n/6 2003   -99.0 -99.0 -99.0 -99.0 -99.0  64.2  67.5  70.5  73.3 
+ 75.8  78.2  80.2  82.1  83.9  85.7  87.3  88.8  90.4  92.1  93.8  95.6  97.4  
+99.5 101.9 104.6 107.2 109.8 109.8 109.8 109.8[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 222--222
+[]\OT1/cmtt/m/n/6 2004   -99.0 -99.0 -99.0 -99.0 -99.0  63.7  67.0  70.1  72.9 
+ 75.5  77.9  79.9  81.7  83.6  85.2  86.6  87.9  89.3  90.9  92.5  94.2  95.9  
+97.6  99.3 100.8 102.2 103.7 103.7 103.7 103.7[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 223--223
+[]\OT1/cmtt/m/n/6 2005   -99.0 -99.0 -99.0 -99.0 -99.0  63.2  66.6  69.7  72.6 
+ 75.3  77.7  79.7  81.6  83.4  84.9  86.2  87.4  88.7  90.1  91.6  93.1  94.7  
+96.3  97.4  98.2  99.0  99.8  99.8  99.8  99.8[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 224--224
+[]\OT1/cmtt/m/n/6 2006   -99.0 -99.0 -99.0 -99.0 -99.0  62.7  66.0  69.3  72.2 
+ 74.9  77.3  79.5  81.4  83.2  84.7  85.9  87.0  88.3  89.5  90.9  92.4  93.8  
+95.5  97.7  99.8 101.9 104.0 104.0 104.0 104.0[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 225--225
+[]\OT1/cmtt/m/n/6 2007   -99.0 -99.0 -99.0 -99.0 -99.0  62.1  65.5  68.7  71.6 
+ 74.3  76.7  78.9  80.9  82.7  84.2  85.5  86.6  87.9  89.1  90.5  91.7  93.0  
+94.6  96.3  97.9  99.5 101.1 101.1 101.1 101.1[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 226--226
+[]\OT1/cmtt/m/n/6 2008   -99.0 -99.0 -99.0 -99.0 -99.0  61.5  64.8  68.0  70.9 
+ 73.6  76.0  78.2  80.2  82.1  83.7  85.0  86.3  87.6  88.8  90.1  91.3  92.4  
+93.8  95.4  97.0  98.6 100.2 100.2 100.2 100.2[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 227--227
+[]\OT1/cmtt/m/n/6 2009   -99.0 -99.0 -99.0 -99.0 -99.0  60.8  64.1  67.2  70.1 
+ 72.7  75.2  77.4  79.4  81.3  83.0  84.5  85.9  87.3  88.5  89.8  90.9  91.9  
+93.0  94.5  96.1  97.7  99.3  99.3  99.3  99.3[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 228--228
+[]\OT1/cmtt/m/n/6 2010   -99.0 -99.0 -99.0 -99.0 -99.0  60.1  63.4  66.4  69.2 
+ 71.9  74.3  76.5  78.6  80.5  82.3  83.9  85.4  86.8  88.1  89.3  90.3  91.9  
+92.3  93.8  95.2  96.5  97.9  97.9  97.9  97.9[] 
+ []
+
+
+Overfull \hbox (123.1285pt too wide) in paragraph at lines 229--229
+[]\OT1/cmtt/m/n/6 2011   -99.0 -99.0 -99.0 -99.0 -99.0  60.1  63.4  65.6  68.4 
+ 71.0  73.4  75.7  77.7  79.7  81.5  83.1  84.6  86.1  87.4  88.6  89.7  91.9  
+92.3  93.2  94.2  95.2  96.2  96.2  96.2  96.2[] 
+ []
+
+) (../DATA/Halibut_2sex_develop.ctl [34] [35])
+(../DATA/Halibut_2sex_develop.pin
+Overfull \hbox (164.56659pt too wide) in paragraph at lines 48--48
+[]\OT1/cmtt/m/n/6 -2.307296 -2.102751 -1.992090 -1.862461 -1.899322 -1.716355 -
+1.625466 -1.513355 -1.371879 -1.288079 -1.249249 -1.231001 -1.238392 -1.346766 
+-1.390905 -1.644806 -5.748506 -5.274046 -5.104748 -4.899100[] 
+ []
+
+
+Overfull \hbox (164.56659pt too wide) in paragraph at lines 49--49
+[]\OT1/cmtt/m/n/6 -4.799907 -4.634285 -4.611588 -4.579337 -4.419579 -4.378035 -
+4.474458 -4.495733 -4.572945 -4.468456 -4.353657 -4.712525 -3.815718 -3.875378 
+-3.873048 -3.822219 -3.823495 -3.771531 -3.827677 -3.909820[] 
+ []
+
+
+Overfull \hbox (164.56659pt too wide) in paragraph at lines 50--50
+[]\OT1/cmtt/m/n/6 -3.932297 -3.962359 -3.955437 -4.088814 -4.268712 -4.289695 -
+4.398994 -4.485602 -4.264599 -4.234448 -4.299606 -4.406967 -4.092137 -4.031404 
+-4.020839 -3.750274 -3.499536 -3.387590 -3.387141 -3.208633[] 
+ []
+
+
+Overfull \hbox (164.56659pt too wide) in paragraph at lines 51--51
+[]\OT1/cmtt/m/n/6 -3.230384 -3.425503 -3.556316 -3.642721 -6.964999 -7.045085 -
+6.793632 -6.705370 -6.581514 -6.417055 -6.394806 -5.661074 -5.451366 -5.342769 
+-5.280884 -5.253524 -5.207165 -5.327662 -5.399307 -5.440480[] 
+ []
+
+[36]
+Overfull \hbox (65.75267pt too wide) in paragraph at lines 70--70
+[] \OT1/cmtt/m/n/6 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00
+000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000
+ 0.00000000000 0.00000000000[] 
+ []
+
+
+Overfull \hbox (65.75267pt too wide) in paragraph at lines 71--71
+[] \OT1/cmtt/m/n/6 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00
+000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000
+ 0.00000000000 0.00000000000[] 
+ []
+
+
+Overfull \hbox (65.75267pt too wide) in paragraph at lines 72--72
+[] \OT1/cmtt/m/n/6 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00
+000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000 0.00000000000
+ 0.00000000000 0.00000000000[] 
+ []
+
+)) (./MODEL_DESCRIPTION/modelDescription.tex [37] [38]
+Overfull \hbox (50.3012pt too wide) in paragraph at lines 62--88
+ [] 
+ []
+
+[39]
+
+LaTeX Warning: Float too large for page by 74.06476pt on input line 161.
+
+File: ../FIGURES/SIZELIMIT/SelRetA.pdf Graphic file (type pdf)
+<use ../FIGURES/SIZELIMIT/SelRetA.pdf>
+Package pdftex.def Info: ../FIGURES/SIZELIMIT/SelRetA.pdf used on input line 17
+6.
+(pdftex.def)             Requested size: 262.25587pt x 216.81pt.
+ [40] [41] [42])
+Package minitoc Info: I0009
+(minitoc)             Listing minitoc auxiliary files. 
+(minitoc)             Creating the Halibut.maf file.
+\openout3 = `Halibut.maf'.
+
+Package minitoc(hints) Info: I0053
+(minitoc(hints))             You have loaded the float package; 
+(minitoc(hints))             please be aware that the minitoc package 
+(minitoc(hints))             facilities can not be used for new types 
+(minitoc(hints))             of floats defined by the float package.
+
+
+Package minitoc(hints) Warning: W0024
+(minitoc(hints))                Some hints have been written 
+(minitoc(hints))                in the Halibut.log file.
+
+[43] (./Halibut.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 7412 strings out of 493633
+ 109044 string characters out of 3143378
+ 237711 words of memory out of 3000000
+ 10255 multiletter control sequences out of 15000+200000
+ 15082 words of font info for 63 fonts, out of 3000000 for 9000
+ 831 hyphenation exceptions out of 8191
+ 37i,17n,43p,2254b,378s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb>
+</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+/usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
+usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></us
+r/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/
+local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/lo
+cal/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/loca
+l/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/
+texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/te
+xlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texl
+ive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive
+/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/20
+11/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2011/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2011/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2011/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2011/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/2011/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive/2011/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on Halibut.pdf (52 pages, 1722692 bytes).
+PDF statistics:
+ 803 PDF objects out of 1000 (max. 8388607)
+ 563 compressed objects within 6 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 401 words of extra memory for PDF output out of 10000 (max. 10000000)
+

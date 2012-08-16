@@ -1,0 +1,32 @@
+\frametitle {Deriving steepness ($h$) from \fmsy}
+\only<1>{
+\begin{block}{(MSY,\fmsy) $\Rightarrow(B_0,h)$ transition}
+In this case estimate reference points directly.
+\begin{columns}
+\begin{column}{0.49\textwidth}
+\includegraphics[height=0.8\textwidth]{../figEquilYield.pdf}
+\end{column}
+\begin{column}{0.49\textwidth}
+\includegraphics[height=0.8\textwidth]{../figStockRecruitII.pdf}
+\end{column}
+\end{columns}
+\end{block}
+}
+\only<+->{
+Given $\Theta=(\mathrm{MSY},\rm{F_{MSY}},M,f_a,s_a)$,\\ then solve the catch equation for $h$.
+\pause
+
+\begin{align}
+C_e &= F_e g(\Theta)   \\
+    &= F_e R_e \phi_q \\
+&\mbox{$R_e$ is the equilibrium recruitment (includes $h$)}\nonumber \\
+&\mbox{$\phi_q$ is the yield per recruit} \nonumber
+\end{align}
+\pause
+\begin{align}
+\frac{\partial C_e}{\partial F_e}&= 0=
+R_e \phi_q + F_e \phi_q \frac{\partial R_e}{\partial F_e} + F_e R_e \frac{\partial \phi_q}{\partial F_e}
+%g(\Theta) + F_e g(\Theta) \frac{\partial g(\Theta)}{\partial F_e}\label{eq4}
+\end{align}
+In this case there is an Analytical solution for $h$ for Beverton-Holt \& Ricker models.
+}

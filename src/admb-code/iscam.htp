@@ -1,0 +1,213 @@
+#if !defined(_iscam_)
+#  define _iscam_
+
+class model_data : public ad_comm{
+  init_adstring DataFile;
+  init_adstring ControlFile;
+  init_adstring ProjectFileControl;
+  data_int n_tac;
+  data_vector tac;
+  data_int n_pfcntrl;
+  data_vector pf_cntrl;
+  data_int eof_pf;
+  int SimFlag;
+  int rseed;
+  int retro_yrs;
+  data_int syr;
+  data_int nyr;
+  data_int sage;
+  data_int nage;
+  dvector age;
+  data_int ngear;
+  data_vector allocation;
+  data_ivector catch_type;
+  int nfleet;
+  ivector fsh_flag;
+  ivector ifleet;
+  data_number fixed_m;
+  data_number linf;
+  data_number vonbk;
+  data_number to;
+  data_number a;
+  data_number b;
+  data_number ah;
+  data_number gh;
+  dvector la;
+  dvector wa;
+  data_matrix catch_data;
+  dmatrix obs_ct;
+  int ft_count;
+  int i;
+  data_int nit;
+  data_ivector nit_nobs;
+  data_ivector survey_type;
+  data_3array survey_data;
+  imatrix iyr;
+  imatrix igr;
+  dmatrix it;
+  dmatrix it_wt;
+  dmatrix it_timing;
+  data_int na_gears;
+  data_ivector na_nobs;
+  data_ivector a_sage;
+  data_ivector a_nage;
+  data_3array A;
+  data_int n_wt_nobs;
+  data_matrix tmp_wt_obs;
+  dmatrix wt_obs;
+  dmatrix wt_dev;
+  dmatrix fec;
+  dvector fa_bar;
+  dvector avg_fec;
+  dvector avg_wt;
+  data_int eof;
+  dvector fmsy;
+  dvector fall;
+  dvector msy;
+  double bmsy;
+  double Umsy;
+  dvector age_tau2;
+  d3_array d3C;
+  data_int npar;
+  data_matrix theta_control;
+  dvector theta_ival;
+  dvector theta_lb;
+  dvector theta_ub;
+  ivector theta_phz;
+  ivector theta_prior;
+  data_ivector isel_type;
+  ivector isel_npar;
+  ivector jsel_npar;
+  data_vector ahat;
+  data_vector ghat;
+  data_vector age_nodes;
+  data_vector yr_nodes;
+  data_ivector sel_phz;
+  data_vector sel_2nd_diff_wt;
+  data_vector sel_dome_wt;
+  data_int nits;
+  data_ivector q_prior;
+  data_vector q_mu;
+  data_vector q_sd;
+  data_vector cntrl;
+  int verbose;
+  data_int eofc;
+  int nf;
+  ivector ilvec;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+  static prevariable current_feval(void)
+  {
+    return *objective_function_value::pobjfun;
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_bounded_number_vector theta;
+  param_init_bounded_matrix_vector sel_par;
+  param_init_bounded_vector log_ft_pars;
+  param_init_bounded_vector init_log_rec_devs;
+  param_init_bounded_vector log_rec_devs;
+  param_init_bounded_vector log_m_nodes;
+  param_number prior_function_value;
+  param_number likelihood_function_value;
+  objective_function_value f;
+  param_number ro;
+  param_number bo;
+  param_number sbo;
+  param_number kappa;
+  param_number m;
+  param_number m_bar;
+  param_number log_avgrec;
+  param_number log_recinit;
+  param_number rho;
+  param_number varphi;
+  param_number so;
+  param_number beta;
+  param_vector log_rt;
+  param_vector vax;
+  param_vector q;
+  param_vector sbt;
+  param_vector rt;
+  param_vector delta;
+  param_vector avg_log_sel;
+  param_vector log_m_devs;
+  param_matrix nlvec;
+  param_matrix N;
+  param_matrix F;
+  param_matrix M_tot;
+  param_matrix ft;
+  param_matrix log_ft;
+  param_matrix Z;
+  param_matrix S;
+  param_matrix ct;
+  param_matrix eta;
+  param_matrix epsilon;
+  param_matrix pit;
+  param_matrix qt;
+  param_3array Ahat;
+  param_3array A_nu;
+  param_3array log_sel;
+  param_3array Chat;
+  param_stddev_number sd_depletion;
+public:
+  virtual void userfunction(void);
+  virtual void report(void);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void);
+  void initParameters(void);
+ dvar_vector cubic_spline(const dvar_vector& spline_coffs);
+ dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector& la);
+ dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs);
+  void calcSelectivities(void);
+  void calcTotalMortality(void);
+  void calcNumbersAtAge(void);
+  void calcAgeProportions(void);
+  void calcFisheryObservations(void);
+  void calcSurveyObservations(void);
+  void calcStockRecruitment(void);
+  void calc_objective_function(void);
+ void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& ve,double& dye_df,double& d2ye_df2);
+ void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df);
+ void calc_reference_points();
+ void simulation_model(const long& seed);
+  void decision_table(void);
+  void mcmc_output(void);
+ dvector age3_recruitment(const dvector& rt, const double& wt,const double& M);
+ void projection_model(const double& tac);
+
+};
+#endif
