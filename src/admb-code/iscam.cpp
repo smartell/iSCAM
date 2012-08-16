@@ -1856,9 +1856,16 @@ void model_parameters::calc_reference_points()
 	dvector d_fa  = (avg_fec);
 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	bo   = cMSY.getBo();
-	cout<<"|------------------------------------------|"<<endl;
-	cout<<"| Bo = "<<setw(10)<<bo                        <<endl;
-	cout<<"|------------------------------------------|"<<endl;
+	cMSY.get_fmsy(fmsy,d_ak);
+	msy  = cMSY.getYe();
+	bmsy = cMSY.getBe();
+	cout<<"|------------------------------------------|" <<endl;
+	cout<<"| Bo   = "<<setw(10)<<bo                      <<endl;
+	cout<<"| Bmsy = "<<setw(10)<<bmsy                    <<endl;
+	cout<<"| Fmsy ="<<setw(10)<<fmsy                     <<endl;
+	cout<<"| MSY  ="<<setw(10)<<msy                      <<endl;
+	cout<<"| dYe  = "<<setw(10)<<sum(cMSY.getdYe())      <<endl;
+	cout<<"|------------------------------------------|" <<endl;
 	//fall = ftry;
 	//
 	////fmsy = fall;
@@ -2542,9 +2549,9 @@ void model_parameters::mcmc_output(void)
 		ofs<<"          rho";
 		ofs<<"     vartheta";
 		ofs<<"           bo";
-		//ofs<<"         bmsy";
-		//for(int k=1;k<=nfleet;k++) ofs<<"         msy"<<k;
-		//for(int k=1;k<=nfleet;k++) ofs<<"        fmsy"<<k;
+		ofs<<"         bmsy";
+		for(int k=1;k<=nfleet;k++) ofs<<"         msy"<<k;
+		for(int k=1;k<=nfleet;k++) ofs<<"        fmsy"<<k;
 		ofs<<"          SSB";
 		ofs<<"        Age-4";
 		ofs<<"         Poor";
@@ -2567,9 +2574,9 @@ void model_parameters::mcmc_output(void)
 		ofstream ofs("iscam.mcmc",ios::app);
 		ofs<<setw(12)<<theta;
 		ofs<<setw(13)<< bo;
-		//ofs<<setw(13)<< bmsy;
-		//ofs<<setw(12)<< msy;
-		//ofs<<setw(12)<< fmsy;
+		ofs<<setw(13)<< bmsy;
+		ofs<<setw(12)<< msy;
+		ofs<<setw(12)<< fmsy;
 		ofs<<setw(13)<< sbt(nyr);
 		ofs<<setw(13)<< future_bt4;
 		ofs<<setw(12)<< future_bt4+rt3;
