@@ -328,6 +328,9 @@ DATA_SECTION
 	vector avg_fec(sage,nage);				//average fecundity-at-age
 	vector avg_wt(sage,nage);				//average weight-at-age
 	LOC_CALCS
+		cout<<"-- EMPIRICAL WEIGHT-AT-AGE DATA --"<<endl;
+		cout<<"-- n_wt_nobs "<<n_wt_nobs          <<endl;
+		cout<<"-- ---------------------------- --"<<endl;
 		int iyr;
 		avg_fec.initialize();
 		for(i=syr;i<=nyr+1;i++)
