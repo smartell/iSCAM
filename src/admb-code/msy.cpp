@@ -416,6 +416,7 @@ void Msy::calc_equilibrium(dvector& fe)
 			}
 		} 
 	}
+	//cout<<"Jacobian\n"<<d2ye<<endl;
 	
 	invJ   = -inv(d2ye);
 	fstp   = invJ * dye;  //Newton-Raphson step.
