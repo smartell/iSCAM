@@ -47,7 +47,7 @@ notebook tabs="Figures Tables Tools" name=nbtab width=520 height=600
 ## ------------------------------------------------------------------------- ##
 ## TOOLS TAB                                                                 ##
 ## ------------------------------------------------------------------------- ##
-	label text="TOOS TAB"
+	label text="TOOLS TAB"
 
 	
 
