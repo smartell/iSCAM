@@ -3,7 +3,7 @@
 */                                                 
 
 #include<admodel.h>
-#define MAXITS 20
+#define MAXITS 50
 #define MAXF   5.0
 double get_ft(const double& ct, const double& m, const dvector& va, const dvector& ba);
 
@@ -74,11 +74,15 @@ dvector getFishingMortality(const dvector &ct, const double &m, const dmatrix &V
 					dvector t2   = elem_prod(t1,V(j));
 					dvector t3   = elem_div(t2,za);
 					double dCdF  = -(t2*sa) + (t3*oa);
-					J(i)(j)      = dCdF;
+					J(j)(i)      = dCdF;
 				}
 			}	
 		}
 		fx   = ct - chat;
+		//The following couts were used to debug the transpose error in the Jacobian.
+		
+		//cout<<"fx = "<<fx<<endl;
+		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
 		ft  += fx*invJ;
 		
