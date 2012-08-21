@@ -81,10 +81,10 @@ dvector getFishingMortality(const dvector &ct, const double &m, const dmatrix &V
 		fx   = ct - chat;
 		//The following couts were used to debug the transpose error in the Jacobian.
 		
-		cout<<its<<" ft = "<<ft<<endl;
-		cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
+		//cout<<its<<" ft = "<<ft<<endl;
+		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
-		cout<<"Good"<<endl;
+		//cout<<"Good"<<endl;
 		ft  += invJ*fx;
 		
 		if( norm(fx) < 1.e-15 ) break;

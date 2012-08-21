@@ -7,7 +7,7 @@
 EXEC=iscam
 prefix=../../../../dist
 DAT=PRD.dat
-CTL=PRDherring2012qBaseGeneric-pfcA.ctl
+CTL=PRDherring2012qBaseGeneric-pfcC
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
