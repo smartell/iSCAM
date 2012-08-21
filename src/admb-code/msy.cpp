@@ -6,7 +6,7 @@
 	are multiple fishing fleets that differ in selectivity and is capable of
 	determining optimal fishing mortality rates for each fleet and optimal 
 	allocations for each fleet such that the sum of catches acrosss all fleets
-	is maximized.  There is also an option to determin MSY-based refence points
+	is maximized.  There is also an option to determine MSY-based reference points
 	in cases where there are allocation agreements in place.
 	
 © Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
