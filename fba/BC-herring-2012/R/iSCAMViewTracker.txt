@@ -3,4 +3,5 @@
 "Select","Stock","Description","Control File"
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
-TRUE, SOG, "SOG Herring",../DATA/SOG/SOG_Herring_2012
+TRUE,SOG, "SOG Herring"   ,../DATA/SOG/SOG_Herring_2012
+TRUE,WCVI,"WCVI Herring"  ,../DATA/WCVI/WCVIHerring2012qBaseGeneric

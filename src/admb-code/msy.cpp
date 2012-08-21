@@ -2,12 +2,17 @@
 	
 	The Msy class provides computational support for age-structured models
 	in which MSY-based (Maximum Sustainable Yield) reference points are 
-	required.
+	required.  It is specifically designed to deal with cases in which there
+	are multiple fishing fleets that differ in selectivity and is capable of
+	determining optimal fishing mortality rates for each fleet and optimal 
+	allocations for each fleet such that the sum of catches acrosss all fleets
+	is maximized.  There is also an option to determin MSY-based refence points
+	in cases where there are allocation agreements in place.
 	
 © Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
 
 	\author Martell UBC Fisheries Centre
-	\author $LastChangedBy$
+	\author $Martell$
 	\date 2012-07-29
 	\date $LastChangedDate$
 	\version $Rev$	\sa
@@ -155,7 +160,7 @@ void Msy::get_fmsy(dvector& fe)
 				fe[i] -= 0.999*m_p[i];         
 			}
 		}
-		cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
@@ -188,7 +193,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		   information for the total yield and use Newton-Rhaphson to
 		   update the estimate of fbar.
 		 - Repeat above steps until derivative for the total yield 
-		   approaches zero (1.e-12).
+		   approaches zero (TOL).
 		
 	*/
 	int i;
