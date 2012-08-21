@@ -2,12 +2,17 @@
 	
 	The Msy class provides computational support for age-structured models
 	in which MSY-based (Maximum Sustainable Yield) reference points are 
-	required.
+	required.  It is specifically designed to deal with cases in which there
+	are multiple fishing fleets that differ in selectivity and is capable of
+	determining optimal fishing mortality rates for each fleet and optimal 
+	allocations for each fleet such that the sum of catches acrosss all fleets
+	is maximized.  There is also an option to determin MSY-based refence points
+	in cases where there are allocation agreements in place.
 	
 © Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
 
 	\author Martell UBC Fisheries Centre
-	\author $LastChangedBy$
+	\author $Martell$
 	\date 2012-07-29
 	\date $LastChangedDate$
 	\version $Rev$	\sa
@@ -152,12 +157,15 @@ void Msy::get_fmsy(dvector& fe)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 ) // backtrack 98% of the newton step.
 			{                                 // if outside the boundary conditions.
-				fe[i] -= 0.98*m_p[i];         
+				fe[i] -= 0.999*m_p[i];         
 			}
 		}
 		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
+	
+	//if(min(fe)<0) exit(1);
 	
 	m_fmsy    = fe;
 	m_msy     = m_ye;
@@ -185,7 +193,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		   information for the total yield and use Newton-Rhaphson to
 		   update the estimate of fbar.
 		 - Repeat above steps until derivative for the total yield 
-		   approaches zero (1.e-12).
+		   approaches zero (TOL).
 		
 	*/
 	int i;
@@ -409,16 +417,16 @@ void Msy::calc_equilibrium(dvector& fe)
 	{
 		for(k=1; k<=ngear; k++)
 		{
-			d2ye(j)(k) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
+			d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
 			if(k == j)
 			{
 				d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(j);
 			}
 		} 
 	}
-	
+	// Newton-Raphson step.
 	invJ   = -inv(d2ye);
-	fstp   = invJ * dye;  //Newton-Raphson step.
+	fstp   = invJ * dye;  
 	
 	// Set private members
 	m_p    = fstp;
