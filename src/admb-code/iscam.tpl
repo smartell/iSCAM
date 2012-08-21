@@ -3239,6 +3239,8 @@ FUNCTION void projection_model(const double& tac);
 	
 	double  ut  = tac / p_sbt(pyr);
 	double u20  = tac / ( (p_N(pyr)(3,nage)*exp(-value(M_tot(nyr,3))))* avg_wt(3,nage) );
+	
+	/* Average rate of change in spawning biomass in last 5 years */
 	double dSb5 = mean(log(p_sbt(pyr-5,pyr)) - log(p_sbt(pyr-6,pyr-1).shift(pyr-5)));
 	
 	ofstream ofs(BaseFileName + ".proj",ios::app);
