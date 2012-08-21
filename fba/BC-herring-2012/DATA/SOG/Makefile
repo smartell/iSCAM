@@ -11,6 +11,7 @@ CTL=SOG_Herring_2012
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
+PFC=SOG_Herring_2012a.pfc SOG_Herring_2012c.pfc SOG_Herring_2012c.pfc
 
 ifdef DEBUG
   DIST=$(prefix)/debug/iscam
@@ -38,6 +39,11 @@ $(EXEC).psv: $(CTL).ctl
 mceval: $(EXEC)
 	cp $(CTL).psv $(EXEC).psv
 	./$(EXEC) -ind $(DAT) -mceval
+
+mceval2: $(EXEC) $(doit)
+
+$(doit):
+	$(foreach var,$(PFC),)
 
 retro: $(EXEC) $(EXEC).ret1
 

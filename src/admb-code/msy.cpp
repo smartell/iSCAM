@@ -152,12 +152,15 @@ void Msy::get_fmsy(dvector& fe)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 ) // backtrack 98% of the newton step.
 			{                                 // if outside the boundary conditions.
-				fe[i] -= 0.98*m_p[i];         
+				fe[i] -= 0.999*m_p[i];         
 			}
 		}
-		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
+	
+	//if(min(fe)<0) exit(1);
 	
 	m_fmsy    = fe;
 	m_msy     = m_ye;
@@ -409,17 +412,16 @@ void Msy::calc_equilibrium(dvector& fe)
 	{
 		for(k=1; k<=ngear; k++)
 		{
-			d2ye(j)(k) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
+			d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
 			if(k == j)
 			{
 				d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(j);
 			}
 		} 
 	}
-	//cout<<"Jacobian\n"<<d2ye<<endl;
-	
+	// Newton-Raphson step.
 	invJ   = -inv(d2ye);
-	fstp   = invJ * dye;  //Newton-Raphson step.
+	fstp   = invJ * dye;  
 	
 	// Set private members
 	m_p    = fstp;

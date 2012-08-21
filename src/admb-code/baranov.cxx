@@ -74,17 +74,17 @@ dvector getFishingMortality(const dvector &ct, const double &m, const dmatrix &V
 					dvector t2   = elem_prod(t1,V(j));
 					dvector t3   = elem_div(t2,za);
 					double dCdF  = -(t2*sa) + (t3*oa);
-					J(j)(i)      = dCdF;
+					J(i)(j)      = dCdF;
 				}
 			}	
 		}
 		fx   = ct - chat;
 		//The following couts were used to debug the transpose error in the Jacobian.
 		
-		//cout<<"fx = "<<fx<<endl;
+		//cout<<its<<" ft = "<<ft<<endl;
 		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
-		ft  += fx*invJ;
+		ft  += invJ*fx;
 		
 		if( norm(fx) < 1.e-15 ) break;
 	}
