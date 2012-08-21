@@ -14,7 +14,7 @@
 	\author Martell UBC Fisheries Centre
 	\author $Martell$
 	\date 2012-07-29
-	\date $LastChangedDate$
+	\date 2012-08-20
 	\version $Rev$	\sa
 **/
 
