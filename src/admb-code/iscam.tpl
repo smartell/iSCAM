@@ -3172,7 +3172,7 @@ FUNCTION void projection_model(const double& tac);
 		
 		// spawning biomass
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13))) * avg_fec;
-		cout<<i<<"\t"<<p_sbt(i)<<"\t"<<p_ct<<endl;
+		
 		
 		// sage recruits with random deviate xx
 		// note the random number seed is repeated for each tac level.
