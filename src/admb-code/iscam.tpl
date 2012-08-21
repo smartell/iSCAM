@@ -3078,7 +3078,7 @@ FUNCTION void projection_model(const double& tac);
 	static int runNo=0;
 	runNo ++;
 	int i,j,k;
-	int pyr = nyr+1;	//projection year.
+	int pyr = nyr+2;	//projection year.
 	
 	// --derive stock recruitment parameters
 	// --survivorship of spawning biomass
