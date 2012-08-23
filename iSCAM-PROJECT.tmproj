@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fba/BC-herring-2011/R/iscam.R</string>
+	<string>fba/BC-herring-2012/DATA/Makefile</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -18,9 +18,53 @@
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
-	<integer>332</integer>
+	<integer>350</integer>
 	<key>metaData</key>
 	<dict>
+		<key>Makefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>54</integer>
+				<key>line</key>
+				<integer>23</integer>
+			</dict>
+		</dict>
+		<key>ReadMe</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>docs/iSCAM-guide/userGuide/ModelAPI/ModelDocumentation.tex</key>
 		<dict>
 			<key>caret</key>
@@ -49,61 +93,63 @@
 			<key>firstVisibleLine</key>
 			<integer>69</integer>
 		</dict>
-		<key>examples/DEMO/DATA/DataTemplate.dat</key>
+		<key>examples/ECODETECTIVE/DATA/Makefile</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>26</integer>
+				<integer>0</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>4</integer>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>69</integer>
+				<key>line</key>
+				<integer>52</integer>
+			</dict>
 		</dict>
-		<key>examples/DEMO/DATA/ProjectionTemplate.pfc</key>
+		<key>examples/ECODETECTIVE/PRESENTATION/ECODETECTIVE.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>31</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>24</integer>
 		</dict>
-		<key>examples/ECODETECTIVE/DATA/NamibianHake.dat</key>
+		<key>examples/LingcodSRA/PRESENTATION/LingcodSRA.tex</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>113</integer>
+				<integer>0</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>71</integer>
-		</dict>
-		<key>examples/ECODETECTIVE/DATA/NamibianHake.rep</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>22</integer>
-				<key>line</key>
-				<integer>103</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
 			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>83</integer>
 		</dict>
 		<key>examples/PacificHake/PHake2010.dat</key>
 		<dict>
@@ -134,6 +180,20 @@
 			<integer>0</integer>
 		</dict>
 		<key>examples/PacificHake/PHake2011.ctl</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>examples/makeproject</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -205,35 +265,7 @@
 			<key>firstVisibleLine</key>
 			<integer>23</integer>
 		</dict>
-		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.mcmc</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1836</integer>
-		</dict>
 		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.par</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.proj</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -275,20 +307,6 @@
 			<key>firstVisibleLine</key>
 			<integer>335</integer>
 		</dict>
-		<key>fba/BC-herring-2011/R/MultiFleetEquil.R</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>24</integer>
-				<key>line</key>
-				<integer>65</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>40</integer>
-		</dict>
 		<key>fba/BC-herring-2011/R/iSCAMViewTracker.txt</key>
 		<dict>
 			<key>caret</key>
@@ -297,20 +315,6 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>fba/BC-herring-2011/R/iscam.R</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>81</integer>
-				<key>line</key>
-				<integer>17</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -347,35 +351,21 @@
 				<integer>7</integer>
 			</dict>
 		</dict>
-		<key>fba/Halibut/DATA/Halibut_2sex_develop.pin</key>
+		<key>fba/BC-herring-2012/DATA/Makefile</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>63</integer>
+				<integer>24</integer>
 				<key>line</key>
-				<integer>33</integer>
+				<integer>5</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>10</integer>
-		</dict>
-		<key>fba/Halibut/DATA/Halibut_2sex_develop.rep</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
 			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>731</integer>
 		</dict>
-		<key>fba/Halibut/DATA/Halibut_2sex_develop.sim</key>
+		<key>fba/SILVER_HAKE/DATA/SilverHake.ctl</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -389,35 +379,221 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>fba/Halibut/DATA/iscam.r01</key>
+		<key>fba/SILVER_HAKE/DATA/SilverHake.dat</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>381</integer>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/SILVER_HAKE/DATA/SilverHake.pfc</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>21</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/SILVER_HAKE/DATA/SilverHake.rep</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>28</integer>
+		</dict>
+		<key>fba/SILVER_HAKE/R/iSCAM.R</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>fba/SILVER_HAKE/R/iSCAMViewTracker.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>scripts/BeamerTemplate.tex</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>scripts/DataTemplate.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>src/R_pkg/iSCAMViewTracker.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>6</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>354</integer>
+			<integer>0</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>364</integer>
+				<integer>0</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>381</integer>
+				<integer>6</integer>
 			</dict>
+		</dict>
+		<key>src/R_pkg/iscam.R</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>35</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>2</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>31</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>35</integer>
+			</dict>
+		</dict>
+		<key>src/R_pkg/iscamView.R</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>10</integer>
+				<key>line</key>
+				<integer>79</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>71</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>79</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>13</integer>
+				<key>line</key>
+				<integer>79</integer>
+			</dict>
+		</dict>
+		<key>src/R_pkg/iscamWin.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>26</integer>
+				<key>line</key>
+				<integer>11</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>src/R_pkg/plotCatch.R</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>54</integer>
+				<key>line</key>
+				<integer>30</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>src/R_pkg/plotMeanWt.R</key>
 		<dict>
@@ -433,6 +609,20 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>src/admb-code/baranov.cxx</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>39</integer>
+		</dict>
 		<key>src/admb-code/iscam.tpl</key>
 		<dict>
 			<key>caret</key>
@@ -445,36 +635,66 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>3134</integer>
+			<integer>2898</integer>
 		</dict>
-		<key>src/admb-code/msy.cpp</key>
+		<key>src/admb-code/linux.mak</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>6</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>162</integer>
+				<integer>20</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>52</integer>
+			<integer>0</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>162</integer>
+				<integer>0</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>6</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>162</integer>
+				<integer>20</integer>
+			</dict>
+		</dict>
+		<key>src/admb-code/stats.cxx</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>596</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>504</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>8</integer>
+				<key>line</key>
+				<integer>596</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>596</integer>
 			</dict>
 		</dict>
 		<key>src/r-code/iscam-Rpackage/DESCRIPTION</key>
@@ -509,10 +729,19 @@
 	<key>openDocuments</key>
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
-		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.proj</string>
-		<string>fba/BC-herring-2011/DATA/SOG/SOGHerring2011qprior.mcmc</string>
-		<string>fba/BC-herring-2011/R/iscam.R</string>
-		<string>src/admb-code/msy.cpp</string>
+		<string>fba/BC-herring-2012/DATA/Makefile</string>
+		<string>src/admb-code/baranov.cxx</string>
+		<string>fba/SILVER_HAKE/DATA/SilverHake.pfc</string>
+		<string>src/R_pkg/iscam.R</string>
+		<string>src/R_pkg/iscamView.R</string>
+		<string>src/R_pkg/plotCatch.R</string>
+		<string>fba/SILVER_HAKE/R/iSCAMViewTracker.txt</string>
+		<string>fba/SILVER_HAKE/R/iSCAM.R</string>
+		<string>fba/SILVER_HAKE/DATA/SilverHake.rep</string>
+		<string>fba/SILVER_HAKE/DATA/SilverHake.ctl</string>
+		<string>fba/SILVER_HAKE/DATA/SilverHake.dat</string>
+		<string>src/R_pkg/iSCAMViewTracker.txt</string>
+		<string>src/R_pkg/iscamWin.txt</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<false/>
@@ -532,7 +761,7 @@
 					<true/>
 					<key>subItems</key>
 					<dict>
-						<key>BC-herring-2011</key>
+						<key>BC-herring-2012</key>
 						<dict>
 							<key>isExpanded</key>
 							<true/>
@@ -543,24 +772,24 @@
 									<key>isExpanded</key>
 									<true/>
 									<key>subItems</key>
-									<dict>
-										<key>SOG</key>
-										<dict>
-											<key>isExpanded</key>
-											<true/>
-											<key>subItems</key>
-											<dict/>
-										</dict>
-									</dict>
-								</dict>
-								<key>R</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
 									<dict/>
 								</dict>
 							</dict>
+						</dict>
+					</dict>
+				</dict>
+				<key>src</key>
+				<dict>
+					<key>isExpanded</key>
+					<true/>
+					<key>subItems</key>
+					<dict>
+						<key>R_pkg</key>
+						<dict>
+							<key>isExpanded</key>
+							<true/>
+							<key>subItems</key>
+							<dict/>
 						</dict>
 					</dict>
 				</dict>

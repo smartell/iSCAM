@@ -784,6 +784,7 @@ guiView	<- function()
 	{
 		if(file.exists(fn))
 		{
+			cat(fn)
 			Obj = read.rep(fn)
 			lines(Obj$yr, Obj$sbt[1:length(Obj$yr)],...)
 			points(max(Obj$yr), Obj$bo, pch=20, ...)
