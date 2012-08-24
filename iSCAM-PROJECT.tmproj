@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>fba/BC-herring-2012/DATA/Makefile</string>
+	<string>fba/BC-herring-2012/DATA/PRD/Makefile</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -18,7 +18,7 @@
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
-	<integer>350</integer>
+	<integer>416</integer>
 	<key>metaData</key>
 	<dict>
 		<key>Makefile</key>
@@ -351,14 +351,14 @@
 				<integer>7</integer>
 			</dict>
 		</dict>
-		<key>fba/BC-herring-2012/DATA/Makefile</key>
+		<key>fba/BC-herring-2012/DATA/PRD/Makefile</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>24</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>5</integer>
+				<integer>43</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -406,20 +406,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>fba/SILVER_HAKE/DATA/SilverHake.rep</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>28</integer>
 		</dict>
 		<key>fba/SILVER_HAKE/R/iSCAM.R</key>
 		<dict>
@@ -621,21 +607,37 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>39</integer>
+			<integer>60</integer>
 		</dict>
 		<key>src/admb-code/iscam.tpl</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>55</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>2931</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>2898</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>50</integer>
+				<key>line</key>
+				<integer>2931</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>55</integer>
+				<key>line</key>
+				<integer>2931</integer>
+			</dict>
 		</dict>
 		<key>src/admb-code/linux.mak</key>
 		<dict>
@@ -729,7 +731,7 @@
 	<key>openDocuments</key>
 	<array>
 		<string>src/admb-code/iscam.tpl</string>
-		<string>fba/BC-herring-2012/DATA/Makefile</string>
+		<string>fba/BC-herring-2012/DATA/PRD/Makefile</string>
 		<string>src/admb-code/baranov.cxx</string>
 		<string>fba/SILVER_HAKE/DATA/SilverHake.pfc</string>
 		<string>src/R_pkg/iscam.R</string>
@@ -737,7 +739,6 @@
 		<string>src/R_pkg/plotCatch.R</string>
 		<string>fba/SILVER_HAKE/R/iSCAMViewTracker.txt</string>
 		<string>fba/SILVER_HAKE/R/iSCAM.R</string>
-		<string>fba/SILVER_HAKE/DATA/SilverHake.rep</string>
 		<string>fba/SILVER_HAKE/DATA/SilverHake.ctl</string>
 		<string>fba/SILVER_HAKE/DATA/SilverHake.dat</string>
 		<string>src/R_pkg/iSCAMViewTracker.txt</string>
@@ -760,38 +761,7 @@
 					<key>isExpanded</key>
 					<true/>
 					<key>subItems</key>
-					<dict>
-						<key>BC-herring-2012</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict>
-								<key>DATA</key>
-								<dict>
-									<key>isExpanded</key>
-									<true/>
-									<key>subItems</key>
-									<dict/>
-								</dict>
-							</dict>
-						</dict>
-					</dict>
-				</dict>
-				<key>src</key>
-				<dict>
-					<key>isExpanded</key>
-					<true/>
-					<key>subItems</key>
-					<dict>
-						<key>R_pkg</key>
-						<dict>
-							<key>isExpanded</key>
-							<true/>
-							<key>subItems</key>
-							<dict/>
-						</dict>
-					</dict>
+					<dict/>
 				</dict>
 			</dict>
 		</dict>
