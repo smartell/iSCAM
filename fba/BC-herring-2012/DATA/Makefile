@@ -3,7 +3,7 @@
 ## targets:
 
 ## Macros
-SUBDIR =  PRD  SOG WCVI 
+SUBDIR =  PRD  SOG WCVI QCI
 ##SUBDIR = SOKeg
 TARGET = 
 

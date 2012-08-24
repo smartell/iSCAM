@@ -12,8 +12,8 @@
 ## _____________________________ ##
 6    ## Length of control options vector
 
-2007 ## - 1) Start year for mean natural mortality rate
-2011 ## - 2)  Last year for mean natural mortality rate
+1951 ## - 1) Start year for mean natural mortality rate
+2012 ## - 2)  Last year for mean natural mortality rate
 
 2007 ## - 3) Start year for average fecundity/weight-at-age in projections
 2011 ## - 4)  Last year for average fecundity/weight-at-age in projections

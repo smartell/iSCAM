@@ -1,0 +1,32 @@
+#../../fba/BC-herring-2011/DATA/QCI/QCIHerring2011.dat
+#../../fba/BC-herring-2011/DATA/QCI/QCIHerring2011q1.ctl
+
+#May 24- implement generic ctl file
+#May 27- implement stockHerring2011qpriorV2.ctl
+#May 29- implement stockHerring2011qpriorGeneric.ctl
+#Jun 14- implement stockHerring2011...GenericTables.ctl and .pfc
+
+#order as: .dat, .ctl. .pfc
+
+QCIHerring2012.dat
+
+QCIHerring2012qBaseGeneric-pfcA.ctl
+#QCIHerring2012qBaseGeneric-pfcB.ctl
+#QCIHerring2012qBaseGeneric-pfcC.ctl
+
+qciherring2012pfcA.pfc
+#qciherring2012pfcB.pfc
+#qciherring2012pfcC.pfc
+
+
+
+# to run 2011 input file (with 2012 tpl)
+#QCIHerring2011.dat
+#QCIHerring2011qBaseGeneric-pfcA.ctl
+#qciherring2011pfcA.pfc
+
+# to run 2012 data file created as 2011input+2012 pasted values
+#QCIHerring2012as2011.dat
+#QCIHerring2012qBaseGeneric-pfcA-as2011data.ctl
+#qciherring2012pfcA-as2011data.pfc
+

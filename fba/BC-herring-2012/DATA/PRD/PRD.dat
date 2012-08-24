@@ -10,10 +10,10 @@
 
 PRDHerring2012.dat 
 
-#PRDHerring2012qBaseGeneric-pfcA.ctl
+PRDHerring2012qBaseGeneric-pfcA.ctl
 #PRDHerring2012qBaseGeneric-pfcB.ctl
-PRDHerring2012qBaseGeneric-pfcC.ctl
+#PRDHerring2012qBaseGeneric-pfcC.ctl
 
-#PRDHerring2012pfcA.pfc
+PRDHerring2012pfcA.pfc
 #PRDHerring2012pfcB.pfc
-PRDHerring2012pfcC.pfc
+#PRDHerring2012pfcC.pfc
