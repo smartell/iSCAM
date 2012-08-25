@@ -1,0 +1,19 @@
+#May 24- implement generic ctl file
+#May 27- implement stockHerring2011qpriorV2.ctl
+#May 29- implement stockHerring2011...Generic.ctl
+#Jun 14- implement stockHerring2011...GenericTables.ctl and .pfc
+
+#order as: .dat, .ctl. .pfc
+
+CCHerring2012.dat
+
+CCHerring2012qBaseGeneric-pfcA.ctl
+#CCHerring2012qBaseGeneric-pfcB.ctl
+#CCHerring2012qBaseGeneric-pfcC.ctl
+
+ccherring2012pfcA.pfc
+#ccherring2012pfcB.pfc
+#ccherring2012pfcC.pfc
+
+
+
