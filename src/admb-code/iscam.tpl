@@ -192,6 +192,18 @@ DATA_SECTION
 		cout<<"  nage\t"<<nage<<endl;
 		cout<<"  ngear\t"<<ngear<<endl;
 		cout<<"** ___________________ **"<<endl;
+		
+		/* Check for dimension errors in projection control file. */
+		if(pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
+		{
+			cout<<"ERROR: start year in projection file control is less than initial model year."<<endl;
+			exit(1);
+		}
+		if(pf_cntrl(2)>nyr || pf_cntrl(4)>nyr || pf_cntrl(6)>nyr )
+		{
+			cout<<"ERROR: last year in projection file control is greater than last model year."<<endl;
+			exit(1);
+		}
 	END_CALCS
 	
 	
@@ -2905,7 +2917,7 @@ REPORT_SECTION
 	
 	
 	if(last_phase()) decision_table();
-	cout<<"OK to Here"<<endl;
+	
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -2914,7 +2926,8 @@ REPORT_SECTION
 		REPORT(rt3);
 	}
 	
-	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
 	REPORT(future_bt);
 	double future_bt4 = sum(future_bt(4,nage));
 	REPORT(future_bt4);
@@ -3008,7 +3021,8 @@ FUNCTION mcmc_output
 	// leading parameters & reference points
 	calc_reference_points();
 	// decision table output
-	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
 	double future_bt4 = sum(future_bt(4,nage));
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	
@@ -3093,6 +3107,8 @@ FUNCTION void projection_model(const double& tac);
 	* Projections are based on average natural mortality and fecundity.
 	* Selectivity is based on selectivity in terminal year.
 	* Average weight-at-age is based on mean weight in the last 5 years.
+	
+	Aug 20, 2012 Found a bug, See issue 2 on github.
 	*/
 	static int runNo=0;
 	runNo ++;
@@ -3102,7 +3118,8 @@ FUNCTION void projection_model(const double& tac);
 	// --derive stock recruitment parameters
 	// --survivorship of spawning biomass
 	dvector lx(sage,nage);
-	double m_M   = value(m_bar); 
+	double   tau = value((1.-rho)/varphi); 
+	double   m_M = value(m_bar); 
 	double m_rho = cntrl(13);
 	lx(sage)     = 1;
 	for(i=sage; i<=nage; i++)
@@ -3126,16 +3143,19 @@ FUNCTION void projection_model(const double& tac);
 		break;
 	}
 	
-	
+	/* Fill arrays with historical values */
 	dvector p_sbt(syr,pyr);
 	dvector  p_ct(1,ngear);
 	dmatrix  p_ft(nyr+1,pyr,1,ngear);
 	dmatrix   p_N(syr,pyr+1,sage,nage);
 	dmatrix   p_Z(syr,pyr,sage,nage);
 	p_N.initialize();
-	p_N.sub(syr,nyr+1) = value(N.sub(syr,nyr+1));
-	p_sbt(syr,nyr)     = value(sbt(syr,nyr));
-	p_Z.sub(syr,nyr)   = value(Z.sub(syr,nyr));
+	p_sbt.initialize();
+	p_Z.initialize();
+	p_N.sub(syr,nyr)   = value( N.sub(syr,nyr) );
+	p_sbt(syr,nyr)     = value( sbt(syr,nyr)   );
+	p_Z.sub(syr,nyr)   = value( Z.sub(syr,nyr) );
+	
 	
 	/* Selectivity and allocation to gears */
 	dmatrix va_bar(1,ngear,sage,nage);
@@ -3146,40 +3166,51 @@ FUNCTION void projection_model(const double& tac);
 	}
 		
 	/* Simulate population into the future under constant tac policy. */
-	for(i = nyr+1; i<=pyr; i++)
+	for(i = nyr; i<=pyr; i++)
 	{
-		//get_ft is defined in the Baranov.cxx file
-		p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
 		
-		//p_ft(i)(1,nfleet) = fmsy(1,nfleet);
-		
-		//Calculate mortality
-		p_Z(i) = value(m_bar);
-		for(k=1;k<=ngear;k++)
+		if(i > nyr)
 		{
-			p_Z(i)+=p_ft(i,k)*va_bar(k);
+			// get_ft is defined in the Baranov.cxx file
+			p_ft(i) = getFishingMortality(p_ct, value(m_bar), va_bar, p_N(i),avg_wt);
+			// p_ft(i)(1,nfleet) = fmsy(1,nfleet);
+			
+			// calculate total mortality in future years
+			p_Z(i) = value(m_bar);
+			for(k=1;k<=ngear;k++)
+			{
+				p_Z(i)+=p_ft(i,k)*va_bar(k);
+			}
 		}
 		
 		
-		//Spawning biomass
-		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13)))*avg_fec;
+		// spawning biomass
+		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13))) * avg_fec;
 		
-		//Age-sage recruits
-		double tau = value((1.-rho)/varphi); 
-		double xx = randn(nf+i)*tau;
 		
+		// sage recruits with random deviate xx
+		// note the random number seed is repeated for each tac level.
+		double  xx = randn(nf+i)*tau;
 		if(i>=syr+sage-1)
 		{
 			double rt;
-			double et=p_sbt(i-sage+1);
-			if(cntrl(2)==1)rt=(so*et/(1.+beta*et));
-			if(cntrl(2)==2)rt=(so*et*exp(-beta*et));
+			double et = p_sbt(i-sage+1);		// lagged spawning biomass
+			
+			if(cntrl(2)==1)						// Beverton-Holt model
+			{
+				rt=(so*et/(1.+beta*et));
+			}
+			if(cntrl(2)==2)						// Ricker model
+			{
+				rt=(so*et*exp(-beta*et));
+			}
+			
 			p_N(i+1,sage)=rt*exp(xx-0.5*tau*tau); 
 		}
 		
-		//Update numbers at age
-		p_N(i+1)(sage+1,nage)=++elem_prod(p_N(i)(sage,nage-1),exp(-p_Z(i)(sage,nage-1)));
-		p_N(i+1,nage)+=p_N(i,nage)*exp(-p_Z(i,nage));
+		/* Update numbers at age in future years */
+		p_N(i+1)(sage+1,nage) =++ elem_prod(p_N(i)(sage,nage-1),exp(-p_Z(i)(sage,nage-1)));
+		p_N(i+1,nage)        +=   p_N(i,nage)*exp(-p_Z(i,nage));
 		
 		//Predicted catch for checking calculations
 		//for(k=1;k<=nfleet;k++)

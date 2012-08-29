@@ -9,15 +9,11 @@ mkdir $1/WRITEUP
 mkdir $1/PRESENTATION
 mkdir $1/MISC
 mkdir $1/R
-## don't forget to add to the svn repository
+## don't forget to add to the git repository
 
-## iscam logo
+## copy R-code directory into ./R/
+cp -r ../src/r-code/ $1/R
 cp ../src/r-code/iScamLogo.eps $1/MISC
-cp ../src/r-code/iSCAM.R $1/R
-cp ../src/r-code/iScamLogo.gif $1/R
-cp ../src/r-code/iSCAMViewTracker.txt $1/R
-cp ../src/r-code/iSCAMWin.txt $1/R
-cp ../src/r-code/read.admb.R $1/R
 
 ## Copy Beamer template to PRESENTATION FOLDER
 cp ../scripts/BeamerTemplate.tex $1/PRESENTATION/$1.tex
