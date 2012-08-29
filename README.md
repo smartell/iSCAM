@@ -3,7 +3,7 @@ ____
 #![iscam](./src/r-code/iscamLogoSmall.png)
 iSCAM is and Integrated Statistical Catch Age Model for use in 
 fisheries stock assessment. The software was originally written by 
-Steve Martell and contains contributions from:
+Steve Martell and contains contributions or stolen code and ideas from:
 
 * Vivian Haist
 * Jaclyn Cleary
@@ -12,6 +12,8 @@ Steve Martell and contains contributions from:
 * Jim Ianelli
 * Dave Fournier
 * Carl Walters
+* Rob Kronlund
+* Sean Cox
 _____________________________________________________________
 _____________________________________________________________
          Integrated Statistical Catch Age Model (iSCAM)
@@ -112,6 +114,7 @@ most of them can be found at: http://git-scm.com/documentation
 
 A video tutorial: http://www.youtube.com/watch?v=ZDR433b0HJY
 
+Another good [cheatsheet](http://cheat.errtheblog.com/s/git/)
 
 ************************* DEPRECATED ************************
 - To check out a copy of the project code, open terminal and

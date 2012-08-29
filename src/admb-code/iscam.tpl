@@ -192,6 +192,18 @@ DATA_SECTION
 		cout<<"  nage\t"<<nage<<endl;
 		cout<<"  ngear\t"<<ngear<<endl;
 		cout<<"** ___________________ **"<<endl;
+		
+		/* Check for dimension errors in projection control file. */
+		if(pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
+		{
+			cout<<"ERROR: start year in projection file control is less than initial model year."<<endl;
+			exit(1);
+		}
+		if(pf_cntrl(2)>nyr || pf_cntrl(4)>nyr || pf_cntrl(6)>nyr )
+		{
+			cout<<"ERROR: last year in projection file control is greater than last model year."<<endl;
+			exit(1);
+		}
 	END_CALCS
 	
 	
@@ -2905,7 +2917,7 @@ REPORT_SECTION
 	
 	
 	if(last_phase()) decision_table();
-	cout<<"OK to Here"<<endl;
+	
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -3174,7 +3186,7 @@ FUNCTION void projection_model(const double& tac);
 		
 		// spawning biomass
 		p_sbt(i) = elem_prod(p_N(i),exp(-p_Z(i)*cntrl(13))) * avg_fec;
-		cout<<i<<"\t"<<p_sbt(i)<<"\t"<<p_ct<<endl;
+		
 		
 		// sage recruits with random deviate xx
 		// note the random number seed is repeated for each tac level.
