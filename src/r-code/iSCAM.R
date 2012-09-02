@@ -11,25 +11,32 @@
 #                                                                               #
 #                                                                               #
 #   DIRECTORY TREE                                                              #
-#   |____r-code                                                                 #
-#   | |____iSCAM.R                                                              #
-#   | |____iSCAMequil_soln.R                                                    #
-#   | |____iSCAMViewTracker.txt                                                 #
-#   | |____iSCAMWin.txt                                                         #
-#   | |____logo                                                                 #
-#   | | |____iscamLogo.eps                                                      #
-#   | | |____iscamLogo.gif                                                      #
-#   | | |____iscamLogo.png                                                      #
-#   | | |____iscamLogoSmall.png                                                 #
-#   | | |____logo.r                                                             #
-#   | |____R                                                                    #
-#   | | |____plotAgeComps.R                                                     #
-#   | | |____plotCatch.R                                                        #
-#   | | |____plotCatchResiduals.R                                               #
-#   | | |____plotIndex.R                                                        #
-#   | | |____plotMeanWt.R                                                       #
-#   | | |____plotSurveyResiduals.R                                              #
-#   | | |____read.admb.R                                                        #
+#   .                                                                           #
+#   |____iSCAM.R                                                                #
+#   |____iSCAMequil_soln.R                                                      #
+#   |____iSCAMViewTracker.txt                                                   #
+#   |____iSCAMWin.txt                                                           #
+#   |____logo                                                                   #
+#   | |____iscamLogo.eps                                                        #
+#   | |____iscamLogo.gif                                                        #
+#   | |____iscamLogo.png                                                        #
+#   | |____iscamLogoSmall.png                                                   #
+#   | |____logo.r                                                               #
+#   |____R                                                                      #
+#   | |____plotAgeCompResiduals.R                                               #
+#   | |____plotAgeComps.R                                                       #
+#   | |____plotBiomass.R                                                        #
+#   | |____plotCatch.R                                                          #
+#   | |____plotCatchResiduals.R                                                 #
+#   | |____plotDepletion.R                                                      #
+#   | |____plotIndex.R                                                          #
+#   | |____plotMeanWt.R                                                         #
+#   | |____plotRecruitment.R                                                    #
+#   | |____plotRecruitmentResiduals.R                                           #
+#   | |____plotSSBretrospective.R                                               #
+#   | |____plotStockRecruitment.R                                               #
+#   | |____plotSurveyResiduals.R                                                #
+#   | |____read.admb.R                                                          #
 #                                                                               #
 #                                                                               #
 #                                                                               #
