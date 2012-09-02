@@ -639,6 +639,17 @@ DATA_SECTION
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
 	
+	// SM Sept 2, 2012. If in retrospective analysis, make sure arrays from pfc 
+	// are ajusted downwards, otherwise arrays for m_bar will go out of bounds.
+	LOC_CALCS
+		if(retro_yrs)
+		{
+			if(pf_cntrl(2)>nyr) pf_cntrl(2) = nyr;
+			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
+			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
+		}
+	END_CALCS
+	
 	
 	
 INITIALIZATION_SECTION
