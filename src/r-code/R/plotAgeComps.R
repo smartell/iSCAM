@@ -21,7 +21,7 @@
 				
 				# plot proportions-at-age (cpro=TRUE)
 				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1, 
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.05, size=0.1, 
 					bg=colr("steelblue", 0.5),main=paste(stock, "Gear", i), 
 					xlim=xrange)
 				

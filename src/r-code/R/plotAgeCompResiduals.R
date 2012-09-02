@@ -21,7 +21,7 @@
 			
 				# plot residuals
 				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[j],
+					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.05, size=0.5*age_tau2[j],
 					bg=colr("white", 0.5), xlim=xrange,main=paste(stock, "Gear", i))
 					
 				grid()
