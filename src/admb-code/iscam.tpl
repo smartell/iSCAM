@@ -2214,6 +2214,10 @@ FUNCTION void calc_reference_points()
 	bo   = cMSY.getBo();
 	cMSY.get_fmsy(fall,d_ak);
 	cMSY.get_fmsy(fmsy);
+	if(cMSY.getFail())
+	cout<<"FAILED TO CONVERGE"<<endl;
+	
+	
 	msy  = cMSY.getYe();
 	bmsy = cMSY.getBe();
 	Umsy = sum(cMSY.getYe())/cMSY.getBi();
