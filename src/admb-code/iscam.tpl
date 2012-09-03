@@ -80,6 +80,7 @@
 // ----------------------------------------------------------------------------- //
 
 
+
 DATA_SECTION
 	// ------------------------------------------------------------------------- //
 	// In the DATA_SECTION 3 separate files are read in:                         //
@@ -192,6 +193,18 @@ DATA_SECTION
 		cout<<"  nage\t"<<nage<<endl;
 		cout<<"  ngear\t"<<ngear<<endl;
 		cout<<"** ___________________ **"<<endl;
+		
+		/* Check for dimension errors in projection control file. */
+		if(pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
+		{
+			cout<<"ERROR: start year in projection file control is less than initial model year."<<endl;
+			exit(1);
+		}
+		if(pf_cntrl(2)>nyr || pf_cntrl(4)>nyr || pf_cntrl(6)>nyr )
+		{
+			cout<<"ERROR: last year in projection file control is greater than last model year."<<endl;
+			exit(1);
+		}
 	END_CALCS
 	
 	
@@ -625,6 +638,17 @@ DATA_SECTION
 	// SM Oct 31, 2010.  Implementing retrospective analysis.
 	//Dont read in any more data below the retrospective reset of nyr
 	!! nyr = nyr - retro_yrs;
+	
+	// SM Sept 2, 2012. If in retrospective analysis, make sure arrays from pfc 
+	// are ajusted downwards, otherwise arrays for m_bar will go out of bounds.
+	LOC_CALCS
+		if(retro_yrs)
+		{
+			if(pf_cntrl(2)>nyr) pf_cntrl(2) = nyr;
+			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
+			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
+		}
+	END_CALCS
 	
 	
 	
@@ -2190,6 +2214,10 @@ FUNCTION void calc_reference_points()
 	bo   = cMSY.getBo();
 	cMSY.get_fmsy(fall,d_ak);
 	cMSY.get_fmsy(fmsy);
+	if(cMSY.getFail())
+	cout<<"FAILED TO CONVERGE"<<endl;
+	
+	
 	msy  = cMSY.getYe();
 	bmsy = cMSY.getBe();
 	Umsy = sum(cMSY.getYe())/cMSY.getBi();
@@ -2905,7 +2933,7 @@ REPORT_SECTION
 	
 	
 	if(last_phase()) decision_table();
-	cout<<"OK to Here"<<endl;
+	
 	
 	dvector rt3(1,3);
 	if(last_phase())
@@ -2914,7 +2942,8 @@ REPORT_SECTION
 		REPORT(rt3);
 	}
 	
-	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
 	REPORT(future_bt);
 	double future_bt4 = sum(future_bt(4,nage));
 	REPORT(future_bt4);
@@ -3008,7 +3037,8 @@ FUNCTION mcmc_output
 	// leading parameters & reference points
 	calc_reference_points();
 	// decision table output
-	dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
+	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
 	double future_bt4 = sum(future_bt(4,nage));
 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
 	

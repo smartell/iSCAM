@@ -8,3 +8,5 @@ TRUE,PRD,"PRD Herring"  ,../DATA/PRD/PRDHerring2012qBaseGeneric-pfcA
 TRUE,CC,"CC Herring"  ,../DATA/CC/CCHerring2012qBaseGeneric-pfcA
 TRUE,SOG, "SOG Herring"   ,../DATA/SOG/SOG_Herring_2012
 TRUE,WCVI,"WCVI Herring"  ,../DATA/WCVI/WCVIHerring2012qBaseGeneric
+TRUE,Area27,"Area27 Herring"  ,../DATA/Area27/Area27Herring2012qBaseGeneric-pfcA
+
