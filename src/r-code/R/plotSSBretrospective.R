@@ -6,14 +6,14 @@
 		{
 			Obj = read.rep(fn)
 			lines(Obj$yr, Obj$sbt[1:length(Obj$yr)],...)
-			points(max(Obj$yr), Obj$sbo, pch=20, ...)
+			# points(max(Obj$yr), Obj$sbo, pch=20, ...)
 			cat(fn, " ", Obj$bo, "\n")
 		}
 	}
 	
 	with(repObj, {
 		plot( yr, sbt[1:length(yr)], type="l"
-			, ylim=c(0,1.3*max(sbt, sbo)), lwd=2
+			, ylim=c(0,1.3*max(sbt)), lwd=2
 			, xlab="Year", ylab="Spawnig biomass (1000 t)", 
 			main=stock )
 	
@@ -24,6 +24,6 @@
 			ix = ix +1
 			plot.sb(ifn, col=ix)
 		}
-			
+		grid()
 	})
 }
