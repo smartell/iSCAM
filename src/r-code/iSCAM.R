@@ -30,11 +30,16 @@
 #   | |____plotCatchResiduals.R                                                 #
 #   | |____plotDepletion.R                                                      #
 #   | |____plotIndex.R                                                          #
+#   | |____plotMarginalPosteriors.R                                             #
 #   | |____plotMeanWt.R                                                         #
+#   | |____plotMortality.R                                                      #
 #   | |____plotRecruitment.R                                                    #
 #   | |____plotRecruitmentResiduals.R                                           #
+#   | |____plotReferencePoints.R                                                #
+#   | |____plotSelectivity.R                                                    #
 #   | |____plotSSBretrospective.R                                               #
 #   | |____plotStockRecruitment.R                                               #
+#   | |____plotSurveyFit.R                                                      #
 #   | |____plotSurveyResiduals.R                                                #
 #   | |____read.admb.R                                                          #
 #                                                                               #
