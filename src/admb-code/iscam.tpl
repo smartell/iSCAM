@@ -264,7 +264,15 @@ DATA_SECTION
 	vector la(sage,nage);		//length-at-age
 	vector wa(sage,nage);		//weight-at-age
 	LOC_CALCS
-	  cout<<"linf\t"<<linf<<endl;
+	  cout<<"_________________________"<<endl;
+	  COUT(linf);
+	  COUT(vonbk);
+	  COUT(to);
+	  COUT(a);
+	  COUT(b);
+	  COUT(ah);
+	  COUT(gh);
+	  cout<<"_________________________"<<endl;
 	  la=linf*(1.-exp(-vonbk*(age-to)));
 	  wa=a*pow(la,b);
 	  cout<<setprecision(2);		//2 decimal places for output
@@ -288,6 +296,7 @@ DATA_SECTION
 			for(i=syr;i<=nyr;i++)
 				if( obs_ct(k,i)>0 ) ft_count++;
 		}
+		COUT(catch_data);
 		cout<<"ft_count\n"<<ft_count<<endl;
 		cout<<"last row of catch \n"<<catch_data(nyr)<<endl;
 		cout<<"Ok after catch extraction"<<endl;
@@ -2214,6 +2223,10 @@ FUNCTION void calc_reference_points()
 	bo   = cMSY.getBo();
 	cMSY.get_fmsy(fall,d_ak);
 	cMSY.get_fmsy(fmsy);
+	if(cMSY.getFail())
+	cout<<"FAILED TO CONVERGE"<<endl;
+	
+	
 	msy  = cMSY.getYe();
 	bmsy = cMSY.getBe();
 	Umsy = sum(cMSY.getYe())/cMSY.getBi();
@@ -3322,7 +3335,7 @@ GLOBALS_SECTION
 	#define REPORT(object) report << #object "\n" << object << endl;
     
 	#undef COUT
-	#define COUT(object) cout << #object "\n" << object <<endl;
+	#define COUT(object) cout << #object "\t" << object <<endl;
 
 	#if defined(_WIN32) && !defined(__linux__)
 		const char* PLATFORM = "Windows";

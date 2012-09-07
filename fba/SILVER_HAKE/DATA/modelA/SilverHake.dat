@@ -37,14 +37,14 @@
 ## From SilverHakeGrowth.R
 ##      linf           k          to          cv 
 ##147.79199137   0.06835632  -3.85647846   0.08162517 
-0.15			# -natural mortality rate (m_fixed) TOBE DEPRECATED
-147.8			# -asymptotic length (linf)  
-0.068356		# -brody growth coefficient (k)
--3.85647		# -theoretical age at zero length (to)
-5.28377e-07		# -scaler in length-weight allometry
-3.155001		# -power parameter in length-weight allometry
-2				# -age at 50% maturity (approx with log(3.0)/k)
-0.20			# -std at 50% maturity (CV ~ 0.1)
+0.334			# -natural mortality rate (m_fixed) TOBE DEPRECATED
+49.16			# -asymptotic length (linf)  
+0.247 			# -brody growth coefficient (k)
+-0.95			# -theoretical age at zero length (to)
+2.66E-6			# -scaler in length-weight allometry 
+3.28			# -power parameter in length-weight allometry
+2.54			# -age at 50% maturity (approx with log(3.0)/k)
+0.25			# -std at 50% maturity (CV ~ 0.1)
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##

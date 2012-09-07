@@ -11,25 +11,37 @@
 #                                                                               #
 #                                                                               #
 #   DIRECTORY TREE                                                              #
-#   |____r-code                                                                 #
-#   | |____iSCAM.R                                                              #
-#   | |____iSCAMequil_soln.R                                                    #
-#   | |____iSCAMViewTracker.txt                                                 #
-#   | |____iSCAMWin.txt                                                         #
-#   | |____logo                                                                 #
-#   | | |____iscamLogo.eps                                                      #
-#   | | |____iscamLogo.gif                                                      #
-#   | | |____iscamLogo.png                                                      #
-#   | | |____iscamLogoSmall.png                                                 #
-#   | | |____logo.r                                                             #
-#   | |____R                                                                    #
-#   | | |____plotAgeComps.R                                                     #
-#   | | |____plotCatch.R                                                        #
-#   | | |____plotCatchResiduals.R                                               #
-#   | | |____plotIndex.R                                                        #
-#   | | |____plotMeanWt.R                                                       #
-#   | | |____plotSurveyResiduals.R                                              #
-#   | | |____read.admb.R                                                        #
+#   .                                                                           #
+#   |____iSCAM.R                                                                #
+#   |____iSCAMequil_soln.R                                                      #
+#   |____iSCAMViewTracker.txt                                                   #
+#   |____iSCAMWin.txt                                                           #
+#   |____logo                                                                   #
+#   | |____iscamLogo.eps                                                        #
+#   | |____iscamLogo.gif                                                        #
+#   | |____iscamLogo.png                                                        #
+#   | |____iscamLogoSmall.png                                                   #
+#   | |____logo.r                                                               #
+#   |____R                                                                      #
+#   | |____plotAgeCompResiduals.R                                               #
+#   | |____plotAgeComps.R                                                       #
+#   | |____plotBiomass.R                                                        #
+#   | |____plotCatch.R                                                          #
+#   | |____plotCatchResiduals.R                                                 #
+#   | |____plotDepletion.R                                                      #
+#   | |____plotIndex.R                                                          #
+#   | |____plotMarginalPosteriors.R                                             #
+#   | |____plotMeanWt.R                                                         #
+#   | |____plotMortality.R                                                      #
+#   | |____plotRecruitment.R                                                    #
+#   | |____plotRecruitmentResiduals.R                                           #
+#   | |____plotReferencePoints.R                                                #
+#   | |____plotSelectivity.R                                                    #
+#   | |____plotSSBretrospective.R                                               #
+#   | |____plotStockRecruitment.R                                               #
+#   | |____plotSurveyFit.R                                                      #
+#   | |____plotSurveyResiduals.R                                                #
+#   | |____read.admb.R                                                          #
 #                                                                               #
 #                                                                               #
 #                                                                               #
@@ -496,16 +508,11 @@ guiView	<- function()
 	
 		if ( plotType=="parameters" )
 		{
-			#admbObj = read.admb( "iscam" )
-			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			#.plotMarginalPosteriors( admbObj )
 			.plotMarginalPosteriors( repObj )
 		}
 	
 		if ( plotType=="refpoints" )
 		{
-			#admbObj = read.admb( "iscam" )
-			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
 			.plotReferencePoints( repObj )
 		}
 	
@@ -670,29 +677,29 @@ guiView	<- function()
 	})
 }
 
-
-.plotReferencePoints	<- function( admbObj )
-{
-	print("	.plotReferencePoints")
-	op=par(no.readonly=T)
-	with(admbObj, {
-		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
-		par(mfcol=c(2, 2))
-		for(i in 8:11)
-		{
-			ps=mcmc[, i]
-			xl=range(ps)
-			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-				main="", ylab="",
-				xlim=xl)#, ...)
-		}
-		mtext(c("MSY reference points", "Probability density",paste(stock)), 
-		c(1, 2, 3),outer=T, line=-1, las=0)
-	})
-	
-	par(op)
-	
-}
+# Deprecated
+# .plotReferencePoints	<- function( admbObj )
+# {
+# 	print("	.plotReferencePoints")
+# 	op=par(no.readonly=T)
+# 	with(admbObj, {
+# 		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
+# 		par(mfcol=c(2, 2))
+# 		for(i in 8:11)
+# 		{
+# 			ps=mcmc[, i]
+# 			xl=range(ps)
+# 			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+# 				main="", ylab="",
+# 				xlim=xl)#, ...)
+# 		}
+# 		mtext(c("MSY reference points", "Probability density",paste(stock)), 
+# 		c(1, 2, 3),outer=T, line=-1, las=0)
+# 	})
+# 	
+# 	par(op)
+# 	
+# }
 
 .plotSbtPosterior	<- function( admbObj, depletion=FALSE, annotate=FALSE )
 {
@@ -879,62 +886,62 @@ guiView	<- function()
 }
 
 
-
-.plotMarginalPosteriors	<- function( admbObj )
-{
-	print("	.plotMarginalPosteriors")
-	#Marginal distributions & priors for theta
-	op=par(no.readonly=T)
-	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 1, 0))
-
-	## Read control file to get bounds and priors for theta
-	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
-
-	with(admbObj, {
-		std=apply(mcmc[,1:7],2,sd)
-		nr=length(std[std!=0])
-		if(nr > 6)
-		{
-			nRow=3; nCol=3
-		}
-		else if(nr>4)
-		{
-			nRow=3; nCol=2
-		}
-		else
-		{
-			nRow=2; nCol=2
-		}
-		par(mfcol=c(nRow, nCol))
-		for(i in 1:7){
-			if(std[i]!=0){
-				ps = mcmc[, i]  #posterior samples
-				xl=range(ps)
-
-				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-					main="", ylab="", col="lightgrey",breaks=30, 
-					xlim=xl)#, ...)
-
-				## Add priors
-				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
-				pt = ctrl[i, 5]+1
-				fn=match.fun(nfn[pt])
-				p1=ctrl[i, 6]; p2=ctrl[i, 7]
-				#browser()
-				if(pt!=4)
-					curve(unlist(lapply(x,fn,p1,p2)),
-						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-				else
-					curve(unlist(lapply((x-ctrl[i,2])/
-						 (ctrl[i,3]-ctrl[i,2])
-						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-			}
-		}
-		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
-			outer=T, line=-1, las=0)
-	})
-	par(op)
-}
+# Deprecated
+# .plotMarginalPosteriors	<- function( admbObj )
+# {
+# 	print("	.plotMarginalPosteriors")
+# 	#Marginal distributions & priors for theta
+# 	op=par(no.readonly=T)
+# 	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 1, 0))
+# 
+# 	## Read control file to get bounds and priors for theta
+# 	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
+# 
+# 	with(admbObj, {
+# 		std=apply(mcmc[,1:7],2,sd)
+# 		nr=length(std[std!=0])
+# 		if(nr > 6)
+# 		{
+# 			nRow=3; nCol=3
+# 		}
+# 		else if(nr>4)
+# 		{
+# 			nRow=3; nCol=2
+# 		}
+# 		else
+# 		{
+# 			nRow=2; nCol=2
+# 		}
+# 		par(mfcol=c(nRow, nCol))
+# 		for(i in 1:7){
+# 			if(std[i]!=0){
+# 				ps = mcmc[, i]  #posterior samples
+# 				xl=range(ps)
+# 
+# 				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+# 					main="", ylab="", col="lightgrey",breaks=30, 
+# 					xlim=xl)#, ...)
+# 
+# 				## Add priors
+# 				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
+# 				pt = ctrl[i, 5]+1
+# 				fn=match.fun(nfn[pt])
+# 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
+# 				#browser()
+# 				if(pt!=4)
+# 					curve(unlist(lapply(x,fn,p1,p2)),
+# 						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+# 				else
+# 					curve(unlist(lapply((x-ctrl[i,2])/
+# 						 (ctrl[i,3]-ctrl[i,2])
+# 						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+# 			}
+# 		}
+# 		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
+# 			outer=T, line=-1, las=0)
+# 	})
+# 	par(op)
+# }
 # DEPRECATED
 # .plotStockRecruit	<- function( repObj )
 # {
@@ -969,51 +976,52 @@ guiView	<- function()
 # 	})
 # }
 
-.plotSelectivity	<- function( repObj )
-{
-	#plot the selectivity curves (3d plots)
-	with(repObj, {
-		#par(mgp=c(3, 3, 5))
-		plot.sel<-function(x, y, z, ...)
-		{
-			#z=exp(A$log_sel)*3
-			#x=A$yr
-			#y=A$age
-			z <- z/max(z)
-			z0 <- 0#min(z) - 20
-			z <- rbind(z0, cbind(z0, z, z0), z0)
-			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
-			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
-			clr=colorRampPalette(c("honeydew","lawngreen"))
-			nbcol=50
-			iclr=clr(nbcol)
-			nrz <- nrow(z)
-			ncz <- ncol(z)
-			zfacet <- z[-1, -1]+z[-1, -ncz]+z[-nrz, -1]+z[-nrz, -ncz]
-			facetcol <- cut(zfacet, nbcol)
-			fill <- matrix(iclr[facetcol],nr=nrow(z)-1,nc=ncol(z)-1)
-			fill[ , i2 <- c(1,ncol(fill))] <- "white"
-			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
-
-			par(bg = "transparent")
-			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=5, 
-				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
-				xlab="Year",ylab="Age",zlab="Selectivity", 
-				ticktype="simple", ...)
-			
-			#require(lattice)
-			#wireframe(z, drap=TRUE, col=fill)
-		}
-		ix=1:length(yr)
-		for(k in 1:ngear){
-			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
-			main=paste(stock, "Gear", k))
-			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
-			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
-		}
-		
-	})
-}
+# Deprecated
+# .plotSelectivity	<- function( repObj )
+# {
+# 	#plot the selectivity curves (3d plots)
+# 	with(repObj, {
+# 		#par(mgp=c(3, 3, 5))
+# 		plot.sel<-function(x, y, z, ...)
+# 		{
+# 			#z=exp(A$log_sel)*3
+# 			#x=A$yr
+# 			#y=A$age
+# 			z <- z/max(z)
+# 			z0 <- 0#min(z) - 20
+# 			z <- rbind(z0, cbind(z0, z, z0), z0)
+# 			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
+# 			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
+# 			clr=colorRampPalette(c("honeydew","lawngreen"))
+# 			nbcol=50
+# 			iclr=clr(nbcol)
+# 			nrz <- nrow(z)
+# 			ncz <- ncol(z)
+# 			zfacet <- z[-1, -1]+z[-1, -ncz]+z[-nrz, -1]+z[-nrz, -ncz]
+# 			facetcol <- cut(zfacet, nbcol)
+# 			fill <- matrix(iclr[facetcol],nr=nrow(z)-1,nc=ncol(z)-1)
+# 			fill[ , i2 <- c(1,ncol(fill))] <- "white"
+# 			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
+# 
+# 			par(bg = "transparent")
+# 			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=5, 
+# 				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
+# 				xlab="Year",ylab="Age",zlab="Selectivity", 
+# 				ticktype="simple", ...)
+# 			
+# 			#require(lattice)
+# 			#wireframe(z, drap=TRUE, col=fill)
+# 		}
+# 		ix=1:length(yr)
+# 		for(k in 1:ngear){
+# 			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
+# 			main=paste(stock, "Gear", k))
+# 			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
+# 			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
+# 		}
+# 		
+# 	})
+# }
 
 # DEPRECATED
 # .plotMeanwt	<- function( repObj )
@@ -1311,110 +1319,111 @@ guiView	<- function()
 #		}
 #	})	
 #}
-#
-.plotSurveyfit	<- function( repObj, annotate=FALSE)
-{
-	with(repObj, {
-		if(is.matrix(it)){
-			xx = t(iyr)
-			m = apply(it,1,max, na.rm=T)
-			yy = t(pit/m)
-			y2 = t(it/m)
-		}else{
-			xx = iyr
-			yy = pit
-			y2 = it
-		}
-		n=nrow(t(as.matrix(yy)))
-		#n=dim(xx)[2]
-		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
-		
-		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
-			xlab="Year", ylab="Relative abundance", main=paste(stock))
-		
-		matlines(xx, yy, col=1:n, lty=1)
-		matpoints(xx, y2, col=1:n, pch=1:n)
-		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		if ( annotate )
-		{
-			
-			txt=paste("Survey ",1:n,", q=",round(q, 3), sep="")
-			
-			mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=1,lwd=1,pch=1:n,ncol=n, col=1:n )
-				
-			#print(q)
-		}
-	})
-}
 
+# Deprecated
+# .plotSurveyfit	<- function( repObj, annotate=FALSE)
+# {
+# 	with(repObj, {
+# 		if(is.matrix(it)){
+# 			xx = t(iyr)
+# 			m = apply(it,1,max, na.rm=T)
+# 			yy = t(pit/m)
+# 			y2 = t(it/m)
+# 		}else{
+# 			xx = iyr
+# 			yy = pit
+# 			y2 = it
+# 		}
+# 		n=nrow(t(as.matrix(yy)))
+# 		#n=dim(xx)[2]
+# 		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
+# 		
+# 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
+# 			xlab="Year", ylab="Relative abundance", main=paste(stock))
+# 		
+# 		matlines(xx, yy, col=1:n, lty=1)
+# 		matpoints(xx, y2, col=1:n, pch=1:n)
+# 		
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		if ( annotate )
+# 		{
+# 			
+# 			txt=paste("Survey ",1:n,", q=",round(q, 3), sep="")
+# 			
+# 			mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "top",legend=txt,
+# 				bty='n',lty=1,lwd=1,pch=1:n,ncol=n, col=1:n )
+# 				
+# 			#print(q)
+# 		}
+# 	})
+# }
 
-.plotMortality	<- function( repObj, annotate=FALSE )
-{
-	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
-	#plot average total mortality,  fishing mortality & natural mortality
-	with(repObj, {
-		xx=yr
-		if(is.matrix(ft))
-		{
-			yy=t(as.matrix(ft))
-		}
-		else
-		{
-			yy=as.matrix(ft)
-		}
-		#n=nrow(t(as.matrix(yy)))
-		icol=apply(yy,2,function(x){sum(cumsum(x))!=0.0})
-		ng=length(icol[icol==T])
-		
-		yy = cbind( rowMeans(M_tot), yy[,icol] )
-		
-		csyy = t(apply(yy,1, cumsum))	#cumulative sum
-			
-		yrange=c(0, max(csyy, na.rm=TRUE))
-		lw = c(1, rep(1,ng))
-		lt = 1
-		iclr = colr(1:(ng+1),0.5)
-		
-		matplot(xx, csyy, type="n", axes=FALSE, log="y",  
-			xlab="Year", ylab="Mortality rate", main=paste(stock))
-			
-		
-		#lines(xx, yy[,1], lwd=2, lty=1, col=1)
-		matlines(xx, csyy, log="y", col=iclr, lwd=lw, lty=lt)
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		ry=cbind(1.e-30,csyy)
-		for(i in 1:dim(csyy)[2])
-		{
-			x2=c(xx, rev(xx))
-			y2=c(ry[,i+1], rev(ry[,i]))
-			#browser()
-			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
-		}
-		
-		
-		
-		if ( annotate )
-		{
-			txt = c("Natural mortality", paste("Gear",1:ng))
-			#mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "topright",legend=txt,col=iclr, 
-				bty='n',lty=lt,lwd=5,pch=-1,ncol=2)
-		}
-	})
-}
+# Deprecated
+# .plotMortality	<- function( repObj, annotate=FALSE )
+# {
+# 	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
+# 	#plot average total mortality,  fishing mortality & natural mortality
+# 	with(repObj, {
+# 		xx=yr
+# 		if(is.matrix(ft))
+# 		{
+# 			yy=t(as.matrix(ft))
+# 		}
+# 		else
+# 		{
+# 			yy=as.matrix(ft)
+# 		}
+# 		#n=nrow(t(as.matrix(yy)))
+# 		icol=apply(yy,2,function(x){sum(cumsum(x))!=0.0})
+# 		ng=length(icol[icol==T])
+# 		
+# 		yy = cbind( rowMeans(M_tot), yy[,icol] )
+# 		
+# 		csyy = t(apply(yy,1, cumsum))	#cumulative sum
+# 			
+# 		yrange=c(0, max(csyy, na.rm=TRUE))
+# 		lw = c(1, rep(1,ng))
+# 		lt = 1
+# 		iclr = colr(1:(ng+1),0.5)
+# 		
+# 		matplot(xx, csyy, type="n", axes=FALSE, log="y",  
+# 			xlab="Year", ylab="Mortality rate", main=paste(stock))
+# 			
+# 		
+# 		#lines(xx, yy[,1], lwd=2, lty=1, col=1)
+# 		matlines(xx, csyy, log="y", col=iclr, lwd=lw, lty=lt)
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		ry=cbind(1.e-30,csyy)
+# 		for(i in 1:dim(csyy)[2])
+# 		{
+# 			x2=c(xx, rev(xx))
+# 			y2=c(ry[,i+1], rev(ry[,i]))
+# 			#browser()
+# 			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
+# 		}
+# 		
+# 		
+# 		
+# 		if ( annotate )
+# 		{
+# 			txt = c("Natural mortality", paste("Gear",1:ng))
+# 			#mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "topright",legend=txt,col=iclr, 
+# 				bty='n',lty=lt,lwd=5,pch=-1,ncol=2)
+# 		}
+# 	})
+# }
 
 # DEPRECATED
 # .plotAgecomps	<- function(repObj, meanAge = FALSE )

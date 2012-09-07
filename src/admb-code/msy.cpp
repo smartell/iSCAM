@@ -6,7 +6,7 @@
 	are multiple fishing fleets that differ in selectivity and is capable of
 	determining optimal fishing mortality rates for each fleet and optimal 
 	allocations for each fleet such that the sum of catches acrosss all fleets
-	is maximized.  There is also an option to determin MSY-based refence points
+	is maximized.  There is also an option to determine MSY-based reference points
 	in cases where there are allocation agreements in place.
 	
 © Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
@@ -29,6 +29,9 @@
 
 class Msy{
 private:
+	
+	bool    m_FAIL;
+	
 	double  m_ro;
 	double  m_h;
 	double  m_M;
@@ -72,6 +75,8 @@ public:
 	~Msy(){}	// destructor
 	
 	// Getters
+	bool     getFail() { return m_FAIL;    }
+	
 	double     getRo() { return m_ro;      }
 	double   getPhie() { return m_phie;    }
 	dvector  getFmsy() { return m_fmsy;    }
@@ -119,6 +124,7 @@ Msy::Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmat
 	m_fa    = fa;
 	m_V     = V;
 	
+	m_FAIL  = false;
 	
 	calc_phie();
 }
@@ -140,7 +146,7 @@ void Msy::get_fmsy(dvector& fe)
 	double x1, x2;
 	dvector fold(1,n);
 	x1 = 1.0e-5;
-	x2 = 2.0e01;
+	x2 = 3.0e02;
 	m_p      = 1.0;
 	// Spawning biomass per recruit for unfished conditions
 	calc_phie(m_M,m_fa);
@@ -164,6 +170,8 @@ void Msy::get_fmsy(dvector& fe)
 		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
+	
+	if( iter == MAXITER ) m_FAIL = true;
 	
 	//if(min(fe)<0) exit(1);
 	
@@ -206,7 +214,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	dvector p(1,n);
 	double x1, x2;
 	x1 = 1.0e-5;
-	x2 = 3.0e01;
+	x2 = 3.0e02;
 	// Spawning biomass per recruit for unfished conditions
 	calc_phie(m_M,m_fa);
 	

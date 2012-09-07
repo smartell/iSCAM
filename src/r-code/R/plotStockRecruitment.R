@@ -6,6 +6,7 @@
 	with(repObj, {
 		xx = sbt[1:(length(yr)-min(age))]
 		yy = rt
+		tt = yr[1:(length(yr)-min(age))]
 		
 		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,sbo,bo)), 
 			xlab="Spawning biomass (t)", 
@@ -13,11 +14,12 @@
 			main=paste(stock))
 		grid()
 			
-		lines(xx, yy, type="o", col=colr(1, 0.7))
-		points(xx, yy)
+		lines(xx, yy, type="l", col=colr(1, 0.7))
+		text(xx, yy, tt, cex=0.65)
+		#points(xx, yy)
 		
-		points(xx[1],yy[1], pch=20, col="green")
-		points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
+		#points(xx[1],yy[1], pch=20, col="green")
+		#points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
 		
 		
 		qn <- quantile(yy, probs=c(0.33, 0.66))
