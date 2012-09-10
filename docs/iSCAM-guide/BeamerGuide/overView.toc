@@ -1,10 +1,10 @@
 \beamer@endinputifotherversion {3.10pt}
 \beamer@sectionintoc {1}{Installation}{2}{0}{1}
 \beamer@subsectionintoc {1}{1}{Obtaining source code}{3}{0}{1}
-\beamer@subsectionintoc {1}{2}{GIT}{5}{0}{1}
-\beamer@subsectionintoc {1}{3}{Directories}{7}{0}{1}
-\beamer@subsectionintoc {1}{4}{Text Editors}{14}{0}{1}
-\beamer@sectionintoc {2}{Compiling Source Code}{16}{0}{2}
-\beamer@sectionintoc {3}{Running Examples}{21}{0}{3}
-\beamer@subsectionintoc {3}{1}{Demo Model}{23}{0}{3}
-\beamer@subsectionintoc {3}{2}{Makefile}{25}{0}{3}
+\beamer@subsectionintoc {1}{2}{GIT}{4}{0}{1}
+\beamer@subsectionintoc {1}{3}{Directories}{6}{0}{1}
+\beamer@subsectionintoc {1}{4}{Text Editors}{13}{0}{1}
+\beamer@sectionintoc {2}{Compiling Source Code}{15}{0}{2}
+\beamer@sectionintoc {3}{Running Examples}{20}{0}{3}
+\beamer@subsectionintoc {3}{1}{Demo Model}{22}{0}{3}
+\beamer@subsectionintoc {3}{2}{Makefile}{24}{0}{3}
