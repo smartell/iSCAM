@@ -116,32 +116,6 @@ A video tutorial: http://www.youtube.com/watch?v=ZDR433b0HJY
 
 Another good [cheatsheet](http://cheat.errtheblog.com/s/git/)
 
-************************* DEPRECATED ************************
-- To check out a copy of the project code, open terminal and
-  go to the directory (folder) where you want to keep 
-  the files and type at the command prompt (you must have 
-  subversion installed):
-
-  svn checkout http://iscam-project.googlecode.com/svn/trunk/
-
-  This is a one-time command that will download the entire 
-  repository onto your machine.  Future updates etc. can be done
-  using simple commands from within your directory. Example,
-  'svn update' will upload any new files, or update files that 
-  have changed on the repository.
-
-- The following is a list of svn commands that you can use once
-  the repository has been checked out onto your machine.
-  
-  svn update         "Updates the code from the repository"
-  svn info           "Obtain the latest commit information"
-  svn log            "View the commit log"
-  svn help <command> "View svn help or help for a command"
-
-- If you would like write permissions to the repository please
-  contact the project owner (email address available at the
-  google repository).
-ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 
 
 Setting up a new project in fba:

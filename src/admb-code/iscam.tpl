@@ -3335,7 +3335,7 @@ GLOBALS_SECTION
 	#define REPORT(object) report << #object "\n" << object << endl;
     
 	#undef COUT
-	#define COUT(object) cout << #object "\t" << object <<endl;
+	#define COUT(object) cout << #object "\n" << object <<endl;
 
 	#if defined(_WIN32) && !defined(__linux__)
 		const char* PLATFORM = "Windows";

@@ -1,4 +1,4 @@
-%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/docs/iSCAM-guide/overView.tex
+%!TEX root = /Users/stevenmartell1/Documents/iSCAM-project/docs/iSCAM-guide/BeamerGuide/overView.tex
 \section{Installation} % (fold)
 \label{sec:installation}
 
@@ -24,30 +24,92 @@
 	\url{http://tortoisesvn.net/}
 \end{frame}
 
-% subsection obtaining_source_code (end)
-\subsection{SVN commands} % (fold)
-\label{sub:svn_commands}
-\begin{frame}
-	\frametitle{Useful SVN commands}
-	Usage: \texttt{svn command}
-	\vfill
-	\begin{scriptsize}
-	\begin{tabular}{ll}
-		Command & Description\\
-		\hline
-		\texttt{checkout} & Check out a working copy from a repository.\\
-		\texttt{info}     & Display information about a local or remote item.\\
-		\texttt{update}   & Bring changes from the repository into the working copy.\\
-		\texttt{log}      & Show the log messages for a set of revision(s) and/or file(s).\\
-		\texttt{revert}   & Restore pristine working copy file (undo most local edits).\\
-		\texttt{commit}   & Send changes from your working copy to the repository.\\
-		\texttt{diff}     & Display the differences between two revisions or paths.\\
-		\texttt{help}     & Display help (usage \texttt{svn help <command>})\\
-		\hline
-	\end{tabular}
-	\end{scriptsize}
+\begin{frame}[containsverbatim]
+	\frametitle{Obtaining \iscam\ source code}
+	The source code is maintained at github:\\
+	\url{https://github.com/smartell/iSCAM}
+	
+	\underline{Prerequisites}
+	\begin{itemize}
+		\item A C++ compiler (preferably gcc)
+		\item AD Model Builder (version 11.0 or later)
+		\item R (version 2.15 or later)
+		\begin{itemize}
+			\item PBSmodelling package (and dependencies)
+			\item Hmisc package (and dependencies)
+		\end{itemize}
+	\end{itemize}
+
+	% ## Prerequisites
+	% 	* A C++ compiler (preferably gcc as this is the compiler that iSCAM is developed on).
+	% 	* AD Model Builder (version 11.0 or later)
+	% 	* R (version 2.15 or later)
+	% 		* PBSmodelling package (and dependencies)
+	% 		* Hmisc package (and dependencies)
+	% 	
 \end{frame}
-% subsection svn_commands (end)
+
+% subsection obtaining_source_code (end)
+
+% \subsection{SVN commands} % (fold)
+% \label{sub:svn_commands}
+% \begin{frame}
+% 	\frametitle{Useful SVN commands}
+% 	Usage: \texttt{svn command}
+% 	\vfill
+% 	\begin{scriptsize}
+% 	\begin{tabular}{ll}
+% 		Command & Description\\
+% 		\hline
+% 		\texttt{checkout} & Check out a working copy from a repository.\\
+% 		\texttt{info}     & Display information about a local or remote item.\\
+% 		\texttt{update}   & Bring changes from the repository into the working copy.\\
+% 		\texttt{log}      & Show the log messages for a set of revision(s) and/or file(s).\\
+% 		\texttt{revert}   & Restore pristine working copy file (undo most local edits).\\
+% 		\texttt{commit}   & Send changes from your working copy to the repository.\\
+% 		\texttt{diff}     & Display the differences between two revisions or paths.\\
+% 		\texttt{help}     & Display help (usage \texttt{svn help <command>})\\
+% 		\hline
+% 	\end{tabular}
+% 	\end{scriptsize}
+% \end{frame}
+% % subsection svn_commands (end)
+
+\subsection{GIT} % (fold)
+\label{sub:git}
+\begin{frame}
+	\frametitle{Working with Distributed Version Control (git)}
+	
+	Before using git, I would highly recommend spending some time 
+	learning how to use git.  There are many online resources and
+	most of them can be found at: \url{http://git-scm.com/documentation} \\
+	\vfill
+	A video tutorial: \url{http://www.youtube.com/watch?v=ZDR433b0HJY} \\
+	\vfill
+	Cheat sheet: \url{http://cheat.errtheblog.com/s/git/}
+	\vfill
+	Read the Readme file for more instructions.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Initial checkout}
+	Essentially want to make a clone of the repository on your computer.
+	\vfill
+	
+	\begin{tiny}
+		
+
+	\begin{verbatim}
+		git clone --depth 1 git://github.com/smartell/iSCAM.git
+		
+		git clone --branch master --single-branch git://github.com/smartell/iSCAM.git
+	\end{verbatim}
+	\end{tiny}
+	\vfill
+	The above command will make a copy of the repository, including the directory structure, on your computer
+\end{frame}
+
+% subsection git (end)
 
 \subsection{Directories} % (fold)
 \label{sub:directories}
@@ -58,7 +120,7 @@
 	\begin{column}{2in}
 	\texttt{
 	\begin{itemize}
-		\item iSCAM-trunk
+		\item iSCAM-project
 		\begin{itemize}
 			\item dist
 			\only<2>{
