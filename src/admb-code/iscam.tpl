@@ -485,7 +485,8 @@ DATA_SECTION
 	
 	init_int npar;
 	init_matrix theta_control(1,npar,1,7);
-	!! cout<<theta_control<<endl;
+	!! COUT(npar);
+	!! COUT(theta_control);
 	
 	vector theta_ival(1,npar);
 	vector theta_lb(1,npar);
@@ -521,7 +522,9 @@ DATA_SECTION
 	init_ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
 	init_vector sel_2nd_diff_wt(1,ngear);	//Penalty weight for 2nd difference in selectivity.
 	init_vector sel_dome_wt(1,ngear);		//Penalty weight for dome-shaped selectivity.
-	!! cout<<isel_type<<endl;
+	!! COUT(isel_type);
+	!! COUT(sel_dome_wt);
+
 	
 	LOC_CALCS
 		//cout up the number of selectivity parameters
@@ -2493,7 +2496,7 @@ FUNCTION void simulation_model(const long& seed)
 	
 	double sig = value(rho/varphi);
 	double tau = value((1.-rho)/varphi);
-	
+	COUT(varphi);
 	if(seed==000)
 	{
 		cout<<"No Error\n";
@@ -2502,14 +2505,14 @@ FUNCTION void simulation_model(const long& seed)
 	}
 	wt.fill_randn(rng); wt *= tau;
 	epsilon.fill_randn(rng); 
-	
 	//now loop over surveys and scale the observation errors
 	for(k=1;k<=nit;k++)
 	{
 		for(j=1;j<=nit_nobs(k);j++)
 			epsilon(k,j) *= sig/it_wt(k,j);
 	}
-	
+	COUT(wt);
+	COUT(epsilon);
 	cout<<"	OK after random numbers\n";
 	/*----------------------------------*/
 	
@@ -2531,69 +2534,25 @@ FUNCTION void simulation_model(const long& seed)
 	if(cntrl(2)==2) beta=log(kappa)/(ro*phie);
 	
 	//Initial numbers-at-age with recruitment devs
-	/*for(i=syr;i < syr+sage;i++)
-			N(i,sage)=exp(log_avgrec+wt(i));
-			
-		for(j=sage+1;j<=nage;j++)
-			N(syr,j)=exp(log_avgrec+wt(syr-j))*lx(j);
-		*/
 	N.initialize();
 	if(cntrl(5))    //If initializing in at unfished conditions
 	{	
 		log_rt(syr) = log(ro);
 		N(syr)      = ro * lx;
 	}
-	else            //If starting at unfished conditions
+	else            //If starting at fished conditions
 	{
 		log_rt(syr)         = log_avgrec+log_rec_devs(syr);
 		N(syr,sage)         = mfexp(log_rt(syr));
-		dvar_vector tmpr    = log_recinit + init_log_rec_devs(sage+1,nage);
+		dvar_vector tmpr    = mfexp(log_recinit + init_log_rec_devs(sage+1,nage));
 		N(syr)(sage+1,nage) = elem_prod(tmpr,lx(sage+1,nage));
 	}
 	
-	
-	/* SM Deprecated Aug 9, 2012 */
-	//if(cntrl(5)){	//If initializing in at unfished conditions
-	//	log_rt(syr) = log(ro);
-	//	for(j=sage;j<=nage;j++)
-	//	{
-	//		N(syr,j)=ro*exp(-m_bar*(j-1.));
-	//	}
-	//}
-	//else{			//If starting at unfished conditions
-	//	log_rt(syr) = log_avgrec;
-	//	N(syr,sage)=mfexp(log_rt(syr));
-	//	for(j=sage+1;j<=nage;j++)
-	//	{
-	//		N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
-	//	}
-	//}
-	//N(syr,nage)/=(1.-exp(-m_bar));
-	
-	//log_rt=log_avgrec+log_rec_devs;
-	//log_rt(syr) = log(ro);
-
 	for(i=syr+1;i<=nyr;i++){
 		log_rt(i)=log_avgrec+log_rec_devs(i);
 		N(i,sage)=mfexp(log_rt(i));
 	}
 	N(nyr+1,sage)=mfexp(log_avgrec);
-
-	/*
-	for(j=sage;j<=nage;j++) 
-	{
-		if(cntrl(5))  //if starting at unfished state
-		{
-			N(syr,j)=ro*exp(-m_bar*(j-1));
-		}
-		else{
-			log_rt(syr-j+sage)=log_avgrec+log_rec_devs(syr-j+sage);
-			N(syr,j)=mfexp(log_rt(syr-j+sage))*exp(-m_bar*(j-sage));
-		}
-	}
-
-	N(syr,nage)/=(1.-exp(-m_bar));
-	*/
 	cout<<"	Ok after initialize model\n";
 	/*----------------------------------*/
 	
@@ -2666,12 +2625,15 @@ FUNCTION void simulation_model(const long& seed)
 		//get_ft is defined in the Baranov.cxx file
 		//CHANGED these ft are based on biomass at age, should be numbers at age
 		//ft(i) = get_ft(oct,value(m),va,bt);
-		ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_obs(i));
+		//ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_obs(i));
+		ft(i) = getFishingMortality(oct, value(m), va, value(N(i)),wt_obs(i));
+		//cout<<"ft\t"<<ft(i)<<endl;
 		//cout<<trans(obs_ct)(i)<<"\t"<<oct<<endl;
 		
 		// overwrite observed catch incase it was modified by get_ft
-		for(k=1;k<=ngear;k++)
-			obs_ct(k,i)=oct(k);
+		// SJDM Deprecated Sept 10, 2012
+		//for(k=1;k<=ngear;k++)
+		//	obs_ct(k,i)=oct(k);
 		
 		//total age-specific mortality
 		//dvector zt(sage,nage);
@@ -2725,7 +2687,7 @@ FUNCTION void simulation_model(const long& seed)
 		}
 		
 	}
-	
+	COUT(N);
 	
 	//initial values of log_ft_pars set to true values
 	ki=1;
