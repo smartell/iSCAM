@@ -1,4 +1,5 @@
-%!TEX root = /Users/stevenmartell/Documents/CURRENT PROJECTS/iSCAM-trunk/docs/iSCAM-guide/overView.tex
+%!TEX root = /Users/stevenmartell1/Documents/iSCAM-project/docs/iSCAM-guide/BeamerGuide/overView.tex
+
 
 \section[Compiling]{Compiling Source Code} % (fold)
 \label{sec:compiling_source_code}
@@ -51,6 +52,11 @@
 	\vspace{0.25in}
 	Using the make file will compile the \iscam\ source code and place copies of the code in the distribution directory ("dist")
 	}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Using make on windoze machines}
+	If you want to run makefiles on Windows that were written for Mac or Linux, you need to reinstall mingw.  Make sure to check off "Developer tools" and "C++ libraries" and "Objective C libraries".  Then run the mingw shell from the start menu and once inside that you can just type "make" as usual.
 \end{frame}
 
 % section compiling_source_code (end)
