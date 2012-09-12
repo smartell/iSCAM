@@ -1650,10 +1650,10 @@ FUNCTION calc_objective_function
 	Likelihoods:
 		-1) likelihood of the catch data
 		-2) likelihood of the survey abundance index
-		-3) likelihood of the survey age comps
-		-4) likelihood of the fishery age comps
-		-5) likelihood for stock-recruitment relationship
-		-6) likelihood for fishery selectivities
+		-3) likelihood of age composition data 
+		-4) likelihood for stock-recruitment relationship
+		-5) likelihood for fishery selectivities
+		-6) 
 	*/
 	int i,j,k;
 	double o=1.e-10;

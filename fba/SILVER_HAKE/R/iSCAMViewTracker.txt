@@ -4,3 +4,4 @@
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
 TRUE, DEMO, "Flack Lake Trout",../DATA/ModelC/SilverHake4VWX
+TRUE, DEMO, "Flack Lake Trout",../DATA/ModelD/SilverHake4VWX
