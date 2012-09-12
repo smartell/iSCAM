@@ -6,32 +6,53 @@
 #   Authors: Steven Martell (with lots of borrowed code from A.R.Kronlund)      #
 #            A.R. Kronlund (Pacific Biological Station, Nanaimo, B.C.)          #
 #   Date: Nov. 22,  2010                                                        #
+#   Date: Aug. 28,  2012                                                        #
 #                                                                               #
 #                                                                               #
 #                                                                               #
+#   DIRECTORY TREE                                                              #
+#   .                                                                           #
+#   |____iSCAM.R                                                                #
+#   |____iSCAMequil_soln.R                                                      #
+#   |____iSCAMViewTracker.txt                                                   #
+#   |____iSCAMWin.txt                                                           #
+#   |____logo                                                                   #
+#   | |____iscamLogo.eps                                                        #
+#   | |____iscamLogo.gif                                                        #
+#   | |____iscamLogo.png                                                        #
+#   | |____iscamLogoSmall.png                                                   #
+#   | |____logo.r                                                               #
+#   |____R                                                                      #
+#   | |____plotAgeCompResiduals.R                                               #
+#   | |____plotAgeComps.R                                                       #
+#   | |____plotBiomass.R                                                        #
+#   | |____plotCatch.R                                                          #
+#   | |____plotCatchResiduals.R                                                 #
+#   | |____plotDepletion.R                                                      #
+#   | |____plotIndex.R                                                          #
+#   | |____plotMarginalPosteriors.R                                             #
+#   | |____plotMeanWt.R                                                         #
+#   | |____plotMortality.R                                                      #
+#   | |____plotRecruitment.R                                                    #
+#   | |____plotRecruitmentResiduals.R                                           #
+#   | |____plotReferencePoints.R                                                #
+#   | |____plotSelectivity.R                                                    #
+#   | |____plotSSBretrospective.R                                               #
+#   | |____plotStockRecruitment.R                                               #
+#   | |____plotSurveyFit.R                                                      #
+#   | |____plotSurveyResiduals.R                                                #
+#   | |____read.admb.R                                                          #
 #                                                                               #
 #                                                                               #
-# NOTES:                                                                        #
-# 1. requires PBSmodelling hacks Riscam Hmisc                                   #
-# 2.                                                                            #
 #                                                                               #
-# CHANGED: Finish  test priors widget to examine priors for parameters          #
-# TODO: Save input List as an .rda file (dput & dget) for saving scenarios      #
-#                                                                               #
-#                                                                               #
-# March 23rd,  added some simulation features.                                  #
-# April 25,  .runSimulationTrials now has a box plot of log2 ratios for         #
-#            estimated values of theta (grep parameters for theta)              #
-#                                                                               #
-# June 4  Major changes to routines for allowing multiple stocks/scenarios      #
 #                                                                               #
 #                                                                               #
 #-------------------------------------------------------------------------------#
 
-require(hacks)	#transparent colors using the function colr("color",tranparency)
-#require(Riscam)	#custom library built specifically for iscam.
 require(Hmisc)
-source("read.admb.R")
+.RFILES     <- list.files("./R/",pattern="\\.[Rr]$")
+for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
+
 
 # Graphics defaults.
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
@@ -61,7 +82,7 @@ source("read.admb.R")
 	
 	#Close any open graphics devices
 	graphics.off()
-	closeWin()
+	closeWin("iscam")
 	
 	#Create a file list object for selection
 	trckExists <- file.exists( .VIEWTRCK )
@@ -80,8 +101,9 @@ source("read.admb.R")
 	#dummy data frame for parameter controls for loading
 	A=(matrix(1,nrow=7,ncol=7))
 	dumfile = paste(ifiles[1, 4],".rep", sep="")
-	A=read.rep(dumfile)$ctrl
+	#A=read.rep(dumfile)$ctrl
 	
+	print("OK")
 	#Build data frame
 	colhdr=c("ival", "lb", "ub", "phz", "prior", "mu\nshape","SD\nrate")
 	rownme=c("log(Ro)","steepness","log(M)","log(Rbar)","log(Rinit)","rho","precision")
@@ -389,6 +411,7 @@ guiView	<- function()
 		#repObj	<- read.rep(hdr$Report.File[i])
 		repObj	<- read.admb(hdr$Control.File[i])
 		repObj$stock = hdr$Stock[i]
+		repObj$Control.File = hdr$Control.File[i]
 		mcfile=paste(hdr$Control.File[i],".mcmc", sep="")
 		if(file.exists(mcfile))
 			repObj$mcmc = read.table( mcfile, header=TRUE )
@@ -400,15 +423,9 @@ guiView	<- function()
 			mcfile=paste(hdr$Control.File[i],".mcst", sep="")
 			repObj$mcsbt = read.table( mcfile, header=FALSE )
 		}
-		#repObj	<- read.rep("iscam.rep")
-	
-	
-	
-	
-	
-	
 	
 		# Conditional statements for radio button selections of plots
+		# Add new calls to radio buttons here.
 		if ( plotType=="catch" )
 		{
 			.plotCatch( repObj, legend.txt=NULL )
@@ -461,7 +478,7 @@ guiView	<- function()
 	
 		if ( plotType=="agecompsresid" )
 		{
-			.plotAgecompresiduals( repObj )
+			.plotAgeCompResiduals( repObj )
 		}
 	
 		if ( plotType=="recruitment" )
@@ -479,6 +496,11 @@ guiView	<- function()
 			.plotSelectivity( repObj )
 		}
 	
+		if ( plotType=="ssbretro" )
+		{
+			.plotSSBretrospective( repObj )
+		}
+		
 		if ( plotType=="stockrecruit" )
 		{
 			.plotStockRecruit( repObj )
@@ -486,16 +508,11 @@ guiView	<- function()
 	
 		if ( plotType=="parameters" )
 		{
-			#admbObj = read.admb( "iscam" )
-			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			#.plotMarginalPosteriors( admbObj )
 			.plotMarginalPosteriors( repObj )
 		}
 	
 		if ( plotType=="refpoints" )
 		{
-			#admbObj = read.admb( "iscam" )
-			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
 			.plotReferencePoints( repObj )
 		}
 	
@@ -660,29 +677,29 @@ guiView	<- function()
 	})
 }
 
-
-.plotReferencePoints	<- function( admbObj )
-{
-	print("	.plotReferencePoints")
-	op=par(no.readonly=T)
-	with(admbObj, {
-		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
-		par(mfcol=c(2, 2))
-		for(i in 8:11)
-		{
-			ps=mcmc[, i]
-			xl=range(ps)
-			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-				main="", ylab="",
-				xlim=xl)#, ...)
-		}
-		mtext(c("MSY reference points", "Probability density",paste(stock)), 
-		c(1, 2, 3),outer=T, line=-1, las=0)
-	})
-	
-	par(op)
-	
-}
+# Deprecated
+# .plotReferencePoints	<- function( admbObj )
+# {
+# 	print("	.plotReferencePoints")
+# 	op=par(no.readonly=T)
+# 	with(admbObj, {
+# 		par(las=1,mar=c(5, 5, 1, 1), oma=c(1, 1, 1, 0))
+# 		par(mfcol=c(2, 2))
+# 		for(i in 8:11)
+# 		{
+# 			ps=mcmc[, i]
+# 			xl=range(ps)
+# 			hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+# 				main="", ylab="",
+# 				xlim=xl)#, ...)
+# 		}
+# 		mtext(c("MSY reference points", "Probability density",paste(stock)), 
+# 		c(1, 2, 3),outer=T, line=-1, las=0)
+# 	})
+# 	
+# 	par(op)
+# 	
+# }
 
 .plotSbtPosterior	<- function( admbObj, depletion=FALSE, annotate=FALSE )
 {
@@ -869,608 +886,619 @@ guiView	<- function()
 }
 
 
+# Deprecated
+# .plotMarginalPosteriors	<- function( admbObj )
+# {
+# 	print("	.plotMarginalPosteriors")
+# 	#Marginal distributions & priors for theta
+# 	op=par(no.readonly=T)
+# 	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 1, 0))
+# 
+# 	## Read control file to get bounds and priors for theta
+# 	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
+# 
+# 	with(admbObj, {
+# 		std=apply(mcmc[,1:7],2,sd)
+# 		nr=length(std[std!=0])
+# 		if(nr > 6)
+# 		{
+# 			nRow=3; nCol=3
+# 		}
+# 		else if(nr>4)
+# 		{
+# 			nRow=3; nCol=2
+# 		}
+# 		else
+# 		{
+# 			nRow=2; nCol=2
+# 		}
+# 		par(mfcol=c(nRow, nCol))
+# 		for(i in 1:7){
+# 			if(std[i]!=0){
+# 				ps = mcmc[, i]  #posterior samples
+# 				xl=range(ps)
+# 
+# 				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
+# 					main="", ylab="", col="lightgrey",breaks=30, 
+# 					xlim=xl)#, ...)
+# 
+# 				## Add priors
+# 				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
+# 				pt = ctrl[i, 5]+1
+# 				fn=match.fun(nfn[pt])
+# 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
+# 				#browser()
+# 				if(pt!=4)
+# 					curve(unlist(lapply(x,fn,p1,p2)),
+# 						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+# 				else
+# 					curve(unlist(lapply((x-ctrl[i,2])/
+# 						 (ctrl[i,3]-ctrl[i,2])
+# 						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
+# 			}
+# 		}
+# 		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
+# 			outer=T, line=-1, las=0)
+# 	})
+# 	par(op)
+# }
+# DEPRECATED
+# .plotStockRecruit	<- function( repObj )
+# {
+# 	with(repObj, {
+# 		xx = sbt[1:(length(yr)-min(age))]
+# 		yy = rt
+# 		
+# 		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
+# 			xlab="Spawning biomass", 
+# 			ylab=paste("Age-",min(age)," recruits", sep=""), 
+# 			main=paste(stock))
+# 			
+# 		points(xx, yy)
+# 		points(xx[1],yy[1], pch=20, col="green")
+# 		points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
+# 		
+# 		st=seq(0, max(sbt, bo), length=100)
+# 		if(rectype==1)
+# 		{
+# 			#Beverton-Holt
+# 			rrt=kappa*ro*st/(bo+(kappa-1)*st)*exp(-0.5*tau^2)  
+# 		}
+# 		if(rectype==2)
+# 		{
+# 			#Ricker
+# 			rrt=kappa*ro*st*exp(-log(kappa)*st/bo)/bo *exp(-0.5*tau^2) 
+# 		}
+# 		lines(st, rrt)
+# 		ro=ro*exp(-0.5*tau^2)
+# 		points(bo, ro, pch="O", col=2)
+# 		points(bo, ro, pch="+", col=2)
+# 	})
+# }
 
-.plotMarginalPosteriors	<- function( admbObj )
-{
-	print("	.plotMarginalPosteriors")
-	#Marginal distributions & priors for theta
-	op=par(no.readonly=T)
-	par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 1, 1, 0))
+# Deprecated
+# .plotSelectivity	<- function( repObj )
+# {
+# 	#plot the selectivity curves (3d plots)
+# 	with(repObj, {
+# 		#par(mgp=c(3, 3, 5))
+# 		plot.sel<-function(x, y, z, ...)
+# 		{
+# 			#z=exp(A$log_sel)*3
+# 			#x=A$yr
+# 			#y=A$age
+# 			z <- z/max(z)
+# 			z0 <- 0#min(z) - 20
+# 			z <- rbind(z0, cbind(z0, z, z0), z0)
+# 			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
+# 			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
+# 			clr=colorRampPalette(c("honeydew","lawngreen"))
+# 			nbcol=50
+# 			iclr=clr(nbcol)
+# 			nrz <- nrow(z)
+# 			ncz <- ncol(z)
+# 			zfacet <- z[-1, -1]+z[-1, -ncz]+z[-nrz, -1]+z[-nrz, -ncz]
+# 			facetcol <- cut(zfacet, nbcol)
+# 			fill <- matrix(iclr[facetcol],nr=nrow(z)-1,nc=ncol(z)-1)
+# 			fill[ , i2 <- c(1,ncol(fill))] <- "white"
+# 			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
+# 
+# 			par(bg = "transparent")
+# 			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=5, 
+# 				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
+# 				xlab="Year",ylab="Age",zlab="Selectivity", 
+# 				ticktype="simple", ...)
+# 			
+# 			#require(lattice)
+# 			#wireframe(z, drap=TRUE, col=fill)
+# 		}
+# 		ix=1:length(yr)
+# 		for(k in 1:ngear){
+# 			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
+# 			main=paste(stock, "Gear", k))
+# 			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
+# 			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
+# 		}
+# 		
+# 	})
+# }
 
-	## Read control file to get bounds and priors for theta
-	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
+# DEPRECATED
+# .plotMeanwt	<- function( repObj )
+# {
+# 	#plot mean weight-at-age by cohort
+# 	with(repObj, {
+# 		xx = yr		## xaxis labels
+# 		yy = age	## yaxis labels
+# 		nage=length(age)
+# 		
+# 		if(sum(par("mfcol"))==2)
+# 		{
+# 			xl = "Cohort year";xlm=""
+# 			yl = "Weight-at-age (kg)";ylm=""
+# 		}
+# 		else
+# 		{
+# 			xlm = "Cohort year";xl=""
+# 			ylm = "Weight-at-age (kg)";yl=""
+# 		}
+# 		
+# 		plot(range(xx), range(wt_obs), type="n", axes=FALSE,
+# 		xlab=xl, ylab=yl, main=paste(stock))
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		for(i in 1:(dim(wt_obs)[1]-1))
+# 		{
+# 			yy = (diag(as.matrix(wt_obs[0:-i, ]))) 
+# 			xx = 1:length(yy)+yr[i]-min(age)+1
+# 			
+# 			yy[yy==0]=NA;xx[yy==NA]=NA
+# 			lines(xx,yy)
+# 			
+# 			points(xx[1],yy[1],pch=20,col="steelblue",cex=0.5)
+# 			points(xx[nage],yy[nage],pch=20,col="salmon",cex=0.5)
+# 		}
+# 		for(i in 1:dim(wt_obs)[2]-1)
+# 		{
+# 			yy = diag(as.matrix(wt_obs[,-1:-i]))
+# 			n = length(yy)
+# 			xx = yr[1]:(yr[1]+n-1)
+# 			lines(xx, yy)
+# 			points(xx[n], yy[n], pch=20, col="salmon", cex=0.5)
+# 		}
+# 		
+# 		mtext(xlm, side=1, outer=T, line=0)
+# 		mtext(ylm, side=2, outer=T, line=0)
+# 	})
+# }
 
-	with(admbObj, {
-		std=apply(mcmc[,1:7],2,sd)
-		nr=length(std[std!=0])
-		if(nr > 6)
-		{
-			nRow=3; nCol=3
-		}
-		else if(nr>4)
-		{
-			nRow=3; nCol=2
-		}
-		else
-		{
-			nRow=2; nCol=2
-		}
-		par(mfcol=c(nRow, nCol))
-		for(i in 1:7){
-			if(std[i]!=0){
-				ps = mcmc[, i]  #posterior samples
-				xl=range(ps)
+# DEPRECATED
+# .plotRecruitment	<- function( repObj )
+# {
+# 	#plot age-a recruits.
+# 	with(repObj, {
+# 		xx = yr
+# 		yy = exp(ln_rt)
+# 		yy=yy
+# 		yrange=c(0, max(yy, na.rm=T))
+# 		
+# 		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+# 			xlab="Year", main=paste(stock), 
+# 			ylab=paste("Age-", min(age), " recruits", sep=""))
+# 		
+# 		lines(xx, yy, type="h")
+# 		
+# 		#add 0.33 and 0.66 quantile lines
+# 		qtl = quantile(yy, prob=c(1/3, 2/3))
+# 		abline(h=qtl,lty=1, col=colr("darkgrey",0.75))
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 	})
+# }
 
-				hist(ps,xlab=colnames(mcmc[i]),prob=T, 
-					main="", ylab="", col="lightgrey",breaks=30, 
-					xlim=xl)#, ...)
+# DEPRECATED
+# .plotCatchResiduals		<- function( repObj, annotate=FALSE )
+# {
+# 	#Plot residuals between observed and predicted catches
+# 	#residuals (epsilon=log(obs_ct)-log(ct))
+# 	with(repObj, {
+# 		epsilon=log(obs_ct)-log(ct)
+# 		if(is.matrix(epsilon)){
+# 			xx = yr
+# 			yy = t(epsilon)
+# 			t1 = colSums(yy,na.rm=T)
+# 			ng = length(t1[t1!=0])
+# 		}else{
+# 			xx = yr
+# 			yy = epsilon
+# 			ng = 1
+# 		}
+# 		#browser()
+# 		absmax = abs(max(yy, na.rm=TRUE))
+# 		if(absmax<=1e-3)absmax=1
+# 		yrange=c(-absmax, absmax)
+# 		
+# 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+# 			xlab="Year", ylab="Catch residual", main=paste(stock))
+# 		
+# 		matlines(xx, yy, type="h", col="black",lty=1)
+# 		matpoints(xx, yy,pch=1:ng, cex=0.75, col=1)
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		if ( annotate )
+# 		{
+# 			#n=dim(yy)[2]
+# 			txt=paste("Gear",1:ng)
+# 			
+# 			mfg <- par( "mfg" )
+# 			if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "top",legend=txt,cex=0.75, 
+# 				bty='n',pch=1:ng,lwd=1,lty=-1,ncol=ng )
+# 		}
+# 	})
+# }
 
-				## Add priors
-				nfn=c("dunif","dnorm","dlnorm","dbeta","dgamma")
-				pt = ctrl[i, 5]+1
-				fn=match.fun(nfn[pt])
-				p1=ctrl[i, 6]; p2=ctrl[i, 7]
-				#browser()
-				if(pt!=4)
-					curve(unlist(lapply(x,fn,p1,p2)),
-						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-				else
-					curve(unlist(lapply((x-ctrl[i,2])/
-						 (ctrl[i,3]-ctrl[i,2])
-						,fn,p1,p2)),xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
-			}
-		}
-		mtext(c("Parameter", "Probability density",paste(stock)), c(1, 2, 3), 
-			outer=T, line=-1, las=0)
-	})
-	par(op)
-}
+# DEPRECATED
+# .plotSurveyResiduals	<- function( repObj, annotate=FALSE )
+# {
+# 	#Plot residuals between observed and predicted relative abundance
+# 	#indicies (epsilon)
+# 	with(repObj, {
+# 		if(is.matrix(epsilon)){
+# 			xx = t(iyr)
+# 			yy = t(epsilon)
+# 		}else{
+# 			xx = iyr
+# 			yy = epsilon
+# 		}
+# 		
+# 		absmax = abs(max(yy, na.rm=TRUE))
+# 		if(absmax< 1e-3) absmax=1
+# 		yrange=c(-absmax, absmax)
+# 		
+# 		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
+# 			xlab="Year", ylab="Survey residual", main=paste(stock))
+# 		
+# 		matlines(xx, yy, type="h", col="black")
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		if ( annotate )
+# 		{
+# 			n=dim(xx)[2]
+# 			txt=paste("Survey",1:n)
+# 			
+# 			mfg <- par( "mfg" )
+# 			if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "top",legend=txt,
+# 				bty='n',lty=1:n,lwd=1,pch=-1,ncol=1 )
+# 		}
+# 	})
+# }
 
-.plotStockRecruit	<- function( repObj )
-{
-	with(repObj, {
-		xx = sbt[1:(length(yr)-min(age))]
-		yy = rt
-		
-		plot(xx, yy, type="n",ylim=c(0, max(yy, ro)),xlim=c(0, max(xx,bo)), 
-			xlab="Spawning biomass", 
-			ylab=paste("Age-",min(age)," recruits", sep=""), 
-			main=paste(stock))
-			
-		points(xx, yy)
-		points(xx[1],yy[1], pch=20, col="green")
-		points(xx[length(xx)], yy[length(xx)], pch=20, col=2)
-		
-		st=seq(0, max(sbt, bo), length=100)
-		if(rectype==1)
-		{
-			#Beverton-Holt
-			rrt=kappa*ro*st/(bo+(kappa-1)*st)*exp(-0.5*tau^2)  
-		}
-		if(rectype==2)
-		{
-			#Ricker
-			rrt=kappa*ro*st*exp(-log(kappa)*st/bo)/bo *exp(-0.5*tau^2) 
-		}
-		lines(st, rrt)
-		ro=ro*exp(-0.5*tau^2)
-		points(bo, ro, pch="O", col=2)
-		points(bo, ro, pch="+", col=2)
-	})
-}
+# DEPRECATED
+#.plotRecruitmentResiduals	<- function( repObj )
+#{
+#	#Plot the log residuals between the estimated recruits and
+#	#those obtained from the recruitment model (delta)
+#	with(repObj, {
+#		ii = 1:min(age)
+#		xx = yr[-ii]
+#		yy = delta
+#		absmax = abs(max(yy, na.rm=TRUE))
+#		if(absmax< 1e-3) absmax=1
+#		yrange=c(-absmax, absmax)
+#		
+#		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
+#			xlab="Year", ylab="Recruitment residuals", main=paste(stock))
+#			
+#		lines(xx, yy, type="h", col="black")
+#		axis( side=1 )
+#		axis( side=2,  las=.VIEWLAS )
+#		box()
+#	})
+#}
+#
+# DEPRECATED
+# .plotIndex	<- function( repObj, annotate=FALSE )
+# {
+# 	#line plot for relative abundance indices
+# 	with(repObj, {
+# 		if(is.matrix(it)){
+# 			xx=t(iyr)
+# 			yy=t(it)
+# 		}else{
+# 			xx=iyr
+# 			yy=it
+# 		}
+# 		n=nrow(t(as.matrix(yy)))
+# 		yrange=c(0, max(yy, na.rm=TRUE))
+# 		
+# 		matplot(xx, yy, type="n", axes=FALSE,
+# 			xlab="Year", ylab="Relative abundance", 
+# 			ylim=yrange , main=paste(stock))
+# 		
+# 		matlines(xx, yy, col="black",type="o", pch=1:n)
+# 		
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		
+# 		if( annotate )
+# 		{
+# 			txt=paste("Survey",1:n)
+# 			legend("top", txt, lty=1:n, pch=1:n, bty="n")
+# 		}
+# 	})
+# }
 
-.plotSelectivity	<- function( repObj )
-{
-	#plot the selectivity curves (3d plots)
-	with(repObj, {
-		#par(mgp=c(3, 3, 5))
-		plot.sel<-function(x, y, z, ...)
-		{
-			#z=exp(A$log_sel)*3
-			#x=A$yr
-			#y=A$age
-			z <- z/max(z)
-			z0 <- 0#min(z) - 20
-			z <- rbind(z0, cbind(z0, z, z0), z0)
-			x <- c(min(x) - 1e-10, x, max(x) + 1e-10)
-			y <- c(min(y) - 1e-10, y, max(y) + 1e-10)
-			clr=colorRampPalette(c("honeydew","lawngreen"))
-			nbcol=50
-			iclr=clr(nbcol)
-			nrz <- nrow(z)
-			ncz <- ncol(z)
-			zfacet <- z[-1, -1]+z[-1, -ncz]+z[-nrz, -1]+z[-nrz, -ncz]
-			facetcol <- cut(zfacet, nbcol)
-			fill <- matrix(iclr[facetcol],nr=nrow(z)-1,nc=ncol(z)-1)
-			fill[ , i2 <- c(1,ncol(fill))] <- "white"
-			fill[i1 <- c(1,nrow(fill)) , ] <- "white"
+# DEPRECATED
+# .plotCatch	<- function( repObj, legend.txt=NULL )
+# {
+# 	#barplot of the observed catch
+# 	with(repObj, {
+# 		tmp = obs_ct
+# 		iRows <- apply( tmp,1,function(x) { sum(diff(x))!=0.0 } )
+# 		barplot( tmp[iRows,], names.arg=yr,axes=FALSE,  
+# 			xlab="Year", ylab="Catch (1000 t)",main=paste(stock),  
+# 			legend.text = legend.txt )
+# 		axis( side=2, las=.VIEWLAS )
+# 	})
+# }
 
-			par(bg = "transparent")
-			persp(x, y, z, theta = 35, phi = 25, col = fill, expand=5, 
-				shade=0.75,ltheta=45 , scale = FALSE, axes = TRUE, d=1,  
-				xlab="Year",ylab="Age",zlab="Selectivity", 
-				ticktype="simple", ...)
-			
-			#require(lattice)
-			#wireframe(z, drap=TRUE, col=fill)
-		}
-		ix=1:length(yr)
-		for(k in 1:ngear){
-			plot.sel(yr, age, exp(log_sel[log_sel[,1]==k,-1]), 
-			main=paste(stock, "Gear", k))
-			#file.name=paste(prefix, "Fig9",letters[k],".eps", sep="")
-			#if(savefigs) dev.copy2eps(file=file.name, height=8, width=8)
-		}
-		
-	})
-}
+# DEPRECATED
+# .plotDepletion	<- function( repObj, annotate=FALSE )
+# {
+# 	#plot the spawning biomass depletion level & reference points
+# 	with(repObj, {
+# 		xx=yr
+# 		yy=sbt[1:length(xx)]/bo
+# 		yrange=c(0,1.1*max(yy, na.rm=TRUE))
+# 		
+# 		plot(xx, yy, type="n", axes=FALSE,
+# 			xlab="Year", ylab="Spawning depletion",main=paste(stock), 
+# 			ylim=yrange)
+# 		lines(xx, yy)
+# 		rlvl=c(1.0, 0.8, 0.4)
+# 		abline(h=rlvl*bmsy/bo,lty=2,lwd=0.5)
+# 		
+# 		
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		if ( annotate )
+# 		{
+# 			#mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
+# 			#	"Upper stock reference","Limit reference point"),
+# 			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
+# 			
+# 			#Delinate critical zone,  cautious zone, healthy zone.
+# 			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/bo,col=colr("red",0.1), border=NA)
+# 			rect(min(xx)-5,0.4*bmsy/bo,max(xx)+5,0.8*bmsy/bo,col=colr("yellow",0.1),border=NA)
+# 			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,1.5,col=colr("green",0.1), border=NA)
+# 		}
+# 	})
+# }
 
-.plotMeanwt	<- function( repObj )
-{
-	#plot mean weight-at-age by cohort
-	with(repObj, {
-		xx = yr		## xaxis labels
-		yy = age	## yaxis labels
-		nage=length(age)
-		
-		if(sum(par("mfcol"))==2)
-		{
-			xl = "Cohort year";xlm=""
-			yl = "Weight-at-age (kg)";ylm=""
-		}
-		else
-		{
-			xlm = "Cohort year";xl=""
-			ylm = "Weight-at-age (kg)";yl=""
-		}
-		
-		plot(range(xx), range(wt_obs), type="n", axes=FALSE,
-		xlab=xl, ylab=yl, main=paste(stock))
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		for(i in 1:(dim(wt_obs)[1]-1))
-		{
-			yy = (diag(as.matrix(wt_obs[0:-i, ]))) 
-			xx = 1:length(yy)+yr[i]-min(age)+1
-			
-			yy[yy==0]=NA;xx[yy==NA]=NA
-			lines(xx,yy)
-			
-			points(xx[1],yy[1],pch=20,col="steelblue",cex=0.5)
-			points(xx[nage],yy[nage],pch=20,col="salmon",cex=0.5)
-		}
-		for(i in 1:dim(wt_obs)[2]-1)
-		{
-			yy = diag(as.matrix(wt_obs[,-1:-i]))
-			n = length(yy)
-			xx = yr[1]:(yr[1]+n-1)
-			lines(xx, yy)
-			points(xx[n], yy[n], pch=20, col="salmon", cex=0.5)
-		}
-		
-		mtext(xlm, side=1, outer=T, line=0)
-		mtext(ylm, side=2, outer=T, line=0)
-	})
-}
+# DEPRECATED
+#.plotBiomass	<- function( repObj, annotate=FALSE )
+#{
+#	#plot total biomass & spawning biomass 
+#	with(repObj, {
+#		xx=yr
+#		yy=cbind(bt[1:length(xx)], sbt[1:length(xx)])
+#		
+#		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
+#		
+#		matplot(xx, yy, type="n",axes=FALSE,
+#				xlab="Year", ylab="Biomass (1000 t)",main=paste(stock), 
+#				ylim=yrange)
+#		
+#		matlines(xx,yy,
+#			type="l", col="black",
+#			ylim=c(0,max(yy,na.rm=T)))
+#		axis( side=1 )
+#		axis( side=2, las=.VIEWLAS )
+#		box()
+#		
+#		if ( annotate )
+#		{
+#			mfg <- par( "mfg" )
+#			if ( mfg[1]==1 && mfg[2]==1 )
+#			legend( "top",legend=c( "Pre-fishery biomass","Spawning biomass"),
+#				bty='n',lty=c(1,2),lwd=c(1,1),pch=c(-1,-1),ncol=1 )
+#		}
+#	})	
+#}
 
-.plotRecruitment	<- function( repObj )
-{
-	#plot age-a recruits.
-	with(repObj, {
-		xx = yr
-		yy = exp(ln_rt)
-		yy=yy
-		yrange=c(0, max(yy, na.rm=T))
-		
-		plot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", main=paste(stock), 
-			ylab=paste("Age-", min(age), " recruits", sep=""))
-		
-		lines(xx, yy, type="h")
-		
-		#add 0.33 and 0.66 quantile lines
-		qtl = quantile(yy, prob=c(0.333, 0.666))
-		abline(h=qtl,lty=1, col=colr("darkgrey",0.75))
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-	})
-}
+# Deprecated
+# .plotSurveyfit	<- function( repObj, annotate=FALSE)
+# {
+# 	with(repObj, {
+# 		if(is.matrix(it)){
+# 			xx = t(iyr)
+# 			m = apply(it,1,max, na.rm=T)
+# 			yy = t(pit/m)
+# 			y2 = t(it/m)
+# 		}else{
+# 			xx = iyr
+# 			yy = pit
+# 			y2 = it
+# 		}
+# 		n=nrow(t(as.matrix(yy)))
+# 		#n=dim(xx)[2]
+# 		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
+# 		
+# 		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
+# 			xlab="Year", ylab="Relative abundance", main=paste(stock))
+# 		
+# 		matlines(xx, yy, col=1:n, lty=1)
+# 		matpoints(xx, y2, col=1:n, pch=1:n)
+# 		
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		if ( annotate )
+# 		{
+# 			
+# 			txt=paste("Survey ",1:n,", q=",round(q, 3), sep="")
+# 			
+# 			mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "top",legend=txt,
+# 				bty='n',lty=1,lwd=1,pch=1:n,ncol=n, col=1:n )
+# 				
+# 			#print(q)
+# 		}
+# 	})
+# }
 
-.plotCatchResiduals		<- function( repObj, annotate=FALSE )
-{
-	#Plot residuals between observed and predicted catches
-	#residuals (epsilon=log(obs_ct)-log(ct))
-	with(repObj, {
-		epsilon=log(obs_ct)-log(ct)
-		if(is.matrix(epsilon)){
-			xx = yr
-			yy = t(epsilon)
-			t1 = colSums(yy,na.rm=T)
-			ng = length(t1[t1!=0])
-		}else{
-			xx = yr
-			yy = epsilon
-			ng = 1
-		}
-		#browser()
-		absmax = abs(max(yy, na.rm=TRUE))
-		if(absmax<=1e-3)absmax=1
-		yrange=c(-absmax, absmax)
-		
-		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Catch residual", main=paste(stock))
-		
-		matlines(xx, yy, type="h", col="black",lty=1)
-		matpoints(xx, yy,pch=1:ng, cex=0.75, col=1)
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		if ( annotate )
-		{
-			#n=dim(yy)[2]
-			txt=paste("Gear",1:ng)
-			
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,cex=0.75, 
-				bty='n',pch=1:ng,lwd=1,lty=-1,ncol=ng )
-		}
-	})
-}
+# Deprecated
+# .plotMortality	<- function( repObj, annotate=FALSE )
+# {
+# 	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
+# 	#plot average total mortality,  fishing mortality & natural mortality
+# 	with(repObj, {
+# 		xx=yr
+# 		if(is.matrix(ft))
+# 		{
+# 			yy=t(as.matrix(ft))
+# 		}
+# 		else
+# 		{
+# 			yy=as.matrix(ft)
+# 		}
+# 		#n=nrow(t(as.matrix(yy)))
+# 		icol=apply(yy,2,function(x){sum(cumsum(x))!=0.0})
+# 		ng=length(icol[icol==T])
+# 		
+# 		yy = cbind( rowMeans(M_tot), yy[,icol] )
+# 		
+# 		csyy = t(apply(yy,1, cumsum))	#cumulative sum
+# 			
+# 		yrange=c(0, max(csyy, na.rm=TRUE))
+# 		lw = c(1, rep(1,ng))
+# 		lt = 1
+# 		iclr = colr(1:(ng+1),0.5)
+# 		
+# 		matplot(xx, csyy, type="n", axes=FALSE, log="y",  
+# 			xlab="Year", ylab="Mortality rate", main=paste(stock))
+# 			
+# 		
+# 		#lines(xx, yy[,1], lwd=2, lty=1, col=1)
+# 		matlines(xx, csyy, log="y", col=iclr, lwd=lw, lty=lt)
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		grid()
+# 		
+# 		ry=cbind(1.e-30,csyy)
+# 		for(i in 1:dim(csyy)[2])
+# 		{
+# 			x2=c(xx, rev(xx))
+# 			y2=c(ry[,i+1], rev(ry[,i]))
+# 			#browser()
+# 			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
+# 		}
+# 		
+# 		
+# 		
+# 		if ( annotate )
+# 		{
+# 			txt = c("Natural mortality", paste("Gear",1:ng))
+# 			#mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			legend( "topright",legend=txt,col=iclr, 
+# 				bty='n',lty=lt,lwd=5,pch=-1,ncol=2)
+# 		}
+# 	})
+# }
 
-.plotSurveyResiduals	<- function( repObj, annotate=FALSE )
-{
-	#Plot residuals between observed and predicted relative abundance
-	#indicies (epsilon)
-	with(repObj, {
-		if(is.matrix(epsilon)){
-			xx = t(iyr)
-			yy = t(epsilon)
-		}else{
-			xx = iyr
-			yy = epsilon
-		}
-		
-		absmax = abs(max(yy, na.rm=TRUE))
-		if(absmax< 1e-3) absmax=1
-		yrange=c(-absmax, absmax)
-		
-		matplot(xx, yy, type="n", axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Survey residual", main=paste(stock))
-		
-		matlines(xx, yy, type="h", col="black")
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		if ( annotate )
-		{
-			n=dim(xx)[2]
-			txt=paste("Survey",1:n)
-			
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=1:n,lwd=1,pch=-1,ncol=1 )
-		}
-	})
-}
+# DEPRECATED
+# .plotAgecomps	<- function(repObj, meanAge = FALSE )
+# {
+# 	#Bubble plot of age-composition data
+# 	#A is the observed age-comps
+# 	#Ahat is the predicted age-comps (proportions)
+# 	with( repObj, {
+# 		if(!is.null(repObj$A)){
+# 			nagear = unique(A[, 2])
+# 			xrange = range(A[, 1])
+# 			#par(mfcol=c(length(nagear), 1))
+# 			for(i in nagear)
+# 			{
+# 				ac = subset(A, A[, 2]==i)
+# 				xx = ac[, 1]
+# 				zz = t(ac[, -1:-2])
+# 				
+# 				
+# 				# plot proportions-at-age (cpro=TRUE)
+# 				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
+# 					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1, 
+# 					bg=colr("steelblue", 0.5),main=paste(stock, "Gear", i), 
+# 					xlim=xrange)
+# 				
+# 				if( meanAge )
+# 				{
+# 					tz = t(zz)
+# 					p = t(tz/rowSums(tz))
+# 					abar = colSums(t(tz/rowSums(tz))*age)
+# 					sbar = sqrt(colSums(p*(1-p)*age))
+# 					sbar = 1.96*colSums(sqrt(p*(1-p))/sqrt(age))
+# 				
+# 					lines( xx, abar, col=colr("steelblue", 0.75), lwd=2 )
+# 				
+# 					yy = c(exp(log(abar)+log(sbar)), rev(exp(log(abar)-log(sbar))))
+# 					polygon(c(xx, rev(xx)),yy,border=NA,col=colr("steelblue",0.25))
+# 				}
+# 			}
+# 		}
+# 		else{print("There is no age-composition data")}
+# 	})
+# }
 
-.plotRecruitmentResiduals	<- function( repObj )
-{
-	#Plot the log residuals between the estimated recruits and
-	#those obtained from the recruitment model (delta)
-	with(repObj, {
-		ii = 1:min(age)
-		xx = yr[-ii]
-		yy = delta
-		absmax = abs(max(yy, na.rm=TRUE))
-		if(absmax< 1e-3) absmax=1
-		yrange=c(-absmax, absmax)
-		
-		plot(xx, yy, type="n",  axes=FALSE, ylim=yrange, 
-			xlab="Year", ylab="Recruitment residuals", main=paste(stock))
-			
-		lines(xx, yy, type="h", col="black")
-		axis( side=1 )
-		axis( side=2,  las=.VIEWLAS )
-		box()
-	})
-}
-
-
-.plotIndex	<- function( repObj, annotate=FALSE )
-{
-	#line plot for relative abundance indices
-	with(repObj, {
-		if(is.matrix(it)){
-			xx=t(iyr)
-			yy=t(it)
-		}else{
-			xx=iyr
-			yy=it
-		}
-		n=nrow(t(as.matrix(yy)))
-		yrange=c(0, max(yy, na.rm=TRUE))
-		
-		matplot(xx, yy, type="n", axes=FALSE,
-			xlab="Year", ylab="Relative abundance", 
-			ylim=yrange , main=paste(stock))
-		
-		matlines(xx, yy, col="black",type="o", pch=1:n)
-		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		
-		if( annotate )
-		{
-			txt=paste("Survey",1:n)
-			legend("top", txt, lty=1:n, pch=1:n, bty="n")
-		}
-	})
-}
-
-.plotCatch	<- function( repObj, legend.txt=NULL )
-{
-	#barplot of the observed catch
-	with(repObj, {
-		tmp = obs_ct
-		iRows <- apply( tmp,1,function(x) { sum(diff(x))!=0.0 } )
-		barplot( tmp[iRows,], names.arg=yr,axes=FALSE,  
-			xlab="Year", ylab="Catch (1000 t)",main=paste(stock),  
-			legend.text = legend.txt )
-		axis( side=2, las=.VIEWLAS )
-	})
-}
-
-.plotDepletion	<- function( repObj, annotate=FALSE )
-{
-	#plot the spawning biomass depletion level & reference points
-	with(repObj, {
-		xx=yr
-		yy=sbt[1:length(xx)]/bo
-		yrange=c(0,1.1*max(yy, na.rm=TRUE))
-		
-		plot(xx, yy, type="n", axes=FALSE,
-			xlab="Year", ylab="Spawning depletion",main=paste(stock), 
-			ylim=yrange)
-		lines(xx, yy)
-		rlvl=c(1.0, 0.8, 0.4)
-		abline(h=rlvl*bmsy/bo,lty=2,lwd=0.5)
-		
-		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		if ( annotate )
-		{
-			#mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
-			#	"Upper stock reference","Limit reference point"),
-			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
-			
-			#Delinate critical zone,  cautious zone, healthy zone.
-			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy/bo,col=colr("red",0.1), border=NA)
-			rect(min(xx)-5,0.4*bmsy/bo,max(xx)+5,0.8*bmsy/bo,col=colr("yellow",0.1),border=NA)
-			rect(min(xx)-5,0.8*bmsy/bo,max(xx)+5,1.5,col=colr("green",0.1), border=NA)
-		}
-	})
-}
-
-.plotBiomass	<- function( repObj, annotate=FALSE )
-{
-	#plot total biomass & spawning biomass 
-	with(repObj, {
-		xx=yr
-		yy=cbind(bt[1:length(xx)], sbt[1:length(xx)])
-		
-		yrange=c(0, 1.2*max(yy, na.rm=TRUE))
-		
-		matplot(xx, yy, type="n",axes=FALSE,
-				xlab="Year", ylab="Biomass (1000 t)",main=paste(stock), 
-				ylim=yrange)
-		
-		matlines(xx,yy,
-			type="l", col="black",
-			ylim=c(0,max(yy,na.rm=T)))
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		
-		if ( annotate )
-		{
-			mfg <- par( "mfg" )
-			if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=c( "Pre-fishery biomass","Spawning biomass"),
-				bty='n',lty=c(1,2),lwd=c(1,1),pch=c(-1,-1),ncol=1 )
-		}
-	})	
-}
-
-.plotSurveyfit	<- function( repObj, annotate=FALSE)
-{
-	with(repObj, {
-		if(is.matrix(it)){
-			xx = t(iyr)
-			m = apply(it,1,max, na.rm=T)
-			yy = t(pit/m)
-			y2 = t(it/m)
-		}else{
-			xx = iyr
-			yy = pit
-			y2 = it
-		}
-		n=nrow(t(as.matrix(yy)))
-		#n=dim(xx)[2]
-		yrange=c(0, 1.15*max(yy, y2, na.rm=TRUE))
-		
-		matplot(xx, yy, type="n",axes=FALSE,ylim=yrange, 
-			xlab="Year", ylab="Relative abundance", main=paste(stock))
-		
-		matlines(xx, yy, col=1:n, lty=1)
-		matpoints(xx, y2, col=1:n, pch=1:n)
-		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		if ( annotate )
-		{
-			
-			txt=paste("Survey ",1:n,", q=",round(q, 3), sep="")
-			
-			mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "top",legend=txt,
-				bty='n',lty=1,lwd=1,pch=1:n,ncol=n, col=1:n )
-				
-			#print(q)
-		}
-	})
-}
-
-
-.plotMortality	<- function( repObj, annotate=FALSE )
-{
-	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
-	#plot average total mortality,  fishing mortality & natural mortality
-	with(repObj, {
-		xx=yr
-		if(is.matrix(ft))
-		{
-			yy=t(as.matrix(ft))
-		}
-		else
-		{
-			yy=as.matrix(ft)
-		}
-		#n=nrow(t(as.matrix(yy)))
-		icol=apply(yy,2,function(x){sum(cumsum(x))!=0.0})
-		ng=length(icol[icol==T])
-		
-		yy = cbind( rowMeans(M_tot), yy[,icol] )
-		
-		csyy = t(apply(yy,1, cumsum))	#cumulative sum
-			
-		yrange=c(0, max(csyy, na.rm=TRUE))
-		lw = c(1, rep(1,ng))
-		lt = 1
-		iclr = colr(1:(ng+1),0.5)
-		
-		matplot(xx, csyy, type="n", axes=FALSE, log="y",  
-			xlab="Year", ylab="Mortality rate", main=paste(stock))
-			
-		
-		#lines(xx, yy[,1], lwd=2, lty=1, col=1)
-		matlines(xx, csyy, log="y", col=iclr, lwd=lw, lty=lt)
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		grid()
-		
-		ry=cbind(1.e-30,csyy)
-		for(i in 1:dim(csyy)[2])
-		{
-			x2=c(xx, rev(xx))
-			y2=c(ry[,i+1], rev(ry[,i]))
-			#browser()
-			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
-		}
-		
-		
-		
-		if ( annotate )
-		{
-			txt = c("Natural mortality", paste("Gear",1:ng))
-			#mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			legend( "topright",legend=txt,col=iclr, 
-				bty='n',lty=lt,lwd=5,pch=-1,ncol=2)
-		}
-	})
-}
-
-
-.plotAgecomps	<- function(repObj, meanAge = FALSE )
-{
-	#Bubble plot of age-composition data
-	#A is the observed age-comps
-	#Ahat is the predicted age-comps (proportions)
-	with( repObj, {
-		if(!is.null(repObj$A)){
-			nagear = unique(A[, 2])
-			xrange = range(A[, 1])
-			#par(mfcol=c(length(nagear), 1))
-			for(i in nagear)
-			{
-				ac = subset(A, A[, 2]==i)
-				xx = ac[, 1]
-				zz = t(ac[, -1:-2])
-				
-				
-				# plot proportions-at-age (cpro=TRUE)
-				plotBubbles(zz, xval = xx, yval = age, cpro=TRUE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.1, 
-					bg=colr("steelblue", 0.5),main=paste(stock, "Gear", i), 
-					xlim=xrange)
-				
-				if( meanAge )
-				{
-					tz = t(zz)
-					p = t(tz/rowSums(tz))
-					abar = colSums(t(tz/rowSums(tz))*age)
-					sbar = sqrt(colSums(p*(1-p)*age))
-					sbar = 1.96*colSums(sqrt(p*(1-p))/sqrt(age))
-				
-					lines( xx, abar, col=colr("steelblue", 0.75), lwd=2 )
-				
-					yy = c(exp(log(abar)+log(sbar)), rev(exp(log(abar)-log(sbar))))
-					polygon(c(xx, rev(xx)),yy,border=NA,col=colr("steelblue",0.25))
-				}
-			}
-		}
-		else{print("There is no age-composition data")}
-	})
-}
-
-.plotAgecompresiduals	<- function(repObj)
-{
-	#Bubble plot of age-composition data
-	#A is the observed age-comps
-	#Ahat is the predicted age-comps (proportions)
-	with( repObj, {
-		if(!is.null(repObj$A)){
-			nagear = unique(A[, 2])
-			xrange = range(A[, 1])
-			#par(mfcol=c(length(nagear), 1))
-			j=0
-			for(i in nagear)
-			{
-				j=j+1
-				ac = subset(A_nu, A_nu[, 2]==i)
-				xx = ac[, 1]
-				zz = t(ac[, -1:-2])
-			
-				# plot residuals
-				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
-					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[j],
-					bg=colr("white", 0.5), xlim=xrange,main=paste(stock, "Gear", i))
-				title(main=paste("Variance=",round(age_tau2[j],3)),line=-1,cex.main=0.75)
-			}
-			
-		}
-		else{print("There is no age-composition data")}
-	})
-}
-
+# DEPRECATED
+#.plotAgeCompResiduals	<- function(repObj)
+#{
+#	#Bubble plot of age-composition data
+#	#A is the observed age-comps
+#	#Ahat is the predicted age-comps (proportions)
+#	with( repObj, {
+#		if(!is.null(repObj$A)){
+#			nagear = unique(A[, 2])
+#			xrange = range(A[, 1])
+#			#par(mfcol=c(length(nagear), 1))
+#			j=0
+#			for(i in nagear)
+#			{
+#				j=j+1
+#				ac = subset(A_nu, A_nu[, 2]==i)
+#				xx = ac[, 1]
+#				zz = t(ac[, -1:-2])
+#			
+#				# plot residuals
+#				plotBubbles(zz, xval = xx, yval = age, rres=FALSE, hide0=TRUE,  
+#					las=.VIEWLAS, xlab="Year", ylab="Age", frange=0.0, size=0.5*age_tau2[j],
+#					bg=colr("white", 0.5), xlim=xrange,main=paste(stock, "Gear", i))
+#				title(main=paste("Variance=",round(age_tau2[j],3)),line=-1,cex.main=0.75)
+#			}
+#			
+#		}
+#		else{print("There is no age-composition data")}
+#	})
+#}
+#
 .plotPriors	<-function()
 {
 	## This function plots the prior distributions for the parameters
