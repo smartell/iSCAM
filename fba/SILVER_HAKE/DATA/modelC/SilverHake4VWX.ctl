@@ -16,11 +16,11 @@
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
    7.5          0.0     20      4       0       0.0     20      #log_ro      ##
-   0.75         0.2     1.0     4       3       5.01    3.01    #steepness   ##
+   0.75         0.2     1.0     4       3       15.01   7.01    #steepness   ##
   -1.049822    -3.0    2.0     -2       0      -3.0     2.0     #log_m       ##
    7.0          0.0     20      1       0       0.0     20      #log_avgrec  ##
    7.0          0.0     20      1       0       0.0     20      #log_recinit ##
-   0.5          0.01    0.99    3       3       1.01    1.01    #rho         ##
+   0.5          0.01    0.99   -3       3       1.01    1.01    #rho         ##
   12.5          0.01   15.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
@@ -41,12 +41,12 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-5       5       6   6   6       # -selectivity type ivector(isel_type) for gear
-3.0		3.0     3   3   3       # -Age/length at 50% selectivity (logistic)
+5       2       1   6   6       # -selectivity type ivector(isel_type) for gear
+3.0		2.0     3   3   3       # -Age/length at 50% selectivity (logistic)
 0.25    0.25    0.5 0.5 0.5     # -STD at 50% selectivity (logistic)
 7		7		1	1	1		# -No. of age nodes for each gear (0=ignore)
 3		3		1	1	1		# -No. of year nodes for 2d spline(0=ignore)
-2		2		-1	-1	-1		# -Phase of estimation (-1 for fixed)
+2		-2		2	-1	-1		# -Phase of estimation (-1 for fixed)
 2.0		2.0		1	1	1		# -Penalty wt for 2nd differences w=1/(2*sig^2)
 3.12	3.12	1	1	1		# -Penalty wt for dome-shaped w=1/(2*sig^2)
 ## ------------------------------------------------------------------------- ##

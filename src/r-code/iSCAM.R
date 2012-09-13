@@ -64,7 +64,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 
 .REPFILES <- list.files(pattern="\\.rep")
 .VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../../fba/BC-herring-2011/Tables/"
+.TABLEDIR <- "../TABLES/"
 
 
 
@@ -518,9 +518,9 @@ guiView	<- function()
 	
 		if ( plotType=="kobeplot" )
 		{
-			admbObj = read.admb( "iscam" )
-			admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			.plotStockStatus( admbObj )
+			#admbObj = read.admb( "iscam" )
+			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
+			.plotStockStatus( repObj )
 		}
 	
 		if ( plotType=="sbmcmc" )
@@ -618,64 +618,64 @@ guiView	<- function()
 	})
 	par(op)
 }
-
-.plotStockStatus	<- function( admbObj )
-{
-	print("	.plotStockStatus")
-	
-	require(MASS)
-	require( KernSmooth)
-	fried.egg=function(xx,yy,...)
-	{
-		bw=25
-		bwx=diff(extendrange(xx))/bw; bwy=diff(extendrange(yy))/bw
-		#bwx=(max(xx)-min(xx))/bw
-		#bwy=(max(yy)-min(yy))/bw
-		est <- bkde2D(cbind(xx,yy),bandwidth=c(bwx,bwy),gridsize=c(81, 81))
-		est$fhat=est$fhat/max(est$fhat)
-		#plot(xx,yy,pch=".",col="dark grey",xlab=NA,ylab=NA,type="n")
-		#text(max(xx),max(yy),labels="D",adj=c(1,1))
-		lvs=c(0.05,0.25,0.75,0.95)
-		maxct=max(lvs)
-		nlvs=length(lvs)
-		thelines=contourLines(est$x1,est$x2,est$fhat,levels=lvs)
-		iclr=colr("khaki", 0.9)
-		polygon(thelines[[nlvs-3]]$x,thelines[[nlvs-3]]$y,col=iclr,border=iclr,lwd=1)
-		iclr=colr("snow", 0.9)
-		polygon(thelines[[nlvs-2]]$x,thelines[[nlvs-2]]$y,col=iclr,border=iclr,lwd=2)
-		iclr=colr("yellow", 0.9)
-		polygon(thelines[[nlvs-1]]$x,thelines[[nlvs-1]]$y,col=iclr,border=iclr,lwd=3)
-		polygon(thelines[[nlvs]]$x,thelines[[nlvs]]$y,col="lightyellow",border="yellow",lwd=1)
-		#contour(est$x1,est$x2,est$fhat,drawlabels=T,add=T,levels=lvs,lty=1,lwd=1,labcex= 0.7)
-		#Add salt and pepper
-		#xi=sample(1:length(xx),300)
-		#points(xx[xi],yy[xi],pch=".",col=grey(0:10/10))
-	}
-	
-	#KOBE plots
-	## This routine needs some work to accomodate multiple
-	## fleets. Also need to address the Fmsy calculation in iscam.
-	with(admbObj, {
-		xx = sbt[1:length(yr)]/bmsy
-		yy = ft/fmsy  #yy can be a matrix
-		yy[yy==0]=NA; ii=!is.na(yy)
-
-		matplot(xx, (yy[ii]), type="l", xlim=c(0,max(2,xx)), 
-		ylim=c(0,max(2,yy[ii])),xlab="Spawning biomass/SBmsy", ylab="Ft/Fmsy")
-		rect(0, 0, 1, 1, col=colr("yellow", 0.5), border=NA)
-		rect(1, 1, max(2, xx),max(2, yy),col=colr("yellow", 0.5),border=NA)
-		rect(1, 0, max(2, xx), 1, col=colr("green", 0.5), border=NA)
-		rect(0, 1, 1, max(2, yy), col=colr("red", 0.5), border=NA)
-		## add bayesian fried egg 
-		## need to get marginal samples for ft and sbt
-		## to correctly plot the fried egg uncertainty
-		xxx=sbt[length(yr)]/mcmc$bmsy
-		yyy=ft[length(yr)]/mcmc$fmsy
-		fried.egg(xxx, yyy)
-		lines(xx, yy[ii], type="l", col=colr(1, 1))
-		text(xx, yy[ii], yr, cex=0.75, col=colr(1, 1))
-	})
-}
+# Deprecated
+# .plotStockStatus	<- function( admbObj )
+# {
+# 	print("	.plotStockStatus")
+# 	
+# 	require(MASS)
+# 	require( KernSmooth)
+# 	fried.egg=function(xx,yy,...)
+# 	{
+# 		bw=25
+# 		bwx=diff(extendrange(xx))/bw; bwy=diff(extendrange(yy))/bw
+# 		#bwx=(max(xx)-min(xx))/bw
+# 		#bwy=(max(yy)-min(yy))/bw
+# 		est <- bkde2D(cbind(xx,yy),bandwidth=c(bwx,bwy),gridsize=c(81, 81))
+# 		est$fhat=est$fhat/max(est$fhat)
+# 		#plot(xx,yy,pch=".",col="dark grey",xlab=NA,ylab=NA,type="n")
+# 		#text(max(xx),max(yy),labels="D",adj=c(1,1))
+# 		lvs=c(0.05,0.25,0.75,0.95)
+# 		maxct=max(lvs)
+# 		nlvs=length(lvs)
+# 		thelines=contourLines(est$x1,est$x2,est$fhat,levels=lvs)
+# 		iclr=colr("khaki", 0.9)
+# 		polygon(thelines[[nlvs-3]]$x,thelines[[nlvs-3]]$y,col=iclr,border=iclr,lwd=1)
+# 		iclr=colr("snow", 0.9)
+# 		polygon(thelines[[nlvs-2]]$x,thelines[[nlvs-2]]$y,col=iclr,border=iclr,lwd=2)
+# 		iclr=colr("yellow", 0.9)
+# 		polygon(thelines[[nlvs-1]]$x,thelines[[nlvs-1]]$y,col=iclr,border=iclr,lwd=3)
+# 		polygon(thelines[[nlvs]]$x,thelines[[nlvs]]$y,col="lightyellow",border="yellow",lwd=1)
+# 		#contour(est$x1,est$x2,est$fhat,drawlabels=T,add=T,levels=lvs,lty=1,lwd=1,labcex= 0.7)
+# 		#Add salt and pepper
+# 		#xi=sample(1:length(xx),300)
+# 		#points(xx[xi],yy[xi],pch=".",col=grey(0:10/10))
+# 	}
+# 	
+# 	#KOBE plots
+# 	## This routine needs some work to accomodate multiple
+# 	## fleets. Also need to address the Fmsy calculation in iscam.
+# 	with(admbObj, {
+# 		xx = sbt[1:length(yr)]/bmsy
+# 		yy = ft/fmsy  #yy can be a matrix
+# 		yy[yy==0]=NA; ii=!is.na(yy)
+# 
+# 		matplot(xx, (yy[ii]), type="l", xlim=c(0,max(2,xx)), 
+# 		ylim=c(0,max(2,yy[ii])),xlab="Spawning biomass/SBmsy", ylab="Ft/Fmsy")
+# 		rect(0, 0, 1, 1, col=colr("yellow", 0.5), border=NA)
+# 		rect(1, 1, max(2, xx),max(2, yy),col=colr("yellow", 0.5),border=NA)
+# 		rect(1, 0, max(2, xx), 1, col=colr("green", 0.5), border=NA)
+# 		rect(0, 1, 1, max(2, yy), col=colr("red", 0.5), border=NA)
+# 		## add bayesian fried egg 
+# 		## need to get marginal samples for ft and sbt
+# 		## to correctly plot the fried egg uncertainty
+# 		xxx=sbt[length(yr)]/mcmc$bmsy
+# 		yyy=ft[length(yr)]/mcmc$fmsy
+# 		fried.egg(xxx, yyy)
+# 		lines(xx, yy[ii], type="l", col=colr(1, 1))
+# 		text(xx, yy[ii], yr, cex=0.75, col=colr(1, 1))
+# 	})
+# }
 
 # Deprecated
 # .plotReferencePoints	<- function( admbObj )

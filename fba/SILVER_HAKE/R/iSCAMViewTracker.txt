@@ -3,4 +3,5 @@
 "Select","Stock","Description","Control File"
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
-TRUE, DEMO, "Flack Lake Trout",../DATA/ModelC/SilverHake4VWX
+TRUE,RunC, "Sliver Hake 4VWX",../DATA/ModelC/SilverHake4VWX
+TRUE,RunD, "Sliver Hake 4VWX",../DATA/ModelD/SilverHake4VWX

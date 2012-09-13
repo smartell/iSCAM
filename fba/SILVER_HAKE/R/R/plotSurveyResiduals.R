@@ -9,6 +9,7 @@
 		if(is.matrix(epsilon)){
 			xx = t(iyr)
 			yy = t(epsilon)
+			t1 = colSums(yy,na.rm=T)
 			ng = length(t1[t1!=0])
 		}else{
 			xx = iyr
