@@ -451,11 +451,6 @@ guiView	<- function()
 			.plotSurveyfit( repObj, annotate=TRUE )
 		}
 	
-		if ( plotType=="natmort" )
-		{
-			.plotNaturalMortality( repObj )
-		}
-	
 		if ( plotType=="mortality" )
 		{
 			.plotMortality( repObj, annotate=TRUE )
@@ -535,6 +530,11 @@ guiView	<- function()
 			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
 			
 			.plotSbtPosterior( repObj )
+		}
+		
+		if ( plotType=="risktable" )
+		{
+			.plotRiskTable( hdr )
 		}
 	
 		if ( plotType=="depletionmcmc" )

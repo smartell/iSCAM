@@ -40,13 +40,12 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		
 		
 		#-- widget 2b
-		grid 10 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=2
+		grid 9 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=2
 		radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
 		radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=recruitment   text="Recruitment"       function=.mpdView mode=character sticky=W
 		radio name=plotType value=stockrecruit  text="Stock-Recruitment" function=.mpdView mode=character sticky=W
-		radio name=plotType value=natmort       text="Natural mortality" function=.mpdView mode=character sticky=W
-		radio name=plotType value=mortality     text="Total mortality"   function=.mpdView mode=character sticky=W
+		radio name=plotType value=mortality     text="Mortality"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=surveyfit     text="Survey(s)"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=selectivity   text="Selectivities(s)"  function=.mpdView mode=character sticky=W
 		radio name=plotType value=kobeplot      text="Stock status (KOBE)" 		function=.mpdView mode=character sticky=W
@@ -64,7 +63,8 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		radio name=plotType value=refpoints     text="Reference points" 		function=.mpdView mode=character sticky=W
 		radio name=plotType value=sbmcmc        text="Spawning stock biomass" 	function=.mpdView mode=character sticky=W
 		radio name=plotType value=depletionmcmc text="Spawning depletion"	 	function=.mpdView mode=character sticky=W
-		null
+		radio name=plotType value=risktable     text="Risk Table"	 			function=.mpdView mode=character sticky=W
+		
 		label text="MCMC diagnostics" font="Courier bold 10" sticky=W
 		radio name=plotType value=traceplot     text="Trace plots" 				function=.mpdView mode=character sticky=W
 		radio name=plotType value=mcmcpairs     text="Pairs plots" 				function=.mpdView mode=character sticky=W
