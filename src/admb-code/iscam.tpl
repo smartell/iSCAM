@@ -2897,7 +2897,29 @@ REPORT_SECTION
 		REPORT(bmsy);
 		REPORT(Umsy);
 	}
-		
+	/*
+	Stock status info
+	Bstatus = sbt/bmsy;
+	Fstatus = ft/fmsy; If fmsy > 0 
+	*/
+	if(bmsy>0)
+	{
+		dvector Bstatus=value(sbt/bmsy);
+		REPORT(Bstatus);
+	}
+	
+	dmatrix Fstatus(1,ngear,syr,nyr);
+	Fstatus.initialize();
+	for(k = 1; k <= nfleet; k++)
+	{
+		if(fmsy(k) >0 )
+		{
+			j    = ifleet(k);
+			Fstatus(j) = value(ft(j)/fmsy(k));
+		}
+	}
+	REPORT(Fstatus);
+	
 	//Parameter controls
 	dmatrix ctrl=theta_control;
 	REPORT(ctrl);
