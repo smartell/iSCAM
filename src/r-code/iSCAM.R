@@ -451,6 +451,11 @@ guiView	<- function()
 			.plotSurveyfit( repObj, annotate=TRUE )
 		}
 	
+		if ( plotType=="natmort" )
+		{
+			.plotNaturalMortality( repObj )
+		}
+	
 		if ( plotType=="mortality" )
 		{
 			.plotMortality( repObj, annotate=TRUE )
