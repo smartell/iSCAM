@@ -539,7 +539,7 @@ guiView	<- function()
 		
 		if ( plotType=="risktable" )
 		{
-			.plotRiskTable( repObj )
+			.plotRiskTable( hdr )
 		}
 	
 		if ( plotType=="depletionmcmc" )
