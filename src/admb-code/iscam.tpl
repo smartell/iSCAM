@@ -1379,6 +1379,13 @@ FUNCTION calcFisheryObservations
 			   the expected proportions at age.*/
 				dvar_vector fa = mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+				
+				/*
+				dvar_matrix alk(sage,nage,1,nbins) = ALK(la, cv*la, xbin)
+				
+				Lhat(i) = Chat *ALK; 
+				*/
+				
 			}
 			
 			

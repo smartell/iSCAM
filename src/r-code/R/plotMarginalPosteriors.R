@@ -12,6 +12,7 @@
 	## ctrl=read.table(A$control.file, header=F, skip=13, nrow=6)
 
 	with(admbObj, {
+		cat("Parameter controls\n", ctrl)
 		std=apply(mcmc[,1:7],2,sd)
 		nr=length(std[std!=0])
 		if(nr > 6)

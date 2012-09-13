@@ -536,6 +536,11 @@ guiView	<- function()
 			
 			.plotSbtPosterior( repObj )
 		}
+		
+		if ( plotType=="risktable" )
+		{
+			.plotRiskTable( hdr )
+		}
 	
 		if ( plotType=="depletionmcmc" )
 		{
