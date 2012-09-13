@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  11 SEP 2012 20:13
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  12 SEP 2012 22:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -943,8 +943,6 @@ LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
 (./Installation/Installation.tex (./overView.toc) [2
 
 
-] [3
-
 ]
 LaTeX Font Info:    Try loading font information for OMS+cmss on input line 34.
 
@@ -955,14 +953,16 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbullet' on input line 34.
 
-[4
+[3
 
-] [5
+] [4
 
 ]
 \openout4 = `overView.vrb'.
 
- (./overView.vrb) [6
+ (./overView.vrb) [5
+
+] [6
 
 ] [7
 
@@ -978,34 +978,32 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 
 ] [13
 
-] [14
-
 ]
-<screenCaptures/TextMate.pdf, id=308, 1800.7275pt x 1142.2675pt>
+<screenCaptures/TextMate.pdf, id=291, 1800.7275pt x 1142.2675pt>
 File: screenCaptures/TextMate.pdf Graphic file (type pdf)
 
 <use screenCaptures/TextMate.pdf>
-Package pdftex.def Info: screenCaptures/TextMate.pdf used on input line 242.
+Package pdftex.def Info: screenCaptures/TextMate.pdf used on input line 248.
 (pdftex.def)             Requested size: 284.82506pt x 180.67499pt.
 
-Overfull \hbox (5.98793pt too wide) in paragraph at lines 242--242
+Overfull \hbox (5.98793pt too wide) in paragraph at lines 248--248
  [] 
  []
 
-[15
+[14
 
  <./screenCaptures/TextMate.pdf>])
 \openout2 = `./Compiling/Compiling.aux'.
 
  (./Compiling/Compiling.tex
-(./overView.toc) [16
+(./overView.toc) [15
 
 
 
-] [17
+] [16
 
 ]
-<screenCaptures/Term_iSCAM-trunk.pdf, id=379, 1007.765pt x 671.50874pt>
+<screenCaptures/Term_iSCAM-trunk.pdf, id=361, 1007.765pt x 671.50874pt>
 File: screenCaptures/Term_iSCAM-trunk.pdf Graphic file (type pdf)
 
 <use screenCaptures/Term_iSCAM-trunk.pdf>
@@ -1016,10 +1014,10 @@ Package pdftex.def Info: screenCaptures/Term_iSCAM-trunk.pdf used on input line
 Overfull \vbox (35.1762pt too high) detected at line 55
  []
 
-[18
+[17
 
  <./screenCaptures/Term_iSCAM-trunk.pdf>]
-<screenCaptures/Term_make.pdf, id=408, 1007.765pt x 671.50874pt>
+<screenCaptures/Term_make.pdf, id=391, 1007.765pt x 671.50874pt>
 File: screenCaptures/Term_make.pdf Graphic file (type pdf)
 
 <use screenCaptures/Term_make.pdf>
@@ -1029,40 +1027,50 @@ Package pdftex.def Info: screenCaptures/Term_make.pdf used on input line 55.
 Overfull \vbox (35.1762pt too high) detected at line 55
  []
 
-[19
+[18
 
- <./screenCaptures/Term_make.pdf>] [20
+ <./screenCaptures/Term_make.pdf>] [19
 
-] [21
+] [20
+
+]
+\openout4 = `overView.vrb'.
+
+ (./overView.vrb
+Missing character: There is no â in font cmss10!
+Missing character: There is no € in font cmss10!
+Missing character: There is no ¦ in font cmss10!
+) [21
 
 ])
 \openout2 = `./RunningDemo/RunningDemo.aux'.
 
- (./RunningDemo/RunningDemo.tex (./overView.toc) [22
+
+(./RunningDemo/RunningDemo.tex (./overView.toc) [22
 
 
 
 ] [23
 
 ]
-<screenCaptures/TermDemo.pdf, id=508, 1088.065pt x 720.6925pt>
+<screenCaptures/TermDemo.pdf, id=507, 1088.065pt x 720.6925pt>
 File: screenCaptures/TermDemo.pdf Graphic file (type pdf)
 
 <use screenCaptures/TermDemo.pdf>
-Package pdftex.def Info: screenCaptures/TermDemo.pdf used on input line 31.
+Package pdftex.def Info: screenCaptures/TermDemo.pdf used on input line 30.
 (pdftex.def)             Requested size: 190.92891pt x 126.47249pt.
 
-Overfull \vbox (3.31897pt too high) detected at line 31
+Overfull \vbox (3.31897pt too high) detected at line 30
  []
 
 [24
 
  <./screenCaptures/TermDemo.pdf>]
-<screenCaptures/Term-catage.pdf, id=535, 1088.065pt x 720.6925pt>
+<screenCaptures/Term-catage.pdf, id=534, 1088.065pt x 720.6925pt>
 File: screenCaptures/Term-catage.pdf Graphic file (type pdf)
 
 <use screenCaptures/Term-catage.pdf>
-Package pdftex.def Info: screenCaptures/Term-catage.pdf used on input line 46.
+Package pdftex.def Info: screenCaptures/Term-catage.pdf used on input line 41.
 (pdftex.def)             Requested size: 190.92891pt x 126.47249pt.
  [25
 
@@ -1081,19 +1089,38 @@ File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
 \openout4 = `overView.vrb'.
 
 
-(./overView.vrb) [27
+(./overView.vrb
+Overfull \hbox (686.96292pt too wide) in paragraph at lines 3--4
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+) [27
 
 ]
 \@verb\makesmart=\box57
+
+Overfull \hbox (489.86087pt too wide) in paragraph at lines 84--85
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][] 
+ []
+
 \@verb\makearg=\box58
 
-Overfull \hbox (3.67581pt too wide) in paragraph at lines 103--104
-[][][] 
+Overfull \hbox (903.77518pt too wide) in paragraph at lines 94--96
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (3.67581pt too wide) in paragraph at lines 112--113
-[][][] 
+Overfull \hbox (29.95609pt too wide) in paragraph at lines 96--98
+[][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (1008.89627pt too wide) in paragraph at lines 98--99
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][] 
  []
 
 \openout4 = `overView.vrb'.
@@ -1106,29 +1133,55 @@ Overfull \hbox (3.67581pt too wide) in paragraph at lines 112--113
 \openout4 = `overView.vrb'.
 
  (./overView.vrb
-./overView.vrb:3: You can't use `macro parameter character #' in horizontal mod
+./overView.vrb:2: You can't use `macro parameter character #' in horizontal mod
 e.
-l.3 The "-j#
+l.2 The "-j#
             " option specifies the number of processors to use.\\
 Sorry, but I'm not programmed to handle this case;
 I'll just pretend that you didn't ask for it.
 If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
-LaTeX Font Info:    Try loading font information for OML+cmss on input line 7.
-LaTeX Font Info:    No file OMLcmss.fd. on input line 7.
+LaTeX Font Info:    Try loading font information for OML+cmss on input line 5.
+LaTeX Font Info:    No file OMLcmss.fd. on input line 5.
 
 LaTeX Font Warning: Font shape `OML/cmss/m/it' undefined
 (Font)              using `OML/cmm/m/it' instead
-(Font)              for symbol `textless' on input line 7.
+(Font)              for symbol `textless' on input line 5.
+
+
+Overfull \hbox (238.51479pt too wide) in paragraph at lines 5--7
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (205.66444pt too wide) in paragraph at lines 7--9
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][] 
+ []
+
+
+Overfull \hbox (41.41273pt too wide) in paragraph at lines 9--11
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (34.84267pt too wide) in paragraph at lines 11--13
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (15.13246pt too wide) in paragraph at lines 13--14
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
 
 ) [30
 
-] <screenCaptures/guiView.pdf, id=643, 560.0925pt x 710.655pt>
+] <screenCaptures/guiView.pdf, id=642, 560.0925pt x 710.655pt>
 File: screenCaptures/guiView.pdf Graphic file (type pdf)
 
 <use screenCaptures/guiView.pdf>
-Package pdftex.def Info: screenCaptures/guiView.pdf used on input line 173.
+Package pdftex.def Info: screenCaptures/guiView.pdf used on input line 138.
 (pdftex.def)             Requested size: 142.39865pt x 180.67499pt.
  [31
 
@@ -1150,7 +1203,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 156.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 156.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 156.
 Package rerunfilecheck Info: File `overView.out' has not changed.
-(rerunfilecheck)             Checksum: 75B4922C378735DF08BE85BD5BE67111;516.
+(rerunfilecheck)             Checksum: 150C2E9A0235803EBAEA0BBDC89E05D9;516.
 
 
 LaTeX Font Warning: Size substitutions with differences
@@ -1162,13 +1215,13 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 156.
  ) 
 Here is how much of TeX's memory you used:
- 17290 strings out of 493633
- 320236 string characters out of 3143378
- 449338 words of memory out of 3000000
- 20059 multiletter control sequences out of 15000+200000
+ 17233 strings out of 493633
+ 319714 string characters out of 3143378
+ 435332 words of memory out of 3000000
+ 20000 multiletter control sequences out of 15000+200000
  24312 words of font info for 92 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
- 51i,15n,66p,475b,1205s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 51i,15n,66p,475b,1179s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 ></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb>
 </usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb><
@@ -1185,10 +1238,10 @@ cal/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/loc
 al/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local
 /texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/t
 exlive/2011/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on overView.pdf (31 pages, 1035263 bytes).
+Output written on overView.pdf (31 pages, 1039325 bytes).
 PDF statistics:
- 743 PDF objects out of 1000 (max. 8388607)
- 657 compressed objects within 7 object streams
+ 742 PDF objects out of 1000 (max. 8388607)
+ 656 compressed objects within 7 object streams
  85 named destinations out of 1000 (max. 500000)
  147 words of extra memory for PDF output out of 10000 (max. 10000000)
 

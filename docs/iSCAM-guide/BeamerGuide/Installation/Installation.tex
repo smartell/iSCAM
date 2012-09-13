@@ -6,23 +6,23 @@
 \subsection[Source code]{Obtaining source code} % (fold)
 \label{sub:obtaining_source_code}
 
-\begin{frame}[containsverbatim]
-	\frametitle{Obtaining \iscam\ source code}
-	Source code available at:\\
-	\url{http://code.google.com/p/iscam-project/}
-	\vfill
-	Use subversion to checkout a copy
-	\vfill
-	\underline{On Mac \& Linux, in Terminal:}
-	\tiny
-	\begin{verbatim}
-		svn checkout http://iscam-project.googlecode.com/svn/trunk/			iscam-project-read-only
-	\end{verbatim}
-	\normalsize
-	\vfill
-	\underline{On Windows use a subversion client}
-	\url{http://tortoisesvn.net/}
-\end{frame}
+% \begin{frame}[containsverbatim]
+% 	\frametitle{Obtaining \iscam\ source code}
+% 	Source code available at:\\
+% 	\url{http://code.google.com/p/iscam-project/}
+% 	\vfill
+% 	Use subversion to checkout a copy
+% 	\vfill
+% 	\underline{On Mac \& Linux, in Terminal:}
+% 	\tiny
+% 	\begin{verbatim}
+% 		svn checkout http://iscam-project.googlecode.com/svn/trunk/			iscam-project-read-only
+% 	\end{verbatim}
+% 	\normalsize
+% 	\vfill
+% 	\underline{On Windows use a subversion client}
+% 	\url{http://tortoisesvn.net/}
+% \end{frame}
 
 \begin{frame}[containsverbatim]
 	\frametitle{Obtaining \iscam\ source code}
@@ -97,16 +97,22 @@
 	\vfill
 	
 	\begin{tiny}
-		
-
 	\begin{verbatim}
-		git clone --depth 1 git://github.com/smartell/iSCAM.git
-		
-		git clone --branch master --single-branch git://github.com/smartell/iSCAM.git
+		git clone  git://github.com/smartell/iSCAM.git
 	\end{verbatim}
 	\end{tiny}
 	\vfill
-	The above command will make a copy of the repository, including the directory structure, on your computer
+	The above command will make a copy of the repository, including the directory structure, on your computer. It will also copy all of the branches and branch history. You may not wish to do this.  If you wish to clone only a single branch (i.e. master), then the following should be done.
+	
+	\begin{tiny}
+	\begin{verbatim}
+		mkdir iSCAM-project
+		cd iSCAM-project
+		git init
+		git remote add -t master -f origin git://github.com/smartell/iSCAM.git
+		git checkout master
+	\end{verbatim}
+	\end{tiny}
 \end{frame}
 
 % subsection git (end)
