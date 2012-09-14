@@ -2,12 +2,12 @@
 
 %% STEP 1) SELECT THE THEM YOU WISH TO USE
 
-\usetheme{Goettingen} % My favorite!
+%\usetheme{Goettingen} % My favorite!
 %\usetheme{PaloAlto}
 %\usetheme{Hannover}
 %\usetheme{Madrid} 
 %\usetheme{Boadilla} % Pretty neat, soft color.
-%\usetheme{default}
+\usetheme{default}
 %\usetheme{Warsaw}
 %\usetheme{Bergen} % This template has nagivation on the left
 %\usetheme{Frankfurt} % Similar to the default 
@@ -29,21 +29,21 @@
 %
 
 %Custom Color theme
-\usepackage{color}
-\definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
-\definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
-\setbeamerfont{title}{size=\Huge}
-\setbeamercolor{structure}{fg=white}
-\setbeamertemplate{frametitle}[default][center]
-
-\setbeamercolor{normal text}{bg=black, fg=white}
-\setbeamertemplate{background canvas}[vertical shading]
-[bottom=bottomcolour, middle=middlecolour, top=black]
-
-\setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
-\setbeamerfont{frametitle}{size=\huge}
-
-
+% \usepackage{color}
+% \definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
+% \definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
+% \setbeamerfont{title}{size=\Huge}
+% \setbeamercolor{structure}{fg=white}
+% \setbeamertemplate{frametitle}[default][center]
+% 
+% \setbeamercolor{normal text}{bg=black, fg=white}
+% \setbeamertemplate{background canvas}[vertical shading]
+% [bottom=bottomcolour, middle=middlecolour, top=black]
+% 
+% \setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
+% \setbeamerfont{frametitle}{size=\huge}
+% 
+% 
 %end of color theme
 
 %iscam logo
@@ -86,11 +86,13 @@ University of [...] \\
 \end{frame}
 %
 \begin{frame}
-\frametitle{Motivation}
-\begin{block}
-{Why Beamer?}
-Does anybody need an introduction to Beamer? I don't think so.
-\end{block}
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[height=3in]{../FIGS/iscam_fig_Depletion.pdf}
+		\caption{caption}
+		\label{fig:FIGS_iscam_fig_Depletion}
+	\end{figure}
+	
 \end{frame}
 %
 \begin{frame}
