@@ -797,8 +797,8 @@ PRELIMINARY_CALCS_SECTION
   }
 
 RUNTIME_SECTION
-    maximum_function_evaluations 100,200,500,25000,25000
-    convergence_criteria 0.01,0.01,1.e-5,1.e-5
+    maximum_function_evaluations 200,400,500,25000,25000
+    convergence_criteria 0.01,0.01,1.e-3,1.e-5
 
 
 PROCEDURE_SECTION
