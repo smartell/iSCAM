@@ -1379,6 +1379,13 @@ FUNCTION calcFisheryObservations
 			   the expected proportions at age.*/
 				dvar_vector fa = mfexp(log_va);
 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
+				
+				/*
+				dvar_matrix alk(sage,nage,1,nbins) = ALK(la, cv*la, xbin)
+				
+				Lhat(i) = Chat *ALK; 
+				*/
+				
 			}
 			
 			
@@ -1650,10 +1657,10 @@ FUNCTION calc_objective_function
 	Likelihoods:
 		-1) likelihood of the catch data
 		-2) likelihood of the survey abundance index
-		-3) likelihood of the survey age comps
-		-4) likelihood of the fishery age comps
-		-5) likelihood for stock-recruitment relationship
-		-6) likelihood for fishery selectivities
+		-3) likelihood of age composition data 
+		-4) likelihood for stock-recruitment relationship
+		-5) likelihood for fishery selectivities
+		-6) 
 	*/
 	int i,j,k;
 	double o=1.e-10;
@@ -2897,7 +2904,29 @@ REPORT_SECTION
 		REPORT(bmsy);
 		REPORT(Umsy);
 	}
-		
+	/*
+	Stock status info
+	Bstatus = sbt/bmsy;
+	Fstatus = ft/fmsy; If fmsy > 0 
+	*/
+	if(bmsy>0)
+	{
+		dvector Bstatus=value(sbt/bmsy);
+		REPORT(Bstatus);
+	}
+	
+	dmatrix Fstatus(1,ngear,syr,nyr);
+	Fstatus.initialize();
+	for(k = 1; k <= nfleet; k++)
+	{
+		if(fmsy(k) >0 )
+		{
+			j    = ifleet(k);
+			Fstatus(j) = value(ft(j)/fmsy(k));
+		}
+	}
+	REPORT(Fstatus);
+	
 	//Parameter controls
 	dmatrix ctrl=theta_control;
 	REPORT(ctrl);
@@ -2930,6 +2959,14 @@ REPORT_SECTION
 		//adstring rep="iscam.ret"+str(retro_yrs);
 		//rename("iscam.rep",rep);
 		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
+		system(copyrep);
+	}
+
+	if(retro_yrs && last_phase() && PLATFORM =="Windows")
+	{
+		//adstring rep="iscam.ret"+str(retro_yrs);
+		//rename("iscam.rep",rep);
+		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
 		system(copyrep);
 	}
 	
@@ -3308,9 +3345,9 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include <statsLib.h>
+	//#include <statsLib.h>
 	#include "msy.cpp"
-	//#include "stats.cxx"
+	#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
@@ -3410,5 +3447,50 @@ FINAL_SECTION
 		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
 		system(bscmd);
 	}
+
+	if(last_phase() && PLATFORM =="Windows" && !retro_yrs)
+	{
+		adstring bscmd = "copy iscam.rep " +ReportFileName;
+		system(bscmd);
+		
+		bscmd = "copy iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
+		
+		bscmd = "copy iscam.std " + BaseFileName + ".std";
+		system(bscmd);
+		
+		bscmd = "copy iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
+		
+		if( mcmcPhase )
+		{
+			bscmd = "copy iscam.psv " + BaseFileName + ".psv";
+			system(bscmd);
+			
+			cout<<"Copied binary posterior sample values"<<endl;
+		}
+		
+		if( mcmcEvalPhase )
+		{		
+			bscmd = "copy iscam.mcmc " + BaseFileName + ".mcmc";
+			system(bscmd);
+		
+			bscmd = "copy sbt.mcmc " + BaseFileName + ".mcst";
+			system(bscmd);
+		
+			bscmd = "copy rt.mcmc " + BaseFileName + ".mcrt";
+			system(bscmd);
+		
+			cout<<"Copied MCMC Files"<<endl;
+		}
+	}
+
+	if( last_phase() && PLATFORM =="Windows" && retro_yrs )
+	{
+		//copy report file with .ret# extension for retrospective analysis
+		adstring bscmd = "copy iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
+		system(bscmd);
+	}
+
 
 

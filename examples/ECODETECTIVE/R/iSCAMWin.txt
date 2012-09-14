@@ -2,12 +2,6 @@ window name=hcamView title="iSCAM Viewer"
 
 menu nitems=1 label="File" font="Courier 10"
   menuitem label="Exit" font="Courier 10"             function=closeWin
-#menu nitems=2 label="View"
-#  menu nitems=1 label="R Code"
-#    menuitem label="GUI Functions"   function=.viewFile action=hcamViewFuns.r
-#  menuitem label="Window"            function=.viewFile action=hcamViewWin.txt
-#menu nitems=1 label="Help"
-#  menuitem label="About HCAM"        function=.viewFile action=hcamAbout.txt
 
 #----------------------------------------------------------------------------------#
 
@@ -25,7 +19,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		#-- widget 1a
 		object name=ifiles pady=2 padx=5 sticky=W font="Courier 10" rowshow=5 rowlabels=FALSE width="5 5 15 33" sticky=W
 		#-- widget 1b
-		#image file="iscamlogo.gif" sticky="E" subsample=2
+		#image file="./logo/iscamLogo.gif" sticky="E" subsample=2
 	
 	
 	#-- widget 2
@@ -46,7 +40,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		
 		
 		#-- widget 2b
-		grid 7 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=2
+		grid 8 1 toptitle="MPD Estimates" topfont="Courier bold 10" relief="raised" sticky=NW padx=5 pady=2
 		radio name=plotType value=biomass       text="Biomass"           function=.mpdView mode=character sticky=W
 		radio name=plotType value=depletion     text="Depletion"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=recruitment   text="Recruitment"       function=.mpdView mode=character sticky=W
@@ -54,6 +48,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		radio name=plotType value=mortality     text="Mortality"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=surveyfit     text="Survey(s)"         function=.mpdView mode=character sticky=W
 		radio name=plotType value=selectivity   text="Selectivities(s)"  function=.mpdView mode=character sticky=W
+		radio name=plotType value=ssbretro      text="SSB retrospective" function=.mpdView mode=character sticky=W
 		#radio buttons for residuals
 		#label text="Residuals" font="Courier bold 10" sticky=W
 		#radio name=plotType value=catchresid    text="Catch(es)"         function=.mpdView mode=character sticky=W
@@ -109,7 +104,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 	
 			
 	#-- widget 4
-	image file="iscamlogo.gif" sticky="SE" subsample=1 padx=1 pady=1
+	image file="./logo/iscamLogo.gif" sticky="SE" subsample=2 padx=1 pady=1
 	
 	##--------------------------------------------------------------------------------##	
 	##-- SYSTEM TAB                                                                 --##
@@ -120,7 +115,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 	grid 1 2
 	label text="Systems controls for running iSCAM" font="Courier bold 12" sticky=W
 	
-	image file="iscamlogo.gif" sticky="NE" subsample=1
+	image file="./logo/iscamLogo.gif" sticky="NE" subsample=2
 	
 	#-- widget 2
 	grid 3 2 toptitle="Simulation controls" topfont="Courier underline 10" \
@@ -146,7 +141,7 @@ notebook tabs="Results System Tools" name=nb width=520 height=600 \
 		Also tools\nfor constructing latex Tables." \
 		font="Courier 10" sticky=W
 	
-		image file="iscamlogo.gif" sticky="NE" subsample=1
+		image file="./logo/iscamLogo.gif" sticky="NE" subsample=2
 	
 	#-- widget 2
 	
