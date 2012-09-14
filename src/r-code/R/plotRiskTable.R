@@ -10,7 +10,7 @@
 	print(".plotRiskTable")
 	nRuns    <- nrow(hdr)
 	TACprobs <- NULL
-	
+	#browser()
 	plot.risk <- function(obj, ...)
 	{
 		#obj is a class object with x & y vectors
@@ -62,12 +62,12 @@
 				"P(U3+ > 20%)",        
 				"P(declining trend)")
 			
-			par(mfcol=c(2, 2), las=2, mar=c(4, 4, 1, 1))
+			par(mfcol=c(3, 2), las=2, mar=c(4, 4, 1, 1))
 			
 			# Decision table for Report
 			tac  <- unique(proj$tac)
 			TACprobs = c(tac, TACprobs)
-			icol = c(2, 3, 10, 11)
+			icol = c(2, 3, 4, 5, 6, 10)
 			for(j in icol)
 			{
 				O   <- list()
@@ -78,7 +78,7 @@
 				print(cbind(O$tac, O$py))
 				TACprobs = cbind(TACprobs, round(O$py, 3))
 			}
-			colnames(TACprobs)=c("TAC", ylbls)
+			colnames(TACprobs)=c("TAC", ylbls[icol])
 			print(TACprobs)			
 			
 			fn=paste(.TABLEDIR, "table:RiskTable",hdr$Stock[i],".tex", sep="")
