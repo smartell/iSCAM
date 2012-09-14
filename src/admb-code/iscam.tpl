@@ -2961,6 +2961,14 @@ REPORT_SECTION
 		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
 		system(copyrep);
 	}
+
+	if(retro_yrs && last_phase() && PLATFORM =="Windows")
+	{
+		//adstring rep="iscam.ret"+str(retro_yrs);
+		//rename("iscam.rep",rep);
+		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
+		system(copyrep);
+	}
 	
 	
   }
@@ -3439,5 +3447,50 @@ FINAL_SECTION
 		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
 		system(bscmd);
 	}
+
+	if(last_phase() && PLATFORM =="Windows" && !retro_yrs)
+	{
+		adstring bscmd = "copy iscam.rep " +ReportFileName;
+		system(bscmd);
+		
+		bscmd = "copy iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
+		
+		bscmd = "copy iscam.std " + BaseFileName + ".std";
+		system(bscmd);
+		
+		bscmd = "copy iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
+		
+		if( mcmcPhase )
+		{
+			bscmd = "copy iscam.psv " + BaseFileName + ".psv";
+			system(bscmd);
+			
+			cout<<"Copied binary posterior sample values"<<endl;
+		}
+		
+		if( mcmcEvalPhase )
+		{		
+			bscmd = "copy iscam.mcmc " + BaseFileName + ".mcmc";
+			system(bscmd);
+		
+			bscmd = "copy sbt.mcmc " + BaseFileName + ".mcst";
+			system(bscmd);
+		
+			bscmd = "copy rt.mcmc " + BaseFileName + ".mcrt";
+			system(bscmd);
+		
+			cout<<"Copied MCMC Files"<<endl;
+		}
+	}
+
+	if( last_phase() && PLATFORM =="Windows" && retro_yrs )
+	{
+		//copy report file with .ret# extension for retrospective analysis
+		adstring bscmd = "copy iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
+		system(bscmd);
+	}
+
 
 

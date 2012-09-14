@@ -12,16 +12,16 @@
 ##                      -3 beta         (p1=alpha,p2=beta)                   ##
 ##                      -4 gamma        (p1=alpha,p2=beta)                   ##
 ## ------------------------------------------------------------------------- ##
-## npar                                                                      ##
-7                                                                            ##
+## npar
+7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   7.1         -5.0    15.0     4       0      -5.0    15.0     #log_ro      ##
-   0.95         0.2     1.0     4       3       1.01    1.01    #steepness   ##
-  -1.06421     -5.0     0.0    -2       2      -1.06421 0.05    #log_m       ##
-   7.1         -5.0    15.0     1       0      -5.0    15.0     #log_avgrec  ##
-   7.20        -5.0    15.0    -1       0      -5.0    15.0     #log_recinit ##
-   0.50         0.001   0.999   3       3     125.0   125.0     #rho         ##
-   5.00         0.01  500.0     3       4       0.01    0.01    #vartheta    ##
+   7.5          0.0     20      4       0       0.0     20      #log_ro      ##
+   0.75         0.2     1.0     4       3       5.5     1.83    #steepness   ##
+  -1.049       -3.0     2.0     3       1      -1.00    0.05    #log_m       ##
+   7.0          0.0    20       1       0       0.0     20      #log_avgrec  ##
+   4.0          0.0    20       1       0       0.0     20      #log_recinit ##
+   0.35         0.01    0.99    3       3     64.65   120.06    #rho         ##
+   0.9          0.01   15.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -41,14 +41,14 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-1                               # -selectivity type ivector(isel_type) for gear
-3.5                             # -Age/length at 50% selectivity (logistic)
-0.25                            # -STD at 50% selectivity (logistic)
-0								# -No. of age nodes for each gear (0=ignore)
-0								# -No. of year nodes for 2d spline(0=ignore)
--2								# -Phase of estimation (-1 for fixed)
-2.0								# -Penalty wt for 2nd differences w=1/(2*sig^2)
-3.12							# -Penalty wt for dome-shaped w=1/(2*sig^2)
+2       2       3   6   6       # -selectivity type ivector(isel_type) for gear
+2.0		2.0     1   1   1       # -Age/length at 50% selectivity (logistic)
+0.15    0.15    0.25 0.25 0.25     # -STD at 50% selectivity (logistic)
+7		7		5	1	1		# -No. of age nodes for each gear (0=ignore)
+3		3		1	1	1		# -No. of year nodes for 2d spline(0=ignore)
+2		2		2	-1	-1		# -Phase of estimation (-1 for fixed)
+12.5	2.0		12.5	1	1	# -Penalty wt for 2nd differences w=1/(2*sig^2)
+1.00	50.0	12.5	1	1	# -Penalty wt for dome-shaped w=1/(2*sig^2)
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -60,31 +60,30 @@
 ##			1 - normal prior density for log(q)                              ##
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
-1					# -number of surveys (nits)
-0					# -prior type (see legend above)
-0					# -prior log(mean)
-0					# -prior sd
+3					# -number of surveys (nits)
+0	0	0			# -prior type (see legend above)
+0	0	0		 	# -prior log(mean)
+0.4	0	0			# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
-
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0     # 1  -verbose ADMB output (0=off, 1=on)                                ##
-1     # 2  -recruitment model (1=beverton-holt, 2=ricker)                    ##
-0.05  # 3  -std in observed catches in first phase.                          ##
-0.025 # 4  -std in observed catches in last phase.                           ##
-1     # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)                  ##
-0.01  # 6  -Minimum proportion to consider in age-comps for dmvlogistic      ##
-0.20  # 7  -Mean fishing mortality for regularizing the estimates of Ft      ##
-0.01  # 8  -std in mean fishing mortality in first phase                     ##
-5.00  # 9  -std in mean fishing mortality in last phase                      ##
--1	  # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)     ##
-0.1	  # 11 -std in deviations for natural mortality                          ##
-3	  # 12 -number of estimated nodes for deviations in natural mortality    ##
-0.0	  # 13 -fraction of total mortality that takes place prior to spawning   ##
-1     # 14 -switch for age-comp likelihood (1=dmvlogistic,2=dmultinom)       ##
-##                                                                           ##
+0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
+0.150       # 3  -std in observed catches in first phase.
+0.0707      # 4  -std in observed catches in last phase.
+0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
+0.02        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
+0.35        # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.02        # 8  -std in mean fishing mortality in first phase
+2.00        # 9  -std in mean fishing mortality in last phase
+3           # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
+0.02        # 11 -std in deviations for natural mortality
+12          # 12 -number of estimated nodes for deviations in natural mortality
+0.01        # 13 -fraction of total mortality that takes place prior to spawning
+1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+##
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)
 ## ------------------------------------------------------------------------- ##
