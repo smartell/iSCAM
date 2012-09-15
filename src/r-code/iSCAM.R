@@ -11,37 +11,45 @@
 #                                                                               #
 #                                                                               #
 #   DIRECTORY TREE                                                              #
-#   .                                                                           #
-#   |____iSCAM.R                                                                #
-#   |____iSCAMequil_soln.R                                                      #
-#   |____iSCAMViewTracker.txt                                                   #
-#   |____iSCAMWin.txt                                                           #
-#   |____logo                                                                   #
-#   | |____iscamLogo.eps                                                        #
-#   | |____iscamLogo.gif                                                        #
-#   | |____iscamLogo.png                                                        #
-#   | |____iscamLogoSmall.png                                                   #
-#   | |____logo.r                                                               #
-#   |____R                                                                      #
-#   | |____plotAgeCompResiduals.R                                               #
-#   | |____plotAgeComps.R                                                       #
-#   | |____plotBiomass.R                                                        #
-#   | |____plotCatch.R                                                          #
-#   | |____plotCatchResiduals.R                                                 #
-#   | |____plotDepletion.R                                                      #
-#   | |____plotIndex.R                                                          #
-#   | |____plotMarginalPosteriors.R                                             #
-#   | |____plotMeanWt.R                                                         #
-#   | |____plotMortality.R                                                      #
-#   | |____plotRecruitment.R                                                    #
-#   | |____plotRecruitmentResiduals.R                                           #
-#   | |____plotReferencePoints.R                                                #
-#   | |____plotSelectivity.R                                                    #
-#   | |____plotSSBretrospective.R                                               #
-#   | |____plotStockRecruitment.R                                               #
-#   | |____plotSurveyFit.R                                                      #
-#   | |____plotSurveyResiduals.R                                                #
-#   | |____read.admb.R                                                          #
+#    .                                                                          #
+#    |____.RData                                                                #
+#    |____.Rhistory                                                             #
+#    |____iSCAM.R                                                               #
+#    |____iSCAMequil_soln.R                                                     #
+#    |____iSCAMViewTracker.txt                                                  #
+#    |____iSCAMWin.txt                                                          #
+#    |____logo                                                                  #
+#    | |____iscamLogo.eps                                                       #
+#    | |____iscamLogo.gif                                                       #
+#    | |____iscamLogo.png                                                       #
+#    | |____iscamLogoSmall.png                                                  #
+#    | |____logo.r                                                              #
+#    |____R                                                                     #
+#    | |____.RData                                                              #
+#    | |____.Rhistory                                                           #
+#    | |____plotAgeCompResiduals.R                                              #
+#    | |____plotAgeComps.R                                                      #
+#    | |____plotBiomass.R                                                       #
+#    | |____plotCatch.R                                                         #
+#    | |____plotCatchResiduals.R                                                #
+#    | |____plotDepletion.R                                                     #
+#    | |____plotIndex.R                                                         #
+#    | |____plotMarginalPosteriors.R                                            #
+#    | |____plotMeanWt.R                                                        #
+#    | |____plotMortality.R                                                     #
+#    | |____plotNaturalMortality.R                                              #
+#    | |____plotRecruitment.R                                                   #
+#    | |____plotRecruitmentResiduals.R                                          #
+#    | |____plotReferencePoints.R                                               #
+#    | |____plotRiskTable.R                                                     #
+#    | |____plotSelectivity.R                                                   #
+#    | |____plotSSBretrospective.R                                              #
+#    | |____plotStockRecruitment.R                                              #
+#    | |____plotStockStatus.R                                                   #
+#    | |____plotSurveyFit.R                                                     #
+#    | |____plotSurveyResiduals.R                                               #
+#    | |____read.admb.R                                                         #
+#                                                                               #
 #                                                                               #
 #                                                                               #
 #                                                                               #
@@ -62,9 +70,10 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 .VIEWOMA  <- c(2, 2, 1, 1)  # Multi-panel plots: outer margin sizes c(b,l,t,r).
 .VIEWLAS  <- 1
 
-.REPFILES <- list.files(pattern="\\.rep")
-.VIEWTRCK <- "iSCAMViewTracker.txt"  # File containing list of report files.
-.TABLEDIR <- "../TABLES/"
+#.REPFILES   <- list.files(pattern="\\.rep")
+.VIEWTRCK   <- "iSCAMViewTracker.txt"  # File containing list of report files.
+.TABLEDIR   <- "../TABLES/"
+.FIGUREDIR  <- "../FIGS/"
 
 
 
@@ -82,7 +91,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 	
 	#Close any open graphics devices
 	graphics.off()
-	closeWin("iscam")
+	closeWin(win)
 	
 	#Create a file list object for selection
 	trckExists <- file.exists( .VIEWTRCK )
@@ -115,15 +124,43 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 	#Create new window based on iscamWin.txt
 	createWin("iscamWin.txt")
 	
+	
 	#Default Graphic directory
 	wdir = paste(getwd(), sep="")
 	setWinVal(list(graphicDirectory=wdir))
 	
 }
 
+.gui2	<- function(win)
+{
+	require(PBSmodelling)
+	
+	#Create a file list object for selection
+	trckExists <- file.exists( .VIEWTRCK )
+	if (trckExists)
+	{
+		tmp <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
+		cat( "MSG (.hCamViewSetup): Viewer tracking file ",.VIEWTRCK, " found.\n" )
+		ifiles <- tmp
+	}
+	else
+	{
+		ifiles=data.frame("Report Files"=.REPFILES,Select=TRUE)
+	}
+	
+	
+	
+	
+	closeWin(win)
+	createWin("iscamWin2.txt")
+	
+	setWinVal(list(txtFigDir=.FIGUREDIR))
+}
+
 guiView	<- function()
 {
-	.iscamViewSetup("iscam")
+	#.iscamViewSetup("iscam")
+	.gui2("iSCAMView")
 }
 
 
@@ -335,6 +372,22 @@ guiView	<- function()
 	cat("Latex table saved as", fn)
 }
 
+getRepObj   <- function(fileName)
+{
+	print("getRepObj")
+	cat(fileName)
+	repObj	<- read.admb(fileName)
+	#repObj$stock = hdr$Stock[i]
+	repObj$Control.File = fileName
+	mcfile=paste(fileName,".mcmc", sep="")
+	if(file.exists(mcfile))
+		repObj$mcmc = read.table( mcfile, header=TRUE )
+	else
+		cat("NB. MCMC file missing.")
+	
+	return(repObj)
+}
+
 .mpdView	<- function()
 {
 	print(".mpdView")
@@ -352,59 +405,59 @@ guiView	<- function()
 	#hdr$Report.File contains the vector of report files to examine.
 
 	## TODO auto layout stuff.
-	if ( autoLayout )
-	{
-		if (nRuns < 4 )
-		{
-			winCols <- 1
-			winRows <- nRuns
-		}
-		else if( nRuns >3 && nRuns<=6 )
-		{
-			winCols <- 2
-			winRows <- 3
-		}
-		
-		if (plotType=="selectivity")
-		{
-			winCols <- 1
-			winRows <- 1
-		}
-	}
-	
-	newPlot <- TRUE
-	if ( !autoLayout )
-	{
-		winCols <- ncols
-		winRows <- nrows
-		
-		## Determin if newPlot should be set to TRUE
-		# This sets newPlot to TRUE if current plot panel is the last row and
-	    # last column of the layout.
-		newPlot <- FALSE
-	    mfg <- par( "mfg" )
-	    if ( (mfg[1]==mfg[3]) && (mfg[2]==mfg[4]) )
-	      newPlot <- TRUE
-	    
-	}
-	
-	## Update the gui
-	guiChanges$ncols = winCols
-	guiChanges$nrows = winRows
-	setWinVal( guiChanges )
-	
-	
-	## set graphical parameters
-	if (newPlot)
-	{
-		if ( plotbyrow )
-			par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
-		else
-			par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
-	}
+	# if ( autoLayout )
+	# 	{
+	# 		if (nRuns < 4 )
+	# 		{
+	# 			winCols <- 1
+	# 			winRows <- nRuns
+	# 		}
+	# 		else if( nRuns >3 && nRuns<=6 )
+	# 		{
+	# 			winCols <- 2
+	# 			winRows <- 3
+	# 		}
+	# 		
+	# 		if (plotType=="selectivity")
+	# 		{
+	# 			winCols <- 1
+	# 			winRows <- 1
+	# 		}
+	# 	}
+	# 	
+	# 	newPlot <- TRUE
+	# 	if ( !autoLayout )
+	# 	{
+	# 		winCols <- ncols
+	# 		winRows <- nrows
+	# 		
+	# 		## Determin if newPlot should be set to TRUE
+	# 		# This sets newPlot to TRUE if current plot panel is the last row and
+	# 	    # last column of the layout.
+	# 		newPlot <- FALSE
+	# 	    mfg <- par( "mfg" )
+	# 	    if ( (mfg[1]==mfg[3]) && (mfg[2]==mfg[4]) )
+	# 	      newPlot <- TRUE
+	# 	    
+	# 	}
+	# 	
+	# 	## Update the gui
+	# 	guiChanges$ncols = winCols
+	# 	guiChanges$nrows = winRows
+	# 	setWinVal( guiChanges )
+	# 	
+	# 	
+	# 	## set graphical parameters
+	# 	if (newPlot)
+	# 	{
+	# 		if ( plotbyrow )
+	# 			par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
+	# 		else
+	# 			par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
+	# 	}
 	
 	## TODO Loop over runs and plot corresponding graph
-	
+	par(las=1)
 	for(i in 1:nRuns)
 	{
 		# Read the report file
@@ -433,7 +486,7 @@ guiView	<- function()
 	
 		if ( plotType=="survey" )
 		{
-			.plotIndex( repObj, annotate=annotate )
+			.plotIndex( repObj, annotate=TRUE )
 		}
 	
 		if ( plotType=="biomass" )
@@ -448,6 +501,7 @@ guiView	<- function()
 	
 		if ( plotType=="surveyfit" )
 		{
+			cat("plotSurveyFit\n")
 			.plotSurveyfit( repObj, annotate=TRUE )
 		}
 	
@@ -565,28 +619,31 @@ guiView	<- function()
 			.plotSimulationSummary( admbObj )
 		}
 	
-		if(gLetter)
-		{
-			mfg=par("mfg")
-			if(mfg[1]==1 && mfg[2]==1) ix=1
-			if(mfg[1]==2 && mfg[2]==1) ix=2
-			if(mfg[1]==1 && mfg[2]==2) ix=3
-			if(mfg[1]==2 && mfg[2]==2) ix=4
-			gletter(ix)
-		}
+		# if(gLetter)
+		# {
+		# 	mfg=par("mfg")
+		# 	if(mfg[1]==1 && mfg[2]==1) ix=1
+		# 	if(mfg[1]==2 && mfg[2]==1) ix=2
+		# 	if(mfg[1]==1 && mfg[2]==2) ix=3
+		# 	if(mfg[1]==2 && mfg[2]==2) ix=4
+		# 	gletter(ix)
+		# }
 	}  #end of loop over nRuns
 	
 	## Saving PDF of figure in current device
-	if(savePDF)
-	{
-		#if(graphicFileName=="Graphics File Name or File Prefix")
-		#	graphicFileName = "iSCAM"
-		#filePrefix=graphicFileName
-		#dev.copy2pdf( file=paste( filePrefix,"fig",plotType,".pdf",sep="" ) )
-		setWinVal(c(figFileName=plotType))
-		.saveGraphic()
-	}
+	# if(savePDF)
+	# 	{
+	# 		#if(graphicFileName=="Graphics File Name or File Prefix")
+	# 		#	graphicFileName = "iSCAM"
+	# 		#filePrefix=graphicFileName
+	# 		#dev.copy2pdf( file=paste( filePrefix,"fig",plotType,".pdf",sep="" ) )
+	# 		setWinVal(c(figFileName=plotType))
+	# 		.saveGraphic()
+	# 	}
 }
+
+
+
 
 .plotSimulationSummary	<- function( admbObj )
 {
@@ -1808,7 +1865,7 @@ guiView	<- function()
 ##}
 ##
 
-
+cat("Type: \n guiView()\n to start the iSCAM gui")
 #######################
 #Type: guiView()
 #to start gui
