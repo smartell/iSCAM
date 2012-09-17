@@ -95,5 +95,5 @@ grid 1 1 relief="flat" pady=5 padx=5
 	#-------------------------------------------------------------------------#
 	
 	
-	label b
-	label c
+	label "Under Construction"
+	label "Under Construction"

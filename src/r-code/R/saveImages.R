@@ -7,6 +7,9 @@
 	hdr     <- ifiles[ifiles$Select, ]
 	nSelect <- nrow(hdr)
 	
+	# Figure Directory
+	.FIGUREDIR <<-  txtFigDir
+	
 	for( i in 1:nSelect )
 	{
 		# Obtain the report Object for plotting
@@ -18,6 +21,8 @@
 			.pngPlots( repObj )
 		}
 	}
+	
+	graphics.off()
 }
 
 .pngPlots <- function( repObj )
@@ -113,6 +118,36 @@
 	gfn  <- paste(fileprefix, "StockStatus.png", sep="")
 	png(gfn, width=W, height=H, res=Res)
 	.plotStockStatus ( repObj )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "MarginalPosteriors.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotMarginalPosteriors( repObj )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "ReferencePoints.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotReferencePoints( repObj )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "SbPosterior.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotSbtPosterior( repObj )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "SbDepletionPosterior.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotSbtPosterior( repObj, TRUE,  annotate=TRUE )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "MCMCtrace.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotMCMCtrace( repObj )
+	dev.off()
+	
+	gfn  <- paste(fileprefix, "MCMCpairs.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotMCMCpairs ( repObj )
 	dev.off()
 	
 	

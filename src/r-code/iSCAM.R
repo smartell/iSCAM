@@ -381,7 +381,11 @@ getRepObj   <- function(fileName)
 	repObj$Control.File = fileName
 	mcfile=paste(fileName,".mcmc", sep="")
 	if(file.exists(mcfile))
+	{
 		repObj$mcmc = read.table( mcfile, header=TRUE )
+		mcfile=paste(fileName,".mcst", sep="")
+		repObj$mcsbt = read.table( mcfile, header=FALSE )
+	}
 	else
 		cat("NB. MCMC file missing.")
 	
@@ -596,19 +600,19 @@ getRepObj   <- function(fileName)
 			#admbObj = read.admb( "iscam" )
 			#admbObj$mcsbt = read.table( "sbt.mcmc" )
 			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			.plotSbtPosterior( repObj, TRUE, annotate=annotate )
+			.plotSbtPosterior( repObj, TRUE, annotate=TRUE )
 		}
 	
 		if ( plotType=="traceplot" )
 		{
 			#admbObj = read.admb( "iscam" )
 			#admbObj$mcmc = read.table( "iscam.mcmc", header=TRUE )
-			.mcmcTrace( repObj )
+			.plotMCMCtrace( repObj )
 		}
 		
 		if ( plotType=="mcmcpairs" )
 		{
-			.mcmcPairs( repObj )
+			.plotMCMCpairs( repObj )
 		}
 	
 		if ( plotType=="simplot" )
@@ -763,189 +767,190 @@ getRepObj   <- function(fileName)
 # 	
 # }
 
-.plotSbtPosterior	<- function( admbObj, depletion=FALSE, annotate=FALSE )
-{
-	## Median and 95% CI for spawning biomass or depletion
-	print("	.plotSbtPosterior")
-	with( admbObj, {
-		xx <- yr
-		yy <- t(apply( mcsbt, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
-		
-		bo <- quantile( mcmc$bo, probs=c(0.5, 0.025, 0.975) )
-		bmsy <- quantile( mcmc$bmsy, probs=c(0.5, 0.025, 0.975) )
-		yl="Spawning biomass (1000 t)"
-		
-		if(depletion)
-		{
-			yy <- t(apply( mcsbt/mcmc$bo, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
-			yl = "Spawning biomass depletion"
-		}
-			
+# .plotSbtPosterior	<- function( admbObj, depletion=FALSE, annotate=FALSE )
+# {
+# 	## Median and 95% CI for spawning biomass or depletion
+# 	print("	.plotSbtPosterior")
+# 	with( admbObj, {
+# 		xx <- yr
+# 		yy <- t(apply( mcsbt, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
+# 		
+# 		bo <- quantile( mcmc$bo, probs=c(0.5, 0.025, 0.975) )
+# 		bmsy <- quantile( mcmc$bmsy, probs=c(0.5, 0.025, 0.975) )
+# 		yl="Spawning biomass (1000 t)"
+# 		
+# 		if(depletion)
+# 		{
+# 			yy <- t(apply( mcsbt/mcmc$bo, 2, quantile, probs=c(0.5, 0.025, 0.975) ))
+# 			yl = "Spawning biomass depletion"
+# 		}
+# 			
+# 
+# 		matplot(xx, yy, type="n", xlab="Year", 
+# 			ylab=yl, axes=FALSE, 
+# 			ylim=c(0, 1.0*max(yy)), main=paste(stock) )
+# 		
+# 		axis( side=1 )
+# 		axis( side=2, las=.VIEWLAS )
+# 		box()
+# 		
+# 		polygon(c(xx, rev(xx)), 
+# 			c(yy[,2],rev(yy[,3])), 
+# 			col=colr("red",0.25), border=NA)
+# 		print(yy)
+# 		lines(xx, yy[,1], lwd=1.5)
+# 		#matlines(xx, yy)
+# 		
+# 		if(!depletion)
+# 		{
+# 			points(min(xx)-0.4,bo[1])
+# 			arrows(min(xx)-0.4,bo[2], min(xx)-0.4, bo[3], length=0)
+# 		}
+# 		
+# 		if ( annotate && depletion )
+# 		{
+# 			#mfg <- par( "mfg" )
+# 			#if ( mfg[1]==1 && mfg[2]==1 )
+# 			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
+# 			#	"Upper stock reference","Limit reference point"),
+# 			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
+# 			
+# 			#Delinate critical zone,  cautious zone, healthy zone.
+# 			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy[1]/bo[1],col=colr("red",0.1), border=NA)
+# 			rect(min(xx)-5,0.4*bmsy[1]/bo[1],max(xx)+5,0.8*bmsy[1]/bo[1],col=colr("yellow",0.1),border=NA)
+# 			rect(min(xx)-5,0.8*bmsy[1]/bo[1],max(xx)+5,1.5,col=colr("green",0.1), border=NA)
+# 		}
+# 		
+# 		
+# 	})
+# }
 
-		matplot(xx, yy, type="n", xlab="Year", 
-			ylab=yl, axes=FALSE, 
-			ylim=c(0, 1.0*max(yy)), main=paste(stock) )
-		
-		axis( side=1 )
-		axis( side=2, las=.VIEWLAS )
-		box()
-		
-		polygon(c(xx, rev(xx)), 
-			c(yy[,2],rev(yy[,3])), 
-			col=colr("red",0.25), border=NA)
-		print(yy)
-		lines(xx, yy[,1], lwd=1.5)
-		#matlines(xx, yy)
-		
-		if(!depletion)
-		{
-			points(min(xx)-0.4,bo[1])
-			arrows(min(xx)-0.4,bo[2], min(xx)-0.4, bo[3], length=0)
-		}
-		
-		if ( annotate && depletion )
-		{
-			#mfg <- par( "mfg" )
-			#if ( mfg[1]==1 && mfg[2]==1 )
-			#legend( "top",legend=c( "Spawning biomass","MSY depletion level",
-			#	"Upper stock reference","Limit reference point"),
-			#	bty='n',lty=c(1,2,2,2),lwd=c(1,rlvl),pch=-1,ncol=2 )
-			
-			#Delinate critical zone,  cautious zone, healthy zone.
-			rect(min(xx)-5,-0.5,max(xx)+5,0.4*bmsy[1]/bo[1],col=colr("red",0.1), border=NA)
-			rect(min(xx)-5,0.4*bmsy[1]/bo[1],max(xx)+5,0.8*bmsy[1]/bo[1],col=colr("yellow",0.1),border=NA)
-			rect(min(xx)-5,0.8*bmsy[1]/bo[1],max(xx)+5,1.5,col=colr("green",0.1), border=NA)
-		}
-		
-		
-	})
-}
+# .plotMCMCpairs	<- function( admbObj )
+# {
+# 	## pairs plot of mcmc samples for theta
+# 	## code kindly stolen from ARK.
+# 	panel.mcmc <- function( x,y,z=modes )
+#   {
+# 	xMean <- mean( x,na.rm=T )
+#     yMean <- mean( y,na.rm=T )
+# 	points( x,y,pch=16,cex=0.5,col=colr("black", 0.15) )
+# 	abline( h=yMean,v=xMean,col="blue",lty=3 )
+# 	points( xMean,yMean, bg="cyan", pch=21,cex=1.25 )
+# 	if ( !is.null(modes) )
+#    	{
+#       # This is logic to figure out what "pair" is being plotted.
+#       # The modal estimates are the first row of the mcmcObj.
+#       # The par()$mfg calls finds the current row and column indices of
+#       # the panel being plotted.
+# 
+# 		xMode <- z[ par()$mfg[2] ]
+#     	yMode <- z[ par()$mfg[1] ]
+# 		points( xMode,yMode, bg="red", pch=22, cex=1.25 )
+#     }
+#   }
+# 
+#   panel.hist <- function( x,... )
+#   {
+#     # Histograms for diagonal of pairs plot (from PBS Modelling CCA).
+# 	  usr <- par("usr")
+#       on.exit( par(usr) )
+# 	  h <- hist( x, breaks="Sturges", plot=FALSE )
+# 	  breaks <- h$breaks
+#       nB <- length(breaks)
+# 	  y <- h$counts
+#       y <- y / sum(y)
+# 	  par( usr = c(usr[1:2], 0, max(y)*1.5) )
+# 	  rect( breaks[-nB], 0, breaks[-1], y, col="#FFD18F" )
+#       box()
+#   }
+# 
+#   # Find the active parameters.  If the chain is all equal, then the parameter
+#   # was fixed in the model configuration.  This gets a Boolean vector that
+#   # indicates which columns have fixed values.
+#   mcmcObj <- admbObj$mcmc[, 1:11]
+#   iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
+#   nPars <- sum( iPars )     # Number of active parameters in mcmc output.
+# 
+#   tmp <- mcmcObj[ ,iPars ]
+#   tmpNames <- names( tmp )
+# 
+#   modes <- mcmcObj[1,]
+#   pairs( tmp, panel=panel.mcmc, diag.panel=panel.hist, gap=0 )
+#   mtext(admbObj$stock, side=3, outer=T, line=-1.5)
+#   
+# }
 
-.mcmcPairs	<- function( admbObj )
-{
-	## pairs plot of mcmc samples for theta
-	## code kindly stolen from ARK.
-	panel.mcmc <- function( x,y,z=modes )
-  {
-	xMean <- mean( x,na.rm=T )
-    yMean <- mean( y,na.rm=T )
-	points( x,y,pch=16,cex=0.5,col=colr("black", 0.15) )
-	abline( h=yMean,v=xMean,col="blue",lty=3 )
-	points( xMean,yMean, bg="cyan", pch=21,cex=1.25 )
-	if ( !is.null(modes) )
-   	{
-      # This is logic to figure out what "pair" is being plotted.
-      # The modal estimates are the first row of the mcmcObj.
-      # The par()$mfg calls finds the current row and column indices of
-      # the panel being plotted.
-
-		xMode <- z[ par()$mfg[2] ]
-    	yMode <- z[ par()$mfg[1] ]
-		points( xMode,yMode, bg="red", pch=22, cex=1.25 )
-    }
-  }
-
-  panel.hist <- function( x,... )
-  {
-    # Histograms for diagonal of pairs plot (from PBS Modelling CCA).
-	  usr <- par("usr")
-      on.exit( par(usr) )
-	  h <- hist( x, breaks="Sturges", plot=FALSE )
-	  breaks <- h$breaks
-      nB <- length(breaks)
-	  y <- h$counts
-      y <- y / sum(y)
-	  par( usr = c(usr[1:2], 0, max(y)*1.5) )
-	  rect( breaks[-nB], 0, breaks[-1], y, col="#FFD18F" )
-      box()
-  }
-
-  # Find the active parameters.  If the chain is all equal, then the parameter
-  # was fixed in the model configuration.  This gets a Boolean vector that
-  # indicates which columns have fixed values.
-  mcmcObj <- admbObj$mcmc[, 1:11]
-  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
-  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
-
-  tmp <- mcmcObj[ ,iPars ]
-  tmpNames <- names( tmp )
-
-  modes <- mcmcObj[1,]
-  pairs( tmp, panel=panel.mcmc, diag.panel=panel.hist, gap=0 )
-  mtext(admbObj$stock, side=3, outer=T, line=-1.5)
-  
-}
-
-.mcmcTrace	<- function( admbObj, label=NULL )
-{
-	## this function examines the trace plots for the
-	## estimated leading parameters
-	print("	.mcmcTrace")
-	op=par(no.readonly=T)
-	guiInfo <- getWinVal(scope="L")
-	if ( !autoLayout )
-	{
-		winCols <- ncols
-		winRows <- nrows
-	}
-	else
-	{
-		winCols <- 3
-		winRows <- 4
-	}
-	
-	## set graphical parameters
-	if ( plotbyrow )
-		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
-	else
-		par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
-	
-	#par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 2, 1, 0), mfcol=c(3, 3))
-	plotTrace <- function( obj )
-	{
-	  # Input "obj" is a VECTOR of MCMC samples.
-	  # Produces one panel trace plot.
-
-	  nSample <- length( obj )
-	  plot( c(1:nSample), obj, type="n", axes=FALSE, xlab="", ylab="" )
-	  points( c(1:nSample),obj, cex=0.5, pch=20, col="darkgray" )
-
-	  lines( lowess( c(1:nSample),obj,f=1/4), lty=1, lwd=1 )
-	  abline( h=mean(obj), lty=2 )
-
-	  # Plot MPD point (1st element).
-	  points( 1,obj[1], cex=1.0, pch=16, col="green" )
-	  points( 1,obj[1], cex=1.0, pch=1 )    
-
-	  axis( side=1 )
-	  axis( side=2 )
-	  box()
-	}
-  
-	with(admbObj, {
-	  # Find the active parameters.  If the chain is all equal, then the parameter
-	  # was fixed in the model configuration.  This gets a Boolean vector that
-	  # indicates which columns have fixed values.
-	  mcmcObj=mcmc[, 1:11]
-	  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
-	  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
-
-	  tmp <- mcmcObj[ ,iPars ]
-	  tmpNames <- names( tmp )
-	
-	  for ( i in 1:ncol(tmp) )
-	  {
-	    plotTrace( tmp[,i] )
-		title(ylab=tmpNames[i], line=2)
-		print(tmpNames[i])
-	  }
-
-	  mtext(c("Sample", "Parameter",paste(stock)), c(1, 2, 3), 
-			outer=T, line=c(-1,0, -1), las=0)
-	  
-	})
-	par(op)
-}
+# Deprecated
+# .mcmcTrace	<- function( admbObj, label=NULL )
+# {
+# 	## this function examines the trace plots for the
+# 	## estimated leading parameters
+# 	print("	.mcmcTrace")
+# 	op=par(no.readonly=T)
+# 	guiInfo <- getWinVal(scope="L")
+# 	if ( !autoLayout )
+# 	{
+# 		winCols <- ncols
+# 		winRows <- nrows
+# 	}
+# 	else
+# 	{
+# 		winCols <- 3
+# 		winRows <- 4
+# 	}
+# 	
+# 	## set graphical parameters
+# 	if ( plotbyrow )
+# 		par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
+# 	else
+# 		par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
+# 	
+# 	#par(las=1,mar=c(5, 4, 1, 1), oma=c(1, 2, 1, 0), mfcol=c(3, 3))
+# 	plotTrace <- function( obj )
+# 	{
+# 	  # Input "obj" is a VECTOR of MCMC samples.
+# 	  # Produces one panel trace plot.
+# 
+# 	  nSample <- length( obj )
+# 	  plot( c(1:nSample), obj, type="n", axes=FALSE, xlab="", ylab="" )
+# 	  points( c(1:nSample),obj, cex=0.5, pch=20, col="darkgray" )
+# 
+# 	  lines( lowess( c(1:nSample),obj,f=1/4), lty=1, lwd=1 )
+# 	  abline( h=mean(obj), lty=2 )
+# 
+# 	  # Plot MPD point (1st element).
+# 	  points( 1,obj[1], cex=1.0, pch=16, col="green" )
+# 	  points( 1,obj[1], cex=1.0, pch=1 )    
+# 
+# 	  axis( side=1 )
+# 	  axis( side=2 )
+# 	  box()
+# 	}
+#   
+# 	with(admbObj, {
+# 	  # Find the active parameters.  If the chain is all equal, then the parameter
+# 	  # was fixed in the model configuration.  This gets a Boolean vector that
+# 	  # indicates which columns have fixed values.
+# 	  mcmcObj=mcmc[, 1:11]
+# 	  iPars <- apply( mcmcObj,2,function(x) { sum(diff(x))!=0.0 } )
+# 	  nPars <- sum( iPars )     # Number of active parameters in mcmc output.
+# 
+# 	  tmp <- mcmcObj[ ,iPars ]
+# 	  tmpNames <- names( tmp )
+# 	
+# 	  for ( i in 1:ncol(tmp) )
+# 	  {
+# 	    plotTrace( tmp[,i] )
+# 		title(ylab=tmpNames[i], line=2)
+# 		print(tmpNames[i])
+# 	  }
+# 
+# 	  mtext(c("Sample", "Parameter",paste(stock)), c(1, 2, 3), 
+# 			outer=T, line=c(-1,0, -1), las=0)
+# 	  
+# 	})
+# 	par(op)
+# }
 
 
 # Deprecated
