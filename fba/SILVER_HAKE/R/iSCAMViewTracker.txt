@@ -4,6 +4,7 @@
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
 FALSE,RunC, "Sliver Hake 4VWX",../DATA/ModelC/SilverHake4VWX
-TRUE,RunD, "Sliver Hake 4VWX",../DATA/ModelD/SilverHake4VWX
-TRUE,RunE, "Sliver Hake 4VWX",../DATA/ModelE/SilverHake4VWX
-TRUE,RunF, "Sliver Hake 4VWX",../DATA/ModelF/SilverHake4VWX
+TRUE,BIO, "Sliver Hake 4VWX",../DATA/BIO/SilverHake4VWX
+FALSE,RunD, "Sliver Hake 4VWX",../DATA/ModelD/SilverHake4VWX
+FALSE,RunE, "Sliver Hake 4VWX",../DATA/ModelE/SilverHake4VWX
+FALSE,RunF, "Sliver Hake 4VWX",../DATA/ModelF/SilverHake4VWX

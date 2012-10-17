@@ -328,6 +328,13 @@ DATA_SECTION
 		}
 		cout<<"Last row of the relative abundance data\n"<<survey_data(nit)(nit_nobs(nit))<<endl;
 		cout<<"OK after relative abundance index"<<endl;
+		/*Normalize survey weights so estimated rho parameter is consistent with sd(epsilon)/sd(rec_devs)*/
+		double mean_it_wt;
+		mean_it_wt = mean(it_wt);
+		for(i=1;i<=nit;i++)
+		{
+			it_wt(i) = it_wt(i)/mean_it_wt;
+		}
 	END_CALCS
 	
 	
