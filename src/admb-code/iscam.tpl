@@ -74,6 +74,13 @@
 //--             - modified the following routines:                            --//
 //--             - calcFisheryObservations                                     --//
 //--             - calcTotalMortality                                          --//
+//--                                                                           --//
+//-- Oct 31,2012 - added penalty to time-varying changes in selex for          --//
+//--             - isel_type 4 and 5 cases in the objective function.          --//
+//--             - Requires and additional input in the control file.          --//
+//--                                                                           --//
+//--                                                                           --//
+//--                                                                           --//
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
 //--                                                                           --//
