@@ -74,6 +74,13 @@
 //--             - modified the following routines:                            --//
 //--             - calcFisheryObservations                                     --//
 //--             - calcTotalMortality                                          --//
+//--                                                                           --//
+//-- Oct 31,2012 - added penalty to time-varying changes in selex for          --//
+//--             - isel_type 4 and 5 cases in the objective function.          --//
+//--             - Requires and additional input in the control file.          --//
+//--                                                                           --//
+//--                                                                           --//
+//--                                                                           --//
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
 //--                                                                           --//
@@ -328,6 +335,13 @@ DATA_SECTION
 		}
 		cout<<"Last row of the relative abundance data\n"<<survey_data(nit)(nit_nobs(nit))<<endl;
 		cout<<"OK after relative abundance index"<<endl;
+		/*Normalize survey weights so estimated rho parameter is consistent with sd(epsilon)/sd(rec_devs)*/
+		double mean_it_wt;
+		mean_it_wt = mean(it_wt);
+		for(i=1;i<=nit;i++)
+		{
+			it_wt(i) = it_wt(i)/mean_it_wt;
+		}
 	END_CALCS
 	
 	
@@ -520,8 +534,9 @@ DATA_SECTION
 	init_vector age_nodes(1,ngear);		//No. of age-nodes for bicubic spline.
 	init_vector yr_nodes(1,ngear);		//No. of year-nodes for bicubic spline.
 	init_ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
-	init_vector sel_2nd_diff_wt(1,ngear);	//Penalty weight for 2nd difference in selectivity.
-	init_vector sel_dome_wt(1,ngear);		//Penalty weight for dome-shaped selectivity.
+	init_vector sel_2nd_diff_wt(1,ngear);	   //Penalty weight for 2nd difference in selectivity.
+	init_vector sel_dome_wt(1,ngear);		   //Penalty weight for dome-shaped selectivity.
+	init_vector sel_2nd_diff_wt_time(1,ngear); //Penalty weight for 2nd difference in time-varying selectivity.
 	!! COUT(isel_type);
 	!! COUT(sel_dome_wt);
 
@@ -641,7 +656,7 @@ DATA_SECTION
 	
 	int nf;
 	
-	ivector ilvec(1,6);
+	ivector ilvec(1,7);
 	!!ilvec=ngear;			//number of fisheries
 	!!ilvec(2)=nit;			//number of surveys
 	!!ilvec(3)=na_gears;	//number of age-comps
@@ -757,7 +772,7 @@ PARAMETER_SECTION
 	vector avg_log_sel(1,ngear);//conditional penalty for objective function
 	vector log_m_devs(syr+1,nyr);// log deviations in natural mortality
 	
-	matrix nlvec(1,6,1,ilvec);	//matrix for negative loglikelihoods
+	matrix nlvec(1,7,1,ilvec);	//matrix for negative loglikelihoods
 	
 	//matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	//matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
@@ -1659,13 +1674,13 @@ FUNCTION calc_objective_function
 		-2) likelihood of the survey abundance index
 		-3) likelihood of age composition data 
 		-4) likelihood for stock-recruitment relationship
-		-5) likelihood for fishery selectivities
-		-6) 
+		-5) penalized likelihood for fishery selectivities
+		-6) penalized likelihood for fishery selectivities
 	*/
 	int i,j,k;
 	double o=1.e-10;
 
-	dvar_vector lvec(1,6); lvec.initialize();
+	dvar_vector lvec(1,7); lvec.initialize();
 	nlvec.initialize();
 	
 	//1) likelihood of the catch data (retro)
@@ -1743,7 +1758,8 @@ FUNCTION calc_objective_function
 	//5-6) likelihood for selectivity paramters
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k))){
+		if(active(sel_par(k)))
+		{
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
 			if( isel_type(k)!=1 && 
@@ -1754,8 +1770,8 @@ FUNCTION calc_objective_function
 				for(i=syr;i<=nyr;i++)
 				{
 					//curvature in selectivity parameters
-					dvar_vector df2=first_difference(first_difference(log_sel(k)(i)));
-					nlvec(5,k)+=sel_2nd_diff_wt(k)/(nage-sage+1)*norm2(df2);
+					dvar_vector df2 = first_difference(first_difference(log_sel(k)(i)));
+					nlvec(5,k)     += sel_2nd_diff_wt(k)/(nage-sage+1)*norm2(df2);
 				
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
@@ -1764,6 +1780,18 @@ FUNCTION calc_objective_function
 										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
 				}
 			}
+			
+			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4&5)*/
+			if( isel_type(k)==4 || isel_type(k)==5 )
+			{
+				dvar_matrix trans_log_sel = trans( log_sel(k) );
+				for(j=sage;j<=nage;j++)
+				{
+					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
+					nlvec(7,k)     += sel_2nd_diff_wt_time(k)/(nage-sage+1)*norm2(df2);
+				}
+			}
+			
 		}
 	}
 	

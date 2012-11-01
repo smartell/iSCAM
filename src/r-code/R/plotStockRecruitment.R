@@ -55,6 +55,42 @@
 	})
 }
 
+.plotRecruitsPerSpawner	<- function( repObj )
+{
+	require(ggplot2)
+	# Create data frame object from repObj
+	with(repObj, {
+		SSB  = sbt[1:(length(yr)-min(age))]
+		R    = rt
+		Year = yr[1:(length(yr)-min(age))]
+		
+		st   = seq(1e-5, max(sbt, sbo), length=length(SSB))
+		recruitment.model <-function(sbo, ...)
+		{
+			
+			if(rectype==1)
+			{
+				rm  = kappa*ro*st/(sbo+(kappa-1)*st)*exp(-0.5*tau^2) 
+			}
+			if(rectype==2)
+			{
+				rm = kappa*ro*st*exp(-log(kappa)*st/sbo)/sbo*exp(-0.5*tau^2) 
+			}
+			return(rm)
+		}
+		
+		rm = recruitment.model(sbo)
+		rp = recruitment.model(bo)
+		obj  = data.frame(SSB=SSB,RS=log(R/SSB), R=R,rm=rm, rp=rp, st=st,  Year=Year)
+		
+		p <- ggplot(obj) + geom_point(aes(x=SSB, y=RS, col=Year))
+		p <- p + geom_line(aes(x=st, y=log(rp/st)))
+		p <- p + geom_line(aes(x=st, y=log(rm/st))) + labs(x="Spawning stock biomass (SSB)", y="Log(recruits/SSB)")
+		p <- p + geom_point(x=sbo, y=log(ro*exp(-0.5*tau^2) /sbo), col=I("red"), shape=2)
+		p <- p + geom_point(x=sbo, y=log(ro*exp(-0.5*tau^2) /bo), col=I("blue"), shape=3)
+		print(p)
+	})
+}
 
 # .plotStockRecruit	<- function( repObj )
 # {
