@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  12 SEP 2012 22:30
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  5 NOV 2012 12:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1216,7 +1216,7 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 156.
  ) 
 Here is how much of TeX's memory you used:
  17233 strings out of 493633
- 319714 string characters out of 3143378
+ 319712 string characters out of 3143378
  435332 words of memory out of 3000000
  20000 multiletter control sequences out of 15000+200000
  24312 words of font info for 92 fonts, out of 3000000 for 9000
@@ -1238,7 +1238,7 @@ cal/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/loc
 al/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local
 /texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/t
 exlive/2011/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
-Output written on overView.pdf (31 pages, 1039325 bytes).
+Output written on overView.pdf (31 pages, 1039331 bytes).
 PDF statistics:
  742 PDF objects out of 1000 (max. 8388607)
  656 compressed objects within 7 object streams
