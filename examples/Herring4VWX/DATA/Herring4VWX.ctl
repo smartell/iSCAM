@@ -48,6 +48,7 @@
 2		-2						# -Phase of estimation (-1 for fixed)
 12.5	10						# -Penalty wt for 2nd differences w=1/(2*sig^2)
 3.125	10						# -Penalty wt for dome-shaped w=1/(2*sig^2)
+1.0		1.0						# -Penalty wt for time-varying selectivity
 ## ------------------------------------------------------------------------- ##
 ##
 ##

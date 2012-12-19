@@ -3375,7 +3375,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	//#include <statsLib.h>
 	#include "msy.cpp"
-	#include "stats.cxx"
+	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
 	long hour,minute,second;
