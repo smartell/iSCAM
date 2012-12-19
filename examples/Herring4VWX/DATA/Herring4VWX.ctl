@@ -16,11 +16,11 @@
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
    6.0          0.0     10      4       0       0.0    10.0     #log_ro      ##
-   0.75         0.2     1.0     2       3       3.00    2.00    #steepness   ##
+   0.75         0.2     1.0     2       3       5.50    3.00    #steepness   ##
    -1.60944    -3.0     2.0    -4       1      -1.6094  0.05    #log_m       ##
    6.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
    6.0          0.0     10      1       0       0.0     10      #log_recinit ##
-   0.1          0.01    0.99    3       3       25.0   100.0    #rho         ##
+   0.2          0.01    0.99    3       3       25.0   100.0    #rho         ##
    0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
@@ -48,6 +48,7 @@
 2		-2						# -Phase of estimation (-1 for fixed)
 12.5	10						# -Penalty wt for 2nd differences w=1/(2*sig^2)
 3.125	10						# -Penalty wt for dome-shaped w=1/(2*sig^2)
+1.0		1.0						# -Penalty wt for time-varying selectivity
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -62,7 +63,7 @@
 1					# -number of surveys (nits)
 1					# -prior type (see legend above)
 0					# -prior log(mean)
-1					# -prior sd
+0.2					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 

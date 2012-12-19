@@ -3,7 +3,7 @@
 ## targets:
 
 ## Macros
-SUBDIR = Hake PacificHake
+SUBDIR = ECODETECTIVE/DATA Herring4VWX/DATA LingcodSRA/DATA
 TARGET = 
 
 .PHONY: default $(SUBDIR) mcmc

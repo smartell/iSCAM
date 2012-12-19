@@ -82,7 +82,7 @@
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
 0.90        # 13 -fraction of total mortality that takes place prior to spawning
-1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+2           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ##
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)
