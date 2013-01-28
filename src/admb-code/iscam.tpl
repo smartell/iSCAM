@@ -166,10 +166,10 @@ DATA_SECTION
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-retro",opt))>-1)
 		{
 			retro_yrs=atoi(ad_comm::argv[on+1]);
-			cout<<"______________________________________________________\n"<<endl;
-			cout<<"    **Implementing Retrospective analysis** "<<endl;
-			cout<<"    **Number of retrospective years = "<<retro_yrs<<endl;
-			cout<<"______________________________________________________"<<endl;
+			cout<<"|____________________________________________________|\n";
+			cout<<"| Implementing Retrospective analysis                |\n";
+			cout<<"|____________________________________________________|\n";
+			cout<<"| Number of retrospective years = "<<retro_yrs<<endl;
 		}
 	END_CALCS
 
@@ -479,7 +479,7 @@ DATA_SECTION
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 	number Umsy;					//Exploitation rate at MSY
-	vector age_tau2(1,na_gears);	//MLE estimate of the variance for the age comps
+	vector age_tau2(1,na_gears);	//MLE estimate of the variance for age comps
 	//catch-age for simulation model (could be declared locally 3d_array)
 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
