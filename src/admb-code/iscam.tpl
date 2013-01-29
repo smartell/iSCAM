@@ -101,9 +101,10 @@ DATA_SECTION
 
 	!! cout<<"iSCAM has detected that you are on a "<<PLATFORM<<" box"<<endl;
 	
-	// ------------------------------------------------------------------------- //
-	// STRINGS FOR INPUT FILES                                                   //
-	// ------------------------------------------------------------------------- //
+	// |---------------------------------------------------------------------------------|
+	// | STRINGS FOR INPUT FILES                                                         |
+	// |---------------------------------------------------------------------------------|
+	// |
 	init_adstring DataFile;
 	init_adstring ControlFile;
 	init_adstring ProjectFileControl;
@@ -540,6 +541,10 @@ DATA_SECTION
 	!! COUT(isel_type);
 	!! COUT(sel_dome_wt);
 
+	// Selectivity blocks for each gear.
+	init_ivector n_sel_blocks(1,ngear);
+	init_imatrix sel_blocks(1,ngear,1,n_sel_blocks);
+	!! COUT(sel_blocks);
 	
 	LOC_CALCS
 		//cout up the number of selectivity parameters
@@ -552,7 +557,8 @@ DATA_SECTION
 			{
 				case 1:
 					// logistic selectivity
-					isel_npar(i) = 2; 
+					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i); 
 					break;
 					
 				case 2:
@@ -620,24 +626,24 @@ DATA_SECTION
 	!! cout<<"nits\n"<<nits<<endl;
 	!! cout<<"q Prior\n"<<q_mu<<endl<<q_sd<<endl;
 	
-	
-	
-	//Miscellaneous controls
-	// 1 -> verbose
-	// 2 -> recruitment model (1=beverton-holt, 2=rickers)
-	// 3 -> std in catch first phase
-	// 4 -> std in catch in last phase
-	// 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
-	// 6 -> minimum proportion at age to consider in the dmvlogistic likelihood
-	// 7 -> mean fishing mortality rate to regularize the solution
-	// 8 -> standard deviation of mean F penalty in first phases
-	// 9 -> standard deviation of mean F penalty in last phase.
-	// 10-> phase for estimating deviations in natural mortality.
-	// 11-> std in natural mortality deviations.
-	// 12-> number of estimated nodes for deviations in natural mortality
-	// 13-> fraction of total mortality that takes place prior to spawning
-	// 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
-	// FIXME: document cntrl(14).
+	// |---------------------------------------------------------------------------------|
+	// | Miscellaneous controls                                                          |
+	// |---------------------------------------------------------------------------------|
+	// | 1 -> verbose
+	// | 2 -> recruitment model (1=beverton-holt, 2=rickers)
+	// | 3 -> std in catch first phase
+	// | 4 -> std in catch in last phase
+	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
+	// | 6 -> minimum proportion at age to consider in the dmvlogistic likelihood
+	// | 7 -> mean fishing mortality rate to regularize the solution
+	// | 8 -> standard deviation of mean F penalty in first phases
+	// | 9 -> standard deviation of mean F penalty in last phase.
+	// | 10-> phase for estimating deviations in natural mortality.
+	// | 11-> std in natural mortality deviations.
+	// | 12-> number of estimated nodes for deviations in natural mortality
+	// | 13-> fraction of total mortality that takes place prior to spawning
+	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// | 
 	init_vector cntrl(1,14);
 	int verbose;
 	
@@ -656,11 +662,12 @@ DATA_SECTION
 	
 	int nf;
 	
+	// |
 	ivector ilvec(1,7);
-	!!ilvec=ngear;			//number of fisheries
-	!!ilvec(2)=nit;			//number of surveys
-	!!ilvec(3)=na_gears;	//number of age-comps
-	!!ilvec(4)=1;
+	!!ilvec    = ngear;			//number of fisheries
+	!!ilvec(2) = nit;			//number of surveys
+	!!ilvec(3) = na_gears;		//number of age-comps
+	!!ilvec(4) = 1;
 	
 	// SM Oct 31, 2010.  Implementing retrospective analysis.
 	//Dont read in any more data below the retrospective reset of nyr
@@ -701,14 +708,22 @@ PARAMETER_SECTION
 	LOC_CALCS
 		//initial values for logistic selectivity parameters
 		//set phase to -1 for fixed selectivity.
-		for(int k=1;k<=ngear;k++)
+		if (!global_parfile)
 		{
-			if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)>=7 )
+			for(int k=1;k<=ngear;k++)
 			{
-				sel_par(k,1,1) = log(ahat(k));
-				sel_par(k,1,2) = log(ghat(k));
+				if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)>=7 )
+				{
+					for(int j = 1; j <= n_sel_blocks(k); j++ )
+					{
+						sel_par(k,j,1) = log(ahat(k));
+						sel_par(k,j,2) = log(ghat(k));
+					}
+				}
 			}
 		}
+		// COUT(sel_par(1));
+		// exit(1);
 	END_CALCS
 	
 	//Fishing mortality rate parameters
@@ -806,8 +821,8 @@ PRELIMINARY_CALCS_SECTION
   if(SimFlag) 
   {
     initParameters();
-    calcSelectivities();
-    calcTotalMortality();
+    // calcSelectivities();
+    // calcTotalMortality();
     simulation_model(rseed);
   }
 
@@ -985,7 +1000,7 @@ FUNCTION calcSelectivities
 		mean length. 
 	
 	*/
-	int i,j,k;
+	int i,j,k,byr;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -1007,10 +1022,15 @@ FUNCTION calcSelectivities
 		{
 			case 1:
 				// logistic selectivity for case 1 or 6
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
+				byr = 1;
 				for(i=syr; i<=nyr; i++)
 				{
+					if(sel_blocks(j,byr)==i && byr <= n_sel_blocks(j))
+					{
+						p1 = mfexp(sel_par(j,byr,1));
+						p2 = mfexp(sel_par(j,byr,2));
+						byr ++;
+					}
 					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny );
 				}
 				break;
@@ -1030,7 +1050,7 @@ FUNCTION calcSelectivities
 				for(i=syr; i<=nyr; i++)
 				{
 					for(k=sage;k<=nage-1;k++)
-					log_sel(j)(i)(k) = sel_par(j)(1)(k-sage+1);
+					log_sel(j)(i)(k)   = sel_par(j)(1)(k-sage+1);
 					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
 				}
 				break;
@@ -1137,8 +1157,10 @@ FUNCTION calcSelectivities
 		//subtract mean to ensure mean(exp(log_sel))==1
 		//substract max to ensure exp(log_sel) ranges from 0-1
 		for(i=syr;i<=nyr;i++)
+		{
 			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
 			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
+		}
 			
 		//cout<<"log_sel \t"<<j<<"\n"<<log_sel(j)<<"\n \n"<<endl;
 		//testing bicubic spline  (SM Checked OCT 25,2010.  Works on the example below.)
@@ -1932,7 +1954,7 @@ FUNCTION calc_objective_function
 	
 	if(verbose)
 	{
-		cout<<"nlvec\t"<<nlvec<<endl;
+		COUT(nlvec);
 		cout<<"lvec\t"<<lvec<<endl;
 		cout<<"priors\t"<<priors<<endl;
 		cout<<"penalties\t"<<pvec<<endl;
@@ -2520,7 +2542,10 @@ FUNCTION void simulation_model(const long& seed)
 	//3darray Chat(1,ngear,syr,nyr,sage,nage);
 	//C.initialize();
 	
-	
+    calcSelectivities();
+
+    calcTotalMortality();
+
 	
 	/*----------------------------------*/
 	/*	-- Generate random numbers --	*/
@@ -2544,7 +2569,10 @@ FUNCTION void simulation_model(const long& seed)
 	for(k=1;k<=nit;k++)
 	{
 		for(j=1;j<=nit_nobs(k);j++)
+		{
+			if(it_wt(k,j)!=0)
 			epsilon(k,j) *= sig/it_wt(k,j);
+		}
 	}
 	COUT(wt);
 	COUT(epsilon);
@@ -3373,7 +3401,7 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	//#include <statsLib.h>
+	// #include <statsLib.h>
 	#include "msy.cpp"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
@@ -3408,6 +3436,115 @@ GLOBALS_SECTION
 	{
 		
 	};
+
+	// #ifdef __GNUDOS__
+	//   #include <gccmanip.h>
+	// #endif
+
+	void function_minimizer::mcmc_eval(void)
+	{
+		// |---------------------------------------------------------------------------|
+		// | Added DIC calculation.  Martell, Jan 29, 2013                             |
+		// |---------------------------------------------------------------------------|
+		// | DIC = pd + dbar
+		// | pd  = dbar - dtheta  (Eeffective number of parameters)
+		// | dbar   = expectation of the likelihood function (average f)
+		// | dtheta = expectation of the parameter sample (average y) 
+
+	  gradient_structure::set_NO_DERIVATIVES();
+	  initial_params::current_phase=initial_params::max_number_phases;
+	  uistream * pifs_psave = NULL;
+
+	#if defined(USE_LAPLACE)
+	#endif
+
+	#if defined(USE_LAPLACE)
+	    initial_params::set_active_random_effects();
+	    int nvar1=initial_params::nvarcalc(); 
+	#else
+	  int nvar1=initial_params::nvarcalc(); // get the number of active parameters
+	#endif
+	  int nvar;
+	  
+	  pifs_psave= new
+	    uistream((char*)(ad_comm::adprogram_name + adstring(".psv")));
+	  if (!pifs_psave || !(*pifs_psave))
+	  {
+	    cerr << "Error opening file "
+	            << (char*)(ad_comm::adprogram_name + adstring(".psv"))
+	       << endl;
+	    if (pifs_psave)
+	    {
+	      delete pifs_psave;
+	      pifs_psave=NULL;
+	      return;
+	    }
+	  }
+	  else
+	  {     
+	    (*pifs_psave) >> nvar;
+	    if (nvar!=nvar1)
+	    {
+	      cout << "Incorrect value for nvar in file "
+	           << "should be " << nvar1 << " but read " << nvar << endl;
+	      if (pifs_psave)
+	      {
+	        delete pifs_psave;
+	        pifs_psave=NULL;
+	      }
+	      return;
+	    }
+	  }
+	  
+	  int nsamp = 0;
+	  double sumll = 0;
+	  independent_variables y(1,nvar);
+	  independent_variables sumy(1,nvar);
+
+	  do
+	  {
+	    if (pifs_psave->eof())
+	    {
+	      break;
+	    }
+	    else
+	    {
+	      (*pifs_psave) >> y;
+	      sumy = sumy + y;
+	      if (pifs_psave->eof())
+	      {
+	      	double dbar = sumll/nsamp;
+	      	int ii=1;
+	      	y = sumy/nsamp;
+	      	initial_params::restore_all_values(y,ii);
+	        initial_params::xinit(y);   
+	        double dtheta = 2.0 * get_monte_carlo_value(nvar,y);
+	        double pd     = dbar - dtheta;
+	        double dic    = pd + dbar;
+	        cout<<"Number of posterior samples    = "<<nsamp  <<endl;
+	        cout<<"Expectation of log-likelihood  = "<<dbar   <<endl;
+	        cout<<"Expectation of theta           = "<<dtheta <<endl;
+		    cout<<"Effective number of parameters = "<<pd     <<endl;
+		    cout<<"DIC = "<<dic<<endl;
+	        break;
+	      }
+	      int ii=1;
+	      initial_params::restore_all_values(y,ii);
+	      initial_params::xinit(y);   
+	      double ll = 2.0 * get_monte_carlo_value(nvar,y);
+	      sumll    += ll;
+	      nsamp++;
+	      //cout<<get_monte_carlo_value(nvar,y)<<endl;
+	    }
+	  }
+	  while(1);
+	  if (pifs_psave)
+	  {
+	    delete pifs_psave;
+	    pifs_psave=NULL;
+	  }
+	  return;
+	}
 	
 	
 FINAL_SECTION
