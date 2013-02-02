@@ -49,7 +49,7 @@
 	2		2						# 6  -Phase of estimation (-1 for fixed)
 	12.5	200						# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	12.5 	200						# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	2.00	1.0						# 9  -Penalty wt for time-varying selectivity
+	0.00	1.0						# 9  -Penalty wt for time-varying selectivity
 	1       1                       # 10 -Selectivity type for simulating data
 	1       1                       # 11 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
