@@ -1,0 +1,8 @@
+# iSCAM View Tracker File 
+# Do not use extension for the control file (using read.admb to input results)
+"Select","Stock","Description","Control File"
+#The following line is for the Demo example
+#TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
+TRUE, Hake,    "Pacific Hake",../../CAPAM/DATA/2010//PHake2010
+FALSE,Hake,    "Pacific Hake",../../CAPAM/DATA/2011//PHake2011
+#TRUE,Herring, "4VWX Herring",../../examples/Herring4VWX/DATA/Herring4VWX

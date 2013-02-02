@@ -108,7 +108,7 @@ DATA_SECTION
 	init_adstring DataFile;
 	init_adstring ControlFile;
 	init_adstring ProjectFileControl;
-	
+
 	
 	// ------------------------------------------------------------------------- //
 	// READ IN PROJECTION FILE CONTROLS                                          //
@@ -527,25 +527,42 @@ DATA_SECTION
 	// type 5 = bicubic spline with age_nodes adn yr_nodes
 	// type 6 = fixed logistic by turning sel_phz to (-ve)
 	// type 7 = logistic (3pars) as a function of body weight.
-	init_ivector isel_type(1,ngear);  	//Switch for selectivity
+	init_matrix selex_controls(1,11,1,ngear);
+	!! COUT(selex_controls);
+
 	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
 	ivector jsel_npar(1,ngear);			//ivector for the number of rows for time-varying selectivity.
-	init_vector ahat(1,ngear);			//age-at-50% vulnerbality for logistic function
-	init_vector ghat(1,ngear);			//std at 50% age of vulnerability for logistic funciton
-	init_vector age_nodes(1,ngear);		//No. of age-nodes for bicubic spline.
-	init_vector yr_nodes(1,ngear);		//No. of year-nodes for bicubic spline.
-	init_ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
-	init_vector sel_2nd_diff_wt(1,ngear);	   //Penalty weight for 2nd difference in selectivity.
-	init_vector sel_dome_wt(1,ngear);		   //Penalty weight for dome-shaped selectivity.
-	init_vector sel_2nd_diff_wt_time(1,ngear); //Penalty weight for 2nd difference in time-varying selectivity.
+	ivector isel_type(1,ngear);  	//Switch for selectivity
+	vector ahat(1,ngear);			//age-at-50% vulnerbality for logistic function
+	vector ghat(1,ngear);			//std at 50% age of vulnerability for logistic funciton
+	vector age_nodes(1,ngear);		//No. of age-nodes for bicubic spline.
+	vector yr_nodes(1,ngear);		//No. of year-nodes for bicubic spline.
+	ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
+	vector sel_2nd_diff_wt(1,ngear);	   //Penalty weight for 2nd difference in selectivity.
+	vector sel_dome_wt(1,ngear);		   //Penalty weight for dome-shaped selectivity.
+	vector sel_2nd_diff_wt_time(1,ngear); //Penalty weight for 2nd difference in time-varying selectivity.
+	ivector n_sel_blocks(1,ngear);
+	ivector sim_isel_type(1,ngear);
+	LOC_CALCS
+		isel_type = ivector(selex_controls(1));
+		ahat      = selex_controls(2);
+		ghat      = selex_controls(3);
+		age_nodes = selex_controls(4);
+		yr_nodes  = selex_controls(5);
+
+		sel_phz   = ivector(selex_controls(6));
+		sel_2nd_diff_wt = selex_controls(7);
+		sel_dome_wt     = selex_controls(8);
+		sel_2nd_diff_wt_time = selex_controls(9);
+		sim_isel_type   = ivector(selex_controls(10));
+		n_sel_blocks    = ivector(selex_controls(11));
+	END_CALCS
 	!! COUT(isel_type);
 	!! COUT(sel_dome_wt);
-
 	// Selectivity blocks for each gear.
-	init_ivector n_sel_blocks(1,ngear);
 	init_imatrix sel_blocks(1,ngear,1,n_sel_blocks);
 	!! COUT(sel_blocks);
-	
+
 	LOC_CALCS
 		//cout up the number of selectivity parameters
 		//depending on the value of isel_type
@@ -563,12 +580,14 @@ DATA_SECTION
 					
 				case 2:
 					// age-specific coefficients
-					isel_npar(i) = (nage-sage); 
+					isel_npar(i) = (nage-sage);
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				case 3:
 				 	// cubic spline 
 					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				case 4:	 
@@ -647,6 +666,14 @@ DATA_SECTION
 	init_vector cntrl(1,14);
 	int verbose;
 	
+
+	// |---------------------------------------------------------------------------------|
+	// | SIMULATION CONTROLS
+	// |---------------------------------------------------------------------------------|
+	// | 1 -> flag for IFD selectivity.
+
+	init_vector sim_ctrl(1,1);
+
 	init_int eofc;
 	LOC_CALCS
 		verbose = cntrl(1);
@@ -712,7 +739,10 @@ PARAMETER_SECTION
 		{
 			for(int k=1;k<=ngear;k++)
 			{
-				if( isel_type(k)==1 || isel_type(k)==6 || isel_type(k)>=7 )
+				if( isel_type(k)==1 || 
+					isel_type(k)==6 || 
+					isel_type(k)>=7 ||
+					sim_isel_type(k)==1)
 				{
 					for(int j = 1; j <= n_sel_blocks(k); j++ )
 					{
@@ -834,7 +864,7 @@ RUNTIME_SECTION
 PROCEDURE_SECTION
 	initParameters();
 
-	calcSelectivities();
+	calcSelectivities(isel_type);
 	
 	calcTotalMortality();
 	
@@ -965,7 +995,7 @@ FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
   }
 
 
-FUNCTION calcSelectivities
+FUNCTION void calcSelectivities(const ivector& isel_type)
   {
 	/*
 		This function loops over each ngear and calculates the corresponding
@@ -1000,7 +1030,7 @@ FUNCTION calcSelectivities
 		mean length. 
 	
 	*/
-	int i,j,k,byr;
+	int i,j,k,byr,bpar;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -1017,20 +1047,22 @@ FUNCTION calcSelectivities
 		tmp.initialize(); tmp2.initialize();
 		dvector iy(1,yr_nodes(j));
 		dvector ia(1,age_nodes(j));
-		
+		byr = 1;
+		bpar = 0;
 		switch(isel_type(j))
 		{
 			case 1:
 				// logistic selectivity for case 1 or 6
-				byr = 1;
 				for(i=syr; i<=nyr; i++)
 				{
-					if(sel_blocks(j,byr)==i && byr <= n_sel_blocks(j))
+					if( i == sel_blocks(j,byr) )
 					{
-						p1 = mfexp(sel_par(j,byr,1));
-						p2 = mfexp(sel_par(j,byr,2));
-						byr ++;
+						bpar ++;
+						if( byr < n_sel_blocks(j) ) byr++;
 					}
+
+					p1 = mfexp(sel_par(j,bpar,1));
+					p2 = mfexp(sel_par(j,bpar,2));
 					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny );
 				}
 				break;
@@ -1049,17 +1081,30 @@ FUNCTION calcSelectivities
 				// age-specific selectivity coefficients
 				for(i=syr; i<=nyr; i++)
 				{
+					if( i == sel_blocks(j,byr) )
+					{
+						bpar ++;
+						if( byr < n_sel_blocks(j) ) byr++;
+					}
 					for(k=sage;k<=nage-1;k++)
-					log_sel(j)(i)(k)   = sel_par(j)(1)(k-sage+1);
+					{
+						log_sel(j)(i)(k)   = sel_par(j)(bpar)(k-sage+1);
+					}
 					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
 				}
 				break;
 				
 			case 3:		
 				// cubic spline
-				log_sel(j)(syr)=cubic_spline( sel_par(j)(1) );
+				// log_sel(j)(syr)=cubic_spline( sel_par(j)(1) );
 				for(i=syr; i<nyr; i++)
 				{
+					if( i==sel_blocks(j,byr) )
+					{
+						bpar ++;	
+						log_sel(j)(i)=cubic_spline( sel_par(j)(bpar) );
+						if( byr < n_sel_blocks(j) ) byr++;
+					}
 					log_sel(j)(i+1) = log_sel(j)(i);
 				}
 				break;
@@ -1158,8 +1203,8 @@ FUNCTION calcSelectivities
 		//substract max to ensure exp(log_sel) ranges from 0-1
 		for(i=syr;i<=nyr;i++)
 		{
-			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i)))+tiny );
-			//log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
+			log_sel(j)(i) -= log( mean(mfexp(log_sel(j)(i))) );
+			// log_sel(j)(i) -= log(max(mfexp(log_sel(j)(i))));
 		}
 			
 		//cout<<"log_sel \t"<<j<<"\n"<<log_sel(j)<<"\n \n"<<endl;
@@ -1702,7 +1747,8 @@ FUNCTION calc_objective_function
 	int i,j,k;
 	double o=1.e-10;
 
-	dvar_vector lvec(1,7); lvec.initialize();
+	dvar_vector lvec(1,7); 
+	lvec.initialize();
 	nlvec.initialize();
 	
 	//1) likelihood of the catch data (retro)
@@ -1789,12 +1835,13 @@ FUNCTION calc_objective_function
 				isel_type(k)!=8 &&
 				isel_type(k)!=11 )  
 			{
+
 				for(i=syr;i<=nyr;i++)
 				{
 					//curvature in selectivity parameters
 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(i)));
-					nlvec(5,k)     += sel_2nd_diff_wt(k)/(nage-sage+1)*norm2(df2);
-				
+					nlvec(5,k)     += sel_2nd_diff_wt(k)/(nage-sage+1)*df2*df2;
+
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,i,j)>log_sel(k,i,j+1))
@@ -2526,6 +2573,11 @@ FUNCTION void simulation_model(const long& seed)
 	the initial values.  Change the standard deviations of the 
 	random number vectors epsilon (observation error) or 
 	recruitment devs wt (process error).
+
+	Jan 30, 2013  SM
+	- added some simulation controls to the control file for simulating
+	  fake data.  These controls include:
+	  - sim_control(1) -> 
 	*/
 	
 	
@@ -2542,7 +2594,7 @@ FUNCTION void simulation_model(const long& seed)
 	//3darray Chat(1,ngear,syr,nyr,sage,nage);
 	//C.initialize();
 	
-    calcSelectivities();
+    calcSelectivities(sim_isel_type);
 
     calcTotalMortality();
 
@@ -2681,9 +2733,21 @@ FUNCTION void simulation_model(const long& seed)
 		observed catch from each fleet.*/
 		dvector oct = trans(obs_ct)(i);
 		
-		
+		/*
+		Feb 1, 2013.  SM
+		Added simulation options for selectivity in:
+		sim_ctrl(1) -> uses Ideal Free Distribution to modify dlog_sel
+
+		*/
 		for(k=1;k<=ngear;k++)
+		{
 			va(k)=exp(dlog_sel(k)(i));
+			if(sim_ctrl(1) && fsh_flag(k))
+			{
+				va(k) = ifdSelex(va(k),bt);
+				dlog_sel(k)(i) = log(va(k));
+			}
+		}
 		
 		//get_ft is defined in the Baranov.cxx file
 		//CHANGED these ft are based on biomass at age, should be numbers at age
@@ -2750,7 +2814,7 @@ FUNCTION void simulation_model(const long& seed)
 		}
 		
 	}
-	COUT(N);
+	// COUT(N);
 	
 	//initial values of log_ft_pars set to true values
 	ki=1;
@@ -2786,6 +2850,7 @@ FUNCTION void simulation_model(const long& seed)
 	
 	//Simulated Age-compositions
 	int ig;
+	double age_tau = sqrt(value(rho/varphi));
 	for(k=1;k<=na_gears;k++)
 	{
 		for(i=1;i<=na_nobs(k);i++)
@@ -2798,7 +2863,7 @@ FUNCTION void simulation_model(const long& seed)
 			
 			dvector t1=pa(a_sage(k),a_nage(k));
 			t1/=sum(t1);
-			A(k)(i)(a_sage(k),a_nage(k))=rmvlogistic(t1,0.3,i+seed);
+			A(k)(i)(a_sage(k),a_nage(k))=rmvlogistic(t1,age_tau,i+seed);
 			if(seed==000)
 			{
 				A(k)(i)(a_sage(k),a_nage(k))=t1;
@@ -2873,7 +2938,25 @@ FUNCTION void simulation_model(const long& seed)
 	//cout<<N<<endl;
 	//exit(1);
   }
-	
+FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
+  {
+  	/*
+  	This function returns a modified selectivity vector (va) based on
+  	the assumption that age-based selectivity will operate on the principle
+  	of ideal free distribution.  
+
+  	va -> is a vector representing the selectivity of the gear
+  	ba -> is a vector of relative biomasses-at-age.  
+  	*/
+  	dvector pa(sage,nage);
+
+  	pa = (elem_prod(va,pow(ba,1.0)));
+  	// pa = (pa - mean(pa))/sqrt(var(pa));
+  	// pa = va * exp(0.1*pa);
+  	pa = pa/sum(pa);
+  	pa = exp( log(pa) - log(mean(pa)) );
+  	return (pa);
+  }
 
 REPORT_SECTION
   {
