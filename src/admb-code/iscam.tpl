@@ -1850,8 +1850,8 @@ FUNCTION calc_objective_function
 				}
 			}
 			
-			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4&5)*/
-			if( isel_type(k)==4 || isel_type(k)==5 )
+			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4)*/
+			if( isel_type(k)==4 )
 			{
 				dvar_matrix trans_log_sel = trans( log_sel(k) );
 				for(j=sage;j<=nage;j++)
@@ -1884,7 +1884,7 @@ FUNCTION calc_objective_function
 				for(j=1;j<=tmp.rowmax();j++)
 				{
 					s=mean(tmp(j));
-					lvec(1)+=1000.*s*s;
+					lvec(1)+=10000.0*s*s;
 				}
 			}
 			if( isel_type(k)==4 ||
@@ -1895,7 +1895,7 @@ FUNCTION calc_objective_function
 				for(j=1;j<=tmp.rowmax();j++)
 				{
 					s=mean(tmp(j));
-					lvec(1)+=1000.*s*s;
+					lvec(1)+=10000.0*s*s;
 				}
 			}
 		}
