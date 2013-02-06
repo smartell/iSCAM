@@ -762,7 +762,7 @@ PARAMETER_SECTION
 						} 
 
 						// Special case if sim with sel_type=1 and estimate with sel_type11
-						if(sim_isel_type(k)==1 && isel_type(k)==11 && j==1)
+						if(sim_isel_type(k)==1 && isel_type(k)>=11 && j==1)
 						{
 							// convert length to age
 							ahat(k) = -log(-(ahat(k)-linf)/linf)/vonbk;
@@ -1212,8 +1212,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				//based on cubic spline interpolation
 				for(i=syr; i<=nyr; i++)
 				{
+					if( i == sel_blocks(j,byr) )
+					{
+						bpar ++;
+						if( byr < n_sel_blocks(j) ) byr++;
+					}
 					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i)=cubic_spline( sel_par(j)(1), len );
+					log_sel(j)(i)=cubic_spline( sel_par(j)(bpar), len );
 				}
 				break;
 				
