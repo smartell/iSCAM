@@ -614,21 +614,25 @@ DATA_SECTION
 					// logistic (3 parameters) with mean body 
 					// weight deviations. 
 					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				case 8:
 					// Alternative logistic selectivity with wt_dev coefficients.
 					isel_npar(i) = 3;
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				case 11:
 					// Logistic length-based selectivity.
 					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				case 12:
 					// Length-based selectivity coeffs with cubic spline interpolation
 					isel_npar(i) = (nage-sage);
+					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
 				default: break;
@@ -673,6 +677,7 @@ DATA_SECTION
 	// | 1 -> flag for IFD selectivity.
 
 	init_vector sim_ctrl(1,1);
+	!! COUT(sim_ctrl);
 
 	init_int eofc;
 	LOC_CALCS
@@ -709,9 +714,12 @@ DATA_SECTION
 			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
 			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
 		}
+		if(verbose) COUT(pf_cntrl);
 	END_CALCS
+
 	
-	
+	// END OF DATA_SECTION
+	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 	
 INITIALIZATION_SECTION
  theta theta_ival;
@@ -742,11 +750,26 @@ PARAMETER_SECTION
 				if( isel_type(k)==1 || 
 					isel_type(k)==6 || 
 					isel_type(k)>=7 ||
-					sim_isel_type(k)==1)
+					sim_isel_type(k)==1 ||
+					sim_isel_type(k)>=7 )
 				{
 					for(int j = 1; j <= n_sel_blocks(k); j++ )
 					{
-						sel_par(k,j,1) = log(ahat(k));
+						double uu = 0;
+						if(sim_isel_type(k)==1 && j > 1)
+						{
+							uu = 0.05*randn(j+rseed);
+						} 
+
+						// Special case if sim with sel_type=1 and estimate with sel_type11
+						if(sim_isel_type(k)==1 && isel_type(k)==11 && j==1)
+						{
+							// convert length to age
+							ahat(k) = -log(-(ahat(k)-linf)/linf)/vonbk;
+						}
+
+							
+						sel_par(k,j,1) = log(ahat(k)*exp(uu));
 						sel_par(k,j,2) = log(ghat(k));
 					}
 				}
@@ -848,6 +871,7 @@ PARAMETER_SECTION
 PRELIMINARY_CALCS_SECTION
   //Run the model with input parameters to simulate real data.
   nf=0;
+  cout<<"OK TO HERE"<<endl;
   if(SimFlag) 
   {
     initParameters();
@@ -855,6 +879,7 @@ PRELIMINARY_CALCS_SECTION
     // calcTotalMortality();
     simulation_model(rseed);
   }
+  if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,200,500,25000,25000
@@ -863,7 +888,7 @@ RUNTIME_SECTION
 
 PROCEDURE_SECTION
 	initParameters();
-
+	
 	calcSelectivities(isel_type);
 	
 	calcTotalMortality();
@@ -1164,14 +1189,21 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				break;
 				
 			case 11:
-				//logistic selectivity based on mean length-at-age
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				
+				//logistic selectivity based on mean length-at-age				
 				for(i=syr; i<=nyr; i++)
 				{
+					if( i == sel_blocks(j,byr) )
+					{
+						bpar ++;
+						if( byr < n_sel_blocks(j) ) byr++;
+					}
+					p1 = mfexp(sel_par(j,bpar,1));
+					p2 = mfexp(sel_par(j,bpar,2));
+
 					dvector len = pow(wt_obs(i)/a,1./b);
+
 					log_sel(j)(i) = log( plogis(len,p1,p2) );
+					// COUT(exp(log_sel(j)(i)- log(mean(exp(log_sel(j)(i))))) );
 				}
 				break;
 				
@@ -3515,14 +3547,15 @@ GLOBALS_SECTION
 		return fileName;
 	}
 	
-	class Selex
-	{
-		
-	};
-
+	
 	// #ifdef __GNUDOS__
 	//   #include <gccmanip.h>
 	// #endif
+	// Variables to store results from DIC calculations.
+	double dicNoPar;
+	double dicValue;
+
+
 
 	void function_minimizer::mcmc_eval(void)
 	{
@@ -3604,6 +3637,8 @@ GLOBALS_SECTION
 	        double dtheta = 2.0 * get_monte_carlo_value(nvar,y);
 	        double pd     = dbar - dtheta;
 	        double dic    = pd + dbar;
+	        dicValue      = dic;
+	        dicNoPar      = pd;
 	        cout<<"Number of posterior samples    = "<<nsamp  <<endl;
 	        cout<<"Expectation of log-likelihood  = "<<dbar   <<endl;
 	        cout<<"Expectation of theta           = "<<dtheta <<endl;
@@ -3684,7 +3719,11 @@ FINAL_SECTION
 		
 			bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
 			system(bscmd);
-		
+			
+			ofstream mcofs(ReportFileName,ios::app);
+			mcofs<<"ENpar\n"<<dicNoPar<<endl;
+			mcofs<<"DIC\n"<<dicValue<<endl;
+			mcofs.close();
 			cout<<"Copied MCMC Files"<<endl;
 		}
 	}

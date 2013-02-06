@@ -21,10 +21,13 @@
 	%\usepackage{subfigure}
 	
 	% More symbols
-	%\usepackage{amsmath}
-	%\usepackage{amssymb}
-	%\usepackage{latexsym}
+	\usepackage{amsmath}
+	\usepackage{amssymb}
+	\usepackage{latexsym}
 
+    % Columns spanning multiple rows in latex
+    \usepackage{multirow}
+    
 	%% -math- c/o jon schnute
 	\newcounter{saveEq}
 	\def\putEq{\setcounter{saveEq}{\value{equation}}}
@@ -96,6 +99,7 @@
 	\end{abstract}
 	
 	\input{./Introduction/Intro}
+	\input{./Methods/methods}
 
 
 	\addcontentsline{toc}{section}{References}
