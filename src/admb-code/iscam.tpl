@@ -83,6 +83,10 @@
 //--                                                                           --//
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
+//-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
+//--              - Should probably use a separate simulation control file.    --//
+//--                                                                           --//
+//--                                                                           --//
 //--                                                                           --//
 // ----------------------------------------------------------------------------- //
 
@@ -527,7 +531,7 @@ DATA_SECTION
 	// type 5 = bicubic spline with age_nodes adn yr_nodes
 	// type 6 = fixed logistic by turning sel_phz to (-ve)
 	// type 7 = logistic (3pars) as a function of body weight.
-	init_matrix selex_controls(1,11,1,ngear);
+	init_matrix selex_controls(1,10,1,ngear);
 	!! COUT(selex_controls);
 
 	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
@@ -542,7 +546,7 @@ DATA_SECTION
 	vector sel_dome_wt(1,ngear);		   //Penalty weight for dome-shaped selectivity.
 	vector sel_2nd_diff_wt_time(1,ngear); //Penalty weight for 2nd difference in time-varying selectivity.
 	ivector n_sel_blocks(1,ngear);
-	ivector sim_isel_type(1,ngear);
+	
 	LOC_CALCS
 		isel_type = ivector(selex_controls(1));
 		ahat      = selex_controls(2);
@@ -554,8 +558,7 @@ DATA_SECTION
 		sel_2nd_diff_wt = selex_controls(7);
 		sel_dome_wt     = selex_controls(8);
 		sel_2nd_diff_wt_time = selex_controls(9);
-		sim_isel_type   = ivector(selex_controls(10));
-		n_sel_blocks    = ivector(selex_controls(11));
+		n_sel_blocks    = ivector(selex_controls(10));
 	END_CALCS
 	!! COUT(isel_type);
 	!! COUT(sel_dome_wt);
@@ -676,8 +679,18 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | 1 -> flag for IFD selectivity.
 
-	init_vector sim_ctrl(1,1);
+	init_matrix sim_ctrl(1,3,1,ngear);
 	!! COUT(sim_ctrl);
+
+	ivector sim_isel_type(1,ngear);
+	ivector nsim_sel_blocks(1,ngear);
+	
+	LOC_CALCS
+		sim_isel_type   = ivector(sim_ctrl(2));
+		nsim_sel_blocks = ivector(sim_ctrl(3));
+	END_CALCS
+	init_imatrix sim_sel_blocks(1,ngear,1,nsim_sel_blocks);
+	// TODO modify calcSelectivities to include sim_sel_blocks.
 
 	init_int eofc;
 	LOC_CALCS
@@ -775,8 +788,6 @@ PARAMETER_SECTION
 				}
 			}
 		}
-		// COUT(sel_par(1));
-		// exit(1);
 	END_CALCS
 	
 	//Fishing mortality rate parameters
@@ -1052,7 +1063,9 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		TODO: add an option for length-based selectivity.  Use inverse of
 		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
 		empirical weight-at-age data, then calculate selectivity based on 
-		mean length. 
+		mean length.
+
+		CHANGED: Added blocks for simulation model sim_sel_blocks 
 	
 	*/
 	int i,j,k,byr,bpar;
@@ -1084,6 +1097,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					{
 						bpar ++;
 						if( byr < n_sel_blocks(j) ) byr++;
+					}
+
+					// switch for simulation blocks
+					if( i == sim_sel_blocks(j,byr) && SimFlag )
+					{
+						bpar ++;
+						if( byr < nsim_sel_blocks(j) ) byr++;
 					}
 
 					p1 = mfexp(sel_par(j,bpar,1));
@@ -2632,7 +2652,7 @@ FUNCTION void simulation_model(const long& seed)
 	//C.initialize();
 	
     calcSelectivities(sim_isel_type);
-
+    cout<<"OK DUDE"<<endl;
     calcTotalMortality();
 
 	
@@ -2779,7 +2799,7 @@ FUNCTION void simulation_model(const long& seed)
 		for(k=1;k<=ngear;k++)
 		{
 			va(k)=exp(dlog_sel(k)(i));
-			if(sim_ctrl(1) && fsh_flag(k))
+			if( sim_ctrl(1)(k) )
 			{
 				va(k) = ifdSelex(va(k),bt);
 				dlog_sel(k)(i) = log(va(k));
