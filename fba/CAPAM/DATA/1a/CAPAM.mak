@@ -1,3 +1,5 @@
+# CAPAM.mak 
+# Makefile for the simualtions for CAPAM selectivity workshop.
 ## Makefile for running iscam
 ## Targets: 
 ##		all:   -copy executable and run the model with DAT & ARG
@@ -5,12 +7,15 @@
 ##		mcmc:  -copy executable and run in mcmc mode and mceval
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
-prefix=../../../../dist
+prefix=../../../../../dist
 DAT=RUN.dat
 CTL=PHake2010
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
+NOSIM = 8
+
+.PHONY = all run mcmc mceval retro clean data
 
 ifdef DEBUG
   DIST=$(prefix)/debug/iscam
@@ -50,4 +55,29 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
                         system(cmd)})'
 
 clean: 
-	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
+	-rm -rf 0* iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
+
+
+simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --slave)
+datadone := $(foreach dir,$(simdirs),$(dir)/datadone)
+simfiles := $(foreach dir,$(simdirs),$(dir)/simdone)
+
+$(datadone):
+	mkdir $(@D)
+	cd $(@D); touch datadone
+
+data: $(datadone)
+
+
+$(simfiles): data 	
+	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat $(@D)
+	cd  $(@D); make clean --file=CAPAM.mak; 
+	cd  $(@D); make mcmc ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak; 
+	cd  $(@D); touch simdone	
+
+est: $(simfiles)
+
+
+
+
+

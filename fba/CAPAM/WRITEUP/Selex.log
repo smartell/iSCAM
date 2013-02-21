@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  4 FEB 2013 10:20
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  21 FEB 2013 11:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -551,7 +551,7 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 (./Introduction/Intro.tex [1
 
 {/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]) (./Met
-hods/methods.tex) (./Selex.bbl [2])
+hods/methods.tex [2]) (./Selex.bbl)
 Package minitoc Info: I0009
 (minitoc)             Listing minitoc auxiliary files. 
 (minitoc)             Creating the Selex.maf file.
@@ -563,13 +563,13 @@ Package minitoc(hints) Info: I0019
  [3]
 (./Selex.aux) ) 
 Here is how much of TeX's memory you used:
- 5943 strings out of 493633
- 79474 string characters out of 3143378
- 154224 words of memory out of 3000000
- 8938 multiletter control sequences out of 15000+200000
+ 5946 strings out of 493633
+ 79552 string characters out of 3143378
+ 155262 words of memory out of 3000000
+ 8941 multiletter control sequences out of 15000+200000
  13994 words of font info for 57 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
- 37i,10n,32p,1047b,297s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 37i,10n,32p,1291b,297s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/c
 m/cmbx12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm
@@ -577,7 +577,7 @@ m/cmbx12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm
 mr12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 17.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
 2.pfb>
-Output written on Selex.pdf (3 pages, 84589 bytes).
+Output written on Selex.pdf (3 pages, 88558 bytes).
 PDF statistics:
  38 PDF objects out of 1000 (max. 8388607)
  26 compressed objects within 1 object stream

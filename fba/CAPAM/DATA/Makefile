@@ -3,12 +3,15 @@
 ## targets:
 
 ## Macros
-SUBDIR = 1a 1b
+SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c
+#SUBDIR = 3a 3b 3c
 ##SUBDIR = SOKeg
 TARGET = 
 SEED  = 999 
+JOBS  = 8
 
 .PHONY: default $(SUBDIR) mcmc
+
 
 ## Targets
 default: $(SUBDIR)
@@ -26,7 +29,12 @@ $(clean_files):
 
 .PHONY: sim
 sim_dirs := $(foreach dir,$(SUBDIR),$(dir)/sim)
+run_dirs := $(foreach dir,$(SUBDIR),$(dir)/run)
 
 sim: $(sim_dirs)
 $(sim_dirs):
-	cd $(@D); make clean; make data; make est -j8; make collect #; make ARG="-sim $(SEED) -nox"
+	cd $(@D); make clean; make data; make est -j$(JOBS); make collect #; make ARG="-sim $(SEED) -nox"
+
+run: $(run_dirs)
+$(run_dirs):
+	cd $(@D); make clean; make ARG="-sim 999 -ainp PHake2010.pin -nox" mcmc

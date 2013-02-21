@@ -7,10 +7,15 @@
 EXEC=iscam
 prefix=../../../../dist
 DAT=RUN.dat
-CTL=PHake2011
+CTL=PHake2010
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
+NOSIM = 8
+
+.PHONY = all run mcmc mceval retro clean data
+
+
 
 ifdef DEBUG
   DIST=$(prefix)/debug/iscam
@@ -49,5 +54,40 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT)",a);\
                         system(cmd)})'
 
+
+
+simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --slave)
+datadone := $(foreach dir,$(simdirs),$(dir)/datadone)
+simfiles := $(foreach dir,$(simdirs),$(dir)/simdone)
+
+$(datadone):
+	mkdir $(@D)
+	cd $(@D); touch datadone
+
+data: $(datadone)
+
+$(simfiles): data 
+	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat $(@D)
+	cd  $(@D); make clean --file=CAPAM.mak; 
+	cd  $(@D); make mcmc ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak; 
+	cd  $(@D); touch simdone
+	#cp  ../../../../dist/release/iscam $(@D)
+	
+
+est: $(simfiles)
+
+COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
+				sims <- lapply(dn,function(d){require(Riscam);setwd(d);A<-read.rep("PHake2010.rep");setwd("..");c(A$$ENpar,A$$DIC)}); \
+			   	save(sims,file="allSims.Rdata")'
+
+saveDICvalue:
+	echo $(COLLECTALL) | R --vanilla --slave
+
+collect: saveDICvalue
+
 clean: 
-	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
+	-rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance allSims.R \
+	allSims.Rdata
+
+cleanall:
+	-rm -rf 0*

@@ -84,7 +84,7 @@
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
 //-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
-//--              - Should probably use a separate simulation control file.    --//
+//--              - Should probably use a separate simulation control file.    --//               
 //--                                                                           --//
 //--                                                                           --//
 //--                                                                           --//
@@ -534,18 +534,18 @@ DATA_SECTION
 	init_matrix selex_controls(1,10,1,ngear);
 	!! COUT(selex_controls);
 
-	ivector isel_npar(1,ngear);			//ivector for # of parameters for each gear.
-	ivector jsel_npar(1,ngear);			//ivector for the number of rows for time-varying selectivity.
-	ivector isel_type(1,ngear);  	//Switch for selectivity
-	vector ahat(1,ngear);			//age-at-50% vulnerbality for logistic function
-	vector ghat(1,ngear);			//std at 50% age of vulnerability for logistic funciton
-	vector age_nodes(1,ngear);		//No. of age-nodes for bicubic spline.
-	vector yr_nodes(1,ngear);		//No. of year-nodes for bicubic spline.
-	ivector sel_phz(1,ngear);		//Phase for estimating selectivity parameters.
-	vector sel_2nd_diff_wt(1,ngear);	   //Penalty weight for 2nd difference in selectivity.
-	vector sel_dome_wt(1,ngear);		   //Penalty weight for dome-shaped selectivity.
-	vector sel_2nd_diff_wt_time(1,ngear); //Penalty weight for 2nd difference in time-varying selectivity.
-	ivector n_sel_blocks(1,ngear);
+	ivector isel_npar(1,ngear);				//ivector for # of parameters for each gear.
+	ivector jsel_npar(1,ngear);				//ivector for the number of rows for time-varying selectivity.
+	ivector isel_type(1,ngear);  	   	 	//Switch for selectivity
+	vector ahat(1,ngear);			   	 	//age-at-50% vulnerbality for logistic function
+	vector ghat(1,ngear);			   	 	//std at 50% age of vulnerability for logistic funciton
+	vector age_nodes(1,ngear);		   	 	//No. of age-nodes for bicubic spline.
+	vector yr_nodes(1,ngear);		   	 	//No. of year-nodes for bicubic spline.
+	ivector sel_phz(1,ngear);		   	 	//Phase for estimating selectivity parameters.
+	vector sel_2nd_diff_wt(1,ngear);	   	//Penalty weight for 2nd difference in selectivity.
+	vector sel_dome_wt(1,ngear);		   	//Penalty weight for dome-shaped selectivity.
+	vector sel_2nd_diff_wt_time(1,ngear); 	//Penalty weight for 2nd difference in time-varying selectivity.
+	ivector n_sel_blocks(1,ngear);			//Number of discrete selectivity blocks.
 	
 	LOC_CALCS
 		isel_type = ivector(selex_controls(1));
@@ -569,6 +569,7 @@ DATA_SECTION
 	LOC_CALCS
 		//cout up the number of selectivity parameters
 		//depending on the value of isel_type
+		//testing();
 		isel_npar.initialize();
 		for(i=1;i<=ngear;i++)
 		{	
@@ -677,7 +678,10 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | SIMULATION CONTROLS
 	// |---------------------------------------------------------------------------------|
-	// | 1 -> flag for IFD selectivity.
+	// | Defn' for sim_ctrl
+	// | 1) Flag for modelling selectivity using ideal free distribution.
+	// | 2) Index for simulated sel_type
+	// | 3) Number of selectivity blocks for each gear type.
 
 	init_matrix sim_ctrl(1,3,1,ngear);
 	!! COUT(sim_ctrl);
@@ -774,6 +778,7 @@ PARAMETER_SECTION
 							uu = 0.05*randn(j+rseed);
 						} 
 
+						// SPECIAL CASE for simulation.
 						// Special case if sim with sel_type=1 and estimate with sel_type11
 						if(sim_isel_type(k)==1 && isel_type(k)>=11 && j==1)
 						{
@@ -876,19 +881,20 @@ PARAMETER_SECTION
 	3darray log_sel(1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
 	3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
 	
-	sdreport_number sd_depletion;
-	
+	sdreport_number sd_depletion;	
 	
 PRELIMINARY_CALCS_SECTION
-  //Run the model with input parameters to simulate real data.
+	// |---------------------------------------------------------------------------------|
+	// | Run the model with input parameters to simulate real data.
+	// |---------------------------------------------------------------------------------|
+	// | 1) get Simulation controls from *.sim
+ 	// | 
   nf=0;
   cout<<"OK TO HERE"<<endl;
   if(SimFlag) 
   {
     initParameters();
-    // calcSelectivities();
-    // calcTotalMortality();
-    simulation_model(rseed);
+    simulationModel(rseed);
   }
   if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 
@@ -934,7 +940,6 @@ PROCEDURE_SECTION
 	//dvariable a=3.0;
 	//cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 	
-
 
 FUNCTION initParameters
   {
@@ -1064,10 +1069,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
 		empirical weight-at-age data, then calculate selectivity based on 
 		mean length.
-
-		CHANGED: Added blocks for simulation model sim_sel_blocks 
-	
 	*/
+
 	int i,j,k,byr,bpar;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
@@ -1097,13 +1100,6 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					{
 						bpar ++;
 						if( byr < n_sel_blocks(j) ) byr++;
-					}
-
-					// switch for simulation blocks
-					if( i == sim_sel_blocks(j,byr) && SimFlag )
-					{
-						bpar ++;
-						if( byr < nsim_sel_blocks(j) ) byr++;
 					}
 
 					p1 = mfexp(sel_par(j,bpar,1));
@@ -1643,6 +1639,7 @@ FUNCTION calcSurveyObservations
 		
 		
 		//TODO, this might not be working correctly, simulation test it.
+		// The following allows for a penalized random walk in survey q.
 		if(q_prior(i)==2)
 		{
 			//random walk in q
@@ -1658,11 +1655,7 @@ FUNCTION calcSurveyObservations
 			//cout<<sum(epsilon(i))<<endl;
 			//exit(1);
 		}
-		
-		
-		
-		
-		
+	
 	}
 	
 	
@@ -2612,7 +2605,7 @@ FUNCTION void calc_reference_points()
 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
   }
 	
-FUNCTION void simulation_model(const long& seed)
+FUNCTION void simulationModel(const long& seed)
   {
 	/*
 	Call this routine to simulate data for simulation testing.
@@ -2634,13 +2627,19 @@ FUNCTION void simulation_model(const long& seed)
 	Jan 30, 2013  SM
 	- added some simulation controls to the control file for simulating
 	  fake data.  These controls include:
-	  - sim_control(1) -> 
+	  - sim_control(1) -> flag modeling selectivity using Ideal Free Distribution.
+	  - sim_control(2) -> 
 	*/
 	
-	
+	bool pinfile = 0;
 	cout<<"___________________________________________________\n"<<endl;
 	cout<<"  **Implementing Simulation--Estimation trial**    "<<endl;
 	cout<<"___________________________________________________"<<endl;
+	if(norm(log_rec_devs)!=0)
+	{
+		cout<<"\tUsing pin file for simulation"<<endl;
+		pinfile = 1;
+	}
 	cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
 	cout<<"___________________________________________________\n"<<endl;
 	
@@ -2648,11 +2647,10 @@ FUNCTION void simulation_model(const long& seed)
 	//Indexes:
 	int i,j,k,ii,ki;
 
-	//3darray Chat(1,ngear,syr,nyr,sage,nage);
-	//C.initialize();
-	
+	// Initialize selectivity based on model parameters.
     calcSelectivities(sim_isel_type);
-    cout<<"OK DUDE"<<endl;
+    
+    // Initialize natural mortality rates.  Should add Random-walk in M parameters here.
     calcTotalMortality();
 
 	
@@ -2660,7 +2658,7 @@ FUNCTION void simulation_model(const long& seed)
 	/*	-- Generate random numbers --	*/
 	/*----------------------------------*/
 	random_number_generator rng(seed);
-	dvector wt(syr-nage-1,nyr);			//recruitment anomalies
+	dvector wt(syr-nage-1,nyr);			//recruitment anomalies if !pinfile
 	dmatrix epsilon(1,nit,1,nit_nobs);  //observation errors in survey
 	
 	double sig = value(rho/varphi);
@@ -2744,22 +2742,60 @@ FUNCTION void simulation_model(const long& seed)
 		the eplogistic function where g goes from
 		strongly domed to asymptotic, e.g.,
 		g = 0.2 * (nyr-i)/(nyr-syr);
+
+		-If simulation blocks differ from estimation blocks,
+		then need to loop over years and change selectivity
+		to correspond to the simulation blocks.
 		
 	*/
 
-	/*CHANGED May 15, 2011 calcSelectivities gets called from PRELIMINARY_CALCS*/
+	
 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
 	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
-	dlog_sel=value(log_sel);
-	/*
+
+	// Check to see if Selectivity blocks differ from estimation blocks.
+	int byr;
+	double p1,p2,xx;
+	
 	for(k=1;k<=ngear;k++)
+	{
+		byr = 1;
+		if( nsim_sel_blocks(k) > 1 )
+		{
+			p1 = mfexp(value(sel_par(k,1,1)));
+			p2 = mfexp(value(sel_par(k,1,2)));
+
+			for(i=syr; i<=nyr; i++)
+			{
+				if( i == sim_sel_blocks(k,byr) )
+				{
+					if( byr <= nsim_sel_blocks(k) )
+					{
+						byr++;
+
+						// Get new selectivity parameters
+						xx  = randn(rng);
+						p1 *= exp(0.1 * xx);
+						xx  = randn(rng);
+						p2 *= exp( 0.05 * xx);
+					}
+				}				
+				log_sel(k)(i) = log( plogis(age,p1,p2) );
+			}
+		}
+	}
+	
+	dlog_sel=value(log_sel);
+
+	
+	/*
 		for(i=syr;i<=nyr;i++)
 		{
 			//sel(k)(i)=plogis(age,ahat(k),ghat(k));
 			log_sel(k)(i)=log(plogis(age,ahat(k),ghat(k)));
-			log_sel(k)(i) -= log(mean(exp(log_sel(k)(i))));
+		log_sel(k)(i) -= log(mean(exp(log_sel(k)(i))));
 		}
-		//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
+	//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
 	*/
 	cout<<"	Ok after selectivity\n";
 
@@ -2831,7 +2867,8 @@ FUNCTION void simulation_model(const long& seed)
 		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(13)))*fec(i));
 		
 		//Update numbers at age
-		if(i>=syr+sage-1)
+		// SM Changed to allow for pinfile to over-ride S_R relationship.
+		if(i>=syr+sage-1 && !pinfile)
 		{
 			double rt;
 			//double et=value(N(i-sage+1))*fec(i-sage+1);
@@ -3007,7 +3044,7 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
   	*/
   	dvector pa(sage,nage);
 
-  	pa = (elem_prod(va,pow(ba,1.0)));
+  	pa = (elem_prod(va,pow(ba,0.25)));
   	// pa = (pa - mean(pa))/sqrt(var(pa));
   	// pa = va * exp(0.1*pa);
   	pa = pa/sum(pa);
@@ -3580,6 +3617,11 @@ GLOBALS_SECTION
 	double dicNoPar;
 	double dicValue;
 
+    void testing(void)
+    {
+		cout<<"Hello World"<<endl;
+		exit(1);
+    }
 
 
 	void function_minimizer::mcmc_eval(void)
@@ -3664,9 +3706,11 @@ GLOBALS_SECTION
 	        double dic    = pd + dbar;
 	        dicValue      = dic;
 	        dicNoPar      = pd;
+
 	        cout<<"Number of posterior samples    = "<<nsamp  <<endl;
 	        cout<<"Expectation of log-likelihood  = "<<dbar   <<endl;
 	        cout<<"Expectation of theta           = "<<dtheta <<endl;
+	        cout<<"Number of estimated parameters = "<<nvar1  <<endl;
 		    cout<<"Effective number of parameters = "<<pd     <<endl;
 		    cout<<"DIC = "<<dic<<endl;
 	        break;

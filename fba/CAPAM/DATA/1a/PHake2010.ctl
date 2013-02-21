@@ -15,22 +15,22 @@
 ## npar
 	7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-	1.6         -5.0    15       4       0       -5.0    15.     #log_ro/msy 
-	0.65        0.2     1.0      4       3       3       2       #steepness/fmsy
-	-1.469      -5.0    0.0      2       1       -1.469  0.05    #log.m
-	1.6         -5.0    15       1       0       -5.0    15      #log_avgrec
-	1.60        -5.0    15       1     0         -5.0    15      #log_recinit
-	0.2         0.001   0.999    3       3       12.0    52.8    #rho
-	1.25        0.01    10.      3       4       39.0625 62.5    #kappa (precision)
+	1.6         -5.0    15       4       1       1.6    0.50    #log_ro/msy 
+	0.65        0.2     1.0      4       3       3       2      #steepness/fmsy
+	-1.469      -5.0    0.0      2       1       -1.469  0.015   #log.m
+	1.2         -5.0    15       1       0       -5.0    15     #log_avgrec
+	1.40        -5.0    15       1       0       -5.0    15     #log_recinit
+	0.20        0.001   0.999    3       3       5.00    20.0   #rho
+	1.25        0.01    10.00    3       4       15.0    10.0   #kappa (precision)
 ## ------------------------------------------------------------------------- ##
 ##
 ##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
-##      1) logistic selectivity parameters                                   ##
-##      2) selectivity coefficients                                          ##
-##      3) a constant cubic spline with age-nodes                            ##
+##      1) logistic selectivity parameters         (block mode)              ##
+##      2) selectivity coefficients                (block mode)              ##
+##      3) a constant cubic spline with age-nodes  (block mode)              ##
 ##      4) a time varying cubic spline with age-nodes                        ##
 ##      5) a time varying bicubic spline with age & year nodes.              ##
 ##      6) fixed logistic (set isel_type=6, and estimation phase to -1)      ##
@@ -41,16 +41,20 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	1		1                       # -selectivity type ivector(isel_type) for gear
-	3.5		2.5                     # -Age/length at 50% selectivity (logistic)
-	1.0		0.532                   # -STD at 50% selectivity (logistic)
-	5		5						# -No. of age nodes for each gear (0=ignore)
-	9		5						# -No. of year nodes for 2d spline(0=ignore)
-	2		2						# -Phase of estimation (-1 for fixed)
-	150		200						# -Penalty wt for 2nd differences w=1/(2*sig^2)
-	50.0	200						# -Penalty wt for dome-shaped w=1/(2*sig^2)
-	1.0		1.0						# -Penalty wt for time-varying selectivity
+	1		1                       # 1  -selectivity type ivector(isel_type) for gear
+	3.5		2.5                     # 2  -Age/length at 50% selectivity (logistic)
+	0.5		0.75                    # 3  -STD at 50% selectivity (logistic)
+	7		5						# 4  -No. of age nodes for each gear (0=ignore)
+	12		5						# 5  -No. of year nodes for 2d spline(0=ignore)
+	2		3						# 6  -Phase of estimation (-1 for fixed)
+	12.5	200						# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	12.5 	200						# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+	12.5	1.0						# 9  -Penalty wt for time-varying selectivity
+	1       1                       # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
+## start years for selectivity blocks
+1977 #1985 1996 
+1977
 ##
 ##
 ##
@@ -76,9 +80,9 @@
 	0.100       # 3  -std in observed catches in first phase.
 	0.0707      # 4  -std in observed catches in last phase.
 	0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
-	0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
+	0.005       # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 	0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
-	0.01        # 8  -std in mean fishing mortality in first phase
+	0.05        # 8  -std in mean fishing mortality in first phase
 	2.00        # 9  -std in mean fishing mortality in last phase
 	-3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 	0.1         # 11 -std in deviations for natural mortality
@@ -86,6 +90,17 @@
 	0.50        # 13 -fraction of total mortality that takes place prior to spawning
 	1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 ##
+## ------------------------------------------------------------------------- ##
+## SIMULATION SELEX CONTROLS FOR FAKE DATA FOR MODEL TESTING                 ##
+## ------------------------------------------------------------------------- ##
+## selex_ctrl
+    0 		0          				# 1  - flag for using IFD (0=off, 1=on)
+    1       1                       # 2  - Selectivity type for simulating data
+    1       1                       # 3  - nsim_sel_blocks
+## ------------------------------------------------------------------------- ##
+## start years for selectivity blocks
+1977	#1985	1996
+1977
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)
 ## ------------------------------------------------------------------------- ##
