@@ -85,6 +85,12 @@
 	.plotBiomass ( repObj, annotate=TRUE )
 	dev.off()
 	
+
+	gfn  <- paste(fileprefix, "RetrospectiveBiomass.png", sep="")
+	png(gfn, width=W, height=H, res=Res)
+	.plotSSBretrospective ( repObj )
+	dev.off()
+
 	gfn  <- paste(fileprefix, "Depletion.png", sep="")
 	png(gfn, width=W, height=H, res=Res)
 	.plotDepletion ( repObj, annotate=TRUE )

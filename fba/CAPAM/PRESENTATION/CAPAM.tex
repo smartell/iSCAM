@@ -2,21 +2,21 @@
 
 %% STEP 1) SELECT THE THEM YOU WISH TO USE
 
-\usetheme{Goettingen} % My favorite!
-%\usetheme{PaloAlto}
+% \usetheme{Goettingen} % My favorite!
+% usetheme{PaloAlto}
 %\usetheme{Hannover}
 %\usetheme{Madrid} 
-%\usetheme{Boadilla} % Pretty neat, soft color.
-%\usetheme{default}
-%\usetheme{Warsaw}
-%\usetheme{Bergen} % This template has nagivation on the left
+\usetheme{Boadilla} % Pretty neat, soft color.
+% \usetheme{default}
+% \usetheme{Warsaw}
+% \usetheme{Bergen} % This template has nagivation on the left
 %\usetheme{Frankfurt} % Similar to the default 
 %with an extra region at the top.
-%\usecolortheme{seahorse} % Simple and clean template
+% \usecolortheme{seahorse} % Simple and clean template
 %\usetheme{Darmstadt} % not so good
 % Uncomment the following line if you want %
 % page numbers and using Warsaw theme%
-% \setbeamertemplate{footline}[page number]
+\setbeamertemplate{footline}[page number]
 %\setbeamercovered{transparent}
 \setbeamercovered{invisible}
 % To remove the navigation symbols from 
@@ -29,19 +29,19 @@
 %
 
 %Custom Color theme
-\usepackage{color}
-\definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
-\definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
-\setbeamerfont{title}{size=\Huge}
-\setbeamercolor{structure}{fg=white}
-\setbeamertemplate{frametitle}[default][center]
+% \usepackage{color}
+% \definecolor{bottomcolour}{rgb}{0.32,0.3,0.38}
+% \definecolor{middlecolour}{rgb}{0.08,0.08,0.16}
+% \setbeamerfont{title}{size=\Huge}
+% \setbeamercolor{structure}{fg=white}
+% \setbeamertemplate{frametitle}[default][center]
 
-\setbeamercolor{normal text}{bg=black, fg=white}
-\setbeamertemplate{background canvas}[vertical shading]
-[bottom=bottomcolour, middle=middlecolour, top=black]
+% \setbeamercolor{normal text}{bg=black, fg=white}
+% \setbeamertemplate{background canvas}[vertical shading]
+% [bottom=bottomcolour, middle=middlecolour, top=black]
 
-\setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
-\setbeamerfont{frametitle}{size=\huge}
+% \setbeamertemplate{itemize item}{\lower3pt\hbox{\Large\textbullet}}
+% \setbeamerfont{frametitle}{size=\huge}
 
 
 %end of color theme
@@ -54,7 +54,7 @@
 	\textcolor{blue}{\raisebox{-.25ex}{A}}%
 	\raisebox{-.50ex}{M}%
 	}
-\logo{\iscam}
+% \logo{\iscam}
 %end of iscam logo
 
 %Table of contents at begining of each section
@@ -67,13 +67,13 @@
 }
 %end of table of contents
 
-\title[\iscam]{Beautiful Presentation using Beamer}
-\author{Name of the Speaker}
-\institute[U of X]
+\title[IPHC]{Best Practices for Modeling Time-Varying Selectivity}
+\author[Martell \& Stewart]{Steven Martell \& Ian Stewart}
+\institute[IPHC]
 {
-University of [...] \\
+International Pacific Halibut Commission\\
 \medskip
-{\emph{email@domain.ca}}
+{\emph{stevem@iphc.int}}
 }
 \date{\today}
 % \today will show current date. 
@@ -85,53 +85,195 @@ University of [...] \\
 \titlepage
 \end{frame}
 %
+\section{Motivation} % (fold)
+\label{sec:motivation}
+
 \begin{frame}
 \frametitle{Motivation}
-\begin{block}
-{Why Beamer?}
-Does anybody need an introduction to Beamer? I don't think so.
-\end{block}
+
+	
+\begin{center}
+	There are many \textbf{SUBJECTIVE} elements in stock assessment.
+\end{center}
+
 \end{frame}
+% section motivation (end)
+
+\section{Virtual \& Synthetic methods} % (fold)
+\label{sec:virtual_&_synthetic_methods}
+
+\begin{frame}[m]\frametitle{VPA vs. SCA}
+
+\begin{itemize}
+
+	\item \alert<1>{Virtual Population Analysis}
+		\begin{itemize}[<+->]
+			\item Catch reported without error
+			\item Incomplete cohorts
+			\item Error propagation
+		\end{itemize}
+\vfill
+	\item \alert<4>{Statistic Catch Age }
+		\begin{itemize}[<+->]
+			\item Confounding between error \& structural assumptions
+			\item Seprability (year \& age effect)
+			\item Large number of latent variables
+		\end{itemize}
+\end{itemize}
+    
+
+
+\end{frame}
+
+% section virtual_&_synthetic_methods (end)
+
+\section{Selectivity Models} % (fold)
+\label{sec:Selectivity_Models}
+
+\begin{frame}[m]\frametitle{Selectivity Models}
+    
+\begin{columns}
+	\column{0.33\textwidth}
+		\textbf{Fixed}\\
+		\includegraphics[width=1.5in]{../FIGS/2b/iSCAMfig:Hake(2b):Selectivity2.png}\\
+		Asymptotic or dome?\\
+	
+	
+	\column{0.33\textwidth}
+		\textbf{Discrete}\\
+		\includegraphics[width=1.5in]{../FIGS/2b/iSCAMfig:Hake(2b):Selectivity1.png}\\
+		Choice of time blocks?\\
+	
+	
+	\column{0.33\textwidth}
+		\textbf{Continuous}\\
+		\includegraphics[width=1.5in]{../FIGS/3c/iSCAMfig:Hake(3c):Selectivity1.png}\\
+		Variance on penalty?\\
+	
+\end{columns}
+\vfill
+\emph{How do we go about choosing the appropriate model?}
+\end{frame}
+
+\begin{frame}[m]\frametitle{How do we go about choosing the appropriate model?}
+	\only<1>{
+    \emph{Fishing epochs}\\
+    \begin{center}
+	    \includegraphics[width=1.in]{../FIGS/halibuthook.jpeg}
+	    \includegraphics[width=1.7in]{../FIGS/circlehook.jpeg}
+    \end{center}
+    }
+    \only<2>{
+    \emph{Residual patterns}\\
+    \begin{center}
+		\includegraphics[width=3in]{../FIGS/3c/iSCAMfig:Hake(3c):AgeCompResidual1.png}    
+    \end{center}
+    }
+    \only<3>{
+    \emph{Retrospective performance}\\
+    \begin{center}
+		\includegraphics[width=3in]{../FIGS/1c/iSCAMfig:Hake(1c):RetrospectiveBiomass.png}    
+    \end{center}
+    }
+    \only<4>{
+    \centerline{Center for Independent Experts!}
+    }
+\end{frame}
+% section Selectivity_models (end)
+
+
+% |--------------------------------------------------------------------------------------|
+% | SIMULATION EXPERIMENT
+% |--------------------------------------------------------------------------------------|
+% |
+\section{Simulation Experiment} % (fold)
+\label{sec:simulation_experiment}
+
+
+\begin{frame}[m]\frametitle{Simulation experiment}
+    
+ \begin{tabular}{r|ccc}
+		\hline
+
+		\hline
+		\textbf{\textbf{\underline{Assumed}}}
+		&\multicolumn{3}{c}{\textbf{\underline{True selectivity states}}}\\
+		&\textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} \\
+		\hline
+		 \textbf{Fixed (1)}      & 1a & 1b & 1c \\
+		 \textbf{Discrete (2)}   & 2a & 2b & 2c \\
+		 \textbf{Continuous (3)} & 3a & 3b & 3c \\
+		\hline
+
+		\hline
+		\end{tabular}
+\end{frame}
+
+
+
+% section simulation_experiment (end)
+
 %
-\begin{frame}
-\frametitle{Example of a Theorem}
-\begin{theorem}
-The quick brown fox jumps over the lazy dog.
-\end{theorem}
-\end{frame}
+% \begin{frame}[m]
+% \frametitle{Constant selectivity perils}
+% \begin{itemize}
+% 	\item Structural assumption may lead to:
+% 	\begin{itemize}
+% 		\item bias in recruitment estimates (e.g., 2J3KL cod).
+% 		\item precisely biased estimates of abundance.
+% 		\item ...
+% 	\end{itemize}
+% 	\item Reference points are based on selectivity.
+% 	\item A source of retrospective bias.
+% 	\item Bias in forecast (e.g., Pacific halibut).
+% \end{itemize}
+% \end{frame}
+
+% \begin{frame}[t]\frametitle{Selectivity models}
+%     \begin{enumerate}
+%     	\item Discrete time blocks, or
+% 		\includegraphics[width=1.5in]{../FIGS/2b/iSCAMfig:Hake(2b):Selectivity1.png}
+%     	\item Continuous penalized random walk.
+% 		\includegraphics[height=2.2in]{../FIGS/3c/iSCAMfig:Hake(3c):Selectivity1.png}
+%     \end{enumerate}
+%     \begin{center}
+% 		% \fcolorbox{white}{white}{\includegraphics[height=2.in]{../FIGS/2b/iSCAMfig:Hake(2b):Selectivity1.png}}
+%     \end{center}
+
+% \end{frame}
 %
-\begin{frame}[fragile] % Notice the [fragile] option %
-\frametitle{Verbatim}
-\begin{example}[Putting Verbatim]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Outline}
-\begin{block}
-{Why Beamer?}
-Does anybody need an introduction to Beamer?
-I don't think so.
-\end{block}
-% Extra carriage return causes problem with verbatim %
-\end{frame}\end{verbatim} 
-\end{example}
-\end{frame}
+% \begin{frame}[fragile] % Notice the [fragile] option %
+% \frametitle{Verbatim}
+% \begin{example}[Putting Verbatim]
+% \begin{verbatim}
+% \begin{frame}
+% \frametitle{Outline}
+% \begin{block}
+% {Why Beamer?}
+% Does anybody need an introduction to Beamer?
+% I don't think so.
+% \end{block}
+% % Extra carriage return causes problem with verbatim %
+% \end{frame}\end{verbatim} 
+% \end{example}
+% \end{frame}
  
-\begin{frame}[fragile]  % notice the fragile option, since the body
-			% contains a verbatim command
-Example of the \verb|\cite| command to give a reference is below:
-Example of citation using \cite{key1} follows on.
-\end{frame}
+% \begin{frame}[fragile]  % notice the fragile option, since the body
+% 			% contains a verbatim command
+% Example of the \verb|\cite| command to give a reference is below:
+% Example of citation using \cite{key1} follows on.
+% \end{frame}
  
-\begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99}
- \bibitem[Label1, 2010]{key1} Author's name (1987)
- \newblock Title of the paper.
- \newblock \emph{Journal Name} 55(4), 765 -- 799.
-\end{thebibliography}
-}
-\end{frame}
+% \begin{frame}
+% \frametitle{References}
+% \footnotesize{
+% \begin{thebibliography}{99}
+%  \bibitem[Label1, 2010]{key1} Author's name (1987)
+%  \newblock Title of the paper.
+%  \newblock \emph{Journal Name} 55(4), 765 -- 799.
+% \end{thebibliography}
+% }
+% \end{frame}
  
 \begin{frame}
 \centerline{The End}

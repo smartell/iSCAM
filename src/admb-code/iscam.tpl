@@ -2839,6 +2839,7 @@ FUNCTION void simulationModel(const long& seed)
 			{
 				va(k) = ifdSelex(va(k),bt);
 				dlog_sel(k)(i) = log(va(k));
+				log_sel(k)(i)  = dlog_sel(k)(i);
 			}
 		}
 		
