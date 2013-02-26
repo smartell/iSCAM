@@ -37,10 +37,12 @@ $(clean_dirs):
 sim_dirs := $(foreach dir,$(SUBDIR),$(dir)/sim)
 run_dirs := $(foreach dir,$(SUBDIR),$(dir)/run)
 
-sim: $(sim_dirs)
+
+
 $(sim_dirs):
-	cd $(@D); make data; make est -j$(JOBS); make collect;
+	cd $(@D);make data -j$(JOBS); make est -j$(JOBS); make collect;
 	
+sim: $(sim_dirs)
 
 	#make clean; make data;
 run: $(run_dirs)

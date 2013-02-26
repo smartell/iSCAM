@@ -3615,8 +3615,8 @@ GLOBALS_SECTION
 	//   #include <gccmanip.h>
 	// #endif
 	// Variables to store results from DIC calculations.
-	double dicNoPar;
-	double dicValue;
+	double dicNoPar = 0;
+	double dicValue = 0;
 
     void testing(void)
     {

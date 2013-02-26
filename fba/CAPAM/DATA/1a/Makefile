@@ -84,15 +84,16 @@ simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --sla
 datadone:= $(foreach dir,$(simdirs),$(dir)/datadone)
 simfiles:= $(foreach dir,$(simdirs),$(dir)/simdone)
 
-$(datadone): $(CTL).ctl $(CTL).pin
+$(datadone):
 	mkdir $(@D)
-	cd $(@D); touch datadone
+	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat $(@D)
+	cd $(@D); make $(EXEC) --file=CAPAM.mak
+	cd $(@D); touch datadone;
 
 data: $(datadone)
 
-$(simfiles): data 
-	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat $(@D)
-	cd  $(@D); make clean --file=CAPAM.mak; make mcmc ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
+$(simfiles):  
+	cd  $(@D); make mcmc ARG="-nox -sim 56$(@D) -ainp PHake2010.pin" --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
