@@ -3618,11 +3618,7 @@ GLOBALS_SECTION
 	double dicNoPar = 0;
 	double dicValue = 0;
 
-    void testing(void)
-    {
-		cout<<"Hello World"<<endl;
-		exit(1);
-    }
+
 
 
 	void function_minimizer::mcmc_eval(void)
@@ -3708,12 +3704,12 @@ GLOBALS_SECTION
 	        dicValue      = dic;
 	        dicNoPar      = pd;
 
-	        cout<<"Number of posterior samples    = "<<nsamp  <<endl;
-	        cout<<"Expectation of log-likelihood  = "<<dbar   <<endl;
-	        cout<<"Expectation of theta           = "<<dtheta <<endl;
-	        cout<<"Number of estimated parameters = "<<nvar1  <<endl;
-		    cout<<"Effective number of parameters = "<<pd     <<endl;
-		    cout<<"DIC = "<<dic<<endl;
+	        cout<<"Number of posterior samples    = "<<nsamp    <<endl;
+	        cout<<"Expectation of log-likelihood  = "<<dbar     <<endl;
+	        cout<<"Expectation of theta           = "<<dtheta   <<endl;
+	        cout<<"Number of estimated parameters = "<<nvar1    <<endl;
+		    cout<<"Effective number of parameters = "<<dicNoPar <<endl;
+		    cout<<"DIC                            = "<<dicValue <<endl;
 	        break;
 	      }
 	      int ii=1;

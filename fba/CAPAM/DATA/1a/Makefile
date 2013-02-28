@@ -93,7 +93,7 @@ $(datadone):
 data: $(datadone)
 
 $(simfiles):  
-	cd  $(@D); make mcmc ARG="-nox -sim 56$(@D) -ainp PHake2010.pin" --file=CAPAM.mak
+	cd  $(@D); make mcmc ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
