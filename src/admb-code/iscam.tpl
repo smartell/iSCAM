@@ -3557,7 +3557,6 @@ TOP_OF_MAIN_SECTION
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
 
-	
 
 GLOBALS_SECTION
 	/**

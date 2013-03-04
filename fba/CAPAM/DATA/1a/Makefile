@@ -14,7 +14,7 @@ prefix =../../../../dist
 DAT    = RUN.dat
 CTL    = PHake2010
 ARG    =
-MCFLAG = -mcmc 10000 -mcsave 100 -nosdmcmc
+MCFLAG = -mcmc 1000 -mcsave 100 -nosdmcmc
 NR     = 4
 NOSIM  = 10   
 
@@ -93,14 +93,16 @@ $(datadone):
 data: $(datadone)
 
 $(simfiles):  
-	cd  $(@D); make mcmc ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
+	cd  $(@D); make retro ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
+	cd  $(@D); make mcmc  ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
 
 COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
 				sims <- lapply(dn,function(d){require(Riscam);setwd(d);\
-					A<-read.rep("PHake2010.rep");setwd("..");c(A$$ENpar,A$$DIC)}); \
+					A<-read.rep("PHake2010.rep");setwd("..");\
+					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy)}); \
 			   	save(sims,file="allSims.Rdata")'
 
 allSims.Rdata:
