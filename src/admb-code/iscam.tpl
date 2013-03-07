@@ -1901,7 +1901,7 @@ FUNCTION calc_objective_function
 			}
 			
 			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4)*/
-			if( isel_type(k)==4 )
+			if( isel_type(k)==4 || n_sel_blocks(k) > 1 )
 			{
 				dvar_matrix trans_log_sel = trans( log_sel(k) );
 				for(j=sage;j<=nage;j++)
@@ -2357,6 +2357,7 @@ FUNCTION void calc_reference_points()
 	}
 	d_ak /= sum(d_ak);
 	
+	
 	/* 
 	(3) Come up with a reasonable estimate of Fmsy 
 	In practice seems to  work best if start with 
@@ -2754,17 +2755,23 @@ FUNCTION void simulationModel(const long& seed)
 	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
 
 	// Check to see if Selectivity blocks differ from estimation blocks.
-	int byr;
+	int byr,bpar;
 	double p1,p2,xx;
+	double mu1, sd1;
+
 	
 	for(k=1;k<=ngear;k++)
 	{
 		byr = 1;
+		bpar = 0;
 		if( nsim_sel_blocks(k) > 1 )
 		{
+			mu1 = (value(sel_par(k,1,1))); 
+			sd1 = (value(sel_par(k,1,2)));
 			p1 = mfexp(value(sel_par(k,1,1)));
 			p2 = mfexp(value(sel_par(k,1,2)));
 
+			
 			for(i=syr; i<=nyr; i++)
 			{
 				if( i == sim_sel_blocks(k,byr) )
@@ -2772,21 +2779,19 @@ FUNCTION void simulationModel(const long& seed)
 					if( byr <= nsim_sel_blocks(k) )
 					{
 						byr++;
-
 						// Get new selectivity parameters
 						xx  = randn(rng);
-						p1 *= exp(0.1 * xx);
+						p1  = exp(mu1 + 0.2 * xx);
 						xx  = randn(rng);
-						p2 *= exp( 0.05 * xx);
+						p2  = exp(sd1 - 0.2 * xx);
 					}
 				}				
 				log_sel(k)(i) = log( plogis(age,p1,p2) );
 			}
 		}
 	}
-	
+	//exit(1);
 	dlog_sel=value(log_sel);
-
 	
 	/*
 		for(i=syr;i<=nyr;i++)

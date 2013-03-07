@@ -1,4 +1,5 @@
 ## Makefile for running iscam
+## Author: Steve Martell :)
 ## Targets: 
 ##		all:   -copy executable and run the model with DAT & ARG
 ##		run:   -copy executable and force a run
@@ -14,9 +15,9 @@ prefix =../../../../dist
 DAT    = RUN.dat
 CTL    = PHake2010
 ARG    =
-MCFLAG = -mcmc 1000 -mcsave 100 -nosdmcmc
-NR     = 4
-NOSIM  = 10   
+MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc
+NR     = 1
+NOSIM  = 16   
 
 
 .PHONY = all run mcmc mceval retro clean data est
@@ -101,8 +102,9 @@ est: $(simfiles)
 
 COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
 				sims <- lapply(dn,function(d){require(Riscam);setwd(d);\
-					A<-read.rep("PHake2010.rep");setwd("..");\
-					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy)}); \
+					A<-read.rep("PHake2010.rep");\
+					B<-read.rep("iscam.sim");setwd("..");\
+					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy)}); \
 			   	save(sims,file="allSims.Rdata")'
 
 allSims.Rdata:
@@ -110,9 +112,21 @@ allSims.Rdata:
 
 collect: allSims.Rdata
 
+COLLECTRETRO =  'dn<-dir(pattern="^[[:digit:]]"); \
+				runs <- lapply(dn,function(d){setwd(d);\
+					source("../../retroStat.R");\
+					setwd("..");\
+					bias <- c(mean=mean(bias),abs.mean=mean(abs(bias)),bias)});\
+				save(runs,file="retroSims.Rdata")'
+
+retroSims.Rdata:
+	echo $(COLLECTRETRO) | R --vanilla --slave
+
+retrostat: retroSims.Rdata
+
 clean: 
 	-rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance 
 	
 
 cleanall:
-	-rm -rf 0* allSims.Rdata allSims.R 
+	-rm -rf 0* allSims.Rdata allSims.R retroSims.Rdata
