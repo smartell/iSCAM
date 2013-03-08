@@ -25,6 +25,7 @@ $(SUBDIR):
 .PHONY: clean
 clean_files := $(foreach dir,$(SUBDIR),$(dir)/clean)
 clean_dirs  := $(foreach dir,$(SUBDIR),$(dir)/cleanall)
+collect_files := $(foreach dir,$(SUBDIR),$(dir)/collect)
 
 clean: $(clean_files)
 $(clean_files):
@@ -50,3 +51,11 @@ sim: $(sim_dirs)
 run: $(run_dirs)
 $(run_dirs):
 	cd $(@D); make ARG="-sim $(SEED) -ainp PHake2010.pin -nox";
+
+
+.PHONY: collect
+collect: $(collect_files)
+$(collect_files):
+	cd $(@D); rm allSims.Rdata
+	cd $(@D); make collect
+

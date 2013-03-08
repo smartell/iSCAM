@@ -16,8 +16,8 @@ DAT    = RUN.dat
 CTL    = PHake2010
 ARG    =
 MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc
-NR     = 1
-NOSIM  = 16   
+NR     = 4
+NOSIM  = 24   
 
 
 .PHONY = all run mcmc mceval retro clean data est
@@ -104,7 +104,9 @@ COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
 				sims <- lapply(dn,function(d){require(Riscam);setwd(d);\
 					A<-read.rep("PHake2010.rep");\
 					B<-read.rep("iscam.sim");setwd("..");\
-					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy)}); \
+					bstatus <- log2(A$$sbt[33]/A$$bmsy)-log2(B$$sbt[33]/B$$bmsy) ;\
+					fstatus <- log2(A$$ft[1,33]/A$$fmsy)-log2(B$$ft[1,33]/B$$fmsy);\
+					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy,fstatus,bstatus)}); \
 			   	save(sims,file="allSims.Rdata")'
 
 allSims.Rdata:

@@ -195,9 +195,8 @@ International Pacific Halibut Commission\\
  \begin{tabular}{r|ccc}
 		\hline
 
-		\hline
-		\textbf{\textbf{\underline{Assumed}}}
-		&\multicolumn{3}{c}{\textbf{\underline{True selectivity states}}}\\
+		\textbf{\textbf{\underline{True states}}}
+		&\multicolumn{3}{c}{\textbf{\underline{Assumed selectivity states}}}\\
 		&\textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} \\
 		\hline
 		 \textbf{Fixed (1)}      & 1a & 1b & 1c \\
@@ -205,11 +204,74 @@ International Pacific Halibut Commission\\
 		 \textbf{Continuous (3)} & 3a & 3b & 3c \\
 		\hline
 
+
 		\hline
 		\end{tabular}
 \end{frame}
+\subsection{Model overview} % (fold)
+\label{sub:model_overview}
+
+\begin{frame}[t]\frametitle{Model structure}
+	Simulation: based on 2010 Pacific hake assessment
+    \begin{itemize}
+    	\item Age-structured, assume $M$ is known.
+    	\item Conditioned on historical catch \& parameters fixed at MLE values.
+    \end{itemize}
+    \vfill
+    Data:
+    \begin{itemize}
+    	\item Historical removals.
+    	\item Annual abundance index based on stationary $q$.
+    	\item Survey age composition (logistic--time invariant).
+    	\item Fishery age composition (selectivity: fixed, blocks, or continous).
+    	\item Index observation error: $\sigma = 0.16$
+    	\item Age-composition error (multivariate logistic): $\sigma = 0.40$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[m]\frametitle{Questions}
+    \begin{enumerate}
+    	\item Can DIC be used reliably to choose the correct selectivity model?
+    	\item Impact of selectivity mis-specification on reference points?
+    	\item Retrospective performance of selectivity mis-specification?
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}[m]\frametitle{Algorithm}
+    For each model scenario:
+	\begin{enumerate}
+		\item Estimate model parameters for 2010 hake assesment.
+		\item Simulate relative abundance and age-comps based on MLE values.
+		\item Estimate joint posterior for simulated observations.
+		\item Calculate DIC from 1000 posterior samples.
+		\item Compute bias in estimated reference points.
+		\item Compute 4-year mean retrospective bias.
+		\item Repeat steps 2:5 at least 100 times for each scenario (9).
+	\end{enumerate}
+
+\end{frame}
+% subsection model_overview (end)
+
+\subsection{Simulation results} % (fold)
+\label{sub:simulation_results}
+
+\begin{frame}[t]\frametitle{Effective number of parameters}
+    
+    \begin{center}
+		\includegraphics[height=0.8\textheight]{../FIGS/EffectiveNoPars.png} 
+    \end{center}
+
+\end{frame}
 
 
+\begin{frame}[t]\frametitle{Model selection vis-\`a-vis DIC}
+    
+\begin{center}
+		\includegraphics[height=0.8\textheight]{../FIGS/DIC.png} 
+    \end{center}
+
+\end{frame}
+% subsection simulation_results (end)
 
 % section simulation_experiment (end)
 
