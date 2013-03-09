@@ -23,7 +23,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	#-------------------------------------------------------------------------#
 	grid 2 1
 	#-------------------------------------------------------------------------#
-	grid 6 1 toptitle="Select radio button to display plot" relief="solid" topfont="Helvetica" padx=2 pady=2 sticky=W
+	grid 7 1 toptitle="Select radio button to display plot" relief="solid" topfont="Helvetica" padx=2 pady=2 sticky=W
 	
 		# RowCol (1 1) Input data
 		grid 2 1 relief="flat" sticky=W
@@ -87,6 +87,14 @@ grid 1 1 relief="flat" pady=5 padx=5
 		null
 		
 		# RowCol (6 1)
+		grid 2 1 relief="flat" sticky=W
+		label "SIMULATION COMPARISON" font="Helvetica" sticky=W
+		grid 1 3 relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=simbiomass 	text="Spawning biomass"			function=.viewPlot mode=character sticky=W edit=TRUE
+		radio name=plotType value=retrossb  	text="Retrospective SSB"		function=.viewPlot mode=character sticky=W edit=TRUE
+		null
+
+		# RowCol (7 1)
 		grid 2 2 relief="flat" sticky=W
 		button text="Save Images" sticky=E function=.saveImages padx=2 pady=2 sticky=W
 		entry name=txtFigDir value=Directory width=43 mode=character sticky=W

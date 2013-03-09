@@ -305,7 +305,7 @@ DATA_SECTION
 		
 		for(k=1;k<=ngear;k++)
 		{	
-			for(i=syr;i<=nyr;i++)
+			for(i=syr;i<=nyr - retro_yrs;i++)
 				if( obs_ct(k,i)>0 ) ft_count++;
 		}
 		COUT(catch_data);
@@ -2650,7 +2650,8 @@ FUNCTION void simulationModel(const long& seed)
 
 	// Initialize selectivity based on model parameters.
     calcSelectivities(sim_isel_type);
-    
+    cout<<"	Ok after calcSelectivities"<<endl;
+
     // Initialize natural mortality rates.  Should add Random-walk in M parameters here.
     calcTotalMortality();
 
@@ -2982,6 +2983,8 @@ FUNCTION void simulationModel(const long& seed)
 		for(i=1;i<=nit_nobs(k);i++)
 		{
 			ii=iyr(k,i);
+			if(ii > nyr) break;  //Guard for retrospective on simulations.
+
 			ig=igr(k,i);
 			dvector sel = exp(dlog_sel(ig)(ii));
 			dvector Np = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
@@ -3027,7 +3030,7 @@ FUNCTION void simulationModel(const long& seed)
 	ofs<<"rt\n"<<rt<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
 	ofs<<"ft\n"<<trans(ft)<<endl;
-	ofs<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
+	//ofs<<"ut\n"<<elem_div(colsum(obs_ct),N.sub(syr,nyr)*wa)<<endl;
 	ofs<<"iyr\n"<<iyr<<endl;
 	ofs<<"it\n"<<it<<endl;
 	ofs<<"N\n"<<N<<endl;
@@ -3051,7 +3054,7 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
   	*/
   	dvector pa(sage,nage);
 
-  	pa = (elem_prod(va,pow(ba,0.25)));
+  	pa = (elem_prod(va,pow(ba,0.95)));
   	// pa = (pa - mean(pa))/sqrt(var(pa));
   	// pa = va * exp(0.1*pa);
   	pa = pa/sum(pa);
@@ -3772,6 +3775,12 @@ FINAL_SECTION
 		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
 		system(bscmd);
 		
+		if( SimFlag )
+		{
+			bscmd = "cp iscam.sim " + BaseFileName + ".sim";
+			system(bscmd);
+		}
+
 		if( mcmcPhase )
 		{
 			bscmd = "cp iscam.psv " + BaseFileName + ".psv";

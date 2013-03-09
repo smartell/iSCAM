@@ -75,7 +75,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 .TABLEDIR   <- "../TABLES/"
 .FIGUREDIR  <- "../FIGS/"
 
-
+.OVERLAY    <- FALSE
 
 
 
@@ -346,6 +346,65 @@ getRepObj   <- function(fileName)
 	
 	return(repObj)
 }
+# New function to use ggplots for model objects.
+getSimObj   <- function(fn)
+{	
+	print(fn)
+	tmp      <- read.admb(fn)
+	simfile  <- paste(fn,".sim",sep="")
+	if(file.exists(simfile))
+	{
+		tmp$sim      <- read.rep(simfile)
+	}
+	# Retrospectives
+	retfile <- paste(fn,".ret",1:4,sep="")
+	retSbt <- list()
+	i <- 0
+	for(ifn in retfile)
+	{
+		if(file.exists(ifn))
+		{
+			i <- i + 1
+			sbt <- read.rep(ifn)$sbt
+			retSbt[[i]] <- sbt
+		}
+	}
+	tmp$retSbt <- retSbt
+	return(tmp)
+}
+.viewPlot	<- function()
+{
+	print(".viewPlot")
+	# Get the guiPerf parameters so that plot controls available.
+	guiInfo <- getWinVal(scope="L")
+	print(plotType)
+	
+	# List of gui changes
+	guiChanges <- list()
+	
+	# Determine which files have been selected
+	hdr	<- ifiles[ ifiles$Select, ]
+	fn  <- hdr$Control.File
+	#print(fn)
+	nRuns <- nrow(hdr)
+	#hdr$Report.File contains the vector of report files to examine.
+
+	# Get model results from fn vector
+	# M        <<- lapply(fn, read.admb)
+	M        <<- lapply(fn, getSimObj)
+	names(M) <<- hdr$Stock
+
+	# use plotType to determine what is being plotted.
+	if( plotType=="simbiomass" )
+	{
+		.plotSimulatedBiomass( M )
+	}
+	if( plotType=="retrossb" )
+	{
+		.plotRetrospectiveBiomass( M )
+	}
+
+}
 
 .mpdView	<- function()
 {
@@ -363,60 +422,10 @@ getRepObj   <- function(fileName)
 	nRuns <- nrow(hdr)
 	#hdr$Report.File contains the vector of report files to examine.
 
-	## TODO auto layout stuff.
-	# if ( autoLayout )
-	# 	{
-	# 		if (nRuns < 4 )
-	# 		{
-	# 			winCols <- 1
-	# 			winRows <- nRuns
-	# 		}
-	# 		else if( nRuns >3 && nRuns<=6 )
-	# 		{
-	# 			winCols <- 2
-	# 			winRows <- 3
-	# 		}
-	# 		
-	# 		if (plotType=="selectivity")
-	# 		{
-	# 			winCols <- 1
-	# 			winRows <- 1
-	# 		}
-	# 	}
-	# 	
-	# 	newPlot <- TRUE
-	# 	if ( !autoLayout )
-	# 	{
-	# 		winCols <- ncols
-	# 		winRows <- nrows
-	# 		
-	# 		## Determin if newPlot should be set to TRUE
-	# 		# This sets newPlot to TRUE if current plot panel is the last row and
-	# 	    # last column of the layout.
-	# 		newPlot <- FALSE
-	# 	    mfg <- par( "mfg" )
-	# 	    if ( (mfg[1]==mfg[3]) && (mfg[2]==mfg[4]) )
-	# 	      newPlot <- TRUE
-	# 	    
-	# 	}
-	# 	
-	# 	## Update the gui
-	# 	guiChanges$ncols = winCols
-	# 	guiChanges$nrows = winRows
-	# 	setWinVal( guiChanges )
-	# 	
-	# 	
-	# 	## set graphical parameters
-	# 	if (newPlot)
-	# 	{
-	# 		if ( plotbyrow )
-	# 			par( oma=.VIEWOMA, mar=.VIEWMAR, mfrow=c(winRows,winCols) )
-	# 		else
-	# 			par( oma=.VIEWOMA, mar=.VIEWMAR, mfcol=c(winRows,winCols) )
-	# 	}
 	
 	## TODO Loop over runs and plot corresponding graph
 	par(las=1)
+	print(plotType)
 	for(i in 1:nRuns)
 	{
 		# Read the report file
@@ -435,6 +444,7 @@ getRepObj   <- function(fileName)
 			mcfile=paste(hdr$Control.File[i],".mcst", sep="")
 			repObj$mcsbt = read.table( mcfile, header=FALSE )
 		}
+
 	
 		# Conditional statements for radio button selections of plots
 		# Add new calls to radio buttons here.
@@ -575,14 +585,14 @@ getRepObj   <- function(fileName)
 			.plotMCMCpairs( repObj )
 		}
 	
-		if ( plotType=="simplot" )
+		if ( plotType=="simplot" )  #deprecate
 		{
 			admbObj = read.admb( "iscam" )
 			admbObj$sim = read.rep( "iscam.sim" )
 			
 			.plotSimulationSummary( admbObj )
 		}
-	
+		
 		# if(gLetter)
 		# {
 		# 	mfg=par("mfg")

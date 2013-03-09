@@ -15,9 +15,9 @@ prefix =../../../../dist
 DAT    = RUN.dat
 CTL    = PHake2010
 ARG    =
-MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc
+MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc -nox
 NR     = 4
-NOSIM  = 24   
+NOSIM  = 16   
 
 
 .PHONY = all run mcmc mceval retro clean data est
@@ -70,9 +70,9 @@ retro: $(EXEC) $(EXEC).ret1
 $(EXEC).ret1:
 	@echo $(RUNRETRO) | R --vanilla --slave
 
-RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
+RUNRETRO = 'args = paste("-retro",c(1:$(NR),0),"-nox"); \
             sapply(args,\
-            function(a){ cmd=paste("./$(EXEC)","-ind $(DAT)",a);\
+            function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
 
 
