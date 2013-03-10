@@ -2630,6 +2630,14 @@ FUNCTION void simulationModel(const long& seed)
 	  fake data.  These controls include:
 	  - sim_control(1) -> flag modeling selectivity using Ideal Free Distribution.
 	  - sim_control(2) -> 
+
+	March 9, 2013.  Fix simulation model to generate consistent data when 
+	doing retrospective analyses on simulated datasets.
+
+	NOTES:
+		-at the end of DATA_SECTION nyrs is modified by retro_yrs if -retro.
+		-add back the retro_yrs to ensure same random number sequence for 
+		observation errors.
 	*/
 	
 	bool pinfile = 0;
@@ -2642,6 +2650,7 @@ FUNCTION void simulationModel(const long& seed)
 		pinfile = 1;
 	}
 	cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
+	cout<<"\tNumber of retrospective years: "<<retro_yrs<<endl;
 	cout<<"___________________________________________________\n"<<endl;
 	
 	
@@ -2660,8 +2669,8 @@ FUNCTION void simulationModel(const long& seed)
 	/*	-- Generate random numbers --	*/
 	/*----------------------------------*/
 	random_number_generator rng(seed);
-	dvector wt(syr-nage-1,nyr);			//recruitment anomalies if !pinfile
-	dmatrix epsilon(1,nit,1,nit_nobs);  //observation errors in survey
+	dvector wt(syr-nage-1,nyr+retro_yrs);	//recruitment anomalies if !pinfile
+	dmatrix epsilon(1,nit,1,nit_nobs);  	//observation errors in survey
 	
 	double sig = value(sqrt(rho)*varphi);
 	double tau = value(sqrt(1.-rho)*varphi);
@@ -3001,6 +3010,7 @@ FUNCTION void simulationModel(const long& seed)
 				break;
 			}
 			it(k,i) = sum(Np) * exp(epsilon(k,i));
+			survey_data(k)(i,2) = it(k,i);
 		}
 	}
 	
@@ -3008,7 +3018,7 @@ FUNCTION void simulationModel(const long& seed)
 
 	cout<<"	OK after observation models\n";
 	/*----------------------------------*/
-	
+	writeSimulatedDataFile();
 	//CHANGED Fixed bug in reference points calc call from simulation model,
 	//had to calculate m_bar before running this routine.
 	
@@ -3027,6 +3037,7 @@ FUNCTION void simulationModel(const long& seed)
 	ofs<<"bmsy\n"<<bmsy<<endl;
 	ofs<<"va\n"<<va<<endl;
 	ofs<<"sbt\n"<<sbt<<endl;//<<rowsum(elem_prod(N,fec))<<endl;
+	ofs<<"log_rec_devs\n"<<log_rec_devs<<endl;
 	ofs<<"rt\n"<<rt<<endl;
 	ofs<<"ct\n"<<obs_ct<<endl;
 	ofs<<"ft\n"<<trans(ft)<<endl;
@@ -3041,6 +3052,65 @@ FUNCTION void simulationModel(const long& seed)
 	
 	//cout<<N<<endl;
 	//exit(1);
+  }
+
+FUNCTION writeSimulatedDataFile
+  {
+  	/*
+	This function writes a simulated data file based on the simulation
+	model output when the user specifies the -sim option.  This is only
+	necessary if the user wishes to perform a retrospecrtive analysis on
+	simulated data.
+  	*/
+
+  	ofstream dfs("SimulatedData.dat");
+  	dfs<<"#Model dimensions"<<endl;
+  	dfs<<syr<<endl;
+  	dfs<<nyr<<endl;
+  	dfs<<sage<<endl;
+  	dfs<<nage<<endl;
+  	dfs<<ngear<<endl;
+
+  	dfs<<"#Allocation"<<endl;
+  	dfs<<allocation<<endl;
+  	dfs<<"#Catch type"<<endl;
+  	dfs<<catch_type<<endl;
+
+  	dfs<<"#Age-schedule and population parameters"<<endl;
+  	dfs<<fixed_m<<endl;
+  	dfs<<linf<<endl;
+  	dfs<<vonbk<<endl;
+  	dfs<<to<<endl;
+  	dfs<<a<<endl;
+  	dfs<<b<<endl;
+  	dfs<<ah<<endl;
+  	dfs<<gh<<endl;
+
+  	dfs<<"#Observed catch data"<<endl;
+  	dfs<<catch_data<<endl;
+
+  	dfs<<"#Abundance indices"<<endl;
+  	dfs<<nit<<endl;
+  	dfs<<nit_nobs<<endl;
+  	dfs<<survey_type<<endl;
+  	dfs<<survey_data<<endl;
+
+  	dfs<<"#Age composition"<<endl;
+  	dfs<<na_gears<<endl;
+  	dfs<<na_nobs<<endl;
+  	dfs<<a_sage<<endl;
+  	dfs<<a_nage<<endl;
+  	dfs<<A<<endl;
+
+  	dfs<<"#Empirical weight-at-age data"<<endl;
+  	dfs<<n_wt_nobs<<endl;
+	dfs<<tmp_wt_obs<<endl;
+
+	dfs<<"#EOF"<<endl;
+	dfs<<999<<endl;
+	
+
+
   }
 FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
   {

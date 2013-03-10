@@ -35,14 +35,14 @@ run:  $(EXEC)
 	./$(EXEC) -ind $(DAT) $(ARG)
 
 mcmc: $(EXEC) $(EXEC).psv
-	./$(EXEC) -ind $(DAT) -mceval
+	./$(EXEC) -ind $(DAT) $(ARG) -mceval
 
 $(EXEC).psv: $(CTL).ctl
 	./$(EXEC) -ind $(DAT) $(MCFLAG) $(ARG)
 
 mceval: $(EXEC)
 	cp $(CTL).psv $(EXEC).psv
-	./$(EXEC) -ind $(DAT) -mceval
+	./$(EXEC) -ind $(DAT) $(ARG) -mceval
 
 retro: $(EXEC) $(EXEC).ret1
 
@@ -51,7 +51,7 @@ $(EXEC).ret1:
 
 RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
             sapply(args,\
-            function(a){ cmd=paste("./$(EXEC)","-ind $(DAT)",a);\
+            function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
 
 clean: 

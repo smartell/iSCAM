@@ -87,15 +87,16 @@ simfiles:= $(foreach dir,$(simdirs),$(dir)/simdone)
 
 $(datadone):
 	mkdir $(@D)
-	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat $(@D)
+	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat ./SIM.dat $(@D)
 	cd $(@D); make $(EXEC) --file=CAPAM.mak
 	cd $(@D); touch datadone;
 
 data: $(datadone)
 
 $(simfiles):  
-	cd  $(@D); make retro ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
-	cd  $(@D); make mcmc  ARG="-nox -sim $(@D) -ainp PHake2010.pin" --file=CAPAM.mak
+	cd  $(@D); make run   ARG="-sim $(@D) -ainp PHake2010.pin -noest" --file=CAPAM.mak
+	cd  $(@D); make retro DAT=SIM.dat       --file=CAPAM.mak
+	cd  $(@D); make mcmc  DAT=SIM.dat       --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
@@ -127,7 +128,7 @@ retroSims.Rdata:
 retrostat: retroSims.Rdata
 
 clean: 
-	-rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance 
+	-rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance *.ret[0-9]*
 	
 
 cleanall:

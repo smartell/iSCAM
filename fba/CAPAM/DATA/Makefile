@@ -3,14 +3,14 @@
 ## targets:
 
 ## Macros
-SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c 
-# SUBDIR = 1a
-# SUBDIR = 1a 1b 1c
+# SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c 
+# SUBDIR = 2b
+SUBDIR = 1a 1b 1c
 # SUBDIR = 2a 2b 2c
 # SUBDIR = 3a 3b 3c
 
 TARGET = 
-SEED  = 999 
+SEED  = 991 
 JOBS  = 8
 
 .PHONY: default $(SUBDIR) mcmc
@@ -51,7 +51,9 @@ sim: $(sim_dirs)
 	#make clean; make data;
 run: $(run_dirs)
 $(run_dirs):
-	cd $(@D); make retro ARG="-sim $(SEED) -ainp PHake2010.pin -nox";
+	cd $(@D); make ARG="-sim $(SEED) -ainp PHake2010.pin -noest" run
+	cd $(@D); make retro DAT=SIM.dat
+	#cd $(@D); make retro ARG="-sim $(SEED) -ainp PHake2010.pin -nox";
 
 
 .PHONY: collect

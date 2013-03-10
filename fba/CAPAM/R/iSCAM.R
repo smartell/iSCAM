@@ -366,7 +366,8 @@ getSimObj   <- function(fn)
 		{
 			i <- i + 1
 			sbt <- read.rep(ifn)$sbt
-			retSbt[[i]] <- sbt
+			nn  <- 1:(length(sbt)-1)
+			retSbt[[i]] <- sbt[nn]
 		}
 	}
 	tmp$retSbt <- retSbt
