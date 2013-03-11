@@ -3322,8 +3322,10 @@ FUNCTION decision_table
 	//    This vector should is now read in from the projection file control (pfc).
 	for(i=1;i<=n_tac;i++)
 	{
+		cout<<i<<" "<<n_tac<<endl;
 		projection_model(tac(i));
 	}
+	cout<<"Ok to here"<<endl;
   }
 	
 FUNCTION mcmc_output
@@ -3625,7 +3627,7 @@ FUNCTION void projection_model(const double& tac);
 	   << u20/0.2                       <<setw(12)
 	   << dSb5+1                        <<setw(12)
 	   << endl;
-	
+	// cout<<"Finished projection model"<<endl;
   }
 
 TOP_OF_MAIN_SECTION

@@ -255,6 +255,14 @@ International Pacific Halibut Commission\\
 \subsection{Simulation results} % (fold)
 \label{sub:simulation_results}
 
+\begin{frame}[m]\frametitle{Spawning biomass}
+    \begin{center}
+    	\includegraphics[height=0.8\textheight]{../FIGS/HakeSpawningBiomass991.png}
+    \end{center}
+
+
+\end{frame}
+
 \begin{frame}[t]\frametitle{Effective number of parameters}
     
     \begin{center}
@@ -271,10 +279,43 @@ International Pacific Halibut Commission\\
     \end{center}
 
 \end{frame}
+
+
+\begin{frame}[m]\frametitle{Retrospective bias}
+	\only<1>{
+    \begin{center}
+    	\includegraphics[height=0.8\textheight]{../FIGS/SSBretro991.png}
+    \end{center}
+    }
+    \only<2>{
+    \[
+    	\mbox{bias} = \frac{1}{4} \sum_{t=2005}^{2009} 100 \frac{B_t^y-B_t^{2010}}{B_t^{2010}}
+    \]
+    }
+    \only<3>{
+    \begin{center}
+    	\includegraphics[height=0.8\textheight]{../FIGS/RetroBias.png}
+    \end{center}
+    }
+\end{frame}
 % subsection simulation_results (end)
 
 % section simulation_experiment (end)
 
+
+
+\section{Discussion} % (fold)
+\label{sec:discussion}
+
+\begin{frame}[t]\frametitle{Discussion}
+    
+	\begin{itemize}
+		\item Random walk models: loss of scale information, informative prior for $B_o$ or $q$.
+	\end{itemize}
+
+\end{frame}
+
+% section discussion (end)
 %
 % \begin{frame}[m]
 % \frametitle{Constant selectivity perils}
