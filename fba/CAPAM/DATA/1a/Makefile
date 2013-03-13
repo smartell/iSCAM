@@ -107,7 +107,10 @@ COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
 					B<-read.rep("iscam.sim");setwd("..");\
 					bstatus <- log2(A$$sbt[33]/A$$bmsy)-log2(B$$sbt[33]/B$$bmsy) ;\
 					fstatus <- log2(A$$ft[1,33]/A$$fmsy)-log2(B$$ft[1,33]/B$$fmsy);\
-					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy,fstatus,bstatus)}); \
+					nu      <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
+					effN    <- sum(nu^2)/A$$age_tau2[1];\
+					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy,\
+						fstatus,bstatus,effN,A$$age_tau2[1])}); \
 			   	save(sims,file="allSims.Rdata")'
 
 allSims.Rdata:

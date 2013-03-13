@@ -1900,8 +1900,9 @@ FUNCTION calc_objective_function
 				}
 			}
 			
-			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4)*/
-			if( isel_type(k)==4 || n_sel_blocks(k) > 1 )
+			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4)
+			Mar 13, 2013, added 2nd difference penalty on isel_type==5 */
+			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
 			{
 				dvar_matrix trans_log_sel = trans( log_sel(k) );
 				for(j=sage;j<=nage;j++)
@@ -3690,6 +3691,33 @@ GLOBALS_SECTION
 		return fileName;
 	}
 	
+
+
+	// class selex_vector
+	// {
+	// 	private:
+	// 		int m_length;
+	// 		double *m_pnSelexData;
+
+	// 	public:
+
+	// 	selex_vector()
+	// 	{
+	// 		m_length = 0;
+	// 		m_pnSelexData = 0;
+	// 	}
+
+	// 	~selex_vector()
+	// 	{
+	// 		delete[] m_pnSelexData;
+	// 	}
+
+	// 	int& operator()(int& nindex)
+	// 	{
+	// 		return m_pnSelexData(nindex);
+	// 	}
+	// };
+
 	
 	// #ifdef __GNUDOS__
 	//   #include <gccmanip.h>

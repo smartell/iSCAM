@@ -13,3 +13,4 @@ TRUE,Hake(2c),    "Pacific Hake",../../CAPAM/DATA/2c/PHake2010
 TRUE,Hake(3a),    "Pacific Hake",../../CAPAM/DATA/3a/PHake2010
 TRUE,Hake(3b),    "Pacific Hake",../../CAPAM/DATA/3b/PHake2010
 TRUE,Hake(3c),    "Pacific Hake",../../CAPAM/DATA/3c/PHake2010
+FALSE,Hake(3d),    "Pacific Hake",../../CAPAM/DATA/3d/PHake2010

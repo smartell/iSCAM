@@ -10,7 +10,7 @@ SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c
 # SUBDIR = 3a 3b 3c
 
 TARGET = 
-SEED  = 991 
+SEED  = 123 
 JOBS  = 8
 
 .PHONY: default $(SUBDIR) mcmc
@@ -52,7 +52,7 @@ sim: $(sim_dirs)
 run: $(run_dirs)
 $(run_dirs):
 	cd $(@D); make ARG="-sim $(SEED) -ainp PHake2010.pin -noest" run
-	cd $(@D); make retro DAT=SIM.dat
+	#cd $(@D); make retro DAT=SIM.dat
 	cd $(@D); make run DAT=SIM.dat
 	#cd $(@D); make retro ARG="-sim $(SEED) -ainp PHake2010.pin -nox";
 

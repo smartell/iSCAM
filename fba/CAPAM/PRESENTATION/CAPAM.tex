@@ -198,6 +198,7 @@ International Pacific Halibut Commission\\
 		\textbf{\textbf{\underline{True states}}}
 		&\multicolumn{3}{c}{\textbf{\underline{Assumed selectivity states}}}\\
 		&\textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} \\
+		&\textbf{N=89} & \textbf{N=93} & \textbf{N=318} \\
 		\hline
 		 \textbf{Fixed (1)}      & 1a & 1b & 1c \\
 		 \textbf{Discrete (2)}   & 2a & 2b & 2c \\
@@ -216,6 +217,8 @@ International Pacific Halibut Commission\\
     \begin{itemize}
     	\item Age-structured, assume $M$ is known.
     	\item Conditioned on historical catch \& parameters fixed at MLE values.
+    	\item Parameters: $B_o$, $h$, initial states, rec-devs, selectivities, F's, q, total variance.
+    	\item Concentrated likelihood for age-comps \& estimate total variance.
     \end{itemize}
     \vfill
     Data:
@@ -224,8 +227,9 @@ International Pacific Halibut Commission\\
     	\item Annual abundance index based on stationary $q$.
     	\item Survey age composition (logistic--time invariant).
     	\item Fishery age composition (selectivity: fixed, blocks, or continous).
-    	\item Index observation error: $\sigma = 0.16$
+    	\item Index observation error: $\sigma = 0.40$
     	\item Age-composition error (multivariate logistic): $\sigma = 0.40$
+    	\item Process error: $\tau = 1.12$
     \end{itemize}
 \end{frame}
 
@@ -252,15 +256,37 @@ International Pacific Halibut Commission\\
 \end{frame}
 % subsection model_overview (end)
 
+
+
 \subsection{Simulation results} % (fold)
 \label{sub:simulation_results}
 
+\begin{frame}[m]\frametitle{Model Selection}	
+	\begin{block}
+    {Can DIC be used reliably to choose the correct selectivity model?}
+	    
+	    
+	    DIC based on 1000 samples from the joint posterior.
+	    
+	    Monte carlo runs based on 24 simulated data sets per treatment.
+	    
+	\end{block}
+\end{frame}
+
+
 \begin{frame}[m]\frametitle{Spawning biomass}
+	\only<1>{
     \begin{center}
+    	Seed=991
     	\includegraphics[height=0.8\textheight]{../FIGS/HakeSpawningBiomass991.png}
     \end{center}
-
-
+    }
+    \only<2>{
+    \begin{center}
+    	Seed = 123
+    	\includegraphics[height=0.8\textheight]{../FIGS/HakeSpawningBiomass123.png}
+    \end{center}
+    }
 \end{frame}
 
 \begin{frame}[t]\frametitle{Effective number of parameters}
@@ -271,7 +297,6 @@ International Pacific Halibut Commission\\
 
 \end{frame}
 
-
 \begin{frame}[t]\frametitle{Model selection vis-\`a-vis DIC}
     
 \begin{center}
@@ -280,19 +305,47 @@ International Pacific Halibut Commission\\
 
 \end{frame}
 
+\begin{frame}[m]\frametitle{Impacts on reference points}
+    
+	\only<1>{
+		\begin{block}
+	    {Impact of selectivity mis-specification on reference points?}
+	    
+	    MSY-based reference points based on MLE estimates.\\
+	    Monte carlo runs based on 24 simulated data sets per treatment.\\
+	    Compute $ \log_2\left(\frac{ F_{est} }{ F_{true} } \right)$\\
+	    
+		\end{block}
+	}
+	\only<2>{
+		\begin{center}
+			\includegraphics[height=0.8\textheight]{../FIGS/FmsyBmsyBias.png}
+		\end{center}
+	}
+
+\end{frame}
+
+
 
 \begin{frame}[m]\frametitle{Retrospective bias}
 	\only<1>{
     \begin{center}
+    	Seed = 991
     	\includegraphics[height=0.8\textheight]{../FIGS/SSBretro991.png}
     \end{center}
     }
     \only<2>{
+    \begin{center}
+    	Seed = 123
+    	\includegraphics[height=0.8\textheight]{../FIGS/SSBretro123.png}
+    \end{center}
+    }
+    \only<3>{
     \[
     	\mbox{bias} = \frac{1}{4} \sum_{t=2005}^{2009} 100 \frac{B_t^y-B_t^{2010}}{B_t^{2010}}
     \]
     }
-    \only<3>{
+    \only<4>{
     \begin{center}
     	\includegraphics[height=0.8\textheight]{../FIGS/RetroBias.png}
     \end{center}
@@ -307,12 +360,35 @@ International Pacific Halibut Commission\\
 \section{Discussion} % (fold)
 \label{sec:discussion}
 
-\begin{frame}[t]\frametitle{Discussion}
+\begin{frame}[t]\frametitle{What I learned from this exercise}
     
 	\begin{itemize}
-		\item Random walk models: loss of scale information, informative prior for $B_o$ or $q$.
+		\item<+-> Preferable to adopt a penalized random walk versus time blocks.
+			\begin{itemize}
+				\item Less retrospective bias \& less bias in $F_{\rm{MSY}}$.
+			\end{itemize}
+		\item<+-> Random walk models: loss of scale information, informative prior for survey $q$.
+		\item<+-> Rather than add small constant, pool weak cohorts into adjacent year classes.
+		\item<+-> Tagging data could help resolve confounding in integrated models.
+		\item<+-> Conduct simulation testing to verify that model selection criteria works.
+		\item<+-> And there is one more thing....
+		\begin{itemize}
+			\item <+-> Can also use 2 dimensional splines for selectivity.
+		\end{itemize}
 	\end{itemize}
 
+\end{frame}
+
+\begin{frame}[t]\frametitle{2d cubic splines}
+    Top = 231 and bottom = 60 selectivity parameters.
+	\begin{center}
+		\vspace{-0.15in}
+		\includegraphics[height=0.5\textheight]{../FIGS/Selex231pars.pdf}\\
+		\vspace{-0.4in}
+		\includegraphics[height=0.5\textheight]{../FIGS/Selex60pars.pdf}
+	\end{center}
+	\vspace{-2.1in}
+	See \texttt{bicubic\_spline}  in \texttt{statsLib.h}  at \url{http://admb-project.org/documentation/api/}.
 \end{frame}
 
 % section discussion (end)
@@ -378,8 +454,13 @@ International Pacific Halibut Commission\\
 % }
 % \end{frame}
  
-\begin{frame}
+\begin{frame}[t]
 \centerline{The End}
+Acknowledgements:\\
+\vfill 
+IPHC, ADMB Foundation, CAPAM workshop organizers.\\
+\vfill
+Jim Ianelli and Dave Fournier for the \texttt{vcubicspline\_function\_array} class. 
 \end{frame}
 % End of slides
 \end{document}
