@@ -56,17 +56,18 @@
 	
 	% This is now the recommended way for checking for PDFLaTeX:
 	\usepackage{ifpdf}
-
+	\usepackage{pdfsync}
+	
 	% Bibliography
 	\usepackage[round]{natbib}
 	
-	%\newif\ifpdf
-	%\ifx\pdfoutput\undefined
-	%\pdffalse % we are not running PDFLaTeX
-	%\else
-	%\pdfoutput=1 % we are running PDFLaTeX
-	%\pdftrue
-	%\fi
+	\newif\ifpdf
+	\ifx\pdfoutput\undefined
+	\pdffalse % we are not running PDFLaTeX
+	\else
+	\pdfoutput=1 % we are running PDFLaTeX
+	\pdftrue
+	\fi
 	
 	\ifpdf
 	\usepackage[pdftex]{graphicx}

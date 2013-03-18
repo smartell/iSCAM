@@ -157,7 +157,7 @@ DATA_SECTION
 		rseed=999;
 		int on,opt;
 		//the following line checks for the "-SimFlag" command line option
-		//if it exists the if statement retreives the random number seed
+		//if it exists the if statement retrieves the random number seed
 		//that is required for the simulation model
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-sim",opt))>-1)
 		{
@@ -444,8 +444,8 @@ DATA_SECTION
 			in an awkward way where GN selectivities were a random walk
 			sel(t+1)=sel(t) + tmp(2);
 			
-			Trying a compromize where estimating an additional parameter
-			that attemps to explain residual variation in age-comps
+			Trying a compromise where estimating an additional parameter
+			that attempts to explain residual variation in age-comps
 			via changes in standardized mean weights at age. This is 
 			implemented as:
 			
@@ -842,6 +842,8 @@ PARAMETER_SECTION
 	//number log_avg_f;			//log of average fishing mortality DEPRICATED
 	number rho;					//proportion of the observation error
 	number varphi				//total precision in the CPUE & Rec anomalies.
+	number sig;					//std of the observation errors in CPUE.
+	number tau; 				//std of the process errors.
 	number so;
 	number beta;
 	
@@ -890,7 +892,7 @@ PRELIMINARY_CALCS_SECTION
 	// | 1) get Simulation controls from *.sim
  	// | 
   nf=0;
-  cout<<"OK TO HERE"<<endl;
+  // cout<<"OK TO HERE"<<endl;
   if(SimFlag) 
   {
     initParameters();
@@ -950,6 +952,16 @@ FUNCTION initParameters
 	
 	Note that you must call this routine before runnning the 
 	simulation model to generate fake data.
+
+	Variance partitioning:
+	-Estimating total variance as = 1/precision
+	 and partition variance by rho = sig^2/(sig^2+tau^2).
+
+	 E.g. if sig = 0.2 and tau =1.12 then
+	 rho = 0.2^2/(0.2^2+1.12^2) = 0.1131222
+	 the total variance is kappa^2 = sig^2 + tau^2 = 1.4144
+
+
 	*/
 	
 	ro          = mfexp(theta(1));
@@ -959,6 +971,8 @@ FUNCTION initParameters
 	log_recinit = theta(5);
 	rho         = theta(6);
 	varphi      = sqrt(1.0/theta(7));
+	sig         = sqrt(rho) * varphi;
+	tau         = sqrt(1-rho) * varphi;
 	
 	
 	switch(int(cntrl(2)))
@@ -3326,7 +3340,7 @@ FUNCTION decision_table
 		cout<<i<<" "<<n_tac<<endl;
 		projection_model(tac(i));
 	}
-	cout<<"Ok to here"<<endl;
+	// cout<<"Ok to here"<<endl;
   }
 	
 FUNCTION mcmc_output

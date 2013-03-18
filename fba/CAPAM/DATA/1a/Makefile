@@ -95,8 +95,8 @@ data: $(datadone)
 
 $(simfiles):  
 	cd  $(@D); make run   ARG="-sim $(@D) -ainp PHake2010.pin -noest" --file=CAPAM.mak
-	cd  $(@D); make retro DAT=SIM.dat       --file=CAPAM.mak
-	cd  $(@D); make mcmc  DAT=SIM.dat       --file=CAPAM.mak
+	cd  $(@D); make retro DAT=SIM.dat  ARG="-ainp PHake2010.pin"      --file=CAPAM.mak
+	cd  $(@D); make mcmc  DAT=SIM.dat  ARG="-ainp PHake2010.pin"      --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
@@ -110,7 +110,7 @@ COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
 					nu      <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
 					effN    <- sum(nu^2)/A$$age_tau2[1];\
 					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy,\
-						fstatus,bstatus,effN,A$$age_tau2[1])}); \
+						fstatus,bstatus,effN,A$$age_tau2[1],A$$sig,A$$tau)}); \
 			   	save(sims,file="allSims.Rdata")'
 
 allSims.Rdata:
