@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  17 MAR 2013 11:53
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  18 MAR 2013 09:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -569,7 +569,7 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 (./Introduction/Intro.tex [1
 
 {/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]) (./Met
-hods/methods.tex [2]) (./Selex.bbl [3])
+hods/methods.tex [2]) (./Selex.bbl)
 Package minitoc Info: I0009
 (minitoc)             Listing minitoc auxiliary files. 
 (minitoc)             Creating the Selex.maf file.
@@ -578,7 +578,7 @@ Package minitoc Info: I0009
 Package minitoc(hints) Info: I0019
 (minitoc(hints))             No hints have been written 
 (minitoc(hints))             in the Selex.log file..
- [4]
+ [3] [4]
 (./Selex.aux) ) 
 Here is how much of TeX's memory you used:
  6018 strings out of 493633
@@ -601,7 +601,7 @@ fb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb
 usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr
 /local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/
 local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on Selex.pdf (4 pages, 147843 bytes).
+Output written on Selex.pdf (4 pages, 147789 bytes).
 PDF statistics:
  69 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream

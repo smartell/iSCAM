@@ -70,7 +70,7 @@ retro: $(EXEC) $(EXEC).ret1
 $(EXEC).ret1:
 	@echo $(RUNRETRO) | R --vanilla --slave
 
-RUNRETRO = 'args = paste("-retro",c(1:$(NR)),"-nox"); \
+RUNRETRO = 'args = paste("-retro",c(1:$(NR),0),"-nox"); \
             sapply(args,\
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
@@ -124,6 +124,17 @@ COLLECTRETRO =  'dn<-dir(pattern="^[[:digit:]]"); \
 					setwd("..");\
 					bias <- c(mean=mean(bias),abs.mean=mean(abs(bias)),bias)});\
 				save(runs,file="retroSims.Rdata")'
+
+SPAWNBIO = 'dn<-dir(pattern="^[[:digit:]]"); \
+			spbio <- lapply(dn,function(d){require(Riscam);setwd(d);\
+					A<-read.rep("PHake2010.rep");\
+					sbt <- A$$sbt[1:33];setwd("..");return(sbt)});\
+					print(spbio);\
+					save(spbio,file="spawnbio.Rdata")'
+spawnbio.Rdata:
+	echo $(SPAWNBIO) | R --vanilla	--slave
+
+collectssb: spawnbio.Rdata
 
 retroSims.Rdata:
 	echo $(COLLECTRETRO) | R --vanilla --slave

@@ -11,44 +11,54 @@
 #                                                                               #
 #                                                                               #
 #   DIRECTORY TREE                                                              #
-#    .                                                                          #
-#    |____.RData                                                                #
-#    |____.Rhistory                                                             #
-#    |____iSCAM.R                                                               #
-#    |____iSCAMequil_soln.R                                                     #
-#    |____iSCAMViewTracker.txt                                                  #
-#    |____iSCAMWin.txt                                                          #
-#    |____logo                                                                  #
-#    | |____iscamLogo.eps                                                       #
-#    | |____iscamLogo.gif                                                       #
-#    | |____iscamLogo.png                                                       #
-#    | |____iscamLogoSmall.png                                                  #
-#    | |____logo.r                                                              #
-#    |____R                                                                     #
-#    | |____.RData                                                              #
-#    | |____.Rhistory                                                           #
-#    | |____plotAgeCompResiduals.R                                              #
-#    | |____plotAgeComps.R                                                      #
-#    | |____plotBiomass.R                                                       #
-#    | |____plotCatch.R                                                         #
-#    | |____plotCatchResiduals.R                                                #
-#    | |____plotDepletion.R                                                     #
-#    | |____plotIndex.R                                                         #
-#    | |____plotMarginalPosteriors.R                                            #
-#    | |____plotMeanWt.R                                                        #
-#    | |____plotMortality.R                                                     #
-#    | |____plotNaturalMortality.R                                              #
-#    | |____plotRecruitment.R                                                   #
-#    | |____plotRecruitmentResiduals.R                                          #
-#    | |____plotReferencePoints.R                                               #
-#    | |____plotRiskTable.R                                                     #
-#    | |____plotSelectivity.R                                                   #
-#    | |____plotSSBretrospective.R                                              #
-#    | |____plotStockRecruitment.R                                              #
-#    | |____plotStockStatus.R                                                   #
-#    | |____plotSurveyFit.R                                                     #
-#    | |____plotSurveyResiduals.R                                               #
-#    | |____read.admb.R                                                         #
+#	.					z
+#	|____.RData					
+#	|____.Rhistory					
+#	|____getDIC.R					
+#	|____iSCAM.R					
+#	|____iSCAMequil_soln.R					
+#	|____iSCAMViewTracker.txt					
+#	|____iSCAMWin.txt					
+#	|____iscamWin2.txt					
+#	|____logo					
+#	| |____iscamLogo.eps					
+#	| |____iscamLogo.gif					
+#	| |____iscamLogo.png					
+#	| |____iscamLogoSmall.png					
+#	| |____logo.r					
+#	|____R					
+#	| |____.RData					
+#	| |____.Rhistory					
+#	| |____plotAgeCompResiduals.R					
+#	| |____plotAgeComps.R					
+#	| |____plotBiomass.R					
+#	| |____plotCatch.R					
+#	| |____plotCatchResiduals.R					
+#	| |____plotDepletion.R					
+#	| |____plotIndex.R					
+#	| |____plotMarginalPosteriors.R					
+#	| |____plotMCMCpairs.R					
+#	| |____plotMCMCtrace.R					
+#	| |____plotMeanWt.R					
+#	| |____plotMortality.R					
+#	| |____plotNaturalMortality.R					
+#	| |____plotRecruitment.R					
+#	| |____plotRecruitmentResiduals.R					
+#	| |____plotReferencePoints.R					
+#	| |____plotRetrospectiveBiomass.R					
+#	| |____plotRiskTable.R					
+#	| |____plotSBtPosterior.R					
+#	| |____plotSelectivity.R					
+#	| |____plotSelex.R					
+#	| |____plotSimulatedBiomass.R					
+#	| |____plotSSBretrospective.R					
+#	| |____plotStockRecruitment.R					
+#	| |____plotStockStatus.R					
+#	| |____plotSurveyFit.R					
+#	| |____plotSurveyResiduals.R					
+#	| |____read.admb.R					
+#	| |____saveImages.R					
+#	| |____tableCatch.R					
 #                                                                               #
 #                                                                               #
 #                                                                               #
@@ -371,6 +381,16 @@ getSimObj   <- function(fn)
 		}
 	}
 	tmp$retSbt <- retSbt
+
+	oldfn <- getwd()
+	setwd(substr(fn,1,20))
+	if(file.exists("spawnbio.Rdata"))
+	{
+		load("spawnbio.Rdata")
+		tmp$spbio <- spbio
+		# print(head(tmp$spbio))
+	}
+	setwd(oldfn)
 	return(tmp)
 }
 .viewPlot	<- function()
@@ -407,6 +427,10 @@ getSimObj   <- function(fn)
 	if( plotType=="selex" )
 	{
 		.plotSelex( M )
+	}
+	if( plotType=="simsbdist" )
+	{
+		.plotSSBdist( M )
 	}
 
 }
