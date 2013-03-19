@@ -3,8 +3,8 @@
 ## targets:
 
 ## Macros
-SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c 
-# SUBDIR = 2a
+# SUBDIR = 1a 1b 1c 2a 2b 2c 3a 3b 3c 
+SUBDIR = 3b
 # SUBDIR = 1a 1b 1c
 # SUBDIR = 2a 2b 2c
 # SUBDIR = 3a 3b 3c

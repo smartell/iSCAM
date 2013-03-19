@@ -70,7 +70,7 @@ retro: $(EXEC) $(EXEC).ret1
 $(EXEC).ret1:
 	@echo $(RUNRETRO) | R --vanilla --slave
 
-RUNRETRO = 'args = paste("-retro",c(1:$(NR),0),"-nox"); \
+RUNRETRO = 'args = paste("-retro",c(1:$(NR)),"-nox"); \
             sapply(args,\
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
