@@ -15,13 +15,14 @@
 ## npar
 	7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-	1.6         -5.0    15       4       1       1.6    0.50    #log_ro/msy 
+	1.6         -5.0    15       3       1       1.6    0.50    #log_ro/msy 
 	0.65        0.2     1.0      4       3       3       2      #steepness/fmsy
    -1.469676   -5.0    0.0     -2       1       -1.469  0.015   #log.m
 	1.2         -5.0    15       1       0       -5.0    15     #log_avgrec
 	1.40        -5.0    15       1       0       -5.0    15     #log_recinit
 	0.03090235  0.001   0.999   -3       3       5.00    20.0   #rho
-	0.75        0.01    10.00    5       4       7.725587    10.0   #kappa (precision)
+#	0.75        0.01    10.00    5       4       7.725587    10.0   #kappa (precision)
+	0.7725587   0.01    10.00   -5       4       15.45117    20.0   #kappa (precision)
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -41,7 +42,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	1		1                       # 1  -selectivity type ivector(isel_type) for gear
+	3		1                       # 1  -selectivity type ivector(isel_type) for gear
 	3.5		2.5                     # 2  -Age/length at 50% selectivity (logistic)
 	0.5		0.75                    # 3  -STD at 50% selectivity (logistic)
 	7		5						# 4  -No. of age nodes for each gear (0=ignore)
@@ -80,7 +81,7 @@
 	0.100       # 3  -std in observed catches in first phase.
 	0.0707      # 4  -std in observed catches in last phase.
 	0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
-	0.005       # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
+	0.000       # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 	0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 	0.05        # 8  -std in mean fishing mortality in first phase
 	2.00        # 9  -std in mean fishing mortality in last phase

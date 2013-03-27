@@ -2697,7 +2697,9 @@ FUNCTION void simulationModel(const long& seed)
 		sig=0;
 		tau=0;
 	}
-	wt.fill_randn(rng); wt *= tau;
+	wt.fill_randn(rng); 
+	wt *= tau - 0.5*tau*tau;
+	
 	epsilon.fill_randn(rng); 
 	//now loop over surveys and scale the observation errors
 	for(k=1;k<=nit;k++)
@@ -2705,7 +2707,7 @@ FUNCTION void simulationModel(const long& seed)
 		for(j=1;j<=nit_nobs(k);j++)
 		{
 			if(it_wt(k,j)!=0)
-			epsilon(k,j) *= sig/it_wt(k,j);
+			epsilon(k,j) *= sig/it_wt(k,j) - 0.5*sig*sig;
 		}
 	}
 	COUT(wt);
@@ -2781,41 +2783,42 @@ FUNCTION void simulationModel(const long& seed)
 	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
 
 	// Check to see if Selectivity blocks differ from estimation blocks.
-	int byr,bpar;
-	double p1,p2,xx;
-	double mu1, sd1;
+	// int byr,bpar;
+	// double p1,p2,xx;
+	// double mu1, sd1;
 
 	
-	for(k=1;k<=ngear;k++)
-	{
-		byr = 1;
-		bpar = 0;
-		if( nsim_sel_blocks(k) > 1 )
-		{
-			mu1 = (value(sel_par(k,1,1))); 
-			sd1 = (value(sel_par(k,1,2)));
-			p1 = mfexp(value(sel_par(k,1,1)));
-			p2 = mfexp(value(sel_par(k,1,2)));
+	// for(k=1;k<=ngear;k++)
+	// {
+	// 	byr = 1;
+	// 	bpar = 0;
+	// 	if( nsim_sel_blocks(k) > 1 )
+	// 	{
+	// 		mu1 = (value(sel_par(k,1,1))); 
+	// 		sd1 = (value(sel_par(k,1,2)));
+	// 		p1 = mfexp(value(sel_par(k,1,1)));
+	// 		p2 = mfexp(value(sel_par(k,1,2)));
 
 			
-			for(i=syr; i<=nyr; i++)
-			{
-				if( i == sim_sel_blocks(k,byr) )
-				{
-					if( byr <= nsim_sel_blocks(k) )
-					{
-						byr++;
-						// Get new selectivity parameters
-						xx  = randn(rng);
-						p1  = exp(mu1 + 0.2 * xx);
-						xx  = randn(rng);
-						p2  = exp(sd1 - 0.2 * xx);
-					}
-				}				
-				log_sel(k)(i) = log( plogis(age,p1,p2) );
-			}
-		}
-	}
+	// 		for(i=syr; i<=nyr; i++)
+	// 		{
+	// 			if( i == sim_sel_blocks(k,byr) )
+	// 			{
+	// 				if( byr <= nsim_sel_blocks(k) )
+	// 				{
+	// 					byr++;
+	// 					// Get new selectivity parameters
+	// 					xx  = randn(rng);
+	// 					p1  = exp(mu1 + 0.2 * xx);
+	// 					xx  = randn(rng);
+	// 					p2  = exp(sd1 - 0.2 * xx);
+	// 				}
+	// 			}				
+	// 			log_sel(k)(i) = log( plogis(age,p1,p2) );
+	// 			log_sel(k)(i)-= log(mean(mfexp(log_sel(k)(i))));
+	// 		}
+	// 	}
+	// }
 	//exit(1);
 	dlog_sel=value(log_sel);
 	
@@ -3139,7 +3142,7 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
   	*/
   	dvector pa(sage,nage);
 
-  	pa = (elem_prod(va,pow(ba,0.95)));
+  	pa = (elem_prod(va,pow(ba,0.25)));
   	// pa = (pa - mean(pa))/sqrt(var(pa));
   	// pa = va * exp(0.1*pa);
   	pa = pa/sum(pa);

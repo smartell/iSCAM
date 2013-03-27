@@ -87,16 +87,16 @@ simfiles:= $(foreach dir,$(simdirs),$(dir)/simdone)
 
 $(datadone):
 	mkdir $(@D)
-	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat ./SIM.dat $(@D)
+	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat ./SIM.dat ./Sim1_PHake2010.ctl ./Sim1_PHake2010.pin $(@D)
 	cd $(@D); make $(EXEC) --file=CAPAM.mak
 	cd $(@D); touch datadone;
 
 data: $(datadone)
 
 $(simfiles):  
-	cd  $(@D); make run   ARG="-sim $(@D) -ainp PHake2010.pin -noest" --file=CAPAM.mak
-	cd  $(@D); make retro DAT=SIM.dat  ARG="-ainp PHake2010.pin"      --file=CAPAM.mak
-	cd  $(@D); make mcmc  DAT=SIM.dat  ARG="-ainp PHake2010.pin"      --file=CAPAM.mak
+	cd  $(@D); make run   DAT=SIM.dat ARG="-sim $(@D) -ainp Sim1_PHake2010.pin -noest" --file=CAPAM.mak
+	cd  $(@D); make retro ARG="-nox -ainp PHake2010.pin" --file=CAPAM.mak
+	cd  $(@D); make mcmc  ARG="-nox -ainp PHake2010.pin" --file=CAPAM.mak
 	cd  $(@D); touch simdone
 	
 est: $(simfiles)
@@ -129,7 +129,7 @@ SPAWNBIO = 'dn<-dir(pattern="^[[:digit:]]"); \
 			spbio <- lapply(dn,function(d){require(Riscam);setwd(d);\
 					A<-read.rep("PHake2010.rep");\
 					sbt <- A$$sbt[1:33];setwd("..");return(sbt)});\
-					print(spbio);\
+					#print(spbio);\
 					save(spbio,file="spawnbio.Rdata")'
 spawnbio.Rdata:
 	echo $(SPAWNBIO) | R --vanilla	--slave

@@ -424,6 +424,10 @@ getSimObj   <- function(fn)
 	{
 		.plotRetrospectiveBiomass( M )
 	}
+	if( plotType=="retrosquid" )
+	{
+		.plotRetrospectiveSquid( M )
+	}
 	if( plotType=="selex" )
 	{
 		.plotSelex( M )
