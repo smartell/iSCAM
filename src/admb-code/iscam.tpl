@@ -958,8 +958,8 @@ FUNCTION initParameters
 	 and partition variance by rho = sig^2/(sig^2+tau^2).
 
 	 E.g. if sig = 0.2 and tau =1.12 then
-	 rho = 0.2^2/(0.2^2+1.12^2) = 0.1131222
-	 the total variance is kappa^2 = sig^2 + tau^2 = 1.4144
+	 rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
+	 the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
 
 
 	*/
@@ -2699,7 +2699,7 @@ FUNCTION void simulationModel(const long& seed)
 	}
 	wt.fill_randn(rng); 
 	wt *= tau - 0.5*tau*tau;
-	
+
 	epsilon.fill_randn(rng); 
 	//now loop over surveys and scale the observation errors
 	for(k=1;k<=nit;k++)
@@ -3677,6 +3677,7 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
+	// #include <contrib.h>
 	// #include <statsLib.h>
 	#include "msy.cpp"
 	//#include "stats.cxx"
@@ -3752,7 +3753,7 @@ GLOBALS_SECTION
 		// | Added DIC calculation.  Martell, Jan 29, 2013                             |
 		// |---------------------------------------------------------------------------|
 		// | DIC = pd + dbar
-		// | pd  = dbar - dtheta  (Eeffective number of parameters)
+		// | pd  = dbar - dtheta  (Effective number of parameters)
 		// | dbar   = expectation of the likelihood function (average f)
 		// | dtheta = expectation of the parameter sample (average y) 
 
@@ -3843,7 +3844,7 @@ GLOBALS_SECTION
 	      double ll = 2.0 * get_monte_carlo_value(nvar,y);
 	      sumll    += ll;
 	      nsamp++;
-	      //cout<<get_monte_carlo_value(nvar,y)<<endl;
+	      // cout<<sumy(1,3)/nsamp<<" "<<get_monte_carlo_value(nvar,y)<<endl;
 	    }
 	  }
 	  while(1);

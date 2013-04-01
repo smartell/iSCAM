@@ -17,10 +17,8 @@ CTL    = PHake2010
 ARG    =
 MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc -nox
 NR     = 4
-NOSIM  = 24   
+NOSIM  = 10   
 
-
-.PHONY = all run mcmc mceval retro clean data est
 # |------------------------------------------------------------------------------------|
 # | DEBUG FLAG
 # |------------------------------------------------------------------------------------|
@@ -46,6 +44,7 @@ $(EXEC).par: $(DIST) $(CTL).ctl
 
 run:  $(EXEC)
 	./$(EXEC) -ind $(DAT) $(ARG)
+
 
 # |------------------------------------------------------------------------------------|
 # | MCMC and MCEVAL
@@ -75,75 +74,93 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR)),"-nox"); \
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
 
+# |------------------------------------------------------------------------------------|
+# | REMOVE TEMPORARY ADMB FILES
+# |------------------------------------------------------------------------------------|
+# |
+dust:
+	rm -f *.log *.rpt *.htp admodel.* variance *.bar *.mcm
 
 # |------------------------------------------------------------------------------------|
 # | SIMULATIONS TO BE RUN IN PARALLEL IN NUMERIC DIRECTORIES
 # |------------------------------------------------------------------------------------|
 # | NOSIM determines the number of simulations.
+# | simdirs	: is the list of simulation directories to copy material to.
+# | datadone: is a loop for looping over directories
 
-simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --slave)
+simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --vanilla --slave)
 datadone:= $(foreach dir,$(simdirs),$(dir)/datadone)
-simfiles:= $(foreach dir,$(simdirs),$(dir)/simdone)
-
-$(datadone):
-	mkdir $(@D)
+runsims := $(foreach dir,$(simdirs),$(dir)/runsims)
+# |------------------------------------------------------------------------------------|
+# | BUILD DIRECTORIES AND COPY FILES INTO EACH DIRECTORY (target = data)
+# |------------------------------------------------------------------------------------|
+# |
+$(datadone): 
+	mkdir $(@D);
 	cp  ./PHake2010.[cdp]*[!v] ./CAPAM.mak ./RUN.dat ./SIM.dat ./Sim1_PHake2010.ctl ./Sim1_PHake2010.pin $(@D)
 	cd $(@D); make $(EXEC) --file=CAPAM.mak
-	cd $(@D); touch datadone;
+	cd $(@D); make run DAT=SIM.dat ARG="-sim $(@D) -ainp Sim1_PHake2010.pin -noest" --file=CAPAM.mak
+	cd $(@D); touch datadone
 
 data: $(datadone)
 
-$(simfiles):  
-	cd  $(@D); make run   DAT=SIM.dat ARG="-sim $(@D) -ainp Sim1_PHake2010.pin -noest" --file=CAPAM.mak
-	cd  $(@D); make retro ARG="-nox -ainp PHake2010.pin" --file=CAPAM.mak
-	cd  $(@D); make mcmc  ARG="-nox -ainp PHake2010.pin" --file=CAPAM.mak
-	cd  $(@D); touch simdone
-	
-est: $(simfiles)
+cleansims:
+	rm -r 0*
 
-COLLECTALL = 	'dn<-dir(pattern="^[[:digit:]]"); \
+# |------------------------------------------------------------------------------------|
+# | RUN SIMULATIONS IN EACH DIRECTORY (target = sims)
+# |------------------------------------------------------------------------------------|
+# |
+$(runsims):
+	cd $(@D); make retro --file=CAPAM.mak; make --file=CAPAM.mak; make dust --file=CAPAM.mak
+
+sims: data $(runsims)
+	touch allDONE
+
+# |------------------------------------------------------------------------------------|
+# | COLLECT SUMMARY STATISTICS FROM SIMULATION RUNS (target = collect)
+# |------------------------------------------------------------------------------------|
+# | COLLECTALL is an R-script to open report files and save output to allSims.Rdata
+COLLECTALL ='dn<-dir(pattern="^[[:digit:]]"); \
 				sims <- lapply(dn,function(d){require(Riscam);setwd(d);\
-					A<-read.rep("PHake2010.rep");\
-					B<-read.rep("iscam.sim");setwd("..");\
-					bstatus <- log2(A$$sbt[33]/A$$bmsy)-log2(B$$sbt[33]/B$$bmsy) ;\
-					fstatus <- log2(A$$ft[1,33]/A$$fmsy)-log2(B$$ft[1,33]/B$$fmsy);\
-					nu      <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
-					effN    <- sum(nu^2)/A$$age_tau2[1];\
-					c(A$$ENpar,A$$DIC,A$$fmsy,A$$msy,A$$bmsy,B$$fmsy,B$$msy,B$$bmsy,\
-						fstatus,bstatus,effN,A$$age_tau2[1],A$$sig,A$$tau)}); \
-			   	save(sims,file="allSims.Rdata")'
+				A<-read.rep("PHake2010.rep");\
+				B<-read.rep("iscam.sim");setwd("..");\
+				bstatus <- log2(A$$sbt[33]/A$$bmsy)-log2(B$$sbt[33]/B$$bmsy) ;\
+				fstatus <- log2(A$$ft[1,33]/A$$fmsy)-log2(B$$ft[1,33]/B$$fmsy);\
+				nu      <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
+				effN    <- sum(nu^2)/A$$age_tau2[1];\
+				c(Fmsy=A$$fmsy,MSY=A$$msy,Bmsy=A$$bmsy,\
+				  hat.Fmsy=B$$fmsy,hat.MSY=B$$msy,hat.Bmsy=B$$bmsy,\
+				  Fstatus.err=fstatus,Bstatus.err=bstatus,\
+				  EffectiveN=effN,\
+				  Age.tau2=A$$age_tau2[1],\
+				  sigma=A$$sig,\
+				  tau=A$$tau)}); \
+		   		save(sims,file="allSims.Rdata")'
 
-allSims.Rdata:
-	echo $(COLLECTALL) | R --vanilla --slave
-
-collect: allSims.Rdata
-
-COLLECTRETRO =  'dn<-dir(pattern="^[[:digit:]]"); \
+COLLECTRETRO =	'dn<-dir(pattern="^[[:digit:]]"); \
 				runs <- lapply(dn,function(d){setwd(d);\
-					source("../../retroStat.R");\
-					setwd("..");\
-					bias <- c(mean=mean(bias),abs.mean=mean(abs(bias)),bias)});\
+				source("../../retroStat.R");\
+				setwd("..");\
+				bias <- c(mean=mean(bias),abs.mean=mean(abs(bias)),bias)});\
 				save(runs,file="retroSims.Rdata")'
 
 SPAWNBIO = 'dn<-dir(pattern="^[[:digit:]]"); \
 			spbio <- lapply(dn,function(d){require(Riscam);setwd(d);\
-					A<-read.rep("PHake2010.rep");\
-					sbt <- A$$sbt[1:33];setwd("..");return(sbt)});\
-					#print(spbio);\
-					save(spbio,file="spawnbio.Rdata")'
-spawnbio.Rdata:
-	echo $(SPAWNBIO) | R --vanilla	--slave
+			A<-read.rep("PHake2010.rep");\
+			sbt <- A$$sbt[1:33];setwd("..");return(sbt)});\
+			save(spbio,file="spawnbio.Rdata")'
 
-collectssb: spawnbio.Rdata
+allSims.Rdata: allDONE
+	@echo $(COLLECTALL) | R --vanilla --slave
 
-retroSims.Rdata:
-	echo $(COLLECTRETRO) | R --vanilla --slave
+retroSims.Rdata: allDONE
+	@echo $(COLLECTRETRO) | R --vanilla --slave
 
-retrostat: retroSims.Rdata
+spawnbio.Rdata: allDONE
+	@echo $(SPAWNBIO) | R --vanilla	--slave
 
-clean: 
-	-rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance *.ret[0-9]*
-	
+collect: allSims.Rdata retroSims.Rdata spawnbio.Rdata
 
-cleanall:
-	-rm -rf 0* allSims.Rdata allSims.R retroSims.Rdata
+
+

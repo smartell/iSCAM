@@ -4,7 +4,7 @@
 
 ## Macros
 # SUBDIR = 1a 1b 1c 1d 2a 2b 2c 2d 3a 3b 3c 3d
-SUBDIR = 1d 2d 3d
+SUBDIR = 1a
 # SUBDIR = 1a 1b 1c 1d
 # SUBDIR = 2a 2b 2c 2d
 # SUBDIR = 3a 3b 3c 3d
@@ -48,7 +48,8 @@ run_dirs := $(foreach dir,$(SUBDIR),$(dir)/run)
 
 
 $(sim_dirs):
-	cd $(@D);make data -j$(JOBS); make est -j$(JOBS); make collect; make retrostat; touch allDONE
+	#cd $(@D);make data -j$(JOBS); make est -j$(JOBS); make collect; make retrostat; touch allDONE
+	cd $(@D); make sims -j$(JOBS); make collect;
 	
 sim: $(sim_dirs)
 

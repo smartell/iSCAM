@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  27 MAR 2013 10:12
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  31 MAR 2013 11:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -573,12 +573,53 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 (./Introduction/Intro.tex [1
 
 {/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]) (./Met
-hods/methods.tex [2] [3] [4]
-Overfull \hbox (2.71864pt too wide) in paragraph at lines 103--118
+hods/methods.tex [2] [3] [4] [5]
+<../FIGS/fig:simSelex1.png, id=33, 481.8pt x 481.8pt>
+File: ../FIGS/fig:simSelex1.png Graphic file (type png)
+
+<use ../FIGS/fig:simSelex1.png>
+Package pdftex.def Info: ../FIGS/fig:simSelex1.png used on input line 176.
+(pdftex.def)             Requested size: 173.80705pt x 173.80074pt.
+
+<../FIGS/fig:simSelex2.png, id=35, 481.8pt x 481.8pt>
+File: ../FIGS/fig:simSelex2.png Graphic file (type png)
+
+<use ../FIGS/fig:simSelex2.png>
+Package pdftex.def Info: ../FIGS/fig:simSelex2.png used on input line 178.
+(pdftex.def)             Requested size: 173.80705pt x 173.80074pt.
+
+<../FIGS/fig:simSelex3.png, id=36, 481.8pt x 481.8pt>
+File: ../FIGS/fig:simSelex3.png Graphic file (type png)
+
+<use ../FIGS/fig:simSelex3.png>
+Package pdftex.def Info: ../FIGS/fig:simSelex3.png used on input line 180.
+(pdftex.def)             Requested size: 173.80705pt x 173.80074pt.
+ [6 <../FIGS/fig:simSelex1.png> <../FIGS/fig:simSelex2.png> <../FIGS/fig:simSel
+ex3.png>]
+Overfull \hbox (2.14822pt too wide) in paragraph at lines 200--218
  [] 
  []
 
-) (./Results/Results.tex) (./Selex.bbl)
+) (./Results/Results.tex [7]
+Overfull \hbox (10.39955pt too wide) in paragraph at lines 27--72
+ [] 
+ []
+
+<../FIGS/fig:RetroSpectiveSSB.png, id=47, 3011.25pt x 2258.4375pt>
+File: ../FIGS/fig:RetroSpectiveSSB.png Graphic file (type png)
+
+<use ../FIGS/fig:RetroSpectiveSSB.png>
+Package pdftex.def Info: ../FIGS/fig:RetroSpectiveSSB.png used on input line 85
+.
+(pdftex.def)             Requested size: 3011.24269pt x 2258.432pt.
+ [8]
+<../FIGS/fig:RetroSquid.png, id=51, 3011.25pt x 2258.4375pt>
+File: ../FIGS/fig:RetroSquid.png Graphic file (type png)
+
+<use ../FIGS/fig:RetroSquid.png>
+Package pdftex.def Info: ../FIGS/fig:RetroSquid.png used on input line 99.
+(pdftex.def)             Requested size: 3011.24269pt x 2258.432pt.
+) (./Selex.bbl)
 Package minitoc Info: I0009
 (minitoc)             Listing minitoc auxiliary files. 
 (minitoc)             Creating the Selex.maf file.
@@ -587,34 +628,36 @@ Package minitoc Info: I0009
 Package minitoc(hints) Info: I0019
 (minitoc(hints))             No hints have been written 
 (minitoc(hints))             in the Selex.log file..
- [5] [6] (./Selex.aux) ) 
+ [9] [10] [11] [12] [13 <../FIGS/fig:RetroSpectiveSSB.png>] [14 <../FIGS/fig:Re
+troSquid.png>] (./Selex.aux) ) 
 Here is how much of TeX's memory you used:
- 6106 strings out of 493633
- 81863 string characters out of 3143378
- 162858 words of memory out of 3000000
- 9084 multiletter control sequences out of 15000+200000
+ 6161 strings out of 493633
+ 83163 string characters out of 3143378
+ 176174 words of memory out of 3000000
+ 9132 multiletter control sequences out of 15000+200000
  14163 words of font info for 58 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
- 41i,18n,32p,1291b,386s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2011/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmbx10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmbx12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmex10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmmi12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmmi6.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi8.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmr12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmr17.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r6.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.
-pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.p
-fb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
-></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Selex.pdf (6 pages, 172859 bytes).
+ 41i,29n,32p,1575b,420s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2011/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmex10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmmi8.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmr10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr12.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmr17.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr6.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr8.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+sy10.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y8.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
+2.pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12
+.pfb>
+Output written on Selex.pdf (14 pages, 1677488 bytes).
 PDF statistics:
- 83 PDF objects out of 1000 (max. 8388607)
- 59 compressed objects within 1 object stream
+ 121 PDF objects out of 1000 (max. 8388607)
+ 79 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

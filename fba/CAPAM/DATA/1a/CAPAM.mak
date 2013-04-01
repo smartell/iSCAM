@@ -54,6 +54,15 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
 
+
+# |------------------------------------------------------------------------------------|
+# | REMOVE TEMPORARY ADMB FILES
+# |------------------------------------------------------------------------------------|
+# |
+dust:
+	rm -f *.log *.rpt *.htp admodel.* variance *.bar *.b* *.p0* *.r0* *.mcm
+
+
 clean: 
 	-rm -rf 0* iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
 
