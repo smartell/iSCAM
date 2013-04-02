@@ -17,7 +17,7 @@ CTL    = PHake2010
 ARG    =
 MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc -nox
 NR     = 4
-NOSIM  = 10   
+NOSIM  = 8   
 
 # |------------------------------------------------------------------------------------|
 # | DEBUG FLAG
@@ -69,7 +69,7 @@ retro: $(EXEC) $(EXEC).ret1
 $(EXEC).ret1:
 	@echo $(RUNRETRO) | R --vanilla --slave
 
-RUNRETRO = 'args = paste("-retro",c(1:$(NR)),"-nox"); \
+RUNRETRO = 'args = paste("-retro",c(1:$(NR),0),"-nox"); \
             sapply(args,\
             function(a){ cmd=paste("./$(EXEC)","-ind $(DAT) $(ARG)",a);\
                         system(cmd)})'
@@ -105,7 +105,7 @@ $(datadone):
 data: $(datadone)
 
 cleansims:
-	rm -r 0*
+	rm -r 0* *.Rdata
 
 # |------------------------------------------------------------------------------------|
 # | RUN SIMULATIONS IN EACH DIRECTORY (target = sims)
@@ -131,6 +131,7 @@ COLLECTALL ='dn<-dir(pattern="^[[:digit:]]"); \
 				effN    <- sum(nu^2)/A$$age_tau2[1];\
 				c(Fmsy=A$$fmsy,MSY=A$$msy,Bmsy=A$$bmsy,\
 				  hat.Fmsy=B$$fmsy,hat.MSY=B$$msy,hat.Bmsy=B$$bmsy,\
+				  Bo = A$$bo, hat.Bo = B$$bo,\
 				  Fstatus.err=fstatus,Bstatus.err=bstatus,\
 				  EffectiveN=effN,\
 				  Age.tau2=A$$age_tau2[1],\

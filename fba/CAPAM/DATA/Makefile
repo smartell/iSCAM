@@ -3,8 +3,8 @@
 ## targets:
 
 ## Macros
-# SUBDIR = 1a 1b 1c 1d 2a 2b 2c 2d 3a 3b 3c 3d
-SUBDIR = 1a
+SUBDIR = 1a 1b 1c 1d 2a 2b 2c 2d 3a 3b 3c 3d
+# SUBDIR = 1a
 # SUBDIR = 1a 1b 1c 1d
 # SUBDIR = 2a 2b 2c 2d
 # SUBDIR = 3a 3b 3c 3d
@@ -39,7 +39,7 @@ $(clean_files):
 cleanall: $(clean_dirs)
 
 $(clean_dirs):
-	cd $(@D) && $(MAKE) cleanall
+	cd $(@D) && $(MAKE) cleansims
 
 .PHONY: sim
 sim_dirs := $(foreach dir,$(SUBDIR),$(dir)/sim)
@@ -48,18 +48,14 @@ run_dirs := $(foreach dir,$(SUBDIR),$(dir)/run)
 
 
 $(sim_dirs):
-	#cd $(@D);make data -j$(JOBS); make est -j$(JOBS); make collect; make retrostat; touch allDONE
 	cd $(@D); make sims -j$(JOBS); make collect;
 	
 sim: $(sim_dirs)
 
-	#make clean; make data;
 run: $(run_dirs)
 $(run_dirs):
 	cd $(@D); make DAT=SIM.dat ARG="-sim $(SEED) -ainp Sim1_PHake2010.pin -noest" run;
 	cd $(@D); cp Sim1_PHake2010.sim PHake2010.sim;
-	# cd $(@D); make retro ARG="-nox -ainp PHake2010.pin"; touch tmp1;
-	# cd $(@D); make mcmc  ARG="-nox -ainp PHake2010.pin"; touch tmp2;
 	cd $(@D); make retro; touch tmp1;
 	cd $(@D); make mcmc; touch tmp2;
 	
@@ -68,7 +64,5 @@ $(run_dirs):
 .PHONY: collect
 collect: $(collect_files)
 $(collect_files):
-	cd $(@D); rm allSims.Rdata
 	cd $(@D); make collect
-	cd $(@D); rm spawnbio.Rdata; make collectssb
 

@@ -3053,6 +3053,7 @@ FUNCTION void simulationModel(const long& seed)
 	ofs<<"fmsy\n"<<fmsy<<endl;
 	ofs<<"msy\n"<<msy<<endl;
 	ofs<<"bmsy\n"<<bmsy<<endl;
+	ofs<<"bo\n"<<bo<<endl;
 	ofs<<"va\n"<<va<<endl;
 	ofs<<"sbt\n"<<sbt<<endl;//<<rowsum(elem_prod(N,fec))<<endl;
 	ofs<<"log_rec_devs\n"<<log_rec_devs<<endl;

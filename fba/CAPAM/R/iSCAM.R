@@ -390,6 +390,11 @@ getSimObj   <- function(fn)
 		tmp$spbio <- spbio
 		# print(head(tmp$spbio))
 	}
+	if(file.exists("allSims.Rdata"))
+	{
+		load("allSims.Rdata")
+		tmp$allSims <- sims
+	}
 	setwd(oldfn)
 	return(tmp)
 }
@@ -435,6 +440,10 @@ getSimObj   <- function(fn)
 	if( plotType=="simsbdist" )
 	{
 		.plotSSBdist( M )
+	}
+	if( plotType=="refpoints" )
+	{
+		.plotRefPointBias( M )
 	}
 
 }

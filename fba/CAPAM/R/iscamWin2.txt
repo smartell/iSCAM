@@ -94,8 +94,8 @@ grid 1 1 relief="flat" pady=5 padx=5
 		radio name=plotType value=retrossb  	text="Retrospective SSB"		function=.viewPlot mode=character sticky=W edit=TRUE
 		radio name=plotType value=retrosquid  	text="SSB squid plot"  			function=.viewPlot mode=character sticky=W edit=TRUE
 		radio name=plotType value=selex			text="Selectivity"				function=.viewPlot mode=character sticky=W edit=TRUE
+		radio name=plotType value=refpoints 	text="Reference point bias"		function=.viewPlot mode=character sticky=W edit=TRUE
 		radio name=plotType value=simsbdist 	text="SSB distribution"			function=.viewPlot mode=character sticky=W edit=TRUE
-		null
 
 		# RowCol (7 1)
 		grid 2 2 relief="flat" sticky=W
