@@ -1,5 +1,5 @@
 ____
-# iSCAM (integrated Statistical Catch Age Model)
+# iSCAM (integrated Statistical Catch Age Model) using AD Model Builder
 ![iscam](https://github.com/smartell/iSCAM/tree/master/src/r-code/logo/iscamLogoSmall.png)
 iSCAM is and Integrated Statistical Catch Age Model for use in 
 fisheries stock assessment. The software was originally written by 
