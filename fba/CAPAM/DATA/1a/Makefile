@@ -81,6 +81,10 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0),"-nox"); \
 dust:
 	rm -f *.log *.rpt *.htp admodel.* variance *.bar *.mcm
 
+clean: 
+	rm -rf iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance *.ret[0-9]*
+
+
 # |------------------------------------------------------------------------------------|
 # | SIMULATIONS TO BE RUN IN PARALLEL IN NUMERIC DIRECTORIES
 # |------------------------------------------------------------------------------------|
@@ -112,7 +116,7 @@ cleansims:
 # |------------------------------------------------------------------------------------|
 # |
 $(runsims):
-	cd $(@D); make retro --file=CAPAM.mak; make --file=CAPAM.mak; make dust --file=CAPAM.mak
+	cd $(@D); make retro ARG="-nox" --file=CAPAM.mak; make --file=CAPAM.mak; make dust --file=CAPAM.mak
 
 sims: data $(runsims)
 	touch allDONE

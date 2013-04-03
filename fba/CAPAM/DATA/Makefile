@@ -13,7 +13,8 @@ TARGET =
 # SEED  = 98723 
 # SEED  = 99123  
 # SEED  = 12345   #Upward retrospective bias
-SEED = 111411     #Downward retrospective bias
+SEED = 111411   #Downward retrospective bias
+# SEED  = 999
 JOBS  = 8
 
 .PHONY: default $(SUBDIR) mcmc
