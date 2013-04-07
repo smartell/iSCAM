@@ -17,7 +17,7 @@ CTL    = PHake2010
 ARG    =
 MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc -nox
 NR     = 4
-NOSIM  = 8   
+NOSIM  = 40   
 
 # |------------------------------------------------------------------------------------|
 # | DEBUG FLAG
@@ -140,7 +140,8 @@ COLLECTALL ='dn<-dir(pattern="^[[:digit:]]"); \
 				  EffectiveN=effN,\
 				  Age.tau2=A$$age_tau2[1],\
 				  sigma=A$$sig,\
-				  tau=A$$tau)}); \
+				  tau=A$$tau,\
+				  RMSE=A$$tau+A$$sig+sum(sqrt(A$$age_tau2)) )}); \
 		   		save(sims,file="allSims.Rdata")'
 
 COLLECTRETRO =	'dn<-dir(pattern="^[[:digit:]]"); \

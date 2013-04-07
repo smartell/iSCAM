@@ -395,6 +395,11 @@ getSimObj   <- function(fn)
 		load("allSims.Rdata")
 		tmp$allSims <- sims
 	}
+	if(file.exists("retroSims.Rdata"))
+	{
+		load("retroSims.Rdata")
+		tmp$retroSims <- runs
+	}
 	setwd(oldfn)
 	return(tmp)
 }
@@ -445,7 +450,14 @@ getSimObj   <- function(fn)
 	{
 		.plotRefPointBias( M )
 	}
-
+	if( plotType=="retrobias")
+	{
+		.plotRetroBias( M )
+	}
+	if( plotType=="rmse" )
+	{
+		.plotRMSE( M )
+	}
 }
 
 .mpdView	<- function()
