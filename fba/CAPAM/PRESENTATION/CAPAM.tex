@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[table]{beamer}
 
 %% STEP 1) SELECT THE THEM YOU WISH TO USE
 
@@ -24,6 +24,7 @@
 \setbeamertemplate{navigation symbols}{} 
 %
 \usepackage{graphicx}
+
 %\usepackage{bm}         % For typesetting bold math (not \mathbold)
 %\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
 %
@@ -85,6 +86,12 @@ International Pacific Halibut Commission\\
 \titlepage
 \end{frame}
 %
+\begin{frame}[t]\frametitle{Parts to this talk}
+    
+\tableofcontents
+
+\end{frame}
+
 \section{Motivation} % (fold)
 \label{sec:motivation}
 
@@ -166,7 +173,8 @@ International Pacific Halibut Commission\\
     \only<2>{
     \emph{Residual patterns}\\
     \begin{center}
-		\includegraphics[width=3in]{../FIGS/3c/iSCAMfig:Hake(3c):AgeCompResidual1.png}    
+		% \includegraphics[width=3in]{../FIGS/3c/iSCAMfig:Hake(3c):AgeCompResidual1.png}    
+		\includegraphics[width=3in]{../FIGS/fig:AgeCompResidual.png}
     \end{center}
     }
     \only<3>{
@@ -191,23 +199,26 @@ International Pacific Halibut Commission\\
 
 
 \begin{frame}[m]\frametitle{Simulation experiment}
-    
- \begin{tabular}{r|ccc}
+ \begin{center}
+ 	
+ \begin{tabular}{r|cccc}
 		\hline
-
 		\textbf{\textbf{\underline{True states}}}
-		&\multicolumn{3}{c}{\textbf{\underline{Assumed selectivity states}}}\\
-		&\textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} \\
-		&\textbf{N=89} & \textbf{N=93} & \textbf{N=318} \\
+		&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+		&{Fixed (a)} & {Disc. (b)} & {Cont. (c)}
+		&{Bicub (d)} \\
+		No. parameters&{N=156} & {N=160} & {N=385} & {N=239}\\
+		Estimated No. &{N=89} & {N=93} & {N=318} & {N=172}\\
 		\hline
-		 \textbf{Fixed (1)}      & 1a & 1b & 1c \\
-		 \textbf{Discrete (2)}   & 2a & 2b & 2c \\
-		 \textbf{Continuous (3)} & 3a & 3b & 3c \\
+		 {Fixed (1)}      & 1a & 1b & 1c & 1d \\
+		 {Discrete (2)}   & 2a & 2b & 2c & 2d \\
+		 {Continuous (3)} & 3a & 3b & 3c & 3d \\
 		\hline
 
 
 		\hline
 		\end{tabular}
+ \end{center}
 \end{frame}
 \subsection{Model overview} % (fold)
 \label{sub:model_overview}
@@ -218,7 +229,7 @@ International Pacific Halibut Commission\\
     	\item Age-structured, assume $M$ is known.
     	\item Conditioned on historical catch \& parameters fixed at MLE values.
     	\item Parameters: $B_o$, $h$, initial states, rec-devs, selectivities, F's, q, total variance.
-    	\item Concentrated likelihood for age-comps \& estimate total variance.
+    	\item Concentrated likelihood for age-comps \& estimate variance for survey \& recruitment deviates.
     \end{itemize}
     \vfill
     Data:
@@ -227,137 +238,405 @@ International Pacific Halibut Commission\\
     	\item Annual abundance index based on stationary $q$.
     	\item Survey age composition (logistic--time invariant).
     	\item Fishery age composition (selectivity: fixed, blocks, or continous).
-    	\item Index observation error: $\sigma = 0.40$
-    	\item Age-composition error (multivariate logistic): $\sigma = 0.40$
+    	\item Index observation error: $\sigma = 0.30$
+    	\item Age-composition error (multivariate logistic): $\sigma = 0.30$
     	\item Process error: $\tau = 1.12$
     \end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{Selectivities}
+    Simulated
+	\begin{center}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:simSelex1.png}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:simSelex2.png}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:simSelex3.png}
+	\end{center}
+	\vspace{-1cm}
+	Estimated (7 knot cubic spline)
+	\begin{center}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:estSelex1.pdf}\hspace{-1.4cm}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:estSelex2.pdf}\hspace{-1.4cm}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:estSelex3.pdf}\hspace{-1.4cm}
+		\includegraphics[width=0.33\textwidth]{../FIGS/fig:estSelex4.pdf}		
+	\end{center}
 \end{frame}
 
 \begin{frame}[m]\frametitle{Questions}
     \begin{enumerate}
     	\item Can DIC be used reliably to choose the correct selectivity model?
-    	\item Impact of selectivity mis-specification on reference points?
     	\item Retrospective performance of selectivity mis-specification?
+    	\item Impact of selectivity mis-specification on reference points?
     \end{enumerate}
 \end{frame}
 
-\begin{frame}[m]\frametitle{Algorithm}
-    For each model scenario:
-	\begin{enumerate}
-		\item Estimate model parameters for 2010 hake assesment.
-		\item Simulate relative abundance and age-comps based on MLE values.
-		\item Estimate joint posterior for simulated observations.
-		\item Calculate DIC from 1000 posterior samples.
-		\item Compute bias in estimated reference points.
-		\item Compute 4-year mean retrospective bias.
-		\item Repeat steps 2:5 at least 100 times for each scenario (9).
-	\end{enumerate}
+% \begin{frame}[m]\frametitle{Algorithm}
+%     For each model scenario:
+% 	\begin{enumerate}
+% 		\item Estimate model parameters for 2010 hake assesment.
+% 		\item Simulate relative abundance and age-comps based on MLE values.
+% 		\item Estimate joint posterior for simulated observations.
+% 		\item Calculate DIC from 1000 posterior samples.
+% 		\item Compute bias in estimated reference points.
+% 		\item Compute 4-year mean retrospective bias.
+% 		\item Repeat steps 2:5 at least 100 times for each scenario (9).
+% 	\end{enumerate}
 
-\end{frame}
+% \end{frame}
 % subsection model_overview (end)
 
 
 
 \subsection{Simulation results} % (fold)
 \label{sub:simulation_results}
-
-\begin{frame}[m]\frametitle{Model Selection}	
-	\begin{block}
-    {Can DIC be used reliably to choose the correct selectivity model?}
-	    
-	    
-	    DIC based on 1000 samples from the joint posterior.
-	    
-	    Monte carlo runs based on 24 simulated data sets per treatment.
-	    
-	\end{block}
-\end{frame}
-
-
-\begin{frame}[m]\frametitle{Spawning biomass}
-	\only<1>{
-    \begin{center}
-    	Seed=991
-    	\includegraphics[height=0.75\textheight]{../FIGS/HakeSpawningBiomass991.png}
-    \end{center}
+\begin{frame}[m,fragile]\frametitle{Model selection based on DIC}
+    \only<1>{
+    For each true state (fixed, discrete, continuous), fit 4 alternative assessment models to the data and calculate Deviance Information Criterion (DIC).
     }
+
     \only<2>{
-    \begin{center}
-    	Seed = 123
-    	\includegraphics[height=0.75\textheight]{../FIGS/HakeSpawningBiomass123.png}
-    \end{center}
+    $\Delta$DIC
+     \begin{center}
+ 	
+ 		\begin{tabular}{r|cccc}
+			\hline
+			\textbf{\textbf{\underline{True states}}}
+			&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+			&{Fixed (a)} & {Disc. (b)} & {Cont. (c)}
+			&{Bicub (d)} \\
+			\hline
+			 
+			 Fixed (1)     & 
+			 \cellcolor{green}     \color[gray]{0.1959} 10.28 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.4178} 21.92 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.5000} 26.23 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.0000} 0.00 \\
+			 
+			 Discrete (2)  & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.5000} 195.52 & 
+			 \cellcolor{green}     \color[gray]{0.1151} 45.45 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.0000} 0.00 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.0069} 2.70 \\
+			 
+			 Continuous (3)& 
+			 \cellcolor[gray]{0.8} \color[gray]{0.1017} 1.72 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.5000} 8.45 & 
+			 \cellcolor{green}     \color[gray]{0.1804} 3.05 & 
+			 \cellcolor[gray]{0.8} \color[gray]{0.0000} 0.00 \\
+			 
+			\hline
+
+			\hline
+		\end{tabular}
+ 	\end{center}
     }
-\end{frame}
-
-\begin{frame}[t]\frametitle{Effective number of parameters}
-    
-    \begin{center}
-		\includegraphics[height=0.8\textheight]{../FIGS/EffectiveNoPars.png} 
-    \end{center}
 
 \end{frame}
 
-\begin{frame}[t]\frametitle{Model selection vis-\`a-vis DIC}
-    
-\begin{center}
-		\includegraphics[height=0.8\textheight]{../FIGS/DIC.png} 
-    \end{center}
+\begin{frame}[m]\frametitle{Root Mean Square Error}
+ \only<1>{
+ 	\begin{center}
+ 		\includegraphics[width=\textwidth]{../FIGS/fig:RMSE.png}
+ 	\end{center}
+ }
+ \only<2>{
+  	RMSE 
+     \begin{center}
+ 	
+ 		\begin{tabular}{r|cccc}
+			\hline
+			\textbf{\textbf{\underline{True states}}}
+			&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+			&{Fixed (a)} & {Disc. (b)} & {Cont. (c)}
+			&{Bicub (d)} \\
+			\hline
+			Fixed (1)     & 
+			\cellcolor[gray]{0.5} 1.942 & 
+			\cellcolor[gray]{0.7} 1.937 & 
+			\cellcolor[gray]{1.0} 1.867 & 
+			\cellcolor[gray]{0.9} 1.915 \\ 
+
+			Discrete (2)  & 
+			\cellcolor[gray]{0.5} 1.979 & 
+			\cellcolor[gray]{0.7} 1.949 & 
+			\cellcolor[gray]{1.0} 1.868 & 
+			\cellcolor[gray]{0.9} 1.918 \\ 
+
+			Continuous (3)& 
+			\cellcolor[gray]{0.5} 2.093 & 
+			\cellcolor[gray]{0.7} 2.087 & 
+			\cellcolor[gray]{1.0} 1.999 &
+			\cellcolor[gray]{0.9} 2.053 \\
+			\hline
+
+			\hline
+		\end{tabular}
+ 	\end{center}
+
+
+ }
+
 
 \end{frame}
 
-\begin{frame}[m]\frametitle{Impacts on reference points}
-    
-	\only<1>{
-		\begin{block}
-	    {Impact of selectivity mis-specification on reference points?}
-	    
-	    MSY-based reference points based on MLE estimates.\\
-	    Monte carlo runs based on 24 simulated data sets per treatment.\\
-	    Compute $ \log_2\left(\frac{ F_{est} }{ F_{true} } \right)$\\
-	    
-		\end{block}
-	}
-	\only<2>{
-		\begin{center}
-			\includegraphics[height=0.8\textheight]{../FIGS/FmsyBmsyBias.png}
-		\end{center}
-	}
 
+
+
+
+
+
+
+\begin{frame}[t]\frametitle{Retrospective performance}
+
+\only<1>{
+	\begin{center}
+		\includegraphics[width=\textwidth]{../FIGS/fig:retrospectiveBias.pdf}
+	\end{center}
+}
+\only<2>{
+	\begin{center}
+		\includegraphics[width=\textwidth]{../FIGS/fig:retrospectiveSquid.pdf}
+	\end{center}
+}
+\only<3>{
+	Monte Carlo trials
+	\begin{center}
+		\includegraphics[width=\textwidth]{../FIGS/fig:RetrospectiveBiasMC.png}
+	\end{center}	
+}
 \end{frame}
 
-
-
-\begin{frame}[m]\frametitle{Retrospective bias}
-	\only<1>{
-    \begin{center}
-    	Seed = 991
-    	\includegraphics[height=0.75\textheight]{../FIGS/SSBretro991.png}
-    \end{center}
-    }
-    \only<2>{
-    \begin{center}
-    	Seed = 123
-    	\includegraphics[height=0.75\textheight]{../FIGS/SSBretro123.png}
-    \end{center}
-    }
-    \only<3>{
+\begin{frame}[m]\frametitle{Retrospective bias statistic $\Omega$}
+    \only<1>{
+    Distance between average and absolute average bias:\\
     \[
-    	\mbox{bias} = \frac{1}{4} \sum_{t=2005}^{2009} 100 \frac{B_t^y-B_t^{2010}}{B_t^{2010}}
+    \mbox{bias} = \frac{1}{4} \sum_{t=2005}^{2009} \frac{B_t^y-B_t^{2010}}{B_t^{2010}}
+    \]
+    \[
+    |\mbox{bias}| = \frac{1}{4} \sum_{t=2005}^{2009}\left| \frac{B_t^y-B_t^{2010}}{B_t^{2010}}\right|
+    \]
+    \[
+    \Omega = \sqrt{\mbox{bias}^2 + |\mbox{bias}|^2 }
     \]
     }
-    \only<4>{
+
+    \only<2>{
+    	$\Omega = 0$ implies no bias 
+     \begin{center}
+ 	
+ 		\begin{tabular}{r|cccc}
+			\hline
+			\textbf{\textbf{\underline{True states}}}
+			&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+			&{Fixed (a)} & {Disc. (b)} & {Cont. (c)}
+			&{Bicub (d)} \\
+			\hline
+			 
+			 Fixed (1)     & 
+			 \cellcolor[gray]{0.9} 15.75         &
+			 \cellcolor[gray]{1.0} 15.66         &
+			 \cellcolor[gray]{0.5} 16.53         &
+			 \cellcolor[gray]{0.7} 16.40         \\
+			 
+			 Discrete (2)  & 
+			 \cellcolor[gray]{0.9} 16.62         &
+			 \cellcolor[gray]{0.5} 18.99         &
+			 \cellcolor[gray]{0.7} 16.73         &
+			 \cellcolor[gray]{1.0} 16.55         \\
+			 
+			 Continuous (3)& 
+			 \cellcolor[gray]{1.0} 16.62         & 
+			 \cellcolor[gray]{0.7} 17.47         & 
+			 \cellcolor[gray]{0.9} 17.40         & 
+			 \cellcolor[gray]{0.5} 17.48         \\
+			 
+			\hline
+
+			\hline
+		\end{tabular}
+ 	\end{center}
+    }
+
+\end{frame}
+
+\begin{frame}[m]\frametitle{Bias in reference points}
+    \only<1>{
     \begin{center}
-    	\includegraphics[height=0.75\textheight]{../FIGS/RetroBias.png}
+    	\includegraphics[width=0.9\textwidth]{../FIGS/fig:RefPointBias.png}
     \end{center}
     }
+    \only<2>{
+        	$F_{\rm{MSY}}$ bias
+     \begin{center}
+ 	
+ 		\begin{tabular}{r|cccc}
+			\hline
+			\textbf{\textbf{\underline{True states}}}
+			&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+			&{Fixed (a)} & {Disc. (b)} & {Cont. (c)}
+			&{Bicub (d)} \\
+			\hline
+			 
+			 Fixed (1)     & 
+			 \cellcolor[gray]{0.5}	-0.054           &
+			 \cellcolor[gray]{0.7}	-0.050           &
+			 \cellcolor[gray]{0.9}	-0.009           &
+			 \cellcolor[gray]{1.0}	0.007           \\
+			 
+			 Discrete (2)  & 
+			 \cellcolor[gray]{0.5}	-0.155           &
+			 \cellcolor[gray]{0.7}	-0.120           &
+			 \cellcolor[gray]{1.0}	0.003           &
+			 \cellcolor[gray]{0.9}	0.013           \\
+			 
+			 Continuous (3)& 
+			 \cellcolor[gray]{0.5}	0.142           & 
+			 \cellcolor[gray]{0.9}	0.086           & 
+			 \cellcolor[gray]{1.0}	0.064           & 
+			 \cellcolor[gray]{0.7}	0.100         \\
+			 
+			\hline
+
+			\hline
+		\end{tabular}
+ 	\end{center}
+    }
+
 \end{frame}
+
+\begin{frame}[m]\frametitle{Rank scores}
+    
+     		\begin{tabular}{r|ccc|c}
+			\hline
+			\textbf{\textbf{\underline{True states}}}
+			&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+			&{Fixed (1)} & {Disc. (2)} & {Cont. (3)}
+			&{Rank order} \\
+			\hline
+			 
+			 DIC     & 
+			 \cellcolor[gray]{1.0}	d,a,b,c           &
+			 \cellcolor[gray]{1.0}	c,d,b,a           &
+			 \cellcolor[gray]{1.0}	d,a,c,b           &
+			 \cellcolor[gray]{1.0}	\textbf{d},c,b,a       \\
+			 
+			 $\Omega$  & 
+			 \cellcolor[gray]{1.0}	b,a,d,c           &
+			 \cellcolor[gray]{1.0}	d,a,c,b           &
+			 \cellcolor[gray]{1.0}	a,c,b,d          &
+			 \cellcolor[gray]{1.0}	a,\textbf{d},c,b        \\
+			 
+			 $F_{\rm{MSY}}$& 
+			 \cellcolor[gray]{1.0}	d,c,b,a          & 
+			 \cellcolor[gray]{1.0}	c,d,b,a          & 
+			 \cellcolor[gray]{1.0}	c,b,d,a          & 
+			 \cellcolor[gray]{1.0}	c,\textbf{d},b,a        \\
+			 
+			\hline
+
+			\hline
+
+		\end{tabular}
+
+
+\end{frame}
+
+% \begin{frame}[m]\frametitle{Model Selection}	
+% 	\begin{block}
+%     {Can DIC be used reliably to choose the correct selectivity model?}
+	    
+	    
+% 	    DIC based on 1000 samples from the joint posterior.
+	    
+% 	    Monte carlo runs based on 24 simulated data sets per treatment.
+	    
+% 	\end{block}
+% \end{frame}
+
+
+% \begin{frame}[m]\frametitle{Spawning biomass}
+% 	\only<1>{
+%     \begin{center}
+%     	Seed=991
+%     	\includegraphics[height=0.75\textheight]{../FIGS/HakeSpawningBiomass991.png}
+%     \end{center}
+%     }
+%     \only<2>{
+%     \begin{center}
+%     	Seed = 123
+%     	\includegraphics[height=0.75\textheight]{../FIGS/HakeSpawningBiomass123.png}
+%     \end{center}
+%     }
+% \end{frame}
+
+% \begin{frame}[t]\frametitle{Effective number of parameters}
+    
+%     \begin{center}
+% 		\includegraphics[height=0.8\textheight]{../FIGS/EffectiveNoPars.png} 
+%     \end{center}
+
+% \end{frame}
+
+% \begin{frame}[t]\frametitle{Model selection vis-\`a-vis DIC}
+    
+% \begin{center}
+% 		\includegraphics[height=0.8\textheight]{../FIGS/DIC.png} 
+%     \end{center}
+
+% \end{frame}
+
+% \begin{frame}[m]\frametitle{Impacts on reference points}
+    
+% 	\only<1>{
+% 		\begin{block}
+% 	    {Impact of selectivity mis-specification on reference points?}
+	    
+% 	    MSY-based reference points based on MLE estimates.\\
+% 	    Monte carlo runs based on 24 simulated data sets per treatment.\\
+% 	    Compute $ \log_2\left(\frac{ F_{est} }{ F_{true} } \right)$\\
+	    
+% 		\end{block}
+% 	}
+% 	\only<2>{
+% 		\begin{center}
+% 			\includegraphics[height=0.8\textheight]{../FIGS/FmsyBmsyBias.png}
+% 		\end{center}
+% 	}
+
+% \end{frame}
+
+
+
+% \begin{frame}[m]\frametitle{Retrospective bias}
+% 	\only<1>{
+%     \begin{center}
+%     	Seed = 991
+%     	\includegraphics[height=0.75\textheight]{../FIGS/SSBretro991.png}
+%     \end{center}
+%     }
+%     \only<2>{
+%     \begin{center}
+%     	Seed = 123
+%     	\includegraphics[height=0.75\textheight]{../FIGS/SSBretro123.png}
+%     \end{center}
+%     }
+%     \only<3>{
+%     \[
+%     	\mbox{bias} = \frac{1}{4} \sum_{t=2005}^{2009} 100 \frac{B_t^y-B_t^{2010}}{B_t^{2010}}
+%     \]
+%     }
+%     \only<4>{
+%     \begin{center}
+%     	\includegraphics[height=0.75\textheight]{../FIGS/RetroBias.png}
+%     \end{center}
+%     }
+% \end{frame}
 % subsection simulation_results (end)
 
 % section simulation_experiment (end)
 
 
 
-\section{Discussion} % (fold)
+\section{What I've learned so far} % (fold)
 \label{sec:discussion}
 
 \begin{frame}[t]\frametitle{What I learned from this exercise}
@@ -367,14 +646,26 @@ International Pacific Halibut Commission\\
 			\begin{itemize}
 				\item Less retrospective bias \& less bias in $F_{\rm{MSY}}$.
 			\end{itemize}
-		\item<+-> Random walk models: loss of scale information, informative prior for survey $q$.
-		\item<+-> Rather than add small constant, pool weak cohorts into adjacent year classes.
+		\item<+-> Random walk models: loss of scale information (i.e., catch curves).
+			\begin{itemize}
+				\item Informative prior for scaling parameters may be necessary.
+			\end{itemize}
+		\item<+-> \alert<3>{Don't add small constants to age-comp likelihoods.}
+			\begin{itemize}
+				\item  Pool small proportions into adjacent year classes.
+			\end{itemize}
 		\item<+-> Tagging data could help resolve confounding in integrated models.
-		\item<+-> Conduct simulation testing to verify that model selection criteria works.
-		\item<+-> And there is one more thing....
+		\item<+-> Simulation test model selection criteria.
+		\item<+-> Can also use 2 dimensional splines for selectivity.
 		\begin{itemize}
-			\item <+-> Can also use 2 dimensional splines for selectivity.
+			\item Appears to perform much better in n\"iave situations.
+			\item Reduces number of estimated selectivity coefficients.
+			\item More robust to smoothing penalities.
 		\end{itemize}
+		\item<+-> Ensure parameterization is continuous and differentiable.
+			\begin{itemize}
+				\item Avoid \texttt{max} function (not continous).
+			\end{itemize}
 	\end{itemize}
 
 \end{frame}
