@@ -92,18 +92,19 @@
 	12          # 12 -number of estimated nodes for deviations in natural mortality
 	0.50        # 13 -fraction of total mortality that takes place prior to spawning
 	1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	1           # 15 -switch for simulating data with IFD on cohorts
 ##
 ## ------------------------------------------------------------------------- ##
 ## SIMULATION SELEX CONTROLS FOR FAKE DATA FOR MODEL TESTING                 ##
 ## ------------------------------------------------------------------------- ##
 ## selex_ctrl
-    0 		0          				# 1  - flag for using IFD (0=off, 1=on)
-    1       1                       # 2  - Selectivity type for simulating data
-    1       1                       # 3  - nsim_sel_blocks
-## ------------------------------------------------------------------------- ##
-## start years for selectivity blocks
-1977	#1985	1996
-1977
+##    0 		0          				# 1  - flag for using IFD (0=off, 1=on)
+##    1       1                       # 2  - Selectivity type for simulating data
+##    1       1                       # 3  - nsim_sel_blocks
+#### ------------------------------------------------------------------------- ##
+#### start years for selectivity blocks
+##1977	#1985	1996
+##1977
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)
 ## ------------------------------------------------------------------------- ##

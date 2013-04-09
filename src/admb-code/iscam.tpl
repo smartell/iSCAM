@@ -671,7 +671,7 @@ DATA_SECTION
 	// | 13-> fraction of total mortality that takes place prior to spawning
 	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	// | 
-	init_vector cntrl(1,14);
+	init_vector cntrl(1,15);
 	int verbose;
 	
 
@@ -683,18 +683,18 @@ DATA_SECTION
 	// | 2) Index for simulated sel_type
 	// | 3) Number of selectivity blocks for each gear type.
 
-	init_matrix sim_ctrl(1,3,1,ngear);
-	!! COUT(sim_ctrl);
+	// init_matrix sim_ctrl(1,3,1,ngear);
+	// !! COUT(sim_ctrl);
 
-	ivector sim_isel_type(1,ngear);
-	ivector nsim_sel_blocks(1,ngear);
+	// ivector sim_isel_type(1,ngear);
+	// ivector nsim_sel_blocks(1,ngear);
 	
-	LOC_CALCS
-		sim_isel_type   = ivector(sim_ctrl(2));
-		nsim_sel_blocks = ivector(sim_ctrl(3));
-	END_CALCS
-	init_imatrix sim_sel_blocks(1,ngear,1,nsim_sel_blocks);
-	// TODO modify calcSelectivities to include sim_sel_blocks.
+	// LOC_CALCS
+	// 	sim_isel_type   = ivector(sim_ctrl(2));
+	// 	nsim_sel_blocks = ivector(sim_ctrl(3));
+	// END_CALCS
+	// init_imatrix sim_sel_blocks(1,ngear,1,nsim_sel_blocks);
+	// // TODO modify calcSelectivities to include sim_sel_blocks.
 
 	init_int eofc;
 	LOC_CALCS
@@ -2869,7 +2869,8 @@ FUNCTION void simulationModel(const long& seed)
 		for(k=1;k<=ngear;k++)
 		{
 			va(k)=exp(dlog_sel(k)(i));
-			if( sim_ctrl(1)(k) )
+			// if( sim_ctrl(1)(k) )
+			if( cntrl(15) == 1 )
 			{
 				va(k) = ifdSelex(va(k),bt);
 				dlog_sel(k)(i) = log(va(k));
