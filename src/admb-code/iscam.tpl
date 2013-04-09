@@ -766,25 +766,26 @@ PARAMETER_SECTION
 			{
 				if( isel_type(k)==1 || 
 					isel_type(k)==6 || 
-					isel_type(k)>=7 ||
-					sim_isel_type(k)==1 ||
-					sim_isel_type(k)>=7 )
+					isel_type(k)>=7 
+					//sim_isel_type(k)==1 ||
+					//sim_isel_type(k)>=7 
+					)
 				{
 					for(int j = 1; j <= n_sel_blocks(k); j++ )
 					{
 						double uu = 0;
-						if(sim_isel_type(k)==1 && j > 1)
+						if(SimFlag && j > 1)
 						{
 							uu = 0.05*randn(j+rseed);
 						} 
 
-						// SPECIAL CASE for simulation.
-						// Special case if sim with sel_type=1 and estimate with sel_type11
-						if(sim_isel_type(k)==1 && isel_type(k)>=11 && j==1)
-						{
-							// convert length to age
-							ahat(k) = -log(-(ahat(k)-linf)/linf)/vonbk;
-						}
+						// // SPECIAL CASE for simulation.
+						// // Special case if sim with sel_type=1 and estimate with sel_type11
+						// if(sim_isel_type(k)==1 && isel_type(k)>=11 && j==1)
+						// {
+						// 	// convert length to age
+						// 	ahat(k) = -log(-(ahat(k)-linf)/linf)/vonbk;
+						// }
 
 							
 						sel_par(k,j,1) = log(ahat(k)*exp(uu));
@@ -2673,7 +2674,7 @@ FUNCTION void simulationModel(const long& seed)
 	int i,j,k,ii,ki;
 
 	// Initialize selectivity based on model parameters.
-    calcSelectivities(sim_isel_type);
+    calcSelectivities(isel_type);
     cout<<"	Ok after calcSelectivities"<<endl;
 
     // Initialize natural mortality rates.  Should add Random-walk in M parameters here.
