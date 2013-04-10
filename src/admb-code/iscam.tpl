@@ -674,7 +674,7 @@ DATA_SECTION
 	init_vector cntrl(1,15);
 	int verbose;
 	
-
+	// DEPRECATED
 	// |---------------------------------------------------------------------------------|
 	// | SIMULATION CONTROLS
 	// |---------------------------------------------------------------------------------|
@@ -777,6 +777,7 @@ PARAMETER_SECTION
 						if(SimFlag && j > 1)
 						{
 							uu = 0.05*randn(j+rseed);
+							// cout<<"Hello Everbody, so glad to see you"<<endl;
 						} 
 
 						// // SPECIAL CASE for simulation.
@@ -2871,7 +2872,7 @@ FUNCTION void simulationModel(const long& seed)
 		{
 			va(k)=exp(dlog_sel(k)(i));
 			// if( sim_ctrl(1)(k) )
-			if( cntrl(15) == 1 )
+			if( cntrl(15) == 1 && allocation(k) > 0 )
 			{
 				va(k) = ifdSelex(va(k),bt);
 				dlog_sel(k)(i) = log(va(k));
