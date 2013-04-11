@@ -60,6 +60,8 @@
 //--                                                                           --//
 //-- May 6, 2011- added pre-processor commands to determin PLATFORM            --//
 //--              either "Windows" or "Linux"                                  --//
+//--            - change April 10, 2013 to #if defined _WIN32 etc.            --//
+//--                                                                           --//
 //--                                                                           --//
 //-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning               --//
 //--                                                                           --//
@@ -103,7 +105,6 @@ DATA_SECTION
 	//                                                                           //
 	// ------------------------------------------------------------------------- //
 
-	!! cout<<"iSCAM has detected that you are on a "<<PLATFORM<<" box"<<endl;
 	
 	// |---------------------------------------------------------------------------------|
 	// | STRINGS FOR INPUT FILES                                                         |
@@ -3289,22 +3290,29 @@ REPORT_SECTION
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
-	if(retro_yrs && last_phase() && PLATFORM =="Linux")
+	#if defined __APPLE__ || defined __linux
+	if( retro_yrs && last_phase() )
 	{
 		//adstring rep="iscam.ret"+str(retro_yrs);
 		//rename("iscam.rep",rep);
 		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
 		system(copyrep);
 	}
+	// cout<<"Ya hoo"<<endl;
+	//exit(1);
+	#endif
 
-	if(retro_yrs && last_phase() && PLATFORM =="Windows")
+	#if defined _WIN32 || defined _WIN64
+	if( retro_yrs && last_phase() )
 	{
 		//adstring rep="iscam.ret"+str(retro_yrs);
 		//rename("iscam.rep",rep);
 		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
 		system(copyrep);
 	}
-	
+	// cout<<"Windows"<<endl;
+	// exit(1);
+	#endif
 	
   }
 	
@@ -3672,12 +3680,6 @@ GLOBALS_SECTION
 	#undef COUT
 	#define COUT(object) cout << #object "\n" << object <<endl;
 
-	#if defined(_WIN32) && !defined(__linux__)
-		const char* PLATFORM = "Windows";
-	#else
-		const char* PLATFORM = "Linux";
-	#endif
-
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
@@ -3883,7 +3885,8 @@ FINAL_SECTION
 	
 	//CHANGED only copy over the mcmc files if in mceval_phase()
 	
-	if(last_phase() && PLATFORM =="Linux" && !retro_yrs)
+	#if defined __APPLE__ || defined __linux
+	if(last_phase() && !retro_yrs)
 	{
 		adstring bscmd = "cp iscam.rep " +ReportFileName;
 		system(bscmd);
@@ -3930,14 +3933,16 @@ FINAL_SECTION
 		}
 	}
 
-	if( last_phase() && PLATFORM =="Linux" && retro_yrs )
+	if( last_phase() && retro_yrs )
 	{
 		//copy report file with .ret# extension for retrospective analysis
 		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
 		system(bscmd);
 	}
+	#endif
 
-	if(last_phase() && PLATFORM =="Windows" && !retro_yrs)
+	#if defined _WIN32 || defined _WIN64
+	if(last_phase() && !retro_yrs)
 	{
 		adstring bscmd = "copy iscam.rep " +ReportFileName;
 		system(bscmd);
@@ -3974,12 +3979,12 @@ FINAL_SECTION
 		}
 	}
 
-	if( last_phase() && PLATFORM =="Windows" && retro_yrs )
+	if( last_phase() && retro_yrs )
 	{
 		//copy report file with .ret# extension for retrospective analysis
 		adstring bscmd = "copy iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
 		system(bscmd);
 	}
-
+	#endif
 
 

@@ -3,19 +3,19 @@
 ## targets:
 
 ## Macros
-SUBDIR = ECODETECTIVE/DATA Herring4VWX/DATA LingcodSRA/DATA
-TARGET = 
+SUBDIR = ECODETECTIVE/DATA Herring4VWX/DATA LingcodSRA/DATA PacificHake/DATA
+TARGET = make
 
-.PHONY: default $(SUBDIR) mcmc
 
 ## Targets
-default: $(SUBDIR)
-$(SUBDIR):
-	cd $@ && $(MAKE) $(TARGET)
+runall := $(foreach dir,$(SUBDIR),$(dir)/runall)
+default: $(runall)	
+$(runall):
+	cd $(@D) && $(MAKE)
 
 
 
-.PHONY: clean
+
 clean_files := $(foreach dir,$(SUBDIR),$(dir)/clean)
 
 clean: $(clean_files)
