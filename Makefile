@@ -12,8 +12,8 @@ dist:
 	mkdir -p ${DISK}/debug
 	mkdir -p ${DISK}/R
 	mkdir -p ${DISK}/release
-	make --directory=src/admb-code --file=linux.mak 
-	make --directory=src/admb-code --file=linux.mak opt
+	make     --directory=src/admb-code 
+	make opt --directory=src/admb-code 
 	cp -r ./src/r-code/ ${DISK}/R/
 
 clean:
