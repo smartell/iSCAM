@@ -70,7 +70,7 @@ setwd("/Users/stevenmartell1/Documents/iSCAM-project/fba/CAPAM/R/")
 require(Hmisc)
 .RFILES     <- list.files("./R/",pattern="\\.[Rr]$")
 for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
-
+.READIN     <- FALSE
 
 # Graphics defaults.
 .VIEWCEX    <- 1            # Generic default cex for axis labels etc.
@@ -421,9 +421,12 @@ getSimObj   <- function(fn)
 	#hdr$Report.File contains the vector of report files to examine.
 
 	# Get model results from fn vector
-	# M        <<- lapply(fn, read.admb)
-	M        <<- lapply(fn, getSimObj)
-	names(M) <<- hdr$Stock
+	if(!.READIN)
+	{
+		M        <<- lapply(fn, getSimObj)
+		names(M) <<- hdr$Stock
+		.READIN  <<- TRUE
+	}
 
 	# use plotType to determine what is being plotted.
 	if( plotType=="simbiomass" )

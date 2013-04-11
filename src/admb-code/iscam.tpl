@@ -636,7 +636,7 @@ DATA_SECTION
 					
 				case 12:
 					// Length-based selectivity coeffs with cubic spline interpolation
-					isel_npar(i) = (nage-sage);
+					isel_npar(i) = age_nodes(i);
 					jsel_npar(i) = n_sel_blocks(i);
 					break;
 					
@@ -671,7 +671,7 @@ DATA_SECTION
 	// | 12-> number of estimated nodes for deviations in natural mortality
 	// | 13-> fraction of total mortality that takes place prior to spawning
 	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
-	// | 
+	// | 15-> switch for generating selex based on IFD and cohort biomass
 	init_vector cntrl(1,15);
 	int verbose;
 	
@@ -757,7 +757,7 @@ PARAMETER_SECTION
 	//!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Selectivity parameters (A very complicated ragged array)
-	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-15.,15.,sel_phz);
+	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 	LOC_CALCS
 		//initial values for logistic selectivity parameters
 		//set phase to -1 for fixed selectivity.
@@ -1250,6 +1250,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						bpar ++;
 						if( byr < n_sel_blocks(j) ) byr++;
 					}
+				
 					dvector len = pow(wt_obs(i)/a,1./b);
 					log_sel(j)(i)=cubic_spline( sel_par(j)(bpar), len );
 				}
@@ -1902,7 +1903,7 @@ FUNCTION calc_objective_function
 				isel_type(k)!=8 &&
 				isel_type(k)!=11 )  
 			{
-
+				
 				for(i=syr;i<=nyr;i++)
 				{
 					//curvature in selectivity parameters
@@ -1917,8 +1918,12 @@ FUNCTION calc_objective_function
 				}
 			}
 			
-			/*Oct 31, 2012 Halloween! Added 2nd difference penalty on time for isel_type==(4)
-			Mar 13, 2013, added 2nd difference penalty on isel_type==5 */
+			/*
+			Oct 31, 2012 Halloween! Added 2nd difference penalty on time 
+			for isel_type==(4)
+
+			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
+			*/
 			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
 			{
 				dvar_matrix trans_log_sel = trans( log_sel(k) );

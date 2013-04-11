@@ -17,7 +17,7 @@ CTL    = PHake2010
 ARG    =
 MCFLAG = -mcmc 20000 -mcsave 200 -nosdmcmc -nox
 NR     = 4
-NOSIM  = 24   
+NOSIM  = 8   
 
 # |------------------------------------------------------------------------------------|
 # | DEBUG FLAG
