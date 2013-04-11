@@ -29,6 +29,8 @@
 *.vrb
 *.top
 *.toi
+*.d
+*.dvi
 
 # R stuff
 *.Rhistory
