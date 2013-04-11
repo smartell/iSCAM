@@ -19,6 +19,18 @@
 *.sim
 *.proj
 
+# Latex Stuff
+*.aux
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+
+# R stuff
+*.Rhistory
+
 # Compiled Object files
 *.slo
 *.lo
