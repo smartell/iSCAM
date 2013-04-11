@@ -27,6 +27,8 @@
 *.synctex.gz
 *.toc
 *.vrb
+*.top
+*.toi
 
 # R stuff
 *.Rhistory
