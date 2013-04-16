@@ -4,15 +4,15 @@
 #The following line is for the Demo example
 #TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
 #FALSE, Hake,    "Pacific Hake",../../CAPAM/DATA/2010/PHake2010
-TRUE,Hake(1a),    "Pacific Hake",../../CAPAM/DATA/1a/PHake2010
-TRUE,Hake(1b),    "Pacific Hake",../../CAPAM/DATA/1b/PHake2010
-TRUE,Hake(1c),    "Pacific Hake",../../CAPAM/DATA/1c/PHake2010
-TRUE,Hake(1d),    "Pacific Hake",../../CAPAM/DATA/1d/PHake2010
-TRUE,Hake(2a),    "Pacific Hake",../../CAPAM/DATA/2a/PHake2010
-TRUE,Hake(2b),    "Pacific Hake",../../CAPAM/DATA/2b/PHake2010
-TRUE,Hake(2c),    "Pacific Hake",../../CAPAM/DATA/2c/PHake2010
-TRUE,Hake(2d),    "Pacific Hake",../../CAPAM/DATA/2d/PHake2010
-TRUE,Hake(3a),    "Pacific Hake",../../CAPAM/DATA/3a/PHake2010
-TRUE,Hake(3b),    "Pacific Hake",../../CAPAM/DATA/3b/PHake2010
-TRUE,Hake(3c),    "Pacific Hake",../../CAPAM/DATA/3c/PHake2010
-TRUE,Hake(3d),    "Pacific Hake",../../CAPAM/DATA/3d/PHake2010
+TRUE,(1a),    "Pacific Hake",../../CAPAM/DATA/1a/PHake2010
+TRUE,(1b),    "Pacific Hake",../../CAPAM/DATA/1b/PHake2010
+TRUE,(1c),    "Pacific Hake",../../CAPAM/DATA/1c/PHake2010
+TRUE,(1d),    "Pacific Hake",../../CAPAM/DATA/1d/PHake2010
+TRUE,(2a),    "Pacific Hake",../../CAPAM/DATA/2a/PHake2010
+TRUE,(2b),    "Pacific Hake",../../CAPAM/DATA/2b/PHake2010
+TRUE,(2c),    "Pacific Hake",../../CAPAM/DATA/2c/PHake2010
+TRUE,(2d),    "Pacific Hake",../../CAPAM/DATA/2d/PHake2010
+TRUE,(3a),    "Pacific Hake",../../CAPAM/DATA/3a/PHake2010
+TRUE,(3b),    "Pacific Hake",../../CAPAM/DATA/3b/PHake2010
+TRUE,(3c),    "Pacific Hake",../../CAPAM/DATA/3c/PHake2010
+TRUE,(3d),    "Pacific Hake",../../CAPAM/DATA/3d/PHake2010
