@@ -512,7 +512,16 @@ DATA_SECTION
 		}
 
 		// average weight-at-age in projection years
-
+		for(ig=1;ig<=n_ags;ig++)
+		{
+			dvector wt_bar    = colsum(wt_avg(ig).sub(pf_cntrl(3),pf_cntrl(4)));
+			wt_bar           /= pf_cntrl(4)-pf_cntrl(3)+1;
+			wt_avg(ig)(nyr+1) = wt_bar;
+			wt_mat(ig)(nyr+1) = elem_prod(wt_bar,ma(ig));
+		}
+		// avg_wt   = colsum(wt_avg.sub(pf_cntrl(3),pf_cntrl(4)));
+		// avg_wt  /= pf_cntrl(4)-pf_cntrl(3)+1;
+		// wt_avg(nyr+1) = avg_wt;
 
 		// deviations in mean weight-at-age
 		for(ig=1;ig<=n_ags;ig++)
@@ -581,34 +590,7 @@ DATA_SECTION
 // 			exit(2);
 // 		}
 		
-		
-		
-// 		//May 5, 2011 SJDM: Calculating standardized deviates
-// 		//in mean weights-at-age from empiracle data to use
-// 		//with selectivity as a function of mean weight at age.
-// 		//Idea borrowed from Vivian Haist in HCAM model.
-// 		/*
-// 			CHANGED: selectivity function based on average weight.
-// 			Based on the logistic function;
-// 			1) calculate a matrix of standardized deviates
-// 			wt_dev = (wt_avg-mean(wt_avg))/sd(wt_avg);
-			
-// 			Not implemented, using the version provided by Vivian.
-			
-// 			Aug 5, 2011, noticed that Vivian's method was implemented
-// 			in an awkward way where GN selectivities were a random walk
-// 			sel(t+1)=sel(t) + tmp(2);
-			
-// 			Trying a compromise where estimating an additional parameter
-// 			that attempts to explain residual variation in age-comps
-// 			via changes in standardized mean weights at age. This is 
-// 			implemented as:
-			
-// 			log_sel = log(plogis(age,s1,s2)) + s3*delta
-// 			where delta is a matrix of standardized deviations
-// 			(mu=0, std=1) of weights at age.  delta is calculated
-// 			based on the wt_dev matrix above.
-// 		*/
+
 
 		
 	END_CALCS
