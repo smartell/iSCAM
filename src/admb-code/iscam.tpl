@@ -392,7 +392,12 @@ DATA_SECTION
 // 	matrix it_timing(1,nit,1,nit_nobs);	//timing of the survey (0-1)
 
 // 	!! cout<<"Number of surveys "<<nit<<endl;
-// 	LOC_CALCS
+	LOC_CALCS
+		cout<<"| ----------------------- |"<<endl;
+		cout<<"| TAIL(survey_data)       |"<<endl;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<survey_data(nit).sub(nit_nobs(nit)-3,nit_nobs(nit))<<endl;
+		cout<<"| ----------------------- |\n"<<endl;
 // 		for(i=1;i<=nit;i++)
 // 		{
 // 			iyr(i)=ivector(column(survey_data(i),1));
@@ -410,7 +415,7 @@ DATA_SECTION
 // 		{
 // 			it_wt(i) = it_wt(i)/mean_it_wt;
 // 		}
-// 	END_CALCS
+	END_CALCS
 	
 	
 // 	//Age comps for all gears.
