@@ -196,15 +196,26 @@ DATA_SECTION
 	// ------------------------------------------------------------------------- //
 	// MODEL DIMENSIONS                                                          //
 	// ------------------------------------------------------------------------- //
+	// area   f
+	// group  g
+	// sex    h
+	// year   i
+	// age    j
+	// gear   k  - number of gears with unique selectivity
+
+	init_int narea;
+	init_int ngroup;
+	init_int nsex;
 	init_int syr;
 	init_int nyr;	
 	init_int sage;
 	init_int nage;
+	init_int ngear;	
+	
 	vector age(sage,nage);
 	!! age.fill_seqadd(sage,1);
 	
-	//number of gear types with unique selectivities
-	init_int ngear;	
+	
 	
 	LOC_CALCS
 		cout<<"** __MODEL DIMENSION__ **"<<endl;
@@ -213,6 +224,9 @@ DATA_SECTION
 		cout<<"  sage\t"<<sage<<endl;
 		cout<<"  nage\t"<<nage<<endl;
 		cout<<"  ngear\t"<<ngear<<endl;
+		cout<<"  narea\t"<<narea<<endl;
+		cout<<"  ngroup\t"<<ngroup<<endl;
+		cout<<"  nsex\t"<<nsex<<endl;
 		cout<<"** ___________________ **"<<endl;
 		
 		/* Check for dimension errors in projection control file. */
@@ -3193,11 +3207,19 @@ REPORT_SECTION
 	REPORT(sig);
 	REPORT(age_tau2);
 	
+	// Model dimensions
+	REPORT(syr);
+	REPORT(nyr);
+	REPORT(sage);
+	REPORT(nage);
+	REPORT(ngear);
+	REPORT(narea);
+	REPORT(ngroup);
+	REPORT(nsex);
 	ivector yr(syr,nyr);
 	ivector yrs(syr,nyr+1);
 	yr.fill_seqadd(syr,1); 
 	yrs.fill_seqadd(syr,1); 
-	REPORT(ngear);
 	REPORT(yr);
 	REPORT(yrs);
 	REPORT(iyr);
