@@ -323,6 +323,7 @@ DATA_SECTION
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	LOC_CALCS
+		cout<<setw(8)<<setprecision(4)<<endl;
 	  	cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
@@ -369,6 +370,9 @@ DATA_SECTION
 		cout<<"| ----------------------- |\n"<<endl;
 	END_CALCS
 	
+
+
+
 	// |---------------------------------------------------------------------------------|
 	// | RELATIVE ABUNDANCE INDICIES (ragged array)
 	// |---------------------------------------------------------------------------------|
@@ -418,17 +422,45 @@ DATA_SECTION
 	END_CALCS
 	
 	
-// 	//Age comps for all gears.
-// 	init_int na_gears;	//total number of aging observations
-// 	init_ivector na_nobs(1,na_gears);
-// 	init_ivector a_sage(1,na_gears);	//youngest age in the ageing matrix
-// 	init_ivector a_nage(1,na_gears);	//oldest age in the ageing matrix
 
-// 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
+
+	// |---------------------------------------------------------------------------------|
+	// | AGE COMPOSITION DATA (ragged object)
+	// |---------------------------------------------------------------------------------|
+	// | na_gears  = number of ragged objects
+	// | na_nobs   = ivector for number of rows in each object
+	// | a_sage    = ivector for starting age in each object
+	// | a_nage	   = ivector for plus group age
+	// | A         = 3darray of observations
+	init_int na_gears;	//total number of aging observations
+	init_ivector na_nobs(1,na_gears);
+	init_ivector a_sage(1,na_gears);	
+	init_ivector a_nage(1,na_gears);	
+	init_3darray A(1,na_gears,1,na_nobs,a_sage-4,a_nage);
+
+
+	LOC_CALCS
+		cout<<"| ----------------------- |"<<endl;
+		cout<<"| TAIL(A)       |"<<endl;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-3,na_nobs(na_gears))<<endl;
+		cout<<"| ----------------------- |\n"<<endl;
+	END_CALCS
+
 	
-// 	//Mean weight-at-age data (units are kg) (if exists)
-// 	init_int n_wt_nobs;
-// 	init_matrix tmp_wt_obs(1,n_wt_nobs,sage-1,nage);
+
+
+	// |---------------------------------------------------------------------------------|
+	// | EMPIRICAL WEIGHT_AT_AGE DATA
+	// |---------------------------------------------------------------------------------|
+	// | Mean weight-at-age data (kg) if n_wt_nobs > 0
+	// | sage-4 = year
+	// | sage-3 = gear
+	// | sage-2 = area
+	// | sage-1 = sex
+
+	init_int n_wt_nobs;
+	init_matrix inp_wt_obs(1,n_wt_nobs,sage-4,nage);
 	
 // 	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
 // 	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
@@ -447,8 +479,8 @@ DATA_SECTION
 // 		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
 // 		for(i=1;i<=n_wt_nobs;i++)
 // 		{
-// 			iyr         = tmp_wt_obs(i,sage-1);  //index for year
-// 			wt_obs(iyr) = tmp_wt_obs(i)(sage,nage);
+// 			iyr         = inp_wt_obs(i,sage-1);  //index for year
+// 			wt_obs(iyr) = inp_wt_obs(i)(sage,nage);
 // 			fec(iyr)    = elem_prod(plogis(age,ah,gh),wt_obs(iyr));
 // 		}
 // 		//CHANGED SM Deprecated Aug 9, 2012 for new projection file control.
@@ -3199,7 +3231,7 @@ PROCEDURE_SECTION
 
 //   	dfs<<"#Empirical weight-at-age data"<<endl;
 //   	dfs<<n_wt_nobs<<endl;
-// 	dfs<<tmp_wt_obs<<endl;
+// 	dfs<<inp_wt_obs<<endl;
 
 // 	dfs<<"#EOF"<<endl;
 // 	dfs<<999<<endl;
