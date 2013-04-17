@@ -242,14 +242,17 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| MODEL DIMENSION         |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<"| narea \t"<<narea<<endl;
-		cout<<"| ngroup\t"<<ngroup<<endl;
-		cout<<"| nsex  \t"<<nsex<<endl;
-		cout<<"| syr   \t"<<syr<<endl;
-		cout<<"| nyr   \t"<<nyr<<endl;
-		cout<<"| sage  \t"<<sage<<endl;
-		cout<<"| nage  \t"<<nage<<endl;
-		cout<<"| ngear \t"<<ngear<<endl;
+		cout<<"| narea  \t"<<narea<<endl;
+		cout<<"| ngroup \t"<<ngroup<<endl;
+		cout<<"| nsex   \t"<<nsex<<endl;
+		cout<<"| syr    \t"<<syr<<endl;
+		cout<<"| nyr    \t"<<nyr<<endl;
+		cout<<"| sage   \t"<<sage<<endl;
+		cout<<"| nage   \t"<<nage<<endl;
+		cout<<"| ngear  \t"<<ngear<<endl;
+		cout<<"| i_area \t"<<i_area<<endl;
+		cout<<"| i_group\t"<<i_group<<endl;
+		cout<<"| i_sex  \t"<<i_sex<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		
 		
@@ -272,9 +275,12 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | fsh_flag is used to determine which fleets should be in MSY-based referecen points
 	// | If allocation >0 then set fish flag =1 else 0
+	// | nfleet is the number of non-survey gear fleet with allocations > 0
+	// |
+
+	int nfleet;
 	init_vector allocation(1,ngear);
 	init_ivector catch_type(1,ngear);
-	int nfleet;
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		int k;
@@ -299,31 +305,20 @@ DATA_SECTION
 		// cout<<"ifleet index\t"<<ifleet<<endl;
 	END_CALCS
 	
-	//The following code has been deprecated
-	//ivector ft_phz(1,ngear);
-	//LOC_CALCS
-	//	int k;
-	//	ft_phz=1;
-	//	for(k=1;k<=ngear;k++)
-	//	{
-	//		if(!fsh_flag(k))
-	//			ft_phz(k)=-1;
-	//	}
-	//END_CALCS
 	
 	// |---------------------------------------------------------------------------------|
 	// | Growth and maturity parameters
 	// |---------------------------------------------------------------------------------|
 	// | n_ags -> number of areas * groups * sex
+	// |
 
-	// init_number fixed_m;		//FIXME: depricate this from data files
-	init_vector linf(1,n_ags);
+	init_vector  linf(1,n_ags);
 	init_vector vonbk(1,n_ags);
-	init_vector to(1,n_ags);
-	init_vector a(1,n_ags);
-	init_vector b(1,n_ags);
-	init_vector ah(1,n_ags);
-	init_vector gh(1,n_ags);
+	init_vector    to(1,n_ags);
+	init_vector     a(1,n_ags);
+	init_vector     b(1,n_ags);
+	init_vector    ah(1,n_ags);
+	init_vector    gh(1,n_ags);
 	
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -352,7 +347,7 @@ DATA_SECTION
 	// | Historical removal
 	// |---------------------------------------------------------------------------------|
 	// | catch_data; matrix
-	
+
 	init_matrix catch_data(syr,nyr,1,ngear+1);
 // 	matrix obs_ct(1,ngear,syr,nyr);
 // 	int ft_count;
