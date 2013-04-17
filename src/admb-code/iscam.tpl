@@ -519,10 +519,8 @@ DATA_SECTION
 			wt_avg(ig)(nyr+1) = wt_bar;
 			wt_mat(ig)(nyr+1) = elem_prod(wt_bar,ma(ig));
 		}
-		// avg_wt   = colsum(wt_avg.sub(pf_cntrl(3),pf_cntrl(4)));
-		// avg_wt  /= pf_cntrl(4)-pf_cntrl(3)+1;
-		// wt_avg(nyr+1) = avg_wt;
-
+		
+		
 		// deviations in mean weight-at-age
 		for(ig=1;ig<=n_ags;ig++)
 		{
