@@ -211,22 +211,43 @@ DATA_SECTION
 	init_int sage;
 	init_int nage;
 	init_int ngear;	
-	
+
+	// linked lists to manage array indexs
+	int n_ags;
+	!! n_ags = narea * ngroup * nsex;
+	ivector   i_area(1,n_ags);
+	ivector  i_group(1,n_ags);
+	ivector    i_sex(1,n_ags);
 	vector age(sage,nage);
-	!! age.fill_seqadd(sage,1);
 	
 	
 	
 	LOC_CALCS
+		age.fill_seqadd(sage,1);
+		int f,g,h,ig;
+		ig = 0;
+		for(f=1; f<=narea; f++)
+		{
+			for(g=1; g<=ngroup; g++)
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig ++;
+					i_area(ig)  = f;
+					i_group(ig) = g;
+					i_sex(ig)   = h;
+				}
+			}
+		}
 		cout<<"** __MODEL DIMENSION__ **"<<endl;
+		cout<<"  narea\t"<<narea<<endl;
+		cout<<"  ngroup\t"<<ngroup<<endl;
+		cout<<"  nsex\t"<<nsex<<endl;
 		cout<<"  syr\t"<<syr<<endl;
 		cout<<"  nyr\t"<<nyr<<endl;
 		cout<<"  sage\t"<<sage<<endl;
 		cout<<"  nage\t"<<nage<<endl;
 		cout<<"  ngear\t"<<ngear<<endl;
-		cout<<"  narea\t"<<narea<<endl;
-		cout<<"  ngroup\t"<<ngroup<<endl;
-		cout<<"  nsex\t"<<nsex<<endl;
 		cout<<"** ___________________ **"<<endl;
 		
 		/* Check for dimension errors in projection control file. */
@@ -854,7 +875,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
-	objective_function_value f;
+	objective_function_value objfun;
     
 	number ro;					//unfished age-1 recruits
 	number bo;					//unfished spawning stock biomass (reference point)
@@ -2101,8 +2122,8 @@ FUNCTION calc_objective_function
 		cout<<"priors\t"<<priors<<endl;
 		cout<<"penalties\t"<<pvec<<endl;
 	}
-	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
-	//cout<<f<<endl;
+	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
+	//cout<<objfun<<endl;
 	nf++;
 	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
@@ -3189,7 +3210,7 @@ REPORT_SECTION
 	report<<DataFile<<endl;
 	report<<ControlFile<<endl;
 	report<<ProjectFileControl<<endl;
-	REPORT(f);
+	REPORT(objfun);
 	REPORT(nlvec);
 	REPORT(ro);
 	double rbar=value(exp(log_avgrec));
@@ -3443,7 +3464,7 @@ FUNCTION mcmc_output
 		ofs<<setw(13)<< future_bt4;
 		ofs<<setw(12)<< future_bt4+rt3;
 		ofs<<setw(12)<< log(q);
-		ofs<<setw(13)<< f;
+		ofs<<setw(13)<< objfun;
 		ofs<<endl;
 		
 		/* June 12, 2012.  SJDM Call decision table. */
