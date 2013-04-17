@@ -280,7 +280,7 @@ DATA_SECTION
 
 	int nfleet;
 	init_vector allocation(1,ngear);
-	init_ivector catch_type(1,ngear);
+	// init_ivector catch_type(1,ngear);  DEPRECATED
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		int k;
@@ -333,7 +333,7 @@ DATA_SECTION
 	  	cout<<"| b     \t"<<b<<endl;
 	  	cout<<"| ah    \t"<<ah<<endl;
 	  	cout<<"| gh    \t"<<gh<<endl;
-	  	cout<<"| ----------------------- |"<<endl;
+	  	cout<<"| ----------------------- |\n"<<endl;
 
 	  	// length & weight-at-age based on input growth pars
 	  	for(ig=1;ig<=n_ags;ig++)
@@ -346,29 +346,36 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Historical removal
 	// |---------------------------------------------------------------------------------|
-	// | catch_data; matrix
-
-	init_matrix catch_data(syr,nyr,1,ngear+1);
-// 	matrix obs_ct(1,ngear,syr,nyr);
-// 	int ft_count;
-// 	int i;
-// 	LOC_CALCS
-// 		ft_count=0;
-// 		for(k=1;k<=ngear;k++)
-// 			obs_ct(k)=column(catch_data,k+1);
-		
-// 		for(k=1;k<=ngear;k++)
-// 		{	
-// 			for(i=syr;i<=nyr - retro_yrs;i++)
-// 				if( obs_ct(k,i)>0 ) ft_count++;
-// 		}
-// 		COUT(catch_data);
-// 		cout<<"ft_count\n"<<ft_count<<endl;
-// 		cout<<"last row of catch \n"<<catch_data(nyr)<<endl;
-// 		cout<<"Ok after catch extraction"<<endl;
-// 	END_CALCS
+	// | Assumes total catch of both sexes by area
+	// | catch_data matrix cols: (year gear area sex type value)
+	init_int n_ct_obs;
+	init_matrix catch_data(1,n_ct_obs,1,6);
 	
-// 	init_int nit;
+
+// 	matrix obs_ct(1,ngear,syr,nyr);
+	int ft_count;
+// 	int i;
+	LOC_CALCS
+		ft_count = n_ct_obs;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<"| HEAD(catch_data)        |"<<endl;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<catch_data.sub(1,6)<<endl;
+		cout<<"| ----------------------- |\n"<<endl;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<"| TAIL(catch_data)        |"<<endl;
+		cout<<"| ----------------------- |"<<endl;
+		cout<<catch_data.sub(n_ct_obs-6,n_ct_obs)<<endl;
+		cout<<"| ----------------------- |\n"<<endl;
+	END_CALCS
+	
+	// |---------------------------------------------------------------------------------|
+	// | RELATIVE ABUNDANCE INDICIES (ragged array)
+	// |---------------------------------------------------------------------------------|
+	// | nit = number of independent surveys
+	// |
+
+	init_int nit;
 // 	!! cout<<"Number of surveys "<<nit<<endl;
 // 	init_ivector nit_nobs(1,nit);
 // 	//#survey type 
