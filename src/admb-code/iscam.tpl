@@ -202,6 +202,12 @@ DATA_SECTION
 	// year   i
 	// age    j
 	// gear   k  - number of gears with unique selectivity
+	int f;
+	int g; 
+	int h;
+	int i;
+	int j;
+	int k;
 
 	init_int narea;
 	init_int ngroup;
@@ -211,6 +217,7 @@ DATA_SECTION
 	init_int sage;
 	init_int nage;
 	init_int ngear;	
+	vector age(sage,nage);
 
 	// linked lists to manage array indexs
 	int n_ags;
@@ -218,13 +225,13 @@ DATA_SECTION
 	ivector   i_area(1,n_ags);
 	ivector  i_group(1,n_ags);
 	ivector    i_sex(1,n_ags);
-	vector age(sage,nage);
+	3darray pntr_ags(1,narea,1,ngroup,1,nsex);
 	
 	
 	
 	LOC_CALCS
 		age.fill_seqadd(sage,1);
-		int f,g,h,ig;
+		int ig;
 		ig = 0;
 		for(f=1; f<=narea; f++)
 		{
@@ -236,6 +243,7 @@ DATA_SECTION
 					i_area(ig)  = f;
 					i_group(ig) = g;
 					i_sex(ig)   = h;
+					pntr_ags(f,g,h) = ig;
 				}
 			}
 		}
@@ -253,6 +261,7 @@ DATA_SECTION
 		cout<<"| i_area \t"<<i_area<<endl;
 		cout<<"| i_group\t"<<i_group<<endl;
 		cout<<"| i_sex  \t"<<i_sex<<endl;
+		cout<<"| pntr_ags\n"<<pntr_ags(1)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		
 		
@@ -283,7 +292,6 @@ DATA_SECTION
 	// init_ivector catch_type(1,ngear);  DEPRECATED
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
-		int k;
 		allocation = allocation/sum(allocation);
 		for(k=1;k<=ngear;k++)
 		{
@@ -296,12 +304,13 @@ DATA_SECTION
 	END_CALCS
 	
 	ivector ifleet(1,nfleet);
-	LOC_CALCS	
-		int j=1;
+	LOC_CALCS
+		j = 1;
 		for(k=1; k<=ngear;k++)
 		{
 			if(fsh_flag(k)) ifleet(j++) = k;
 		}
+		cout<<"OK TO HERE"<<endl;
 		// cout<<"ifleet index\t"<<ifleet<<endl;
 	END_CALCS
 	
@@ -322,6 +331,7 @@ DATA_SECTION
 	
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
+	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
 	LOC_CALCS
 		cout<<setw(8)<<setprecision(4)<<endl;
 	  	cout<<"| ----------------------- |"<<endl;
@@ -341,6 +351,7 @@ DATA_SECTION
 	  	{
 	  		la(ig) = linf(ig)*(1. - exp(-vonbk(ig)*(age-to(ig))));
 	  		wa(ig) = a(ig) * pow(la(ig),b(ig));
+	  		ma(ig) = plogis(age,ah(ig),gh(ig));
 	  	}
 	END_CALCS
 	
@@ -454,34 +465,78 @@ DATA_SECTION
 	// | EMPIRICAL WEIGHT_AT_AGE DATA
 	// |---------------------------------------------------------------------------------|
 	// | Mean weight-at-age data (kg) if n_wt_nobs > 0
-	// | sage-4 = year
-	// | sage-3 = gear
-	// | sage-2 = area
+	// | sage-5 = year
+	// | sage-4 = gear
+	// | sage-3 = area
+	// | sage-2 = stock
 	// | sage-1 = sex
+	// | - construct and fill weight-at-age matrix for use in the model code  (wt_avg)
+	// | - construct and fill weight-at-age dev matrix for length-based selex (wt_dev)
+	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (wt_mat)
 
 	init_int n_wt_nobs;
-	init_matrix inp_wt_obs(1,n_wt_nobs,sage-4,nage);
+	init_matrix inp_wt_avg(1,n_wt_nobs,sage-5,nage);
 	
-// 	matrix wt_obs(syr,nyr+1,sage,nage);		//weight-at-age
-// 	matrix wt_dev(syr,nyr+1,sage,nage);		//standardized deviations in weight-at-age
-// 	matrix fec(syr,nyr+1,sage,nage);		//fecundity-at-age
+	3darray wt_avg(1,n_ags,syr,nyr+1,sage,nage);
+	3darray wt_dev(1,n_ags,syr,nyr+1,sage,nage);
+	3darray wt_mat(1,n_ags,syr,nyr+1,sage,nage);
 // 	vector fa_bar(sage,nage);				//average fecundity-at-age for all years.
 // 	vector avg_fec(sage,nage);				//average fecundity-at-age
 // 	vector avg_wt(sage,nage);				//average weight-at-age
-// 	LOC_CALCS
-// 		int iyr;
-// 		avg_fec.initialize();
-// 		for(i=syr;i<=nyr+1;i++)
-// 		{
-// 			wt_obs(i) = wa;			
-// 			fec(i)    = elem_prod(plogis(age,ah,gh),wt_obs(i));
-// 		}
-// 		//if empiracle weight-at-age data exist, the overwrite wt_obs & fec.
+	LOC_CALCS
+		wt_avg.initialize();
+		wt_dev.initialize();
+		wt_mat.initialize();
+
+		for(ig=1;ig<=n_ags;ig++)
+		{
+			for(int i=syr;i<=nyr;i++)
+			{
+				wt_avg(ig)(i) = wa(ig);
+				wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
+			}
+		}
+		
+		// the overwrite wt_avg & wt_mat with existing empirical data
+		int iyr;
+		for(i=1;i<=n_wt_nobs;i++)
+		{
+			iyr             = inp_wt_avg(i,sage-5);
+			f               = inp_wt_avg(i,sage-3);
+			g               = inp_wt_avg(i,sage-2);
+			h               = inp_wt_avg(i,sage-1);
+			ig              = pntr_ags(f,g,h);
+			
+			wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
+			wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));
+		}
+
+		// average weight-at-age in projection years
+
+
+		// deviations in mean weight-at-age
+		for(ig=1;ig<=n_ags;ig++)
+		{
+			dmatrix mtmp = trans( wt_avg(ig) );
+			for(j=sage;j<=nage;j++)
+			{
+				if( !sum( first_difference(mtmp(j))) )
+				{
+					mtmp(j) = ( mtmp(j)-mean(mtmp(j)) ) / sqrt(var(mtmp(j)));
+				}
+				else
+				{
+					mtmp(j) = 0;
+				}
+			}
+			wt_dev(ig) = trans(mtmp);
+		}
+		
 // 		for(i=1;i<=n_wt_nobs;i++)
 // 		{
-// 			iyr         = inp_wt_obs(i,sage-1);  //index for year
-// 			wt_obs(iyr) = inp_wt_obs(i)(sage,nage);
-// 			fec(iyr)    = elem_prod(plogis(age,ah,gh),wt_obs(iyr));
+// 			iyr         = inp_wt_avg(i,sage-1);  //index for year
+// 			wt_avg(iyr) = inp_wt_avg(i)(sage,nage);
+// 			fec(iyr)    = elem_prod(plogis(age,ah,gh),wt_avg(iyr));
 // 		}
 // 		//CHANGED SM Deprecated Aug 9, 2012 for new projection file control.
 // 		//int nfec = fec.rowmax()-fec.rowmin()+1;
@@ -492,9 +547,9 @@ DATA_SECTION
 // 		// projection control file (pf_cntrl(3-4)). Also set
 // 		// the average weight-at-age in nyr+1 to the same.
 // 		// Deprecate the 5-year average that Jake suggested.
-// 		avg_wt   = colsum(wt_obs.sub(pf_cntrl(3),pf_cntrl(4)));
+// 		avg_wt   = colsum(wt_avg.sub(pf_cntrl(3),pf_cntrl(4)));
 // 		avg_wt  /= pf_cntrl(4)-pf_cntrl(3)+1;
-// 		wt_obs(nyr+1) = avg_wt;
+// 		wt_avg(nyr+1) = avg_wt;
 		
 // 		avg_fec  = colsum(fec.sub(pf_cntrl(3),pf_cntrl(4)));
 // 		avg_fec /= pf_cntrl(4)-pf_cntrl(3)+1;
@@ -506,20 +561,20 @@ DATA_SECTION
 // 		//DEPRECATED SM AUG 9, 2012
 // 		//from Jake Schweigert: use mean-weight-at-age data
 // 		//from the last 5 years for the projected mean wt.
-// 		//dvector tmp=colsum(wt_obs.sub(nyr-5,nyr))/6.;
-// 		//wt_obs(nyr+1) = tmp;
+// 		//dvector tmp=colsum(wt_avg.sub(nyr-5,nyr))/6.;
+// 		//wt_avg(nyr+1) = tmp;
 // 		//
 // 		///*June 8, 2012, average wt at age for all years*/
-// 		//tmp = colsum(wt_obs.sub(syr,nyr))/(nyr-syr+1.);
+// 		//tmp = colsum(wt_avg.sub(syr,nyr))/(nyr-syr+1.);
 // 		//avg_wt = tmp;
 		
 // 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
 // 		cout<<"Ok after empiracle weight-at-age data"<<endl;
 		
-// 		//July 14, 2011 Error handler to ensure non-zero wt_obs
+// 		//July 14, 2011 Error handler to ensure non-zero wt_avg
 // 		//in the data. Otherwise causes and error with weight-based
 // 		//selectivities.
-// 		if(min(wt_obs)==0)
+// 		if(min(wt_avg)==0)
 // 		{
 // 			cout<<"Cannont have a observed 0 mean weight at age\n";
 // 			cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
@@ -536,7 +591,7 @@ DATA_SECTION
 // 			CHANGED: selectivity function based on average weight.
 // 			Based on the logistic function;
 // 			1) calculate a matrix of standardized deviates
-// 			wt_dev = (wt_obs-mean(wt_obs))/sd(wt_obs);
+// 			wt_dev = (wt_avg-mean(wt_avg))/sd(wt_avg);
 			
 // 			Not implemented, using the version provided by Vivian.
 			
@@ -554,27 +609,25 @@ DATA_SECTION
 // 			(mu=0, std=1) of weights at age.  delta is calculated
 // 			based on the wt_dev matrix above.
 // 		*/
-// 		wt_dev.initialize();
-// 		dmatrix mtmp = trans(wt_obs);
-// 		for(i=sage;i<=nage;i++)
-// 		{
-// 			dvector wa_dev = (mtmp(i)-mean(mtmp(i)))/sqrt(var(mtmp(i)));
-// 			mtmp(i) = wa_dev;
-// 		}
-// 		wt_dev = trans(mtmp);	//each column has mean=0 sd=1
+
 		
-// 	END_CALCS
+	END_CALCS
 	
-// 	//End of data file
-// 	init_int eof;	
-// 	LOC_CALCS
-// 	  cout<<"eof = "<<eof<<endl;
-// 	  if(eof==999){
-// 		cout<<"\n -- END OF DATA SECTION -- \n"<<endl;
-// 	  }else{
-// 		cout<<"\n *** ERROR READING DATA *** \n"<<endl; exit(1);
-// 	  }
-// 	END_CALCS
+	//End of data file
+	// |---------------------------------------------------------------------------------|
+	// | END OF DATA FILE
+	// |---------------------------------------------------------------------------------|
+	// |
+	init_int eof;	
+	LOC_CALCS
+	  if(eof==999){
+		cout<<"\n| -- END OF DATA SECTION -- |\n";
+	  	cout<<"|         eof = "<<eof<<"         |"<<endl;
+		cout<<"|___________________________|"<<endl;
+	  }else{
+		cout<<"\n *** ERROR READING DATA *** \n"<<endl; exit(1);
+	  }
+	END_CALCS
 
 	
 	
@@ -1300,7 +1353,7 @@ PROCEDURE_SECTION
 				
 // 				for(i = syr; i<=nyr; i++)
 // 				{
-// 					dvar_vector tmpwt=log(wt_obs(i)*1000)/mean(log(wt_obs*1000.));
+// 					dvar_vector tmpwt=log(wt_avg(i)*1000)/mean(log(wt_avg*1000.));
 // 					log_sel(j)(i) = log( plogis(tmpwt,p1,p2)+tiny );
 // 				}	 
 // 				break;
@@ -1332,7 +1385,7 @@ PROCEDURE_SECTION
 // 					p1 = mfexp(sel_par(j,bpar,1));
 // 					p2 = mfexp(sel_par(j,bpar,2));
 
-// 					dvector len = pow(wt_obs(i)/a,1./b);
+// 					dvector len = pow(wt_avg(i)/a,1./b);
 
 // 					log_sel(j)(i) = log( plogis(len,p1,p2) );
 // 					// COUT(exp(log_sel(j)(i)- log(mean(exp(log_sel(j)(i))))) );
@@ -1350,7 +1403,7 @@ PROCEDURE_SECTION
 // 						if( byr < n_sel_blocks(j) ) byr++;
 // 					}
 				
-// 					dvector len = pow(wt_obs(i)/a,1./b);
+// 					dvector len = pow(wt_avg(i)/a,1./b);
 // 					log_sel(j)(i)=cubic_spline( sel_par(j)(bpar), len );
 // 				}
 // 				break;
@@ -1578,7 +1631,7 @@ PROCEDURE_SECTION
 //   {
 // 	/*
 // 	Dec 6, 2010.  Modified ct calculations to include
-// 				  empirical weight at age data (wt_obs);
+// 				  empirical weight at age data (wt_avg);
 				
 // 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
 // 					computing the age-comps in calc_fisheries_observations
@@ -1614,7 +1667,7 @@ PROCEDURE_SECTION
 // 				switch(catch_type(k))
 // 				{
 // 					case 1:	//catch in weight
-// 						ct(k,i) = Chat(k,i)*wt_obs(i);
+// 						ct(k,i) = Chat(k,i)*wt_avg(i);
 // 					break;
 // 					case 2:	//catch in numbers
 // 						ct(k,i) = sum(Chat(k,i));
@@ -1656,7 +1709,7 @@ PROCEDURE_SECTION
 			
 // 			//Catch weight by gear
 // 			//ct(k,i)=Chat(k,i)*wa;  
-// 			ct(k,i)=Chat(k,i)*wt_obs(i);  //SM Dec 6, 2010*/
+// 			ct(k,i)=Chat(k,i)*wt_avg(i);  //SM Dec 6, 2010*/
 // 		}
 // 	}
 // 	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
@@ -1677,7 +1730,7 @@ PROCEDURE_SECTION
 // 	fishery has taken place.
 	
 // 	Dec 6, 2010, modified predicted survey biomass to accomodate empirical weight-at-age 
-// 	data (wt_obs).
+// 	data (wt_avg).
 	
 // 	May 11, 2011.  CHANGED Vivian Haist pointed out an error in survey biomass comparison.
 // 	The spawning biomass was not properly calculated in this routine. I.e. its different 
@@ -1728,7 +1781,7 @@ PROCEDURE_SECTION
 // 					V(j)=elem_prod(Np,mfexp(log_va));
 // 				break;
 // 				case 2:
-// 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_obs(ii));
+// 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_avg(ii));
 // 				break;
 // 				case 3:
 // 					//SJDM Jan 6, 2012 Modified for roe fishery
@@ -1736,7 +1789,7 @@ PROCEDURE_SECTION
 // 				break;
 // 			}
 			
-// 			//VB(j)=elem_prod(V(j),wt_obs(ii));		//SM Dec 6, 2010
+// 			//VB(j)=elem_prod(V(j),wt_avg(ii));		//SM Dec 6, 2010
 			
 // 			//If the survey is a spawn index, then need to account
 // 			//for changes in fecundity.
@@ -2621,7 +2674,7 @@ PROCEDURE_SECTION
 // 	//	for(i=1;i<=20;i++)
 // 	//	{
 // 	//		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-// 	//		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+// 	//		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_avg(nyr),
 // 	//		//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 // 	//		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
 // 	//					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
@@ -2657,7 +2710,7 @@ PROCEDURE_SECTION
 // 	//		while(i < 1500)
 // 	//		{
 // 	//			#if !defined(USE_NEW_EQUILIBRIUM)
-// 	//			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_obs(nyr),
+// 	//			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,wt_avg(nyr),
 // 	//						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
 // 	//			#endif
 // 	//		
@@ -2960,7 +3013,7 @@ PROCEDURE_SECTION
 		
 // 		//total biomass at age
 // 		//dvector bt = elem_prod(value(N(i)),wa);
-// 		dvector bt = elem_prod(value(N(i)),wt_obs(i));
+// 		dvector bt = elem_prod(value(N(i)),wt_avg(i));
 
 // 		/*calculate instantaneous fishing mortalities
 // 		based on Baranov's catch equation and the 
@@ -2988,8 +3041,8 @@ PROCEDURE_SECTION
 // 		//get_ft is defined in the Baranov.cxx file
 // 		//CHANGED these ft are based on biomass at age, should be numbers at age
 // 		//ft(i) = get_ft(oct,value(m),va,bt);
-// 		//ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_obs(i));
-// 		ft(i) = getFishingMortality(oct, value(m), va, value(N(i)),wt_obs(i));
+// 		//ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_avg(i));
+// 		ft(i) = getFishingMortality(oct, value(m), va, value(N(i)),wt_avg(i));
 // 		//cout<<"ft\t"<<ft(i)<<endl;
 // 		//cout<<trans(obs_ct)(i)<<"\t"<<oct<<endl;
 		
@@ -3041,7 +3094,7 @@ PROCEDURE_SECTION
 // 			{
 // 				dvector sel = exp(dlog_sel(k)(i));
 // 				d3C(k)(i)=elem_prod(elem_div(ft(i,k)*sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
-// 				obs_ct(k,i)=d3C(k)(i)*wt_obs(i);
+// 				obs_ct(k,i)=d3C(k)(i)*wt_avg(i);
 // 			}
 // 			else	//if this is a survey
 // 			{
@@ -3129,7 +3182,7 @@ PROCEDURE_SECTION
 // 					Np = elem_prod(Np,sel);
 // 				break;
 // 				case 2: //survey based on biomass
-// 					Np = elem_prod(elem_prod(Np,sel),wt_obs(ii));
+// 					Np = elem_prod(elem_prod(Np,sel),wt_avg(ii));
 // 				break;
 // 				case 3: //survey based on spawning biomass
 // 					Np = elem_prod(Np,fec(ii));
@@ -3231,7 +3284,7 @@ PROCEDURE_SECTION
 
 //   	dfs<<"#Empirical weight-at-age data"<<endl;
 //   	dfs<<n_wt_nobs<<endl;
-// 	dfs<<inp_wt_obs<<endl;
+// 	dfs<<inp_wt_avg<<endl;
 
 // 	dfs<<"#EOF"<<endl;
 // 	dfs<<999<<endl;
@@ -3317,7 +3370,7 @@ PROCEDURE_SECTION
 // 	REPORT(ft);
 // 	/*FIXED small problem here with array bounds if using -retro option*/
 // 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
-// 	report<<"bt\n"<<rowsum(elem_prod(N,wt_obs))<<endl;
+// 	report<<"bt\n"<<rowsum(elem_prod(N,wt_avg))<<endl;
 // 	report<<"sbt\n"<<sbt<<endl;
 
 // 	int rectype=int(cntrl(2));
@@ -3341,7 +3394,7 @@ PROCEDURE_SECTION
 // 	REPORT(Ahat);
 // 	REPORT(A_nu);
 // 	REPORT(N);
-// 	REPORT(wt_obs);
+// 	REPORT(wt_avg);
 	
 // 	if(last_phase())
 // 	{
@@ -3386,12 +3439,12 @@ PROCEDURE_SECTION
 // 	dvector rt3(1,3);
 // 	if(last_phase())
 // 	{
-// 		dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));
+// 		dvector rt3 = age3_recruitment(value(column(N,3)),wt_avg(nyr+1,3),value(M_tot(nyr,3)));
 // 		REPORT(rt3);
 // 	}
 	
-// 	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
-// 	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
+// 	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_avg(nyr+1)));
+// 	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_avg(nyr+1)));
 // 	REPORT(future_bt);
 // 	double future_bt4 = sum(future_bt(4,nage));
 // 	REPORT(future_bt4);
@@ -3502,10 +3555,10 @@ PROCEDURE_SECTION
 // 	// leading parameters & reference points
 // 	calc_reference_points();
 // 	// decision table output
-// 	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_obs(nyr+1)));
-// 	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_obs(nyr+1)));
+// 	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_avg(nyr+1)));
+// 	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_avg(nyr+1)));
 // 	double future_bt4 = sum(future_bt(4,nage));
-// 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_obs(nyr+1,3),value(M_tot(nyr,3)));	
+// 	dvector rt3 = age3_recruitment(value(column(N,3)),wt_avg(nyr+1,3),value(M_tot(nyr,3)));	
 	
 	
 // 	//if( bmsy > 0 && min(fmsy) >= 0 )
