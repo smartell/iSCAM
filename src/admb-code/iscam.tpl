@@ -88,6 +88,14 @@
 //-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
 //--              - Should probably use a separate simulation control file.    --//               
 //--                                                                           --//
+//-- April 16, - Created new IPHC branch for developing sex/area/group         --//
+//--           - INDEXS:                                                       --//
+//--             area     f                                                    --//
+//--             group    g                                                    --//
+//--             sex      h                                                    --//
+//--             year     i                                                    --//
+//--             age      j                                                    --//
+//--             gear     k                                                    --//
 //--                                                                           --//
 //--                                                                           --//
 // ----------------------------------------------------------------------------- //
