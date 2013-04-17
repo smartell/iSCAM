@@ -354,42 +354,44 @@ DATA_SECTION
 
 // 	matrix obs_ct(1,ngear,syr,nyr);
 	int ft_count;
-// 	int i;
+
 	LOC_CALCS
 		ft_count = n_ct_obs;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| HEAD(catch_data)        |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<catch_data.sub(1,6)<<endl;
+		cout<<catch_data.sub(1,3)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(catch_data)        |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<catch_data.sub(n_ct_obs-6,n_ct_obs)<<endl;
+		cout<<catch_data.sub(n_ct_obs-3,n_ct_obs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 	END_CALCS
 	
 	// |---------------------------------------------------------------------------------|
 	// | RELATIVE ABUNDANCE INDICIES (ragged array)
 	// |---------------------------------------------------------------------------------|
-	// | nit = number of independent surveys
+	// | nit         = number of independent surveys
+	// | nit_nobs    = number of survey observations
+	// | survey_type = 1: survey is proportional to vulnerable numbers
+	// | survey_type = 2: survey is proportional to vulnerable biomass
+	// | survey_type = 3: survey is proportional to vulnerable spawning biomass
+	// | survey_data: (iyr index(it) gear area sex wt timing)
 	// |
 
 	init_int nit;
-// 	!! cout<<"Number of surveys "<<nit<<endl;
-// 	init_ivector nit_nobs(1,nit);
-// 	//#survey type 
-// 	//## 1 = survey is proportional to vulnerable numbers
-// 	//## 2 = survey is proportional to vulnerable biomass
-// 	//## 3 = survey is proportional to spawning biomass (e.g., herring spawn survey)
-// 	init_ivector survey_type(1,nit);
-// 	init_3darray survey_data(1,nit,1,nit_nobs,1,5);
-// 	//init_matrix survey_data(1,nit,1,4);
+	init_ivector    nit_nobs(1,nit);
+	init_ivector survey_type(1,nit);
+	init_3darray survey_data(1,nit,1,nit_nobs,1,7);
+	//init_matrix survey_data(1,nit,1,4);
 // 	imatrix iyr(1,nit,1,nit_nobs);
 // 	imatrix igr(1,nit,1,nit_nobs);
 // 	matrix it(1,nit,1,nit_nobs);
 // 	matrix it_wt(1,nit,1,nit_nobs);		//relative weight
 // 	matrix it_timing(1,nit,1,nit_nobs);	//timing of the survey (0-1)
+
+// 	!! cout<<"Number of surveys "<<nit<<endl;
 // 	LOC_CALCS
 // 		for(i=1;i<=nit;i++)
 // 		{
