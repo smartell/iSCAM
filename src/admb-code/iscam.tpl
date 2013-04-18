@@ -187,21 +187,23 @@ DATA_SECTION
 		}
 	END_CALCS
 
-	// ************************************************************************* //
-	// ** READ IN MODEL DATA FROM  DataFile                                   ** //
-	// ************************************************************************* //
+
+	// |---------------------------------------------------------------------------------|
+	// | MODEL DATA FROM DATA FILE
+	// |---------------------------------------------------------------------------------|
+	// |
 	!! ad_comm::change_datafile_name(DataFile);
 
-	
-	// ------------------------------------------------------------------------- //
-	// MODEL DIMENSIONS                                                          //
-	// ------------------------------------------------------------------------- //
-	// area   f
-	// group  g
-	// sex    h
-	// year   i
-	// age    j
-	// gear   k  - number of gears with unique selectivity
+	// |---------------------------------------------------------------------------------|
+	// | MODEL DIMENSIONS
+	// |---------------------------------------------------------------------------------|
+	// |
+	// | area   f
+	// | group  g
+	// | sex    h
+	// | year   i
+	// | age    j
+	// | gear   k  - number of gears with unique selectivity
 	int f;
 	int g; 
 	int h;
@@ -630,28 +632,38 @@ DATA_SECTION
 	
 	
 	
-// 	// ***************************************************
-// 	// ** Read parameter controls from ControlFile      **
-// 	// ***************************************************
-// 	!! ad_comm::change_datafile_name(ControlFile);
+	// |---------------------------------------------------------------------------------|
+	// | CONTROL FILE
+	// |---------------------------------------------------------------------------------|
+	// |
+	!! ad_comm::change_datafile_name(ControlFile);
 	
-// 	init_int npar;
-// 	init_matrix theta_control(1,npar,1,7);
-// 	!! COUT(npar);
-// 	!! COUT(theta_control);
+
+	// |---------------------------------------------------------------------------------|
+	// | Leading Parameters
+	// |---------------------------------------------------------------------------------|
+	// | -1) log_ro      - unfished sage recruitment
+	// | -2) steepness   - steepness of the stock-recruitment relationship
+	// | -3) log_m       - instantaneous natural mortality rate
+	// | -4) log_avgrec  - average sage recruitment from syr+1 to nyr
+	// | -5) log_recinit - average sage recruitment for initialization
+	// | -6) rho         - proportion of total variance for observation errors
+	// | -7) varhtheta   - total precision (1/variance)
+	init_int npar;
+	init_matrix theta_control(1,npar,1,7);
 	
-// 	vector theta_ival(1,npar);
-// 	vector theta_lb(1,npar);
-// 	vector theta_ub(1,npar);
-// 	ivector theta_phz(1,npar);
-// 	ivector theta_prior(1,npar);
-// 	LOC_CALCS
-// 		theta_ival = column(theta_control,1);
-// 		theta_lb = column(theta_control,2);
-// 		theta_ub = column(theta_control,3);
-// 		theta_phz = ivector(column(theta_control,4));
-// 		theta_prior=ivector(column(theta_control,5));
-// 	END_CALCS
+	vector   theta_ival(1,npar);
+	vector     theta_lb(1,npar);
+	vector     theta_ub(1,npar);
+	ivector   theta_phz(1,npar);
+	ivector theta_prior(1,npar);
+	LOC_CALCS
+		theta_ival  = column(theta_control,1);
+		theta_lb    = column(theta_control,2);
+		theta_ub    = column(theta_control,3);
+		theta_phz   = ivector(column(theta_control,4));
+		theta_prior = ivector(column(theta_control,5));
+	END_CALCS
 	
 	
 // 	// ***************************************************
@@ -875,18 +887,18 @@ DATA_SECTION
 //  theta theta_ival;
 	
 PARAMETER_SECTION
-	// //Leading parameters
-	// //theta[1]		log_ro, or log_msy
-	// //theta[2]		steepness(h), or log_fmsy
-	// //theta[3]		log_m
-	// //theta[4]		log_avgrec
-	// //theta[5]		log_recinit
-	// //theta[6]		rho
-	// //theta[7]		vartheta
+	//Leading parameters
+	//theta[1]		log_ro, or log_msy
+	//theta[2]		steepness(h), or log_fmsy
+	//theta[3]		log_m
+	//theta[4]		log_avgrec
+	//theta[5]		log_recinit
+	//theta[6]		rho
+	//theta[7]		vartheta
 	
 	
-	// init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
-	// //!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
+	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
+	//!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	// //Selectivity parameters (A very complicated ragged array)
 	// init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
