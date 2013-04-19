@@ -665,138 +665,178 @@ DATA_SECTION
 		theta_prior = ivector(column(theta_control,5));
 	END_CALCS
 	
+	// |---------------------------------------------------------------------------------|
+	// | CONTROLS FOR SELECTIVITY OPTIONS
+	// |---------------------------------------------------------------------------------|
+	// | - 12 different options for modelling selectivity which are summarized here:
+	// | - isel_npar  -> ivector for # of parameters for each gear.
+	// | - jsel_npar  -> ivector for the number of rows for time-varying selectivity.
+	// | 
+	// | SEL_TYPE  DESCRIPTION
+	// |    1      age-based logistic function with 2 parameters.
+	// |    2      age-based selectivity coefficients with nage-sage parameters.
+	// |    3      cubic spline with age knots.
+	// |    4      time-varying cubic spline with age knots.
+	// |    5      time-varying bicubic spline with age and year knots.
+	// |    6      logistic with fixed parameters.
+	// |    7      logistic function of body weight with 2 parameters.
+	// |    8      logistic 3 parameter function based on mean weight deviations.
+	// |    11     length-based logistic function with 2 parametrs based on mean length.
+	// |    12     length-based selectivity coefficients with cubic spline interpolation.
+	// |
+	// | selex_controls (1-10)
+	// |  1  -> isel_type - switch for selectivity.
+	// |  2  -> ahat      - age-at-50% vulnerbality for logistic function.
+	// |  3  -> ghat      - std at 50% age of vulnerability for logistic function.
+	// |  4  -> age_nodes - No. of age-nodes for bicubic spline.
+	// |  5  -> yr_nodes  - No. of year-nodes for bicubic spline.
+	// |  6  -> sel_phz   - phase for estimating selectivity parameters.
+	// |  7  -> lambda_1  - penalty weight for 2nd difference in selectivity.
+	// |  8  -> lambda_2  - penalty weight for dome-shaped selectivity.
+	// |  9  -> lambda_3  - penalty weight for 2nd difference in time-varying selectivity.
+	// |  10 -> Number of discrete selectivity blocks.
+	// |
+
+	init_matrix selex_controls(1,10,1,ngear);
 	
-// 	// ***************************************************
-// 	// ** Read selectivity parameter options
-// 	// ***************************************************
-// 	// type 1 = logistic (2pars)
-// 	// type 2 = selcoffs (A-1 pars)
-// 	// type 3 = cubic spline (age_nodes)
-// 	// type 4 = time varying cubic spline (age_nodes for each year)
-// 	// type 5 = bicubic spline with age_nodes adn yr_nodes
-// 	// type 6 = fixed logistic by turning sel_phz to (-ve)
-// 	// type 7 = logistic (3pars) as a function of body weight.
-// 	init_matrix selex_controls(1,10,1,ngear);
-// 	!! COUT(selex_controls);
 
-// 	ivector isel_npar(1,ngear);				//ivector for # of parameters for each gear.
-// 	ivector jsel_npar(1,ngear);				//ivector for the number of rows for time-varying selectivity.
-// 	ivector isel_type(1,ngear);  	   	 	//Switch for selectivity
-// 	vector ahat(1,ngear);			   	 	//age-at-50% vulnerbality for logistic function
-// 	vector ghat(1,ngear);			   	 	//std at 50% age of vulnerability for logistic funciton
-// 	vector age_nodes(1,ngear);		   	 	//No. of age-nodes for bicubic spline.
-// 	vector yr_nodes(1,ngear);		   	 	//No. of year-nodes for bicubic spline.
-// 	ivector sel_phz(1,ngear);		   	 	//Phase for estimating selectivity parameters.
-// 	vector sel_2nd_diff_wt(1,ngear);	   	//Penalty weight for 2nd difference in selectivity.
-// 	vector sel_dome_wt(1,ngear);		   	//Penalty weight for dome-shaped selectivity.
-// 	vector sel_2nd_diff_wt_time(1,ngear); 	//Penalty weight for 2nd difference in time-varying selectivity.
-// 	ivector n_sel_blocks(1,ngear);			//Number of discrete selectivity blocks.
+	ivector    isel_npar(1,ngear);	
+	ivector    jsel_npar(1,ngear);	
+	ivector    isel_type(1,ngear);	
+	ivector      sel_phz(1,ngear);	
+	ivector n_sel_blocks(1,ngear);	
+
+	vector      ahat(1,ngear);	
+	vector      ghat(1,ngear);	
+	vector age_nodes(1,ngear);	
+	vector  yr_nodes(1,ngear);	
+	vector  lambda_1(1,ngear);	
+	vector  lambda_2(1,ngear);	
+	vector  lambda_3(1,ngear);	
 	
-// 	LOC_CALCS
-// 		isel_type = ivector(selex_controls(1));
-// 		ahat      = selex_controls(2);
-// 		ghat      = selex_controls(3);
-// 		age_nodes = selex_controls(4);
-// 		yr_nodes  = selex_controls(5);
+	LOC_CALCS
+		ahat      = selex_controls(2);
+		ghat      = selex_controls(3);
+		age_nodes = selex_controls(4);
+		yr_nodes  = selex_controls(5);
+		lambda_1  = selex_controls(7);
+		lambda_2  = selex_controls(8);
+		lambda_3  = selex_controls(9);
 
-// 		sel_phz   = ivector(selex_controls(6));
-// 		sel_2nd_diff_wt = selex_controls(7);
-// 		sel_dome_wt     = selex_controls(8);
-// 		sel_2nd_diff_wt_time = selex_controls(9);
-// 		n_sel_blocks    = ivector(selex_controls(10));
-// 	END_CALCS
-// 	!! COUT(isel_type);
-// 	!! COUT(sel_dome_wt);
-// 	// Selectivity blocks for each gear.
-// 	init_imatrix sel_blocks(1,ngear,1,n_sel_blocks);
-// 	!! COUT(sel_blocks);
+		isel_type    = ivector(selex_controls(1));
+		sel_phz      = ivector(selex_controls(6));
+		n_sel_blocks = ivector(selex_controls(10));
+	END_CALCS
+	
+	init_imatrix sel_blocks(1,ngear,1,n_sel_blocks);
 
-// 	LOC_CALCS
-// 		//cout up the number of selectivity parameters
-// 		//depending on the value of isel_type
-// 		//testing();
-// 		isel_npar.initialize();
-// 		for(i=1;i<=ngear;i++)
-// 		{	
-// 			jsel_npar(i)=1;
-// 			switch(isel_type(i))
-// 			{
-// 				case 1:
-// 					// logistic selectivity
-// 					isel_npar(i) = 2;
-// 					jsel_npar(i) = n_sel_blocks(i); 
-// 					break;
+
+	LOC_CALCS
+		// | COUNT THE NUMBER OF ESTIMATED SELECTIVITY PARAMETERS TO ESTIMATE
+		// | isel_npar number of columns for each gear.
+		// | jsel_npar number of rows for each gear.
+		isel_npar.initialize();
+		for(i=1;i<=ngear;i++)
+		{	
+			jsel_npar(i)=1;
+			switch(isel_type(i))
+			{
+				case 1:
+					// logistic selectivity
+					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i); 
+					break;
 					
-// 				case 2:
-// 					// age-specific coefficients
-// 					isel_npar(i) = (nage-sage);
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 2:
+					// age-specific coefficients
+					isel_npar(i) = (nage-sage);
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				case 3:
-// 				 	// cubic spline 
-// 					isel_npar(i) = age_nodes(i);
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 3:
+				 	// cubic spline 
+					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				case 4:	 
-// 					// annual cubic splines
-// 					isel_npar(i) = age_nodes(i);
-// 					jsel_npar(i) = (nyr-syr-retro_yrs)+1;
-// 					break;
+				case 4:	 
+					// annual cubic splines
+					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = (nyr-syr-retro_yrs)+1;
+					break;
 					
-// 				case 5:  
-// 					// bicubic spline
-// 					jsel_npar(i) = age_nodes(i);
-// 					isel_npar(i) = yr_nodes(i);
-// 					break;
+				case 5:  
+					// bicubic spline
+					jsel_npar(i) = age_nodes(i);
+					isel_npar(i) = yr_nodes(i);
+					break;
 				
-// 				case 6:
-// 					// fixed logistic (no parameters estimated)
-// 					// ensure sel_phz is set to negative value.
-// 					isel_npar(i) = 2;
-// 					if(sel_phz(i)>0) sel_phz(i) = -1;
-// 					break;
+				case 6:
+					// fixed logistic (no parameters estimated)
+					// ensure sel_phz is set to negative value.
+					isel_npar(i) = 2;
+					if(sel_phz(i)>0) sel_phz(i) = -1;
+					break;
 					
-// 				case 7:
-// 					// CHANGED: Now working, Vivian Haist fixed it.
-// 					// logistic (3 parameters) with mean body 
-// 					// weight deviations. 
-// 					isel_npar(i) = 2;
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 7:
+					// CHANGED: Now working, Vivian Haist fixed it.
+					// logistic (3 parameters) with mean body 
+					// weight deviations. 
+					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				case 8:
-// 					// Alternative logistic selectivity with wt_dev coefficients.
-// 					isel_npar(i) = 3;
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 8:
+					// Alternative logistic selectivity with wt_dev coefficients.
+					isel_npar(i) = 3;
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				case 11:
-// 					// Logistic length-based selectivity.
-// 					isel_npar(i) = 2;
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 11:
+					// Logistic length-based selectivity.
+					isel_npar(i) = 2;
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				case 12:
-// 					// Length-based selectivity coeffs with cubic spline interpolation
-// 					isel_npar(i) = age_nodes(i);
-// 					jsel_npar(i) = n_sel_blocks(i);
-// 					break;
+				case 12:
+					// Length-based selectivity coeffs with cubic spline interpolation
+					isel_npar(i) = age_nodes(i);
+					jsel_npar(i) = n_sel_blocks(i);
+					break;
 					
-// 				default: break;
-// 			}
-// 		}
-// 		//cout<<"Number of estimated selectivity parameters\n"<<isel_npar<<endl;
-// 	END_CALCS
+				default: break;
+			}
+		}
+	END_CALCS
 	
-// 	//Controls for prior on survey q.
-// 	init_int nits;					//FIXME (redundant with nit, could be deprecated)
-// 	init_ivector q_prior(1,nits);
-// 	init_vector q_mu(1,nits);
-// 	init_vector q_sd(1,nits);
-// 	!! cout<<"nits\n"<<nits<<endl;
-// 	!! cout<<"q Prior\n"<<q_mu<<endl<<q_sd<<endl;
+
+
+
+
+
+	// |---------------------------------------------------------------------------------|
+	// | PRIOR FOR RELATIVE ABUNDANCE DATA
+	// |---------------------------------------------------------------------------------|
+	// | nits     -> number of relative abundance indices
+	// | q_prior  -> type of prior to use, see legend
+	// | mu_log_q -> mean q in log-space
+	// | sd_log_q -> std of q prior in log-space
+	// |
+	// | q_prior type:
+	// | 0 -> uninformative prior.
+	// | 1 -> normal prior on q in log-space.
+	// | 2 -> penalized random walk in q.
+
+
+
+	init_int nits;					
+	init_ivector q_prior(1,nits);
+	init_vector mu_log_q(1,nits);
+	init_vector sd_log_q(1,nits);
+
+
+
+
 	
 // 	// |---------------------------------------------------------------------------------|
 // 	// | Miscellaneous controls                                                          |
@@ -883,8 +923,8 @@ DATA_SECTION
 // 	// END OF DATA_SECTION
 // 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 	
-// INITIALIZATION_SECTION
-//  theta theta_ival;
+INITIALIZATION_SECTION
+ theta theta_ival;
 	
 PARAMETER_SECTION
 	//Leading parameters
@@ -898,7 +938,7 @@ PARAMETER_SECTION
 	
 	
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
-	//!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
+	// !! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	// //Selectivity parameters (A very complicated ragged array)
 	// init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
@@ -978,21 +1018,20 @@ PARAMETER_SECTION
 	
 	objective_function_value objfun;
     
-	// number ro;					//unfished age-1 recruits
-	// number bo;					//unfished spawning stock biomass (reference point)
-	// number sbo;					//unfished spawning biomass at time of spawning from SR curve
-	// number kappa;				//Goodyear compensation ratio
-	// number m;					//initial natural mortality rate
-	// number m_bar;				//average natural mortality rate
-	// number log_avgrec;			//log of average recruitment.
-	// number log_recinit;			//log of initial recruitment in syr.
-	// //number log_avg_f;			//log of average fishing mortality DEPRICATED
-	// number rho;					//proportion of the observation error
-	// number varphi				//total precision in the CPUE & Rec anomalies.
-	// number sig;					//std of the observation errors in CPUE.
-	// number tau; 				//std of the process errors.
-	// number so;
-	// number beta;
+	number ro;					//unfished age-1 recruits
+	number bo;					//unfished spawning stock biomass (reference point)
+	number sbo;					//unfished spawning biomass at time of spawning from SR curve
+	number kappa;				//Goodyear compensation ratio
+	number m;					//initial natural mortality rate
+	number m_bar;				//average natural mortality rate
+	number log_avgrec;			//log of average recruitment.
+	number log_recinit;			//log of initial recruitment in syr.
+	number rho;					//proportion of the observation error
+	number varphi				//total precision in the CPUE & Rec anomalies.
+	number sig;					//std of the observation errors in CPUE.
+	number tau; 				//std of the process errors.
+	number so;
+	number beta;
 	
 	// vector log_rt(syr-nage+sage,nyr);
 	// vector vax(sage,nage);		//survey selectivity coefficients
@@ -1053,7 +1092,7 @@ RUNTIME_SECTION
 
 
 PROCEDURE_SECTION
-	// initParameters();
+	initParameters();
 	
 	// calcSelectivities(isel_type);
 	
@@ -1090,59 +1129,59 @@ PROCEDURE_SECTION
 	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 	
 
-// FUNCTION initParameters
-//   {
-// 	/*
-// 	This function is used to extract the specific parameter values
-// 	from the init_bounded_number_vector to the specific variables
-// 	used in the code.
+FUNCTION initParameters
+  {
+	/*
+	This function is used to extract the specific parameter values
+	from the init_bounded_number_vector to the specific variables
+	used in the code.
 	
-// 	Note that you must call this routine before runnning the 
-// 	simulation model to generate fake data.
+	Note that you must call this routine before runnning the 
+	simulation model to generate fake data.
 
-// 	Variance partitioning:
-// 	-Estimating total variance as = 1/precision
-// 	 and partition variance by rho = sig^2/(sig^2+tau^2).
+	Variance partitioning:
+	-Estimating total variance as = 1/precision
+	 and partition variance by rho = sig^2/(sig^2+tau^2).
 
-// 	 E.g. if sig = 0.2 and tau =1.12 then
-// 	 rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
-// 	 the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
+	 E.g. if sig = 0.2 and tau =1.12 then
+	 rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
+	 the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
 
 
-// 	*/
+	*/
 	
-// 	ro          = mfexp(theta(1));
-// 	dvariable h = theta(2);
-// 	m           = mfexp(theta(3));
-// 	log_avgrec  = theta(4);
-// 	log_recinit = theta(5);
-// 	rho         = theta(6);
-// 	varphi      = sqrt(1.0/theta(7));
-// 	sig         = sqrt(rho) * varphi;
-// 	tau         = sqrt(1-rho) * varphi;
-	
-	
-// 	switch(int(cntrl(2)))
-// 	{
-// 		case 1:
-// 			//Beverton-Holt model
-// 			kappa = (4.*h/(1.-h));
-// 			break;
-// 		case 2:
-// 			//Ricker model
-// 			kappa = pow((5.*h),1.25);
-// 		break;
-// 	}
+	ro          = mfexp(theta(1));
+	dvariable h = theta(2);
+	m           = mfexp(theta(3));
+	log_avgrec  = theta(4);
+	log_recinit = theta(5);
+	rho         = theta(6);
+	varphi      = sqrt(1.0/theta(7));
+	sig         = sqrt(rho) * varphi;
+	tau         = sqrt(1-rho) * varphi;
 	
 	
-// 	//TODO Alternative parameterization using MSY and FMSY as leading parameters
+	// switch(int(cntrl(2)))
+	// {
+	// 	case 1:
+	// 		//Beverton-Holt model
+	// 		kappa = (4.*h/(1.-h));
+	// 		break;
+	// 	case 2:
+	// 		//Ricker model
+	// 		kappa = pow((5.*h),1.25);
+	// 	break;
+	// }
+	
+	
+	//TODO Alternative parameterization using MSY and FMSY as leading parameters
 	
 	
 
 	
-// 	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
+	// if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
-//   }
+  }
 	
 // FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs)
 //   {
@@ -2052,12 +2091,12 @@ PROCEDURE_SECTION
 // 				{
 // 					//curvature in selectivity parameters
 // 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(i)));
-// 					nlvec(5,k)     += sel_2nd_diff_wt(k)/(nage-sage+1)*df2*df2;
+// 					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
 // 					//penalty for dome-shapeness
 // 					for(j=sage;j<=nage-1;j++)
 // 						if(log_sel(k,i,j)>log_sel(k,i,j+1))
-// 							nlvec(6,k)+=sel_dome_wt(k)
+// 							nlvec(6,k)+=lambda_2(k)
 // 										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
 // 				}
 // 			}
@@ -2074,7 +2113,7 @@ PROCEDURE_SECTION
 // 				for(j=sage;j<=nage;j++)
 // 				{
 // 					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
-// 					nlvec(7,k)     += sel_2nd_diff_wt_time(k)/(nage-sage+1)*norm2(df2);
+// 					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
 // 				}
 // 			}
 			
@@ -2165,7 +2204,7 @@ PROCEDURE_SECTION
 // 	{
 // 		if(q_prior(i)==1) 
 // 		{
-// 			qvec(i)=dnorm(log(q(i)),q_mu(i),q_sd(i));
+// 			qvec(i)=dnorm(log(q(i)),mu_log_q(i),sd_log_q(i));
 // 		}
 // 	}
 	
