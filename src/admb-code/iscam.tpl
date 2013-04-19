@@ -613,7 +613,10 @@ DATA_SECTION
 
 	
 	
-	
+	// |---------------------------------------------------------------------------------|
+	// | VARIABLES FOR MSY-BASED REFERENCE POINTS
+	// |---------------------------------------------------------------------------------|
+	// |
 // 	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
 // 	vector fall(1,nfleet);			//Fishing mortality based on allocation
 // 	vector  msy(1,nfleet);			//Maximum sustainable yield
@@ -838,183 +841,188 @@ DATA_SECTION
 
 
 	
-// 	// |---------------------------------------------------------------------------------|
-// 	// | Miscellaneous controls                                                          |
-// 	// |---------------------------------------------------------------------------------|
-// 	// | 1 -> verbose
-// 	// | 2 -> recruitment model (1=beverton-holt, 2=rickers)
-// 	// | 3 -> std in catch first phase
-// 	// | 4 -> std in catch in last phase
-// 	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
-// 	// | 6 -> minimum proportion at age to consider in the dmvlogistic likelihood
-// 	// | 7 -> mean fishing mortality rate to regularize the solution
-// 	// | 8 -> standard deviation of mean F penalty in first phases
-// 	// | 9 -> standard deviation of mean F penalty in last phase.
-// 	// | 10-> phase for estimating deviations in natural mortality.
-// 	// | 11-> std in natural mortality deviations.
-// 	// | 12-> number of estimated nodes for deviations in natural mortality
-// 	// | 13-> fraction of total mortality that takes place prior to spawning
-// 	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
-// 	// | 15-> switch for generating selex based on IFD and cohort biomass
-// 	init_vector cntrl(1,15);
-// 	int verbose;
+	// |---------------------------------------------------------------------------------|
+	// | Miscellaneous controls                                                          |
+	// |---------------------------------------------------------------------------------|
+	// | 1 -> verbose
+	// | 2 -> recruitment model (1=beverton-holt, 2=rickers)
+	// | 3 -> std in catch first phase
+	// | 4 -> std in catch in last phase
+	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
+	// | 6 -> minimum proportion at age to consider in the dmvlogistic likelihood
+	// | 7 -> mean fishing mortality rate to regularize the solution
+	// | 8 -> standard deviation of mean F penalty in first phases
+	// | 9 -> standard deviation of mean F penalty in last phase.
+	// | 10-> phase for estimating deviations in natural mortality.
+	// | 11-> std in natural mortality deviations.
+	// | 12-> number of estimated nodes for deviations in natural mortality
+	// | 13-> fraction of total mortality that takes place prior to spawning
+	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// | 15-> switch for generating selex based on IFD and cohort biomass
+	init_vector cntrl(1,15);
+	int verbose;
 	
-// 	// DEPRECATED
-// 	// |---------------------------------------------------------------------------------|
-// 	// | SIMULATION CONTROLS
-// 	// |---------------------------------------------------------------------------------|
-// 	// | Defn' for sim_ctrl
-// 	// | 1) Flag for modelling selectivity using ideal free distribution.
-// 	// | 2) Index for simulated sel_type
-// 	// | 3) Number of selectivity blocks for each gear type.
 
-// 	// init_matrix sim_ctrl(1,3,1,ngear);
-// 	// !! COUT(sim_ctrl);
-
-// 	// ivector sim_isel_type(1,ngear);
-// 	// ivector nsim_sel_blocks(1,ngear);
-	
-// 	// LOC_CALCS
-// 	// 	sim_isel_type   = ivector(sim_ctrl(2));
-// 	// 	nsim_sel_blocks = ivector(sim_ctrl(3));
-// 	// END_CALCS
-// 	// init_imatrix sim_sel_blocks(1,ngear,1,nsim_sel_blocks);
-// 	// // TODO modify calcSelectivities to include sim_sel_blocks.
-
-// 	init_int eofc;
-// 	LOC_CALCS
-// 		verbose = cntrl(1);
-// 		cout<<"cntrl\n"<<cntrl<<endl;
-// 		cout<<"eofc\t"<<eofc<<endl;
-// 		if(eofc==999){
-// 			cout<<"\n -- END OF CONTROL FILE -- \n"<<endl;
-// 		}else{
-// 			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; exit(1);
-// 		}
-// 	END_CALCS
-	
+	init_int eofc;
+	LOC_CALCS
+		verbose = cntrl(1);
+		if(verbose) COUT(cntrl);
+		
+		if(eofc==999){
+			cout<<"\n| -- END OF CONTROL SECTION -- |\n";
+		  	cout<<"|          eofc = "<<eofc<<"          |"<<endl;
+			cout<<"|______________________________|"<<endl;
+		}else{
+			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; exit(1);
+		}
+	END_CALCS
 	
 	int nf;
 	
-// 	// |
-// 	ivector ilvec(1,7);
-// 	!!ilvec    = ngear;			//number of fisheries
-// 	!!ilvec(2) = nit;			//number of surveys
-// 	!!ilvec(3) = na_gears;		//number of age-comps
-// 	!!ilvec(4) = 1;
+	// |---------------------------------------------------------------------------------|
+	// | VECTOR DIMENTIONS FOR NEGATIVE LOG LIKELIHOODS
+	// |---------------------------------------------------------------------------------|
+	// | ilvec[1,5,6,7] -> number of fishing gears (ngear)
+	// | ilvec[2]       -> number of surveys       (nit)
+	// | ilvec[3]       -> number of age-compisition data sets (na_gears)
+	// | ilvec[4]       -> container for recruitment deviations.
+	ivector ilvec(1,7);
+	!! ilvec    = ngear;			
+	!! ilvec(2) = nit;			
+	!! ilvec(3) = na_gears;		
+	!! ilvec(4) = 1;
 	
-// 	// SM Oct 31, 2010.  Implementing retrospective analysis.
-// 	//Dont read in any more data below the retrospective reset of nyr
-// 	!! nyr = nyr - retro_yrs;
+
+	// |---------------------------------------------------------------------------------|
+	// | RETROSPECTIVE ADJUSTMENT TO nyrs
+	// |---------------------------------------------------------------------------------|
+	// | - Don't read any more input data from here on in. 
+	// | - Modifying nyr to allow for retrospective analysis.
+	// | - If retro_yrs > 0, then ensure that pf_cntrl arrays are not greater than nyr,
+	// |   otherwise arrays for mbar will go out of bounds.
+	// | 
+
+	!! nyr = nyr - retro_yrs;
 	
-// 	// SM Sept 2, 2012. If in retrospective analysis, make sure arrays from pfc 
-// 	// are ajusted downwards, otherwise arrays for m_bar will go out of bounds.
-// 	LOC_CALCS
-// 		if(retro_yrs)
-// 		{
-// 			if(pf_cntrl(2)>nyr) pf_cntrl(2) = nyr;
-// 			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
-// 			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
-// 		}
-// 		if(verbose) COUT(pf_cntrl);
-// 	END_CALCS
+	LOC_CALCS
+		if(retro_yrs)
+		{
+			if(pf_cntrl(2)>nyr) pf_cntrl(2) = nyr;
+			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
+			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
+		}
+	END_CALCS
 
 	
-// 	// END OF DATA_SECTION
-// 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
+	// END OF DATA_SECTION
+	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 	
 INITIALIZATION_SECTION
  theta theta_ival;
 	
 PARAMETER_SECTION
-	//Leading parameters
-	//theta[1]		log_ro, or log_msy
-	//theta[2]		steepness(h), or log_fmsy
-	//theta[3]		log_m
-	//theta[4]		log_avgrec
-	//theta[5]		log_recinit
-	//theta[6]		rho
-	//theta[7]		vartheta
-	
-	
+	// |---------------------------------------------------------------------------------|
+	// | LEADING PARAMTERS
+	// |---------------------------------------------------------------------------------|
+	// | - Initialized in the INITIALIZATION_SECTION with theta_ival from control file.
+	// | theta[1] -> log_ro, or log_msy
+	// | theta[2] -> steepness(h), or log_fmsy
+	// | theta[3] -> log_m
+	// | theta[4] -> log_avgrec
+	// | theta[5] -> log_recinit
+	// | theta[6] -> rho
+	// | theta[7] -> vartheta
+	// |
 	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
-	// !! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
-	// //Selectivity parameters (A very complicated ragged array)
-	// init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
-	// LOC_CALCS
-	// 	//initial values for logistic selectivity parameters
-	// 	//set phase to -1 for fixed selectivity.
-	// 	if (!global_parfile)
-	// 	{
-	// 		for(int k=1;k<=ngear;k++)
-	// 		{
-	// 			if( isel_type(k)==1 || 
-	// 				isel_type(k)==6 || 
-	// 				isel_type(k)>=7 
-	// 				//sim_isel_type(k)==1 ||
-	// 				//sim_isel_type(k)>=7 
-	// 				)
-	// 			{
-	// 				for(int j = 1; j <= n_sel_blocks(k); j++ )
-	// 				{
-	// 					double uu = 0;
-	// 					if(SimFlag && j > 1)
-	// 					{
-	// 						uu = 0.05*randn(j+rseed);
-	// 						// cout<<"Hello Everbody, so glad to see you"<<endl;
-	// 					} 
 
-	// 					// // SPECIAL CASE for simulation.
-	// 					// // Special case if sim with sel_type=1 and estimate with sel_type11
-	// 					// if(sim_isel_type(k)==1 && isel_type(k)>=11 && j==1)
-	// 					// {
-	// 					// 	// convert length to age
-	// 					// 	ahat(k) = -log(-(ahat(k)-linf)/linf)/vonbk;
-	// 					// }
+	// |---------------------------------------------------------------------------------|
+	// | SELECTIVITY PARAMETERS
+	// |---------------------------------------------------------------------------------|
+	// | - This is a bounded matrix vector where the dimensions are defined by the 
+	// | - selectivity options specified in the control file.
+	// | - There are 1:ngear arrays, having jsel_npar rows and isel_npar columns.
+	// | - If the user has not specified -ainp or -binp, the initial values are set
+	// |   based on ahat and ghat in the control file for logistic selectivities.
+	// | - Special case: if SimFlag=TRUE, then add some random noise to ahat.
+	// |
+	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 
-							
-	// 					sel_par(k,j,1) = log(ahat(k)*exp(uu));
-	// 					sel_par(k,j,2) = log(ghat(k));
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// END_CALCS
+	LOC_CALCS
+		if ( !global_parfile )
+		{
+			for(int k=1; k<=ngear; k++)
+			{
+				if( isel_type(k)==1 || 
+					isel_type(k)==6 || 
+					(
+					isel_type(k)>=7 && 
+					isel_type(k) != 12 
+					)
+					)
+				{
+					for(int j = 1; j <= n_sel_blocks(k); j++ )
+					{
+						double uu = 0;
+						if(SimFlag && j > 1)
+						{
+							uu = 0.05*randn(j+rseed);
+						} 
+						sel_par(k,j,1) = log(ahat(k)*exp(uu));
+						sel_par(k,j,2) = log(ghat(k));
+					}
+				}
+			}
+		}
+	END_CALCS
 	
-	// //Fishing mortality rate parameters
-	// init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
+
+	// |---------------------------------------------------------------------------------|
+	// | FISHING MORTALITY RATE PARAMETERS
+	// |---------------------------------------------------------------------------------|
+	// | - Estimate all fishing mortality rates in log-space.
+	// | - If in simulation mode then initialize with F=0.1; Actual F is conditioned on 
+	// |   the observed catch.
+	// |
 	
-	// LOC_CALCS
-	// 	if(!SimFlag) log_ft_pars = log(0.1);
-	// END_CALCS
+	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
+	
+	LOC_CALCS
+		if(!SimFlag) log_ft_pars = log(0.1);
+	END_CALCS
 	
 	
-	// //CHANGED Vivian Haist: possible bias in Bo due to dev_vector for log_rec_devs
-	// //	-Try and compare estimates using init_bounded_vector version.
-	// //	-Now estimating Rinit, Rbar and Ro.
+
+	// |---------------------------------------------------------------------------------|
+	// | INITIAL AND ANNUAL RECRUITMENT 
+	// |---------------------------------------------------------------------------------|
+	// | - Estimate single mean initial recruitment and deviations for each initial 
+	// |   cohort from sage+1 to nage. (Rinit + init_log_rec_devs)
+	// | - Estimate mean overal recruitment and annual deviations from syr to nyr.
+	// | - cntrl(5) is a flag to initialize the model at unfished recruitment (ro),
+	// |   if this is true, then do not estimate init_log_rec_devs
+
+	!! int init_dev_phz = 2;
+	!! if(cntrl(5)) init_dev_phz = -1;
+	init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
+	init_bounded_vector log_rec_devs(syr,nyr,-15.,15.,2);
 	
-	// // May 16, Just looked at Ianelli's code, he used bounded_vector, and 
-	// // separates the problem into init_log_rec_devs and log_rec_devs
+
+
+	// |---------------------------------------------------------------------------------|
+	// | DEVIATIONS FOR NATURAL MORTALITY BASED ON CUBIC SPLINE INTERPOLATION
+	// |---------------------------------------------------------------------------------|
+	// | - Estimating trends in natural mortality rates, where the user specified the 
+	// |   number of knots (cntrl(12)) and the std in M in the control file, and the phase
+	// |   in which to estimate natural mortality devs (cntrl(10)).  If the phase is neg.
+	// |   then natural mortality rate deviates are not estimated and M is assumed const.
+	// | - This model is implemented as a random walk, where M{t+1} = M{t} + dev.
 	
+	!! int m_dev_phz = -1;
+	!!     m_dev_phz = cntrl(10);
+	!! int  n_m_devs = cntrl(12);
+	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	
-	// //Annual recruitment deviations
-	// //!! int ii;
-	// //!! ii=syr-nage+sage;
-	// //!! if(cntrl(5)) ii = syr;  //if initializing with ro
-	// //init_bounded_vector log_rec_devs(ii,nyr,-15.,15.,2);
-	
-	// !! int init_dev_phz = 2;
-	// !! if(cntrl(5)) init_dev_phz = -1;
-	// init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
-	// init_bounded_vector log_rec_devs(syr,nyr,-15.,15.,2);
-	
-	// //Deviations for natural mortality
-	// !! int m_dev_phz = -1;
-	// !! m_dev_phz = cntrl(10);
-	// !! int n_m_devs = cntrl(12);
-	// init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
-	// //init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	objective_function_value objfun;
     
@@ -1033,9 +1041,9 @@ PARAMETER_SECTION
 	number so;
 	number beta;
 	
-	// vector log_rt(syr-nage+sage,nyr);
-	// vector vax(sage,nage);		//survey selectivity coefficients
-	// vector q(1,nit);			//survey catchability coefficients
+	vector log_rt(syr-nage+sage,nyr);
+	// DEPRECATE// vector vax(sage,nage);		//survey selectivity coefficients
+	vector q(1,nit);			//survey catchability coefficients
 	
 	// vector sbt(syr,nyr+1);		//spawning stock biomass
 	// vector rt(syr+sage,nyr); 	//predicted sage recruits from S-R curve
@@ -1161,17 +1169,17 @@ FUNCTION initParameters
 	tau         = sqrt(1-rho) * varphi;
 	
 	
-	// switch(int(cntrl(2)))
-	// {
-	// 	case 1:
-	// 		//Beverton-Holt model
-	// 		kappa = (4.*h/(1.-h));
-	// 		break;
-	// 	case 2:
-	// 		//Ricker model
-	// 		kappa = pow((5.*h),1.25);
-	// 	break;
-	// }
+	switch(int(cntrl(2)))
+	{
+		case 1:
+			//Beverton-Holt model
+			kappa = (4.*h/(1.-h));
+			break;
+		case 2:
+			//Ricker model
+			kappa = pow((5.*h),1.25);
+		break;
+	}
 	
 	
 	//TODO Alternative parameterization using MSY and FMSY as leading parameters
@@ -1179,7 +1187,7 @@ FUNCTION initParameters
 	
 
 	
-	// if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
+	if(verbose)cout<<"**** Ok after initParameters ****"<<endl;
 	
   }
 	
@@ -3394,7 +3402,7 @@ FUNCTION initParameters
 // 		for(i=syr;i<=nyr;i++)
 // 			report<<k<<"\t"<<log_sel(k)(i)<<endl;
 // 	//REPORT(log_sel);
-// 	REPORT(vax);
+	// //DEPRECATE REPORT(vax);
 // 	REPORT(obs_ct);
 // 	REPORT(ct);
 // 	REPORT(eta);
