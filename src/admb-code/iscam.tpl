@@ -361,9 +361,9 @@ DATA_SECTION
 	// | Historical removal
 	// |---------------------------------------------------------------------------------|
 	// | Assumes total catch of both sexes by area
-	// | catch_data matrix cols: (year gear area sex type value)
+	// | catch_data matrix cols: (year gear area group sex type value)
 	init_int n_ct_obs;
-	init_matrix catch_data(1,n_ct_obs,1,6);
+	init_matrix catch_data(1,n_ct_obs,1,7);
 	
 
 // 	matrix obs_ct(1,ngear,syr,nyr);
@@ -1084,19 +1084,31 @@ PARAMETER_SECTION
 	vector          q(1,nit);	
 	
 	
-	//DEPRECATE // vector avg_log_sel(1,ngear);//conditional penalty for objective function
-	
+	// DEPRECATE // vector avg_log_sel(1,ngear);//conditional penalty for objective function	
 	// DEPRECATE// vector vax(sage,nage);		//survey selectivity coefficients
+
+	// |---------------------------------------------------------------------------------|
+	// | THREE DIMENSIONAL ARRAYS
+	// |---------------------------------------------------------------------------------|
+	// | F          -> Instantaneous fishing mortality rate for (group,year,age)
+	// | M          -> Instantaneous natural mortality rate for (group,year,age)
+	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
+	// | S          -> Annual survival rate exp(-Z) for (group,year,age)
+	3darray F(1,n_ags,syr,nyr,sage,nage);
+	3darray M(1,n_ags,syr,nyr,sage,nage);
+	3darray Z(1,n_ags,syr,nyr,sage,nage);
+	3darray S(1,n_ags,syr,nyr,sage,nage);
+
 	// matrix nlvec(1,7,1,ilvec);	//matrix for negative loglikelihoods
 	
 	// //matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	// //matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	 
-	// matrix N(syr,nyr+1,sage,nage);			//Numbers at age
+	// matrix N(syr,nyr+1,sage,nage);		//Numbers at age
 	// matrix F(syr,nyr,sage,nage);			//Age-specific fishing mortality
 	// matrix M_tot(syr,nyr,sage,nage);		//Age-specific natural mortality
-	// matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates
-	// matrix log_ft(1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
+	matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates
+	matrix log_ft(1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
 	// matrix Z(syr,nyr,sage,nage);
 	// matrix S(syr,nyr,sage,nage);
 	// matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
@@ -1144,7 +1156,7 @@ PROCEDURE_SECTION
 	
 	calcSelectivities(isel_type);
 	
-	// calcTotalMortality();
+	calcTotalMortality();
 	
 	// calcNumbersAtAge();
 	
@@ -1494,90 +1506,120 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	
   }	
 	
-// FUNCTION calcTotalMortality
-//   {
-// 	/*
-// 	This routine calculates fishing mortality, total mortality
-// 	and annaul survival rates (exp(-Z)) for each age in each
-// 	year.
+FUNCTION calcTotalMortality
+  {
+  	/*
+  	Purpose: This function calculates fishing mortality, total mortality and annual
+  	         surivival rates S=exp(-Z) for each age and year based on fishing mortality
+  	         and selectivity coefficients.  Z also is updated with time-varying 
+  	         natural mortality rates if specificed by user.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		- Jan 5, 2012 Added catch_type to allow for catch in numbers, weight or spawn.
+          In the case of spawn on kelp (roe fisheries), the Fishing mortality does not
+          occur on the adult component.  
+        - Added if(catch_type(k)!=3) //exclude roe fisheries
+  		- F(group,year,age)
+  		- Exclude type = 3, roe fisheries harvesting eggs only, not adults.
+		- if catch_data$sex is male & female combined, then allocate to both sexes.
+
+  	TODO list:
+  	[*] Dec 24, 2010.  Adding time-varying natural mortality.
+  	[*] May 20, 2011.  Add cubic spline to the time-varying natural mortality.
+	[ ] Calculate average M for reference point calculations based on pfc file.
+	[ ] 
+  	*/
+
+	int ig,ii,i,k,ki,l;
+	dvariable ftmp;
+	F.initialize(); 
+	ft.initialize();
+	log_ft.initialize();
 	
-// 	There is a complication in that if there is a survey gear
-// 	then the fishing mortality rate is set to an extremely small
-// 	value: exp(-70.)~3.975e-31, which is effectively 0.
-	
-	
-// 	The above issue is no longer an issue b/c now estimating Fs
-// 	for years where there is non-zero catch.
-	
-// 	SJDM.  Dec 24, 2010.  Adding time-varying natural mortality
-	
-// 	CHANGED May 20, 2011  Add cubic spline to the time-varying natural mortality
-	
-// 	Jan 5, 2012 Adding catch_type to allow for catch in numbers, weight or spawn.
-// 	In the case of spawn on kelp (roe fisheries), the Fishing mortality does not
-// 	occur on the adult component.  Added if(catch_type(k)!=3) //exclude roe fisheries
-// 	*/
-// 	int i,k,ki;
-// 	dvariable ftmp;
-// 	F.initialize();
-// 	ft.initialize();
-// 	log_ft.initialize();
-	
-// 	//Fishing mortality
-// 	ki=1;
-// 	for(k=1;k<=ngear;k++)
-// 	{
-		
-// 		for(i=syr;i<=nyr;i++)
-// 		{	
-// 			ftmp=0;
-// 			if( obs_ct(k,i)>0  )
-// 				ftmp = mfexp(log_ft_pars(ki++));
-			
-// 			ft(k,i)=ftmp;
-			
-// 			if(catch_type(k)!=3){	//exclude roe fisheries
-// 				F(i)+=ftmp*mfexp(log_sel(k)(i));
-// 				//cout<<obs_ct(k,i)<<endl;
-// 			}
-// 		}
-// 	}
-	
-// 	//Natural mortality (year and age specific)
-// 	//M_tot(syr,nyr,sage,nage);
-// 	M_tot = m;
+	// |---------------------------------------------------------------------------------|
+	// | FISHING MORTALITY
+	// |---------------------------------------------------------------------------------|
+	// |
+
+	for(ig=1;ig<=n_ct_obs;ig++)
+	{
+		i  = catch_data(ig)(1);	 //year
+		k  = catch_data(ig)(2);  //gear
+		f  = catch_data(ig)(3);  //area
+		g  = catch_data(ig)(4);  //group
+		h  = catch_data(ig)(5);  //sex
+		l  = catch_data(ig)(6);  //type
+		if( h )
+		{
+			ii = pntr_ags(f,g,h);    
+			ftmp = mfexp(log_ft_pars(ig));
+			ft(k,i) = ftmp;
+			if( l != 3 )
+			{
+				F(ii)(i) += ftmp*mfexp(log_sel(k)(ii)(i));
+			}
+		}
+		else if( !h ) // h=0 case for asexual catch
+		{
+			for(h=1;h<=2;h++)
+			{
+				ii = pntr_ags(f,g,h);    
+				ftmp = mfexp(log_ft_pars(ig));
+				ft(k,i) = ftmp;
+				if( l != 3 )
+				{
+					F(ii)(i) += ftmp*mfexp(log_sel(k)(ii)(i));
+				}		
+			}
+		}
+	}
+
+	// |---------------------------------------------------------------------------------|
+	// | NATURAL MORTALITY
+	// |---------------------------------------------------------------------------------|
+	// | - uses cubic spline to interpolate time-varying natural mortality
+	M.initialize();
+	log_m_devs.initialize();
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		M(ig) = m;
+		if( active( log_m_nodes) )
+		{
+			int nodes = size_count(log_m_nodes);
+			dvector im(1,nodes);
+			dvector fm(syr+1,nyr);
+			im.fill_seqadd(0,1./(nodes-1));
+			fm.fill_seqadd(0,1./(nyr-syr));
+			vcubic_spline_function m_spline(im,log_m_nodes);
+			log_m_devs = m_spline( fm );
+		}
+
+		for(i=syr+1; i<=nyr; i++)
+		{
+			M(ig)(i) = M(ig)(i-1) * mfexp(log_m_devs(i));
+		}
+		// TODO fix for reference point calculations
+		// m_bar = mean( M_tot.sub(pf_cntrl(1),pf_cntrl(2)) );
+	}
+
+	// |---------------------------------------------------------------------------------|
+	// | TOTAL MORTALITY
+	// |---------------------------------------------------------------------------------|
+	// |
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		Z(ig) = M(ig) + F(ig);
+		S(ig) = mfexp(-Z(ig));
+	}
 
 
-// 	// Cubic spline to interpolate log_m_devs (log_m_nodes)
-// 	log_m_devs = 0.;
-// 	if(active(log_m_nodes))
-// 	{
-// 		int nodes = size_count(log_m_nodes);
-// 		dvector im(1,nodes);
-// 		dvector fm(syr+1,nyr);
-// 		im.fill_seqadd(0,1./(nodes-1));
-// 		fm.fill_seqadd(0,1./(nyr-syr));
-// 		vcubic_spline_function m_spline(im,log_m_nodes);
-// 		//m_spline(fm);
-// 		log_m_devs = m_spline(fm);
-// 	}
+	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
 	
-// 	// Random walk in natural mortality.
-// 	for(i=syr;i<=nyr;i++)
-// 	{
-// 		// if(active(log_m_devs)&&i>syr)
-// 		if(active(log_m_nodes)&&i>syr)
-// 		{
-// 			M_tot(i)=M_tot(i-1)*exp(log_m_devs(i));
-// 		}
-// 	}
-// 	m_bar = mean( M_tot.sub(pf_cntrl(1),pf_cntrl(2)) );
-	
-// 	Z=M_tot+F;
-// 	S=mfexp(-Z);
-// 	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
-	
-//   }
+  }
 	
 	
 // FUNCTION calcNumbersAtAge
