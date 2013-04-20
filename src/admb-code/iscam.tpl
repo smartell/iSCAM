@@ -1094,10 +1094,13 @@ PARAMETER_SECTION
 	// | M          -> Instantaneous natural mortality rate for (group,year,age)
 	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
 	// | S          -> Annual survival rate exp(-Z) for (group,year,age)
+	// | N          -> Numbers-at-age for (group,year+1,age)
+	// | 
 	3darray F(1,n_ags,syr,nyr,sage,nage);
 	3darray M(1,n_ags,syr,nyr,sage,nage);
 	3darray Z(1,n_ags,syr,nyr,sage,nage);
 	3darray S(1,n_ags,syr,nyr,sage,nage);
+	3darray N(1,n_ags,syr,nyr+1,sage,nage);
 
 	// matrix nlvec(1,7,1,ilvec);	//matrix for negative loglikelihoods
 	
@@ -1158,7 +1161,7 @@ PROCEDURE_SECTION
 	
 	calcTotalMortality();
 	
-	// calcNumbersAtAge();
+	calcNumbersAtAge();
 	
 	// calcFisheryObservations();
 	
@@ -1616,24 +1619,37 @@ FUNCTION calcTotalMortality
 		S(ig) = mfexp(-Z(ig));
 	}
 
-
-	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;
-	
+	if(verbose) cout<<"**** OK after calcTotalMortality ****"<<endl;	
   }
 	
 	
-// FUNCTION calcNumbersAtAge
-//   {
-// 	/*
-// 		Aug 9, 2012.  Made a change here to initialize the numbers
-// 		at age in syr using the natural mortality rate at age in syr. 
-// 		Prior to this the average (m_bar) rate was used, since this 
-// 		has now changed with new projection control files.  Should only
-// 		affect models that were using time varying natural mortality.
-// 	*/
+FUNCTION calcNumbersAtAge
+  {
+  	/*
+  	Purpose: This function initializes the numbers-at-age matrix in syr
+  	         based on log_rinit and log_init_rec_devs, the annual recruitment
+  	         based on log_rbar and log_rec_devs, and updates the number-at-age
+  	         over time based on the survival rate calculated in calcTotalMortality.
+
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  			- Aug 9, 2012.  Made a change here to initialize the numbers
+			  at age in syr using the natural mortality rate at age in syr. 
+			  Prior to this the average (m_bar) rate was used, since this 
+			  has now changed with new projection control files.  Should only
+			  affect models that were using time varying natural mortality.
+  		
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 	
-// 	int i,j;
-// 	N.initialize();
+
+	N.initialize();
 // 	dvariable avg_M = mean(M_tot(syr));
 // 	dvar_vector lx(sage,nage);
 // 	lx(sage)=1;
@@ -1711,7 +1727,7 @@ FUNCTION calcTotalMortality
 // 	}
 // 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
-//   }	
+  }	
 
 // FUNCTION calcFisheryObservations
 //   {
