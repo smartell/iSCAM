@@ -655,7 +655,6 @@ DATA_SECTION
 	// | -6) rho         - proportion of total variance for observation errors
 	// | -7) varhtheta   - total precision (1/variance)
 	init_int npar;
-	init_ivector  ipar_vector(1,npar);
 	init_matrix theta_control(1,npar,1,7);
 	
 	vector   theta_ival(1,npar);
@@ -663,12 +662,17 @@ DATA_SECTION
 	vector     theta_ub(1,npar);
 	ivector   theta_phz(1,npar);
 	ivector theta_prior(1,npar);
+	ivector ipar_vector(1,npar);
 	LOC_CALCS
 		theta_ival  = column(theta_control,1);
 		theta_lb    = column(theta_control,2);
 		theta_ub    = column(theta_control,3);
 		theta_phz   = ivector(column(theta_control,4));
 		theta_prior = ivector(column(theta_control,5));
+		ipar_vector(1,2) = 1;
+		ipar_vector(6,7) = 1;
+		ipar_vector(3)   = nsex;
+		ipar_vector(4,5) = narea*ngroup*nsex;
 	END_CALCS
 	
 	// |---------------------------------------------------------------------------------|
@@ -992,7 +996,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
-		if(!SimFlag) log_ft_pars = log(0.1);
+		if(!SimFlag) log_ft_pars = log(0.01);
 	END_CALCS
 	
 	
@@ -1008,8 +1012,8 @@ PARAMETER_SECTION
 
 	!! int init_dev_phz = 2;
 	!! if(cntrl(5)) init_dev_phz = -1;
-	init_bounded_vector init_log_rec_devs(sage+1,nage,-15.,15.,init_dev_phz);
-	init_bounded_vector log_rec_devs(syr,nyr,-15.,15.,2);
+	init_bounded_matrix init_log_rec_devs(1,n_ags,sage+1,nage,-15.,15.,init_dev_phz);
+	init_bounded_matrix log_rec_devs(1,n_ags,syr,nyr,-15.,15.,2);
 	
 
 
@@ -1069,7 +1073,6 @@ PARAMETER_SECTION
     // | - m           -> Instantaneous natural mortality rate by nsex
     // | - log_avgrec  -> Average sage recruitment from syr to nyr in log-space.
     // | - log_recinit -> Average initial recruitment for initial year cohorts.
-	// | - log_rt      -> age-sage recruitment for initial years and annual recruitment.
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
 	// | - sbt         -> spawning stock biomass used in S-R relationship.
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
@@ -1078,15 +1081,20 @@ PARAMETER_SECTION
 	// |
 	
 	vector           m(1,nsex);	
-	vector  log_avgrec(1,narea);			
-	vector log_recinit(1,narea);			
-	vector     log_rt(syr-nage+sage,nyr);
+	vector  log_avgrec(1,n_ags);			
+	vector log_recinit(1,n_ags);			
 	vector         rt(syr+sage,nyr); 
 	vector        sbt(syr,nyr+1);	
 	vector      delta(syr+sage,nyr);
 	vector log_m_devs(syr+1,nyr);
 	vector          q(1,nit);	
 	
+	// |---------------------------------------------------------------------------------|
+	// | MATRIX OBJECTS
+	// |---------------------------------------------------------------------------------|
+	// | - log_rt   -> age-sage recruitment for initial years and annual recruitment.
+	// | 
+	matrix     log_rt(1,n_ags,syr-nage+sage,nyr);
 	
 	// DEPRECATE // vector avg_log_sel(1,ngear);//conditional penalty for objective function	
 	// DEPRECATE// vector vax(sage,nage);		//survey selectivity coefficients
@@ -1219,7 +1227,8 @@ FUNCTION initParameters
 
 	TODO list:
 	[ ] - Alternative parameterization using MSY and FMSY as leading parameters (Martell).
-	[ ] - avg recruitment limited to area, may consider ragged object for area & stock.
+	[*] - avg recruitment limited to area, may consider ragged object for area & stock.
+
 	*/
   	
 	ro          = mfexp(theta(1,1));
@@ -1339,7 +1348,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		empirical weight-at-age data, then calculate selectivity based on 
 		mean length. IMPLEMENTED IN CASE 11
 
-	[ ] change index for gear loop from j to k, and be consistent with year (i) and
+	[*] change index for gear loop from j to k, and be consistent with year (i) and
 	    age (j), and sex (h) indexing.
 
   	*/
@@ -1642,69 +1651,59 @@ FUNCTION calcNumbersAtAge
   		None
   	
   	NOTES:
-  			- Aug 9, 2012.  Made a change here to initialize the numbers
-			  at age in syr using the natural mortality rate at age in syr. 
-			  Prior to this the average (m_bar) rate was used, since this 
-			  has now changed with new projection control files.  Should only
-			  affect models that were using time varying natural mortality.
-  		
+		- Aug 9, 2012.  Made a change here to initialize the numbers
+		  at age in syr using the natural mortality rate at age in syr. 
+		  Prior to this the average (m_bar) rate was used, since this 
+		  has now changed with new projection control files.  Should only
+		  affect models that were using time varying natural mortality.
+  		- cntrl(5) is a flag to start at unfished conditions, so set N(syr,sage) = ro
   	
   	TODO list:
-  	[ ] 
+  	[ ] - Initialize from unfished conditions (cntrl 5 flag is true then rt(syr) = ro)
   	*/
-	
+	int ig;
 
 	N.initialize();
-// 	dvariable avg_M = mean(M_tot(syr));
-// 	dvar_vector lx(sage,nage);
-// 	lx(sage)=1;
-// 	for( j=sage+1; j<=nage;j++) 
-// 	{
-// 		lx(j) = lx(j-1)*exp(-avg_M);
-// 	}
-// 	lx(nage) /= (1.-exp(-avg_M));
-	
-// 	if(cntrl(5))    //If initializing in at unfished conditions
-// 	{	
-// 		log_rt(syr) = log(ro);
-// 		N(syr)      = ro * lx;
-// 		//SM Deprecated Aug 9, 2012
-// 		//for(j=sage;j<=nage;j++)
-// 		//{
-// 		//	N(syr,j)=ro*exp(-m_bar*(j-1.));    
-// 		//}
-// 	}
-// 	else            //If starting at unfished conditions
-// 	{
-// 		log_rt(syr)         = log_avgrec+log_rec_devs(syr);
-// 		N(syr,sage)         = mfexp(log_rt(syr));
-// 		dvar_vector tmpr    = mfexp(log_recinit + init_log_rec_devs(sage+1,nage));
-// 		N(syr)(sage+1,nage) = elem_prod(tmpr,lx(sage+1,nage));
-// 		//SM Deprecated Aug 9, 2012
-// 		//for(j=sage+1;j<=nage;j++)
-// 		//{
-// 		//	N(syr,j)=mfexp(log_recinit+init_log_rec_devs(j))*exp(-m_bar*(j-sage));
-// 		//}
-// 	}
-// 	// SM Depreceated Aug 9, 2012
-// 	//N(syr,nage)/=(1.-exp(-m_bar));
-	
-// 	//initial number of sage recruits from year syr+1, nyr;
-// 	for(i=syr+1;i<=nyr;i++){
-// 		log_rt(i)=log_avgrec+log_rec_devs(i);
-// 		N(i,sage)=mfexp(log_rt(i));
-// 	}
-// 	N(nyr+1,sage)=mfexp(log_avgrec);
-	
-// 	/* Dynamic state variables */
-// 	for(i=syr;i<=nyr;i++)
-// 	{
-// 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),S(i)(sage,nage-1))+1.e-10;
-// 		N(i+1,nage)+=N(i,nage)*S(i,nage);
-// 	}
-// 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;
-	
-//   }
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		dvar_vector lx(sage,nage);
+		dvar_vector tr(sage,nage);
+		lx(sage) = 1.0;
+		for(j=sage;j< nage;j++)
+		{
+			lx(j+1) = lx(j) * exp( -M(ig)(syr)(j) );
+		}
+		lx(nage) /= (1.-exp(-M(ig)(syr,nage)));
+		
+		if( cntrl(5) ) // initialize at unfished conditions.
+		{
+			tr =  log(1./nsex * ro) + log(lx);
+		}
+		else if ( !cntrl(5) )
+		{
+			tr(sage)        = 1./nsex * ( log_avgrec(ig)+log_rec_devs(ig)(syr));
+			tr(sage+1,nage) = 1./nsex * (log_recinit(ig)+init_log_rec_devs(ig));
+			tr(sage+1,nage) = tr(sage+1,nage)+log(lx(sage+1,nage));
+		}
+		N(ig)(syr)(sage,nage) = mfexp(tr);
+		log_rt(ig)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
+		for(i=syr;i<=nyr;i++)
+		{
+			if( i>syr )
+			{
+				log_rt(ig)(i) = 1./nsex * (log_avgrec(ig)+log_rec_devs(ig)(i));
+				N(ig)(i,sage) = mfexp( log_rt(ig)(i) );				
+			}
+
+			N(ig)(i+1)(sage+1,nage) =++elem_prod(N(ig)(i)(sage,nage-1)
+			                                     ,S(ig)(i)(sage,nage-1));
+			N(ig)(i+1,nage)        +=  N(ig)(i,nage)*S(ig)(i,nage);
+		}
+		N(ig)(nyr+1,sage) = mfexp(1./nsex * log_avgrec(ig));
+
+	}
+	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
+  }
 
 // FUNCTION calcAgeProportions
 //   {
@@ -1732,7 +1731,7 @@ FUNCTION calcNumbersAtAge
 // 	}
 // 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
-  }	
+  // }	
 
 // FUNCTION calcFisheryObservations
 //   {
