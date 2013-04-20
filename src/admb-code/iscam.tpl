@@ -645,6 +645,8 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Leading Parameters
 	// |---------------------------------------------------------------------------------|
+	// | npar            -> number of leading parameters
+	// | ipar_vector     -> integer vector based on the number of areas groups sexes
 	// | -1) log_ro      - unfished sage recruitment
 	// | -2) steepness   - steepness of the stock-recruitment relationship
 	// | -3) log_m       - instantaneous natural mortality rate
@@ -653,6 +655,7 @@ DATA_SECTION
 	// | -6) rho         - proportion of total variance for observation errors
 	// | -7) varhtheta   - total precision (1/variance)
 	init_int npar;
+	init_ivector  ipar_vector(1,npar);
 	init_matrix theta_control(1,npar,1,7);
 	
 	vector   theta_ival(1,npar);
@@ -918,13 +921,14 @@ DATA_SECTION
 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 	
 INITIALIZATION_SECTION
- theta theta_ival;
+  theta theta_ival;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | LEADING PARAMTERS
 	// |---------------------------------------------------------------------------------|
 	// | - Initialized in the INITIALIZATION_SECTION with theta_ival from control file.
+	// | [ ] Change to init_bounded_vector_vector.
 	// | theta[1] -> log_ro, or log_msy
 	// | theta[2] -> steepness(h), or log_fmsy
 	// | theta[3] -> log_m
@@ -933,9 +937,9 @@ PARAMETER_SECTION
 	// | theta[6] -> rho
 	// | theta[7] -> vartheta
 	// |
-	init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
+	// init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
+	init_bounded_vector_vector theta(1,npar,1,ipar_vector,theta_lb,theta_ub,theta_phz);
 	
-
 	// |---------------------------------------------------------------------------------|
 	// | SELECTIVITY PARAMETERS
 	// |---------------------------------------------------------------------------------|
@@ -1038,10 +1042,7 @@ PARAMETER_SECTION
     // | - bo          -> theoretical unfished spawning biomass (MSY-based ref point).
     // | - sbo         -> unfished spawning biomass at the time of spawning.
     // | - kappa       -> Goodyear recruitment compensation ratio K = 4h/(1-h); h=K/(4+K)
-    // | - m           -> Instantaneous natural mortality rate
     // | - m_bar       -> Average natural mortality rate from syr to nyr.
-    // | - log_avgrec  -> Average sage recruitment from syr to nyr in log-space.
-    // | - log_recinit -> Average initial recruitment for initial year cohorts.
     // | - rho         -> Proportion of total variance associated with obs error.
     // | - varphi      -> Total precision of CPUE and Recruitment deviations.
     // | - sig         -> STD of the observation errors in relative abundance data.
@@ -1053,10 +1054,7 @@ PARAMETER_SECTION
 	number bo;					
 	number sbo;					
 	number kappa;				
-	number m;					
 	number m_bar;				
-	number log_avgrec;			
-	number log_recinit;			
 	number rho;					
 	number varphi				
 	number sig;					
@@ -1068,6 +1066,9 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | POPULATION VECTORS
 	// |---------------------------------------------------------------------------------|
+    // | - m           -> Instantaneous natural mortality rate by nsex
+    // | - log_avgrec  -> Average sage recruitment from syr to nyr in log-space.
+    // | - log_recinit -> Average initial recruitment for initial year cohorts.
 	// | - log_rt      -> age-sage recruitment for initial years and annual recruitment.
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
 	// | - sbt         -> spawning stock biomass used in S-R relationship.
@@ -1076,6 +1077,9 @@ PARAMETER_SECTION
 	// | - q           -> conditional MLE estimates of q in It=q*Bt*exp(epsilon)
 	// |
 	
+	vector           m(1,nsex);	
+	vector  log_avgrec(1,narea);			
+	vector log_recinit(1,narea);			
 	vector     log_rt(syr-nage+sage,nyr);
 	vector         rt(syr+sage,nyr); 
 	vector        sbt(syr,nyr+1);	
@@ -1194,36 +1198,37 @@ PROCEDURE_SECTION
 
 FUNCTION initParameters
   {
-  /*
-  Purpose: This function extracts the specific parameter values from the theta vector
-           to initialize the leading parameters in the model.
-  Author: Steven Martell
-  
-  Arguments:
-  	None
-  
-  NOTES:
-  	- You must call this routine before running the simulation model to generate 
-  	  fake data, otherwise you'll have goofy initial values for your leading parameters.
-  	- Variance partitioning:
-      Estimating total variance as = 1/precision
-      and partition variance by rho = sig^2/(sig^2+tau^2).
-      
-      E.g. if sig = 0.2 and tau =1.12 then
-      rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
-      the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
+	/*
+	Purpose: This function extracts the specific parameter values from the theta vector
+	       to initialize the leading parameters in the model.
+	Author: Steven Martell
 
-  TODO list:
-  [ ] -Alternative parameterization using MSY and FMSY as leading parameters (Martell).
+	Arguments:
+		None
 
-  */
-	ro          = mfexp(theta(1));
-	dvariable h = theta(2);
+	NOTES:
+		- You must call this routine before running the simulation model to generate 
+		  fake data, otherwise you'll have goofy initial values for your leading parameters.
+		- Variance partitioning:
+	  Estimating total variance as = 1/precision
+	  and partition variance by rho = sig^2/(sig^2+tau^2).
+	  
+	  E.g. if sig = 0.2 and tau =1.12 then
+	  rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
+	  the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
+
+	TODO list:
+	[ ] - Alternative parameterization using MSY and FMSY as leading parameters (Martell).
+	[ ] - avg recruitment limited to area, may consider ragged object for area & stock.
+	*/
+  	
+	ro          = mfexp(theta(1,1));
+	dvariable h = theta(2,1);
 	m           = mfexp(theta(3));
 	log_avgrec  = theta(4);
 	log_recinit = theta(5);
-	rho         = theta(6);
-	varphi      = sqrt(1.0/theta(7));
+	rho         = theta(6,1);
+	varphi      = sqrt(1.0/theta(7,1));
 	sig         = sqrt(rho) * varphi;
 	tau         = sqrt(1-rho) * varphi;
 	
@@ -1589,7 +1594,7 @@ FUNCTION calcTotalMortality
 	log_m_devs.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
-		M(ig) = m;
+		M(ig) = m( i_sex(ig) );
 		if( active( log_m_nodes) )
 		{
 			int nodes = size_count(log_m_nodes);
