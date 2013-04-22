@@ -1140,11 +1140,17 @@ PARAMETER_SECTION
 	// | FOUR DIMENSIONAL ARRAYS
 	// |---------------------------------------------------------------------------------|
 	// | log_sel    -> Selectivity for (gear, group, year, age)
+	// | Chat       -> Predicted catch-age array for (gear, group, year, age)
 	// | 
-	4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
-	// 3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
+	4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);		
+	4darray    Chat(1,ngear,1,n_ags,syr,nyr,sage,nage);		
 	
-	// sdreport_number sd_depletion;	
+
+	// |---------------------------------------------------------------------------------|
+	// | SDREPORT VARIABLES AND VECTORS
+	// |---------------------------------------------------------------------------------|
+	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
+	sdreport_number sd_depletion;	
 	
 PRELIMINARY_CALCS_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -1175,7 +1181,7 @@ PROCEDURE_SECTION
 	
 	calcNumbersAtAge();
 	
-	// calcFisheryObservations();
+	calcFisheryObservations();
 	
 	// calcAgeProportions();
 	
@@ -1582,7 +1588,7 @@ FUNCTION calcTotalMortality
 		}
 		else if( !h ) // h=0 case for asexual catch
 		{
-			for(h=1;h<=2;h++)
+			for(h=1;h<=nsex;h++)
 			{
 				ii = pntr_ags(f,g,h);    
 				ftmp = mfexp(log_ft_pars(ig));
@@ -1705,6 +1711,10 @@ FUNCTION calcNumbersAtAge
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
 
+
+
+
+
 // FUNCTION calcAgeProportions
 //   {
 // 	/*This function loops over each gear and year
@@ -1733,29 +1743,83 @@ FUNCTION calcNumbersAtAge
 
   // }	
 
-// FUNCTION calcFisheryObservations
-//   {
-// 	/*
-// 	Dec 6, 2010.  Modified ct calculations to include
-// 				  empirical weight at age data (wt_avg);
-				
-// 	Jan 16, 2011. 	modified this code to get age-comps from surveys, rather than 
-// 					computing the age-comps in calc_fisheries_observations
+FUNCTION calcFisheryObservations
+  {
+  	/*
+  	Purpose:  This function calculates the fishery related observations, namely the catc
+  	          and catch-age composition data.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+	 	Dec 6, 2010.  Modified ct calculations to include
+	 				  empirical weight at age data (wt_avg);
+		Jan 16, 2011. Modified this code to get age-comps from surveys, rather than 
+					  computing the age-comps in calc_fisheries_observations
 	
-// 	Jan 6, 2012. 	modified code to allow for catch observations in numbers,
-// 					biomass, and harvest of roe.  
+		Jan 6, 2012.  Modified code to allow for catch observations in numbers,
+					  biomass, and harvest of roe.  
 	
-// 	Jun 22, 2012.	added eta variable for catch residuals.
-	
-// 	*/
-	
-// 	/*
-// 		FIXED Reconcile the difference between the predicted catch 
-// 		here and in the simulation model.
-// 	*/
-// 	int i,k;
-// 	ct.initialize();
-// 	eta.initialize();
+		Jun 22, 2012. Added eta variable for catch residuals.
+
+		Apr 21, 2013. Major changes associated with addding group dimension to the model.
+  		
+  		-             catch_data matrix cols: (year gear area group sex type value)
+  	
+  	TODO list:
+  	[*] FIXED Reconcile the difference between the predicted catch 
+ 		here and in the simulation model.
+  	*/
+
+
+	int ig,ii,l;
+	double d_ct;
+	dvar_vector log_va(sage,nage);
+	dvar_vector     fa(sage,nage);
+	Chat.initialize();
+	// ct.initialize();
+	// eta.initialize();
+
+	for(ii=1;ii<=n_ct_obs;ii++)
+	{
+		i    = catch_data(ii,1);
+		k    = catch_data(ii,2);
+		f    = catch_data(ii,3);
+		g    = catch_data(ii,4);
+		h    = catch_data(ii,5);
+		l    = catch_data(ii,6);
+		d_ct = catch_data(ii,7);
+
+		if( h ) // catch by sex
+		{
+			ig     = pntr_ags(f,g,h);
+			log_va = log_sel(k)(ig)(i);
+			fa     = ft(k)(i) * mfexp(log_va);
+			Chat(k)(ig)(i) = elem_prod(
+			                 elem_prod(
+			                  elem_div(fa,Z(ig)(i)),
+			                  1.-S(ig)(i)),
+			                  N(ig)(i));
+		}
+		else if ( !h ) // asexual catch
+		{
+			for(h=1;h<=nsex;h++)
+			{
+				ig     = pntr_ags(f,g,h);
+				log_va = log_sel(k)(ig)(i);
+				fa     = ft(k)(i) * mfexp(log_va);
+				Chat(k)(ig)(i) = elem_prod(
+			                 elem_prod(
+			                  elem_div(fa,Z(ig)(i)),
+			                  1.-S(ig)(i)),
+			                  N(ig)(i));
+			}
+		}
+	}
+	COUT(Chat(1));
+
 // 	for(i=syr;i<=nyr;i++)
 // 	{
 // 		for(k=1;k<=ngear;k++)
@@ -1818,9 +1882,9 @@ FUNCTION calcNumbersAtAge
 // 			ct(k,i)=Chat(k,i)*wt_avg(i);  //SM Dec 6, 2010*/
 // 		}
 // 	}
-// 	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
 
-//   }	
+  }	
 	
 // FUNCTION calcSurveyObservations
 //   {
