@@ -1210,6 +1210,8 @@ PROCEDURE_SECTION
 	calcNumbersAtAge();
 	
 	calcAgeComposition();
+
+	calcTotalCatch();
 	
 	// calcAgeProportions();
 	
@@ -1845,18 +1847,60 @@ FUNCTION calcAgeComposition
 			                  N(ig)(i));
 			}
 		}
-
-		// predicted catch
-		switch(l)
-		{
-			case 1:  // catch in weight
-				//ct(ig)(k)(i)
-			break;
-		}
 	} // n_ct_obs loop.
 	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
   }	
 	
+FUNCTION calcTotalCatch
+  {
+  	/*
+  	Purpose:  This function calculates the total catch.  
+  	Dependencies: Must call calcAgeComposition function first.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		
+  	
+  	TODO list:
+  	[ ] get rid of the obs_ct, ct, eta array structures, inefficient, better to use
+  	    a matrix, then cbind the predicted catch and residuals for report. (ie. and R
+  	    data.frame structure and use melt to ggplot for efficient plots.)
+  	*/
+  	 int ii,l,ig;
+  	// double d_ct;
+  	// ct.initialize();
+
+  	for(ii=1;ii<=n_ct_obs;ii++)
+	{
+		i    = catch_data(ii,1);
+		k    = catch_data(ii,2);
+		f    = catch_data(ii,3);
+		g    = catch_data(ii,4);
+		h    = catch_data(ii,5);
+		l    = catch_data(ii,6);
+		// d_ct = catch_data(ii,7);
+  		COUT(h);
+		ig     = pntr_ags(f,g,h);
+		switch(l)
+		{
+			case 1:  // catch in weight
+				ct(ig)(k)(i) = Chat(k)(ig)(i) * wt_avg(ig)(i);
+			break;
+
+			case 2:  // catch in numbers
+				ct(ig)(k)(i) = sum( Chat(k)(ig)(i) );
+			break;
+
+			case 3:  // roe fisheries, special case
+				dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
+				ct(ig)(k)(i) = (1.-exp(-ft(k)(i))) * ssb;
+			break;
+		}
+	}
+  }
 
 // 	for(i=syr;i<=nyr;i++)
 // 	{
