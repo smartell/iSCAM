@@ -1122,6 +1122,7 @@ PARAMETER_SECTION
 	matrix log_rt(1,n_ags,syr-nage+sage,nyr);
 	matrix  nlvec(1,7,1,ilvec);	
 	matrix  A_hat(1,n_A_nobs,a_sage,a_nage);
+	matrix   A_nu(1,n_A_nobs,a_sage,a_nage);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1759,14 +1760,18 @@ FUNCTION calcAgeProportions
   		- Adapted from iSCAM 1.5.  
   		- No longer using ragged arrays for gear, the ragged matrix is indexed by:
   		  year gear area, group, sex | age columns
+  		- For the residuals, note that each gear is weigthed by the conditional MLE
+  		  of the variance.
   	
   	TODO list:
-  	[ ] Add case where Chat data do not exsist.
+  	[*] - Add case where Chat data do not exsist.
+	[ ] - Calculate residuals A_nu
   	*/
   	int ii,ig;
   	dvar_vector log_va(sage,nage);
   	dvar_vector tmp_na(sage,nage);
   	A_hat.initialize();
+
   	for(ii=1;ii<=n_A_nobs;ii++)
   	{
   		i = A(ii)(1);
@@ -1810,9 +1815,10 @@ FUNCTION calcAgeProportions
 				}
   			}
   		}
-  		A_hat(ii) /= sum(A_hat(ii));
+  		A_hat(ii) /= sum( A_hat(ii) );
 
   	}
+  	
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
   }	
@@ -1853,9 +1859,7 @@ FUNCTION calcCatchAtAge
 	dvar_vector log_va(sage,nage);
 	dvar_vector     fa(sage,nage);
 	Chat.initialize();
-	// ct.initialize();
-	// eta.initialize();
-
+	
 	for(ii=1;ii<=n_ct_obs;ii++)
 	{
 		i    = catch_data(ii,1);
@@ -2285,6 +2289,14 @@ FUNCTION calc_objective_function
 // 	}
 	
 	
+	// |---------------------------------------------------------------------------------|
+	// | LIKELIHOOD FOR AGE-COMPOSITION DATA
+	// |---------------------------------------------------------------------------------|
+	// | - Two options based on cntrl(14):
+	// | - 	1 -> multivariate logistic using conditional MLE of the variance for weight.
+	// | -  2 -> multnomial, assumes input sample size as n in n log(p)
+	// | -  Both likelihoods pool pmin (cntrl(16)) into adjacent yearclass.
+	// | 
 	
 // 	//3) likelihood for age-composition data
 // 	for(k=1;k<=na_gears;k++)
