@@ -74,7 +74,7 @@
 //--                                                                           --//
 //-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector          --//
 //--             - modified the following routines:                            --//
-//--             - calcFisheryObservations                                     --//
+//--             - calcAgeComposition                                          --//
 //--             - calcTotalMortality                                          --//
 //--                                                                           --//
 //-- Oct 31,2012 - added penalty to time-varying changes in selex for          --//
@@ -360,14 +360,16 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Historical removal
 	// |---------------------------------------------------------------------------------|
-	// | Assumes total catch of both sexes by area
-	// | catch_data matrix cols: (year gear area group sex type value)
+	// | - Total catch in weight (type=1), numbers (type=2), or roe (type=3).
+	// | - catch_data matrix cols: (year gear area group sex type value).
+	// | - If total catch is asexual (sex=0), then split observed catch into nsex groups.
+	// | - obs_ct -> observed catch by (group, gear, year).
 	init_int n_ct_obs;
 	init_matrix catch_data(1,n_ct_obs,1,7);
 	
 
-// 	matrix obs_ct(1,ngear,syr,nyr);
 	int ft_count;
+ 	3darray obs_ct(1,n_ags,1,ngear,syr,nyr);
 
 	LOC_CALCS
 		ft_count = n_ct_obs;
@@ -381,6 +383,31 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<catch_data.sub(n_ct_obs-3,n_ct_obs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
+
+		// | Construct observed catch by group, gear, year array
+		obs_ct.initialize();
+		for(int ii=1;ii<=n_ct_obs;ii++)
+		{
+			i = catch_data(ii,1);
+			k = catch_data(ii,2);
+			f = catch_data(ii,3);
+			g = catch_data(ii,4);
+			h = catch_data(ii,5);
+			if( h )
+			{
+				ig = pntr_ags(f,g,h);
+				obs_ct(ig)(k)(i) = catch_data(ii,7);
+			}
+			else if( !h )
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig = pntr_ags(f,g,h);
+					obs_ct(ig)(k)(i) = 1./nsex * catch_data(ii,7);
+				}
+
+			}
+		}
 	END_CALCS
 	
 
@@ -1107,12 +1134,15 @@ PARAMETER_SECTION
 	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
 	// | S          -> Annual survival rate exp(-Z) for (group,year,age)
 	// | N          -> Numbers-at-age for (group,year+1,age)
-	// | 
-	3darray F(1,n_ags,syr,nyr,sage,nage);
-	3darray M(1,n_ags,syr,nyr,sage,nage);
-	3darray Z(1,n_ags,syr,nyr,sage,nage);
-	3darray S(1,n_ags,syr,nyr,sage,nage);
-	3darray N(1,n_ags,syr,nyr+1,sage,nage);
+	// | ct         -> Predicted catch for (group,gear,year) sex=0, split eql to nsex.
+	// | eta        -> log residuals between observed and predicted total catch.
+	3darray   F(1,n_ags,syr,nyr,sage,nage);
+	3darray   M(1,n_ags,syr,nyr,sage,nage);
+	3darray   Z(1,n_ags,syr,nyr,sage,nage);
+	3darray   S(1,n_ags,syr,nyr,sage,nage);
+	3darray   N(1,n_ags,syr,nyr+1,sage,nage);
+	3darray  ct(1,n_ags,1,ngear,syr,nyr);				
+	3darray eta(1,n_ags,1,ngear,syr,nyr);			
 
 	// matrix nlvec(1,7,1,ilvec);	//matrix for negative loglikelihoods
 	
@@ -1126,8 +1156,6 @@ PARAMETER_SECTION
 	matrix log_ft(1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
 	// matrix Z(syr,nyr,sage,nage);
 	// matrix S(syr,nyr,sage,nage);
-	// matrix ct(1,ngear,syr,nyr);				//predicted catch biomass
-	// matrix eta(1,ngear,syr,nyr);			//residuals for catch
 	// matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
 	// matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
 	// matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
@@ -1181,7 +1209,7 @@ PROCEDURE_SECTION
 	
 	calcNumbersAtAge();
 	
-	calcFisheryObservations();
+	calcAgeComposition();
 	
 	// calcAgeProportions();
 	
@@ -1743,7 +1771,7 @@ FUNCTION calcNumbersAtAge
 
   // }	
 
-FUNCTION calcFisheryObservations
+FUNCTION calcAgeComposition
   {
   	/*
   	Purpose:  This function calculates the fishery related observations, namely the catc
@@ -1817,8 +1845,18 @@ FUNCTION calcFisheryObservations
 			                  N(ig)(i));
 			}
 		}
-	}
-	COUT(Chat(1));
+
+		// predicted catch
+		switch(l)
+		{
+			case 1:  // catch in weight
+				//ct(ig)(k)(i)
+			break;
+		}
+	} // n_ct_obs loop.
+	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
+  }	
+	
 
 // 	for(i=syr;i<=nyr;i++)
 // 	{
@@ -1882,9 +1920,6 @@ FUNCTION calcFisheryObservations
 // 			ct(k,i)=Chat(k,i)*wt_avg(i);  //SM Dec 6, 2010*/
 // 		}
 // 	}
-	if(verbose)cout<<"**** Ok after calcFisheryObservations ****"<<endl;
-
-  }	
 	
 // FUNCTION calcSurveyObservations
 //   {
