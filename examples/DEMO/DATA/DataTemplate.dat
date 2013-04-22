@@ -97,23 +97,27 @@
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-1			# Number of gears with age-comps int(na_gears)
-12			# Number of rows in the matrix   ivector(na_nobs)
-3			# Youngest age column			   ivector(a_sage)
-9			# Oldest age column +group       ivector(a_nage)
-## year gear area sex age colums (numbers or proportions)
-   1968 1    1    0   13 129  646  954  99 19  4
-   1969 1    1    0   19 169  416 1031 243 47 18
-   1970 1    1    0   40 354  606  479 152 18  7
-   1971 1    1    0   32 606 1424  644 157 23 17
-   1972 1    1    0    0 226 1178 1156 116 16  5
-   1973 1    1    0    2 165  593  982 428 22 11
-   1974 1    1    0   53 209  560  410  30  0  4
-   1975 1    1    0    0 105  674  446  16  2  2
-   1976 1    1    0   46 422  838  726  70  4  4
-   1977 1    1    0    3 310 1224 1068  65  0  0
-   1978 1    1    0   14 354 1264 1172  69  0  6
-   1979 1    1    0    6 429 1222 1067 192  0  0  
+## 1			# Number of gears with age-comps int(na_gears)
+12			# Number of rows in the matrix   ivector(n_A_nobs)
+##3			# Youngest age column			   ivector(a_sage)
+##9			# Oldest age column +group       ivector(a_nage)
+## ivector(n_A_nobs) of youngest age-class
+3 3 3 3 3 3 3 3 3 3 3 3
+## ivector(n_A_nobs) of oldest age-class + group
+9 9 9 9 9 9 9 9 9 9 9 7
+## year gear area group sex | data columns (numbers or proportions)
+   1968 1    1    1     0     13 129  646  954  99 19  4
+   1969 1    1    1     0     19 169  416 1031 243 47 18
+   1970 1    1    1     0     40 354  606  479 152 18  7
+   1971 1    1    1     0     32 606 1424  644 157 23 17
+   1972 1    1    1     0      0 226 1178 1156 116 16  5
+   1973 1    1    1     0      2 165  593  982 428 22 11
+   1974 1    1    1     0     53 209  560  410  30  0  4
+   1975 1    1    1     0      0 105  674  446  16  2  2
+   1976 1    1    1     0     46 422  838  726  70  4  4
+   1977 1    1    1     0      3 310 1224 1068  65  0  0
+   1978 1    1    1     0     14 354 1264 1172  69  0  6
+   1979 1    1    1     0      6 429 1222 1067 192  #0  0  
 ##
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##

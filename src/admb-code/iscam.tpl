@@ -74,7 +74,7 @@
 //--                                                                           --//
 //-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector          --//
 //--             - modified the following routines:                            --//
-//--             - calcAgeComposition                                          --//
+//--             - calcCatchAtAge                                          --//
 //--             - calcTotalMortality                                          --//
 //--                                                                           --//
 //-- Oct 31,2012 - added penalty to time-varying changes in selex for          --//
@@ -442,23 +442,29 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | AGE COMPOSITION DATA (ragged object)
 	// |---------------------------------------------------------------------------------|
-	// | na_gears  = number of ragged objects
-	// | na_nobs   = ivector for number of rows in each object
-	// | a_sage    = ivector for starting age in each object
-	// | a_nage	   = ivector for plus group age
-	// | A         = 3darray of observations
-	init_int na_gears;	//total number of aging observations
-	init_ivector na_nobs(1,na_gears);
-	init_ivector a_sage(1,na_gears);	
-	init_ivector a_nage(1,na_gears);	
-	init_3darray A(1,na_gears,1,na_nobs,a_sage-4,a_nage);
+	// | - n_A_nobs   -> number of rows in age composition (A) matrix
+	// | a_sage       -> ivector for starting age in each row
+	// | a_nage	      -> ivector for plus group age in each row
+	// | icol_A       -> number of columns for each row in A.
+	// | A            -> matrix of data (year,gear,area,group,sex|Data...)
+	// |
+	init_int n_A_nobs;	//total number of aging observations
+	init_ivector a_sage(1,n_A_nobs);
+	init_ivector a_nage(1,n_A_nobs);
+	ivector      icol_A(1,n_A_nobs);
+	!! icol_A = 6 + a_nage - a_sage;
+	!! COUT(icol_A);
+	// init_ivector na_nobs(1,na_gears);
+	// init_ivector a_sage(1,na_gears);	
+	// init_ivector a_nage(1,na_gears);	
+	init_matrix A(1,n_A_nobs,1,icol_A);
 
 
 	LOC_CALCS
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(A)       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-3,na_nobs(na_gears))<<endl;
+		cout<<setw(4)<<A.sub(n_A_nobs-3,n_A_nobs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 	END_CALCS
 
@@ -899,7 +905,7 @@ DATA_SECTION
 	!! ilvec    = ngear;
 	!! ilvec(1) = 1;			
 	!! ilvec(2) = nit;			
-	!! ilvec(3) = na_gears;		
+	!! ilvec(3) = 1;		
 	!! ilvec(4) = 1;
 	
 
@@ -1197,11 +1203,11 @@ PROCEDURE_SECTION
 	
 	calcNumbersAtAge();
 	
-	calcAgeComposition();
+	calcCatchAtAge();
 
 	calcTotalCatch();
 	
-	// calcAgeProportions();
+	calcAgeProportions();
 	
 	// calcSurveyObservations();
 	
@@ -1733,8 +1739,24 @@ FUNCTION calcNumbersAtAge
 
 
 
-// FUNCTION calcAgeProportions
-//   {
+FUNCTION calcAgeProportions
+  {
+  	/*
+  	Purpose:  This function calculates the predicted age-composition samples (A) for 
+  	          both directed commercial fisheries and survey age-composition data.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		- Adapted from iSCAM 1.5.  
+  		- No longer using ragged arrays, just a matrix of age-comps, indexed by gear
+  		  area, group, sex.  
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 // 	/*This function loops over each gear and year
 // 	and calculates the predicted proportions at age
 // 	sampled based on the selectivity of that gear and
@@ -1757,11 +1779,11 @@ FUNCTION calcNumbersAtAge
 // 										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
 // 		}
 // 	}
-// 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
-  // }	
+  }	
 
-FUNCTION calcAgeComposition
+FUNCTION calcCatchAtAge
   {
   	/*
   	Purpose:  This function calculates the fishery related observations, namely the catc
@@ -1836,14 +1858,14 @@ FUNCTION calcAgeComposition
 			}
 		}
 	} // n_ct_obs loop.
-	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcCatchAtAge ****"<<endl;
   }	
 	
 FUNCTION calcTotalCatch
   {
   	/*
   	Purpose:  This function calculates the total catch.  
-  	Dependencies: Must call calcAgeComposition function first.
+  	Dependencies: Must call calcCatchAtAge function first.
   	Author: Steven Martell
   	
   	Arguments:
