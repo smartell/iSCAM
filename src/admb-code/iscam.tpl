@@ -453,11 +453,9 @@ DATA_SECTION
 	init_ivector a_nage(1,n_A_nobs);
 	ivector      icol_A(1,n_A_nobs);
 	!! icol_A = 6 + a_nage - a_sage;
-	!! COUT(icol_A);
-	// init_ivector na_nobs(1,na_gears);
-	// init_ivector a_sage(1,na_gears);	
-	// init_ivector a_nage(1,na_gears);	
 	init_matrix A(1,n_A_nobs,1,icol_A);
+
+	matrix A_obs(1,n_A_nobs,a_sage,a_nage);
 
 
 	LOC_CALCS
@@ -466,6 +464,11 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<setw(4)<<A.sub(n_A_nobs-3,n_A_nobs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
+		int ii;
+		for(ii=1;ii<=n_A_nobs;ii++)
+		{
+			A_obs(ii) = A(ii)(6,icol_A(ii)).shift(a_sage(ii));
+		}
 	END_CALCS
 
 	
@@ -1105,18 +1108,21 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
 	// |---------------------------------------------------------------------------------|
+	// | - ft       -> Mean fishing mortality rates for (gear, year)
+	// | - log_ft   -> Log fishing mortality rates for (gear,year)
 	// | - log_rt   -> age-sage recruitment for initial years and annual recruitment.
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
 	// | - nlvec    -> matrix for negative loglikelihoods.
+	// | - A_hat    -> ragged matrix for predicted age-composition data.
+	// | - A_nu		-> ragged matrix for age-composition residuals.
 	// | 
-	matrix   log_rt(1,n_ags,syr-nage+sage,nyr);
-	matrix    nlvec(1,7,1,ilvec);	
-	// matrix catch_df(1,n_ct_obs,1,9);				
-	//matrix      eta(1,n_ct_obs,1,ngear,syr,nyr);			
-	
-	// DEPRECATE // vector avg_log_sel(1,ngear);//conditional penalty for objective function	
-	// DEPRECATE// vector vax(sage,nage);		//survey selectivity coefficients
+	matrix     ft(1,ngear,syr,nyr);
+	matrix log_ft(1,ngear,syr,nyr);
+	matrix log_rt(1,n_ags,syr-nage+sage,nyr);
+	matrix  nlvec(1,7,1,ilvec);	
+	matrix  A_hat(1,n_A_nobs,a_sage,a_nage);
+
 
 	// |---------------------------------------------------------------------------------|
 	// | THREE DIMENSIONAL ARRAYS
@@ -1137,11 +1143,6 @@ PARAMETER_SECTION
 	// //matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	// //matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
 	 
-	// matrix N(syr,nyr+1,sage,nage);		//Numbers at age
-	// matrix F(syr,nyr,sage,nage);			//Age-specific fishing mortality
-	// matrix M_tot(syr,nyr,sage,nage);		//Age-specific natural mortality
-	matrix ft(1,ngear,syr,nyr);				//Gear specific fishing mortality rates
-	matrix log_ft(1,ngear,syr,nyr);			//Gear specific log fishing mortlity rates
 	// matrix Z(syr,nyr,sage,nage);
 	// matrix S(syr,nyr,sage,nage);
 	// matrix epsilon(1,nit,1,nit_nobs);		//residuals for survey abundance index
@@ -1743,7 +1744,12 @@ FUNCTION calcAgeProportions
   {
   	/*
   	Purpose:  This function calculates the predicted age-composition samples (A) for 
-  	          both directed commercial fisheries and survey age-composition data.
+  	          both directed commercial fisheries and survey age-composition data. For 
+  	          all years of data specified in the A matrix, calculated the predicted 
+  	          proportions-at-age in the sampled catch-at-age.  If no catch-age data exist
+  	          for a particular year i, for gear k (i.e. no directed fishery or from a 
+  	          survey sample process that does not have an appreciable F), the calculate 
+  	          the predicted proportion based on log(N) + log_sel(group,gear,year)
   	Author: Steven Martell
   	
   	Arguments:
@@ -1751,34 +1757,62 @@ FUNCTION calcAgeProportions
   	
   	NOTES:
   		- Adapted from iSCAM 1.5.  
-  		- No longer using ragged arrays, just a matrix of age-comps, indexed by gear
-  		  area, group, sex.  
+  		- No longer using ragged arrays for gear, the ragged matrix is indexed by:
+  		  year gear area, group, sex | age columns
   	
   	TODO list:
-  	[ ] 
+  	[ ] Add case where Chat data do not exsist.
   	*/
-// 	/*This function loops over each gear and year
-// 	and calculates the predicted proportions at age
-// 	sampled based on the selectivity of that gear and
-// 	the numbers-at-age in the population.*/
-	
-// 	int i,k,iyr,ig;
-// 	for(k=1;k<=na_gears;k++)
-// 	{
-// 		for(i=1;i<=na_nobs(k);i++)
-// 		{
-// 			iyr=A(k,i,a_sage(k)-2);	//index for year
-// 			ig=A(k,i,a_sage(k)-1);	//index for gear
-// 			if(iyr>nyr)break;		//trap for retrospective analysis
-			
-// 			A_nu(k,i,a_sage(k)-2)=iyr;
-// 			A_nu(k,i,a_sage(k)-1)=ig;
-// 			Ahat(k,i,a_sage(k)-2)=iyr;
-// 			Ahat(k,i,a_sage(k)-1)=ig;
-// 			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
-// 										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
-// 		}
-// 	}
+  	int ii,ig;
+  	dvar_vector log_va(sage,nage);
+  	dvar_vector tmp_na(sage,nage);
+  	A_hat.initialize();
+  	for(ii=1;ii<=n_A_nobs;ii++)
+  	{
+  		i = A(ii)(1);
+  		k = A(ii)(2);
+  		f = A(ii)(3);
+  		g = A(ii)(4);
+  		h = A(ii)(5);
+  		h = 1;
+  		// | trap for retrospecitve analysis.
+  		if(i > nyr) continue;
+
+
+  		if( h )
+  		{
+			ig        = pntr_ags(f,g,h);
+			if( sum(Chat(k)(ig)(i)) > 0 )
+			{
+				A_hat(ii) = Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
+			}
+			else
+			{
+				log_va    = log_sel(k)(ig)(i);
+				tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+				A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );
+			}
+  		}
+  		else if( !h )
+  		{
+  			for(h=1;h<=nsex;h++)
+  			{
+				ig         = pntr_ags(f,g,h);
+				if( sum(Chat(k)(ig)(i)) > 0)
+				{
+					A_hat(ii) += Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
+				}
+				else
+				{
+					log_va    = log_sel(k)(ig)(i);
+					tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+					A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );		
+				}
+  			}
+  		}
+  		A_hat(ii) /= sum(A_hat(ii));
+
+  	}
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
   }	
