@@ -363,13 +363,13 @@ DATA_SECTION
 	// | - Total catch in weight (type=1), numbers (type=2), or roe (type=3).
 	// | - catch_data matrix cols: (year gear area group sex type value).
 	// | - If total catch is asexual (sex=0), then split observed catch into nsex groups.
-	// | - obs_ct -> observed catch by (group, gear, year).
+	// | - ft_count -> Number of estimated fishing mortality rate parameters.
 	init_int n_ct_obs;
 	init_matrix catch_data(1,n_ct_obs,1,7);
 	
 
 	int ft_count;
- 	3darray obs_ct(1,n_ags,1,ngear,syr,nyr);
+ 	
 
 	LOC_CALCS
 		ft_count = n_ct_obs;
@@ -383,31 +383,6 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<catch_data.sub(n_ct_obs-3,n_ct_obs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
-
-		// | Construct observed catch by group, gear, year array
-		obs_ct.initialize();
-		for(int ii=1;ii<=n_ct_obs;ii++)
-		{
-			i = catch_data(ii,1);
-			k = catch_data(ii,2);
-			f = catch_data(ii,3);
-			g = catch_data(ii,4);
-			h = catch_data(ii,5);
-			if( h )
-			{
-				ig = pntr_ags(f,g,h);
-				obs_ct(ig)(k)(i) = catch_data(ii,7);
-			}
-			else if( !h )
-			{
-				for(h=1;h<=nsex;h++)
-				{
-					ig = pntr_ags(f,g,h);
-					obs_ct(ig)(k)(i) = 1./nsex * catch_data(ii,7);
-				}
-
-			}
-		}
 	END_CALCS
 	
 
@@ -921,7 +896,8 @@ DATA_SECTION
 	// | ilvec[3]       -> number of age-compisition data sets (na_gears)
 	// | ilvec[4]       -> container for recruitment deviations.
 	ivector ilvec(1,7);
-	!! ilvec    = ngear;			
+	!! ilvec    = ngear;
+	!! ilvec(1) = 1;			
 	!! ilvec(2) = nit;			
 	!! ilvec(3) = na_gears;		
 	!! ilvec(4) = 1;
@@ -1023,7 +999,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
-		if(!SimFlag) log_ft_pars = log(0.01);
+		if(!SimFlag) log_ft_pars = log(0.10);
 	END_CALCS
 	
 	
@@ -1105,6 +1081,8 @@ PARAMETER_SECTION
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | - log_m_devs  -> annual deviations in natural mortality.
 	// | - q           -> conditional MLE estimates of q in It=q*Bt*exp(epsilon)
+	// | - ct          -> predicted catch for each catch observation
+	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
 	// |
 	
 	vector           m(1,nsex);	
@@ -1114,14 +1092,22 @@ PARAMETER_SECTION
 	vector        sbt(syr,nyr+1);	
 	vector      delta(syr+sage,nyr);
 	vector log_m_devs(syr+1,nyr);
-	vector          q(1,nit);	
+	vector          q(1,nit);
+	vector         ct(1,n_ct_obs);
+	vector        eta(1,n_ct_obs);	
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
 	// |---------------------------------------------------------------------------------|
 	// | - log_rt   -> age-sage recruitment for initial years and annual recruitment.
+	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
+	// | - eta      -> log residuals between observed and predicted total catch.
+	// | - nlvec    -> matrix for negative loglikelihoods.
 	// | 
-	matrix     log_rt(1,n_ags,syr-nage+sage,nyr);
+	matrix   log_rt(1,n_ags,syr-nage+sage,nyr);
+	matrix    nlvec(1,7,1,ilvec);	
+	// matrix catch_df(1,n_ct_obs,1,9);				
+	//matrix      eta(1,n_ct_obs,1,ngear,syr,nyr);			
 	
 	// DEPRECATE // vector avg_log_sel(1,ngear);//conditional penalty for objective function	
 	// DEPRECATE// vector vax(sage,nage);		//survey selectivity coefficients
@@ -1134,17 +1120,13 @@ PARAMETER_SECTION
 	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
 	// | S          -> Annual survival rate exp(-Z) for (group,year,age)
 	// | N          -> Numbers-at-age for (group,year+1,age)
-	// | ct         -> Predicted catch for (group,gear,year) sex=0, split eql to nsex.
-	// | eta        -> log residuals between observed and predicted total catch.
+	// |
 	3darray   F(1,n_ags,syr,nyr,sage,nage);
 	3darray   M(1,n_ags,syr,nyr,sage,nage);
 	3darray   Z(1,n_ags,syr,nyr,sage,nage);
 	3darray   S(1,n_ags,syr,nyr,sage,nage);
 	3darray   N(1,n_ags,syr,nyr+1,sage,nage);
-	3darray  ct(1,n_ags,1,ngear,syr,nyr);				
-	3darray eta(1,n_ags,1,ngear,syr,nyr);			
 
-	// matrix nlvec(1,7,1,ilvec);	//matrix for negative loglikelihoods
 	
 	// //matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	// //matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
@@ -1194,6 +1176,12 @@ PRELIMINARY_CALCS_SECTION
 //    simulationModel(rseed);
 //  }
 //  if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
+	// |---------------------------------------------------------------------------------|
+	// | CONSTRUCT DATA FRAMES
+	// |---------------------------------------------------------------------------------|
+	// |
+	// dmatrix tmp_df = trans(trans(catch_data).sub(1,7));
+	
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,200,500,25000,25000
@@ -1219,7 +1207,7 @@ PROCEDURE_SECTION
 	
 	// calcStockRecruitment();
 	
-	// calc_objective_function();
+	calc_objective_function();
 
 	// sd_depletion=sbt(nyr)/sbo;
 	
@@ -1870,8 +1858,9 @@ FUNCTION calcTotalCatch
   	    data.frame structure and use melt to ggplot for efficient plots.)
   	*/
   	 int ii,l,ig;
-  	// double d_ct;
-  	// ct.initialize();
+  	double d_ct;
+  	ct.initialize();
+  	eta.initialize();
 
   	for(ii=1;ii<=n_ct_obs;ii++)
 	{
@@ -1881,89 +1870,68 @@ FUNCTION calcTotalCatch
 		g    = catch_data(ii,4);
 		h    = catch_data(ii,5);
 		l    = catch_data(ii,6);
-		// d_ct = catch_data(ii,7);
-  		COUT(h);
-		ig     = pntr_ags(f,g,h);
+		d_ct = catch_data(ii,7);
+  		
 		switch(l)
 		{
 			case 1:  // catch in weight
-				ct(ig)(k)(i) = Chat(k)(ig)(i) * wt_avg(ig)(i);
+				if( h )
+				{
+					ig     = pntr_ags(f,g,h);
+					ct(ii) = Chat(k)(ig)(i) * wt_avg(ig)(i);
+				}
+				else if( !h )
+				{
+					for(h=1;h<=nsex;h++)
+					{
+						ig      = pntr_ags(f,g,h);
+						ct(ii) += Chat(k)(ig)(i) * wt_avg(ig)(i);		
+					}
+				}
 			break;
 
 			case 2:  // catch in numbers
-				ct(ig)(k)(i) = sum( Chat(k)(ig)(i) );
+				if( h )
+				{
+					ig     = pntr_ags(f,g,h);
+					ct(ii) = sum( Chat(k)(ig)(i) );
+				}
+				else if( !h )
+				{
+					for(h=1;h<=nsex;h++)
+					{
+						ig      = pntr_ags(f,g,h);
+						ct(ii) += sum( Chat(k)(ig)(i) );
+					}
+				}
 			break;
 
 			case 3:  // roe fisheries, special case
-				dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
-				ct(ig)(k)(i) = (1.-exp(-ft(k)(i))) * ssb;
+				if( h )
+				{
+					ig            = pntr_ags(f,g,h);
+					dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
+					ct(ii)        = (1.-exp(-ft(k)(i))) * ssb;
+				}
+				else if( !h )
+				{
+					for(h=1;h<=nsex;h++)
+					{
+						ig            = pntr_ags(f,g,h);
+						dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
+						ct(ii)       += (1.-exp(-ft(k)(i))) * ssb;
+					}
+				}
 			break;
-		}
+		}	// end of switch
+
+		// | catch residual
+		eta(ii) = log(d_ct) - log(ct(ii));
 	}
+	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
   }
 
-// 	for(i=syr;i<=nyr;i++)
-// 	{
-// 		for(k=1;k<=ngear;k++)
-// 		{
-			
-// 			dvar_vector log_va=log_sel(k)(i);
-			
-			
-// 			//SJDM Jan 16, 2011 Modification as noted above.
-// 			//SJDM Jan 06, 2012 Modification as noted above.
-// 			if(obs_ct(k,i)>0)
-// 			{
-// 				dvar_vector fa=ft(k,i)*mfexp(log_va);
-// 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-// 				switch(catch_type(k))
-// 				{
-// 					case 1:	//catch in weight
-// 						ct(k,i) = Chat(k,i)*wt_avg(i);
-// 					break;
-// 					case 2:	//catch in numbers
-// 						ct(k,i) = sum(Chat(k,i));
-// 					break;
-// 					case 3:	//catch in roe that does not contribute to SSB
-// 						dvariable ssb = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-// 						ct(k,i) = ( 1.-mfexp(-ft(k,i)) )*ssb;
-// 					break;
-// 				}
-// 				eta(k,i) = log(obs_ct(k,i))-log(ct(k,i));
-// 			}
-// 			else
-// 			{/*If there is no commercial fishery the set Chat equal to 
-// 			   the expected proportions at age.*/
-// 				dvar_vector fa = mfexp(log_va);
-// 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-				
-// 				/*
-// 				dvar_matrix alk(sage,nage,1,nbins) = ALK(la, cv*la, xbin)
-				
-// 				Lhat(i) = Chat *ALK; 
-// 				*/
-				
-// 			}
-			
-			
-// 			/*
-// 			Changed this on Jan 16, 2011 as it was preventing
-// 			convergence for simuation with zero error due to the tiny
-// 			constant added to F.
-			
-// 			need to add a tiny constant to deal with catch-age data 
-// 			for non-extractive survey age comps
-// 			dvar_vector fa=ft(k,i)*mfexp(log_va)+1.e-30;
-			
-// 			//Catch-at-age by commercial gear
-// 			if(fsh_flag(k))
-// 				Chat(k,i)=elem_prod(elem_prod(elem_div(fa,Z(i)),1.-S(i)),N(i));
-			
-// 			//Catch weight by gear
-// 			//ct(k,i)=Chat(k,i)*wa;  
-// 			ct(k,i)=Chat(k,i)*wt_avg(i);  //SM Dec 6, 2010*/
-// 		}
-// 	}
+
 	
 // FUNCTION calcSurveyObservations
 //   {
@@ -2196,45 +2164,62 @@ FUNCTION calcTotalCatch
 	
 //   }
 	
-// FUNCTION calc_objective_function
-//   {
-// 	//Dec 20, 2010.  SJDM added prior to survey qs.
-// 	/*q_prior is an ivector with current options of 0 & 1.
-// 	0 is a uniform density (ignored) and 1 is a normal
-// 	prior density applied to log(q).*/
+FUNCTION calc_objective_function
+  {
+  	/*
+  	Purpose:  This function computes the objective function that ADMB will minimize.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+		There are several components to the objective function
+		Likelihoods (nlvec):
+			-1) likelihood of the catch data
+			-2) likelihood of the survey abundance index
+			-3) likelihood of age composition data 
+			-4) likelihood for stock-recruitment relationship
+			-5) penalized likelihood for fishery selectivities
+			-6) penalized likelihood for fishery selectivities
+  		
+  	
+  	TODO list:
+	[*]	- Dec 20, 2010.  SJDM added prior to survey qs.
+		  q_prior is an ivector with current options of 0 & 1 & 2.
+		  0 is a uniform density (ignored) and 1 is a normal
+		  prior density applied to log(q), and 2 is a random walk in q.
+  	[ ] - Allow for annual sig_c values in catch data likelihood.
+  	*/
 
-// 	/*
-// 	There are several components to the objective function
-// 	Likelihoods:
-// 		-1) likelihood of the catch data
-// 		-2) likelihood of the survey abundance index
-// 		-3) likelihood of age composition data 
-// 		-4) likelihood for stock-recruitment relationship
-// 		-5) penalized likelihood for fishery selectivities
-// 		-6) penalized likelihood for fishery selectivities
-// 	*/
+
+
 // 	int i,j,k;
 // 	double o=1.e-10;
 
 // 	dvar_vector lvec(1,7); 
 // 	lvec.initialize();
-// 	nlvec.initialize();
+	nlvec.initialize();
 	
-// 	//1) likelihood of the catch data (retro)
-// 	double sig_c =cntrl(3);
-// 	if(last_phase())sig_c=cntrl(4);
-// 	if(active(log_ft_pars))
-// 	for(k=1;k<=ngear;k++){
-// 		for(i=syr;i<=nyr;i++)
-// 		{
-// 			if(obs_ct(k,i)!=0)
-// 				nlvec(1,k)+=dnorm(eta(k,i),0.0,sig_c);
-// 				//nlvec(1,k)+=dnorm(log(ct(k,i)),log(obs_ct(k,i)),sig_c);
-// 		}
-// 		//if(active(log_ft_pars))
-// 		//	nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
-// 	}
-	
+	// |---------------------------------------------------------------------------------|
+	// | LIKELIHOOD FOR CATCH DATA
+	// |---------------------------------------------------------------------------------|
+	// | - This likelihood changes between phases n-1 and n:
+	// | - Phase (n-1): standard deviation in the catch based on user input cntrl(3)
+	// | - Phase (n)  : standard deviation in the catch based on user input cntrl(4)
+	// | 
+
+	double sig_c =cntrl(3);
+	if(last_phase())
+	{
+		sig_c=cntrl(4);
+	}
+	if( active(log_ft_pars) )
+	{
+		nlvec(1) = dnorm(eta,0.0,sig_c);
+	}
+
+
 	
 // 	//2) likelihood of the survey abundance index (retro)
 // 	for(k=1;k<=nit;k++)
@@ -2482,10 +2467,16 @@ FUNCTION calcTotalCatch
 // 	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
-// 	nf++;
-// 	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
+	objfun = sum(nlvec);
+	nf++;
+	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
-//   }
+  }
+
+
+
+
+
 
 // FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& ve,double& dye_df,double& d2ye_df2)//,double& phiq,double& dphiq_df, double& dre_df)
 //   {
