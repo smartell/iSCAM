@@ -98,13 +98,11 @@
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
  1			# Number of gears with age-comps int(na_gears)
-12			# Number of rows in the matrix   ivector(n_A_nobs)
-##3			# Youngest age column			   ivector(a_sage)
-##9			# Oldest age column +group       ivector(a_nage)
-## ivector(n_A_nobs) of youngest age-class
-3 3 3 3 3 3 3 3 3 3 3 3
-## ivector(n_A_nobs) of oldest age-class + group
-9 9 9 9 9 9 9 9 9 9 9 7
+12			# Number of rows in the matrix   ivector(na_gears)
+## ivector(na_gears) of youngest age-class
+3
+## ivector(na_gears) of oldest age-class + group
+9
 ## year gear area group sex | data columns (numbers or proportions)
    1968 1    1    1     0     13 129  646  954  99 19  4
    1969 1    1    1     0     19 169  416 1031 243 47 18

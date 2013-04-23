@@ -454,37 +454,20 @@ DATA_SECTION
 	init_ivector na_nobs(1,na_gears);	
 	init_ivector a_sage(1,na_gears);
 	init_ivector a_nage(1,na_gears);
-
-	LOC_CALCS
-		int ii = 1;
-		for(k=1;k<=na_gears;k++)
-		{
-			for(i=1;i<=na_nobs(k);i++)
-			{
-				icol_A(ii++) = 6 + a_nage(k)(i) - a_sage(k)(i);
-			}
-		}
-		COUT(icol_A);
-	END_CALCS
-	init_3darray A(1,na_gears,1,na_nobs,1,icol_A);
-	!! COUT(A);
+	init_3darray A(1,na_gears,1,na_nobs,a_sage-5,a_nage);
+	
 	3darray A_obs(1,na_gears,1,na_nobs,a_sage,a_nage);
-
-
 	LOC_CALCS
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(A)       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-2,na_nobs(na_gears))<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
-		
 		for(k=1;k<=na_gears;k++)
 		{
-			for(ii=1;ii<=na_nobs(k);ii++)
-			{
-				//A_obs(k)(ii) = A(k)(ii)(6,icol_A(ii)).shift(a_sage(k)(ii));
-			}			
+			A_obs(k) = trans(trans(A(k)).sub(a_sage(k),a_nage(k)));
 		}
+
 	END_CALCS
 
 	
@@ -1225,7 +1208,7 @@ PROCEDURE_SECTION
 
 	calcTotalCatch();
 	
-	calcAgeProportions();
+	calcAgeComposition();
 	
 	// calcSurveyObservations();
 	
@@ -1757,7 +1740,7 @@ FUNCTION calcNumbersAtAge
 
 
 
-FUNCTION calcAgeProportions
+FUNCTION calcAgeComposition
   {
   	/*
   	Purpose:  This function calculates the predicted age-composition samples (A) for 
@@ -1783,59 +1766,60 @@ FUNCTION calcAgeProportions
   	[*] - Add case where Chat data do not exsist.
 	[ ] - Calculate residuals A_nu
   	*/
-  	int ii,ig;
+  	int ii,ig,kk;
   	dvar_vector log_va(sage,nage);
   	dvar_vector tmp_na(sage,nage);
   	A_hat.initialize();
 
-  	// for(ii=1;ii<=n_A_nobs;ii++)
-  	// {
-  	// 	i = A(ii)(1);
-  	// 	k = A(ii)(2);
-  	// 	f = A(ii)(3);
-  	// 	g = A(ii)(4);
-  	// 	h = A(ii)(5);
-  	// 	h = 1;
-  	// 	// | trap for retrospecitve analysis.
-  	// 	if(i > nyr) continue;
-
-
-  	// 	if( h )
-  	// 	{
-			// ig        = pntr_ags(f,g,h);
-			// if( sum(Chat(k)(ig)(i)) > 0 )
-			// {
-			// 	A_hat(ii) = Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
-			// }
-			// else
-			// {
-			// 	log_va    = log_sel(k)(ig)(i);
-			// 	tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-			// 	A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );
-			// }
-  	// 	}
-  	// 	else if( !h )
-  	// 	{
-  	// 		for(h=1;h<=nsex;h++)
-  	// 		{
-			// 	ig         = pntr_ags(f,g,h);
-			// 	if( sum(Chat(k)(ig)(i)) > 0)
-			// 	{
-			// 		A_hat(ii) += Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
-			// 	}
-			// 	else
-			// 	{
-			// 		log_va    = log_sel(k)(ig)(i);
-			// 		tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-			// 		A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );		
-			// 	}
-  	// 		}
-  	// 	}
-  	// 	A_hat(ii) /= sum( A_hat(ii) );
-
-  	// }
+  	 for(kk=1;kk<=na_gears;kk++)
+  	 {
+  	 	for(ii=1;ii<=na_nobs(kk);ii++)
+  	 	{
+	  		i = A(kk)(ii)(a_sage(kk)-5);
+	  		k = A(kk)(ii)(a_sage(kk)-4);
+	  		f = A(kk)(ii)(a_sage(kk)-3);
+	  		g = A(kk)(ii)(a_sage(kk)-2);
+	  		h = A(kk)(ii)(a_sage(kk)-1);
+	  		
+	  		// | trap for retrospecitve analysis.
+	  		if(i > nyr) continue;
+  	 		
+	  		if( h )
+	  		{
+				ig = pntr_ags(f,g,h);
+				if( sum(Chat(k)(ig)(i)) > 0 )
+				{
+					A_hat(kk)(ii) = Chat(k)(ig)(i)(a_sage(kk),a_nage(kk));
+				}
+				else
+				{
+					log_va = log_sel(k)(ig)(i);
+					tmp_na = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+					A_hat(kk)(ii) = tmp_na( a_sage(kk),a_nage(kk) );
+				}
+	  		}
+	  		else if( !h )
+	  		{
+	  			for(h=1;h<=nsex;h++)
+	  			{
+					ig = pntr_ags(f,g,h);
+					if( sum(Chat(k)(ig)(i)) > 0)
+					{
+						A_hat(kk)(ii) += Chat(k)(ig)(i)(a_sage(kk),a_nage(kk));
+					}
+					else
+					{
+						log_va = log_sel(k)(ig)(i);
+						tmp_na = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+						A_hat(kk)(ii) = tmp_na( a_sage(kk),a_nage(kk) );		
+					}
+	  			}
+	  		}
+	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
+  	 	}
+  	}
   	
-	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
 
   }	
 
