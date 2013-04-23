@@ -97,7 +97,7 @@
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-## 1			# Number of gears with age-comps int(na_gears)
+ 1			# Number of gears with age-comps int(na_gears)
 12			# Number of rows in the matrix   ivector(n_A_nobs)
 ##3			# Youngest age column			   ivector(a_sage)
 ##9			# Oldest age column +group       ivector(a_nage)
@@ -117,7 +117,7 @@
    1976 1    1    1     0     46 422  838  726  70  4  4
    1977 1    1    1     0      3 310 1224 1068  65  0  0
    1978 1    1    1     0     14 354 1264 1172  69  0  6
-   1979 1    1    1     0      6 429 1222 1067 192  #0  0  
+   1979 1    1    1     0      6 429 1222 1067 192  0  0  
 ##
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##

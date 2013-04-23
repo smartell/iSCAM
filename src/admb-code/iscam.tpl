@@ -442,32 +442,48 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | AGE COMPOSITION DATA (ragged object)
 	// |---------------------------------------------------------------------------------|
-	// | - n_A_nobs   -> number of rows in age composition (A) matrix
-	// | a_sage       -> ivector for starting age in each row
-	// | a_nage	      -> ivector for plus group age in each row
+	// | - na_gears   -> number of age-composition matrixes, one for each gear.
+	// | - na_nobs    -> ivector for number of rows in age composition (A) matrix
+	// | a_sage       -> imatrix for starting age in each row
+	// | a_nage	      -> imatrix for plus group age in each row
 	// | icol_A       -> number of columns for each row in A.
-	// | A            -> matrix of data (year,gear,area,group,sex|Data...)
+	// | A            -> array of data (year,gear,area,group,sex|Data...)
+	// | A_obs        -> array of catch-age data only.
 	// |
-	init_int n_A_nobs;	//total number of aging observations
-	init_ivector a_sage(1,n_A_nobs);
-	init_ivector a_nage(1,n_A_nobs);
-	ivector      icol_A(1,n_A_nobs);
-	!! icol_A = 6 + a_nage - a_sage;
-	init_matrix A(1,n_A_nobs,1,icol_A);
+	init_int na_gears
+	init_ivector na_nobs(1,na_gears);	
+	init_ivector a_sage(1,na_gears);
+	init_ivector a_nage(1,na_gears);
 
-	matrix A_obs(1,n_A_nobs,a_sage,a_nage);
+	LOC_CALCS
+		int ii = 1;
+		for(k=1;k<=na_gears;k++)
+		{
+			for(i=1;i<=na_nobs(k);i++)
+			{
+				icol_A(ii++) = 6 + a_nage(k)(i) - a_sage(k)(i);
+			}
+		}
+		COUT(icol_A);
+	END_CALCS
+	init_3darray A(1,na_gears,1,na_nobs,1,icol_A);
+	!! COUT(A);
+	3darray A_obs(1,na_gears,1,na_nobs,a_sage,a_nage);
 
 
 	LOC_CALCS
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(A)       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<setw(4)<<A.sub(n_A_nobs-3,n_A_nobs)<<endl;
+		cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-2,na_nobs(na_gears))<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
-		int ii;
-		for(ii=1;ii<=n_A_nobs;ii++)
+		
+		for(k=1;k<=na_gears;k++)
 		{
-			A_obs(ii) = A(ii)(6,icol_A(ii)).shift(a_sage(ii));
+			for(ii=1;ii<=na_nobs(k);ii++)
+			{
+				//A_obs(k)(ii) = A(k)(ii)(6,icol_A(ii)).shift(a_sage(k)(ii));
+			}			
 		}
 	END_CALCS
 
@@ -1114,15 +1130,11 @@ PARAMETER_SECTION
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
 	// | - nlvec    -> matrix for negative loglikelihoods.
-	// | - A_hat    -> ragged matrix for predicted age-composition data.
-	// | - A_nu		-> ragged matrix for age-composition residuals.
 	// | 
 	matrix     ft(1,ngear,syr,nyr);
 	matrix log_ft(1,ngear,syr,nyr);
 	matrix log_rt(1,n_ags,syr-nage+sage,nyr);
 	matrix  nlvec(1,7,1,ilvec);	
-	matrix  A_hat(1,n_A_nobs,a_sage,a_nage);
-	matrix   A_nu(1,n_A_nobs,a_sage,a_nage);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1133,12 +1145,16 @@ PARAMETER_SECTION
 	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
 	// | S          -> Annual survival rate exp(-Z) for (group,year,age)
 	// | N          -> Numbers-at-age for (group,year+1,age)
+	// | - A_hat    -> ragged matrix for predicted age-composition data.
+	// | - A_nu		-> ragged matrix for age-composition residuals.
 	// |
 	3darray   F(1,n_ags,syr,nyr,sage,nage);
 	3darray   M(1,n_ags,syr,nyr,sage,nage);
 	3darray   Z(1,n_ags,syr,nyr,sage,nage);
 	3darray   S(1,n_ags,syr,nyr,sage,nage);
 	3darray   N(1,n_ags,syr,nyr+1,sage,nage);
+	3darray  A_hat(1,na_gears,1,na_nobs,a_sage,a_nage);
+	3darray   A_nu(1,na_gears,1,na_nobs,a_sage,a_nage);
 
 	
 	// //matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
@@ -1772,52 +1788,52 @@ FUNCTION calcAgeProportions
   	dvar_vector tmp_na(sage,nage);
   	A_hat.initialize();
 
-  	for(ii=1;ii<=n_A_nobs;ii++)
-  	{
-  		i = A(ii)(1);
-  		k = A(ii)(2);
-  		f = A(ii)(3);
-  		g = A(ii)(4);
-  		h = A(ii)(5);
-  		h = 1;
-  		// | trap for retrospecitve analysis.
-  		if(i > nyr) continue;
+  	// for(ii=1;ii<=n_A_nobs;ii++)
+  	// {
+  	// 	i = A(ii)(1);
+  	// 	k = A(ii)(2);
+  	// 	f = A(ii)(3);
+  	// 	g = A(ii)(4);
+  	// 	h = A(ii)(5);
+  	// 	h = 1;
+  	// 	// | trap for retrospecitve analysis.
+  	// 	if(i > nyr) continue;
 
 
-  		if( h )
-  		{
-			ig        = pntr_ags(f,g,h);
-			if( sum(Chat(k)(ig)(i)) > 0 )
-			{
-				A_hat(ii) = Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
-			}
-			else
-			{
-				log_va    = log_sel(k)(ig)(i);
-				tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-				A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );
-			}
-  		}
-  		else if( !h )
-  		{
-  			for(h=1;h<=nsex;h++)
-  			{
-				ig         = pntr_ags(f,g,h);
-				if( sum(Chat(k)(ig)(i)) > 0)
-				{
-					A_hat(ii) += Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
-				}
-				else
-				{
-					log_va    = log_sel(k)(ig)(i);
-					tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-					A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );		
-				}
-  			}
-  		}
-  		A_hat(ii) /= sum( A_hat(ii) );
+  	// 	if( h )
+  	// 	{
+			// ig        = pntr_ags(f,g,h);
+			// if( sum(Chat(k)(ig)(i)) > 0 )
+			// {
+			// 	A_hat(ii) = Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
+			// }
+			// else
+			// {
+			// 	log_va    = log_sel(k)(ig)(i);
+			// 	tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+			// 	A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );
+			// }
+  	// 	}
+  	// 	else if( !h )
+  	// 	{
+  	// 		for(h=1;h<=nsex;h++)
+  	// 		{
+			// 	ig         = pntr_ags(f,g,h);
+			// 	if( sum(Chat(k)(ig)(i)) > 0)
+			// 	{
+			// 		A_hat(ii) += Chat(k)(ig)(i)(a_sage(ii),a_nage(ii));
+			// 	}
+			// 	else
+			// 	{
+			// 		log_va    = log_sel(k)(ig)(i);
+			// 		tmp_na    = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
+			// 		A_hat(ii) = tmp_na( a_sage(ii),a_nage(ii) );		
+			// 	}
+  	// 		}
+  	// 	}
+  	// 	A_hat(ii) /= sum( A_hat(ii) );
 
-  	}
+  	// }
   	
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
 
