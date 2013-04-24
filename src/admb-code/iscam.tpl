@@ -911,7 +911,7 @@ DATA_SECTION
 	!! ilvec(1) = 1;			
 	!! ilvec(2) = nit;			
 	!! ilvec(3) = na_gears;		
-	!! ilvec(4) = 1;
+	!! ilvec(4) = ngroup;
 	
 
 	// |---------------------------------------------------------------------------------|
@@ -1720,7 +1720,6 @@ FUNCTION calcNumbersAtAge
 		f  = i_area(ig);
 		g  = i_group(ig);
 		ih = pntr_ag(f,g);
-		cout<<ig<<"\t"<<ih<<endl;
 
 		dvar_vector lx(sage,nage);
 		dvar_vector tr(sage,nage);
@@ -2177,12 +2176,14 @@ FUNCTION calcStockRecruitment
   	
   	TODO list:
   	[ ] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
-  	[ ] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroups
+  	[ ] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
 
   	*/
 
-  	int ig;
+  	int ig,ih;
+  	rt.initialize();
   	sbt.initialize();
+  	delta.initialize();
 	
 	dvariable phib,so,beta;
 	dvar_vector   stmp(sage,nage);
@@ -2233,6 +2234,10 @@ FUNCTION calcStockRecruitment
 				stmp          = mfexp(-M(ig)(nyr)*cntrl(13));
 				sbt(g,nyr+1) += elem_prod(N(ig)(nyr),wt_mat(ig)(i)) * stmp;
 			}
+
+			// |Estimated recruits
+			ih     = pntr_ag(f,g);
+			rt(g) += mfexp(log_rt(ih)(syr+sage,nyr));
 		}
 
 		// | Step 6. calculate stock recruitment parameters (so, beta, sbo);
@@ -2244,7 +2249,6 @@ FUNCTION calcStockRecruitment
 		{
 			case 1:  // | Beverton Holt model
 				beta   = (kappa-1.)/sbo;
-				COUT(beta)
 				tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
 			break;
 
@@ -2255,65 +2259,8 @@ FUNCTION calcStockRecruitment
 		}
 		
 		// | Step 8. // residuals in stock-recruitment curve
-		// rt(g)    = mfexp(log_rt(syr+sage,nyr));
-		// delta(g) = log(rt)-log(tmp_rt)+0.5*tau*tau;
-
+		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
 	}
-	
-// 	// -steps (1),(2),(3)
-// 	dvar_matrix t_M_tot = trans(M_tot);
-// 	for(j=sage; j<=nage;j++)
-// 	{
-// 		ma(j) = mean(t_M_tot(j));
-// 		if(j>sage)
-// 		{
-// 			lx(j) = lx(j-1)*mfexp(-ma(j-1));
-// 		} 
-// 		lw(j) = lx(j) * mfexp(-ma(j)*cntrl(13));
-// 	}
-// 	lx(nage) /= 1.0 - mfexp(-ma(nage));
-// 	lw(nage) /= 1.0 - mfexp(-ma(nage));
-// 	phib      = lw * fa_bar;
-	
-	
-// 	// step (4)
-// 	for(i=syr;i<=nyr;i++)
-// 	{
-// 		sbt(i) = elem_prod(N(i),exp(-Z(i)*cntrl(13)))*fec(i);
-// 		//Adjustment to spawning biomass for roe fisheries
-// 		for(k=1;k<=ngear;k++)
-// 		{
-// 			if(catch_type(k)==3)
-// 			{
-// 				sbt(i) *= mfexp(-ft(k,i));
-// 			}
-// 		}
-			
-// 	}
-// 	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
-// 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
-	
-// 	sbo = ro*phib;
-// 	// steps (6),(7)
-// 	so = kappa/phib;			//max recruits per spawner
-// 	switch(int(cntrl(2)))
-// 	{
-// 		case 1:
-// 			//Beverton-Holt model
-// 			beta   = (kappa-1.)/sbo;
-// 			tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
-// 			break;
-// 		case 2:
-// 			//Ricker model
-// 			beta   = log(kappa)/sbo;
-// 			tmp_rt = elem_prod(so*tmp_st,exp(-beta*tmp_st));
-// 		break;
-// 	}
-	
-// 	// step (8) residuals in stock-recruitment curve
-// 	rt    = mfexp(log_rt(syr+sage,nyr));
-// 	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
-	
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
   }
@@ -2344,6 +2291,7 @@ FUNCTION calcObjectiveFunction
 		  0 is a uniform density (ignored) and 1 is a normal
 		  prior density applied to log(q), and 2 is a random walk in q.
   	[ ] - Allow for annual sig_c values in catch data likelihood.
+  	[ ] - Increase dimensionality of sig and tau to ngroup.
   	*/
 
 
@@ -2440,7 +2388,17 @@ FUNCTION calcObjectiveFunction
 	}
 	
 	
-	
+	// |---------------------------------------------------------------------------------|
+	// | STOCK-RECRUITMENT LIKELIHOOD COMPONENT
+	// |---------------------------------------------------------------------------------|
+	// | - tau is the process error standard deviation.
+	if( active(theta(1)) || active(theta(2)) )
+	{
+		for(g=1;g<=ngroup;g++)
+		{
+			nlvec(4,g) = dnorm(delta(g),tau);
+		}
+	}
 // 	//4) likelihood for stock-recruitment relationship
 // 	dvariable tau = sqrt(1.-rho)*varphi;
 // 	if(active(theta(1)))
