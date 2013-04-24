@@ -1088,7 +1088,6 @@ PARAMETER_SECTION
     // | - log_avgrec  -> Average sage recruitment(syr-nyr,area,group).
     // | - log_recinit -> Avg. initial recruitment for initial year cohorts(area,group).
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
-	// | - sbt         -> spawning stock biomass used in S-R relationship.
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | - log_m_devs  -> annual deviations in natural mortality.
 	// | - q           -> conditional MLE estimates of q in It=q*Bt*exp(epsilon)
@@ -1100,7 +1099,6 @@ PARAMETER_SECTION
 	vector  log_avgrec(1,n_ag);			
 	vector log_recinit(1,n_ag);			
 	vector         rt(syr+sage,nyr); 
-	vector        sbt(syr,nyr+1);	
 	vector      delta(syr+sage,nyr);
 	vector log_m_devs(syr+1,nyr);
 	vector          q(1,nit);
@@ -1119,6 +1117,7 @@ PARAMETER_SECTION
 	// | - epsilon  -> residuals for survey abundance index
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
 	// | - qt       -> catchability coefficients (time-varying)
+	// | - sbt      -> spawning stock biomass by group used in S-R relationship.
 	// | 
 	matrix      ft(1,ngear,syr,nyr);
 	matrix  log_ft(1,ngear,syr,nyr);
@@ -1127,6 +1126,7 @@ PARAMETER_SECTION
 	matrix epsilon(1,nit,1,nit_nobs);
 	matrix  it_hat(1,nit,1,nit_nobs);
 	matrix      qt(1,nit,1,nit_nobs);
+	matrix     sbt(1,ngroup,syr,nyr);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -2143,15 +2143,20 @@ FUNCTION calcSurveyObservations
 FUNCTION calcStockRecruitment
   {
   	/*
-  	Purpose:  This function is used to derive the underlying stock-recruitment 
-  	          relationship that is ultimately used in determining MSY-based reference 
-  	          points.  The objective of this function is to determine the appropriate 
-  	          Ro, Bo and steepness values of either the Beverton-Holt or Ricker  Stock-
-  	          Recruitment Model:
-  	          Beverton-Holt Model
-  				Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
-			  Ricker Model
-				Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
+	Purpose:  
+		This function is used to derive the underlying stock-recruitment 
+		relationship that is ultimately used in determining MSY-based reference 
+		points.  The objective of this function is to determine the appropriate 
+		Ro, Bo and steepness values of either the Beverton-Holt or Ricker  Stock-
+		Recruitment Model:
+		Beverton-Holt Model
+		Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
+		Ricker Model
+		Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
+			
+		The definition of a stock is based on group only. At this point, spawning biomass
+		from all areas for a given group is the assumed stock, and the resulting
+		recruitment is compared with the estimated recruits|group for all areas.
 
   	Author: Steven Martell
   	
@@ -2172,49 +2177,28 @@ FUNCTION calcStockRecruitment
   	
   	TODO list:
   	[ ] 
+
   	*/
-// 	/*
-// 	The following code is used to derive unfished
-// 	spawning stock biomass bo and the stock-
-// 	recruitment parameters for the:
-// 	Beverton-Holt Model
-// 		-Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
-// 	Ricker Model
-// 		-Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
-		
-// 	Dec 6, 2010.  Modified code to allow empirical weight-at-age data
-// 				This required a fecundity-at-age matrix.  Need to 
-// 				project spawning biomass into the future.
-// 	CHANGED bo should be a function of the average natural mortality
-// 	TODO update phib calculation if age-specific M's are used.
+
+  	int ig;
+  	sbt.initialize();
 	
-// 	May 6, 2010.  Changed phib calculation based on average M 
-// 	in cases where M varies over time. Otherwise bo is biased based
-// 	on the initial value of M.
-	
-// 	CHANGED Need to adjust spawning biomass to post fishery numbers.
-// 	CHANGED Need to adjust spawners per recruit (phib) to average fecundity.
-	
-// 	Jan 6, 2012.  Need to adjust stock-recruitment curve for reductions 
-// 	in fecundity associated with removal of roe from a spawn on kelp fishery.
-	
-// 	Aug 9, 2012. Revised routine so that the slope of the stock recruitment
-// 	relationship is based on all of the average fecundity over the whole series.
-// 	Bo is no longer calculated in this routine. This is in response to recent 
-// 	issue with the herring assessment, where reference points (Bo included) are 
-// 	based on recent trends in mean weight-at-age/fecundity-at-age.
-	
-	
-// 	*/ 
-// 	int i,j,k;
-	
-// 	dvariable   phib,so,beta;
-// 	dvariable   tau = sqrt(1.-rho)*varphi;
+	dvariable   phib,so,beta;
+	dvariable   tau = sqrt(1.-rho)*varphi;
 // 	dvar_vector     ma(sage,nage);
 // 	dvar_vector tmp_rt(syr+sage,nyr);
 // 	dvar_vector     lx(sage,nage); lx(sage) = 1.0;
 // 	dvar_vector     lw(sage,nage); lw(sage) = 1.0;
 
+	for(g=1;g<=ngroup;g++)
+	{
+		for(ig=1;ig<=n_ags;ig++)
+		{
+			f = i_area(ig);
+			h = i_sex(ig);
+			cout<<f<<"\t"<<h"<<endl;
+		}
+	}
 	
 // 	// -steps (1),(2),(3)
 // 	dvar_matrix t_M_tot = trans(M_tot);
