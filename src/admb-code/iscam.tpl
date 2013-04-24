@@ -224,21 +224,27 @@ DATA_SECTION
 	// linked lists to manage array indexs
 	int n_ags;
 	!! n_ags = narea * ngroup * nsex;
+	int n_ag;
+	!! n_ag  = narea * ngroup;
 	ivector   i_area(1,n_ags);
 	ivector  i_group(1,n_ags);
 	ivector    i_sex(1,n_ags);
+	imatrix  pntr_ag(1,narea,1,ngroup);
 	3darray pntr_ags(1,narea,1,ngroup,1,nsex);
 	
 	
 	
 	LOC_CALCS
 		age.fill_seqadd(sage,1);
-		int ig;
+		int ig,ih;
 		ig = 0;
+		ih = 0;
 		for(f=1; f<=narea; f++)
 		{
 			for(g=1; g<=ngroup; g++)
 			{
+				ih ++;
+				pntr_ag(f,g) = ih;
 				for(h=1;h<=nsex;h++)
 				{
 					ig ++;
@@ -263,6 +269,7 @@ DATA_SECTION
 		cout<<"| i_area \t"<<i_area<<endl;
 		cout<<"| i_group\t"<<i_group<<endl;
 		cout<<"| i_sex  \t"<<i_sex<<endl;
+		cout<<"| pntr_ag\n"<<pntr_ag<<endl;
 		cout<<"| pntr_ags\n"<<pntr_ags(1)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		
@@ -678,7 +685,7 @@ DATA_SECTION
 		ipar_vector(1,2) = 1;
 		ipar_vector(6,7) = 1;
 		ipar_vector(3)   = nsex;
-		ipar_vector(4,5) = narea*ngroup*nsex;
+		ipar_vector(4,5) = n_ag;
 	END_CALCS
 	
 	// |---------------------------------------------------------------------------------|
@@ -1019,8 +1026,8 @@ PARAMETER_SECTION
 
 	!! int init_dev_phz = 2;
 	!! if(cntrl(5)) init_dev_phz = -1;
-	init_bounded_matrix init_log_rec_devs(1,n_ags,sage+1,nage,-15.,15.,init_dev_phz);
-	init_bounded_matrix log_rec_devs(1,n_ags,syr,nyr,-15.,15.,2);
+	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
+	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-15.,15.,2);
 	
 
 
@@ -1078,8 +1085,8 @@ PARAMETER_SECTION
 	// | POPULATION VECTORS
 	// |---------------------------------------------------------------------------------|
     // | - m           -> Instantaneous natural mortality rate by nsex
-    // | - log_avgrec  -> Average sage recruitment from syr to nyr in log-space.
-    // | - log_recinit -> Average initial recruitment for initial year cohorts.
+    // | - log_avgrec  -> Average sage recruitment(syr-nyr,area,group).
+    // | - log_recinit -> Avg. initial recruitment for initial year cohorts(area,group).
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
 	// | - sbt         -> spawning stock biomass used in S-R relationship.
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
@@ -1090,8 +1097,8 @@ PARAMETER_SECTION
 	// |
 	
 	vector           m(1,nsex);	
-	vector  log_avgrec(1,n_ags);			
-	vector log_recinit(1,n_ags);			
+	vector  log_avgrec(1,n_ag);			
+	vector log_recinit(1,n_ag);			
 	vector         rt(syr+sage,nyr); 
 	vector        sbt(syr,nyr+1);	
 	vector      delta(syr+sage,nyr);
@@ -1115,7 +1122,7 @@ PARAMETER_SECTION
 	// | 
 	matrix      ft(1,ngear,syr,nyr);
 	matrix  log_ft(1,ngear,syr,nyr);
-	matrix  log_rt(1,n_ags,syr-nage+sage,nyr);
+	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nit,1,nit_nobs);
 	matrix  it_hat(1,nit,1,nit_nobs);
@@ -1176,7 +1183,7 @@ PRELIMINARY_CALCS_SECTION
 	// | - nf is a function evaluation counter.
  	// | 
      nf=0;
-//  // cout<<"OK TO HERE"<<endl;
+  
 //  if(SimFlag) 
 //  {
 //    initParameters();
@@ -1212,7 +1219,7 @@ PROCEDURE_SECTION
 	
 	calcSurveyObservations();
 	
-	// calcStockRecruitment();
+	calcStockRecruitment();
 	
 	calcObjectiveFunction();
 
@@ -1261,27 +1268,39 @@ FUNCTION initParameters
 	[*] - avg recruitment limited to area, may consider ragged object for area & stock.
 
 	*/
+
   	
-	ro          = mfexp(theta(1,1));
-	dvariable h = theta(2,1);
-	m           = mfexp(theta(3));
-	log_avgrec  = theta(4);
-	log_recinit = theta(5);
-	rho         = theta(6,1);
-	varphi      = sqrt(1.0/theta(7,1));
-	sig         = sqrt(rho) * varphi;
-	tau         = sqrt(1-rho) * varphi;
-	
+  	int ih;
+  	dvariable steepness;
+	ro        = mfexp(theta(1,1));
+	steepness = theta(2,1);
+	m         = mfexp(theta(3));
+	rho       = theta(6,1);
+	varphi    = sqrt(1.0/theta(7,1));
+	sig       = sqrt(rho) * varphi;
+	tau       = sqrt(1-rho) * varphi;
+
+	for(f=1;f<=narea;f++)
+	{
+		for(g=1;g<=ngroup;g++)
+		{
+			ih = pntr_ag(f,g);
+
+			log_avgrec(ih)  = theta(4,ih);
+			log_recinit(ih) = theta(5,ih);	
+		}
+	}
+
 	
 	switch(int(cntrl(2)))
 	{
 		case 1:
 			//Beverton-Holt model
-			kappa = (4.*h/(1.-h));
+			kappa = (4.*steepness/(1.-steepness));
 			break;
 		case 2:
 			//Ricker model
-			kappa = pow((5.*h),1.25);
+			kappa = pow((5.*steepness),1.25);
 		break;
 	}
 	
@@ -1690,13 +1709,19 @@ FUNCTION calcNumbersAtAge
   		- cntrl(5) is a flag to start at unfished conditions, so set N(syr,sage) = ro
   	
   	TODO list:
+  	[ ] - Restrict log_avgrec and rec_devs to area and group dimensions (remove sex).
   	[ ] - Initialize from unfished conditions (cntrl 5 flag is true then rt(syr) = ro)
   	*/
-	int ig;
+	int ig,ih;
 
 	N.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
+		f  = i_area(ig);
+		g  = i_group(ig);
+		ih = pntr_ag(f,g);
+		cout<<ig<<"\t"<<ih<<endl;
+
 		dvar_vector lx(sage,nage);
 		dvar_vector tr(sage,nage);
 		lx(sage) = 1.0;
@@ -1712,25 +1737,26 @@ FUNCTION calcNumbersAtAge
 		}
 		else if ( !cntrl(5) )
 		{
-			tr(sage)        = 1./nsex * ( log_avgrec(ig)+log_rec_devs(ig)(syr));
-			tr(sage+1,nage) = 1./nsex * (log_recinit(ig)+init_log_rec_devs(ig));
+			tr(sage)        = 1./nsex * ( log_avgrec(ih)+log_rec_devs(ih)(syr));
+			tr(sage+1,nage) = 1./nsex * (log_recinit(ih)+init_log_rec_devs(ih));
 			tr(sage+1,nage) = tr(sage+1,nage)+log(lx(sage+1,nage));
 		}
 		N(ig)(syr)(sage,nage) = mfexp(tr);
-		log_rt(ig)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
+		log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 		for(i=syr;i<=nyr;i++)
 		{
 			if( i>syr )
 			{
-				log_rt(ig)(i) = 1./nsex * (log_avgrec(ig)+log_rec_devs(ig)(i));
-				N(ig)(i,sage) = mfexp( log_rt(ig)(i) );				
+				log_rt(ih)(i) = 1./nsex * (log_avgrec(ih)+log_rec_devs(ih)(i));
+				N(ig)(i,sage) = mfexp( log_rt(ih)(i) );				
 			}
 
 			N(ig)(i+1)(sage+1,nage) =++elem_prod(N(ig)(i)(sage,nage-1)
 			                                     ,S(ig)(i)(sage,nage-1));
 			N(ig)(i+1,nage)        +=  N(ig)(i,nage)*S(ig)(i,nage);
 		}
-		N(ig)(nyr+1,sage) = mfexp(1./nsex * log_avgrec(ig));
+		N(ig)(nyr+1,sage) = mfexp(1./nsex * log_avgrec(ih));
+		
 
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
@@ -2114,8 +2140,39 @@ FUNCTION calcSurveyObservations
 	
   }
 	
-// FUNCTION calcStockRecruitment
-//   {
+FUNCTION calcStockRecruitment
+  {
+  	/*
+  	Purpose:  This function is used to derive the underlying stock-recruitment 
+  	          relationship that is ultimately used in determining MSY-based reference 
+  	          points.  The objective of this function is to determine the appropriate 
+  	          Ro, Bo and steepness values of either the Beverton-Holt or Ricker  Stock-
+  	          Recruitment Model:
+  	          Beverton-Holt Model
+  				Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
+			  Ricker Model
+				Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
+
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+		Psuedocode:
+		-1) Get average natural mortality rate at age.
+		-2) Calculate survivorship to time of spawning.
+		-3) Calculate unfished spawning biomass per recruit.
+		-4) Compute spawning biomass vector & substract roe fishery
+		-5) Project spawning biomass to nyr+1 under natural mortality.
+		-6) Calculate stock recruitment parameters (so, beta);
+		-7) Calculate predicted recruitment
+		-8) Compute residuals from estimated recruitments.
+  			
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 // 	/*
 // 	The following code is used to derive unfished
 // 	spawning stock biomass bo and the stock-
@@ -2147,15 +2204,6 @@ FUNCTION calcSurveyObservations
 // 	issue with the herring assessment, where reference points (Bo included) are 
 // 	based on recent trends in mean weight-at-age/fecundity-at-age.
 	
-// 	Psuedocode:
-// 		-1) Get average natural mortality rate at age.
-// 		-2) Calculate survivorship to time of spawning.
-// 		-3) Calculate unfished spawning biomass per recruit.
-// 		-4) Compute spawning biomass vector & substract roe fishery
-// 		-5) Project spawning biomass to nyr+1 under natural mortality.
-// 		-6) Calculate stock recruitment parameters (so, beta);
-// 		-7) Calculate predicted recruitment
-// 		-8) Compute residuals from estimated recruitments.
 	
 // 	*/ 
 // 	int i,j,k;
@@ -2222,9 +2270,9 @@ FUNCTION calcSurveyObservations
 // 	rt    = mfexp(log_rt(syr+sage,nyr));
 // 	delta = log(rt)-log(tmp_rt)+0.5*tau*tau;
 	
-// 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
-//   }
+  }
 	
 FUNCTION calcObjectiveFunction
   {
