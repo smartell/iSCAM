@@ -1087,8 +1087,6 @@ PARAMETER_SECTION
     // | - m           -> Instantaneous natural mortality rate by nsex
     // | - log_avgrec  -> Average sage recruitment(syr-nyr,area,group).
     // | - log_recinit -> Avg. initial recruitment for initial year cohorts(area,group).
-	// | - rt          -> predicted sage-recruits based on S-R relationship.
-	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | - log_m_devs  -> annual deviations in natural mortality.
 	// | - q           -> conditional MLE estimates of q in It=q*Bt*exp(epsilon)
 	// | - ct          -> predicted catch for each catch observation
@@ -1098,12 +1096,10 @@ PARAMETER_SECTION
 	vector           m(1,nsex);	
 	vector  log_avgrec(1,n_ag);			
 	vector log_recinit(1,n_ag);			
-	vector         rt(syr+sage,nyr); 
-	vector      delta(syr+sage,nyr);
-	vector log_m_devs(syr+1,nyr);
 	vector          q(1,nit);
 	vector         ct(1,n_ct_obs);
 	vector        eta(1,n_ct_obs);	
+	vector log_m_devs(syr+1,nyr);
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1118,6 +1114,8 @@ PARAMETER_SECTION
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
 	// | - qt       -> catchability coefficients (time-varying)
 	// | - sbt      -> spawning stock biomass by group used in S-R relationship.
+	// | - rt          -> predicted sage-recruits based on S-R relationship.
+	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
 	matrix      ft(1,ngear,syr,nyr);
 	matrix  log_ft(1,ngear,syr,nyr);
@@ -1126,7 +1124,9 @@ PARAMETER_SECTION
 	matrix epsilon(1,nit,1,nit_nobs);
 	matrix  it_hat(1,nit,1,nit_nobs);
 	matrix      qt(1,nit,1,nit_nobs);
-	matrix     sbt(1,ngroup,syr,nyr);
+	matrix     sbt(1,ngroup,syr,nyr+1);
+	matrix      rt(1,ngroup,syr+sage,nyr); 
+	matrix   delta(1,ngroup,syr+sage,nyr);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -2176,28 +2176,88 @@ FUNCTION calcStockRecruitment
   			
   	
   	TODO list:
-  	[ ] 
+  	[ ] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
+  	[ ] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroups
 
   	*/
 
   	int ig;
   	sbt.initialize();
 	
-	dvariable   phib,so,beta;
-	dvariable   tau = sqrt(1.-rho)*varphi;
-// 	dvar_vector     ma(sage,nage);
-// 	dvar_vector tmp_rt(syr+sage,nyr);
-// 	dvar_vector     lx(sage,nage); lx(sage) = 1.0;
-// 	dvar_vector     lw(sage,nage); lw(sage) = 1.0;
-
+	dvariable phib,so,beta;
+	dvar_vector   stmp(sage,nage);
+	dvar_vector     ma(sage,nage);
+	dvar_vector tmp_rt(syr+sage,nyr);
+	dvar_vector     lx(sage,nage); 
+	dvar_vector     lw(sage,nage); 
+	
+	
 	for(g=1;g<=ngroup;g++)
 	{
-		for(ig=1;ig<=n_ags;ig++)
+		lx.initialize();
+		lw.initialize();
+		lx(sage) = 1.0;
+		lw(sage) = 1.0;
+		phib = 0;
+		for(f=1;f<=narea;f++)
 		{
-			f = i_area(ig);
-			h = i_sex(ig);
-			cout<<f<<"\t"<<h"<<endl;
+			for(h=1;h<=nsex;h++)
+			{
+				ig = pntr_ags(f,g,h);
+
+				// | Step 1. average natural mortality rate at age.
+				// | Step 2. calculate survivorship
+				for(j=sage;j<=nage;j++)
+				{
+					ma(j) = mean(trans(M(ig))(j));
+					if(j > sage)
+					{
+						lx(j) = lx(j-1) * mfexp(-ma(j-1));
+					}
+					lw(j) = lx(j) * mfexp(-ma(j)*cntrl(13));
+				}
+				lx(nage) /= 1.0 - mfexp(-ma(nage));
+				lw(nage) /= 1.0 - mfexp(-ma(nage));
+				
+				// | Step 3. calculate average spawing biomass per recruit.
+				phib += 1./(narea*nsex) * lw *wt_mat(ig)(syr);
+
+				// | Step 4. compute spawning biomass at time of spawning.
+				for(i=syr;i<=nyr;i++)
+				{
+					stmp      = mfexp(-Z(ig)(i)*cntrl(13));
+					sbt(g,i) += elem_prod(N(ig)(i),wt_mat(ig)(i)) * stmp;
+				}
+
+				// | Step 5. spawning biomass projection under natural mortality only.
+				stmp          = mfexp(-M(ig)(nyr)*cntrl(13));
+				sbt(g,nyr+1) += elem_prod(N(ig)(nyr),wt_mat(ig)(i)) * stmp;
+			}
 		}
+
+		// | Step 6. calculate stock recruitment parameters (so, beta, sbo);
+		// | Step 7. calculate predicted recruitment.
+		so  = kappa/phib;
+		sbo = ro * phib;
+		dvar_vector tmp_st = sbt(g)(syr,nyr-sage).shift(syr+sage);
+		switch(int(cntrl(2)))
+		{
+			case 1:  // | Beverton Holt model
+				beta   = (kappa-1.)/sbo;
+				COUT(beta)
+				tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
+			break;
+
+			case 2:  // | Ricker model
+				beta   = log(kappa)/sbo;
+				tmp_rt = elem_prod(so*tmp_st,exp(-beta*tmp_st));
+			break;
+		}
+		
+		// | Step 8. // residuals in stock-recruitment curve
+		// rt(g)    = mfexp(log_rt(syr+sage,nyr));
+		// delta(g) = log(rt)-log(tmp_rt)+0.5*tau*tau;
+
 	}
 	
 // 	// -steps (1),(2),(3)
