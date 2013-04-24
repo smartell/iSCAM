@@ -71,28 +71,28 @@
 ## ------------------------------------------------------------------------- ##
 ## ABUNDANCE INDICES -A RAGGED ARRAY: (1,nit,1,nit_nobs,1,5)                 ##
 ## ------------------------------------------------------------------------- ##
-1				# Number of abundance series 		int(nit)
+1				# Number of abundance series 		    int(nit)
 12				# Number of observations in series   ivector(nit_nobs(1,nit))
-1				# Survey type (see key below)		ivector(survey_type(1,nit))
+1				# Survey type (see key below)		    ivector(survey_type(1,nit))
 ## 1 = survey is proportional to vulnerable numbers
 ## 2 = survey is proportional to vulnerable biomass
 ## 3 = survey is proportional to spawning biomass (e.g., a spawn survey)
 ##
 ## survey_data:
 ##                                        survey
-## iyr	  index(it) gear area sex	wt	   timing
-   1968    189.1042  1    1    0    1.0   0.5
-   1969    213.6809  1    1    0    1.0   0.5
-   1970    252.0164  1    1    0    1.0   0.5
-   1971    305.3218  1    1    0    1.0   0.5
-   1972    288.2026  1    1    0    1.0   0.5
-   1973    222.7052  1    1    0    1.0   0.5
-   1974    161.6239  1    1    0    1.0   0.5
-   1975    156.8800  1    1    0    1.0   0.5
-   1976    187.9063  1    1    0    1.0   0.5
-   1977    190.1439  1    1    0    1.0   0.5
-   1978    215.9952  1    1    0    1.0   0.5
-   1979    245.9929  1    1    0    1.0   0.5
+## iyr	  index(it) gear area group sex	wt	   timing
+   1968    189.1042  1    1    1     0    1.0   0.5
+   1969    213.6809  1    1    1     0    1.0   0.5
+   1970    252.0164  1    1    1     0    1.0   0.5
+   1971    305.3218  1    1    1     0    1.0   0.5
+   1972    288.2026  1    1    1     0    1.0   0.5
+   1973    222.7052  1    1    1     0    1.0   0.5
+   1974    161.6239  1    1    1     0    1.0   0.5
+   1975    156.8800  1    1    1     0    1.0   0.5
+   1976    187.9063  1    1    1     0    1.0   0.5
+   1977    190.1439  1    1    1     0    1.0   0.5
+   1978    215.9952  1    1    1     0    1.0   0.5
+   1979    245.9929  1    1    1     0    1.0   0.5
 ##
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
