@@ -15,27 +15,15 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   1.0          0.0     10      2       1       7.0     2.0     #log_ro      ##
+   1.0          0.0     10      2       0       0.0     10.0     #log_ro      ##
    0.75         0.2     1.0     2       3       3.00    2.00    #steepness   ##
-   -1.203973    -3.0    2.0    -4       1       -1.203  0.05    #log_m g&b   ##
+   -1.203973    -3.0    2.0     4       1       -1.203  0.15    #log_m g&b   ##
    1.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
    1.0          0.0     10      1       0       0.0     10      #log_recinit ##
    0.5          0.01    0.99    3       3       3.00    5.00    #rho         ##
    0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
-## -PARAMETER
-#| log_ro | steep  | log_m1 | log_m2 | avgrec | recinit| rho    | precis |
-#  1       0.75     -1.2039 -1.2039    1        1       0.50     0.80     # ival
-#  0       0.20     -3.0000 -3.0000    0        0       0.01     0.01     # lb
-# 10       1.00      2.0000  2.0000   10       10       0.99     5.00     # ub
-#  2       2         4       4         1        1       3        3        # phz
-#  1       3         1       1         0        0       3        4        # prior type
-#  7       3.00     -1.2030 -1.2030    0        0       3.00     1.01     # p1
-#  2       2.00      0.0500  0.0500   10       10       5.00     1.01     # p2
-
-
-
-
+##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
@@ -85,7 +73,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

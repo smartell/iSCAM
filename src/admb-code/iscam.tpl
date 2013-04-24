@@ -2490,43 +2490,50 @@ FUNCTION calcObjectiveFunction
 // 	}
 	
 	
-// 	/*
-// 	PRIORS for estimated model parameters from the control file.
-// 	*/
-// 	dvar_vector priors(1,npar);
-// 	dvariable ptmp; priors.initialize();
-// 	for(i=1;i<=npar;i++)
-// 	{
-// 		if(active(theta(i)))
-// 		{
-// 			switch(theta_prior(i))
-// 			{
-// 			case 1:		//normal
-// 				ptmp=dnorm(theta(i),theta_control(i,6),theta_control(i,7));
-// 				break;
-				
-// 			case 2:		//lognormal CHANGED RF found an error in dlnorm prior. rev 116
-// 				ptmp=dlnorm(theta(i),theta_control(i,6),theta_control(i,7));
-// 				break;
-				
-// 			case 3:		//beta distribution (0-1 scale)
-// 				double lb,ub;
-// 				lb=theta_lb(i);
-// 				ub=theta_ub(i);
-// 				ptmp=dbeta((theta(i)-lb)/(ub-lb),theta_control(i,6),theta_control(i,7));
-// 				break;
-				
-// 			case 4:		//gamma distribution
-// 				ptmp=dgamma(theta(i),theta_control(i,6),theta_control(i,7));
-// 				break;
-				
-// 			default:	//uniform density
-// 				ptmp=1./(theta_control(i,3)-theta_control(i,2));
-// 				break;
-// 			}
-// 			priors(i)=ptmp;	
-// 		}
-// 	}
+	// |---------------------------------------------------------------------------------|
+	// | PRIORS FOR LEADING PARAMETERS p(theta)
+	// |---------------------------------------------------------------------------------|
+	// | - theta_prior is a switch to determine which statistical distribution to use.
+	// |
+	dvariable ptmp; 
+	dvar_vector priors(1,npar);
+	priors.initialize();
+	for(i=1;i<=npar;i++)
+	{
+		ptmp = 0;
+		for(j=1;j<=ipar_vector(i);j++)
+		{
+			if( active(theta(i)) )
+			{
+				switch(theta_prior(i))
+				{
+				case 1:		//normal
+					ptmp += dnorm(theta(i,j),theta_control(i,6),theta_control(i,7));
+					break;
+					
+				case 2:		//lognormal CHANGED RF found an error in dlnorm prior. rev 116
+					ptmp += dlnorm(theta(i,j),theta_control(i,6),theta_control(i,7));
+					break;
+					
+				case 3:		//beta distribution (0-1 scale)
+					double lb,ub;
+					lb=theta_lb(i);
+					ub=theta_ub(i);
+					ptmp += dbeta((theta(i,j)-lb)/(ub-lb),theta_control(i,6),theta_control(i,7));
+					break;
+					
+				case 4:		//gamma distribution
+					ptmp += dgamma(theta(i,j),theta_control(i,6),theta_control(i,7));
+					break;
+					
+				default:	//uniform density
+					ptmp += log(1./(theta_control(i,3)-theta_control(i,2)));
+					break;
+				}
+			}
+		}
+		priors(i) = ptmp;	
+	}
 	
 // 	//Priors for suvey q based on control file.
 // 	dvar_vector qvec(1,nits);
@@ -2599,8 +2606,9 @@ FUNCTION calcObjectiveFunction
 // 	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
-	COUT(nlvec);
-	objfun = sum(nlvec);
+	// COUT(nlvec);
+	objfun  = sum(nlvec);
+	objfun += sum(priors);
 	nf++;
 	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
 	
@@ -3685,51 +3693,52 @@ FUNCTION calcObjectiveFunction
 //   	return (pa);
 //   }
 
-// REPORT_SECTION
-//   {
-// 	if(verbose)cout<<"Start of Report Section..."<<endl;
-// 	int i,j,k;
-// 	report<<DataFile<<endl;
-// 	report<<ControlFile<<endl;
-// 	report<<ProjectFileControl<<endl;
-// 	REPORT(objfun);
-// 	REPORT(nlvec);
-// 	REPORT(ro);
-// 	double rbar=value(exp(log_avgrec));
-// 	REPORT(rbar);
-// 	double rinit=value(exp(log_recinit));
-// 	REPORT(rinit);
-// 	REPORT(sbo);
-// 	REPORT(kappa);
-// 	double steepness=value(theta(2));
-// 	REPORT(steepness);
-// 	REPORT(m);
-// 	double tau = value(sqrt(1.-rho)*varphi);
-// 	double sig = value(sqrt(rho)*varphi);
-// 	REPORT(tau);
-// 	REPORT(sig);
-// 	REPORT(age_tau2);
+REPORT_SECTION
+  {
+	if(verbose)cout<<"Start of Report Section..."<<endl;
+	report<<DataFile<<endl;
+	report<<ControlFile<<endl;
+	report<<ProjectFileControl<<endl;
+	REPORT(objfun);
+	REPORT(nlvec);
+	REPORT(ro);
+	dvector rbar=value(exp(log_avgrec));
+	REPORT(rbar);
+	dvector rinit=value(exp(log_recinit));
+	REPORT(rinit);
+	REPORT(sbo);
+	REPORT(kappa);
+	dvector steepness=value(theta(2));
+	REPORT(steepness);
+	REPORT(m);
+	// double tau = value(sqrt(1.-rho)*varphi);
+	// double sig = value(sqrt(rho)*varphi);
+	REPORT(tau);
+	REPORT(sig);
+	REPORT(age_tau2);
 	
-// 	// Model dimensions
-// 	REPORT(syr);
-// 	REPORT(nyr);
-// 	REPORT(sage);
-// 	REPORT(nage);
-// 	REPORT(ngear);
-// 	REPORT(narea);
-// 	REPORT(ngroup);
-// 	REPORT(nsex);
-// 	ivector yr(syr,nyr);
-// 	ivector yrs(syr,nyr+1);
-// 	yr.fill_seqadd(syr,1); 
-// 	yrs.fill_seqadd(syr,1); 
-// 	REPORT(yr);
-// 	REPORT(yrs);
-// 	REPORT(iyr);
-// 	REPORT(age);
-// 	REPORT(la);
-// 	REPORT(wa);
-// 	REPORT(fec);
+	// Model dimensions
+	REPORT(narea);
+	REPORT(ngroup);
+	REPORT(nsex);
+	REPORT(syr);
+	REPORT(nyr);
+	REPORT(sage);
+	REPORT(nage);
+	REPORT(ngear);
+
+	ivector yr(syr,nyr);
+	ivector yrs(syr,nyr+1);
+	yr.fill_seqadd(syr,1); 
+	yrs.fill_seqadd(syr,1); 
+	REPORT(yr);
+	REPORT(yrs);
+	// REPORT(iyr);  //DEPRECATE, old survey years
+	REPORT(age);
+	REPORT(la);
+	REPORT(wa);
+	REPORT(ma);
+	
 // 	//Selectivity
 // 	report<<"log_sel"<<endl;
 // 	for(k=1;k<=ngear;k++)
@@ -3852,7 +3861,7 @@ FUNCTION calcObjectiveFunction
 // 	// exit(1);
 // 	#endif
 	
-//   }
+  }
 	
 // FUNCTION decision_table
 //   {
