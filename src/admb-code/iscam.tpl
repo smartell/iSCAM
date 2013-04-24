@@ -2092,9 +2092,7 @@ FUNCTION calcSurveyObservations
 
 			nz ++;
 
-
-
-			h ==0?h=1:NULL;
+			// h ==0?h=1:NULL;
 			Na.initialize();
 			for(h=1;h<=nsex;h++)
 			{
