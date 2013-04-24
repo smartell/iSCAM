@@ -1620,6 +1620,8 @@ FUNCTION calcTotalMortality
 		g  = catch_data(ig)(4);  //group
 		h  = catch_data(ig)(5);  //sex
 		l  = catch_data(ig)(6);  //type
+
+		if( i > nyr ) continue;
 		if( h )
 		{
 			ii = pntr_ags(f,g,h);    
@@ -1793,11 +1795,11 @@ FUNCTION calcAgeComposition
 	[ ]
 
   	*/
+  	
   	int ii,ig,kk;
   	dvar_vector log_va(sage,nage);
   	dvar_vector tmp_na(sage,nage);
   	A_hat.initialize();
-
   	 for(kk=1;kk<=na_gears;kk++)
   	 {
   	 	for(ii=1;ii<=na_nobs(kk);ii++)
@@ -1810,7 +1812,7 @@ FUNCTION calcAgeComposition
 	  		
 	  		// | trap for retrospecitve analysis.
 	  		if(i > nyr) continue;
-  	 		
+
 	  		if( h )
 	  		{
 				ig = pntr_ags(f,g,h);
@@ -1897,6 +1899,8 @@ FUNCTION calcCatchAtAge
 		l    = catch_data(ii,6);
 		d_ct = catch_data(ii,7);
 
+		if( i>nyr ) continue;
+
 		if( h ) // catch by sex
 		{
 			ig     = pntr_ags(f,g,h);
@@ -1959,6 +1963,9 @@ FUNCTION calcTotalCatch
 		l    = catch_data(ii,6);
 		d_ct = catch_data(ii,7);
   		
+  		// | trap for retro year
+  		if( i>nyr ) continue;
+
 		switch(l)
 		{
 			case 1:  // catch in weight
@@ -2079,10 +2086,11 @@ FUNCTION calcSurveyObservations
 			h    = survey_data(kk)(ii)(6);
 			// wt   = survey_data(kk)(ii)(7);
 			di   = survey_data(kk)(ii)(8);
-			nz ++;
+
 			// | trap for retrospective nyr change
 			if( i > nyr ) continue;
 
+			nz ++;
 
 
 
@@ -2330,6 +2338,8 @@ FUNCTION calcObjectiveFunction
 	for(k=1;k<=nit;k++)
 	{
 		dvar_vector sig_it = sig/it_wt(k);
+		COUT(epsilon(k))
+		COUT(sig_it)
 		nlvec(2,k)=dnorm(epsilon(k),sig_it);
 	}
 	
@@ -2606,7 +2616,7 @@ FUNCTION calcObjectiveFunction
 // 	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
-	// COUT(nlvec);
+	COUT(nlvec);
 	objfun  = sum(nlvec);
 	objfun += sum(priors);
 	nf++;
@@ -3738,7 +3748,7 @@ REPORT_SECTION
 	REPORT(la);
 	REPORT(wa);
 	REPORT(ma);
-	
+
 // 	//Selectivity
 // 	report<<"log_sel"<<endl;
 // 	for(k=1;k<=ngear;k++)
