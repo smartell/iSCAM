@@ -398,17 +398,20 @@ DATA_SECTION
 	// | survey_type = 2: survey is proportional to vulnerable biomass
 	// | survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | survey_data: (iyr index(it) gear area group sex wt timing)
+	// | it_wt       = relative weights for each relative abundance normalized to have a
+	// |               mean = 1 so rho = sig2/(sig^2+tau2) holds true in variance pars.
 	// |
 
 	init_int nit;
 	init_ivector    nit_nobs(1,nit);
 	init_ivector survey_type(1,nit);
 	init_3darray survey_data(1,nit,1,nit_nobs,1,8);
+	matrix it_wt(1,nit,1,nit_nobs);
+
 	//init_matrix survey_data(1,nit,1,4);
 // 	imatrix iyr(1,nit,1,nit_nobs);
 // 	imatrix igr(1,nit,1,nit_nobs);
 // 	matrix it(1,nit,1,nit_nobs);
-// 	matrix it_wt(1,nit,1,nit_nobs);		//relative weight
 // 	matrix it_timing(1,nit,1,nit_nobs);	//timing of the survey (0-1)
 
 // 	!! cout<<"Number of surveys "<<nit<<endl;
@@ -418,23 +421,15 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<survey_data(nit).sub(nit_nobs(nit)-3,nit_nobs(nit))<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
-// 		for(i=1;i<=nit;i++)
-// 		{
-// 			iyr(i)=ivector(column(survey_data(i),1));
-// 			igr(i)=ivector(column(survey_data(i),3));
-// 			it(i)=column(survey_data(i),2);
-// 			it_wt(i)=column(survey_data(i),4)+1.e-10;//add a small constant to allow 0 weight
-// 			it_timing(i)=column(survey_data(i),5);
-// 		}
-// 		cout<<"Last row of the relative abundance data\n"<<survey_data(nit)(nit_nobs(nit))<<endl;
-// 		cout<<"OK after relative abundance index"<<endl;
-// 		/*Normalize survey weights so estimated rho parameter is consistent with sd(epsilon)/sd(rec_devs)*/
-// 		double mean_it_wt;
-// 		mean_it_wt = mean(it_wt);
-// 		for(i=1;i<=nit;i++)
-// 		{
-// 			it_wt(i) = it_wt(i)/mean_it_wt;
-// 		}
+		for(k=1;k<=nit;k++)
+		{
+			it_wt(k) = column(survey_data(k),7) + 1.e-30;
+		}
+		double tmp_mu = mean(it_wt);
+		for(k=1;k<=nit;k++)
+		{
+			it_wt(k) = it_wt(k)/tmp_mu;
+		}
 	END_CALCS
 	
 	
@@ -1116,6 +1111,7 @@ PARAMETER_SECTION
 	// | - nlvec    -> matrix for negative loglikelihoods.
 	// | - epsilon  -> residuals for survey abundance index
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
+	// | - qt       -> catchability coefficients (time-varying)
 	// | 
 	matrix      ft(1,ngear,syr,nyr);
 	matrix  log_ft(1,ngear,syr,nyr);
@@ -1123,6 +1119,7 @@ PARAMETER_SECTION
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nit,1,nit_nobs);
 	matrix  it_hat(1,nit,1,nit_nobs);
+	matrix      qt(1,nit,1,nit_nobs);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1151,7 +1148,6 @@ PARAMETER_SECTION
 	// matrix Z(syr,nyr,sage,nage);
 	// matrix S(syr,nyr,sage,nage);
 	// matrix pit(1,nit,1,nit_nobs);			//predicted relative abundance index
-	// matrix qt(1,nit,1,nit_nobs);			//catchability coefficients (time-varying)
 	
 
 	// 3darray Ahat(1,na_gears,1,na_nobs,a_sage-2,a_nage);		//predicted age proportions by gear & year
@@ -2106,92 +2102,14 @@ FUNCTION calcSurveyObservations
 			dvar_vector fd_zt     = first_difference(zt);
 			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt));
 			epsilon(kk).sub(1,nz) = fd_zt - zw_bar;
+			qt(kk)(1) = exp(zt(1));
+			for(ii=2;ii<=nz;ii++)
+			{
+				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
+			}
+			it_hat(kk).sub(1,nz) = elem_prod(qt(kk)(1,nz),t1(1,nz));
 		}
 	}
-// 		//TODO, this might not be working correctly, simulation test it.
-// 		// The following allows for a penalized random walk in survey q.
-// 		if(q_prior(i)==2)
-// 		{
-// 			//random walk in q
-// 			epsilon(i)=0;
-// 			dvar_vector fd_zt=first_difference(zt);
-// 			epsilon(i).sub(1,nx-1) = fd_zt-mean(fd_zt);
-// 			//dvar_vector qt(1,nx);
-// 			qt(i,1) = exp(zt(1));
-// 			for(j=2;j<=nx;j++)
-// 				qt(i,j) = qt(i,j-1)*exp(fd_zt(j-1));
-				
-// 			pit(i).sub(1,nx)=elem_prod(t1(1,nx),qt(i)(1,nx));
-// 			//cout<<sum(epsilon(i))<<endl;
-// 			//exit(1);
-// 		}
-	
-	
-// 	//survey abudance index residuals
-// 	epsilon.initialize();
-// 	pit.initialize();
-	
-// 	for(i=1;i<=nit;i++)
-// 	{	
-// 		int nx=0;		//counter for retrospective analysis
-// 		dvar_matrix V(1,nit_nobs(i),sage,nage);  //vulnerable units for survey comparison
-// 		V.initialize();
-// 		//dvar_matrix VB(1,nit_nobs(i),sage,nage); //vulnerable biomass
-// 		for(j=1;j<=nit_nobs(i);j++)
-// 		{
-// 			ii=iyr(i,j);
-// 			k=igr(i,j);
-// 			if(ii>nyr) break;	//trap for retrospective analysis.
-// 			dvar_vector log_va=log_sel(k)(ii);
-// 			//Adjust survey biomass by the fraction of the mortality that 
-// 			//occurred during the time of the survey.
-// 			dvar_vector Np = elem_prod(N(ii),exp( -Z(ii)*it_timing(i,j) ));
-			
-// 			//get fishing mortality rate on spawn.
-// 			dvariable ftmp = 0;
-// 			for(kk=1;kk<=ngear;kk++)
-// 				if(catch_type(kk)==3)
-// 					ftmp += ft(kk,ii);
-					
-// 			switch(survey_type(i))
-// 			{
-// 				case 1:
-// 					V(j)=elem_prod(Np,mfexp(log_va));
-// 				break;
-// 				case 2:
-// 					V(j)=elem_prod(elem_prod(Np,mfexp(log_va)),wt_avg(ii));
-// 				break;
-// 				case 3:
-// 					//SJDM Jan 6, 2012 Modified for roe fishery
-// 					V(j)=elem_prod(Np,fec(ii))*exp(-ftmp);
-// 				break;
-// 			}
-			
-// 			//VB(j)=elem_prod(V(j),wt_avg(ii));		//SM Dec 6, 2010
-			
-// 			//If the survey is a spawn index, then need to account
-// 			//for changes in fecundity.
-			
-// 			if(iyr(i,j)<=nyr) nx++;
-// 		}
-// 		dvar_vector t1 = rowsum(V);//V*wa;
-// 		//cout<<"V\n"<<V<<endl;
-		
-// 		//See Ludwig & Walters 1994
-// 		//Note this is incorrect if each survey has different weights.
-// 		dvar_vector zt=log(it(i).sub(1,nx))-log(t1(1,nx));
-// 		//cout<<"zt\n"<<t1(1,nx)<<endl;
-// 		epsilon(i).sub(1,nx) = zt-mean(zt);
-// 		q(i) = exp(mean(zt));
-// 		pit(i).sub(1,nx)=t1(1,nx)*q(i);	//predicted index
-		
-		
-	
-	// }
-	
-	
-	
-	
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
   }
@@ -2364,13 +2282,16 @@ FUNCTION calcObjectiveFunction
 	}
 
 
-	
-// 	//2) likelihood of the survey abundance index (retro)
-// 	for(k=1;k<=nit;k++)
-// 	{
-// 		dvar_vector sig = (sqrt(rho)*varphi)/it_wt(k);
-// 		nlvec(2,k)=dnorm(epsilon(k),sig);
-// 	}
+	// |---------------------------------------------------------------------------------|
+	// | LIKELIHOOD FOR RELATIVE ABUNDANCE INDICES
+	// |---------------------------------------------------------------------------------|
+	// | - sig_it     -> vector of standard deviations based on relative wt for survey.
+	// |
+	for(k=1;k<=nit;k++)
+	{
+		dvar_vector sig_it = sig/it_wt(k);
+		nlvec(2,k)=dnorm(epsilon(k),sig_it);
+	}
 	
 	
 	// |---------------------------------------------------------------------------------|
@@ -2628,6 +2549,7 @@ FUNCTION calcObjectiveFunction
 // 	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
+	COUT(nlvec);
 	objfun = sum(nlvec);
 	nf++;
 	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
