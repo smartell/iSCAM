@@ -32,7 +32,6 @@
 ## ------------------------------------------------------------------------- ##
 ## Age-schedule and population parameters                                    ##
 ## ------------------------------------------------------------------------- ##
-0.345			   # -natural mortality rate (m_fixed) TOBE DEPRECATED
 111				# -asymptotic length (linf)  
 0.23	 		   # -brody growth coefficient (k)
 0				   # -theoretical age at zero length (to)

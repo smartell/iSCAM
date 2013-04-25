@@ -319,7 +319,6 @@ DATA_SECTION
 		{
 			if(fsh_flag(k)) ifleet(j++) = k;
 		}
-		cout<<"OK TO HERE"<<endl;
 		// cout<<"ifleet index\t"<<ifleet<<endl;
 	END_CALCS
 	
@@ -373,6 +372,7 @@ DATA_SECTION
 	// | - ft_count -> Number of estimated fishing mortality rate parameters.
 	// | 
 	init_int n_ct_obs;
+	!! COUT(n_ct_obs)
 	init_matrix catch_data(1,n_ct_obs,1,7);
 	
 
@@ -461,16 +461,24 @@ DATA_SECTION
 	
 	3darray A_obs(1,na_gears,1,na_nobs,a_sage,a_nage);
 	LOC_CALCS
-		cout<<"| ----------------------- |"<<endl;
-		cout<<"| TAIL(A)       |"<<endl;
-		cout<<"| ----------------------- |"<<endl;
-		cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-2,na_nobs(na_gears))<<endl;
-		cout<<"| ----------------------- |\n"<<endl;
-		for(k=1;k<=na_gears;k++)
-		{
-			A_obs(k) = trans(trans(A(k)).sub(a_sage(k),a_nage(k)));
+		if( na_nobs(na_gears) > 0 )
+			{
+			cout<<"| ----------------------- |"<<endl;
+			cout<<"| TAIL(A)       |"<<endl;
+			cout<<"| ----------------------- |"<<endl;
+			cout<<setw(4)<<A(na_gears).sub(na_nobs(na_gears)-2,na_nobs(na_gears))<<endl;
+			cout<<"| ----------------------- |\n"<<endl;
+			for(k=1;k<=na_gears;k++)
+			{
+				A_obs(k) = trans(trans(A(k)).sub(a_sage(k),a_nage(k)));
+			}
 		}
-
+		else
+		{
+			cout<<"| ----------------------- |"<<endl;
+			cout<<"| NO AGE DATA"<<endl;
+			cout<<"| ----------------------- |"<<endl;
+		}
 	END_CALCS
 
 	
@@ -1714,7 +1722,8 @@ FUNCTION calcNumbersAtAge
 		
 		if( cntrl(5) ) // initialize at unfished conditions.
 		{
-			tr =  log(1./nsex * ro) + log(lx);
+			COUT(ig);
+			tr =  log(1./nsex * ro(g)) + log(lx);
 		}
 		else if ( !cntrl(5) )
 		{
