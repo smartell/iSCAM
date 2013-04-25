@@ -3776,7 +3776,11 @@ REPORT_SECTION
 	REPORT(wt_mat);
 	REPORT(wt_dev);
 
-// 	//Selectivity
+	// |---------------------------------------------------------------------------------|
+	// | SELECTIVITIES (4darray)
+	// |---------------------------------------------------------------------------------|
+	// |
+	REPORT("log_sel");
 // 	report<<"log_sel"<<endl;
 // 	for(k=1;k<=ngear;k++)
 // 		for(i=syr;i<=nyr;i++)
