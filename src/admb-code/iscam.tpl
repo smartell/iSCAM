@@ -1051,7 +1051,7 @@ PARAMETER_SECTION
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
 	objective_function_value objfun;
-    
+	
 
     // |---------------------------------------------------------------------------------|
     // | POPULATION VARIABLES
@@ -4283,30 +4283,28 @@ GLOBALS_SECTION
 	
 
 
-	// class selex_vector
-	// {
-	// 	private:
-	// 		int m_length;
-	// 		double *m_pnSelexData;
+	class selex_vector
+	{
+		private:
+			int m_length;
+			
 
-	// 	public:
+		public:
 
-	// 	selex_vector()
-	// 	{
-	// 		m_length = 0;
-	// 		m_pnSelexData = 0;
-	// 	}
+		selex_vector()
+		{
+			m_length = 0;
+			
+		}
 
-	// 	~selex_vector()
-	// 	{
-	// 		delete[] m_pnSelexData;
-	// 	}
+		~selex_vector()
+		{
+			
+		}
 
-	// 	int& operator()(int& nindex)
-	// 	{
-	// 		return m_pnSelexData(nindex);
-	// 	}
-	// };
+		
+	};
+
 
 	
 	// #ifdef __GNUDOS__
