@@ -3780,13 +3780,24 @@ REPORT_SECTION
 	// | SELECTIVITIES (4darray)
 	// |---------------------------------------------------------------------------------|
 	// |
-	REPORT("log_sel");
-// 	report<<"log_sel"<<endl;
-// 	for(k=1;k<=ngear;k++)
-// 		for(i=syr;i<=nyr;i++)
-// 			report<<k<<"\t"<<log_sel(k)(i)<<endl;
-// 	//REPORT(log_sel);
-	// //DEPRECATE REPORT(vax);
+	report<<"log_sel"<<endl;
+	for(k=1;k<=ngear;k++)
+	{
+		for(int ig=1;ig<=n_ags;ig++)
+		{
+			for(i=syr;i<=nyr;i++)
+			{
+				report<<k<<"\t"<<ig<<"\t"<<i<<"\t"<<log_sel(k)(ig)(i)<<endl;	
+			}
+		}
+	}
+	// |---------------------------------------------------------------------------------|
+	// | MORTALITY
+	// |---------------------------------------------------------------------------------|
+	// |
+	REPORT(M);
+	REPORT(F);
+	REPORT(Z);
 // 	REPORT(ft);
 // 	/*FIXED small problem here with array bounds if using -retro option*/
 // 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
