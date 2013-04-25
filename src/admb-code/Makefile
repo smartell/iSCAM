@@ -1,6 +1,6 @@
 ## Make file for building iSCAM
 ## Author: Steven Martell
-ADMB=~/admb-trunk/admb
+
 .PHONY: default opt clean
 
 ifndef DISK

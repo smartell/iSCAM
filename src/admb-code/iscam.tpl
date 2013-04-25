@@ -1151,19 +1151,14 @@ PRELIMINARY_CALCS_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | - nf is a function evaluation counter.
  	// | 
-     nf=0;
+    nf=0;
   
-//  if(SimFlag) 
-//  {
-//    initParameters();
-//    simulationModel(rseed);
-//  }
-//  if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
-	// |---------------------------------------------------------------------------------|
-	// | CONSTRUCT DATA FRAMES
-	// |---------------------------------------------------------------------------------|
-	// |
-	// dmatrix tmp_df = trans(trans(catch_data).sub(1,7));
+	if(SimFlag) 
+	{
+		initParameters();
+		simulationModel(rseed);
+	}
+	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
 
 RUNTIME_SECTION
@@ -3180,8 +3175,37 @@ FUNCTION calcObjectiveFunction
 // 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
 //   }
 	
-// FUNCTION void simulationModel(const long& seed)
-//   {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION void simulationModel(const long& seed)
+  {
+  	/*
+  	Purpose:  This function 
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 // 	/*
 // 	Call this routine to simulate data for simulation testing.
 // 	The random number seed can be used to repeat the same 
@@ -3631,7 +3655,29 @@ FUNCTION calcObjectiveFunction
 	
 // 	//cout<<N<<endl;
 // 	//exit(1);
-//   }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // FUNCTION writeSimulatedDataFile
 //   {
