@@ -492,6 +492,7 @@ DATA_SECTION
 	init_int n_wt_nobs;
 	init_matrix inp_wt_avg(1,n_wt_nobs,sage-5,nage);
 	
+	matrix  wt_bar(1,n_ags,sage,nage);
 	3darray wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	3darray wt_dev(1,n_ags,syr,nyr+1,sage,nage);
 	3darray wt_mat(1,n_ags,syr,nyr+1,sage,nage);
@@ -529,10 +530,10 @@ DATA_SECTION
 		// average weight-at-age in projection years
 		for(ig=1;ig<=n_ags;ig++)
 		{
-			dvector wt_bar    = colsum(wt_avg(ig).sub(pf_cntrl(3),pf_cntrl(4)));
-			wt_bar           /= pf_cntrl(4)-pf_cntrl(3)+1;
-			wt_avg(ig)(nyr+1) = wt_bar;
-			wt_mat(ig)(nyr+1) = elem_prod(wt_bar,ma(ig));
+			wt_bar(ig)        = colsum(wt_avg(ig).sub(pf_cntrl(3),pf_cntrl(4)));
+			wt_bar(ig)       /= pf_cntrl(4)-pf_cntrl(3)+1;
+			wt_avg(ig)(nyr+1) = wt_bar(ig);
+			wt_mat(ig)(nyr+1) = elem_prod(wt_bar(ig),ma(ig));
 		}
 		
 		
@@ -542,7 +543,7 @@ DATA_SECTION
 			dmatrix mtmp = trans( wt_avg(ig) );
 			for(j=sage;j<=nage;j++)
 			{
-				if( !sum( first_difference(mtmp(j))) )
+				if( sum( first_difference(mtmp(j))) )
 				{
 					mtmp(j) = ( mtmp(j)-mean(mtmp(j)) ) / sqrt(var(mtmp(j)));
 				}
@@ -552,63 +553,22 @@ DATA_SECTION
 				}
 			}
 			wt_dev(ig) = trans(mtmp);
+		
+			if(min(wt_avg(ig))<=0)
+			{
+				cout<<"|-----------------------------------------------|"<<endl;
+				cout<<"| ERROR IN INPUT DATA FILE FOR MEAN WEIGHT DATA |"<<endl;
+				cout<<"|-----------------------------------------------|"<<endl;
+				cout<<"| - Cannont have an observed mean weight-at-age\n";
+				cout<<"|   less than or equal to 0.  Please fix. "       <<endl;
+				cout<<"| - Aborting program!"<<endl;
+				cout<<"|-----------------------------------------------|"<<endl;
+				ad_exit(1);
+			}
 		}
-		
-// 		for(i=1;i<=n_wt_nobs;i++)
-// 		{
-// 			iyr         = inp_wt_avg(i,sage-1);  //index for year
-// 			wt_avg(iyr) = inp_wt_avg(i)(sage,nage);
-// 			fec(iyr)    = elem_prod(plogis(age,ah,gh),wt_avg(iyr));
-// 		}
-// 		//CHANGED SM Deprecated Aug 9, 2012 for new projection file control.
-// 		//int nfec = fec.rowmax()-fec.rowmin()+1;
-// 		//avg_fec=colsum(fec)/nfec;
-		
-// 		// SM Aug 9, 2012 calculate averge weight-at-age and
-// 		// fecundity-at-age based on years specificed in the
-// 		// projection control file (pf_cntrl(3-4)). Also set
-// 		// the average weight-at-age in nyr+1 to the same.
-// 		// Deprecate the 5-year average that Jake suggested.
-// 		avg_wt   = colsum(wt_avg.sub(pf_cntrl(3),pf_cntrl(4)));
-// 		avg_wt  /= pf_cntrl(4)-pf_cntrl(3)+1;
-// 		wt_avg(nyr+1) = avg_wt;
-		
-// 		avg_fec  = colsum(fec.sub(pf_cntrl(3),pf_cntrl(4)));
-// 		avg_fec /= pf_cntrl(4)-pf_cntrl(3)+1;
-		
-// 		fa_bar   = colsum(fec.sub(syr,nyr))/(nyr-syr+1);
-// 		cout<<avg_wt<<endl;
-// 		cout<<"avg_fec\n"<<avg_fec<<endl;
-// 		cout<<"fa_bar\n"<<fa_bar<<endl;
-// 		//DEPRECATED SM AUG 9, 2012
-// 		//from Jake Schweigert: use mean-weight-at-age data
-// 		//from the last 5 years for the projected mean wt.
-// 		//dvector tmp=colsum(wt_avg.sub(nyr-5,nyr))/6.;
-// 		//wt_avg(nyr+1) = tmp;
-// 		//
-// 		///*June 8, 2012, average wt at age for all years*/
-// 		//tmp = colsum(wt_avg.sub(syr,nyr))/(nyr-syr+1.);
-// 		//avg_wt = tmp;
-		
-// 		cout<<"n_wt_nobs\t"<<n_wt_nobs<<endl;
-// 		cout<<"Ok after empiracle weight-at-age data"<<endl;
-		
-// 		//July 14, 2011 Error handler to ensure non-zero wt_avg
-// 		//in the data. Otherwise causes and error with weight-based
-// 		//selectivities.
-// 		if(min(wt_avg)==0)
-// 		{
-// 			cout<<"Cannont have a observed 0 mean weight at age\n";
-// 			cout<<"in the data file.  Please fix.\n Aborting program!"<<endl;
-// 			exit(2);
-// 		}
-		
-
-
-		
 	END_CALCS
 	
-	//End of data file
+	
 	// |---------------------------------------------------------------------------------|
 	// | END OF DATA FILE
 	// |---------------------------------------------------------------------------------|
@@ -1174,7 +1134,7 @@ PARAMETER_SECTION
 	// | SDREPORT VARIABLES AND VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
-	sdreport_number sd_depletion;	
+	sdreport_vector sd_depletion(1,ngroup);	
 	
 PRELIMINARY_CALCS_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -1223,7 +1183,8 @@ PROCEDURE_SECTION
 	
 	calcObjectiveFunction();
 
-	// sd_depletion=sbt(nyr)/sbo;
+	calcSdreportVariables();
+	
 	
 	// if(mc_phase())
 	// {
@@ -1241,7 +1202,29 @@ PROCEDURE_SECTION
 	// //dvariable a=3.0;
 	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 	
+FUNCTION calcSdreportVariables
+  {
+	/*
+	Purpose:  This function calculates the sdreport variables.
+	Author: Steven Martell
+	
+	Arguments:
+		None
+	
+	NOTES:
+		
+	
+	TODO list:
+	[ ] - Calculate spawning biomass depletion for each group.
+	*/
+	sd_depletion.initialize();
 
+	for(g=1;g<=ngroup;g++)
+	{
+		sd_depletion(g) = sbt(g)(nyr)/sbo;
+	}
+
+  }
 FUNCTION initParameters
   {
 	/*
@@ -2465,16 +2448,17 @@ FUNCTION calcObjectiveFunction
 	}
 	
 	
-// 	// CONSTRAINT FOR SELECTIVITY DEV VECTORS
-// 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
-// 	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
-	
+	// |---------------------------------------------------------------------------------|
+	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
+	// |---------------------------------------------------------------------------------|
+	// | [] - TODO for isel_type==2 ensure mean 0 as well.
+	// |
 	for(k=1;k<=ngear;k++)
 	{
 		if( active(sel_par(k)) &&
-			isel_type(k)!=1 &&
-			isel_type(k)!=7 &&
-			isel_type(k)!=8 &&
+			isel_type(k)!=1    &&
+			isel_type(k)!=7    &&
+			isel_type(k)!=8    &&
 			isel_type(k)!=11 )
 		{
 			dvariable s = 0;
@@ -2487,8 +2471,9 @@ FUNCTION calcObjectiveFunction
 					lvec(1)+=10000.0*s*s;
 				}
 			}
-			if( isel_type(k)==4 ||
-			 	isel_type(k)==3 || 
+			if( isel_type(k)==2 ||
+			    isel_type(k)==3 ||
+			 	isel_type(k)==4 || 
 				isel_type(k)==12 )
 			{
 				dvar_matrix tmp = sel_par(k);
@@ -2623,8 +2608,9 @@ FUNCTION calcObjectiveFunction
 	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
-	COUT(nlvec);
+	// COUT(nlvec);
 	objfun  = sum(nlvec);
+	objfun += sum(lvec);
 	objfun += sum(priors);
 	objfun += sum(pvec);
 	objfun += sum(qvec);
@@ -3736,7 +3722,10 @@ REPORT_SECTION
 	REPORT(sig);
 	REPORT(age_tau2);
 	
-	// Model dimensions
+	// |---------------------------------------------------------------------------------|
+	// | MODEL DIMENSIONS & AGE-SCHEDULE INFORMATION ON GROWTH AND MATURITY
+	// |---------------------------------------------------------------------------------|
+	// |
 	REPORT(narea);
 	REPORT(ngroup);
 	REPORT(nsex);
@@ -3758,6 +3747,35 @@ REPORT_SECTION
 	REPORT(wa);
 	REPORT(ma);
 
+	// |---------------------------------------------------------------------------------|
+	// | OBSERVED AND PREDICTED DATA AND RESIDUALS
+	// |---------------------------------------------------------------------------------|
+	// | - Catch data
+	// | - Survey data
+	// | - Age composition data
+	// | - Empirical weight-at-age data
+	REPORT(catch_data);
+	REPORT(ct);
+	REPORT(eta);
+
+	REPORT(q);
+	REPORT(qt);
+	REPORT(survey_data);
+	REPORT(it_hat);
+	REPORT(epsilon);
+
+	REPORT(a_sage);
+	REPORT(a_nage);
+	REPORT(A);
+	REPORT(A_hat);
+	REPORT(A_nu);
+
+	REPORT(inp_wt_avg);
+	REPORT(wt_bar);
+	REPORT(wt_avg);
+	REPORT(wt_mat);
+	REPORT(wt_dev);
+
 // 	//Selectivity
 // 	report<<"log_sel"<<endl;
 // 	for(k=1;k<=ngear;k++)
@@ -3765,9 +3783,6 @@ REPORT_SECTION
 // 			report<<k<<"\t"<<log_sel(k)(i)<<endl;
 // 	//REPORT(log_sel);
 	// //DEPRECATE REPORT(vax);
-// 	REPORT(obs_ct);
-// 	REPORT(ct);
-// 	REPORT(eta);
 // 	REPORT(ft);
 // 	/*FIXED small problem here with array bounds if using -retro option*/
 // 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
@@ -3780,17 +3795,9 @@ REPORT_SECTION
 // 	dvector ln_rt=value(log_rt(syr,nyr));
 // 	REPORT(ln_rt);
 // 	REPORT(delta);
-// 	REPORT(q);
-// 	REPORT(qt);
-// 	REPORT(it);
-// 	REPORT(pit);
-// 	REPORT(it_wt);
-// 	REPORT(epsilon);
 // 	REPORT(F);
 // 	REPORT(M_tot);
 	
-// 	REPORT(a_sage);
-// 	REPORT(a_nage);
 // 	REPORT(A); 
 // 	REPORT(Ahat);
 // 	REPORT(A_nu);
