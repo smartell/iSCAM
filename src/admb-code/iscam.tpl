@@ -642,7 +642,7 @@ DATA_SECTION
 		theta_ub    = column(theta_control,3);
 		theta_phz   = ivector(column(theta_control,4));
 		theta_prior = ivector(column(theta_control,5));
-		ipar_vector(1,2) = 1;
+		ipar_vector(1,2) = ngroup;
 		ipar_vector(6,7) = 1;
 		ipar_vector(3)   = nsex;
 		ipar_vector(4,5) = n_ag;
@@ -983,6 +983,7 @@ PARAMETER_SECTION
 	// | - Estimate mean overal recruitment and annual deviations from syr to nyr.
 	// | - cntrl(5) is a flag to initialize the model at unfished recruitment (ro),
 	// |   if this is true, then do not estimate init_log_rec_devs
+	// | [ ] - TODO add dev contstraint for rec_devs in calc_objective_function.
 
 	!! int init_dev_phz = 2;
 	!! if(cntrl(5)) init_dev_phz = -1;
@@ -1016,34 +1017,28 @@ PARAMETER_SECTION
     // |---------------------------------------------------------------------------------|
     // | POPULATION VARIABLES
     // |---------------------------------------------------------------------------------|
-    // | - ro          -> theoretical unfished age-sage recruits. 
-    // | - bo          -> theoretical unfished spawning biomass (MSY-based ref point).
-    // | - sbo         -> unfished spawning biomass at the time of spawning.
-    // | - kappa       -> Goodyear recruitment compensation ratio K = 4h/(1-h); h=K/(4+K)
     // | - m_bar       -> Average natural mortality rate from syr to nyr.
     // | - rho         -> Proportion of total variance associated with obs error.
     // | - varphi      -> Total precision of CPUE and Recruitment deviations.
     // | - sig         -> STD of the observation errors in relative abundance data.
     // | - tau         -> STD of the process errors (recruitment deviations).
-    // | - so          -> Initial slope (max R/S) of the stock-recruitment relationship.
-    // | - beta        -> Density dependent term in the stock-recruitment relationship.
     // |
-	number ro;					
-	number bo;					
-	number sbo;					
-	number kappa;				
 	number m_bar;				
 	number rho;					
 	number varphi				
 	number sig;					
 	number tau; 				
-	number so;
-	number beta;
 
 
 	// |---------------------------------------------------------------------------------|
 	// | POPULATION VECTORS
 	// |---------------------------------------------------------------------------------|
+    // | - ro          -> theoretical unfished age-sage recruits. 
+    // | - bo          -> theoretical unfished spawning biomass (MSY-based ref point).
+    // | - sbo         -> unfished spawning biomass at the time of spawning.
+    // | - kappa       -> Goodyear recruitment compensation ratio K = 4h/(1-h); h=K/(4+K)
+    // | - so          -> Initial slope (max R/S) of the stock-recruitment relationship.
+    // | - beta        -> Density dependent term in the stock-recruitment relationship.
     // | - m           -> Instantaneous natural mortality rate by nsex
     // | - log_avgrec  -> Average sage recruitment(syr-nyr,area,group).
     // | - log_recinit -> Avg. initial recruitment for initial year cohorts(area,group).
@@ -1053,6 +1048,12 @@ PARAMETER_SECTION
 	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
 	// |
 	
+	vector ro(1,ngroup);
+	vector bo(1,ngroup);
+	vector sbo(1,ngroup);
+	vector kappa(1,ngroup);
+	vector so(1,ngroup);
+	vector beta(1,ngroup);
 	vector           m(1,nsex);	
 	vector  log_avgrec(1,n_ag);			
 	vector log_recinit(1,n_ag);			
@@ -1221,7 +1222,7 @@ FUNCTION calcSdreportVariables
 
 	for(g=1;g<=ngroup;g++)
 	{
-		sd_depletion(g) = sbt(g)(nyr)/sbo;
+		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
 	}
 
   }
@@ -1254,9 +1255,9 @@ FUNCTION initParameters
 
   	
   	int ih;
-  	dvariable steepness;
-	ro        = mfexp(theta(1,1));
-	steepness = theta(2,1);
+  	dvar_vector steepness(1,ngroup);
+	ro        = mfexp(theta(1));
+	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6,1);
 	varphi    = sqrt(1.0/theta(7,1));
@@ -1279,7 +1280,7 @@ FUNCTION initParameters
 	{
 		case 1:
 			//Beverton-Holt model
-			kappa = (4.*steepness/(1.-steepness));
+			kappa = elem_div(4.*steepness,(1.-steepness));
 			break;
 		case 2:
 			//Ricker model
@@ -2174,7 +2175,7 @@ FUNCTION calcStockRecruitment
   	sbt.initialize();
   	delta.initialize();
 	
-	dvariable phib,so,beta;
+	dvariable phib;//,so,beta;
 	dvar_vector   stmp(sage,nage);
 	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
@@ -2224,26 +2225,26 @@ FUNCTION calcStockRecruitment
 				sbt(g,nyr+1) += elem_prod(N(ig)(nyr),wt_mat(ig)(i)) * stmp;
 			}
 
-			// |Estimated recruits
+			// | Estimated recruits
 			ih     = pntr_ag(f,g);
 			rt(g) += mfexp(log_rt(ih)(syr+sage,nyr));
 		}
 
 		// | Step 6. calculate stock recruitment parameters (so, beta, sbo);
 		// | Step 7. calculate predicted recruitment.
-		so  = kappa/phib;
-		sbo = ro * phib;
+		so(g)  = kappa(g)/phib;
+		sbo(g) = ro(g) * phib;
 		dvar_vector tmp_st = sbt(g)(syr,nyr-sage).shift(syr+sage);
 		switch(int(cntrl(2)))
 		{
 			case 1:  // | Beverton Holt model
-				beta   = (kappa-1.)/sbo;
-				tmp_rt = elem_div(so*tmp_st,1.+beta*tmp_st);
+				beta(g)   = (kappa(g)-1.)/sbo(g);
+				tmp_rt    = elem_div(so(g)*tmp_st,1.+beta(g)*tmp_st);
 			break;
 
 			case 2:  // | Ricker model
-				beta   = log(kappa)/sbo;
-				tmp_rt = elem_prod(so*tmp_st,exp(-beta*tmp_st));
+				beta(g)   = log(kappa(g))/sbo(g);
+				tmp_rt    = elem_prod(so(g)*tmp_st,exp(-beta(g)*tmp_st));
 			break;
 		}
 		
@@ -3799,26 +3800,24 @@ REPORT_SECTION
 	REPORT(M);
 	REPORT(F);
 	REPORT(Z);
-// 	REPORT(ft);
-// 	/*FIXED small problem here with array bounds if using -retro option*/
-// 	report<<"ut\n"<<elem_div(colsum(obs_ct)(syr,nyr),N.sub(syr,nyr)*wa)<<endl;
-// 	report<<"bt\n"<<rowsum(elem_prod(N,wt_avg))<<endl;
-// 	report<<"sbt\n"<<sbt<<endl;
 
-// 	int rectype=int(cntrl(2));
-// 	REPORT(rectype);
-// 	REPORT(rt);
-// 	dvector ln_rt=value(log_rt(syr,nyr));
-// 	REPORT(ln_rt);
-// 	REPORT(delta);
-// 	REPORT(F);
-// 	REPORT(M_tot);
-	
-// 	REPORT(A); 
-// 	REPORT(Ahat);
-// 	REPORT(A_nu);
-// 	REPORT(N);
-// 	REPORT(wt_avg);
+	// |---------------------------------------------------------------------------------|
+	// | STOCK-RECRUITMENT
+	// |---------------------------------------------------------------------------------|
+	// |
+	int rectype=int(cntrl(2));
+	REPORT(rectype);
+	REPORT(so);
+	REPORT(beta);
+	REPORT(sbt);
+	REPORT(rt);
+	REPORT(delta);
+
+	// |---------------------------------------------------------------------------------|
+	// | ABUNDANCE IN NUMBERS AND BIOMASS
+	// |---------------------------------------------------------------------------------|
+	// |
+	REPORT(N);
 	
 // 	if(last_phase())
 // 	{
