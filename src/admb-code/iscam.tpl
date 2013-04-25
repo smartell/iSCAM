@@ -2305,8 +2305,6 @@ FUNCTION calcObjectiveFunction
 // 	int i,j,k;
 // 	double o=1.e-10;
 
-// 	dvar_vector lvec(1,7); 
-// 	lvec.initialize();
 	nlvec.initialize();
 	
 	// |---------------------------------------------------------------------------------|
@@ -2336,8 +2334,6 @@ FUNCTION calcObjectiveFunction
 	for(k=1;k<=nit;k++)
 	{
 		dvar_vector sig_it = sig/it_wt(k);
-		COUT(epsilon(k))
-		COUT(sig_it)
 		nlvec(2,k)=dnorm(epsilon(k),sig_it);
 	}
 	
@@ -2407,95 +2403,103 @@ FUNCTION calcObjectiveFunction
 			nlvec(4,g) = dnorm(delta(g),tau);
 		}
 	}
-// 	//4) likelihood for stock-recruitment relationship
-// 	dvariable tau = sqrt(1.-rho)*varphi;
-// 	if(active(theta(1)))
-// 		nlvec(4,1)=dnorm(delta,tau);
-	
-	
-	
-// 	//5-6) likelihood for selectivity paramters
-// 	for(k=1;k<=ngear;k++)
-// 	{
-// 		if(active(sel_par(k)))
-// 		{
-// 			//if not using logistic selectivity then
-// 			//CHANGED from || to &&  May 18, 2011 Vivian
-// 			if( isel_type(k)!=1 && 
-// 				isel_type(k)!=7 && 
-// 				isel_type(k)!=8 &&
-// 				isel_type(k)!=11 )  
-// 			{
-				
-// 				for(i=syr;i<=nyr;i++)
-// 				{
-// 					//curvature in selectivity parameters
-// 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(i)));
-// 					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
-// 					//penalty for dome-shapeness
-// 					for(j=sage;j<=nage-1;j++)
-// 						if(log_sel(k,i,j)>log_sel(k,i,j+1))
-// 							nlvec(6,k)+=lambda_2(k)
-// 										*square(log_sel(k,i,j)-log_sel(k,i,j+1));
-// 				}
-// 			}
-			
-// 			/*
-// 			Oct 31, 2012 Halloween! Added 2nd difference penalty on time 
-// 			for isel_type==(4)
+	// |---------------------------------------------------------------------------------|
+	// | LIKELIHOOD COMPONENTS FOR SELECTIVITY PARAMETERS
+	// |---------------------------------------------------------------------------------|
+	// | - lambda_1  -> penalty weight for smoothness
+	// | - lambda_2  -> penalty weight for dome-shape
+	// | - lambda_3  -> penalty weight for inter-annual variation.
+	dvar_vector lvec(1,7); 
+	lvec.initialize();
+	int ig;
+	for(k=1;k<=ngear;k++)
+	{
+		if(active(sel_par(k)))
+		{
+			//if not using logistic selectivity then
+			//CHANGED from || to &&  May 18, 2011 Vivian
+			if( isel_type(k)!=1 && 
+				isel_type(k)!=7 && 
+				isel_type(k)!=8 &&
+				isel_type(k)!=11 )  
+			{
+				for(ig=1;ig<=n_ags;ig++)
+				{
+				for(i=syr;i<=nyr;i++)
+				{
+					//curvature in selectivity parameters
+					dvar_vector df2 = first_difference(first_difference(log_sel(k)(ig)(i)));
+					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
-// 			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
-// 			*/
-// 			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
-// 			{
-// 				dvar_matrix trans_log_sel = trans( log_sel(k) );
-// 				for(j=sage;j<=nage;j++)
-// 				{
-// 					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
-// 					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
-// 				}
-// 			}
+					//penalty for dome-shapeness
+					for(j=sage;j<=nage-1;j++)
+						if(log_sel(k,ig,i,j)>log_sel(k,ig,i,j+1))
+							nlvec(6,k)+=lambda_2(k)
+										*square( log_sel(k,ig,i,j)-log_sel(k,ig,i,j+1) );
+				}
+				}
+			}
 			
-// 		}
-// 	}
+			/*
+			Oct 31, 2012 Halloween! Added 2nd difference penalty on time 
+			for isel_type==(4)
+
+			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
+			*/
+			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
+			{
+				for(ig=1;ig<=n_ags;ig++)
+				{
+					
+				dvar_matrix trans_log_sel = trans( log_sel(k)(ig) );
+				for(j=sage;j<=nage;j++)
+				{
+					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
+					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
+				}
+				}
+			}
+			
+		}
+	}
 	
 	
 // 	// CONSTRAINT FOR SELECTIVITY DEV VECTORS
 // 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
 // 	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
 	
-// 	for(k=1;k<=ngear;k++)
-// 	{
-// 		if( active(sel_par(k)) &&
-// 			isel_type(k)!=1 &&
-// 			isel_type(k)!=7 &&
-// 			isel_type(k)!=8 &&
-// 			isel_type(k)!=11 )
-// 		{
-// 			dvariable s=0;
-// 			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
-// 			{
-// 				dvar_matrix tmp = trans(sel_par(k));
-// 				for(j=1;j<=tmp.rowmax();j++)
-// 				{
-// 					s=mean(tmp(j));
-// 					lvec(1)+=10000.0*s*s;
-// 				}
-// 			}
-// 			if( isel_type(k)==4 ||
-// 			 	isel_type(k)==3 || 
-// 				isel_type(k)==12 )
-// 			{
-// 				dvar_matrix tmp = sel_par(k);
-// 				for(j=1;j<=tmp.rowmax();j++)
-// 				{
-// 					s=mean(tmp(j));
-// 					lvec(1)+=10000.0*s*s;
-// 				}
-// 			}
-// 		}
-// 	}
+	for(k=1;k<=ngear;k++)
+	{
+		if( active(sel_par(k)) &&
+			isel_type(k)!=1 &&
+			isel_type(k)!=7 &&
+			isel_type(k)!=8 &&
+			isel_type(k)!=11 )
+		{
+			dvariable s = 0;
+			if(isel_type(k)==5)  //bicubic spline version ensure column mean = 0
+			{
+				dvar_matrix tmp = trans(sel_par(k));
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+			if( isel_type(k)==4 ||
+			 	isel_type(k)==3 || 
+				isel_type(k)==12 )
+			{
+				dvar_matrix tmp = sel_par(k);
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+		}
+	}
 	
 	
 	// |---------------------------------------------------------------------------------|
@@ -2543,17 +2547,19 @@ FUNCTION calcObjectiveFunction
 		priors(i) = ptmp;	
 	}
 	
-// 	//Priors for suvey q based on control file.
-// 	dvar_vector qvec(1,nits);
-
-// 	qvec.initialize();
-// 	for(i=1;i<=nits;i++)
-// 	{
-// 		if(q_prior(i)==1) 
-// 		{
-// 			qvec(i)=dnorm(log(q(i)),mu_log_q(i),sd_log_q(i));
-// 		}
-// 	}
+	// |---------------------------------------------------------------------------------|
+	// | PRIOR FOR SURVEY Q
+	// |---------------------------------------------------------------------------------|
+	// |
+	dvar_vector qvec(1,nits);
+	qvec.initialize();
+	for(k=1;k<=nits;k++)
+	{
+		if(q_prior(k) == 1 )
+		{
+			qvec(k) = dnorm( log(q(k)), mu_log_q(k), sd_log_q(k) );
+		}
+	}
 	
 	
 // 	//** Legacy **  By accident took Rick Methot's bag from Nantes.
@@ -2561,62 +2567,67 @@ FUNCTION calcObjectiveFunction
 // 	//ibis charles du gaulle at
 // 	//01 49 19 19 20
 	
-// 	/*
-// 	The following are penalties that are invoked in early
-// 	phases to ensure reasonable solutions are obtained,
-// 	and to reduce the sensitivity of initial starting
-// 	conditions.  Penalties include:
-// 		-1) keep average fishing mortality rate near 
-// 			0.2 and in the last phase relax this constraint.
-// 		-3) normal prior for log rec devs with std=50.
-// 	*/
 
 	// |---------------------------------------------------------------------------------|
 	// | LIKELIHOOD PENALTIES TO REGULARIZE SOLUTION
 	// |---------------------------------------------------------------------------------|
 	// | - pvec(1)  -> penalty on mean fishing mortality rate.
+	// | - pvec(2)  -> penalty on first difference in natural mortality rate deviations.
+	// | - pvec(4)  -> penalty on recruitment deviations.
+	// | - pvec(5)  -> penalty on initial recruitment vector.
 	dvar_vector pvec(1,7);
 	pvec.initialize();
 	
 	dvariable log_fbar = mean(log_ft_pars);
 	if(last_phase())
 	{
+		
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(9));
-		//Penalty for log_rec_devs (large variance here)
-		// pvec(4) = dnorm(log_rec_devs,2.0);
-		// pvec(5) = dnorm(init_log_rec_devs,2.0);
+		
+		// | Penalty for log_rec_devs (large variance here)
+		for(g=1;g<=ngroup;g++)
+		{
+			pvec(4) += dnorm(log_rec_devs(g),2.0);
+			pvec(5) += dnorm(init_log_rec_devs(g),2.0);
+		}
 	}
 	else
 	{
+
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(8));
+		
 		//Penalty for log_rec_devs (CV ~ 0.0707) in early phases
-		// pvec(4)=100.*norm2(log_rec_devs);
-		// pvec(5)=100.*norm2(init_log_rec_devs);
+		for(g=1;g<=ngroup;g++)
+		{
+			pvec(4) += 100.*norm2(log_rec_devs(g));
+			pvec(5) += 100.*norm2(init_log_rec_devs(g));			
+		}
 	}
 	
-// 	//Priors for deviations in natural mortality rates
-// 	//if(active(log_m_devs))
-// 	if(active(log_m_nodes))
-// 	{
-// 		double std_mdev = cntrl(11);
-// 		dvar_vector fd_mdevs=first_difference(log_m_devs);
-// 		pvec(2) = dnorm(fd_mdevs,std_mdev);
-// 		pvec(2) += 0.5*norm2(log_m_nodes);
-// 	}
+	if(active(log_m_nodes))
+	{
+		double std_mdev = cntrl(11);
+		dvar_vector fd_mdevs=first_difference(log_m_devs);
+		pvec(2)  = dnorm(fd_mdevs,std_mdev);
+		pvec(2) += 0.5*norm2(log_m_nodes);
+	}
 	
 	
-// 	if(verbose)
-// 	{
-// 		COUT(nlvec);
-// 		cout<<"lvec\t"<<lvec<<endl;
-// 		cout<<"priors\t"<<priors<<endl;
-// 		cout<<"penalties\t"<<pvec<<endl;
-// 	}
+	if(verbose)
+	{
+		COUT(nlvec);
+		COUT(pvec);
+		// cout<<"lvec\t"<<lvec<<endl;
+		cout<<"priors\t"<<priors<<endl;
+		// cout<<"penalties\t"<<pvec<<endl;
+	}
 // 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 // 	//cout<<objfun<<endl;
 	COUT(nlvec);
 	objfun  = sum(nlvec);
 	objfun += sum(priors);
+	objfun += sum(pvec);
+	objfun += sum(qvec);
 	nf++;
 	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
 	
