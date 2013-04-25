@@ -1264,16 +1264,12 @@ FUNCTION initParameters
 	sig       = sqrt(rho) * varphi;
 	tau       = sqrt(1-rho) * varphi;
 
-	for(f=1;f<=narea;f++)
+	for(ih=1;ih<=n_ag;ih++)
 	{
-		for(g=1;g<=ngroup;g++)
-		{
-			ih = pntr_ag(f,g);
-
-			log_avgrec(ih)  = theta(4,ih);
-			log_recinit(ih) = theta(5,ih);	
-		}
+		log_avgrec(ih)  = theta(4,ih);
+		log_recinit(ih) = theta(5,ih);
 	}
+	
 
 	
 	switch(int(cntrl(2)))
@@ -1722,18 +1718,18 @@ FUNCTION calcNumbersAtAge
 		}
 		else if ( !cntrl(5) )
 		{
-			tr(sage)        = 1./nsex * ( log_avgrec(ih)+log_rec_devs(ih)(syr));
-			tr(sage+1,nage) = 1./nsex * (log_recinit(ih)+init_log_rec_devs(ih));
+			tr(sage)        = ( log_avgrec(ih)+log_rec_devs(ih)(syr));
+			tr(sage+1,nage) = (log_recinit(ih)+init_log_rec_devs(ih));
 			tr(sage+1,nage) = tr(sage+1,nage)+log(lx(sage+1,nage));
 		}
-		N(ig)(syr)(sage,nage) = mfexp(tr);
+		N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
 		log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 		for(i=syr;i<=nyr;i++)
 		{
 			if( i>syr )
 			{
-				log_rt(ih)(i) = 1./nsex * (log_avgrec(ih)+log_rec_devs(ih)(i));
-				N(ig)(i,sage) = mfexp( log_rt(ih)(i) );				
+				log_rt(ih)(i) = (log_avgrec(ih)+log_rec_devs(ih)(i));
+				N(ig)(i,sage) = 1./nsex * mfexp( log_rt(ih)(i) );				
 			}
 
 			N(ig)(i+1)(sage+1,nage) =++elem_prod(N(ig)(i)(sage,nage-1)
@@ -2561,6 +2557,7 @@ FUNCTION calcObjectiveFunction
 	// | - pvec(2)  -> penalty on first difference in natural mortality rate deviations.
 	// | - pvec(4)  -> penalty on recruitment deviations.
 	// | - pvec(5)  -> penalty on initial recruitment vector.
+	// | - pvec(6)  -> constraint to ensure sum(log_rec_dev) = 0
 	dvar_vector pvec(1,7);
 	pvec.initialize();
 	
@@ -2571,10 +2568,15 @@ FUNCTION calcObjectiveFunction
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(9));
 		
 		// | Penalty for log_rec_devs (large variance here)
-		for(g=1;g<=ngroup;g++)
+		for(g=1;g<=n_ag;g++)
 		{
 			pvec(4) += dnorm(log_rec_devs(g),2.0);
 			pvec(5) += dnorm(init_log_rec_devs(g),2.0);
+			dvariable s = 0;
+			s = mean(log_rec_devs(g));
+			pvec(6) += 1.e6 * s*s;
+			s = mean(init_log_rec_devs(g));
+			pvec(7) += 1.e6 * s*s;
 		}
 	}
 	else
@@ -2583,10 +2585,15 @@ FUNCTION calcObjectiveFunction
 		pvec(1) = dnorm(log_fbar,log(cntrl(7)),cntrl(8));
 		
 		//Penalty for log_rec_devs (CV ~ 0.0707) in early phases
-		for(g=1;g<=ngroup;g++)
+		for(g=1;g<=n_ag;g++)
 		{
 			pvec(4) += 100.*norm2(log_rec_devs(g));
-			pvec(5) += 100.*norm2(init_log_rec_devs(g));			
+			pvec(5) += 100.*norm2(init_log_rec_devs(g));
+			dvariable s = 0;
+			s = mean(log_rec_devs(g));
+			pvec(6) += 10000.0 * s*s;
+			s = mean(init_log_rec_devs(g));
+			pvec(7) += 10000.0 * s*s;
 		}
 	}
 	
