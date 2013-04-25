@@ -2574,9 +2574,9 @@ FUNCTION calcObjectiveFunction
 			pvec(5) += dnorm(init_log_rec_devs(g),2.0);
 			dvariable s = 0;
 			s = mean(log_rec_devs(g));
-			pvec(6) += 1.e6 * s*s;
+			pvec(6) += 1.e5 * s*s;
 			s = mean(init_log_rec_devs(g));
-			pvec(7) += 1.e6 * s*s;
+			pvec(7) += 1.e5 * s*s;
 		}
 	}
 	else
@@ -2591,9 +2591,9 @@ FUNCTION calcObjectiveFunction
 			pvec(5) += 100.*norm2(init_log_rec_devs(g));
 			dvariable s = 0;
 			s = mean(log_rec_devs(g));
-			pvec(6) += 10000.0 * s*s;
+			pvec(6) += 1.e5 * s*s;
 			s = mean(init_log_rec_devs(g));
-			pvec(7) += 10000.0 * s*s;
+			pvec(7) += 1.e5 * s*s;
 		}
 	}
 	
@@ -2610,12 +2610,8 @@ FUNCTION calcObjectiveFunction
 	{
 		COUT(nlvec);
 		COUT(pvec);
-		// cout<<"lvec\t"<<lvec<<endl;
-		cout<<"priors\t"<<priors<<endl;
-		// cout<<"penalties\t"<<pvec<<endl;
+		COUT(priors);
 	}
-// 	objfun=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
-// 	//cout<<objfun<<endl;
 	// COUT(nlvec);
 	objfun  = sum(nlvec);
 	objfun += sum(lvec);
@@ -3821,10 +3817,11 @@ REPORT_SECTION
 	REPORT(delta);
 
 	// |---------------------------------------------------------------------------------|
-	// | ABUNDANCE IN NUMBERS AND BIOMASS
+	// | ABUNDANCE IN NUMBERS 
 	// |---------------------------------------------------------------------------------|
 	// |
 	REPORT(N);
+
 	
 // 	if(last_phase())
 // 	{
