@@ -368,13 +368,14 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | - Total catch in weight (type=1), numbers (type=2), or roe (type=3).
 	// | - catch_data matrix cols: (year gear area group sex type value).
-	// | - If total catch is asexual (sex=0), then split observed catch into nsex groups.
-	// | - ft_count -> Number of estimated fishing mortality rate parameters.
-	// | 
+	// | - If total catch is asexual (sex=0), pool predicted catch from nsex groups.
+	// | - ft_count    -> Number of estimated fishing mortality rate parameters.
+	// | - catch_array -> An array of observed catch in group(ig) year (row) by gear (col)
+	// | - [ ] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int n_ct_obs;
 	!! COUT(n_ct_obs)
 	init_matrix catch_data(1,n_ct_obs,1,7);
-	
+	3darray catch_array(1,n_ags,syr,nyr,1,ngear);
 
 	int ft_count;
  	
@@ -391,6 +392,19 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<catch_data.sub(n_ct_obs-3,n_ct_obs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
+		catch_array.initialize();
+		for(int ii=1;ii<=n_ct_obs;ii++)
+		{
+			i = catch_data(ii)(1);
+			k = catch_data(ii)(2);
+			f = catch_data(ii)(3);
+			g = catch_data(ii)(4);
+			h = catch_data(ii)(5);
+			if(h==0 && nsex==1) h = 1;
+			ig = pntr_ags(f,g,h);
+			catch_array(ig)(i)(k) = catch_data(ii)(7);
+		}
+		COUT(catch_array(1))
 	END_CALCS
 	
 
@@ -1717,8 +1731,7 @@ FUNCTION calcNumbersAtAge
 		
 		if( cntrl(5) ) // initialize at unfished conditions.
 		{
-			COUT(ig);
-			tr =  log(1./nsex * ro(g)) + log(lx);
+			tr =  log( ro(g) ) + log(lx);
 		}
 		else if ( !cntrl(5) )
 		{
@@ -1740,7 +1753,7 @@ FUNCTION calcNumbersAtAge
 			                                     ,S(ig)(i)(sage,nage-1));
 			N(ig)(i+1,nage)        +=  N(ig)(i,nage)*S(ig)(i,nage);
 		}
-		N(ig)(nyr+1,sage) = mfexp(1./nsex * log_avgrec(ih));
+		N(ig)(nyr+1,sage) = 1./nsex * mfexp( log_avgrec(ih));
 		
 
 	}
@@ -2165,7 +2178,7 @@ FUNCTION calcStockRecruitment
   			
   	
   	TODO list:
-  	[ ] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
+  	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
   	[ ] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
 
   	*/
@@ -2176,6 +2189,7 @@ FUNCTION calcStockRecruitment
   	delta.initialize();
 	
 	dvariable phib;//,so,beta;
+	dvector         fa(sage,nage);
 	dvar_vector   stmp(sage,nage);
 	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
@@ -2201,6 +2215,7 @@ FUNCTION calcStockRecruitment
 				for(j=sage;j<=nage;j++)
 				{
 					ma(j) = mean(trans(M(ig))(j));
+					fa(j) = mean( trans(wt_mat(ig))(j) );
 					if(j > sage)
 					{
 						lx(j) = lx(j-1) * mfexp(-ma(j-1));
@@ -2211,7 +2226,7 @@ FUNCTION calcStockRecruitment
 				lw(nage) /= 1.0 - mfexp(-ma(nage));
 				
 				// | Step 3. calculate average spawing biomass per recruit.
-				phib += 1./(narea*nsex) * lw *wt_mat(ig)(syr);
+				phib += 1./(narea*nsex) * lw*fa;
 
 				// | Step 4. compute spawning biomass at time of spawning.
 				for(i=syr;i<=nyr;i++)
@@ -3194,226 +3209,221 @@ FUNCTION calcObjectiveFunction
 FUNCTION void simulationModel(const long& seed)
   {
   	/*
-  	Purpose:  This function 
+  	Purpose:  This routine gets called from the PRELIMINARY_CALCS_SECTION if the 
+  	          user has specified the -sim command line option.  The random seed
+  	          is specifed at the command line.
+
   	Author: Steven Martell
   	
   	Arguments:
-  		None
+  		seed -> a random seed for generating a unique, repeatable, sequence of 
+  		        random numbers to be used as observation and process errors.
   	
   	NOTES:
-  		
-  	
+		- This routine will over-write the observations in memory
+		  with simulated data, where the true parameter values are
+		  the initial values.  Change the standard deviations of the 
+		  random number vectors epsilon (observation error) or 
+ 		  recruitment devs wt (process error).
+ 		- At the end of DATA_SECTION nyrs is modified by retro_yrs if -retro.
+ 		- Add back the retro_yrs to ensure same random number sequence for 
+		  observation errors.
+ 
+ 	PSUEDOCODE:
+ 		1) calculate selectivities to be used in the simulations.
+ 		2) calculate mortality rates (M), F is conditioned on catch.
+ 		3) generate random numbers for observation & process errors.
+ 		4) calculate survivorship and stock-recruitment pars based on average M & fec.
+ 		5) initialize state variables.
+ 		6) population dynamics with F conditioned on catch.
+
   	TODO list:
+	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
+		  doing retrospective analyses on simulated datasets.
   	[ ] 
   	*/
-// 	/*
-// 	Call this routine to simulate data for simulation testing.
-// 	The random number seed can be used to repeat the same 
-// 	sequence of random number for simulation testing.
 	
-// 	Implemented using the "-SimFlag 99" command line option where
-// 	99 is the random number seed.
+	bool pinfile = 0;
+	cout<<"___________________________________________________\n"<<endl;
+	cout<<"  **Implementing Simulation--Estimation trial**    "<<endl;
+	cout<<"___________________________________________________"<<endl;
+	if(norm(log_rec_devs)!=0)
+	{
+		cout<<"\tUsing pin file for simulation"<<endl;
+		pinfile = 1;
+	}
+	cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
+	cout<<"\tNumber of retrospective years: "<<retro_yrs<<endl;
+	cout<<"___________________________________________________\n"<<endl;
 	
-// 	-SimFlag 99 is a special case used for the manuscript for case 1.
-// 	-SimFlag 000 is a special case with 0 error (exact data)
 	
-// 	-This routine will over-write the observations in memory
-// 	with simulated data, where the true parameter values are
-// 	the initial values.  Change the standard deviations of the 
-// 	random number vectors epsilon (observation error) or 
-// 	recruitment devs wt (process error).
 
-// 	Jan 30, 2013  SM
-// 	- added some simulation controls to the control file for simulating
-// 	  fake data.  These controls include:
-// 	  - sim_control(1) -> flag modeling selectivity using Ideal Free Distribution.
-// 	  - sim_control(2) -> 
+	int ii,ki,ig,ih;
+	// |---------------------------------------------------------------------------------|
+	// | 1) SELECTIVITY
+	// |---------------------------------------------------------------------------------|
+	// |
+    calcSelectivities(isel_type);
 
-// 	March 9, 2013.  Fix simulation model to generate consistent data when 
-// 	doing retrospective analyses on simulated datasets.
+    // |---------------------------------------------------------------------------------|
+    // | 2) MORTALITY
+    // |---------------------------------------------------------------------------------|
+    // | [ ] - add simulated random-walk in natural mortality rate here.
+    // |
+    calcTotalMortality();
 
-// 	NOTES:
-// 		-at the end of DATA_SECTION nyrs is modified by retro_yrs if -retro.
-// 		-add back the retro_yrs to ensure same random number sequence for 
-// 		observation errors.
-// 	*/
-	
-// 	bool pinfile = 0;
-// 	cout<<"___________________________________________________\n"<<endl;
-// 	cout<<"  **Implementing Simulation--Estimation trial**    "<<endl;
-// 	cout<<"___________________________________________________"<<endl;
-// 	if(norm(log_rec_devs)!=0)
-// 	{
-// 		cout<<"\tUsing pin file for simulation"<<endl;
-// 		pinfile = 1;
-// 	}
-// 	cout<<"\tRandom Seed No.:\t"<< rseed<<endl;
-// 	cout<<"\tNumber of retrospective years: "<<retro_yrs<<endl;
-// 	cout<<"___________________________________________________\n"<<endl;
-	
-	
-// 	//Indexes:
-// 	int i,j,k,ii,ki;
 
-// 	// Initialize selectivity based on model parameters.
-//     calcSelectivities(isel_type);
-//     cout<<"	Ok after calcSelectivities"<<endl;
+    // |---------------------------------------------------------------------------------|
+    // | 3) GENERATE RANDOM NUMBERS
+    // |---------------------------------------------------------------------------------|
+    // | - epsilon -> Observation errors
+    // | - rec_dev -> Process errors
+    // | [ ] - add other required random numbers if necessary.
+    // |
+	random_number_generator rng(seed);
+	dmatrix epsilon(1,nit,1,nit_nobs);
+	dmatrix rec_dev(1,n_ag,syr-nage+sage,nyr+retro_yrs);
+    
 
-//     // Initialize natural mortality rates.  Should add Random-walk in M parameters here.
-//     calcTotalMortality();
+    epsilon.fill_randn(rng);
+    rec_dev.fill_randn(rng);
 
-	
-// 	/*----------------------------------*/
-// 	/*	-- Generate random numbers --	*/
-// 	/*----------------------------------*/
-// 	random_number_generator rng(seed);
-// 	dvector wt(syr-nage-1,nyr+retro_yrs);	//recruitment anomalies if !pinfile
-// 	dmatrix epsilon(1,nit,1,nit_nobs);  	//observation errors in survey
-	
-// 	double sig = value(sqrt(rho)*varphi);
-// 	double tau = value(sqrt(1.-rho)*varphi);
-// 	COUT(sig);
-// 	COUT(tau);
-// 	if(seed==000)
-// 	{
-// 		cout<<"No Error\n";
-// 		sig=0;
-// 		tau=0;
-// 	}
-// 	wt.fill_randn(rng); 
-// 	wt *= tau - 0.5*tau*tau;
+    // | Scale survey observation errors
+    double std;
+    for(k=1;k<=nit;k++)
+    {
+    	for(i=1;i<=nit_nobs(k);i++)
+    	{
+    		std = 1.0e3;
+    		if( it_wt(k,i)>0 )
+    		{
+    			std = value(sig/it_wt(k,i));
+    		}
+    		epsilon(k,i) *= std - 0.5*std*std;
+    	}
+    }
 
-// 	epsilon.fill_randn(rng); 
-// 	//now loop over surveys and scale the observation errors
-// 	for(k=1;k<=nit;k++)
-// 	{
-// 		for(j=1;j<=nit_nobs(k);j++)
-// 		{
-// 			if(it_wt(k,j)!=0)
-// 			epsilon(k,j) *= sig/it_wt(k,j) - 0.5*sig*sig;
-// 		}
-// 	}
-// 	COUT(wt);
-// 	COUT(epsilon);
-// 	cout<<"	OK after random numbers\n";
-// 	/*----------------------------------*/
-	
-	
-	
-	
-	
-// 	/*----------------------------------*/
-//     /*		--Initialize model--		*/
-// 	/*CHANGED now calculating phie based on m_bar and avg_fec*/
-// 	/*----------------------------------*/
-// 	dvector lx=pow(exp(-value(m_bar)),age-min(age));
-// 	lx(nage)/=(1.-exp(-value(m_bar)));
-// 	double phie=(lx*exp(-value(m_bar)*cntrl(13)))*avg_fec;//fec(syr);
-// 	so=kappa/phie;
-	
-	
-// 	if(cntrl(2)==1) beta=(kappa-1.)/(ro*phie);
-// 	if(cntrl(2)==2) beta=log(kappa)/(ro*phie);
-	
-// 	//Initial numbers-at-age with recruitment devs
-// 	N.initialize();
-// 	if(cntrl(5))    //If initializing in at unfished conditions
-// 	{	
-// 		log_rt(syr) = log(ro);
-// 		N(syr)      = ro * lx;
-// 	}
-// 	else            //If starting at fished conditions
-// 	{
-// 		log_rt(syr)         = log_avgrec+log_rec_devs(syr);
-// 		N(syr,sage)         = mfexp(log_rt(syr));
-// 		dvar_vector tmpr    = mfexp(log_recinit + init_log_rec_devs(sage+1,nage));
-// 		N(syr)(sage+1,nage) = elem_prod(tmpr,lx(sage+1,nage));
-// 	}
-	
-// 	for(i=syr+1;i<=nyr;i++){
-// 		log_rt(i)=log_avgrec+log_rec_devs(i);
-// 		N(i,sage)=mfexp(log_rt(i));
-// 	}
-// 	N(nyr+1,sage)=mfexp(log_avgrec);
-// 	cout<<"	Ok after initialize model\n";
-// 	/*----------------------------------*/
-	
-	
-	
-// 	/*----------------------------------*/
-//     /*		--    Selectivity   --		*/
-// 	/*----------------------------------*/
-// 	/*
-// 		-Based on values in the control file.
-// 		-Add autocorrelated random numbers
-// 		for time varying or something to that
-// 		effect.
-		
-// 		-If seed==99 then set up a special case
-// 		for the cubic spline manunscript using
-// 		the eplogistic function where g goes from
-// 		strongly domed to asymptotic, e.g.,
-// 		g = 0.2 * (nyr-i)/(nyr-syr);
+    // | Scale process errors
+    for(ih=1;ih<=n_ag;ih++)
+    {
+    	std = value(tau);
+    	rec_dev(ih) = rec_dev(ih) * std - 0.5*std*std;
+    }
 
-// 		-If simulation blocks differ from estimation blocks,
-// 		then need to loop over years and change selectivity
-// 		to correspond to the simulation blocks.
-		
-// 	*/
+    // |---------------------------------------------------------------------------------|
+    // | 4) SURVIVORSHIP & STOCK-RECRUITMENT PARAMETERS BASED ON AVERAGE M & FECUNDITY
+    // |---------------------------------------------------------------------------------|
+    // | -> Loop over each group/stock and compute survivorship, phib, so and beta.
+    // | - fa is the average mature weight-at-age
+    // |
+    double phib;
+    dvector ma(sage,nage);
+    dvector fa(sage,nage);
+    dvector lx(sage,nage);
+    dvector lw(sage,nage);
+
+    for(g=1;g<=ngroup;g++)
+    {
+    	lx.initialize();
+		lw.initialize();
+		lx(sage) = 1.0;
+		lw(sage) = 1.0;
+		phib = 0;
+		for(f=1;f<=narea;f++)
+		{
+			for(h=1;h<=nsex;h++)
+			{
+				ig = pntr_ags(f,g,h);
+				for(j=sage;j<=nage;j++)
+				{
+					ma(j) = mean( trans(value(M(ig)))(j)  );
+					fa(j) = mean( trans(wt_mat(ig))(j) );
+					if(j>sage)
+					{
+						lx(j) = lx(j-1) * exp(-ma(j-1));
+					}
+					lw(j) = lx(j) * exp( -ma(j)*cntrl(13) );
+				}
+				lx(nage) /= 1.0 - exp(-ma(nage));
+				lw(nage) /= 1.0 - exp(-ma(nage));
+
+				phib += 1./(narea*nsex) * lw * fa;
+			}
+		}
+		so(g)  = kappa(g)/phib;
+		sbo(g) = ro(g) * phib;
+		switch(int(cntrl(2)))
+		{
+			case 1:
+				beta(g) = (kappa(g)-1.0)/sbo(g);
+			break;
+			case 2:
+				beta(g) = log(kappa(g))/sbo(g);
+			break;
+		}
+    }
+   
+
+   // |---------------------------------------------------------------------------------|
+   // | 5) INITIALIZE STATE VARIABLES
+   // |---------------------------------------------------------------------------------|
+   // |
+	N.initialize();
+	dvector tr(sage,nage);
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		f  = i_area(ig);
+		g  = i_group(ig);
+		ih = pntr_ag(f,g);
+		lx.initialize();
+		lx(sage) = 1.0;
+		for(j=sage;j<nage;j++)
+		{
+			lx(j+1) = lx(j) * exp(-value(M(ig)(syr)(j)));
+		}
+		lx(nage) /= 1.0 - exp(-value(M(ig)(syr)(nage)));
+		if( cntrl(5) )
+		{
+			tr = log( value(ro(g)) ) + log(lx);
+		}
+		else if( !cntrl(5) )
+		{
+			tr(sage)        = value(log_avgrec(ih)+rec_dev(ih)(syr));
+			tr(sage+1,nage) = value(log_recinit(ih)+rec_dev(ih)(syr-nage+sage,syr-1));
+			tr(sage+1,nage) = tr(sage+1,nage)+log(lx(sage+1,nage));
+		}
+		N(ig)(syr)(sage,nage) = 1./nsex * exp(tr);
+		log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
+
+		for(i=syr+1;i<=nyr;i++)
+		{
+			log_rt(ih)(i) = (log_avgrec(ih)+rec_dev(ih)(i));
+			N(ig)(i,sage) = 1./nsex * exp( log_rt(ih)(i) );
+		}
+		N(ig)(nyr+1,sage) = 1./nsex * exp(log_avgrec(ih));
+	}
+
+
+	// |---------------------------------------------------------------------------------|
+	// | POPULATION DYNAMICS WITH F CONDITIONED ON OBSERVED CATCH
+	// |---------------------------------------------------------------------------------|
+	// | - va  -> matrix of fisheries selectivity coefficients.
+	// | - 
+	// |
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		for(i=syr;i<=nyr;i++)
+		{
+			dvector ba = elem_prod(value(N(ig)(i)),wt_avg(ig)(i));
+			dvector ct = catch_array(ig)(i);
+		}
+	}
+	COUT(N)
 
 	
 // 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
 // 	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
-
-// 	// Check to see if Selectivity blocks differ from estimation blocks.
-// 	// int byr,bpar;
-// 	// double p1,p2,xx;
-// 	// double mu1, sd1;
-
-	
-// 	// for(k=1;k<=ngear;k++)
-// 	// {
-// 	// 	byr = 1;
-// 	// 	bpar = 0;
-// 	// 	if( nsim_sel_blocks(k) > 1 )
-// 	// 	{
-// 	// 		mu1 = (value(sel_par(k,1,1))); 
-// 	// 		sd1 = (value(sel_par(k,1,2)));
-// 	// 		p1 = mfexp(value(sel_par(k,1,1)));
-// 	// 		p2 = mfexp(value(sel_par(k,1,2)));
-
-			
-// 	// 		for(i=syr; i<=nyr; i++)
-// 	// 		{
-// 	// 			if( i == sim_sel_blocks(k,byr) )
-// 	// 			{
-// 	// 				if( byr <= nsim_sel_blocks(k) )
-// 	// 				{
-// 	// 					byr++;
-// 	// 					// Get new selectivity parameters
-// 	// 					xx  = randn(rng);
-// 	// 					p1  = exp(mu1 + 0.2 * xx);
-// 	// 					xx  = randn(rng);
-// 	// 					p2  = exp(sd1 - 0.2 * xx);
-// 	// 				}
-// 	// 			}				
-// 	// 			log_sel(k)(i) = log( plogis(age,p1,p2) );
-// 	// 			log_sel(k)(i)-= log(mean(mfexp(log_sel(k)(i))));
-// 	// 		}
-// 	// 	}
-// 	// }
-// 	//exit(1);
 // 	dlog_sel=value(log_sel);
-	
-// 	/*
-// 		for(i=syr;i<=nyr;i++)
-// 		{
-// 			//sel(k)(i)=plogis(age,ahat(k),ghat(k));
-// 			log_sel(k)(i)=log(plogis(age,ahat(k),ghat(k)));
-// 		log_sel(k)(i) -= log(mean(exp(log_sel(k)(i))));
-// 		}
-// 	//log_sel(j)(i) -= log(mean(mfexp(log_sel(j)(i))));
-// 	*/
 // 	cout<<"	Ok after selectivity\n";
 
 // 	/*----------------------------------*/
