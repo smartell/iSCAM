@@ -3408,9 +3408,12 @@ FUNCTION void simulationModel(const long& seed)
 	// | POPULATION DYNAMICS WITH F CONDITIONED ON OBSERVED CATCH
 	// |---------------------------------------------------------------------------------|
 	// | - va  -> matrix of fisheries selectivity coefficients.
-	// | - 
+	// | - [ ] TODO: Stock-Recruitment model (must loop over area sex for each group).
 	// |
 	dmatrix va(1,ngear,sage,nage);
+	dmatrix ft(syr,nyr,1,ngear);
+	dmatrix zt(syr,nyr,sage,nage);
+	dmatrix st(syr,nyr,sage,nage);
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		for(i=syr;i<=nyr;i++)
@@ -3418,14 +3421,51 @@ FUNCTION void simulationModel(const long& seed)
 			dvector ba = elem_prod(value(N(ig)(i)),wt_avg(ig)(i));
 			dvector ct = catch_array(ig)(i);
 
+			// | Selectivity modifications if necessary
 			for(k=1;k<=ngear;k++)
 			{
-				va(k) = exp(log_sel(k)(ig)(i));
-				COUT(va);
+				va(k) = exp(value(log_sel(k)(ig)(i)));
+				if( cntrl(15) == 1 && allocation(k) > 0 )
+				{
+					va(k)             = ifdSelex(va(k),ba,0.25);
+					log_sel(k)(ig)(i) = log(va(k));
+					// dlog_sel(k)(i) = log(va(k));
+				}
 			}
+
+			ft(i) = getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
+			zt(i) = value(M(ig)(i));
+			for(k=1;k<=ngear;k++)
+			{
+				zt(i) += ft(i,k) * va(k);
+			}
+			st(i) = exp(-zt(i));
+
+			// | [ ] TODO: Stock-Recruitment model
+			/* 
+			sbt(ig)(i) = (elem_prod(N(ig)(i),exp(-zt(i)*cntrl(13)))*wt_mat(ig)(i));
+			if(i>=syr+sage-1 && !pinfile)
+			{
+				double rt,et;
+				et = value(sbt(ig)(i-sage+1));
+				if(cntrl(2)==1)
+				{
+					rt = value(so(g)*et/(1.+beta(g)*et));
+				}
+				else
+				{
+					rt = value(so(g)*et*exp(-beta(g)*et));
+				}
+				N(ig)(i)(sage) = rt * exp(rec_dev(ih)(i)-0.5*tau*tau);
+			}
+			*/
+
+			// | Update state variables
+			N(ig)(i+1)(sage+1,nage) =++ elem_prod(N(ig)(i)(sage,nage-1),st(i)(sage,nage-1));
+			N(ig)(i+1)(nage) += N(ig)(i)(nage)*st(i)(nage);
 		}
 	}
-	COUT(N)
+	
 
 	
 // 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
@@ -3450,82 +3490,6 @@ FUNCTION void simulationModel(const long& seed)
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   
-		
-// 		//total biomass at age
-// 		//dvector bt = elem_prod(value(N(i)),wa);
-// 		dvector bt = elem_prod(value(N(i)),wt_avg(i));
-
-// 		/*calculate instantaneous fishing mortalities
-// 		based on Baranov's catch equation and the 
-// 		observed catch from each fleet.*/
-// 		dvector oct = trans(obs_ct)(i);
-		
-// 		/*
-// 		Feb 1, 2013.  SM
-// 		Added simulation options for selectivity in:
-// 		sim_ctrl(15) -> uses Ideal Free Distribution to modify dlog_sel
-
-// 		*/
-// 		for(k=1;k<=ngear;k++)
-// 		{
-// 			va(k)=exp(dlog_sel(k)(i));
-// 			// if( sim_ctrl(1)(k) )
-// 			if( cntrl(15) == 1 && allocation(k) > 0 )
-// 			{
-// 				va(k) = ifdSelex(va(k),bt);
-// 				dlog_sel(k)(i) = log(va(k));
-// 				log_sel(k)(i)  = dlog_sel(k)(i);
-// 			}
-// 		}
-		
-// 		//get_ft is defined in the Baranov.cxx file
-// 		//CHANGED these ft are based on biomass at age, should be numbers at age
-// 		//ft(i) = get_ft(oct,value(m),va,bt);
-// 		//ft(i) = get_ft(oct,value(m),va,value(N(i)),wt_avg(i));
-// 		ft(i) = getFishingMortality(oct, value(m), va, value(N(i)),wt_avg(i));
-// 		//cout<<"ft\t"<<ft(i)<<endl;
-// 		//cout<<trans(obs_ct)(i)<<"\t"<<oct<<endl;
-		
-// 		// overwrite observed catch incase it was modified by get_ft
-// 		// SJDM Deprecated Sept 10, 2012
-// 		//for(k=1;k<=ngear;k++)
-// 		//	obs_ct(k,i)=oct(k);
-		
-// 		//total age-specific mortality
-// 		//dvector zt(sage,nage);
-// 		zt(i)=value(m);
-// 		for(k=1;k<=ngear;k++){
-// 			zt(i)+= ft(i,k)*exp(dlog_sel(k)(i));
-// 		}
-		
-		
-// 		//CHANGED definition of spawning biomass based on ctrl(13)
-// 		sbt(i) = value(elem_prod(N(i),exp(-zt(i)*cntrl(13)))*fec(i));
-		
-// 		//Update numbers at age
-// 		// SM Changed to allow for pinfile to over-ride S_R relationship.
-// 		if(i>=syr+sage-1 && !pinfile)
-// 		{
-// 			double rt;
-// 			//double et=value(N(i-sage+1))*fec(i-sage+1);
-// 			double et=sbt(i-sage+1);
-// 			if(cntrl(2)==1)rt=value(so*et/(1.+beta*et));
-// 			if(cntrl(2)==2)rt=value(so*et*exp(-beta*et));
-// 			N(i+1,sage)=rt*exp(wt(i)-0.5*tau*tau);
-			
-// 			/*CHANGED The recruitment calculation above is incosistent
-// 			  with the assessment model.  Below recruitment is based on
-// 			  rt=exp(log_avgrec + wt + rt_dev), where the rt_dev calculation
-// 			is based on the BH or Ricker model.*/
-// 			//double rt_dev = log(rt)-value(log_avgrec);
-// 			//N(i+1,sage)=exp(log_avgrec+wt(i));
-			
-// 		}
-
-
-// 		N(i+1)(sage+1,nage)=++elem_prod(N(i)(sage,nage-1),exp(-zt(i)(sage,nage-1)));
-// 		N(i+1,nage)+=N(i,nage)*exp(-zt(i,nage));
-		
 		
 // 		//Catch & Catch-at-age
 // 		for(k=1;k<=ngear;k++)
@@ -3754,25 +3718,32 @@ FUNCTION void simulationModel(const long& seed)
 
 
 //   }
-// FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
-//   {
-//   	/*
-//   	This function returns a modified selectivity vector (va) based on
-//   	the assumption that age-based selectivity will operate on the principle
-//   	of ideal free distribution.  
+FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mpow)
+  {
+  	/*
+  	Purpose:  This function returns a modified selectivity vector (va) based on
+  			  the assumption that age-based selectivity will operate on the principle
+  	          of ideal free distribution.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		va -> age-specific vulnerability
+  		ba -> age-specific biomass (relative abundance is fine)
+  	
+  	NOTES:
+  		
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 
-//   	va -> is a vector representing the selectivity of the gear
-//   	ba -> is a vector of relative biomasses-at-age.  
-//   	*/
-//   	dvector pa(sage,nage);
+  	dvector pa(sage,nage);
 
-//   	pa = (elem_prod(va,pow(ba,0.25)));
-//   	// pa = (pa - mean(pa))/sqrt(var(pa));
-//   	// pa = va * exp(0.1*pa);
-//   	pa = pa/sum(pa);
-//   	pa = exp( log(pa) - log(mean(pa)) );
-//   	return (pa);
-//   }
+  	pa = (elem_prod(va,pow(ba,mpow)));
+  	pa = pa/sum(pa);
+  	pa = exp( log(pa) - log(mean(pa)) );
+  	return (pa);
+  }
 
 REPORT_SECTION
   {
