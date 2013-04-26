@@ -3410,13 +3410,19 @@ FUNCTION void simulationModel(const long& seed)
 	// | - va  -> matrix of fisheries selectivity coefficients.
 	// | - 
 	// |
+	dmatrix va(1,ngear,sage,nage);
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		for(i=syr;i<=nyr;i++)
 		{
 			dvector ba = elem_prod(value(N(ig)(i)),wt_avg(ig)(i));
 			dvector ct = catch_array(ig)(i);
-			
+
+			for(k=1;k<=ngear;k++)
+			{
+				va(k) = exp(log_sel(k)(ig)(i));
+				COUT(va);
+			}
 		}
 	}
 	COUT(N)
@@ -3457,7 +3463,7 @@ FUNCTION void simulationModel(const long& seed)
 // 		/*
 // 		Feb 1, 2013.  SM
 // 		Added simulation options for selectivity in:
-// 		sim_ctrl(1) -> uses Ideal Free Distribution to modify dlog_sel
+// 		sim_ctrl(15) -> uses Ideal Free Distribution to modify dlog_sel
 
 // 		*/
 // 		for(k=1;k<=ngear;k++)
