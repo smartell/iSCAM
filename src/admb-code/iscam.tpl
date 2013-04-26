@@ -3416,6 +3416,7 @@ FUNCTION void simulationModel(const long& seed)
 		{
 			dvector ba = elem_prod(value(N(ig)(i)),wt_avg(ig)(i));
 			dvector ct = catch_array(ig)(i);
+			
 		}
 	}
 	COUT(N)
