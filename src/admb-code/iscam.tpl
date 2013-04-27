@@ -1156,7 +1156,7 @@ PARAMETER_SECTION
 	// | Chat       -> Predicted catch-age array for (gear, group, year, age)
 	// | 
 	4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);		
-	4darray    Chat(1,ngear,1,n_ags,syr,nyr,sage,nage);		
+	// 4darray    Chat(1,ngear,1,n_ags,syr,nyr,sage,nage);		
 	
 
 	// |---------------------------------------------------------------------------------|
@@ -1195,7 +1195,7 @@ PROCEDURE_SECTION
 	
 	calcNumbersAtAge();
 	
-	calcCatchAtAge();
+	//calcCatchAtAge();
 
 	calcTotalCatch();
 	
@@ -1793,16 +1793,22 @@ FUNCTION calcAgeComposition
   		  of the variance.
   	
   	TODO list:
+  	[ ] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[ ]
+	[ ] - add plus group if a_nage < nage;
 
   	*/
   	
   	int ii,ig,kk;
-  	dvar_vector log_va(sage,nage);
-  	dvar_vector tmp_na(sage,nage);
+  	dvar_vector va(sage,nage);
+  	dvar_vector fa(sage,nage);
+  	dvar_vector sa(sage,nage);
+  	dvar_vector za(sage,nage);
+  	dvar_vector ca(sage,nage);
+  	dvar_vector na(sage,nage);
   	A_hat.initialize();
+
   	 for(kk=1;kk<=na_gears;kk++)
   	 {
   	 	for(ii=1;ii<=na_nobs(kk);ii++)
@@ -1819,33 +1825,41 @@ FUNCTION calcAgeComposition
 	  		if( h )
 	  		{
 				ig = pntr_ags(f,g,h);
-				if( sum(Chat(k)(ig)(i)) > 0 )
+				va = mfexp(log_sel(k)(ig)(i));
+				za = Z(ig)(i);
+				sa = S(ig)(i);
+				na = N(ig)(i);
+				if( ft(k)(i)==0 )
 				{
-					A_hat(kk)(ii) = Chat(k)(ig)(i)(a_sage(kk),a_nage(kk));
+					ca = elem_prod(na,0.5*sa);
 				}
 				else
 				{
-					log_va = log_sel(k)(ig)(i);
-					tmp_na = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-					A_hat(kk)(ii) = tmp_na( a_sage(kk),a_nage(kk) );
+					fa = ft(k)(i) * va;
+					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 				}
+				A_hat(kk)(ii) = ca(a_sage(kk),a_nage(kk));
 	  		}
 	  		else if( !h )
 	  		{
 	  			for(h=1;h<=nsex;h++)
 	  			{
 					ig = pntr_ags(f,g,h);
-					if( sum(Chat(k)(ig)(i)) > 0)
+					va = mfexp(log_sel(k)(ig)(i));
+					za = Z(ig)(i);
+					sa = S(ig)(i);
+					na = N(ig)(i);
+					if( ft(k)(i)==0 )
 					{
-						A_hat(kk)(ii) += Chat(k)(ig)(i)(a_sage(kk),a_nage(kk));
+						ca = elem_prod(na,0.5*sa);
 					}
 					else
 					{
-						log_va = log_sel(k)(ig)(i);
-						tmp_na = elem_prod(elem_prod(N(ig)(i),0.5*S(ig)(i)),mfexp(log_va));
-						A_hat(kk)(ii) = tmp_na( a_sage(kk),a_nage(kk) );		
+						fa = ft(k)(i) * va;
+						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 					}
-	  			}
+					A_hat(kk)(ii) += ca(a_sage(kk),a_nage(kk));
+		  		}
 	  		}
 	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
   	 	}
@@ -1855,89 +1869,7 @@ FUNCTION calcAgeComposition
 
   }	
 
-FUNCTION calcCatchAtAge
-  {
-  	/*
-  	Purpose:  This function calculated the predicted catch-at-age samples from all
-  	          gear types, including survey gears. It loops over the na_gears, then for
-  	          each na_gear, loops over all the observations for that gear and calculates
-  	          the predicted age-composition sample based on selectivity and fishing 
-  	          mortality.  The Ahat array is the predicted age composition samples.
 
-  	Author: Steven Martell
-  	
-  	Arguments:
-  		None
-  	
-  	NOTES:
-	 	Dec 6, 2010.  Modified ct calculations to include
-	 				  empirical weight at age data (wt_avg);
-		Jan 16, 2011. Modified this code to get age-comps from surveys, rather than 
-					  computing the age-comps in calc_fisheries_observations
-	
-		Jan 6, 2012.  Modified code to allow for catch observations in numbers,
-					  biomass, and harvest of roe.  
-	
-		Jun 22, 2012. Added eta variable for catch residuals.
-
-		Apr 21, 2013. Major changes associated with addding group dimension to the model.
-  		
-  		-             catch_data matrix cols: (year gear area group sex type value)
-  		- A           -> array of data (year,gear,area,group,sex|Data...)
-  	TODO list:
-  	[ ] - Remove Chat 4darray calculations and replace with Ahat 3darray calculations.
-
-  	*/
-
-
-	int ig,ii,kk,l;
-	
-	dvar_vector log_va(sage,nage);
-	dvar_vector     fa(sage,nage);
-	Chat.initialize();
-	
-	for(kk=1;kk<=na_gears;kk++)
-	{
-		for(ii=1;ii<=na_nobs(kk);ii++)
-		{		
-			i    = A(kk)(ii,a_sage(kk)-5);
-			k    = A(kk)(ii,a_sage(kk)-4);
-			f    = A(kk)(ii,a_sage(kk)-3);
-			g    = A(kk)(ii,a_sage(kk)-2);
-			h    = A(kk)(ii,a_sage(kk)-1);
-
-			if( i>nyr ) continue;
-
-			if( h ) // catch by sex
-			{
-				ig     = pntr_ags(f,g,h);
-				log_va = log_sel(k)(ig)(i);
-				fa     = ft(k)(i) * mfexp(log_va);
-				Chat(k)(ig)(i) = elem_prod(
-				                 elem_prod(
-				                  elem_div(fa,Z(ig)(i)),
-				                  1.-S(ig)(i)),
-				                  N(ig)(i));
-			}
-			else if ( !h ) // asexual catch
-			{
-				for(h=1;h<=nsex;h++)
-				{
-					ig     = pntr_ags(f,g,h);
-					log_va = log_sel(k)(ig)(i);
-					fa     = ft(k)(i) * mfexp(log_va);
-					Chat(k)(ig)(i) = elem_prod(
-				                 elem_prod(
-				                  elem_div(fa,Z(ig)(i)),
-				                  1.-S(ig)(i)),
-				                  N(ig)(i));
-				}
-			}
-		} // na_nobs loop.
-	} // na_gears loop.
-	if(verbose)cout<<"**** Ok after calcCatchAtAge ****"<<endl;
-  }	
-	
 FUNCTION calcTotalCatch
   {
   	/*
@@ -3509,48 +3441,48 @@ FUNCTION void simulationModel(const long& seed)
 	// | 7) CATCH-AT-AGE
 	// |---------------------------------------------------------------------------------|
 	// | - A is the matrix of observed catch-age data.
-	int kk;
-	dvector log_va(sage,nage);
-	for(kk=1;kk<=na_gears;kk++)
-	{
-		for(ii=1;ii<=na_nobs(kk);ii++)
-		{
-			i    = A(kk)(ii,a_sage(kk)-5);
-			k    = A(kk)(ii,a_sage(kk)-4);
-			f    = A(kk)(ii,a_sage(kk)-3);
-			g    = A(kk)(ii,a_sage(kk)-2);
-			h    = A(kk)(ii,a_sage(kk)-1);
+	// int kk;
+	// dvector log_va(sage,nage);
+	// for(kk=1;kk<=na_gears;kk++)
+	// {
+	// 	for(ii=1;ii<=na_nobs(kk);ii++)
+	// 	{
+	// 		i    = A(kk)(ii,a_sage(kk)-5);
+	// 		k    = A(kk)(ii,a_sage(kk)-4);
+	// 		f    = A(kk)(ii,a_sage(kk)-3);
+	// 		g    = A(kk)(ii,a_sage(kk)-2);
+	// 		h    = A(kk)(ii,a_sage(kk)-1);
 
-			if( h ) // catch by sex
-			{
-				ig     = pntr_ags(f,g,h);
-				log_va = value(log_sel(k)(ig)(i));
-				fa     = ft(k)(i) * mfexp(log_va);
-				Chat(k)(ig)(i) = elem_prod(
-				                 elem_prod(
-				                 elem_div(fa,Z(ig)(i)),
-				                 1.-S(ig)(i)),
-				                 N(ig)(i));	
-			}
-			else if ( !h ) // asexual catch
-			{
-				for(h=1;h<=nsex;h++)
-				{
-					ig     = pntr_ags(f,g,h);
-					log_va = value(log_sel(k)(ig)(i));
-					fa     = ft(k)(i) * mfexp(log_va);
-					Chat(k)(ig)(i) = elem_prod(
-				                     elem_prod(
-				                     elem_div(fa,Z(ig)(i)),
-				                     1.-S(ig)(i)),
-				                     N(ig)(i));
-				}
-			}
+	// 		if( h ) // catch by sex
+	// 		{
+	// 			ig     = pntr_ags(f,g,h);
+	// 			log_va = value(log_sel(k)(ig)(i));
+	// 			fa     = ft(k)(i) * mfexp(log_va);
+	// 			Chat(k)(ig)(i) = elem_prod(
+	// 			                 elem_prod(
+	// 			                 elem_div(fa,Z(ig)(i)),
+	// 			                 1.-S(ig)(i)),
+	// 			                 N(ig)(i));	
+	// 		}
+	// 		else if ( !h ) // asexual catch
+	// 		{
+	// 			for(h=1;h<=nsex;h++)
+	// 			{
+	// 				ig     = pntr_ags(f,g,h);
+	// 				log_va = value(log_sel(k)(ig)(i));
+	// 				fa     = ft(k)(i) * mfexp(log_va);
+	// 				Chat(k)(ig)(i) = elem_prod(
+	// 			                     elem_prod(
+	// 			                     elem_div(fa,Z(ig)(i)),
+	// 			                     1.-S(ig)(i)),
+	// 			                     N(ig)(i));
+	// 			}
+	// 		}
 
-			// | Overwrite data with simulation.
-			// A(kk)(ii)(a_sage(kk),a_nage(kk)) = Chat(k)(ig)(i);
-		}
-	}
+	// 		// | Overwrite data with simulation.
+	// 		// A(kk)(ii)(a_sage(kk),a_nage(kk)) = Chat(k)(ig)(i);
+	// 	}
+	// }
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   
