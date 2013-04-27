@@ -3192,15 +3192,16 @@ FUNCTION void simulationModel(const long& seed)
 		  observation errors.
  
  	PSUEDOCODE:
- 		1) calculate selectivities to be used in the simulations.
- 		2) calculate mortality rates (M), F is conditioned on catch.
- 		3) generate random numbers for observation & process errors.
- 		4) calculate survivorship and stock-recruitment pars based on average M & fec.
- 		5) initialize state variables.
- 		6) population dynamics with F conditioned on catch.
- 		7) compute catch-at-age samples.
- 		8) compute total catch.
- 		9) compute the relative abundance indices.
+ 		1)  calculate selectivities to be used in the simulations.
+ 		2)  calculate mortality rates (M), F is conditioned on catch.
+ 		3)  generate random numbers for observation & process errors.
+ 		4)  calculate survivorship and stock-recruitment pars based on average M & fec.
+ 		5)  initialize state variables.
+ 		6)  population dynamics with F conditioned on catch.
+ 		7)  compute catch-at-age samples.
+ 		8)  compute total catch.
+ 		9)  compute the relative abundance indices.
+ 		10) write simulated data to file.
 
   	TODO list:
 	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
@@ -3496,124 +3497,12 @@ FUNCTION void simulationModel(const long& seed)
 		}
 	}
 	
+	// |---------------------------------------------------------------------------------|
+	// | 10) WRITE SIMULATED DATA TO FILE
+	// |---------------------------------------------------------------------------------|
+	// |
+	writeSimulatedDataFile();
 
-	
-// 	for(i=syr;i<=nyr;i++)
-// 	{   
-		
-// 		//Catch & Catch-at-age
-// 		for(k=1;k<=ngear;k++)
-// 		{
-// 			if(ft(i,k)>0)
-// 			{
-// 				dvector sel = exp(dlog_sel(k)(i));
-// 				d3C(k)(i)=elem_prod(elem_div(ft(i,k)*sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
-// 				obs_ct(k,i)=d3C(k)(i)*wt_avg(i);
-// 			}
-// 			else	//if this is a survey
-// 			{
-// 				dvector sel = exp(dlog_sel(k)(i));
-// 				d3C(k)(i)=elem_prod(elem_div(sel,zt(i)),elem_prod(1.-exp(-zt(i)),value(N(i))));
-// 			}
-// 		}
-		
-// 	}
-// 	// COUT(N);
-	
-// 	//initial values of log_ft_pars set to true values
-// 	ki=1;
-// 	for(k=1;k<=ngear;k++)
-// 		for(i=syr;i<=nyr;i++)
-// 			if(obs_ct(k,i)>0){
-// 				log_ft_pars(ki++)=log(ft(i,k));
-// 			}
-	
-// 	// Error handler to inform user population went extinct.
-// 	if(min(sbt(syr,nyr))<=1.e-5)
-// 	{
-// 		cout<<"---------------------------------------\n";
-// 		cout<<"Simulated population went extinct, try\n";
-// 		cout<<"increasing steepness, Ro and Rbar\n";
-// 		cout<<sbt<<endl;
-// 		cout<<"Minimum spawning biomass="<<min(sbt(syr,nyr))<<endl;
-// 		cout<<"---------------------------------------\n";
-// 		exit(1);
-// 	}
-	
-// 	//Average recruitment calculation
-	
-	
-// 	cout<<"	log(mean(column(N,sage))) = "<<mean(log(column(N,sage)))<<endl;
-// 	cout<<"	log_avgrec = "<<log_avgrec<<endl;
-// 	cout<<"	Ok after population dynamics\n";
-// 	/*----------------------------------*/
-	
-// 	/*----------------------------------*/
-//     /*	--  Observation models  --		*/
-// 	/*----------------------------------*/
-	
-// 	//Simulated Age-compositions
-// 	int ig;
-// 	double age_tau = value(sqrt(rho)*varphi);
-// 	for(k=1;k<=na_gears;k++)
-// 	{
-// 		for(i=1;i<=na_nobs(k);i++)
-// 		{
-// 			ii=A(k,i,a_sage(k)-2);	//index for year
-// 			ig=A(k,i,a_sage(k)-1);	//index for gear
-// 			dvector pa = d3C(ig)(ii);	//
-// 			pa/=sum(pa);
-			
-			
-// 			dvector t1=pa(a_sage(k),a_nage(k));
-// 			t1/=sum(t1);
-// 			A(k)(i)(a_sage(k),a_nage(k))=rmvlogistic(t1,age_tau,i+seed);
-// 			if(seed==000)
-// 			{
-// 				A(k)(i)(a_sage(k),a_nage(k))=t1;
-// 			}
-// 			//cout<<iyr<<"\t"<<k<<endl;
-// 		}
-// 	}
-
-// 	//cout<<Ahat<<endl;
-	
-// 	//Relative abundance indices
-// 	//CHANGED fixed this to reflect survey timing etc & survey_type
-// 	for(k=1;k<=nit;k++)
-// 	{   
-// 		for(i=1;i<=nit_nobs(k);i++)
-// 		{
-// 			ii=iyr(k,i);
-// 			if(ii > nyr) break;  //Guard for retrospective on simulations.
-
-// 			ig=igr(k,i);
-// 			dvector sel = exp(dlog_sel(ig)(ii));
-// 			dvector Np = value(elem_prod(N(ii),exp(-zt(ii)*it_timing(k,i))));
-// 			switch(survey_type(k))
-// 			{
-// 				case 1: //survey based on numbers
-// 					Np = elem_prod(Np,sel);
-// 				break;
-// 				case 2: //survey based on biomass
-// 					Np = elem_prod(elem_prod(Np,sel),wt_avg(ii));
-// 				break;
-// 				case 3: //survey based on spawning biomass
-// 					Np = elem_prod(Np,fec(ii));
-// 				break;
-// 			}
-// 			it(k,i) = sum(Np) * exp(epsilon(k,i));
-// 			survey_data(k)(i,2) = it(k,i);
-// 		}
-// 	}
-	
-	
-
-// 	cout<<"	OK after observation models\n";
-// 	/*----------------------------------*/
-// 	writeSimulatedDataFile();
-// 	//CHANGED Fixed bug in reference points calc call from simulation model,
-// 	//had to calculate m_bar before running this routine.
 	
 // 	calc_reference_points();
 // 	//cout<<"	OK after reference points\n"<<fmsy<<endl;
@@ -3670,64 +3559,80 @@ FUNCTION void simulationModel(const long& seed)
 
 
 
-// FUNCTION writeSimulatedDataFile
-//   {
-//   	/*
-// 	This function writes a simulated data file based on the simulation
-// 	model output when the user specifies the -sim option.  This is only
-// 	necessary if the user wishes to perform a retrospecrtive analysis on
-// 	simulated data.
-//   	*/
+FUNCTION writeSimulatedDataFile
+  {
+  	/*
+  	Purpose:  This function writes a simulated data file based on the simulation
+			  model output when the user specifies the -sim option.  This is only
+	          necessary if the user wishes to perform a retrospecrtive analysis on
+	          simulated data. 
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		seed -> the random number seed that is concatenated into the file name.
+  	
+  	NOTES:
+  		
+  	
+  	TODO list:
+  	[ ] 
+  	*/
 
-//   	ofstream dfs("SimulatedData.dat");
-//   	dfs<<"#Model dimensions"<<endl;
-//   	dfs<<syr<<endl;
-//   	dfs<<nyr<<endl;
-//   	dfs<<sage<<endl;
-//   	dfs<<nage<<endl;
-//   	dfs<<ngear<<endl;
 
-//   	dfs<<"#Allocation"<<endl;
-//   	dfs<<allocation<<endl;
-//   	dfs<<"#Catch type"<<endl;
-//   	dfs<<catch_type<<endl;
+  	adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
+  	ofstream dfs(sim_datafile_name);
+  	dfs<<"#Model dimensions"<<endl;
+  	dfs<< narea 		<<endl;
+  	dfs<< ngroup		<<endl;
+  	dfs<< nsex			<<endl;
+  	dfs<< syr   		<<endl;
+  	dfs<< nyr   		<<endl;
+  	dfs<< sage  		<<endl;
+  	dfs<< nage  		<<endl;
+  	dfs<< ngear 		<<endl;
+ 
+  	dfs<<"#Allocation"	<<endl;
+  	dfs<< allocation 	<<endl;
+  	
 
-//   	dfs<<"#Age-schedule and population parameters"<<endl;
-//   	// dfs<<fixed_m<<endl;
-//   	dfs<<linf<<endl;
-//   	dfs<<vonbk<<endl;
-//   	dfs<<to<<endl;
-//   	dfs<<a<<endl;
-//   	dfs<<b<<endl;
-//   	dfs<<ah<<endl;
-//   	dfs<<gh<<endl;
+  	dfs<<"#Age-schedule and population parameters"<<endl;
+  	dfs<< linf  		<<endl;
+  	dfs<< vonbk  		<<endl;
+  	dfs<< to  			<<endl;
+  	dfs<< a  			<<endl;
+  	dfs<< b  			<<endl;
+  	dfs<< ah  			<<endl;
+  	dfs<< gh  			<<endl;
 
-//   	dfs<<"#Observed catch data"<<endl;
-//   	dfs<<catch_data<<endl;
+  	dfs<<"#Observed catch data"<<endl;
+  	dfs<< n_ct_obs 		<<endl;
+  	dfs<< catch_data    <<endl;
 
-//   	dfs<<"#Abundance indices"<<endl;
-//   	dfs<<nit<<endl;
-//   	dfs<<nit_nobs<<endl;
-//   	dfs<<survey_type<<endl;
-//   	dfs<<survey_data<<endl;
+  	dfs<<"#Abundance indices"	<<endl;
+  	dfs<< nit 					<<endl;
+  	dfs<< nit_nobs 				<<endl;
+  	dfs<< survey_type 			<<endl;
+  	dfs<< survey_data 			<<endl;
 
-//   	dfs<<"#Age composition"<<endl;
-//   	dfs<<na_gears<<endl;
-//   	dfs<<na_nobs<<endl;
-//   	dfs<<a_sage<<endl;
-//   	dfs<<a_nage<<endl;
-//   	dfs<<A<<endl;
+  	dfs<<"#Age composition"		<<endl;
+  	dfs<< na_gears				<<endl;
+  	dfs<< na_nobs				<<endl;
+  	dfs<< a_sage				<<endl;
+  	dfs<< a_nage				<<endl;
+  	dfs<< A						<<endl;
 
-//   	dfs<<"#Empirical weight-at-age data"<<endl;
-//   	dfs<<n_wt_nobs<<endl;
-// 	dfs<<inp_wt_avg<<endl;
+  	dfs<<"#Empirical weight-at-age data"	<<endl;
+  	dfs<< n_wt_nobs				<<endl;
+	dfs<< inp_wt_avg			<<endl;
 
-// 	dfs<<"#EOF"<<endl;
-// 	dfs<<999<<endl;
+	dfs<<"#EOF"	<<endl;
+	dfs<< 999	<<endl;
 	
+	// | END OF WRITING SIMULATED DATAFILE.
+  }
 
 
-//   }
+
 FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mpow)
   {
   	/*
