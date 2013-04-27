@@ -1195,8 +1195,6 @@ PROCEDURE_SECTION
 	
 	calcNumbersAtAge();
 	
-	//calcCatchAtAge();
-
 	calcTotalCatch();
 	
 	calcAgeComposition();
@@ -3203,6 +3201,7 @@ FUNCTION void simulationModel(const long& seed)
  		5) initialize state variables.
  		6) population dynamics with F conditioned on catch.
  		7) compute catch-at-age samples.
+ 		8) compute total catch.
 
   	TODO list:
 	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
@@ -3251,14 +3250,16 @@ FUNCTION void simulationModel(const long& seed)
     // | [ ] - add other required random numbers if necessary.
     // |
 	random_number_generator rng(seed);
-	dmatrix epsilon(1,nit,1,nit_nobs);
-	dmatrix rec_dev(1,n_ag,syr,nyr+retro_yrs);
+	dmatrix      epsilon(1,nit,1,nit_nobs);
+	dmatrix      rec_dev(1,n_ag,syr,nyr+retro_yrs);
 	dmatrix init_rec_dev(1,n_ag,sage+1,nage);
+	dmatrix          eta(1,n_ct_obs);
     
 
-    epsilon.fill_randn(rng);
-    rec_dev.fill_randn(rng);
+         epsilon.fill_randn(rng);
+         rec_dev.fill_randn(rng);
     init_rec_dev.fill_randn(rng);
+    		 eta.fill_randn(rng);
 
     // | Scale survey observation errors
     double std;
@@ -3445,6 +3446,7 @@ FUNCTION void simulationModel(const long& seed)
 	// |---------------------------------------------------------------------------------|
 	// | - A is the matrix of observed catch-age data.
 	// | - A_hat is the predicted matrix from which to draw samples.
+	// |
 	int kk,aa,AA;
 	double age_tau = value(sig);
 	COUT(A(1));
@@ -3460,9 +3462,14 @@ FUNCTION void simulationModel(const long& seed)
 			A(kk)(ii)(aa,AA)=rmvlogistic(pa,age_tau,i+seed);
 		}
 	}
-	cout<<"change"<<endl;
-	COUT(A(1));
 	
+	// |---------------------------------------------------------------------------------|
+	// | 8) TOTAL CATCH
+	// |---------------------------------------------------------------------------------|
+	// | - catch_data is the matrix of observations
+	// |
+
+	calcTotalCatch();
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   
