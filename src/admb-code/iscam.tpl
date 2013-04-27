@@ -400,9 +400,15 @@ DATA_SECTION
 			f = catch_data(ii)(3);
 			g = catch_data(ii)(4);
 			h = catch_data(ii)(5);
-			if(h==0 && nsex==1) h = 1;
-			ig = pntr_ags(f,g,h);
-			catch_array(ig)(i)(k) = catch_data(ii)(7);
+			if( h==0 )
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig = pntr_ags(f,g,h);
+					catch_array(ig)(i)(k) = 1./nsex*catch_data(ii)(7);
+				}
+				
+			} 
 		}
 		COUT(catch_array(1))
 	END_CALCS
@@ -1852,8 +1858,12 @@ FUNCTION calcAgeComposition
 FUNCTION calcCatchAtAge
   {
   	/*
-  	Purpose:  This function calculates the fishery related observations, namely the catc
-  	          and catch-age composition data.
+  	Purpose:  This function calculated the predicted catch-at-age samples from all
+  	          gear types, including survey gears. It loops over the na_gears, then for
+  	          each na_gear, loops over all the observations for that gear and calculates
+  	          the predicted age-composition sample based on selectivity and fishing 
+  	          mortality.  The Ahat array is the predicted age composition samples.
+
   	Author: Steven Martell
   	
   	Arguments:
@@ -1873,57 +1883,58 @@ FUNCTION calcCatchAtAge
 		Apr 21, 2013. Major changes associated with addding group dimension to the model.
   		
   		-             catch_data matrix cols: (year gear area group sex type value)
-  	
+  		- A           -> array of data (year,gear,area,group,sex|Data...)
   	TODO list:
-  	[*] FIXED Reconcile the difference between the predicted catch 
- 		here and in the simulation model.
+  	[ ] - Remove Chat 4darray calculations and replace with Ahat 3darray calculations.
+
   	*/
 
 
-	int ig,ii,l;
-	double d_ct;
+	int ig,ii,kk,l;
+	
 	dvar_vector log_va(sage,nage);
 	dvar_vector     fa(sage,nage);
 	Chat.initialize();
 	
-	for(ii=1;ii<=n_ct_obs;ii++)
+	for(kk=1;kk<=na_gears;kk++)
 	{
-		i    = catch_data(ii,1);
-		k    = catch_data(ii,2);
-		f    = catch_data(ii,3);
-		g    = catch_data(ii,4);
-		h    = catch_data(ii,5);
-		l    = catch_data(ii,6);
-		d_ct = catch_data(ii,7);
+		for(ii=1;ii<=na_nobs(kk);ii++)
+		{		
+			i    = A(kk)(ii,a_sage(kk)-5);
+			k    = A(kk)(ii,a_sage(kk)-4);
+			f    = A(kk)(ii,a_sage(kk)-3);
+			g    = A(kk)(ii,a_sage(kk)-2);
+			h    = A(kk)(ii,a_sage(kk)-1);
 
-		if( i>nyr ) continue;
+			if( i>nyr ) continue;
 
-		if( h ) // catch by sex
-		{
-			ig     = pntr_ags(f,g,h);
-			log_va = log_sel(k)(ig)(i);
-			fa     = ft(k)(i) * mfexp(log_va);
-			Chat(k)(ig)(i) = elem_prod(
-			                 elem_prod(
-			                  elem_div(fa,Z(ig)(i)),
-			                  1.-S(ig)(i)),
-			                  N(ig)(i));
-		}
-		else if ( !h ) // asexual catch
-		{
-			for(h=1;h<=nsex;h++)
+			if( h ) // catch by sex
 			{
 				ig     = pntr_ags(f,g,h);
 				log_va = log_sel(k)(ig)(i);
 				fa     = ft(k)(i) * mfexp(log_va);
 				Chat(k)(ig)(i) = elem_prod(
-			                 elem_prod(
-			                  elem_div(fa,Z(ig)(i)),
-			                  1.-S(ig)(i)),
-			                  N(ig)(i));
+				                 elem_prod(
+				                  elem_div(fa,Z(ig)(i)),
+				                  1.-S(ig)(i)),
+				                  N(ig)(i));
 			}
-		}
-	} // n_ct_obs loop.
+			else if ( !h ) // asexual catch
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig     = pntr_ags(f,g,h);
+					log_va = log_sel(k)(ig)(i);
+					fa     = ft(k)(i) * mfexp(log_va);
+					Chat(k)(ig)(i) = elem_prod(
+				                 elem_prod(
+				                  elem_div(fa,Z(ig)(i)),
+				                  1.-S(ig)(i)),
+				                  N(ig)(i));
+				}
+			}
+		} // na_nobs loop.
+	} // na_gears loop.
 	if(verbose)cout<<"**** Ok after calcCatchAtAge ****"<<endl;
   }	
 	
@@ -1949,6 +1960,12 @@ FUNCTION calcTotalCatch
   	double d_ct;
   	ct.initialize();
   	eta.initialize();
+  	
+  	dvar_vector     fa(sage,nage);
+  	dvar_vector     ca(sage,nage);
+  	dvar_vector     sa(sage,nage);
+  	dvar_vector     za(sage,nage);
+
 
   	for(ii=1;ii<=n_ct_obs;ii++)
 	{
@@ -1963,20 +1980,29 @@ FUNCTION calcTotalCatch
   		// | trap for retro year
   		if( i>nyr ) continue;
 
+
 		switch(l)
 		{
 			case 1:  // catch in weight
 				if( h )
 				{
 					ig     = pntr_ags(f,g,h);
-					ct(ii) = Chat(k)(ig)(i) * wt_avg(ig)(i);
+					fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+					za     = Z(ig)(i);
+					sa     = S(ig)(i);
+					ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
+					ct(ii) = ca * wt_avg(ig)(i);
 				}
 				else if( !h )
 				{
 					for(h=1;h<=nsex;h++)
 					{
-						ig      = pntr_ags(f,g,h);
-						ct(ii) += Chat(k)(ig)(i) * wt_avg(ig)(i);		
+						ig     = pntr_ags(f,g,h);
+						fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+						za     = Z(ig)(i);
+						sa     = S(ig)(i);
+						ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
+						ct(ii)+= ca * wt_avg(ig)(i);		
 					}
 				}
 			break;
@@ -1985,14 +2011,22 @@ FUNCTION calcTotalCatch
 				if( h )
 				{
 					ig     = pntr_ags(f,g,h);
-					ct(ii) = sum( Chat(k)(ig)(i) );
+					fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+					za     = Z(ig)(i);
+					sa     = S(ig)(i);
+					ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
+					ct(ii) = sum( ca );
 				}
 				else if( !h )
 				{
 					for(h=1;h<=nsex;h++)
 					{
-						ig      = pntr_ags(f,g,h);
-						ct(ii) += sum( Chat(k)(ig)(i) );
+						ig     = pntr_ags(f,g,h);
+						fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+						za     = Z(ig)(i);
+						sa     = S(ig)(i);
+						ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
+						ct(ii)+= sum( ca );
 					}
 				}
 			break;
@@ -3236,10 +3270,13 @@ FUNCTION void simulationModel(const long& seed)
  		4) calculate survivorship and stock-recruitment pars based on average M & fec.
  		5) initialize state variables.
  		6) population dynamics with F conditioned on catch.
+ 		7) compute catch-at-age samples.
 
   	TODO list:
 	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
 		  doing retrospective analyses on simulated datasets.
+	[ ] - TODO: Stock-Recruitment model.
+	[ ] - TODO: switch statement for catch-type to get Fishing mortality rate.
   	[ ] 
   	*/
 	
@@ -3405,9 +3442,10 @@ FUNCTION void simulationModel(const long& seed)
 
 
 	// |---------------------------------------------------------------------------------|
-	// | POPULATION DYNAMICS WITH F CONDITIONED ON OBSERVED CATCH
+	// | 6) POPULATION DYNAMICS WITH F CONDITIONED ON OBSERVED CATCH
 	// |---------------------------------------------------------------------------------|
 	// | - va  -> matrix of fisheries selectivity coefficients.
+	// | - [ ] TODO: switch statement for catch-type to get Fishing mortality rate.
 	// | - [ ] TODO: Stock-Recruitment model (must loop over area sex for each group).
 	// |
 	dmatrix va(1,ngear,sage,nage);
@@ -3433,6 +3471,7 @@ FUNCTION void simulationModel(const long& seed)
 				}
 			}
 
+			// | [ ] TODO switch statement for catch_type to determine F.
 			ft(i) = getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
 			zt(i) = value(M(ig)(i));
 			for(k=1;k<=ngear;k++)
@@ -3466,27 +3505,52 @@ FUNCTION void simulationModel(const long& seed)
 		}
 	}
 	
+	// |---------------------------------------------------------------------------------|
+	// | 7) CATCH-AT-AGE
+	// |---------------------------------------------------------------------------------|
+	// | - A is the matrix of observed catch-age data.
+	int kk;
+	dvector log_va(sage,nage);
+	for(kk=1;kk<=na_gears;kk++)
+	{
+		for(ii=1;ii<=na_nobs(kk);ii++)
+		{
+			i    = A(kk)(ii,a_sage(kk)-5);
+			k    = A(kk)(ii,a_sage(kk)-4);
+			f    = A(kk)(ii,a_sage(kk)-3);
+			g    = A(kk)(ii,a_sage(kk)-2);
+			h    = A(kk)(ii,a_sage(kk)-1);
 
-	
-// 	dmatrix va(1,ngear,sage,nage);			//fishery selectivity
-// 	d3_array dlog_sel(1,ngear,syr,nyr,sage,nage);
-// 	dlog_sel=value(log_sel);
-// 	cout<<"	Ok after selectivity\n";
+			if( h ) // catch by sex
+			{
+				ig     = pntr_ags(f,g,h);
+				log_va = value(log_sel(k)(ig)(i));
+				fa     = ft(k)(i) * mfexp(log_va);
+				Chat(k)(ig)(i) = elem_prod(
+				                 elem_prod(
+				                 elem_div(fa,Z(ig)(i)),
+				                 1.-S(ig)(i)),
+				                 N(ig)(i));	
+			}
+			else if ( !h ) // asexual catch
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig     = pntr_ags(f,g,h);
+					log_va = value(log_sel(k)(ig)(i));
+					fa     = ft(k)(i) * mfexp(log_va);
+					Chat(k)(ig)(i) = elem_prod(
+				                     elem_prod(
+				                     elem_div(fa,Z(ig)(i)),
+				                     1.-S(ig)(i)),
+				                     N(ig)(i));
+				}
+			}
 
-// 	/*----------------------------------*/
-	
-	
-// 	/*----------------------------------*/
-//     /*	--  Population dynamics  --		*/
-// 	/*----------------------------------*/
-	
-// 	dmatrix zt(syr,nyr,sage,nage);			//total mortality
-// 	zt.initialize();
-// 	dmatrix ft(syr,nyr,1,ngear);
-// 	ft.initialize();
-// 	dvector sbt(syr,nyr+1);
-// 	sbt.initialize();
-	
+			// | Overwrite data with simulation.
+			// A(kk)(ii)(a_sage(kk),a_nage(kk)) = Chat(k)(ig)(i);
+		}
+	}
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   

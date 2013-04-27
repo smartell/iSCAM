@@ -46,7 +46,7 @@
 	0.25	        # 3  -STD at 50% selectivity (logistic)
 	7				# 4  -No. of age nodes for each gear (0=ignore)
 	12				# 5  -No. of year nodes for 2d spline(0=ignore)
-	3				# 6  -Phase of estimation (-1 for fixed)
+	-3				# 6  -Phase of estimation (-1 for fixed)
 	12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	12.5 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 	12.5			# 9  -Penalty wt for time-varying selectivity
