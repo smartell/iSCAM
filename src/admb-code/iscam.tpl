@@ -3247,15 +3247,18 @@ FUNCTION void simulationModel(const long& seed)
     // |---------------------------------------------------------------------------------|
     // | - epsilon -> Observation errors
     // | - rec_dev -> Process errors
+    // | - init_rec_dev
     // | [ ] - add other required random numbers if necessary.
     // |
 	random_number_generator rng(seed);
 	dmatrix epsilon(1,nit,1,nit_nobs);
-	dmatrix rec_dev(1,n_ag,syr-nage+sage,nyr+retro_yrs);
+	dmatrix rec_dev(1,n_ag,syr,nyr+retro_yrs);
+	dmatrix init_rec_dev(1,n_ag,sage+1,nage);
     
 
     epsilon.fill_randn(rng);
     rec_dev.fill_randn(rng);
+    init_rec_dev.fill_randn(rng);
 
     // | Scale survey observation errors
     double std;
@@ -3275,8 +3278,9 @@ FUNCTION void simulationModel(const long& seed)
     // | Scale process errors
     for(ih=1;ih<=n_ag;ih++)
     {
-    	std = value(tau);
-    	rec_dev(ih) = rec_dev(ih) * std - 0.5*std*std;
+		std              = value(tau);
+		rec_dev(ih)      = rec_dev(ih) * std - 0.5*std*std;
+		init_rec_dev(ih) = init_rec_dev(ih)*std - 0.5*std*std;
     }
 
     // |---------------------------------------------------------------------------------|
@@ -3331,20 +3335,21 @@ FUNCTION void simulationModel(const long& seed)
 			break;
 		}
     }
-   
+
 
    // |---------------------------------------------------------------------------------|
    // | 5) INITIALIZE STATE VARIABLES
    // |---------------------------------------------------------------------------------|
    // |
 	N.initialize();
-	dvector tr(sage,nage);
 	for(ig=1;ig<=n_ags;ig++)
 	{
+		dvector tr(sage,nage);
 		f  = i_area(ig);
 		g  = i_group(ig);
 		ih = pntr_ag(f,g);
 		lx.initialize();
+		COUT(ig); COUT(n_ags); COUT(ih);
 		lx(sage) = 1.0;
 		for(j=sage;j<nage;j++)
 		{
@@ -3357,8 +3362,8 @@ FUNCTION void simulationModel(const long& seed)
 		}
 		else if( !cntrl(5) )
 		{
-			tr(sage)        = value(log_avgrec(ih)+rec_dev(ih)(syr));
-			tr(sage+1,nage) = value(log_recinit(ih)+rec_dev(ih)(syr-nage+sage,syr-1));
+			tr(sage)        = value(log_avgrec(ih)+rec_dev(ih)(syr));;
+			tr(sage+1,nage) = value(log_recinit(ih)+init_rec_dev(ih));
 			tr(sage+1,nage) = tr(sage+1,nage)+log(lx(sage+1,nage));
 		}
 		N(ig)(syr)(sage,nage) = 1./nsex * exp(tr);
@@ -3371,7 +3376,6 @@ FUNCTION void simulationModel(const long& seed)
 		}
 		N(ig)(nyr+1,sage) = 1./nsex * exp(log_avgrec(ih));
 	}
-
 
 	// |---------------------------------------------------------------------------------|
 	// | 6) POPULATION DYNAMICS WITH F CONDITIONED ON OBSERVED CATCH
@@ -3436,14 +3440,28 @@ FUNCTION void simulationModel(const long& seed)
 			N(ig)(i+1)(nage) += N(ig)(i)(nage)*st(i)(nage);
 		}
 	}
-	
 	// |---------------------------------------------------------------------------------|
 	// | 7) CATCH-AT-AGE
 	// |---------------------------------------------------------------------------------|
 	// | - A is the matrix of observed catch-age data.
+	// | - A_hat is the predicted matrix from which to draw samples.
+	int kk,aa,AA;
+	double age_tau = value(sig);
+	COUT(A(1));
 	calcAgeComposition();
-
-
+	for(kk=1;kk<=na_gears;kk++)
+	{
+		aa = a_sage(kk);
+		AA = a_nage(kk);
+		dvector pa(aa,AA);
+		for(ii=1;ii<=na_nobs(kk);ii++)
+		{
+			pa = value(A_hat(kk)(ii));
+			A(kk)(ii)(aa,AA)=rmvlogistic(pa,age_tau,i+seed);
+		}
+	}
+	cout<<"change"<<endl;
+	COUT(A(1));
 	
 	
 // 	for(i=syr;i<=nyr;i++)

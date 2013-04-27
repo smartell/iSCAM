@@ -97,7 +97,7 @@ dvector getFishingMortality(const dvector &ct, const double &m, const dmatrix &V
 		invJ = -inv(J);
 		ft  += fx*invJ;
 		
-		if( norm(fx) < TOL ) break;
+		if( norm(fx) < TOL || max(ft) > MAXF ) break;
 	}
 	
 	for(i=1;i<=ngear;i++) if(ft(i)>MAXF) ft(i) = MAXF;
@@ -170,7 +170,7 @@ dvector getFishingMortality(const dvector &ct, const double &m, const dmatrix &V
 		invJ = -inv(J);
 		ft  += fx*invJ;
 		
-		if( norm(fx) < TOL ) break;
+		if( norm(fx) < TOL || max(ft) > MAXF ) break;
 	}
 	
 	for(i=1;i<=ngear;i++) if(ft(i)>MAXF) ft(i) = MAXF;
@@ -242,7 +242,7 @@ dvector getFishingMortality(const dvector &ct, const dvector &ma, const dmatrix 
 		invJ = -inv(J);
 		ft  += fx*invJ;
 		
-		if( norm(fx) < TOL ) break;
+		if( norm(fx) < TOL || max(ft) > MAXF ) break;
 	}
 	
 	for(i=1;i<=ngear;i++) if(ft(i)>MAXF) ft(i) = MAXF;
@@ -310,14 +310,14 @@ dvector getFishingMortality(const dvector &ct, const dvector &ma, const dmatrix 
 		fx   = ct - chat;
 		//The following couts were used to debug the transpose error in the Jacobian.
 		
-		// cout<<"fx = "<<fx<<"\t ct = "<<ct<<endl;
-		// cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
+		cout<<"fx = "<<fx<<"\t ft = "<<max(ft)<<endl;
+		cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
 		ft  += fx*invJ;
 		
-		if( norm(fx) < 1.e-12 ) break;
+		if( norm(fx) < TOL || max(ft) > MAXF ) break;
 	}
-	
+	// | DO NOT DO THE FOLLOWING FOR DIFFERENTIABLE PROBLEMS.
 	for(i=1;i<=ngear;i++) if(ft(i)>MAXF) ft(i) = MAXF;
 	
 	return (ft);
