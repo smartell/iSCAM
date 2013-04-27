@@ -410,7 +410,7 @@ DATA_SECTION
 				
 			} 
 		}
-		COUT(catch_array(1))
+		
 	END_CALCS
 	
 
@@ -2017,7 +2017,7 @@ FUNCTION calcSurveyObservations
 		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	[*] - add capability to accomodate priors for survey q's.
+  	[] - add capability to accomodate priors for survey q's.
   	[ ] - verify q_prior=2 option for random walk in q.
   	[ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
 	*/
@@ -2040,12 +2040,10 @@ FUNCTION calcSurveyObservations
 		for(ii=1;ii<=nit_nobs(kk);ii++)
 		{
 			i    = survey_data(kk)(ii)(1);
-			// d_it = survey_data(kk)(ii)(2);
 			k    = survey_data(kk)(ii)(3);
 			f    = survey_data(kk)(ii)(4);
 			g    = survey_data(kk)(ii)(5);
 			h    = survey_data(kk)(ii)(6);
-			// wt   = survey_data(kk)(ii)(7);
 			di   = survey_data(kk)(ii)(8);
 
 			// | trap for retrospective nyr change
@@ -3202,6 +3200,7 @@ FUNCTION void simulationModel(const long& seed)
  		6) population dynamics with F conditioned on catch.
  		7) compute catch-at-age samples.
  		8) compute total catch.
+ 		9) compute the relative abundance indices.
 
   	TODO list:
 	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
@@ -3253,13 +3252,13 @@ FUNCTION void simulationModel(const long& seed)
 	dmatrix      epsilon(1,nit,1,nit_nobs);
 	dmatrix      rec_dev(1,n_ag,syr,nyr+retro_yrs);
 	dmatrix init_rec_dev(1,n_ag,sage+1,nage);
-	dmatrix          eta(1,n_ct_obs);
+	dvector      eta(1,n_ct_obs);
     
 
          epsilon.fill_randn(rng);
          rec_dev.fill_randn(rng);
     init_rec_dev.fill_randn(rng);
-    		 eta.fill_randn(rng);
+    	 eta.fill_randn(rng);
 
     // | Scale survey observation errors
     double std;
@@ -3272,7 +3271,7 @@ FUNCTION void simulationModel(const long& seed)
     		{
     			std = value(sig/it_wt(k,i));
     		}
-    		epsilon(k,i) *= std - 0.5*std*std;
+    		epsilon(k,i) = epsilon(k,i)*std - 0.5*std*std;
     	}
     }
 
@@ -3282,6 +3281,13 @@ FUNCTION void simulationModel(const long& seed)
 		std              = value(tau);
 		rec_dev(ih)      = rec_dev(ih) * std - 0.5*std*std;
 		init_rec_dev(ih) = init_rec_dev(ih)*std - 0.5*std*std;
+    }
+
+    // | Scale total catch errors
+    std = cntrl(4);
+    for(ii=1;ii<=n_ct_obs;ii++)
+    {
+    	eta(ii) = eta(ii)* std  - 0.5*std*std;
     }
 
     // |---------------------------------------------------------------------------------|
@@ -3470,6 +3476,27 @@ FUNCTION void simulationModel(const long& seed)
 	// |
 
 	calcTotalCatch();
+	for(ii=1;ii<=n_ct_obs;ii++)
+	{
+		catch_data(ii,7) = value(ct(ii)) * exp(eta(ii));
+	}
+
+	// |---------------------------------------------------------------------------------|
+	// | 9) RELATIVE ABUNDANCE INDICES
+	// |---------------------------------------------------------------------------------|
+	// | - survey_data is the matrix of input data.
+	// |
+
+	calcSurveyObservations();
+	for(kk=1;kk<=nit;kk++)
+	{
+		for(ii=1;ii<=nit_nobs(kk);ii++)
+		{
+			survey_data(kk)(ii)(2) *= exp(epsilon(kk)(ii));	
+		}
+	}
+	
+
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   
