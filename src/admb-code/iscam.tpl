@@ -3441,48 +3441,10 @@ FUNCTION void simulationModel(const long& seed)
 	// | 7) CATCH-AT-AGE
 	// |---------------------------------------------------------------------------------|
 	// | - A is the matrix of observed catch-age data.
-	// int kk;
-	// dvector log_va(sage,nage);
-	// for(kk=1;kk<=na_gears;kk++)
-	// {
-	// 	for(ii=1;ii<=na_nobs(kk);ii++)
-	// 	{
-	// 		i    = A(kk)(ii,a_sage(kk)-5);
-	// 		k    = A(kk)(ii,a_sage(kk)-4);
-	// 		f    = A(kk)(ii,a_sage(kk)-3);
-	// 		g    = A(kk)(ii,a_sage(kk)-2);
-	// 		h    = A(kk)(ii,a_sage(kk)-1);
+	calcAgeComposition();
 
-	// 		if( h ) // catch by sex
-	// 		{
-	// 			ig     = pntr_ags(f,g,h);
-	// 			log_va = value(log_sel(k)(ig)(i));
-	// 			fa     = ft(k)(i) * mfexp(log_va);
-	// 			Chat(k)(ig)(i) = elem_prod(
-	// 			                 elem_prod(
-	// 			                 elem_div(fa,Z(ig)(i)),
-	// 			                 1.-S(ig)(i)),
-	// 			                 N(ig)(i));	
-	// 		}
-	// 		else if ( !h ) // asexual catch
-	// 		{
-	// 			for(h=1;h<=nsex;h++)
-	// 			{
-	// 				ig     = pntr_ags(f,g,h);
-	// 				log_va = value(log_sel(k)(ig)(i));
-	// 				fa     = ft(k)(i) * mfexp(log_va);
-	// 				Chat(k)(ig)(i) = elem_prod(
-	// 			                     elem_prod(
-	// 			                     elem_div(fa,Z(ig)(i)),
-	// 			                     1.-S(ig)(i)),
-	// 			                     N(ig)(i));
-	// 			}
-	// 		}
 
-	// 		// | Overwrite data with simulation.
-	// 		// A(kk)(ii)(a_sage(kk),a_nage(kk)) = Chat(k)(ig)(i);
-	// 	}
-	// }
+	
 	
 // 	for(i=syr;i<=nyr;i++)
 // 	{   
