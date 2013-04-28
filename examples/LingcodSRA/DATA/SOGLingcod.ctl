@@ -43,7 +43,7 @@
 	0.5		        # 3  -STD at 50% selectivity (logistic)
 	7				# 4  -No. of age nodes for each gear (0=ignore)
 	12				# 5  -No. of year nodes for 2d spline(0=ignore)
-	3				# 6  -Phase of estimation (-1 for fixed)
+	-3				# 6  -Phase of estimation (-1 for fixed)
 	12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	12.5 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 	12.5			# 9  -Penalty wt for time-varying selectivity
@@ -77,7 +77,7 @@
 1           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
-0.01        # 8  -std in mean fishing mortality in first phase
+0.05        # 8  -std in mean fishing mortality in first phase
 0.20        # 9  -std in mean fishing mortality in last phase
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality

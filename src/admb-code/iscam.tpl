@@ -516,6 +516,7 @@ DATA_SECTION
 	// | - construct and fill weight-at-age matrix for use in the model code  (wt_avg)
 	// | - construct and fill weight-at-age dev matrix for length-based selex (wt_dev)
 	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (wt_mat)
+	// | [ ] - TODO fix h=0 option for weight-at-age data
 
 	init_int n_wt_nobs;
 	init_matrix inp_wt_avg(1,n_wt_nobs,sage-5,nage);
@@ -531,7 +532,6 @@ DATA_SECTION
 		wt_avg.initialize();
 		wt_dev.initialize();
 		wt_mat.initialize();
-
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			for(int i=syr;i<=nyr;i++)
@@ -549,10 +549,23 @@ DATA_SECTION
 			f               = inp_wt_avg(i,sage-3);
 			g               = inp_wt_avg(i,sage-2);
 			h               = inp_wt_avg(i,sage-1);
-			ig              = pntr_ags(f,g,h);
 			
-			wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
-			wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));
+			if( h )
+			{
+				ig              = pntr_ags(f,g,h);
+				wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
+				wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));
+			}
+			else if( !h ) 
+			{
+				for(h=1;h<=nsex;h++)
+				{
+					ig              = pntr_ags(f,g,h);
+					wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
+					wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));		
+				}
+			}
+			
 		}
 
 		// average weight-at-age in projection years
@@ -1888,6 +1901,7 @@ FUNCTION calcTotalCatch
   	*/
   	 int ii,l,ig;
   	double d_ct;
+
   	ct.initialize();
   	eta.initialize();
   	
@@ -1981,7 +1995,7 @@ FUNCTION calcTotalCatch
 		}	// end of switch
 
 		// | catch residual
-		eta(ii) = log(d_ct) - log(ct(ii));
+		eta(ii) = log(d_ct+TINY) - log(ct(ii)+TINY);
 	}
 	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
   }
@@ -4229,6 +4243,9 @@ GLOBALS_SECTION
     
 	#undef COUT
 	#define COUT(object) cout << #object "\n" << object <<endl;
+
+	#undef TINY
+	#define TINY 1.e-08
 
 	#include <admodel.h>
 	#include <time.h>
