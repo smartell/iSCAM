@@ -1107,7 +1107,6 @@ PARAMETER_SECTION
 	// | MATRIX OBJECTS
 	// |---------------------------------------------------------------------------------|
 	// | - ft       -> Mean fishing mortality rates for (gear, year)
-	// | - log_ft   -> Log fishing mortality rates for (gear,year)
 	// | - log_rt   -> age-sage recruitment for initial years and annual recruitment.
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
@@ -1120,7 +1119,6 @@ PARAMETER_SECTION
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
 	matrix      ft(1,ngear,syr,nyr);
-	matrix  log_ft(1,ngear,syr,nyr);
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nit,1,nit_nobs);
@@ -1200,6 +1198,7 @@ RUNTIME_SECTION
 
 
 PROCEDURE_SECTION
+
 	initParameters();
 	
 	calcSelectivities(isel_type);
@@ -1221,16 +1220,16 @@ PROCEDURE_SECTION
 	calcSdreportVariables();
 	
 	
-	// if(mc_phase())
-	// {
-	// 	mcmcPhase=1;
-	// }
+	if(mc_phase())
+	{
+		mcmcPhase=1;
+	}
 	
-	// if(mceval_phase())
-	// {
-	// 	mcmcEvalPhase=1;
-	// 	mcmc_output();
-	// }
+	if(mceval_phase())
+	{
+		mcmcEvalPhase=1;
+		mcmc_output();
+	}
 	
 	// //The following causes a linker error
 	// //duplicate symbol in libdf1b2o.a
@@ -1619,7 +1618,7 @@ FUNCTION calcTotalMortality
 	dvariable ftmp;
 	F.initialize(); 
 	ft.initialize();
-	log_ft.initialize();
+	
 	
 	// |---------------------------------------------------------------------------------|
 	// | FISHING MORTALITY
@@ -3794,7 +3793,10 @@ REPORT_SECTION
 	// |
 	REPORT(N);
 
-	
+	// |---------------------------------------------------------------------------------|
+	// | MSY-BASED REFERENCE POINTS
+	// |---------------------------------------------------------------------------------|
+	// |
 // 	if(last_phase())
 // 	{
 // 		calc_reference_points();
@@ -3850,33 +3852,33 @@ REPORT_SECTION
 	
 
 	
-// 	if(verbose)cout<<"END of Report Section..."<<endl;
+	if(verbose)cout<<"END of Report Section..."<<endl;
 	
-// 	/*IN the following, I'm renaming the report file
-// 	in the case where retrospective analysis is occurring*/
-// 	#if defined __APPLE__ || defined __linux
-// 	if( retro_yrs && last_phase() )
-// 	{
-// 		//adstring rep="iscam.ret"+str(retro_yrs);
-// 		//rename("iscam.rep",rep);
-// 		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
-// 		system(copyrep);
-// 	}
-// 	// cout<<"Ya hoo"<<endl;
-// 	//exit(1);
-// 	#endif
+	/*IN the following, I'm renaming the report file
+	in the case where retrospective analysis is occurring*/
+	#if defined __APPLE__ || defined __linux
+	if( retro_yrs && last_phase() )
+	{
+		//adstring rep="iscam.ret"+str(retro_yrs);
+		//rename("iscam.rep",rep);
+		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
+		system(copyrep);
+	}
+	// cout<<"Ya hoo"<<endl;
+	//exit(1);
+	#endif
 
-// 	#if defined _WIN32 || defined _WIN64
-// 	if( retro_yrs && last_phase() )
-// 	{
-// 		//adstring rep="iscam.ret"+str(retro_yrs);
-// 		//rename("iscam.rep",rep);
-// 		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
-// 		system(copyrep);
-// 	}
-// 	// cout<<"Windows"<<endl;
-// 	// exit(1);
-// 	#endif
+	#if defined _WIN32 || defined _WIN64
+	if( retro_yrs && last_phase() )
+	{
+		//adstring rep="iscam.ret"+str(retro_yrs);
+		//rename("iscam.rep",rep);
+		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
+		system(copyrep);
+	}
+	// cout<<"Windows"<<endl;
+	// exit(1);
+	#endif
 	
   }
 	
@@ -3922,7 +3924,7 @@ REPORT_SECTION
 // 	// cout<<"Ok to here"<<endl;
 //   }
 	
-// FUNCTION mcmc_output
+FUNCTION mcmc_output
 //   {
 // 	if(nf==1){
 // 		ofstream ofs("iscam.mcmc");
@@ -4443,113 +4445,113 @@ FINAL_SECTION
 	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
 
-// 	//Make copies of the report file using the ReportFileName
-// 	//to ensure the results are saved to the same directory 
-// 	//that the data file is in. This should probably go in the 
-// 	//FINAL_SECTION
+	//Make copies of the report file using the ReportFileName
+	//to ensure the results are saved to the same directory 
+	//that the data file is in. This should probably go in the 
+	//FINAL_SECTION
 	
-// 	//CHANGED only copy over the mcmc files if in mceval_phase()
+	//CHANGED only copy over the mcmc files if in mceval_phase()
 	
-// 	#if defined __APPLE__ || defined __linux
-// 	if(last_phase() && !retro_yrs)
-// 	{
-// 		adstring bscmd = "cp iscam.rep " +ReportFileName;
-// 		system(bscmd);
+	#if defined __APPLE__ || defined __linux
+	if(last_phase() && !retro_yrs)
+	{
+		adstring bscmd = "cp iscam.rep " +ReportFileName;
+		system(bscmd);
 		
-// 		bscmd = "cp iscam.par " + BaseFileName + ".par";
-// 		system(bscmd); 
+		bscmd = "cp iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
 		
-// 		bscmd = "cp iscam.std " + BaseFileName + ".std";
-// 		system(bscmd);
+		bscmd = "cp iscam.std " + BaseFileName + ".std";
+		system(bscmd);
 		
-// 		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
-// 		system(bscmd);
+		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
 		
-// 		if( SimFlag )
-// 		{
-// 			bscmd = "cp iscam.sim " + BaseFileName + ".sim";
-// 			system(bscmd);
-// 		}
+		if( SimFlag )
+		{
+			bscmd = "cp iscam.sim " + BaseFileName + ".sim";
+			system(bscmd);
+		}
 
-// 		if( mcmcPhase )
-// 		{
-// 			bscmd = "cp iscam.psv " + BaseFileName + ".psv";
-// 			system(bscmd);
+		if( mcmcPhase )
+		{
+			bscmd = "cp iscam.psv " + BaseFileName + ".psv";
+			system(bscmd);
 			
-// 			cout<<"Copied binary posterior sample values"<<endl;
-// 		}
+			cout<<"Copied binary posterior sample values"<<endl;
+		}
 		
-// 		if( mcmcEvalPhase )
-// 		{		
-// 			bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
-// 			system(bscmd);
+		if( mcmcEvalPhase )
+		{		
+			bscmd = "cp iscam.mcmc " + BaseFileName + ".mcmc";
+			system(bscmd);
 		
-// 			bscmd = "cp sbt.mcmc " + BaseFileName + ".mcst";
-// 			system(bscmd);
+			bscmd = "cp sbt.mcmc " + BaseFileName + ".mcst";
+			system(bscmd);
 		
-// 			bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
-// 			system(bscmd);
+			bscmd = "cp rt.mcmc " + BaseFileName + ".mcrt";
+			system(bscmd);
 			
-// 			ofstream mcofs(ReportFileName,ios::app);
-// 			mcofs<<"ENpar\n"<<dicNoPar<<endl;
-// 			mcofs<<"DIC\n"<<dicValue<<endl;
-// 			mcofs.close();
-// 			cout<<"Copied MCMC Files"<<endl;
-// 		}
-// 	}
+			ofstream mcofs(ReportFileName,ios::app);
+			mcofs<<"ENpar\n"<<dicNoPar<<endl;
+			mcofs<<"DIC\n"<<dicValue<<endl;
+			mcofs.close();
+			cout<<"Copied MCMC Files"<<endl;
+		}
+	}
 
-// 	if( last_phase() && retro_yrs )
-// 	{
-// 		//copy report file with .ret# extension for retrospective analysis
-// 		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
-// 		system(bscmd);
-// 	}
-// 	#endif
+	if( last_phase() && retro_yrs )
+	{
+		//copy report file with .ret# extension for retrospective analysis
+		adstring bscmd = "cp iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
+		system(bscmd);
+	}
+	#endif
 
-// 	#if defined _WIN32 || defined _WIN64
-// 	if(last_phase() && !retro_yrs)
-// 	{
-// 		adstring bscmd = "copy iscam.rep " +ReportFileName;
-// 		system(bscmd);
+	#if defined _WIN32 || defined _WIN64
+	if(last_phase() && !retro_yrs)
+	{
+		adstring bscmd = "copy iscam.rep " +ReportFileName;
+		system(bscmd);
 		
-// 		bscmd = "copy iscam.par " + BaseFileName + ".par";
-// 		system(bscmd); 
+		bscmd = "copy iscam.par " + BaseFileName + ".par";
+		system(bscmd); 
 		
-// 		bscmd = "copy iscam.std " + BaseFileName + ".std";
-// 		system(bscmd);
+		bscmd = "copy iscam.std " + BaseFileName + ".std";
+		system(bscmd);
 		
-// 		bscmd = "copy iscam.cor " + BaseFileName + ".cor";
-// 		system(bscmd);
+		bscmd = "copy iscam.cor " + BaseFileName + ".cor";
+		system(bscmd);
 		
-// 		if( mcmcPhase )
-// 		{
-// 			bscmd = "copy iscam.psv " + BaseFileName + ".psv";
-// 			system(bscmd);
+		if( mcmcPhase )
+		{
+			bscmd = "copy iscam.psv " + BaseFileName + ".psv";
+			system(bscmd);
 			
-// 			cout<<"Copied binary posterior sample values"<<endl;
-// 		}
+			cout<<"Copied binary posterior sample values"<<endl;
+		}
 		
-// 		if( mcmcEvalPhase )
-// 		{		
-// 			bscmd = "copy iscam.mcmc " + BaseFileName + ".mcmc";
-// 			system(bscmd);
+		if( mcmcEvalPhase )
+		{		
+			bscmd = "copy iscam.mcmc " + BaseFileName + ".mcmc";
+			system(bscmd);
 		
-// 			bscmd = "copy sbt.mcmc " + BaseFileName + ".mcst";
-// 			system(bscmd);
+			bscmd = "copy sbt.mcmc " + BaseFileName + ".mcst";
+			system(bscmd);
 		
-// 			bscmd = "copy rt.mcmc " + BaseFileName + ".mcrt";
-// 			system(bscmd);
+			bscmd = "copy rt.mcmc " + BaseFileName + ".mcrt";
+			system(bscmd);
 		
-// 			cout<<"Copied MCMC Files"<<endl;
-// 		}
-// 	}
+			cout<<"Copied MCMC Files"<<endl;
+		}
+	}
 
-// 	if( last_phase() && retro_yrs )
-// 	{
-// 		//copy report file with .ret# extension for retrospective analysis
-// 		adstring bscmd = "copy iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
-// 		system(bscmd);
-// 	}
-// 	#endif
+	if( last_phase() && retro_yrs )
+	{
+		//copy report file with .ret# extension for retrospective analysis
+		adstring bscmd = "copy iscam.rep " + BaseFileName + ".ret" + str(retro_yrs);
+		system(bscmd);
+	}
+	#endif
 
 

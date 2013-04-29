@@ -1,8 +1,3 @@
-
-
-## WTF,  What going on!
-
-
 ##                                       ##
 #-------------------------------------------------------------------------------#
 #   iSCAM Viewer: A gui based viewer for iscam inputs and outputs               #
