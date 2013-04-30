@@ -31,7 +31,8 @@
 // TODO: add DIC calculation for MCMC routines (in -mcveal phase)                //
 // CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds      //
 //                                                                               //
-//   Hi  Sean                                                                            //
+//   Hi  Sean
+//  Now I got some cool shite                                                                            
 //                                                                               //
 // ----------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                               --//
