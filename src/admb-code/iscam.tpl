@@ -292,6 +292,7 @@ DATA_SECTION
 	  cout<<"la\n"<<la<<endl;
 	  cout<<"wa\n"<<wa<<endl;
 	  cout<<setprecision(5);
+	  
 	END_CALCS
 	
 	//Time series data
