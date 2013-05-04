@@ -1,0 +1,275 @@
+%!TEX root=../Selex.tex
+% Statisitcal fit
+
+% Retrospective performance.
+
+% Estimated reference points.
+
+\section*{Results} % (fold)
+\label{sec:results}
+
+\subsection*{Statisical fit} % (fold)
+\label{sub:statisical_fit}
+
+Statisitics summarizing how well each model fits a single realization of simulated data is based on the overall objective function value, Deviance Information Criterion (DIC) and the Root Mean Square Error (RMSE) between observed and predicted quantities (Table \ref{tab:statisticalPeformance}). Under conditions in which the true selectivity is fixed (scenmario 1), similar fits to the relative survey abundance index and age-composition data (see Survey RMSE and Survey age RMSE in Table \ref{tab:statisticalPeformance}) were obtained  irrespective of the form of the assumed selectivity curve for the commercial fishery.  However, fits to the commercial age-composition data markedly improved under the time-varying age-based selectivity model (c).  Allowing for additional structure in the selectivity coefficients over time resulted in decreases in the RMSE from 0.48, 0.41 and 0.33 for models (a), (b), and (c), respectively for the commercial age-composition information (Table \ref{tab:statisticalPeformance}).  The worst fit to the commercial age-composition was obtained for the bicubic spline model (d).
+
+We do not recommend basing model selection solely on statistical criterion, such as DIC, but for statistical comparison we provide DIC and $\Delta$DIC values to give a sense of the relative differences between the various assessment models for each simulation case.  In the cases examined here (Table \ref{tab:statisticalPeformance}), DIC always favors the most structurally complex model (c) with the largest number of estimated selectivity parameters. The large improvement in fit for model (c) is always due to explaining more residual variation in the age-composition data. All other models appear to fit the survey index and age-composition equally, regardless if the data were generated from fixed selectivities or complex time-varying selectivities.  This is not an unexpected result, as the observation models for the survey data are structurally consistent with the simulation model.  What is significant is that the use of the conditional maximum likelihood estimate of the variance to weight the age-composition data is appropriately down-weighted when the incorrect selectivity model is specified for the commercial selectivities. 
+
+
+
+
+\begin{table}[!tbh]
+	\caption{Statistical performance based on the objective function value, effective number of estimated parameters, DIC, $\Delta$DIC, Root Mean Square Error (RMSE) in recruitment deviations, survey abundance residuals, and the age-composition residuals for models fit to fixed, discrete time blocks and continous changes in commercial selectivity.}
+	\label{tab:statisticalPeformance}
+	\begin{center}
+		\begin{tabular}{l|cccc}
+		\hline
+
+		\hline
+		\textbf{} & \textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} & \textbf{Bicubic spline (d)} \\
+		\hline
+
+		
+	    \multicolumn{5}{l}{\textbf{\underline{True selectivity is fixed}}}\\
+		Objective function            &  -836.41 &  -918.16 & -1208.16 &  -939.17 \\
+		Eff. No. parameters             &    96 &   116 &   334 &   173 \\
+		DIC              & -1479.77 & -1601.51 & -1739.09 & -1528.01 \\
+		$\Delta$DIC         &   259.32 &   137.58 &     0.00 &   211.08 \\
+		Recruitment RMSE &     1.04 &     1.04 &     1.06 &     1.04 \\
+		Survey RMSE      &     0.25 &     0.25 &     0.26 &     0.26 \\
+		Commercial RMSE         &     0.47 &     0.40 &     0.32 &     0.49 \\
+		Survey age RMSE         &     0.24 &     0.25 &     0.25 &     0.24 \\
+		%Total.RMSE       &     2.03 &     1.96 &     1.90 &     2.06 \\
+		
+		\hline
+		\multicolumn{5}{l}{\textbf{\underline{True selectivity has 3 time blocks}}}\\
+		Objective function            &  -775.49 & -1051.57 & -1335.82 & -1028.80 \\
+		Eff. No. parameters             &    96 &   116 &   337 &   173 \\
+		DIC              & -1356.24 & -1868.57 & -1990.44 & -1707.88 \\
+		$\Delta$DIC         &   634.20 &   121.87 &     0.00 &   282.56 \\
+		Recruitment RMSE &     1.04 &     1.04 &     1.05 &     1.05 \\
+		Survey RMSE      &     0.26 &     0.26 &     0.26 &     0.26 \\
+		Commercial RMSE         &     0.52 &     0.35 &     0.29 &     0.45 \\
+		Survey age RMSE         &     0.25 &     0.29 &     0.25 &     0.24 \\
+		%Total.RMSE       &     2.10 &     1.92 &     1.86 &     2.02 \\
+
+		\hline
+		\multicolumn{5}{l}{\textbf{\underline{True selectivity changes annually}}}\\
+		Objective function            &  -717.56 &  -788.52 & -1029.41 &  -785.91 \\
+		Eff. No. parameters             &    96 &   116 &   333 &   173 \\
+		DIC              & -1241.22 & -1342.26 & -1382.43 & -1222.14 \\
+		$\Delta$DIC         &   141.21 &    40.17 &     0.00 &   160.29 \\
+		Recruitment RMSE &     1.06 &     1.09 &     1.12 &     1.05 \\
+		Survey RMSE      &     0.26 &     0.26 &     0.27 &     0.26 \\
+		Commercial RMSE         &     0.52 &     0.44 &     0.35 &     0.56 \\
+		Survey age RMSE         &     0.27 &     0.29 &     0.30 &     0.27 \\
+		%Total.RMSE       &     2.14 &     2.10 &     2.07 &     2.17 \\
+
+
+
+		% Objective function  & -1452.78 &  -1461.06 &  -1695.12 &  -1538.09 \\
+		% Eff. No. parameters &    96    &    110    &    344    &    175    \\
+		% DIC                 & -2712.84 &  -2701.20 &  -2696.89 &  -2723.12 \\
+		% $\Delta$DIC         &    10.28  &    21.92 &     26.23 &      0.00 \\
+		% Recruitment RMSE    &     1.03 &      1.03 &      1.03 &      1.03 \\
+		% Survey RMSE         &     0.25 &      0.26 &      0.25 &      0.25 \\
+		% Commercial RMSE     &     0.28 &      0.28 &      0.20 &      0.26 \\
+		% Survey age RMSE     &     0.26 &      0.26 &      0.27 &      0.26 \\
+
+		
+		% \hline
+		% Objective function  & -1340.49 &  -1428.81 &  -1689.57 &  -1516.78 \\
+		% Eff. No. parameters &    96    &    109    &    345    &    175    \\
+		% DIC                 & -2487.96 &  -2638.03 &  -2683.48 &  -2680.78 \\
+		% $\Delta$DIC         &   195.52 &     45.45 &      0.00 &      2.70 \\
+		% Recruitment RMSE    &     1.04 &      1.04 &      1.03 &      1.03 \\
+		% Survey RMSE         &     0.25 &      0.26 &      0.25 &      0.25 \\
+		% Commercial RMSE     &     0.32 &      0.29 &      0.20 &      0.26 \\
+		% Survey age RMSE     &     0.26 &      0.26 &      0.27 &      0.26 \\
+
+		
+		% \hline
+		% Objective function  & -1293.30 &  -1304.14 &  -1543.59 &  -1376.39 \\
+		% Eff. No. parameters &    95    &    109    &    344    &    177    \\
+		% DIC                 & -2394.61 &  -2387.88 &  -2393.28 &  -2396.33 \\
+		% $\Delta$DIC         &     1.72 &      8.45 &      3.05 &      0.00 \\
+		% Recruitment RMSE    &     1.13 &      1.13 &      1.12 &      1.12 \\
+		% Survey RMSE         &     0.26 &      0.27 &      0.27 &      0.27 \\
+		% Commercial RMSE     &     0.30 &      0.30 &      0.21 &      0.28 \\
+		% Survey age RMSE     &     0.33 &      0.34 &      0.33 &      0.32 \\
+
+		\hline
+
+		\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+The effective number of estimated parameters is based on the difference between the expectation of the deviance and the deviance based on the expectation of the parameter values.  The larger the effective number of parameters is a measure of how well the model fits the data.  In all cases the effective number of parameters was equal to or greater than the number of parameters estimated in the model.  In the case of model (c) the effective number of parameters ($\approx$335) is much greater than the 319 that were actually estimated in the ADMB code.  However, it should also be noted that the variance parameters for age-composition residuals and the scaling parameter $q$ \citep[see][]{walters1994calculation} are based on the conditional maximum likelihood estimates, rather than explicitly estimating them inside the model code.  This parameterization implies an additional 67 parameters and hence the effective number of parameters is much less than the 386 parameters in model (c).
+
+
+% For the cases where the true selectivity is based on a fixed logistic function, the most appropriate model based on DIC is model (d) where a bicubic spline is used to model selectivity. The RMSE terms for model (d) are less than the true underlying values that were used to generate the data, which is of no surprice when additional flexibility in selectivity can accomodate some of the residual variance in age-composition in the form of minor changes in selectivity (Table \ref{tab:statisticalPeformance}).   This pattern of explaining the residual variation is virtually the same regardless of what the true underlying selectivity pattern is.
+
+% In the case where the true selectivity changes discretely over three time blocks, assessment models with time-varying selectivity (c) and (d) appear to fit the data better that models that assumed fixed selectivity (a), or even the discrete changes in selectivity (see $\Delta$DIC values in Table \ref{tab:statisticalPeformance}).  For this particular case, it's better to allow for continous changes in selectivity than to 
+% assume fixed values.
+
+% In the case where the true selectivity changes annually, based on relative cohort abundance, the model results were a bit more surprising.  The expectation would be that assuming fixed selectivity would perform less well than allowing for time-varying selectivity.  Based on the $\Delta$DIC values obtained in Table \ref{tab:statisticalPeformance} there is very little differnce between models that allow for continous changes in selectivity (models c and d) and fixed selectivity (model a).  There was less weight for the model that allows for discrete-block changes in selectivity (model b).
+
+% Similar results were also obtained in the case where true selectivity changes annually (as a function of the relative cohort abundance).  However, the difference between assuming block selectivity and fixed selectivity resulted in negligble differences in the $\Delta$AIC values.  Moreover, the RMSE for the age-composition data was greater than the true values used to generate the observation errors in age-sampling in models (a) and (b). For model (c), the RMSE was less than the true value for the commercial age-composition, and  in model (d) it was identical to the true value.   
+
+% subsection statisical_fit (end)
+\subsection*{Retrospective performance} % (fold)
+\label{sub:retrospective_performance}
+
+Two useful graphical tools for examining retrospective problems in stock assessment models are referred to here as spaghetti plots (Figure \ref{fig:retrospectiveSSB}), and squid plots (Figure \ref{fig:retrosquidbase}), respectively.  In the spaghetti plots, successive estimates of spawning stock biomass based on sequentially removing the terminal year of data are overlayed on each panel.  In addition to the estimated spawning biomass in Fig. \ref{fig:retrospectiveSSB}, the true spawning biomass that was used to generate simulated data is also shown for reference.  In the squid plots, successive estimates of spawning biomass relative to the  spawning biomass in the terminal year of data are overlaid.  In Fig. \ref{fig:retrosquidbase}, the percent bias is shown as the relative difference between the true values; hence a 100\% bias implies that the stock size is over-estimated by a factor of 2.  
+
+
+\begin{figure}[!tbh]
+	\begin{center}
+		\includegraphics[angle=0,width=\textwidth]{../FIGS/fig:RetroSpectiveSSB.png}
+	\end{center}
+	\caption{Retrospective estimates of spawning biomass for simulated Pacific hake populations where 4 years of data was sequentially removed from.  The true spawning biomass used to simulated the data is included for reference.}
+	\label{fig:retrospectiveSSB}
+\end{figure}
+
+Based on the results from the single realization shown in Figure \ref{fig:retrospectiveSSB}, there is a tendency for the model to systematically over-estimate the spawning stock biomass in the terminal years.  This trend is largely a function of the recent downward trend in abundance since the mid 2000s, and not a persistent feature of the stock assessment model.  In the case of the true selectivity being fixed over time, the least amount of retrospective bias occurred in the simple models (a) and (b) with length-based selectivity and the largest bias was observed for model (c).  Similar results were also obtained in the discrete changes in selectivity (row 2 of Figure \ref{fig:retrosquidbase}) as well as the time-varying changes in selectivity.  Also of interest is the retrospective behavior in model (d) where the sequential removal of the terminal year data results in changing the knot positions in the bicubic spline (see early years on column (d) of Fig. \ref{fig:retrosquidbase}). Retrospective  estimates of spawning biomass earlier in the time series of model (d) are slightly more variable in comparison to models with fixed selectivities (a), (b), and even in the case where selectivity is allowed to vary annually (c).  However, these results are from a single realization, and should not be used to make general inferences in retrospective bias.  They merely illustrate that despite additional structural flexibility associated with time-varying selectivity, large retrospective bias can still occur. 
+
+
+
+% For the simulated data based on fixed selectivity, the qualitative pattern in retrospective bias was similar for all four alternative selectivity scenarios (Figure \ref{fig:retrospectiveSSB}, 1a, ..., 1d).   The worst performing models were the cases with continuous changes in selectivity over time (1c and 1d), with maximum estimates of retrospective bias relative to the terminal values approaching 25\% for the bicubic spline model (Figure \ref{fig:retrosquidbase}).  
+
+% For cases based on simulated data with discrete time blocks in selectivity, the least amount of bias was observed in the case where the correct model was specified (Figure \ref{fig:retrosquidbase}, 2b).  Assuming fixed selectivity or continuous changes in selectivity resulted in significantly more retrospecitve bias.  Assuming fixed selectivity also resulted in further departures from the true spawning biomass in the initial years.
+
+\begin{figure}[!tbh]
+	\begin{center}
+		\includegraphics[angle=0,width=\textwidth]{../FIGS/fig:RetroSquidBase.png}
+	\end{center}
+	\caption{Retrospective estimates of bias in spawning biomass relative to spawning biomass estimated with all available data.  These biases are based on the same spawning biomass trajectories in Figure \ref{fig:retrospectiveSSB}.}
+	\label{fig:retrosquidbase}
+\end{figure}
+
+
+% \begin{figure}[tb]
+% 	\begin{center}
+% 		\includegraphics[angle=90,width=0.85\textwidth]{../FIGS/fig:RetroSquid.png}
+% 	\end{center}
+% 	\caption{Retrospective estimates of bias in spawning biomass relative to the true spawning biomass used to simulated the data.  These biases are based on the same spawning biomass trajectories in Figure \ref{fig:retrospectiveSSB}.}
+% 	\label{fig:retrosquid}
+% \end{figure}
+
+% In the cases where the true selectivity varies over time, the retrospective performance was least biased for the models that assume time-varying selectivity (Figure \ref{fig:retrosquidbase}, 3c and 3d).  Retrospective peformance is much worse if the selectivity is assumed to be constant, or change in a series of blocks, when the real underlying process is continuous change in selectivity (Figure \ref{fig:retrosquid}, 3a and 3b). 
+
+% Monte Carlo retrospective results. Make general statement that less retrospective bias when assuming more structural complexity.  May be better to assume a penalized random walk in selectivity than to not.
+
+Over a number of Monte Carlo trials (40 independent data sets) the patterns in retrospective bias over the alternative selectivity assumptions differ from the single realization shown in Figure \ref{fig:retrospectiveSSB}.  To quantify retrospective bias, a series of summary statistics were used to measure the trade-off between precision and bias in the retrospective analyses (Table \ref{tab:RetroStatistics}).  The mean bias $\mu$ reflects the average difference between the terminal and retrospective year spawning biomass and is generally lowest for models that allow for time-varying selectivity (models (c) and (d) in Table \ref{tab:RetroStatistics}).  The absolute mean bias $|\mu|$ better characterizes the mean retrospective  variation.  For example, in model 3c (Table \ref{tab:RetroStatistics}) the mean bias $\mu$ is relatively small, but the mean absolute difference over 4 retrospective years is very large.  This is also reflected in the summary statistic $\Omega$ and the Mean Absolute Deviation (MAD).  Even though model 3c is the correct model for the simulations with continuous changes in selectivity, the results in Table \ref{tab:RetroStatistics} suggest that model 3d would be preferable due to less mean bias and a lower overall variance in the potential bias.  
+
+\begin{table}[!tbh]
+	\caption{Retrospective bias statistics for each model run, where $\mu$ corresponds to the mean bias over 4 retrospective years, $|\mu|$ is the absolute mean, $\Omega$ is a combined measure of mean and absolute bias, and MAD is the Mean Absolute Deviation of $|\mu|$.  Lower MAD scores imply less variability in retrospective bias estimates.}
+	\label{tab:RetroStatistics}
+	\begin{center}
+	\begin{footnotesize}
+		
+		\begin{tabular}{l|cccc|cccc|cccc}
+		\hline
+
+		\hline
+		&\multicolumn{4}{c|}{\textbf{Fixed}} & \multicolumn{4}{c|}{\textbf{Discrete}} & \multicolumn{4}{c}{\textbf{Continous}} \\
+		&\textbf{1a}  &\textbf{1b}  &\textbf{1c}  &\textbf{1d}  &\textbf{2a}   &\textbf{2b}  &\textbf{2c}  &\textbf{2d}  &\textbf{3a}  &\textbf{3b}  &\textbf{3c}  &\textbf{3d}\\
+		\hline
+		$\mu$     &-9.14& -8.26& -1.55& -1.77& -8.88& -12.57& -1.11& -3.11& -6.72& -5.90& -2.09& -0.83\\
+		$|\mu|$ &14.19& 13.63& 13.46& 12.78& 12.94&  14.96& 12.12& 13.75& 14.06& 14.08& 17.99& 13.85\\
+		$\Omega$  &19.13& 18.28& 17.49& 16.53& 17.58&  20.66& 15.73& 17.86& 18.62& 18.47& 22.97& 18.08\\
+		MAD    & 4.77&  4.68&  6.42&  4.93&  5.32&   6.28&  5.11&  5.48&  4.73&  4.84& 10.51&  5.78\\
+
+		\hline
+
+		\hline
+		\end{tabular}
+	\end{footnotesize}
+	\end{center}
+\end{table}
+
+Similar results were also obtained for the simulations involving fixed selectivities and discrete time blocks with less overall mean bias, and lower MAD's, for models with continuous changes in selectivity over time (Table \ref{tab:RetroStatistics}).
+
+
+% subsection retrospective_performance (end)
+
+
+\subsection*{Estimated reference points} % (fold)
+\label{sub:estimated_reference_points}
+
+
+The impacts of model specification on the estimates of MSY-based reference points are summarized using a series of box-plots (Figure \ref{fig:RefPointBias}) based on Monte Carlo trials.  In each box plot the $\ln_2$ ratios of the estimated versus true values are shown where the median bias is based on the solid bar.  A value of 1, or -1 corresponds to 100\% over or under estimation of the true value, respectively.  In the case where the true model is based on fixed selectivity, estimated reference points are relatively unbiased ($\pm$ 10\%); however, the precision of the estimates decreases with increasing model complexity (Figure \ref{fig:RefPointBias}).  There is a bit of a trend in the estimate of $F_{\rm{MSY}}$ that corresponds to an increase in overall stock productivity with assumed increases in model complexity.  This same increasing trend is also present, but less pronounced, in the estimates of MSY.  These trends indicate that the overall scale and productivity of the estimated population increases with increasing model complexity. 
+
+In cases where the true model is based on scenario 2, estimated $F_{\rm{MSY}}$ reference points were biased upwards for model (a)  because the true selectivity shifts towards smaller fish later in the time series (Figure \ref{fig:RefPointBias}). The vast majority of the age-composition data were based on selectivities curves that target larger fish and the constant selectivity assumption in model (a) does not capture this trend. Estimates of MSY were less biased in this case. Estimates of spawning biomass reference points ($B_{\rm{MSY}}$ and $B_o$) were less sensitive to the assumed model structure, with the exception of model (a) being fit to scenario 2. Recall that the MSY-based reference points are based on selectivity values in the terminal year. Under the assumption of constant selectivity, estimates of $F_{\rm{MSY}}$ are almost certain to be biased with the rare exception that the terminal year selectivity corresponds to the estiamted average selectivity.  
+
+\begin{figure}[!tbh]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../FIGS/fig:RefPointBias.png}
+	\end{center}
+	\caption{Estimates of precision and bias for fishing mortality rate reference points ($F_{\rm{MSY}}$), maximum sustainable yield (MSY), spawning biomass as MSY ($B_{\rm{MSY}}$) and the unfished spawning biomass ($B_o$) based on Monte Carlo trials using data simulated from fixed, discrete blocks and continuous changes in selectivity. }
+	\label{fig:RefPointBias}
+\end{figure}
+
+For the case where the true model involves continuous changes in selectivity, or scenario 3, estimates of $F_{\rm{MSY}}$ for all models are biased upwards (Figure \ref{fig:RefPointBias}).  Estimates of $F_{\rm{MSY}}$ are less precise for models that have a large number of estimated selectivity parameters, indicating that estimates of selectivity in the terminal year are highly imprecise. All other reference points are much less biased if a more complex assessment model is assumed in comparison to the underlying simulation model.
+
+
+% RMSE resultz
+In all of the Monte Carlo simulation-estimation experiments the variance components for recruitment deviations, survey index errors, age-composition data for both the commercial and survey samples were estimated.  The root mean square error (RMSE) of the residuals is a proximate measure of how each of the data series are weighted internally in the assessment model.   The distribution of the RMSE values for each error component is shown in Fig. \ref{fig:RMSEdist} for scenarios 1-3 using models (a)-(d).  The RMSE values for the survey abundance index for all scenario and model combinations were very similar to the true standard deviation of 0.3 that was used to generate the simulated observation errors (Figure \ref{fig:RMSEdist}).   For scenarios (1) and (2), the RMSE value for the recruitment deviations were also similar to the true standard deviation of $\sigma_R=1.12$ in the simulated recruitment deviations.  For scenario (3) however, RMSE values were greater than 1.12 under the assumption that selectivity changes annually  as in model (c), but less so under model (d) where changes selectivity is constrained via the bicubic spline interpolation.
+
+\begin{figure}[!tbh]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{../FIGS/fig:RMSEdist.png}
+	\end{center}
+	\caption{Distribution of Root Mean Squared Error values for the recruitment deviations, survey residuals, commercial and survey age-composition residuals based on 40 Monte Carlo trials.}
+	\label{fig:RMSEdist}
+\end{figure}
+
+The pattern of RMSE values for the commercial age composition samples generally decreases with increasing flexibility in the selectivity model (Figure \ref{fig:RMSEdist}, lower left panel), with the exception of the bicubic spline model.  The simlated size-based selectivties in all of the model scenarios was very dynamic owing to the large changes in the empirical size-at-age data in Pacific hake (Figure \ref{fig:simSelex}). The bicubic spline model used in model (d) estimates a total of 60 knots (7 for age, and 12 for years), and interpolates over age, not size-at-age.  In this case, the bicubic spline performs rather poorly in comparison to fixed size-based selectivities and the annual age-based selectivity due to the tension imposed by the limited number of knots.
+
+Another pattern in the distributions of RMSE values shown in Fig. \ref{fig:RMSEdist} that is of significant interest is how the weight of the survey age-composition data changes with changes in assessment models.  In scenario 1 and 2, the distribution of RMSE values is fairly similar for all assessment models, and here we note that the variability in RMSE values increases with increasing number of estimated selectivity coefficients.  However, in scenario (3) with continuous changes in commercial selectivity being the true case, the relative RMSE values increase (i.e. poorer fit) for the survey age-composition data.  In other words, more structurally complex assessment models fit the commercial age-composition better at the partial expense of putting less weight on the survey age-composition.  But note that the RMSE values for 3c are roughly equal to the true standard deviation of $\sigma_2=0.3$ in the multivariate logistic sampling distribution.
+
+
+% The distribution of the RMSE values from the Monte Carlo trials displayed pretty consistent patters over each alternative dataset (Figure \ref{fig:RMSEdist}).  The residual fit to the survey abundance index was very similar across all simulated datasets and all alternative assessment models.  The true coefficient of variation used in simulating the true data was fixed at 0.3, and accounting for the bias correction in the lognormal errors, the theoretical RMSE in the residuals should be approximately 0.255.  The standard deviation in the simulated recruitment residuals was fixed at 1.12 and the distribution of RMSE values is very similar for the fixed selectivity and time-block selectivity simulated datasets (Figure \ref{fig:RMSEdist}).  In the case where the simulated data was based on continouse changes in selectivity, the RMSE values for the recruitment deviations was slightly higher than the true value, presumably to allow for more variation in recruitment that could be explained by annual changes in selectivity.
+
+% The pattern of RMSE values for the commercial age-composition residuals was consistent across simulated datasets, where largest RMSE values were always observed with fixed selectivity (Figure \ref{fig:RMSEdist}, model a), and the smallest under the annual time-varying selectivity (Figure \ref{fig:RMSEdist}, model c).  Models with intermediate complexity were able to explain more residual variation in the comercial age-composition(models b and d, respectively).  
+
+% subsection estimated_reference_points (end)
+
+\subsection*{Simulation performance} % (fold)
+\label{sub:simulation_performance}
+
+
+
+
+To qualitatively evaluate how each of the four alternative selectivity models would perform if the analyst was na\"ive about the underlying true selectivity, we use a simple rank order system (Table \ref{tab:rankorder}).  For example, if DIC was the statistical basis for choosing the most appropriate selectivity model then based on the simulation results in Tab. \ref{tab:statisticalPeformance} when the true underlying model is based on fixed selectivity, the rank order of DIC values (low to high) is model c, b, d, and a. If the underlying model is not known, the DIC criterion favors model (c) the most, and model (d) the second most.    Based on all of the criterion listed in Table \ref{tab:rankorder}, the most appropriate model to choose if in fact the analyst was na\"ive about the underlying processes in selectivity would be model (c).    Model (b) also ranks fairly high; however, this assumes the correct block time-periods can be identified from residual analysis or historical knowledge of fishing practices.
+
+\begin{table}[!tbh]
+	\caption{Ranking of model based on Deviance Information Criterion, RMSE, retrospective bias and bias in the estimates of $F_{\rm{MSY}}$ and MSY based on Monte Carlo trials. Each column ranks the assumed selectivity model from most likely (left) to least likely (right) for simulation case study.  The top-two ranks represent the most and second most frequently selected model.}
+	\label{tab:rankorder}
+	\begin{center}
+		\begin{tabular}{l|ccc|c}
+		\hline
+
+		\hline
+		\textbf{Criterion} & \textbf{Fixed} & \textbf{Discrete} &\textbf{Continuous} & \textbf{Top-two ranks} \\
+		\hline
+		DIC from Tab. \ref{tab:statisticalPeformance}
+		           & c,b,d,a & c,b,d,a & c,b,d,a & c,b\\
+		\hline
+		Retrospective    & d,c,a,b & c,d,a,b & d,a,b,c & c,d\\
+		$F_{\rm{MSY}}$   & b,c,a,d & c,d,b,a & c,b,a,d & c,b\\
+		MSY              & d,c,b,a & c,d,b,a & d,a,c,b & d,c\\
+		RMSE             & c,b,a,d & c,b,a,d & c,b,a,d & c,b\\
+		% RMSE           & c,d,a,b & c,d,b,a & c,d,a,b & c,d\\
+		% Retrospective  & d,b,a,c & d,a,c,b & a,b,d,c & d,b\\
+		% $F_{\rm{MSY}}$ & c,d,a,b & c,d,a,b & a,b,d,c & c,d\\
+		\hline
+
+		\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+% subsection simulation_performance (end)
+
+% section results (end)
