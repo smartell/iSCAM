@@ -1,4 +1,4 @@
-window name=iscamView title="iSCAM Viewer 2.0"
+window name=iscamView title="R4iSCAM"
 
 #-----------------------------------------------------------------------------#
 # TOP OF WINDOW                                                               #

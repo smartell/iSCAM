@@ -3746,11 +3746,33 @@ REPORT_SECTION
 	REPORT(A_hat);
 	REPORT(A_nu);
 
+	// wt_avg(1,n_ags,syr,nyr+1,sage,nage);
+	adstring tt = "\t";
 	REPORT(inp_wt_avg);
 	REPORT(wt_bar);
-	REPORT(wt_avg);
+	// REPORT(wt_avg);
 	REPORT(wt_mat);
 	REPORT(wt_dev);
+
+	report<<"wt_avg"<<endl;
+	for(int ig=1;ig<=n_ags;ig++)
+	{
+		f = i_area(ig);
+		g = i_group(ig);
+		h = i_sex(ig);
+		
+		for(i=syr;i<=nyr;i++)
+		{
+			//year area stock sex |age columns (sage, nage) of weight at age data |
+			report<<i<<tt;
+			report<<f<<tt;
+			report<<g<<tt;
+			report<<h<<tt;
+			report<<wt_avg(ig)(i)<<endl;
+		}
+	
+	}
+
 
 	// |---------------------------------------------------------------------------------|
 	// | SELECTIVITIES (4darray)
