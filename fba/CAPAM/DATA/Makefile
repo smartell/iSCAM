@@ -66,4 +66,5 @@ $(run_dirs):
 collect: $(collect_files)
 $(collect_files):
 	cd $(@D); make collect
+	#cd $(@D); touch allDONE && make collect
 

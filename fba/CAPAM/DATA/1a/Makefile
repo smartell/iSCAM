@@ -131,8 +131,13 @@ COLLECTALL ='dn<-dir(pattern="^[[:digit:]]"); \
 				B<-read.rep("iscam.sim");setwd("..");\
 				bstatus <- log2(A$$sbt[33]/A$$bmsy)-log2(B$$sbt[33]/B$$bmsy) ;\
 				fstatus <- log2(A$$ft[1,33]/A$$fmsy)-log2(B$$ft[1,33]/B$$fmsy);\
-				nu      <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
-				effN    <- sum(nu^2)/A$$age_tau2[1];\
+				nu1     <- subset(A$$A_nu,A$$A_nu[,2]==1)[,-c(1,2)];\
+				nu2     <- subset(A$$A_nu,A$$A_nu[,2]==2)[,-c(1,2)];\
+				effN    <- sum(nu1^2)/A$$age_tau2[1];\
+				rmse.nu1<- sd(c(nu1));\
+				rmse.nu2<- sd(c(nu2));\
+				rmse.sig<- sd(A$$epsilon);\
+				rmse.tau<- sd(A$$delta);\
 				c(Fmsy=A$$fmsy,MSY=A$$msy,Bmsy=A$$bmsy,\
 				  hat.Fmsy=B$$fmsy,hat.MSY=B$$msy,hat.Bmsy=B$$bmsy,\
 				  Bo = A$$bo, hat.Bo = B$$bo,\
@@ -141,7 +146,11 @@ COLLECTALL ='dn<-dir(pattern="^[[:digit:]]"); \
 				  Age.tau2=A$$age_tau2[1],\
 				  sigma=A$$sig,\
 				  tau=A$$tau,\
-				  RMSE=A$$tau+A$$sig+sum(sqrt(A$$age_tau2)) )}); \
+				  RMSE=A$$tau+A$$sig+sum(sqrt(A$$age_tau2)),\
+				  rmse.nu1 = rmse.nu1,\
+				  rmse.nu2 = rmse.nu2,\
+				  rmse.sig = rmse.sig,\
+				  rmse.tau = rmse.tau )}); \
 		   		save(sims,file="allSims.Rdata")'
 
 COLLECTRETRO =	'dn<-dir(pattern="^[[:digit:]]"); \
