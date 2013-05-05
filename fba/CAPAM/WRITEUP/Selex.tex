@@ -4,6 +4,7 @@
 	%  Created by Martell on 2013-01-10.
 	%  Copyright (c) 2013 UBC Fisheries Centre. All rights reserved.
 	%
+	% \documentclass{elsart}
 	\documentclass[12pt]{article}
 	
 	% Use utf-8 encoding for foreign characters
@@ -20,6 +21,9 @@
 	% Multipart figures
 	%\usepackage{subfigure}
 	
+	% endfloat
+	\usepackage{endfloat}
+
 	% More symbols
 	\usepackage{amsmath}
 	\usepackage{amssymb}
@@ -80,10 +84,16 @@
 	
 	\date{\today}
 	
+	\usepackage[displaymath, mathlines]{lineno}
+	
 	\linespread{1.3}
 
 	\begin{document}
-	
+	% \setpagewiselinenumbers
+	% \modulolinenumbers[2]
+	% \linenumbers
+
+
 	\ifpdf
 	\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
 	\else

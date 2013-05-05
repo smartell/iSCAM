@@ -19,11 +19,13 @@ Parameters for the simulation-estimation experiments were based on the maximum l
 where the random deviate is $\epsilon \sim N(0,1)$, $\sigma$ is the standard error, $\nu_a$ is the age-specific proportion that this selected by the acoustic sampling gear, $N_{a,t}$ is the numbers-at-age, and $W_a$ is the average weight-at-age.  For simplicity, the scaling parameter was fixed at $q=1$.
 
 Age-composition data for both commercial and survey samples were randomly drawn from a multivariate distribution with a probability of $p_{a,t}$ of sampling an age-$a$ fish in a given year $t$.  The age-proportion samples must sum to 1 in each year, and random samples were based on the the following:
+
 \begin{align}
 	x_{a,t} &= \ln(\hat{p}_{a,t}) + \sigma_2 \epsilon_{a,t} - \frac{1}{A}
 	\left[\sum_a \ln(\hat{p}_{a,t}) + \sigma_2 \epsilon_{a,t} \right],\nonumber \\ 
 	p_{a,t} &= \dfrac{e^{x_{a,t}}}{\sum_{a} e^{x_{a,t}} } \label{eq:ageProportion}
 \end{align}
+
 where $\epsilon_{a,t}$ is a standard random normal deviate, $\sigma_2$ is the standard error, $\hat{p}$ is the expectation of the proportion-at-age in year $t$ in the sampled catch.
 
 True parameter values used in the simulation model are listed in Table~\ref{table:simulationpars}.  Annual fishing mortality rates were conditioned on the observed catch from the Pacific hake fishery and it was assumed that both natural mortality and fishing mortality occur simultaneously.  Simulated age-specific fishing mortality rates were based on the annual age-specific selectivity which differs among three alternative simulation scenarios (see description in the Scenarios subsection).
@@ -118,6 +120,7 @@ The likelihood for age-composition information collected from commercial fisheri
 Annual age-1 recruitment was estimated via a mean recruitment value and a vector of deviates that were constrained to sum to 0.  The integrated statistical catch age-model also jointly estimates the parameters of the resulting stock recruitment relationship given estimates of annual age-1 recruits and the  spawning stock biomass.  Residual deviations between annual recruitment and recruitment based on a Beverton-Holt stock recruitment model were calculated using \eqref{eq:T1.4}, and the unfished age-1 recruits ($R_o$) and steepness parameters ($h$) were jointly estimated based on the negative log likelihood \eqref{eq:L1.4}.  The variance parameter for recruitment deviations $\sigma_R^2$ was based on the 2007 stock assessment \citep{helser2007stock}.
 
 Uniform priors were assumed for all the estimated parameters with the exception of an informative beta distribution for the steepness parameter in the interval 0.2--1.0, and informative priors for the variance parameters.  The expected value for the steepness prior was set at 0.6 with a standard deviation of 0.161.  For the variance parameters, we adopted a variance partitioning approach for estimating observation and process error variance. The estimated quantities consist of the total precision $\varphi^2$ and the proportion of the total variance that is associated with the observation errors $\rho$ and the total variance is partitioned as:  
+
 \begin{align}
 	\sigma^2_1 &= \rho/\varphi^2 \nonumber \\
 	\sigma^2_R   &= (1-\rho)/\varphi^2 \label{eq:variance}
