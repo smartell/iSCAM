@@ -153,7 +153,11 @@ DATA_SECTION
 	END_CALCS
 	
 	
-	
+	// |---------------------------------------------------------------------------------|
+	// | COMMAND LINE ARGUMENTS FOR SIMULATION & RETROSPECTIVE ANALYSIS
+	// |---------------------------------------------------------------------------------|
+	// | SimFlag    : if user specifies -sim, then turn SimFlag on.
+	// | retro_yrs  : number of terminal years to remove.
 	
 	int SimFlag;
 	int rseed;
