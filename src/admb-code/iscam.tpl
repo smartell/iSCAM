@@ -95,41 +95,38 @@
 
 
 DATA_SECTION
-	// ------------------------------------------------------------------------- //
-	// In the DATA_SECTION 3 separate files are read in:                         //
-	// 1) ProjectFileControl.pfc (used for stock projections under TAC)          //
-	// 2) DataFile.dat           (data to condition the assessment model on)     //
-	// 3) ControlFile.ctl        (controls for phases, selectivity options )     //
-	//                                                                           //
-	// NOTES:                                                                    //
-	//                                                                           //
-	// ------------------------------------------------------------------------- //
-
-	
 	// |---------------------------------------------------------------------------------|
 	// | STRINGS FOR INPUT FILES                                                         |
 	// |---------------------------------------------------------------------------------|
-	// |
+	// | ProjectFileControl.pfc : used for stock projections under TAC    
+	// | DataFile.dat           : data to condition the assessment model on 
+	// | ControlFile.ctl        : controls for phases, selectivity options  
+	// | BaseFileName           : File prefix for all model outputs         
 	init_adstring DataFile;
 	init_adstring ControlFile;
 	init_adstring ProjectFileControl;
 
+	!! BaseFileName   = stripExtension(ControlFile);
+	!! ReportFileName = BaseFileName + adstring(".rep");
+	!! cout<<BaseFileName<<endl;
 	
-	// ------------------------------------------------------------------------- //
-	// READ IN PROJECTION FILE CONTROLS                                          //
-	// ------------------------------------------------------------------------- //	
+	
+	// |---------------------------------------------------------------------------------|
+	// | PROJECTION FILE CONTROLS
+	// |---------------------------------------------------------------------------------|
+	// | Documentation for projection control file pf_cntrl
+	// | 1) start year for m_bar calculation
+	// | 2)   end year for m_bar calculation
+	// | 3) start year for average fecundity/weight-at-age
+	// | 4)   end year for average fecundity/weight-at-age
+	// | 5) start year for recruitment period (not implemented yet)
+	// | 6)   end year for recruitment period (not implemented yet)
+	// |
+	init_int n_pfcntrl;
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	init_int n_tac;
 	init_vector tac(1,n_tac);
 	
-	// Documentation for projection control file pf_cntrl
-	// 1) start year for m_bar calculation
-	// 2)   end year for m_bar calculation
-	// 3) start year for average fecundity/weight-at-age
-	// 4)   end year for average fecundity/weight-at-age
-	// 5) start year for recruitment period (not implemented yet)
-	// 6)   end year for recruitment period (not implemented yet)
-	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
 	
 	init_int eof_pf;
@@ -142,11 +139,6 @@ DATA_SECTION
 			exit(1);
 		}
 	END_CALCS
-	
-	
-	!! BaseFileName=stripExtension(ControlFile);
-	!! cout<<BaseFileName<<endl;
-	!! ReportFileName = BaseFileName + adstring(".rep");
 	
 	
 	
