@@ -632,7 +632,7 @@ DATA_SECTION
 	// | VARIABLES FOR MSY-BASED REFERENCE POINTS
 	// |---------------------------------------------------------------------------------|
 	// |
-// 	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
+	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
 // 	vector fall(1,nfleet);			//Fishing mortality based on allocation
 // 	vector  msy(1,nfleet);			//Maximum sustainable yield
 // 	number bmsy;					//Spawning biomass at MSY
@@ -1088,13 +1088,14 @@ PARAMETER_SECTION
 	// | - ct          -> predicted catch for each catch observation
 	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
 	// |
-	
-	vector ro(1,ngroup);
-	vector bo(1,ngroup);
-	vector sbo(1,ngroup);
-	vector kappa(1,ngroup);
-	vector so(1,ngroup);
-	vector beta(1,ngroup);
+	 
+	vector        ro(1,ngroup);
+	vector        bo(1,ngroup);
+	vector       sbo(1,ngroup);
+	vector     kappa(1,ngroup);
+	vector steepness(1,ngroup);
+	vector        so(1,ngroup);
+	vector      beta(1,ngroup);
 	vector           m(1,nsex);	
 	vector  log_avgrec(1,n_ag);			
 	vector log_recinit(1,n_ag);			
@@ -1288,7 +1289,7 @@ FUNCTION initParameters
 
   	
   	int ih;
-  	dvar_vector steepness(1,ngroup);
+  	
 	ro        = mfexp(theta(1));
 	steepness = theta(2);
 	m         = mfexp(theta(3));
@@ -2914,9 +2915,7 @@ FUNCTION void calcReferencePoints()
    	PSEUDOCODE: 
    		(1) : Construct array of selectivities (potentially sex based log_sel)
    		(2) : Construct arrays of wt_avg and wt_mat for reference years.
-
-	  	(2) : Construct a matrix of selectivities for the directed fleets.
-	  	(3) : Come up with a reasonable guess for fmsy for each gear.
+	  	(3) : Come up with a reasonable guess for fmsy for each gear in nfleet.
 	  	(4) : Instantiate an Msy class object and get_fmsy.
 	  	(5) : Use Msy object to get reference points.
 
@@ -2949,13 +2948,34 @@ FUNCTION void calcReferencePoints()
 	// | (2) : Average weight and mature spawnign biomass for reference years
 	// |     : wt_bar(1,n_ags,sage,nage)
 	dmatrix fa_bar(1,n_ags,sage,nage);
+	dmatrix  M_bar(1,n_ags,sage,nage);
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		fa_bar(ig) = elem_prod(wt_bar(ig),ma(ig));
+		M_bar(ig)  = colsum(value(M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
+		M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
 	}
 	
-	
-	
+	// | (3) : Initial guess for fmsy for each fleet
+	dvector ftry(1,nfleet);
+	ftry  = 0.6 *value(m_bar);
+	fmsy  = ftry;
+
+
+	// | (4) : Instantiate msy class
+	for(g=1;g<=ngroup;g++)
+	{
+		double d_ro = value(ro(g));
+		double  d_h = value(steepness(g));
+		double d_rho = cntrl(13);
+
+		dvector d_mbar = M_bar(g);
+		dvector   d_wa = wt_bar(g);
+		dvector   d_fa = fa_bar(g);
+
+		Msy cMSY(d_ro,d_h,d_mbar,d_rho,d_wa,d_fa,d_V);
+	}
+
 // 	/* 
 // 	(3) Come up with a reasonable estimate of Fmsy 
 // 	In practice seems to  work best if start with 
