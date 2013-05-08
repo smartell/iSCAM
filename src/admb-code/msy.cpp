@@ -99,7 +99,7 @@ public:
 	void  set_h(double& h)   { m_h  = h;  }
 	void set_fa(dvector& fa) { m_fa = fa; }
 	void set_wa(dvector& wa) { m_wa = wa; }
-	void set_fa(dmatrix& V)  { m_V  = V;  }
+	void  set_V(dmatrix& V)  { m_V  = V;  }
 	
 	// Member functions
 	void        calc_phie();

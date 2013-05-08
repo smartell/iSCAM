@@ -957,7 +957,6 @@ PARAMETER_SECTION
 	// | theta[6] -> rho
 	// | theta[7] -> vartheta
 	// |
-	// init_bounded_number_vector theta(1,npar,theta_lb,theta_ub,theta_phz);
 	init_bounded_vector_vector theta(1,npar,1,ipar_vector,theta_lb,theta_ub,theta_phz);
 	
 	// |---------------------------------------------------------------------------------|
@@ -1140,6 +1139,7 @@ PARAMETER_SECTION
 	// | N          -> Numbers-at-age for (group,year+1,age)
 	// | - A_hat    -> ragged matrix for predicted age-composition data.
 	// | - A_nu		-> ragged matrix for age-composition residuals.
+	// | - log_sel  -> selectivity coefficients for each gear.
 	// |
 	3darray   F(1,n_ags,syr,nyr,sage,nage);
 	3darray   M(1,n_ags,syr,nyr,sage,nage);
@@ -1148,7 +1148,7 @@ PARAMETER_SECTION
 	3darray   N(1,n_ags,syr,nyr+1,sage,nage);
 	3darray  A_hat(1,na_gears,1,na_nobs,a_sage,a_nage);
 	3darray   A_nu(1,na_gears,1,na_nobs,a_sage,a_nage);
-
+	3darray log_sel(1,ngear,syr,nyr,sage,nage);
 	
 	// //matrix jlog_sel(1,ngear,sage,nage);		//selectivity coefficients for each gear type.
 	// //matrix log_sur_sel(syr,nyr,sage,nage);	//selectivity coefficients for survey.
@@ -1167,7 +1167,7 @@ PARAMETER_SECTION
 	// | log_sel    -> Selectivity for (gear, group, year, age)
 	// | Chat       -> Predicted catch-age array for (gear, group, year, age)
 	// | 
-	4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);		
+	// 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 	// 4darray    Chat(1,ngear,1,n_ags,syr,nyr,sage,nage);		
 	
 
@@ -2222,9 +2222,10 @@ FUNCTION calcStockRecruitment
 		}
 
 		// | Step 6. calculate stock recruitment parameters (so, beta, sbo);
-		// | Step 7. calculate predicted recruitment.
 		so(g)  = kappa(g)/phib;
 		sbo(g) = ro(g) * phib;
+
+		// | Step 7. calculate predicted recruitment.
 		dvar_vector tmp_st = sbt(g)(syr,nyr-sage).shift(syr+sage);
 		switch(int(cntrl(2)))
 		{
@@ -2553,6 +2554,8 @@ FUNCTION calcObjectiveFunction
 	// | - pvec(4)  -> penalty on recruitment deviations.
 	// | - pvec(5)  -> penalty on initial recruitment vector.
 	// | - pvec(6)  -> constraint to ensure sum(log_rec_dev) = 0
+	// | - pvec(7)  -> constraint to ensure sum(init_log_rec_dev) = 0
+	// |
 	dvar_vector pvec(1,7);
 	pvec.initialize();
 	
@@ -2604,8 +2607,10 @@ FUNCTION calcObjectiveFunction
 	if(verbose)
 	{
 		COUT(nlvec);
-		COUT(pvec);
+		COUT(lvec);
 		COUT(priors);
+		COUT(pvec);
+		COUT(qvec);
 	}
 	// COUT(nlvec);
 	objfun  = sum(nlvec);
@@ -2848,63 +2853,94 @@ FUNCTION calcObjectiveFunction
 	
 //   }
 	
-// FUNCTION void calc_reference_points()
-//   {
-// 	/**
-// 	\file iscam.tpl
-// 	\author Steven Martell
-// 	Uses Newton_Raphson method to determine Fmsy and MSY 
-// 	based reference points.  
+FUNCTION void calcReferencePoints()
+  {
+  	/*
+  	Purpose:  This function calculates the MSY-based reference points, and also loops
+  	          over values of F and F-multipliers and calculates the equilibrium yield
+  	          for each fishing gear.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		- This function is based on the msyReferencePoint class object written by 
+  		  Steve Martell on the Island of Maui while on Sabbatical leave from UBC.
+  		- The msyReferencePoint class uses Newton-Raphson method to iteratively solve
+  		  for the Fmsy values that maximize catch for each fleet. You can compare 
+  		  MSY-reference points with the numerical values calculated at the end of this
+  		  function.
+  		- Code check: appears to find the correct value of MSY
+		  in terms of maximizing ye.  Check to ensure rec-devs
+		  need a bias correction term to get this right.
 	
-// 	Code check: appears to find the correct value of MSY
-// 	in terms of maximizing ye.  Check to ensure rec-devs
-// 	need a bias correction term to get this right.
-	
-// 	Modification for multiple fleets:
-// 		Need to pass a weighted average vector of selectivities
-// 		to the equilibrium routine, where the weights for each
-// 		selectivity is based on the allocation to each fleet.
+		- Modification for multiple fleets:
+    	  	Need to pass a weighted average vector of selectivities
+    	  	to the equilibrium routine, where the weights for each
+    	  	selectivity is based on the allocation to each fleet.
 		
-// 		Perhaps as a default, assign an equal allocation to each
-// 		fleet.  Eventually,user must specify allocation in 
-// 		control file.  DONE
+	 		Perhaps as a default, assign an equal allocation to each
+	 		fleet.  Eventually,user must specify allocation in 
+	 		control file.  DONE
 		
-// 		Use selectivity in the terminal year to calculate reference
-// 		points.
+	 	- Use selectivity in the terminal year to calculate reference
+	 	  points.  See todo, this is something that should be specified by the user.
 	
-// 	June 8, 2012.  SJDM.  Made the following changes to this routine.
-// 		1) changed reference points calculations to use the average
-// 		   weight-at-age and fecundity-at-age.
-// 		2) change equilibrium calculations to use the catch allocation
-// 		   for multiple gear types. Not the average vulnerablity... this was wrong.
+		- June 8, 2012.  SJDM.  Made the following changes to this routine.
+			1) changed reference points calculations to use the average
+			   weight-at-age and fecundity-at-age.
+			2) change equilibrium calculations to use the catch allocation
+			   for multiple gear types. Not the average vulnerablity... this was wrong.
 	
-// 	July 29, 2012.  SJDM Issue1.  New routine for calculating reference points
-// 	for multiple fleets. In this case, finds a vector of Fmsy's that simultaneously 
-// 	maximizes the total catch for each of the fleets respectively.  See
-// 	iSCAMequil_soln.R for an example.
+		- July 29, 2012.  SJDM Issue1.  New routine for calculating reference points
+		  for multiple fleets. In this case, finds a vector of Fmsy's that simultaneously 
+		  maximizes the total catch for each of the fleets respectively.  See
+		  iSCAMequil_soln.R for an example.
 	
-// 	August 1, 2012.  SJDM, In response to Issue1. A major overhaul of this routine.
-// 	Now using the new Msy class to calculate reference points. This greatly simplifies
-// 	the code in this routine and makes other routines (equilibrium) redundant.  Also
-// 	the new Msy class does a much better job in the case of multiple fleets.
+		- August 1, 2012.  SJDM, In response to Issue1. A major overhaul of this routine.
+		  Now using the new Msy class to calculate reference points. This greatly simplifies
+		  the code in this routine and makes other routines (equilibrium) redundant.  Also
+		  the new Msy class does a much better job in the case of multiple fleets.
 	
-// 	The algorithm is as follows:
-// 		(2) Construct a matrix of selectivities for the directed fleets.
-// 		(3) Come up with a reasonable guess for fmsy for each gear.
-// 		(4) Instantiate an Msy class object and get_fmsy.
-// 		(5) Use Msy object to get reference points.
+		- Aug 11, 2012.
+		  For the Pacific herring branch omit the get_fmsy calculations and use only the 
+		  Bo calculuation for the reference points.  As there are no MSY based reference
+		  points required for the descision table. 
+
+		- May 8, 2013.
+		  Starting to modify this code to allow for multiple areas, sex and stock-specific
+		  reference points.  Key to this modification is the definition of a stock. For
+		  the purposes of reference points, a stock is assumed to be distributed over all
+		  areas, can be unisex or two sex, and can be fished by all fleets given the stock
+		  exists in an area where the fishing gear operates.
+
+   	PSEUDOCODE: 
+   		(1) : Loop over areas and construct a matrix of selectivities for each gear.
+	  	(2) : Construct a matrix of selectivities for the directed fleets.
+	  	(3) : Come up with a reasonable guess for fmsy for each gear.
+	  	(4) : Instantiate an Msy class object and get_fmsy.
+	  	(5) : Use Msy object to get reference points.
+
 		
-		
-// 	Aug 11, 2012.
-// 	For the Pacific herring branch omit the get_fmsy calculations and use only the 
-// 	Bo calculuation for the reference points.  As there are no MSY based reference
-// 	points required for the descision table. 
-// 	*/
-// 	int i,j,k;
+
+
+  	TODO list:
+  	[ ] - allow user to specify which selectivity years are used in reference point
+  	      calculations. This should probably be done in the projection File Control.
+  	*/
+	int kk;
 	
-// 	/* (1) Determine which fleets are directed fishing fleets. */
-// 	/* This is done in the data section with nfeet and ifleet. */
-	
+	// | (1) : Matrix of selectivities for directed fisheries.
+	// | log_sel(gear)(n_ags)(year)(age)
+	dvector d_ak(1,nfleet);
+	dmatrix  d_V(1,nfleet,sage,nage);
+	for(k=1;k<=nfleet;k++)
+	{
+		kk     = ifleet(k);
+		d_V(k) = value( exp(log_sel(kk)(nyr)) );
+	}
+
 	
 // 	/* (2) Matrix of selectivities for directed fleets */
 // 	dmatrix d_V(1,nfleet,sage,nage);
@@ -3163,8 +3199,8 @@ FUNCTION calcObjectiveFunction
 // 		}
 // 	}
 // 	//exit(1);
-// 	if(verbose)cout<<"**** Ok after calc_reference_points ****"<<endl;
-//   }
+	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
+  }
 	
 
 
@@ -3518,7 +3554,7 @@ FUNCTION void simulationModel(const long& seed)
 	writeSimulatedDataFile();
 
 	
-// 	calc_reference_points();
+// 	calcReferencePoints();
 // 	//cout<<"	OK after reference points\n"<<fmsy<<endl;
 // 	//exit(1);
 // 	//	REPORT(fmsy);
@@ -3820,15 +3856,15 @@ REPORT_SECTION
 	// | MSY-BASED REFERENCE POINTS
 	// |---------------------------------------------------------------------------------|
 	// |
-// 	if(last_phase())
-// 	{
-// 		calc_reference_points();
+	if(last_phase())
+	{
+		calcReferencePoints();
 // 		REPORT(bo);
 // 		REPORT(fmsy);
 // 		REPORT(msy);
 // 		REPORT(bmsy);
 // 		REPORT(Umsy);
-// 	}
+	}
 // 	/*
 // 	Stock status info
 // 	Bstatus = sbt/bmsy;
@@ -3935,7 +3971,7 @@ REPORT_SECTION
 // 	*/
 // 	int i;
 // 	// 1) Calculate reference pionts.
-// 	//calc_reference_points();  //redundant b/c its called in mcmc_output?
+// 	//calcReferencePoints();  //redundant b/c its called in mcmc_output?
 	
 // 	// 2) Loop over vector of proposed catches
 // 	//    This vector should is now read in from the projection file control (pfc).
@@ -3977,7 +4013,7 @@ FUNCTION mcmc_output
 // 	}
 	
 // 	// leading parameters & reference points
-// 	calc_reference_points();
+// 	calcReferencePoints();
 // 	// decision table output
 // 	//dvector future_bt = value(elem_prod(elem_prod(N(nyr+1),exp(-M_tot(nyr))),wt_avg(nyr+1)));
 // 	dvector future_bt = value(elem_prod(N(nyr+1)*exp(-m_bar),wt_avg(nyr+1)));
