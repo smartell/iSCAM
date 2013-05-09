@@ -1431,152 +1431,155 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 	for(k=1; k<=ngear; k++)
 	{
-		tmp.initialize(); tmp2.initialize();
-		dvector iy(1,yr_nodes(k));
-		dvector ia(1,age_nodes(k));
-		byr  = 1;
-		bpar = 0;
-		switch(isel_type(k))
+		for( ig = 1; ig <= n_ags; ig++ )
 		{
-			case 1: //logistic selectivity (2 parameters)
-				for(i=syr; i<=nyr; i++)
-				{
-					if( i == sel_blocks(k,byr) )
+			tmp.initialize(); tmp2.initialize();
+			dvector iy(1,yr_nodes(k));
+			dvector ia(1,age_nodes(k));
+			byr  = 1;
+			bpar = 0;
+			switch(isel_type(k))
+			{
+				case 1: //logistic selectivity (2 parameters)
+					for(i=syr; i<=nyr; i++)
 					{
-						bpar ++;
-						if( byr < n_sel_blocks(k) ) byr++;
-					}
+						if( i == sel_blocks(k,byr) )
+						{
+							bpar ++;
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
 
-					p1 = mfexp(sel_par(k,bpar,1));
-					p2 = mfexp(sel_par(k,bpar,2));
-					log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
-				}
-				break;
-			
-			case 6:	// fixed logistic selectivity
-				p1 = mfexp(sel_par(k,1,1));
-				p2 = mfexp(sel_par(k,1,2));
-				for(i=syr; i<=nyr; i++)
-				{
-					log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
-				}
-				break;
-				
-			case 2:	// age-specific selectivity coefficients
-				for(i=syr; i<=nyr; i++)
-				{
-					if( i == sel_blocks(k,byr) )
-					{
-						bpar ++;
-						if( byr < n_sel_blocks(k) ) byr++;
+						p1 = mfexp(sel_par(k,bpar,1));
+						p2 = mfexp(sel_par(k,bpar,2));
+						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
 					}
-					for(j=sage;j<=nage-1;j++)
+					break;
+				
+				case 6:	// fixed logistic selectivity
+					p1 = mfexp(sel_par(k,1,1));
+					p2 = mfexp(sel_par(k,1,2));
+					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
+						log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
 					}
-					log_sel(k)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
-				}
-				break;
-				
-			case 3:	// cubic spline 
-				for(i=syr; i<nyr; i++)
-				{
-					if( i==sel_blocks(k,byr) )
+					break;
+					
+				case 2:	// age-specific selectivity coefficients
+					for(i=syr; i<=nyr; i++)
 					{
-						bpar ++;	
-						log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
-						if( byr < n_sel_blocks(k) ) byr++;
+						if( i == sel_blocks(k,byr) )
+						{
+							bpar ++;
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
+						for(j=sage;j<=nage-1;j++)
+						{
+							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
+						}
+						log_sel(k)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
 					}
-					log_sel(k)(ig)(i+1) = log_sel(k)(ig)(i);
-				}
-				break;
-				
-			case 4:	// time-varying cubic spline every year				
-				for(i=syr; i<=nyr; i++)
-				{
-					log_sel(k)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
-				}
-				break;
-				
-			case 5:	// time-varying bicubic spline
-				ia.fill_seqadd( 0,1./(age_nodes(k)-1) );
-				iy.fill_seqadd( 0,1./( yr_nodes(k)-1) );	
-				bicubic_spline( iy,ia,sel_par(k),tmp2 );
-				log_sel(k)(ig) = tmp2; 
-				break;
-				
-			case 7:
-				// time-varying selectivity based on deviations in weight-at-age
-				// CHANGED This is not working and should not be used. (May 5, 2011)
-				// SkDM:  I was not able to get this to run very well.
-				// AUG 5, CHANGED so it no longer has the random walk component.
-				p1 = mfexp(sel_par(k,1,1));
-				p2 = mfexp(sel_par(k,1,2));
-				
-				for(i = syr; i<=nyr; i++)
-				{
-					dvar_vector tmpwt=log(wt_avg(ig)(i)*1000)/mean(log(wt_avg(ig)*1000.));
-					log_sel(k)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
-				}	 
-				break;
-				
-			case 8:
-				//Alternative time-varying selectivity based on weight 
-				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
-				//p3 is the coefficient that describes variation in log_sel.
-				p1 = mfexp(sel_par(k,1,1));
-				p2 = mfexp(sel_par(k,1,2));
-				p3 = sel_par(k,1,3);
-				
-				for(i=syr; i<=nyr; i++)
-				{
-					tmp2(i) = p3*wt_dev(ig)(i);
-					log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
-				}
-				break;
-				
-			case 11: // logistic selectivity based on mean length-at-age
-				for(i=syr; i<=nyr; i++)
-				{
-					if( i == sel_blocks(k,byr) )
+					break;
+					
+				case 3:	// cubic spline 
+					for(i=syr; i<nyr; i++)
 					{
-						bpar ++;
-						if( byr < n_sel_blocks(k) ) byr++;
+						if( i==sel_blocks(k,byr) )
+						{
+							bpar ++;	
+							log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
+						log_sel(k)(ig)(i+1) = log_sel(k)(ig)(i);
 					}
-					p1 = mfexp(sel_par(k,bpar,1));
-					p2 = mfexp(sel_par(k,bpar,2));
+					break;
+					
+				case 4:	// time-varying cubic spline every year				
+					for(i=syr; i<=nyr; i++)
+					{
+						log_sel(k)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
+					}
+					break;
+					
+				case 5:	// time-varying bicubic spline
+					ia.fill_seqadd( 0,1./(age_nodes(k)-1) );
+					iy.fill_seqadd( 0,1./( yr_nodes(k)-1) );	
+					bicubic_spline( iy,ia,sel_par(k),tmp2 );
+					log_sel(k)(ig) = tmp2; 
+					break;
+					
+				case 7:
+					// time-varying selectivity based on deviations in weight-at-age
+					// CHANGED This is not working and should not be used. (May 5, 2011)
+					// SkDM:  I was not able to get this to run very well.
+					// AUG 5, CHANGED so it no longer has the random walk component.
+					p1 = mfexp(sel_par(k,1,1));
+					p2 = mfexp(sel_par(k,1,2));
+					
+					for(i = syr; i<=nyr; i++)
+					{
+						dvar_vector tmpwt=log(wt_avg(ig)(i)*1000)/mean(log(wt_avg(ig)*1000.));
+						log_sel(k)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
+					}	 
+					break;
+					
+				case 8:
+					//Alternative time-varying selectivity based on weight 
+					//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
+					//p3 is the coefficient that describes variation in log_sel.
+					p1 = mfexp(sel_par(k,1,1));
+					p2 = mfexp(sel_par(k,1,2));
+					p3 = sel_par(k,1,3);
+					
+					for(i=syr; i<=nyr; i++)
+					{
+						tmp2(i) = p3*wt_dev(ig)(i);
+						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
+					}
+					break;
+					
+				case 11: // logistic selectivity based on mean length-at-age
+					for(i=syr; i<=nyr; i++)
+					{
+						if( i == sel_blocks(k,byr) )
+						{
+							bpar ++;
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
+						p1 = mfexp(sel_par(k,bpar,1));
+						p2 = mfexp(sel_par(k,bpar,2));
 
-					dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
+						dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
 
-					log_sel(k)(ig)(i) = log( plogis(len,p1,p2) );
-				}
-				break;
-				
-			case 12: // cubic spline length-based coefficients.
-				for(i=syr; i<=nyr; i++)
-				{
-					if( i == sel_blocks(k,byr) )
-					{
-						bpar ++;
-						if( byr < n_sel_blocks(k) ) byr++;
+						log_sel(k)(ig)(i) = log( plogis(len,p1,p2) );
 					}
-				
-					dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
-					log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
-				}
-				break;
-				
-				
-			default:
-				log_sel(k)(ig)=0;
-				break;
-				
-		}  // switch
+					break;
+					
+				case 12: // cubic spline length-based coefficients.
+					for(i=syr; i<=nyr; i++)
+					{
+						if( i == sel_blocks(k,byr) )
+						{
+							bpar ++;
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
+					
+						dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
+						log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
+					}
+					break;
+					
+					
+				default:
+					log_sel(k)(ig)=0;
+					break;
+					
+			}  // switch
 
-		//subtract mean to ensure mean(exp(log_sel))==1
-		for(i=syr;i<=nyr;i++)
-		{
-			log_sel(k)(ig)(i) -= log( mean(mfexp(log_sel(k)(ig)(i))) );
+			//subtract mean to ensure mean(exp(log_sel))==1
+			for(i=syr;i<=nyr;i++)
+			{
+				log_sel(k)(ig)(i) -= log( mean(mfexp(log_sel(k)(ig)(i))) );
+			}
 		}
 	}  //end of gear k
 	
