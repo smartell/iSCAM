@@ -1431,6 +1431,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 	for(k=1; k<=ngear; k++)
 	{
+
 		for( ig = 1; ig <= n_ags; ig++ )
 		{
 			tmp.initialize(); tmp2.initialize();
@@ -1438,6 +1439,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			dvector ia(1,age_nodes(k));
 			byr  = 1;
 			bpar = 0;
+			
 			switch(isel_type(k))
 			{
 				case 1: //logistic selectivity (2 parameters)
@@ -2086,6 +2088,7 @@ FUNCTION calcSurveyObservations
 					break;
 				}
 			}
+		cout<<"Marco"<<endl;
 		} // end of ii loop
 		dvector     it = trans(survey_data(kk))(2)(1,nz);
 		dvector     wt = trans(survey_data(kk))(7)(1,nz);
@@ -2094,7 +2097,6 @@ FUNCTION calcSurveyObservations
 		dvar_vector zt = log(it) - log(t1(1,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
 				 q(kk) = mfexp(zbar);
-
 		// | survey residuals
 		epsilon(kk).sub(1,nz) = zt - zbar;
 		 it_hat(kk).sub(1,nz) = q(kk) * t1(1,nz);
@@ -2104,8 +2106,8 @@ FUNCTION calcSurveyObservations
 		{
 			epsilon(kk).initialize();
 			dvar_vector fd_zt     = first_difference(zt);
-			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt));
-			epsilon(kk).sub(1,nz) = fd_zt - zw_bar;
+			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(1,nz-1)));
+			epsilon(kk).sub(1,nz-1) = fd_zt - zw_bar;
 			qt(kk)(1) = exp(zt(1));
 			for(ii=2;ii<=nz;ii++)
 			{
@@ -2155,7 +2157,7 @@ FUNCTION calcStockRecruitment
   	
   	TODO list:
   	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
-  	[ ] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
+  	[] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
 
   	*/
 

@@ -12,7 +12,7 @@ default:
 	cp iscam ${DISK}/debug
 
 opt:
-	admb iscam
+	admb -O iscam
 	cp iscam ${DISK}/release
 
 clean:
