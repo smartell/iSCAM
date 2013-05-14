@@ -2088,7 +2088,7 @@ FUNCTION calcSurveyObservations
 					break;
 				}
 			}
-		cout<<"Marco"<<endl;
+		
 		} // end of ii loop
 		dvector     it = trans(survey_data(kk))(2)(1,nz);
 		dvector     wt = trans(survey_data(kk))(7)(1,nz);
