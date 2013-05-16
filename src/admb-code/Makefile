@@ -1,6 +1,6 @@
 ## Make file for building iSCAM
 ## Author: Steven Martell
-ADMB=~/admb-trunk/admb
+
 .PHONY: default opt clean
 
 ifndef DISK
@@ -8,11 +8,11 @@ ifndef DISK
 endif
 
 default:
-	~/admb-trunk/admb -s -g iscam
+	admb -s -g iscam
 	cp iscam ${DISK}/debug
 
 opt:
-	~/admb-trunk/admb iscam
+	admb iscam
 	cp iscam ${DISK}/release
 
 clean:

@@ -56,7 +56,7 @@
 #                                                                               #
 #                                                                               #
 #-------------------------------------------------------------------------------#
-
+setwd("/Users/stevenmartell1/Documents/iSCAM-project/src/r-code/")
 require(Hmisc)
 .RFILES     <- list.files("./R/",pattern="\\.[Rr]$")
 for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
@@ -137,6 +137,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 	
 	#Create a file list object for selection
 	trckExists <- file.exists( .VIEWTRCK )
+	cat(trckExists)
 	if (trckExists)
 	{
 		tmp <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )

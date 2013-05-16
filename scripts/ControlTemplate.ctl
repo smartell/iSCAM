@@ -15,15 +15,14 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   1.0          0.0     10      2       1       7.0     2.0     #log_ro      ##
+   1.0          0.0     10      2       0       0.0     10.0     #log_ro      ##
    0.75         0.2     1.0     2       3       3.00    2.00    #steepness   ##
-   -1.203973    -3.0    2.0     4       1       -1.203  0.05    #log_m       ##
+   -1.203973    -3.0    2.0     4       1       -1.203  0.15    #log_m g&b   ##
    1.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
    1.0          0.0     10      1       0       0.0     10      #log_recinit ##
    0.5          0.01    0.99    3       3       3.00    5.00    #rho         ##
    0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
-##
 ##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
@@ -47,11 +46,12 @@
 	7				# 4  -No. of age nodes for each gear (0=ignore)
 	12				# 5  -No. of year nodes for 2d spline(0=ignore)
 	3				# 6  -Phase of estimation (-1 for fixed)
-	12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-	12.5 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+	2.00			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	2.00 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 	12.5			# 9  -Penalty wt for time-varying selectivity
 	1               # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
+## Start year of each time block: 1 row for each gear
 1968
 ##
 ##
@@ -63,7 +63,7 @@
 ##			1 - normal prior density for log(q)                              ##
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
-1					# -number of surveys (nits)
+1					# -number of surveys (nits) 
 0					# -prior type (see legend above)
 0					# -prior log(mean)
 0					# -prior sd
@@ -80,7 +80,7 @@
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
-0.01        # 8  -std in mean fishing mortality in first phase
+0.10        # 8  -std in mean fishing mortality in first phase
 2.00        # 9  -std in mean fishing mortality in last phase
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality

@@ -1,6 +1,7 @@
 # Rscript for plotting relative abundance data
 # Steven Martell
 # August 28,  2012
+
 require(ggplot2)
 require(reshape2)
 
@@ -24,8 +25,6 @@ require(reshape2)
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }
-
-
 # .plotIndex	<- function( repObj, annotate=FALSE )
 # {
 # 	#line plot for relative abundance indices
