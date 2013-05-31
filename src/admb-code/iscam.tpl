@@ -1,3 +1,21 @@
+/// @file iscam.tpl
+/// @author Steve Martell, IPHC
+
+///
+/// \def REPORT(object)
+/// \brief Prints name and value of \a object on ADMB report %ofstream file.
+///
+
+///
+/// \def COUT(object)
+/// \brief Screen dump using cout<<"object\n"<<object<<endl;
+///
+
+///
+/// \def TINY 1.e-08
+/// \brief A small number
+///
+
 // ----------------------------------------------------------------------------- //
 //         integrated Statistical Catch Age Model (iSCAM)                        //
 //                                                                               //
@@ -159,7 +177,7 @@ DATA_SECTION
 	// | SimFlag    : if user specifies -sim, then turn SimFlag on.
 	// | retro_yrs  : number of terminal years to remove.
 	
-	int SimFlag;
+	int SimFlag;  //! Flag for simulation mode */
 	int rseed;
 	int retro_yrs;
 	LOC_CALCS
