@@ -12,8 +12,8 @@
 ///
 
 ///
-/// \def TINY 1.e-08
-/// \brief A small number
+/// \def TINY
+/// \brief A small number (1.e-08)
 ///
 
 // ----------------------------------------------------------------------------- //
@@ -4358,7 +4358,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	// #include <contrib.h>
 	// #include <statsLib.h>
-	#include "msy.cpp"
+	#include "msy.h"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;

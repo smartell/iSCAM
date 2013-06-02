@@ -1,5 +1,6 @@
 ## Make file for building iSCAM
 ## Author: Steven Martell
+SRCS = msy.cpp
 
 .PHONY: default opt clean
 
@@ -8,11 +9,11 @@ ifndef DISK
 endif
 
 default:
-	admb -s -g iscam
+	admb -s -g iscam $(SRCS)
 	cp iscam ${DISK}/debug
 
 opt:
-	admb -O iscam
+	admb -O iscam $(SRCS)
 	cp iscam ${DISK}/release
 
 clean:
