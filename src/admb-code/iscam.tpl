@@ -125,14 +125,14 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | STRINGS FOR INPUT FILES                                                         |
 	// |---------------------------------------------------------------------------------|
-	// | ProjectFileControl.pfc : used for stock projections under TAC
-	// | DataFile.dat           : data to condition the assessment model on     
-	// | ControlFile.ctl        : controls for phases, selectivity options 
+	/// | DataFile.dat           : data to condition the assessment model on     
+	init_adstring DataFile;      
+	/// | ControlFile.ctl        : controls for phases, selectivity options 
+	init_adstring ControlFile;
+	/// | ProjectFileControl.pfc : used for stock projections under TAC
+	init_adstring ProjectFileControl;
 	// | BaseFileName           : file prefix used for all iSCAM model output
 	// |
-	init_adstring DataFile;
-	init_adstring ControlFile;
-	init_adstring ProjectFileControl;
 
 	!! BaseFileName   = stripExtension(ControlFile);
 	!! ReportFileName = BaseFileName + adstring(".rep");
@@ -1254,7 +1254,13 @@ PROCEDURE_SECTION
 	// //duplicate symbol in libdf1b2o.a
 	// //dvariable a=3.0;
 	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
-	
+
+///
+/// @brief Claculate Standard Deviation report variables
+/// @author Steve Martell
+/// @fn FUNCTION calcSdreportVariables
+/// @remarks
+///
 FUNCTION calcSdreportVariables
   {
 	/*
@@ -2137,8 +2143,12 @@ FUNCTION calcSurveyObservations
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
   }
-	
-FUNCTION calcStockRecruitment
+
+/// 
+/// @fn Calculates stock recruitment residuals.
+/// @author Steve Martell
+///
+FUNCTION void calcStockRecruitment()
   {
   	/*
 	Purpose:  
@@ -4356,11 +4366,10 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	// #include <contrib.h>
-	// #include <statsLib.h>
 	#include "msy.h"
-	//#include "stats.cxx"
 	#include "baranov.cxx"
+
+
 	time_t start,finish;
 	long hour,minute,second;
 	double elapsed_time;
