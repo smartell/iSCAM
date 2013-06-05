@@ -91,8 +91,9 @@ Model parameters were estimated using maximum likelihood methods where the objec
 		\ell(R)& = (T-1)[\ln(\sigma_R) + 0.5\ln(2 \pi) ] + \sum_{t =2}^T
 		\frac{\delta_t^2}{2\sigma_R^2} \label{eq:L1.4} \\
 		% 
-		{p}(\Theta) & = R_o \propto U(-5,15) + h\propto \beta(3,2)
-			+ \bar{R} \propto U(-5,15) +\dot{R} \propto U(-5,15)
+		p(R_o)&=p(\bar{R})=p(\dot{R}) \propto U(-5,15),\nonumber\\
+		p(h)   &\propto \beta(3,2),\nonumber\\
+		{p}(\Theta) & = p(R_o)+ p(h) + p(\bar{R})+p(\dot{R})
 			\label{eq:L1.5}\\
 		% 
 		\mathrm{P} & = \phantom{+} \lambda^{(1)}_k \sum_{a=3}^{A-1}(v_{a,t}-2v_{a-1,t} + v_{a-2,t})^2
@@ -107,7 +108,7 @@ Model parameters were estimated using maximum likelihood methods where the objec
 		 \label{eq:L1.6}\\[1ex]
 		% 
 		&\mbox{Objective function}\nonumber\\
-		f(\Theta)& = \ell(C) + \ell(I) + \ell(P) + \ell(R) +{p}(\Theta) + \mathrm{P}\\
+		f(\Theta)& = \ell(C) + \ell(I) + \ell(P) + \ell(R) -\ln[{p}(\Theta)] + \mathrm{P}\\
 		\hline \nonumber
 	\end{align}
 	\normalEq
@@ -168,7 +169,7 @@ Three alternative datasets were generated with the simulation model using: (1) f
 \end{equation}
 The coefficient of 0.25 is an arbitrary scaling of the biomass-at-age that would relate price premiums to larger size fish.  The larger the price premium the less dome-shaped the selectivity curve would be because there is a financial incentive to target larger more valuable fish that are less abundant.  In any case, the unique feature of \eqref{eq:ifsSelex} is that it allows for modal and multi-modal selectivity curves based on the relative abundance of each cohort (Figure \ref{fig:simSelex}).
 
-\begin{figure}[!tbh]
+\begin{figure*}[!tbh]
 	\begin{center}
 		\includegraphics[width=0.37\textwidth]{../FIGS/fig:simSelex1.png}
 		\hspace{-1.25cm}
@@ -178,7 +179,7 @@ The coefficient of 0.25 is an arbitrary scaling of the biomass-at-age that would
 	\end{center}
 	\caption{True selectivity curves used to generate simulated data sets for scenario 1 (left), scenario 2 (middle), scenario 3 (right).}
 	\label{fig:simSelex}
-\end{figure}
+\end{figure*}
 
 Four alternative selectivity states were assumed in the assessment model (denoted by the letters a-d).  For the fixed scenario, model (a), the probability of catching an individual of a given length was assumed to be constant over time.  Length-based selectivity was based on estimating seven equally spaced selectivity coefficients (or knots) starting at the length at age-1 and ending at the length of age-15.  A cubic spline function was then used to interpolate between these knots to get the corresponding age-specific selectivity values based on the empirical length-at-age from fisheries samples.  An additional penalty was added to the objective function to ensure a smooth function and penalize  dome-shape selectivity curve; values for $\lambda^{(1)}$ and $\lambda^{(2)}$ were both set at 12.5 which is roughly equivalent to a 20\% coefficient of variation.  The resulting simulated age-based selectivities change with changes in the observed length-at-age data over time.
 
@@ -190,7 +191,7 @@ An alternative to the annual time-varying selectivity is to interpolate in 2-dim
 
 The model permutations and combinations are summarized in Table \ref{tab:scenarios}, along with the total number of estimated and implied parameters for each of the four assessment models.  The additional 67 implied parameters correspond to the use of conditional maximum likelihood estimates for the survey scaling parameter $q$ and 66 additional variance terms for the measurement error in the survey and commercial age-composition data.  Unless otherwise noted, figures and additional tables maintain the same layout as Table \ref{tab:scenarios} where the true states of selectivity are in the rows, and assumed states in the assessment models are represented in the columns.
 
-\begin{table}[!tbh]
+\begin{table*}[!tbh]
 	\caption{List of model scenarios and labels associated with each scenario explored.  For example, scenario 2a is based on simulated data with a fixed selectivity curve, but assumes 3 discrete time blocks in the assessment model.}
 	\label{tab:scenarios}
 	\begin{center}
@@ -218,7 +219,7 @@ The model permutations and combinations are summarized in Table \ref{tab:scenari
 		\hline
 		\end{tabular}
 	\end{center}
-\end{table}
+\end{table*}
 
 Taking into consideration that the appropriate structural assumption about selectivity may not be known, we examine three criteria for choosing the appropriate selectivity parameterization.  The first criterion compares how well each model configuration explains simulated data (statistical fit) based on the effective number of parameters and the  Deviance Information Criterion (DIC).  The second criterion is based on retrospective performance based on Monte Carlo trials. Finally, we examine the precision and bias of estimated reference points based on the same Monte Carlo trials.
 
