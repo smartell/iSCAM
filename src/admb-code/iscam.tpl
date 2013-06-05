@@ -131,12 +131,12 @@ DATA_SECTION
 	init_adstring ControlFile;
 	/// | ProjectFileControl.pfc : used for stock projections under TAC
 	init_adstring ProjectFileControl;
-	// | BaseFileName           : file prefix used for all iSCAM model output
-	// |
-
+	/// | BaseFileName           : file prefix used for all iSCAM model output
 	!! BaseFileName   = stripExtension(ControlFile);
+	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
+
 	
 	
 	
@@ -686,7 +686,7 @@ DATA_SECTION
 	// | -4) log_avgrec  - average sage recruitment from syr+1 to nyr
 	// | -5) log_recinit - average sage recruitment for initialization
 	// | -6) rho         - proportion of total variance for observation errors
-	// | -7) varhtheta   - total precision (1/variance)
+	// | -7) vartheta    - total precision (1/variance)
 	init_int npar;
 	init_matrix theta_control(1,npar,1,7);
 	
@@ -1211,6 +1211,23 @@ PRELIMINARY_CALCS_SECTION
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
 
+	// |---------------------------------------------------------------------------------|
+	// | Testing some class objects for an operating model
+	// |---------------------------------------------------------------------------------|
+	// |
+	ModelDimension cMD(narea,ngroup,nsex,syr,nyr,sage,nage,ngear);
+	initParameters();
+	StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
+	                           value(ro),\
+	                           value(steepness),\
+	                           value(m),\
+	                           value(exp(log_avgrec)),\
+	                           value(exp(log_recinit)),\
+	                           value(rho),\
+	                           value(varphi));
+	cout<<"End of class testing"<<endl;
+	exit(1);
+
 RUNTIME_SECTION
     maximum_function_evaluations 100,  200,   500, 25000, 25000
     convergence_criteria        0.01, 0.01, 1.e-3, 1.e-4, 1.e-5
@@ -1255,13 +1272,8 @@ PROCEDURE_SECTION
 	// //dvariable a=3.0;
 	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
 
-///
-/// @brief Claculate Standard Deviation report variables
-/// @author Steve Martell
-/// @fn FUNCTION calcSdreportVariables
-/// @remarks
-///
-FUNCTION calcSdreportVariables
+
+FUNCTION void calcSdreportVariables()
   {
 	/*
 	Purpose:  This function calculates the sdreport variables.
@@ -1284,7 +1296,7 @@ FUNCTION calcSdreportVariables
 	}
 
   }
-FUNCTION initParameters
+FUNCTION void initParameters()
   {
 	/*
 	Purpose: This function extracts the specific parameter values from the theta vector
@@ -1311,6 +1323,7 @@ FUNCTION initParameters
 
 	*/
 
+	
   	
   	int ih;
   	
@@ -4368,6 +4381,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include "msy.h"
 	#include "baranov.cxx"
+	#include "OpMod.h"
 
 
 	time_t start,finish;

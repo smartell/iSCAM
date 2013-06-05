@@ -1,6 +1,6 @@
 ## Make file for building iSCAM
 ## Author: Steven Martell
-SRCS = msy.cpp
+SRCS = msy.cpp OpMod.cpp
 
 .PHONY: default opt clean
 
