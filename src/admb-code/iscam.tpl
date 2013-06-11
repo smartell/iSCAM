@@ -564,10 +564,10 @@ DATA_SECTION
 		int iyr;
 		for(i=1;i<=n_wt_nobs;i++)
 		{
-			iyr             = inp_wt_avg(i,sage-5);
-			f               = inp_wt_avg(i,sage-3);
-			g               = inp_wt_avg(i,sage-2);
-			h               = inp_wt_avg(i,sage-1);
+			iyr = inp_wt_avg(i,sage-5);
+			f   = inp_wt_avg(i,sage-3);
+			g   = inp_wt_avg(i,sage-2);
+			h   = inp_wt_avg(i,sage-1);
 			
 			if( h )
 			{
