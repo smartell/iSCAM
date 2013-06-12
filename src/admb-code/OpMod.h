@@ -8,6 +8,8 @@
 
 #include <admodel.h>
 
+
+
 #ifndef _MODEL_DIMENSION_H
 #define _MODEL_DIMENSION_H
 /**
@@ -48,6 +50,24 @@ public:
 
 #endif
 
+#ifndef STOCK_RECRUITMENT_MODEL_H
+#define STOCK_RECRUITMENT_MODEL_H
+class StockRecruitmentModel
+{
+public:
+	double m_dAlpha;
+	double m_dBeta;
+	double m_dSteepness;
+	double m_dBo;
+	StockRecruitmentModel(const double& bo, const double& h);
+	~StockRecruitmentModel();
+
+	/* data */
+};
+
+#endif
+
+
 #ifndef _STOCK_PARAMETERS_H
 #define _STOCK_PARAMETERS_H
 /**
@@ -60,15 +80,23 @@ class StockParameters: public ModelDimension
 private:
 
 public:
+	double m_dRho;
+	double m_dVartheta;
+	double m_dSigma;
+	double m_dTau;
+	double m_dSigma2;
+	double m_dTau2;
+
 	dvector m_dRo;
 	dvector m_dSteepness;
 	dvector m_dNaturalMortality;
 	dvector m_dRbar;
 	dvector m_dRinit;
-	double m_dRho;
-	double m_dVartheta;
+
+	d5_array m_dN;
 
 	~StockParameters();
+	StockParameters(){};
 	StockParameters(const int f,
 	                const int g,
 	                const int h,
@@ -85,6 +113,39 @@ public:
 	                const double rho,
 	                const double vartheta);
 
+	
+};
+#endif
+
+
+#ifndef _OPERATING_MODEL_H
+#define _OPERATING_MODEL_H
+/**
+ * \brief A class for the entire operating model to be used in iSCAM.
+ * \author Steven Martell
+ *
+**/
+
+
+class OperatingModel
+{
+private:
+	ModelDimension m_cModelDimension;
+	StockParameters m_cStockParameters;
+
+	
+public:
+	OperatingModel(ModelDimension& c_md,StockParameters& c_sp);
+	~OperatingModel();
+
 	/* data */
 };
+
+// Constructor
+OperatingModel::OperatingModel(ModelDimension& c_md,StockParameters& c_sp)
+: m_cModelDimension(c_md)
+{
+
+}
+
 #endif

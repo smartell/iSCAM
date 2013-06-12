@@ -1215,18 +1215,18 @@ PRELIMINARY_CALCS_SECTION
 	// | Testing some class objects for an operating model
 	// |---------------------------------------------------------------------------------|
 	// |
-	ModelDimension cMD(narea,ngroup,nsex,syr,nyr,sage,nage,ngear);
-	initParameters();
-	StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
-	                           value(ro),\
-	                           value(steepness),\
-	                           value(m),\
-	                           value(exp(log_avgrec)),\
-	                           value(exp(log_recinit)),\
-	                           value(rho),\
-	                           value(varphi));
-	cout<<"End of class testing"<<endl;
-	exit(1);
+	// ModelDimension cMD(narea,ngroup,nsex,syr,nyr,sage,nage,ngear);
+	// initParameters();
+	// StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
+	//                            value(ro),\
+	//                            value(steepness),\
+	//                            value(m),\
+	//                            value(exp(log_avgrec)),\
+	//                            value(exp(log_recinit)),\
+	//                            value(rho),\
+	//                            value(varphi));
+	// cout<<"End of class testing"<<endl;
+	// exit(1);
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,  200,   500, 25000, 25000
@@ -3374,10 +3374,10 @@ FUNCTION void simulationModel(const long& seed)
 	dvector      eta(1,n_ct_obs);
     
 
-         epsilon.fill_randn(rng);
-         rec_dev.fill_randn(rng);
-    init_rec_dev.fill_randn(rng);
-    	 eta.fill_randn(rng);
+	epsilon.fill_randn(rng);
+	rec_dev.fill_randn(rng);
+	init_rec_dev.fill_randn(rng);
+	eta.fill_randn(rng);
 
     // | Scale survey observation errors
     double std;
@@ -4571,6 +4571,21 @@ FINAL_SECTION
 	cout<<"--Number of function evaluations: "<<nf<<endl;
 	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
+
+	// |---------------------------------------------------------------------------------|
+	// | CALL OPERATING MODEL FOR MSE
+	// |---------------------------------------------------------------------------------|
+	// | StockParameters is a class object in OpMod.h
+	StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
+	                           value(ro),\
+	                           value(steepness),\
+	                           value(m),\
+	                           value(exp(log_avgrec)),\
+	                           value(exp(log_recinit)),\
+	                           value(rho),\
+	                           value(varphi));
+	cout<<"End of class testing"<<endl;
+
 
 	//Make copies of the report file using the ReportFileName
 	//to ensure the results are saved to the same directory 

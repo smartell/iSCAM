@@ -54,6 +54,17 @@ ModelDimension::~ModelDimension()
 }
 
 // |---------------------------------------------------------------------------------|
+// | STOCK RECRUITMENT MODEL
+// |---------------------------------------------------------------------------------|
+// |
+
+StockRecruitment::StockRecruitmentModel(const double& bo, const double& h)
+: m_dBo(bo),m_dSteepness(h)
+{
+
+}
+
+// |---------------------------------------------------------------------------------|
 // | StockParameters: 
 // |---------------------------------------------------------------------------------|
 // |
@@ -82,6 +93,17 @@ StockParameters::StockParameters(const int f,
 	m_dVartheta(vartheta)
 {
 
+	/// Variance components for observation error (Sigma) and process error (Tau);
+	m_dSigma  = sqrt(m_dRho/m_dVartheta);
+	m_dTau    = sqrt((1.-m_dRho)/m_dVartheta);
+	m_dSigma2 = m_dSigma * m_dSigma;
+	m_dTau2   = m_dTau * m_dTau;
+	
+	// allocate member variables
+	m_dN.allocate(1,m_nArea,1,m_nGroup,1,m_nSex,m_nSyr,m_nNyr+1,m_nSage,m_nNage);
+
+	m_dN.initialize();
+	cout<<m_dN(1)(1)(1)<<endl;
 };
 
 StockParameters::~StockParameters()
