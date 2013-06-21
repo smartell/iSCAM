@@ -70,7 +70,7 @@ public:
 public:
 	OM_model_data();
 	OM_model_data(
-	            const int nArea,
+	        const int nArea,
 	   			const int nGroup,
 	   			const int nSex,
 	   			const int nSyr,
@@ -113,7 +113,57 @@ public:
 class OM_model_parameters : public OM_model_data
 {
 public:
-	OM_model_parameters();
+  dmatrix theta;
+  // param_init_bounded_matrix_vector sel_par;
+  // param_init_bounded_vector log_ft_pars;
+  // param_init_bounded_matrix init_log_rec_devs;
+  // param_init_bounded_matrix log_rec_devs;
+  // param_init_bounded_vector log_m_nodes;
+  // param_number prior_function_value;
+  // param_number likelihood_function_value;
+  // objective_function_value objfun;
+  // param_number m_bar;
+  // param_number rho;
+  // param_number varphi;
+  // param_number sig;
+  // param_number tau;
+  // param_vector ro;
+  // param_vector bo;
+  // param_vector sbo;
+  // param_vector kappa;
+  // param_vector steepness;
+  // param_vector so;
+  // param_vector beta;
+  // param_vector m;
+  // param_vector log_avgrec;
+  // param_vector log_recinit;
+  // param_vector q;
+  // param_vector ct;
+  // param_vector eta;
+  // param_vector log_m_devs;
+  // param_matrix ft;
+  // param_matrix log_rt;
+  // param_matrix nlvec;
+  // param_matrix epsilon;
+  // param_matrix it_hat;
+  // param_matrix qt;
+  // param_matrix sbt;
+  // param_matrix rt;
+  // param_matrix delta;
+  // param_3array F;
+  // param_3array M;
+  // param_3array Z;
+  // param_3array S;
+  // param_3array N;
+  // param_3array A_hat;
+  // param_3array A_nu;
+  // param_4array log_sel;
+  // param_stddev_vector sd_depletion;
+public:
+  OM_model_parameters();
+	OM_model_parameters(
+                      dmatrix theta
+                      );
 	~OM_model_parameters();
 
 	/* data */

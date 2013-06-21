@@ -83,8 +83,9 @@ OM_model_parameters::~OM_model_parameters()
 }
 
 OM_model_parameters::OM_model_parameters(
+                                         dmatrix theta
                                          )
-:
+:theta(theta)
 {
 	cout<<"Read in OM model parameters"<<endl;
 }

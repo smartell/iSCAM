@@ -4418,6 +4418,8 @@ FUNCTION void runMSE()
 								n_wt_nobs,
 								wt_avg); 
 
+	OM_model_parameters cModelPars( theta );
+
 
 TOP_OF_MAIN_SECTION
 	time(&start);
