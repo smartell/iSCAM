@@ -11,7 +11,7 @@
 #                                                                               #
 #                                                                               #
 #   DIRECTORY TREE                                                              #
-#	.					z
+#	.					
 #	|____.RData					
 #	|____.Rhistory					
 #	|____getDIC.R					

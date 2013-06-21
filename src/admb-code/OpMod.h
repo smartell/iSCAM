@@ -8,144 +8,116 @@
 
 #include <admodel.h>
 
+#ifndef OM_MODEL_DATA_H
+#define OM_MODEL_DATA_H
 
-
-#ifndef _MODEL_DIMENSION_H
-#define _MODEL_DIMENSION_H
-/**
- * \brief A class that defines the dimensions of the Operating Model.
- * \author Steve Martell
-**/
-class ModelDimension
-{
-private:
-
-public:
-	int m_nArea;
-	int m_nGroup;
-	int m_nSex;
-	int m_nSyr;
-	int m_nNyr;
-	int m_nSage;
-	int m_nNage;
-	int m_nGear;
-
-	int m_nAGS;
-	int m_nAG;
-	int m_nGS;
-
-	d3_array m_pAGS;
-
-	~ModelDimension();
-	ModelDimension();
-	ModelDimension(const int nArea,
-	               const int nGroup,
-	               const int nSex,
-	               const int nSyr,
-	               const int nNyr,
-	               const int nSage,
-	               const int nNage,
-	               const int nGear);
-};
-
-#endif
-
-#ifndef STOCK_RECRUITMENT_MODEL_H
-#define STOCK_RECRUITMENT_MODEL_H
-class StockRecruitmentModel
+class OM_model_data
 {
 public:
-	double m_dAlpha;
-	double m_dBeta;
-	double m_dSteepness;
-	double m_dBo;
-	StockRecruitmentModel(const double& bo, const double& h);
-	~StockRecruitmentModel();
+  int narea;
+  int ngroup;
+  int nsex;
+  int syr;
+  int nyr;
+  int sage;
+  int nage;
+  int ngear;
+  // dvector age;
+  // int n_ags;
+  // int n_ag;
+  // ivector i_area;
+  // ivector i_group;
+  // ivector i_sex;
+  // imatrix pntr_ag;
+  // d3_array pntr_ags;
+  // int nfleet;
+  dvector allocation;
+  // ivector fsh_flag;
+  // ivector ifleet;
+  dvector linf;
+  dvector vonbk;
+  dvector to;
+  dvector a;
+  dvector b;
+  dvector ah;
+  dvector gh;
+  // dmatrix la;
+  // dmatrix wa;
+  // dmatrix ma;
+  int n_ct_obs;
+  dmatrix catch_data;
+  // d3_array catch_array;
+  // int ft_count;
+  int nit;
+  ivector nit_nobs;
+  ivector survey_type;
+  d3_array survey_data;
+  // dmatrix it_wt;
+  int na_gears;
+  ivector na_nobs;
+  ivector a_sage;
+  ivector a_nage;
+  d3_array A;
+  // d3_array A_obs;
+  int n_wt_nobs;
+  d3_array wt_avg;
+  // dmatrix wt_bar;
+  // d3_array wt_avg;
+  // d3_array wt_dev;
+  // d3_array wt_mat;
+  // data_int eof;
+
+public:
+	OM_model_data();
+	OM_model_data(
+	            const int nArea,
+	   			const int nGroup,
+	   			const int nSex,
+	   			const int nSyr,
+	   			const int nNyr,
+	   			const int nSage,
+	   			const int nNage,
+	   			const int nGear,
+	   			dvector allocation,
+	   			dvector linf,
+	   			dvector vonbk,
+	   			dvector to,
+	   			dvector a,
+	   			dvector b,
+	   			dvector ah,
+	   			dvector gh,
+	   			const int n_ct_obs,
+	   			dmatrix& catch_data,
+	   			const int nit,
+	   			ivector nit_nobs,
+	   			ivector survey_type,
+	   			d3_array survey_data,
+	   			const int na_gears,
+	   			ivector na_nobs,
+	   			ivector a_sage,
+	   			ivector a_nage,
+	   			d3_array A,
+	   			int n_wt_nobs,
+	   			d3_array wt_avg
+	   			);
+
+	~OM_model_data();
 
 	/* data */
 };
 
 #endif
 
-
-#ifndef _STOCK_PARAMETERS_H
-#define _STOCK_PARAMETERS_H
-/**
- * \brief A class object for the stock parameters
- * \author Steven Martell
- * \
-**/
-class StockParameters: public ModelDimension
+#ifndef OM_MODEL_PARAMETERS_H
+#define OM_MODEL_PARAMETERS_H
+class OM_model_parameters : public OM_model_data
 {
-private:
-
 public:
-	double m_dRho;
-	double m_dVartheta;
-	double m_dSigma;
-	double m_dTau;
-	double m_dSigma2;
-	double m_dTau2;
-
-	dvector m_dRo;
-	dvector m_dSteepness;
-	dvector m_dNaturalMortality;
-	dvector m_dRbar;
-	dvector m_dRinit;
-
-	d5_array m_dN;
-
-	~StockParameters();
-	StockParameters(){};
-	StockParameters(const int f,
-	                const int g,
-	                const int h,
-	                const int syr,
-	                const int nyr,
-	                const int sage,
-	                const int nage,
-	                const int ngear,
-	                const dvector ro,
-	                const dvector steepness,
-	                const dvector m,
-	                const dvector rbar,
-	                const dvector rinit,
-	                const double rho,
-	                const double vartheta);
-
-	
-};
-#endif
-
-
-#ifndef _OPERATING_MODEL_H
-#define _OPERATING_MODEL_H
-/**
- * \brief A class for the entire operating model to be used in iSCAM.
- * \author Steven Martell
- *
-**/
-
-
-class OperatingModel
-{
-private:
-	ModelDimension m_cModelDimension;
-	StockParameters m_cStockParameters;
-
-	
-public:
-	OperatingModel(ModelDimension& c_md,StockParameters& c_sp);
-	~OperatingModel();
+	OM_model_parameters();
+	~OM_model_parameters();
 
 	/* data */
 };
-
-// Constructor
-OperatingModel::OperatingModel(ModelDimension& c_md,StockParameters& c_sp)
-: m_cModelDimension(c_md)
-{
-
-}
-
 #endif
+
+

@@ -1,111 +1,90 @@
 #include <admodel.h>
 #include "OpMod.h"
-
 // |---------------------------------------------------------------------------------|
-// | ModelDimensions: CONSTRUCTORS & GETTERS & SETTERS 
+// | OM_model_data
 // |---------------------------------------------------------------------------------|
 // |
-ModelDimension::ModelDimension()
-{}
+OM_model_data::~OM_model_data(){}
 
-ModelDimension::ModelDimension(
-                   const int nArea,
-	               const int nGroup,
-	               const int nSex,
-	               const int nSyr,
-	               const int nNyr,
-	               const int nSage,
-	               const int nNage,
-	               const int nGear)
-:	m_nArea(nArea),
-	m_nGroup(nGroup),
-	m_nSex(nSex),
-	m_nSyr(nSyr),
-	m_nNyr(nNyr),
-	m_nSage(nSage),
-	m_nNage(nNage),
-	m_nGear(nGear)
+
+OM_model_data::OM_model_data(
+                   			const int nArea,
+	               			const int nGroup,
+	               			const int nSex,
+	               			const int nSyr,
+	               			const int nNyr,
+	               			const int nSage,
+	               			const int nNage,
+	               			const int nGear,
+	               			dvector allocation,
+	               			dvector linf,
+				   			dvector vonbk,
+				   			dvector to,
+				   			dvector a,
+				   			dvector b,
+				   			dvector ah,
+				   			dvector gh,
+				   			const int n_ct_obs,
+	   						dmatrix& catch_data,
+	   						const int nit,
+				   			ivector nit_nobs,
+				   			ivector survey_type,
+				   			d3_array survey_data,
+				   			const int na_gears,
+				   			ivector na_nobs,
+				   			ivector a_sage,
+				   			ivector a_nage,
+				   			d3_array A,
+				   			int n_wt_nobs,
+	   						d3_array wt_avg)
+:	narea(nArea),
+	ngroup(nGroup),
+	nsex(nSex),
+	syr(nSyr),
+	nyr(nNyr),
+	sage(nSage),
+	nage(nNage),
+	ngear(nGear),
+	allocation(allocation),
+	linf(linf),
+	vonbk(vonbk),
+	to(to),
+	a(a),
+	b(b),
+	ah(ah),
+	gh(gh),
+	n_ct_obs(n_ct_obs),
+	catch_data(catch_data),
+	nit(nit),
+	nit_nobs(nit_nobs),
+	survey_type(survey_type),
+	survey_data(survey_data),
+	na_gears(na_gears),
+	na_nobs(na_nobs),
+	a_sage(a_sage),
+	a_nage(a_nage),
+	A(A),
+	n_wt_nobs(n_wt_nobs),
+	wt_avg(wt_avg)
 {
-	m_nAGS = nArea  * nGroup * nSex;
-	m_nAG  = nArea  * nGroup;
-	m_nGS  = nGroup * nSex;
-
-	m_pAGS.allocate(1,m_nArea,1,m_nGroup,1,m_nSex);
-	int f,g,h,ig;
-	ig = 0;
-	for( f = 1; f <= m_nArea; f++ )
-	{
-		for( g = 1; g <= m_nGroup; g++ )
-		{
-			for( h = 1; h <= m_nSex; h++ )
-			{
-				ig ++;
-				m_pAGS(f,g,h) = ig;				
-			}
-		}
-	}
-	cout<<m_pAGS(1)<<endl;
+	cout<<"Read in OM model data"<<endl;
+	cout<<A(1)<<endl;
 }
 
 
-ModelDimension::~ModelDimension()
+// |---------------------------------------------------------------------------------|
+// | OM_model_parameters
+// |---------------------------------------------------------------------------------|
+// |
+
+OM_model_parameters::~OM_model_parameters()
 {
 
 }
 
-// |---------------------------------------------------------------------------------|
-// | STOCK RECRUITMENT MODEL
-// |---------------------------------------------------------------------------------|
-// |
-
-StockRecruitment::StockRecruitmentModel(const double& bo, const double& h)
-: m_dBo(bo),m_dSteepness(h)
+OM_model_parameters::OM_model_parameters(
+                                         )
+:
 {
-
+	cout<<"Read in OM model parameters"<<endl;
 }
-
-// |---------------------------------------------------------------------------------|
-// | StockParameters: 
-// |---------------------------------------------------------------------------------|
-// |
-StockParameters::StockParameters(const int f,
-				                 const int g,
-				                 const int h,
-				                 const int syr,
-				                 const int nyr,
-				                 const int sage,
-				                 const int nage,
-				                 const int ngear,
-				                 const dvector ro,
-				                 const dvector steepness,
-				                 const dvector m,
-				                 const dvector rbar,
-				                 const dvector rinit,
-				                 const double rho,
-				                 const double vartheta)
-: 	ModelDimension(f,g,h,syr,nyr,sage,nage,ngear),
-	m_dRo(ro),
-	m_dSteepness(steepness),
-	m_dNaturalMortality(m),
-	m_dRbar(rbar),
-	m_dRinit(rinit),
-	m_dRho(rho),
-	m_dVartheta(vartheta)
-{
-
-	/// Variance components for observation error (Sigma) and process error (Tau);
-	m_dSigma  = sqrt(m_dRho/m_dVartheta);
-	m_dTau    = sqrt((1.-m_dRho)/m_dVartheta);
-	m_dSigma2 = m_dSigma * m_dSigma;
-	m_dTau2   = m_dTau * m_dTau;
-	
-	// allocate member variables
-	m_dN.allocate(1,m_nArea,1,m_nGroup,1,m_nSex,m_nSyr,m_nNyr+1,m_nSage,m_nNage);
-
-	m_dN.initialize();
-	cout<<m_dN(1)(1)(1)<<endl;
-};
-
-StockParameters::~StockParameters()
-{};
-

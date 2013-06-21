@@ -4353,6 +4353,72 @@ FUNCTION mcmc_output
 // 	// cout<<"Finished projection model"<<endl;
 //   }
 
+FUNCTION void runMSE()
+	// |---------------------------------------------------------------------------------|
+	// | CALL OPERATING MODEL FOR MSE
+	// |---------------------------------------------------------------------------------|
+	// | StockParameters is a class object in OpMod.h
+	// | const int nArea
+	// | const int nGroup
+	// | const int nSex
+	// | const int nSyr
+	// | const int nNyr
+	// | const int nSage
+	// | const int nNage
+	// | const int nGear
+	// | dvector allocation
+	// | dvector linf
+	// | dvector vonbk
+	// | dvector to
+	// | dvector a
+	// | dvector b
+	// | dvector ah
+	// | dvector gh
+	// | const int n_ct_obs
+	// | dmatrix catch_data
+	// | const int nit
+	// | ivector nit_nobs
+	// | ivector survey_type
+	// | d3_array survey_data
+	// | const int na_gears
+	// | ivector na_nobs
+	// | ivector a_sage
+	// | ivector a_nage
+	// | d3_array A
+	// | int n_wt_nobs
+	// | d3_array wt_av
+	
+	OM_model_data cModelData(	narea,              
+								ngroup,	   			
+								nsex,	   			
+								syr,	   			
+								nyr,	   			
+								sage,	   			
+								nage,	   			
+								ngear,   			
+								allocation,	  		
+								linf,	   			
+								vonbk,	   			
+								to,		   			
+								a,		   			
+								b,		   			
+								ah,		   			
+								gh,		   			
+								n_ct_obs,   		
+								catch_data,			
+								nit,				
+								nit_nobs,   		
+								survey_type,   		
+								survey_data,
+								na_gears,
+								na_nobs,
+								a_sage,
+								a_nage,
+								A,
+								n_wt_nobs,
+								wt_avg); 
+
+
 TOP_OF_MAIN_SECTION
 	time(&start);
 	arrmblsize = 50000000;
@@ -4572,18 +4638,9 @@ FINAL_SECTION
 	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
 
-	// |---------------------------------------------------------------------------------|
-	// | CALL OPERATING MODEL FOR MSE
-	// |---------------------------------------------------------------------------------|
-	// | StockParameters is a class object in OpMod.h
-	StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
-	                           value(ro),\
-	                           value(steepness),\
-	                           value(m),\
-	                           value(exp(log_avgrec)),\
-	                           value(exp(log_recinit)),\
-	                           value(rho),\
-	                           value(varphi));
+		
+
+	runMSE();
 	cout<<"End of class testing"<<endl;
 
 
