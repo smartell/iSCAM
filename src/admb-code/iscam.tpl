@@ -4359,8 +4359,13 @@ FUNCTION void runMSE()
 	// |---------------------------------------------------------------------------------|
 	// |
 
-	
+	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,
+	                    log(value(ro)),value(steepness),log(value(m)) );
 
+	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
+	cScenario.set_nArea(4);
+	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
+	cout<<"log_ro\n"<<cScenario.get_log_ro()<<endl;
 
 TOP_OF_MAIN_SECTION
 	time(&start);
