@@ -67,16 +67,39 @@ public:
   dvector m_log_ro;
   dvector m_steepness;
   dvector m_log_m;
+  dvector m_log_avgrec;
+  dvector m_log_initrec;
+  dvector m_rho;
+  dvector m_vartheta;
 
 public:
   ModelParams(){};
-  ModelParams(const dvector log_ro, const dvector steepness,const dvector log_m)
-  :m_log_ro(log_ro),m_steepness(steepness),m_log_m(log_m)
+  ModelParams(const dvector log_ro, const dvector steepness,const dvector log_m,
+              const dvector log_avgrec, const dvector log_initrec, 
+              const dvector rho,const dvector vartheta)
+  :m_log_ro(log_ro),m_steepness(steepness),m_log_m(log_m),
+   m_log_avgrec(log_avgrec),m_log_initrec(log_initrec), m_rho(rho),m_vartheta(vartheta)
   {};
   ~ModelParams();
 
   /* getters */
-  dvector get_log_ro()   { return m_log_ro; }
+  dvector get_log_ro       (){ return m_log_ro;      }
+  dvector get_steepness    (){ return m_steepness;   }
+  dvector get_log_m        (){ return m_log_m;       }
+  dvector get_log_avgrec   (){ return m_log_avgrec;  }
+  dvector get_log_initrec  (){ return m_log_initrec; }
+  dvector get_rho          (){ return m_rho;         }
+  dvector get_vartheta     (){ return m_vartheta;    }
+
+  /* setters */
+  dvector set_log_ro      (dvector t1) { m_log_ro      = t1;}
+  dvector set_steepness   (dvector t1) { m_steepness   = t1;}
+  dvector set_log_m       (dvector t1) { m_log_m       = t1;}
+  dvector set_log_avgrec  (dvector t1) { m_log_avgrec  = t1;}
+  dvector set_log_initrec (dvector t1) { m_log_initrec = t1;}
+  dvector set_rho         (dvector t1) { m_rho         = t1;}
+  dvector set_vartheta    (dvector t1) { m_vartheta    = t1;}
+
 };
 #endif
 
@@ -95,16 +118,21 @@ class Scenario: public ModelData, public ModelParams
 
 public:
   Scenario();
-  Scenario(const int nStock, const int nArea, const int nSex, const int nSyr, 
-           const int nNyr, const int nPyr, const int nSage, const int nNage,
-           const dvector log_ro, const dvector steepness,const dvector log_m)
-  :ModelData(nStock,nArea,nSex,nSyr,nNyr,nPyr,nSage,nNage),
-   ModelParams(log_ro,steepness,log_m)
-  {
-    cout<<"In Constructor"<<endl;
-    cout<<m_nStock<<endl;
-    cout<<"Leaving constructor"<<endl;
-  };
+  Scenario( const int nStock, 
+            const int nArea, 
+            const int nSex, 
+            const int nSyr, 
+            const int nNyr, 
+            const int nPyr, 
+            const int nSage, 
+            const int nNage,
+            const dvector log_ro, 
+            const dvector steepness,
+            const dvector log_m,
+            const dvector log_avgrec,
+            const dvector log_initrec,
+            const dvector rho,
+            const dvector vartheta);
 
   ~Scenario();
 
@@ -116,7 +144,7 @@ public:
 
 #ifndef OPERATINGMODEL_H
 #define OPERATINGMODEL_H
-class OperatingModel : public Scenario
+class OperatingModel //: public Scenario
 {
 private:
   // Model dimensions
@@ -129,12 +157,23 @@ private:
   int nSage;
   int nNage;
 
+  dvector dRo;
+  dvector dSteepness;
+  dvector dM;
+  dvector dAvgRec;
+  dvector dInitRec;
+  dvector dRho;
+  dvector dVartheta;
+
   // Class aggregations
   Scenario m_cScenario;
 public:
   OperatingModel(Scenario &cScenario);
+  
+
   ~OperatingModel();
 
   /* data */
+  void initializeVariables(Scenario& cS);
 };
 #endif

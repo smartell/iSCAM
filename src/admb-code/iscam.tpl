@@ -4358,14 +4358,19 @@ FUNCTION void runMSE()
 	// | CALL OPERATING MODEL FOR MSE
 	// |---------------------------------------------------------------------------------|
 	// |
-
+	dvector rho      = value(theta(6));
+	dvector vartheta = value(theta(7));
 	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,
-	                    log(value(ro)),value(steepness),log(value(m)) );
+	                    log(value(ro)),value(steepness),log(value(m)),
+	                    value(log_avgrec),value(log_recinit),rho,vartheta  );
 
 	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
 	cScenario.set_nArea(4);
 	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
 	cout<<"log_ro\n"<<cScenario.get_log_ro()<<endl;
+
+	OperatingModel cOpMod(cScenario);
+
 
 TOP_OF_MAIN_SECTION
 	time(&start);
