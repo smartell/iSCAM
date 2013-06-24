@@ -4360,9 +4360,16 @@ FUNCTION void runMSE()
 	// |
 	dvector rho      = value(theta(6));
 	dvector vartheta = value(theta(7));
+	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
+	for(k=1;k<=ngear;k++)
+	{
+		d3_selpar(k) = value(sel_par(k));
+	}
+	
 	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,
 	                    log(value(ro)),value(steepness),log(value(m)),
-	                    value(log_avgrec),value(log_recinit),rho,vartheta  );
+	                    value(log_avgrec),value(log_recinit),rho,vartheta,
+	                    d3_selpar  );
 
 	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
 	cScenario.set_nArea(4);

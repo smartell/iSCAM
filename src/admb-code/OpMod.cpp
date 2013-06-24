@@ -21,10 +21,12 @@ Scenario::Scenario(const int nStock,
            	const dvector log_avgrec,
            	const dvector log_initrec,
            	const dvector rho,
-           	const dvector vartheta)
+           	const dvector vartheta,
+           	d3_array selpar)
   			: 
   			ModelData(nStock,nArea,nSex,nSyr,nNyr,nPyr,nSage,nNage),
-   			ModelParams(log_ro,steepness,log_m, log_avgrec, log_initrec, rho, vartheta)
+   			ModelParams(log_ro,steepness,log_m, log_avgrec, log_initrec, rho, vartheta,
+   			            selpar)
   {
     cout<<"In Constructor"<<endl;
     cout<<m_nStock<<endl;
@@ -71,4 +73,6 @@ void OperatingModel::initializeVariables(Scenario& cS)
 	dInitRec   = mfexp(cS.m_log_initrec);
 	dRho       = mfexp(cS.m_rho);
 	dVartheta  = mfexp(cS.m_vartheta);
+
+	dKappa     = elem_div(4. * dSteepness, 1.-dSteepness);
 }

@@ -72,13 +72,18 @@ public:
   dvector m_rho;
   dvector m_vartheta;
 
+
+  d3_array m_selpars;
+
 public:
   ModelParams(){};
   ModelParams(const dvector log_ro, const dvector steepness,const dvector log_m,
               const dvector log_avgrec, const dvector log_initrec, 
-              const dvector rho,const dvector vartheta)
+              const dvector rho,const dvector vartheta,
+              const d3_array selpars)
   :m_log_ro(log_ro),m_steepness(steepness),m_log_m(log_m),
-   m_log_avgrec(log_avgrec),m_log_initrec(log_initrec), m_rho(rho),m_vartheta(vartheta)
+   m_log_avgrec(log_avgrec),m_log_initrec(log_initrec), m_rho(rho),m_vartheta(vartheta),
+   m_selpars(selpars)
   {};
   ~ModelParams();
 
@@ -132,7 +137,8 @@ public:
             const dvector log_avgrec,
             const dvector log_initrec,
             const dvector rho,
-            const dvector vartheta);
+            const dvector vartheta,
+            d3_array selpar);
 
   ~Scenario();
 
@@ -164,6 +170,11 @@ private:
   dvector dInitRec;
   dvector dRho;
   dvector dVartheta;
+
+  dvector dKappa;
+
+  d3_array d3_selPars;
+
 
   // Class aggregations
   Scenario m_cScenario;
