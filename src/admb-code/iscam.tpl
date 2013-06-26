@@ -1464,6 +1464,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	dvar_matrix  tmp2(syr,nyr,sage,nage);
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
 	
+	Selex cSelex(age);
+	
 	log_sel.initialize();
 
 	for(k=1; k<=ngear; k++)
@@ -1487,7 +1489,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							bpar ++;
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-
+						cout<<"Testing"<<endl;
+						// log_sel(k)(ig)(i) = log( cSelex.logistic(sel_par(k)(bpar)) );
 						p1 = mfexp(sel_par(k,bpar,1));
 						p2 = mfexp(sel_par(k,bpar,2));
 						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
@@ -4408,6 +4411,7 @@ GLOBALS_SECTION
 	#include "msy.h"
 	#include "baranov.cxx"
 	#include "OpMod.h"
+	#include "Selex.h"
 
 
 	time_t start,finish;
@@ -4439,27 +4443,27 @@ GLOBALS_SECTION
 	
 
 
-	class selex_vector
-	{
-		private:
-			int m_length;
+	// class selex_vector
+	// {
+	// 	private:
+	// 		int m_length;
 			
 
-		public:
+	// 	public:
 
-		selex_vector()
-		{
-			m_length = 0;
+	// 	selex_vector()
+	// 	{
+	// 		m_length = 0;
 			
-		}
+	// 	}
 
-		~selex_vector()
-		{
+	// 	~selex_vector()
+	// 	{
 			
-		}
+	// 	}
 
 		
-	};
+	// };
 
 
 	

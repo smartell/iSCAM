@@ -16,42 +16,49 @@
 
 
 #include <admodel.h>
+#include "Selex.h"
 
+Selex::~Selex(){}
 
+Selex::Selex()
+{}
 
+Selex::Selex(const dvector& x)
+: m_x(x)
+{};
 
-// ------------------------------------------------------------------------------------ //
-class Selex{
-private:
-	dvariable m_mu;
-	dvariable m_sd;
+// // ------------------------------------------------------------------------------------ //
+// class Selex{
+// private:
+// 	dvariable m_mu;
+// 	dvariable m_sd;
 		
-public:
-	~Selex() {}                                   // destructor
+// public:
+// 	~Selex() {}                                   // destructor
 		
-	Selex( const dvariable& mu = 0., const dvariable& sd = 1.0) // default constructor
-	{
-		m_mu = mu;
-		m_sd = sd;
-	}
+// 	Selex( const dvariable& mu = 0., const dvariable& sd = 1.0) // default constructor
+// 	{
+// 		m_mu = mu;
+// 		m_sd = sd;
+// 	}
 	
-	// Logistic function
-	dvector     logistic( const dvector& x,const double& mu, const double& sd );
-	dvar_vector logistic( const dvector& x,const dvariable& mu, const dvariable& sd );
-	
-	
-	// Exponential logistic
-	dvector     eplogis(const dvector& x, const double& x1, const double& x2, const double& gamma);
-	dvar_vector eplogis(const dvar_vector& x, const dvariable& x1, const dvariable& x2, const dvariable& gamma);
+// 	// Logistic function
+// 	dvector     logistic( const dvector& x,const double& mu, const double& sd );
+// 	dvar_vector logistic( const dvector& x,const dvariable& mu, const dvariable& sd );
 	
 	
-	// Linear Interoplation
-	dvector     linapprox(const dvector& x, const dvector& y, const dvector& xout);
-	dvar_vector linapprox(const dvector& x, const dvar_vector& y, const dvector& xout);
+// 	// Exponential logistic
+// 	dvector     eplogis(const dvector& x, const double& x1, const double& x2, const double& gamma);
+// 	dvar_vector eplogis(const dvar_vector& x, const dvariable& x1, const dvariable& x2, const dvariable& gamma);
 	
-	dvariable GetMu()  { return m_mu; }
-	dvariable GetSd()  { return m_sd; }
-};
+	
+// 	// Linear Interoplation
+// 	dvector     linapprox(const dvector& x, const dvector& y, const dvector& xout);
+// 	dvar_vector linapprox(const dvector& x, const dvar_vector& y, const dvector& xout);
+	
+// 	dvariable GetMu()  { return m_mu; }
+// 	dvariable GetSd()  { return m_sd; }
+// };
 // ------------------------------------------------------------------------------------ //
 // Logistic function                                                                    //
 // ------------------------------------------------------------------------------------ //
@@ -64,12 +71,19 @@ dvector Selex::logistic( const dvector& x,const double& mu, const double& sd )
 {
 	return 1./(1.+mfexp(-(x-mu)/sd) );
 }
+ 
+dvar_vector Selex::logistic(const dvar_vector& selpar)
+{
+	dvariable mu = selpar(1);
+	dvariable sd = selpar(2);
+	return 1./(1.+mfexp(-(m_x-mu)/sd) );
+}
 
 
 // ------------------------------------------------------------------------------------ //
 // Exponential Logistic                                                                 //
 // ------------------------------------------------------------------------------------ //
-dvar_vector Selex::eplogis( const dvar_vector& x, const dvariable& x1, 
+dvar_vector Selex::eplogis( const dvector& x, const dvariable& x1, 
                             const dvariable& x2, const dvariable& gamma )
 {
 	//exponential logistic based on Grant Thompson (1994) Paper, CJFAS.
