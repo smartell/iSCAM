@@ -16,7 +16,35 @@
 
 
 #include <admodel.h>
+#include <contrib.h>
 #include "Selex.h"
+
+logistic_selectivity::~logistic_selectivity(){}
+
+logistic_selectivity::logistic_selectivity(const dvector & _x)
+: x(_x)
+{}
+
+dvar_vector logistic_selectivity::operator () (const dvar_vector & log_selpar)
+{
+	RETURN_ARRAYS_INCREMENT();	
+	dvariable mu = mfexp(log_selpar(1));
+	dvariable sd = mfexp(log_selpar(2));
+	RETURN_ARRAYS_DECREMENT();
+	y = plogis(x,mu,sd);
+	return y;
+}
+
+dvector logistic_selectivity::operator () (const dvector & log_selpar)
+{
+	RETURN_ARRAYS_INCREMENT();	
+	double mu = mfexp(log_selpar(1));
+	double sd = mfexp(log_selpar(2));
+	RETURN_ARRAYS_DECREMENT();
+	dy = plogis(x,mu,sd);
+	return dy;
+}
+
 
 Selex::~Selex(){}
 
@@ -72,10 +100,12 @@ dvector Selex::logistic( const dvector& x,const double& mu, const double& sd )
 	return 1./(1.+mfexp(-(x-mu)/sd) );
 }
  
-dvar_vector Selex::logistic(const dvar_vector& selpar)
+dvar_vector Selex::logistic(const dvar_vector& log_selpar)
 {
-	dvariable mu = selpar(1);
-	dvariable sd = selpar(2);
+	RETURN_ARRAYS_INCREMENT();
+	dvariable mu = mfexp(log_selpar(1));
+	dvariable sd = mfexp(log_selpar(2));
+	RETURN_ARRAYS_DECREMENT();
 	return 1./(1.+mfexp(-(m_x-mu)/sd) );
 }
 

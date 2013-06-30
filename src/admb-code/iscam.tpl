@@ -1464,8 +1464,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	dvar_matrix  tmp2(syr,nyr,sage,nage);
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
 	
-	Selex cSelex(age);
-	
+	// Selex cSelex(age);
+	logistic_selectivity cLogisticSelex(age);
 	log_sel.initialize();
 
 	for(k=1; k<=ngear; k++)
@@ -1489,11 +1489,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							bpar ++;
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						cout<<"Testing"<<endl;
+
+						// cout<<"Testing selex class"<<endl;
 						// log_sel(k)(ig)(i) = log( cSelex.logistic(sel_par(k)(bpar)) );
-						p1 = mfexp(sel_par(k,bpar,1));
-						p2 = mfexp(sel_par(k,bpar,2));
-						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
+						log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
+						// p1 = mfexp(sel_par(k,bpar,1));
+						// p2 = mfexp(sel_par(k,bpar,2));
+						// log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
 					}
 					break;
 				
@@ -1502,7 +1504,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					p2 = mfexp(sel_par(k,1,2));
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
+						// log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
+						log_sel(k)(ig)(i) = cLogisticSelex(sel_par(k)(1));
 					}
 					break;
 					
@@ -4369,10 +4372,10 @@ FUNCTION void runMSE()
 		d3_selpar(k) = value(sel_par(k));
 	}
 	
-	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,
+	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,ngear,
 	                    log(value(ro)),value(steepness),log(value(m)),
 	                    value(log_avgrec),value(log_recinit),rho,vartheta,
-	                    d3_selpar  );
+	                    d3_selpar,isel_type  );
 
 	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
 	cScenario.set_nArea(4);

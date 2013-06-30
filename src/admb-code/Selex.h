@@ -11,6 +11,26 @@
  * Returns a log_sel matrix for a given fishery that may be time-invariate, blocked, 
  * or continuous changes over year.
 **/
+#ifndef LOGISTIC_SELECTIVITY_H
+#define LOGISTIC_SELECTIVITY_H
+class logistic_selectivity
+{
+private: 
+	dvector x;
+	dvector dy;
+	dvar_vector y;
+
+public:
+	logistic_selectivity(const dvector & _x);
+	~logistic_selectivity();
+
+	dvector     operator () (const dvector & log_selpar);
+	dvar_vector operator () (const dvar_vector & log_selpar);
+
+
+};
+#endif
+
 #ifndef SELEX_H
 #define SELEX_H
 enum eSelType
@@ -23,9 +43,9 @@ enum eSelType
 class Selex
 {
 private:
-	int     m_selType;
-	dvector m_x;
-	dmatrix m_dlogsel;
+	int         m_selType;
+	dvector     m_x;
+	dmatrix     m_dlogsel;
 	dvar_matrix m_dvar_logsel;
 
 public:
@@ -36,7 +56,7 @@ public:
 	/* logistic prototypes */
 	dvector     logistic( const dvector& x,const double& mu, const double& sd );
 	dvar_vector logistic( const dvector& x,const dvariable& mu, const dvariable& sd );
-	dvar_vector logistic( const dvar_vector& selpar );
+	dvar_vector logistic( const dvar_vector& log_selpar );
 
 	/* eplogistic */
 	dvector     eplogis( const dvector& x, const double& x1, 

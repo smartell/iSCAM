@@ -18,14 +18,17 @@ public:
   int m_nPyr;
   int m_nSage;
   int m_nNage;
+  int m_nGear;
 
 public:
   ModelData(const int nStock=1, const int nArea=1, const int nSex=1, const int nSyr=1950,
             const int nNyr=1999, const int nPyr=2020, const int nSage=1, 
-            const int nNage=10)
+            const int nNage=10,const int nGear=1)
   :m_nStock(nStock),m_nArea(nArea),m_nSex(nSex),m_nSyr(nSyr),m_nNyr(nNyr),m_nPyr(nPyr),
-   m_nSage(nSage),m_nNage(nNage)
+   m_nSage(nSage),m_nNage(nNage),m_nGear(nGear)
   {};
+
+  
   ~ModelData();
 
   
@@ -38,6 +41,7 @@ public:
   int     get_nPyr()      { return m_nPyr;     }
   int     get_nSage()     { return m_nSage;    }
   int     get_nNage()     { return m_nNage;    }
+  int     get_nGear()     { return m_nGear;    }
 
   /* setters */
   void set_nStock(int x)  { m_nStock  = x;   }
@@ -48,6 +52,7 @@ public:
   void set_nPyr(int x)    { m_nPyr    = x;   }
   void set_nSage(int x)   { m_nSage   = x;   }
   void set_nNage(int x)   { m_nNage   = x;   }
+  void set_nGear(int x)   { m_nGear   = x;   }
 
 };
 #endif
@@ -75,16 +80,19 @@ public:
 
   d3_array m_selpars;
 
+
 public:
   ModelParams(){};
   ModelParams(const dvector log_ro, const dvector steepness,const dvector log_m,
               const dvector log_avgrec, const dvector log_initrec, 
               const dvector rho,const dvector vartheta,
-              const d3_array selpars)
+              const d3_array & selpars)
   :m_log_ro(log_ro),m_steepness(steepness),m_log_m(log_m),
    m_log_avgrec(log_avgrec),m_log_initrec(log_initrec), m_rho(rho),m_vartheta(vartheta),
    m_selpars(selpars)
   {};
+
+
   ~ModelParams();
 
   /* getters */
@@ -120,6 +128,7 @@ public:
 #define SCENARIO_H
 class Scenario: public ModelData, public ModelParams
 {
+private:
 
 public:
   Scenario();
@@ -131,6 +140,7 @@ public:
             const int nPyr, 
             const int nSage, 
             const int nNage,
+            const int nGear,
             const dvector log_ro, 
             const dvector steepness,
             const dvector log_m,
@@ -138,10 +148,11 @@ public:
             const dvector log_initrec,
             const dvector rho,
             const dvector vartheta,
-            d3_array selpar);
+            const d3_array& selpar,
+            const ivector& sel_type);
 
   ~Scenario();
-
+  ivector m_sel_type;
  
 };
 
@@ -154,7 +165,7 @@ class OperatingModel //: public Scenario
 {
 private:
   // Model dimensions
-  int nStock;
+  int nStock;        
   int nArea;
   int nSex;
   int nSyr;
@@ -162,7 +173,9 @@ private:
   int nPyr;
   int nSage;
   int nNage;
+  int nGear;
 
+  dvector dAge;
   dvector dRo;
   dvector dSteepness;
   dvector dM;
@@ -173,7 +186,10 @@ private:
 
   dvector dKappa;
 
+  // Selectivity parameters
+  ivector  nSel_type;
   d3_array d3_selPars;
+  d5_array d5_logSel;
 
 
   // Class aggregations
@@ -186,5 +202,6 @@ public:
 
   /* data */
   void initializeVariables(Scenario& cS);
+  void calcSelectivities();
 };
 #endif
