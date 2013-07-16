@@ -1237,6 +1237,7 @@ PROCEDURE_SECTION
 
 	initParameters();
 	
+	calcSelex();
 	calcSelectivities(isel_type);
 	
 	calcTotalMortality();
@@ -1411,6 +1412,23 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 	
 //   }
 
+FUNCTION calcSelex
+  {
+  	// Testing Selex class
+  	int k, ig;
+
+  	for( k = 1; k <= ngear; k++ )
+  	{
+  		Selex cSelex(isel_type(k),age,sel_par(k));
+  		for( ig = 1; ig <= n_ags; ig++ )
+		{
+  			cSelex.fill_selex_array(log_sel(k)(ig));
+  			cout<<log_sel(k)(ig)(syr)<<endl;
+  		}
+  	}
+
+  	
+  }
 
 FUNCTION void calcSelectivities(const ivector& isel_type)
   {
@@ -1505,7 +1523,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i=syr; i<=nyr; i++)
 					{
 						// log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
-						log_sel(k)(ig)(i) = cLogisticSelex(sel_par(k)(1));
+						log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
 					}
 					break;
 					

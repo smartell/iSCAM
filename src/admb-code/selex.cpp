@@ -51,9 +51,65 @@ Selex::~Selex(){}
 Selex::Selex()
 {}
 
-Selex::Selex(const dvector& x)
-: m_x(x)
-{};
+Selex::Selex(const int& _selType, const dvector& _x, const dvector& _selPar)
+: m_selType(_selType), m_x(_x), m_selPar(_selPar)
+{
+
+};
+
+Selex::Selex(const int& _selType, const dvector& _x, const dvar_vector& _dvar_selPar)
+: m_selType(_selType), m_x(_x), m_dvar_selPar(_dvar_selPar)
+{
+
+};
+
+Selex::Selex(const int& _selType, const dvector& _x, const dvar_matrix& _dvar_selPar)
+: m_selType(_selType), m_x(_x), m_dvar_mselPar(_dvar_selPar)
+{
+	cout<<"In the dvar_matrix constructor:"<<endl;
+};
+
+void Selex::fill_selex_array(dvar_matrix& log_sel)
+{
+	/*
+		Fill in the selectivity matrix based on selType and selPars defined during
+		instantiation of the class.
+	*/
+
+
+	int i,j;
+	int r1 = log_sel.rowmin();
+	int r2 = log_sel.rowmax();
+	int c1 = log_sel.colmin();
+	int c2 = log_sel.colmax();
+
+	for( i = r1; i <= r2; i++ )
+	{
+		switch (m_selType)
+		{
+			default:
+				log_sel(i) = 0;
+				break;
+
+			case 1:    // logistic
+				log_sel(i) = log( logistic(m_selPar) );
+				break;
+
+			case 2:
+				cout<<m_selPar.rowmin()<<endl;
+				for( j = c1; j < c2; j++ )
+				{
+					log_sel(i,j) = m_selPar(j);
+				}
+				log_sel(i)(c2) = log_sel(i)(c2-1);
+				break;
+		}
+	}
+
+	cout<<m_selType<<endl;
+	cout<<r1<<"\t"<<r2<<"\t"<<c1<<"\t"<<c2<<endl;
+	cout<<m_selPar<<endl;
+}
 
 // // ------------------------------------------------------------------------------------ //
 // class Selex{

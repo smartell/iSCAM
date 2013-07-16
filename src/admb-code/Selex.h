@@ -4,6 +4,9 @@
  * @file Selex.h
  * @author Steve Martell
  * @Description
+ * The Fishery class is the superclass, with virtual subclasses for each selectivity
+ * type. The user instantiates the Selex class.
+ * 
  * This class calculated selectivity coefficients based on parametric and
  * nonparametric functions.  Idea here is to create a Selex class object then
  * call the appropriate function based on the selectivity-type.
@@ -11,47 +14,33 @@
  * Returns a log_sel matrix for a given fishery that may be time-invariate, blocked, 
  * or continuous changes over year.
 **/
-#ifndef LOGISTIC_SELECTIVITY_H
-#define LOGISTIC_SELECTIVITY_H
-class logistic_selectivity
-{
-private: 
-	dvector x;
-	dvector dy;
-	dvar_vector y;
-
-public:
-	logistic_selectivity(const dvector & _x);
-	~logistic_selectivity();
-
-	dvector     operator () (const dvector & log_selpar);
-	dvar_vector operator () (const dvar_vector & log_selpar);
 
 
-};
-#endif
 
 #ifndef SELEX_H
 #define SELEX_H
-enum eSelType
-{
-	LOGISTIC = 1,
-	EPLOGISTIC,
-	LINEARAPPROX
-};
 
 class Selex
 {
 private:
 	int         m_selType;
 	dvector     m_x;
+	dvector     m_selPar;
+
+	dvar_vector m_dvar_selPar;
+
 	dmatrix     m_dlogsel;
 	dvar_matrix m_dvar_logsel;
+	dvar_matrix m_dvar_selPar;
 
 public:
 	Selex();
-	Selex(const dvector& x);
+	Selex(const int& _selType, const dvector& _x, const dvector& _selPar);
+	Selex(const int& _selType, const dvector& _x, const dvar_vector& _dvar_selPar);
+	Selex(const int& _selType, const dvector& _x, const dvar_matrix& _dvar_selPar);
 	~Selex();
+
+	void fill_selex_array(dvar_matrix& log_sel);
 
 	/* logistic prototypes */
 	dvector     logistic( const dvector& x,const double& mu, const double& sd );
@@ -70,4 +59,24 @@ public:
 	dvar_vector linapprox(const dvector& x, const dvar_vector& y, const dvector& xout);
 };
 
+#endif
+
+#ifndef LOGISTIC_SELECTIVITY_H
+#define LOGISTIC_SELECTIVITY_H
+class logistic_selectivity
+{
+private: 
+	dvector x;
+	dvector dy;
+	dvar_vector y;
+
+public:
+	logistic_selectivity(const dvector & _x);
+	~logistic_selectivity();
+
+	dvector     operator () (const dvector & log_selpar);
+	dvar_vector operator () (const dvar_vector & log_selpar);
+
+
+};
 #endif
