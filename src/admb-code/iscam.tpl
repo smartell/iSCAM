@@ -1423,7 +1423,7 @@ FUNCTION calcSelex
   		for( ig = 1; ig <= n_ags; ig++ )
 		{
   			cSelex.fill_selex_array(log_sel(k)(ig));
-  			cout<<log_sel(k)(ig)(syr)<<endl;
+  			// cout<<log_sel(k)(ig)(syr)<<endl;
   		}
   	}
 

@@ -4,8 +4,8 @@
  * @file Selex.h
  * @author Steve Martell
  * @Description
- * The Fishery class is the superclass, with virtual subclasses for each selectivity
- * type. The user instantiates the Selex class.
+ * Selex is the main aggregation class.  User instantiates Selex, this will then initialize
+ * class members for various selectivity functions.
  * 
  * This class calculated selectivity coefficients based on parametric and
  * nonparametric functions.  Idea here is to create a Selex class object then
@@ -15,7 +15,26 @@
  * or continuous changes over year.
 **/
 
+#ifndef LOGISTIC_SELECTIVITY_H
+#define LOGISTIC_SELECTIVITY_H
+class logistic_selectivity
+{
+private: 
+	dvector x;
+	dvector dy;
+	dvar_vector y;
 
+public:
+	logistic_selectivity(){};
+	logistic_selectivity(const dvector & _x);
+	~logistic_selectivity();
+
+	dvector     operator () (const dvector & log_selpar);
+	dvar_vector operator () (const dvar_vector & log_selpar);
+
+
+};
+#endif
 
 #ifndef SELEX_H
 #define SELEX_H
@@ -25,18 +44,17 @@ class Selex
 private:
 	int         m_selType;
 	dvector     m_x;
-	dvector     m_selPar;
-
-	dvar_vector m_dvar_selPar;
+	
 
 	dmatrix     m_dlogsel;
 	dvar_matrix m_dvar_logsel;
 	dvar_matrix m_dvar_selPar;
 
+	// Selectivity classes
+	logistic_selectivity m_plogis;
+
 public:
 	Selex();
-	Selex(const int& _selType, const dvector& _x, const dvector& _selPar);
-	Selex(const int& _selType, const dvector& _x, const dvar_vector& _dvar_selPar);
 	Selex(const int& _selType, const dvector& _x, const dvar_matrix& _dvar_selPar);
 	~Selex();
 
@@ -61,22 +79,3 @@ public:
 
 #endif
 
-#ifndef LOGISTIC_SELECTIVITY_H
-#define LOGISTIC_SELECTIVITY_H
-class logistic_selectivity
-{
-private: 
-	dvector x;
-	dvector dy;
-	dvar_vector y;
-
-public:
-	logistic_selectivity(const dvector & _x);
-	~logistic_selectivity();
-
-	dvector     operator () (const dvector & log_selpar);
-	dvar_vector operator () (const dvar_vector & log_selpar);
-
-
-};
-#endif

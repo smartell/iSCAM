@@ -51,22 +51,13 @@ Selex::~Selex(){}
 Selex::Selex()
 {}
 
-Selex::Selex(const int& _selType, const dvector& _x, const dvector& _selPar)
-: m_selType(_selType), m_x(_x), m_selPar(_selPar)
-{
-
-};
-
-Selex::Selex(const int& _selType, const dvector& _x, const dvar_vector& _dvar_selPar)
-: m_selType(_selType), m_x(_x), m_dvar_selPar(_dvar_selPar)
-{
-
-};
 
 Selex::Selex(const int& _selType, const dvector& _x, const dvar_matrix& _dvar_selPar)
-: m_selType(_selType), m_x(_x), m_dvar_mselPar(_dvar_selPar)
+: m_selType(_selType), m_x(_x), m_dvar_selPar(_dvar_selPar)
 {
 	cout<<"In the dvar_matrix constructor:"<<endl;
+	m_plogis(m_x);
+	cout<<m_plogis(m_dvar_selPar(1)(3,4))<<endl;
 };
 
 void Selex::fill_selex_array(dvar_matrix& log_sel)
@@ -82,7 +73,6 @@ void Selex::fill_selex_array(dvar_matrix& log_sel)
 	int r2 = log_sel.rowmax();
 	int c1 = log_sel.colmin();
 	int c2 = log_sel.colmax();
-
 	for( i = r1; i <= r2; i++ )
 	{
 		switch (m_selType)
@@ -92,14 +82,13 @@ void Selex::fill_selex_array(dvar_matrix& log_sel)
 				break;
 
 			case 1:    // logistic
-				log_sel(i) = log( logistic(m_selPar) );
+				log_sel(i) = log( logistic( m_dvar_selPar(1)) );
 				break;
 
 			case 2:
-				cout<<m_selPar.rowmin()<<endl;
 				for( j = c1; j < c2; j++ )
 				{
-					log_sel(i,j) = m_selPar(j);
+					log_sel(i,j) = m_dvar_selPar(1,j-c1+1);
 				}
 				log_sel(i)(c2) = log_sel(i)(c2-1);
 				break;
@@ -108,7 +97,7 @@ void Selex::fill_selex_array(dvar_matrix& log_sel)
 
 	cout<<m_selType<<endl;
 	cout<<r1<<"\t"<<r2<<"\t"<<c1<<"\t"<<c2<<endl;
-	cout<<m_selPar<<endl;
+	cout<<m_dvar_selPar<<endl;
 }
 
 // // ------------------------------------------------------------------------------------ //
