@@ -1237,7 +1237,7 @@ PROCEDURE_SECTION
 
 	initParameters();
 	
-	calcSelex();
+	// calcSelex();
 	calcSelectivities(isel_type);
 	
 	calcTotalMortality();
@@ -1642,6 +1642,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			for(i=syr;i<=nyr;i++)
 			{
 				log_sel(k)(ig)(i) -= log( mean(mfexp(log_sel(k)(ig)(i))) );
+				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
 		}
 	}  //end of gear k
