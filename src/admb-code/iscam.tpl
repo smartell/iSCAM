@@ -703,7 +703,7 @@ DATA_SECTION
 		theta_phz   = ivector(column(theta_control,4));
 		theta_prior = ivector(column(theta_control,5));
 		ipar_vector(1,2) = ngroup;
-		ipar_vector(6,7) = 1;
+		ipar_vector(6,7) = ngroup;
 		ipar_vector(3)   = nsex;
 		ipar_vector(4,5) = n_ag;
 	END_CALCS
@@ -4410,21 +4410,37 @@ FUNCTION void runMSE()
 
 
 	/* SCENARIO PARAMETERS */
-	dvector rbar = value(exp(log_avgrec));
-	dvector rinit = value(exp(log_recinit));
+	dvector rbar     = value(exp(log_avgrec));
+	dvector rinit    = value(exp(log_recinit));
+	dvector rho      = value(theta(6));
+	dvector varphi   = value(theta(7));
+	
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
 	for(k=1;k<=ngear;k++)
 	{
 		d3_selpar(k) = value(sel_par(k));
 	}
+	cout<<sbo<<endl;
+	cout<<steepness<<endl;
+	cout<<m<<endl;
+	cout<<rbar<<endl;
+	cout<<rinit<<endl;
+	cout<<rho<<endl;
+	cout<<varphi<<endl;
+	cout<<log_m_devs<<endl;
+	cout<<log_rec_devs<<endl;
+	cout<<init_log_rec_devs<<endl;
+	cout<<d3_selpar(1)<<endl;
+	cout<<ft<<endl;
+
 	ScenarioParameters cSparams(
-	                            value(bo),
+	                            value(sbo),
 	                            value(steepness),
 	                            value(m),
-	                            value(rbar),
-	                            value(rinit),
-	                            value(rho),
-	                            value(varphi),
+	                            (rbar),
+	                            (rinit),
+	                            (rho),
+	                            (varphi),
 	                            value(log_m_devs),
 	                            value(log_rec_devs),
 	                            value(init_log_rec_devs),
@@ -4432,39 +4448,37 @@ FUNCTION void runMSE()
 	                            value(ft)
 	                            );
 
+	Scenario cScenario(cSdata,cSparams);
 
 	// |---------------------------------------------------------------------------------|
 	// | CALL OPERATING MODEL FOR MSE
 	// |---------------------------------------------------------------------------------|
 	// |
-	dvector rho      = value(theta(6));
-	dvector vartheta = value(theta(7));
-	
-	Scenario  cScenario(narea,
-	                    ngroup,
-	                    nsex,
-	                    syr,
-	                    nyr,
-	                    nyr+15,
-	                    sage,
-	                    nage,
-	                    ngear,
-	                    log(value(ro)),
-	                    value(steepness),
-	                    log(value(m)),
-	                    value(log_avgrec),
-	                    value(log_recinit),
-	                    rho,
-	                    vartheta,
-	                    d3_selpar,
-	                    isel_type  );
+	// Scenario  cScenario(narea,
+	//                     ngroup,
+	//                     nsex,
+	//                     syr,
+	//                     nyr,
+	//                     nyr+15,
+	//                     sage,
+	//                     nage,
+	//                     ngear,
+	//                     log(value(ro)),
+	//                     value(steepness),
+	//                     log(value(m)),
+	//                     value(log_avgrec),
+	//                     value(log_recinit),
+	//                     rho,
+	//                     vartheta,
+	//                     d3_selpar,
+	//                     isel_type  );
 
-	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
-	cScenario.set_nArea(4);
-	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
-	cout<<"log_ro\n"<<cScenario.get_log_ro()<<endl;
+	// cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
+	// // cScenario.set_nArea(4);
+	// cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
+	// cout<<"log_ro\n"<<cScenario.get_log_ro()<<endl;
 
-	OperatingModel cOpMod(cScenario);
+	// OperatingModel cOpMod(cScenario);
 
 
 TOP_OF_MAIN_SECTION

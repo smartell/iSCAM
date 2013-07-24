@@ -62,7 +62,7 @@ m_nWtNobs(_nWtNobs),
 m_dWt_avg(_dWt_avg),
 m_dWt_mat(_dWt_mat)
 {
-
+	cout<<"Data is good"<<endl;
 };
 
 // |---------------------------------------------------------------------------------|
@@ -77,8 +77,8 @@ ScenarioParameters::ScenarioParameters(
 			const dvector&  _dM,
 			const dvector&  _dRbar,
 			const dvector&  _dRinit,
-			const double&   _dRho,
-			const double&   _dVarphi,
+			const dvector&  _dRho,
+			const dvector&  _dVarphi,
 			const dvector&  _dLog_M_devs,
 			const dmatrix&  _dLog_Rbar_devs,
 			const dmatrix&  _dLog_Rinit_devs,
@@ -99,7 +99,7 @@ m_dLog_Rinit_devs(_dLog_Rinit_devs),
 m_dSelPars(_dSelPars),
 m_dFt(_dFt)
 {
-
+	cout<<"O=k to here dude"<<endl;
 };
 
 // |---------------------------------------------------------------------------------|
@@ -107,6 +107,12 @@ m_dFt(_dFt)
 // |---------------------------------------------------------------------------------|
 // |
 Scenario::~Scenario(){};
+
+Scenario::Scenario(const ScenarioData& data, const ScenarioParameters& params)
+{
+	cout<<"Scenario is all set"<<endl;
+	cout<<m_nPyr<<endl;
+}
 
 Scenario::Scenario(
             const int nStock, 

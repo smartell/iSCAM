@@ -84,6 +84,7 @@ public:
   ~ScenarioData();
   
   /* Friends */
+  friend class Scenario;
 };
 #endif
 
@@ -101,8 +102,8 @@ private:
   const dvector&  m_dM;
   const dvector&  m_dRbar;
   const dvector&  m_dRinit;
-  const double&   m_dRho;
-  const double&   m_dVarphi;
+  const dvector&  m_dRho;
+  const dvector&  m_dVarphi;
   const dvector&  m_dLog_M_devs;
   const dmatrix&  m_dLog_Rbar_devs;
   const dmatrix&  m_dLog_Rinit_devs;
@@ -116,8 +117,8 @@ public:
           const dvector&  _dM,
           const dvector&  _dRbar,
           const dvector&  _dRinit,
-          const double&   _dRho,
-          const double&   _dVarphi,
+          const dvector&  _dRho,
+          const dvector&  _dVarphi,
           const dvector&  _dLog_M_devs,
           const dmatrix&  _dLog_Rbar_devs,
           const dmatrix&  _dLog_Rinit_devs,
@@ -127,6 +128,7 @@ public:
   ~ScenarioParameters();
 
   /* Friends */
+  friend class Scenario;
 
 };
 #endif
@@ -286,6 +288,8 @@ public:
             const d3_array& selpar,
             const ivector& sel_type );
 
+
+  Scenario(const ScenarioData& data, const ScenarioParameters& params);
   ~Scenario();
   ivector m_sel_type;
  
