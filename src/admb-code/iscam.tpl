@@ -4379,6 +4379,36 @@ FUNCTION mcmc_output
 //   }
 
 FUNCTION void runMSE()
+	/* SCENARIO DATA */
+	ScenarioData cSdata(
+	                    ngroup,
+	                    narea,
+	                    nsex,
+	                    syr,
+	                    nyr,
+	                    nyr+15,
+	                    sage,
+	                    nage,
+	                    ngear,
+	                    allocation,
+	                    linf,
+	                    vonbk,
+	                    to,
+	                    a,
+	                    b,
+	                    ah,
+	                    gh,
+	                    n_ct_obs,
+	                    catch_data,
+	                    nit,
+	                    nit_nobs,
+	                    survey_type,
+	                    survey_data,
+	                    n_wt_nobs,
+	                    wt_avg,
+	                    wt_mat);
+
+
 	// |---------------------------------------------------------------------------------|
 	// | CALL OPERATING MODEL FOR MSE
 	// |---------------------------------------------------------------------------------|
@@ -4391,10 +4421,24 @@ FUNCTION void runMSE()
 		d3_selpar(k) = value(sel_par(k));
 	}
 	
-	Scenario  cScenario(narea,ngroup,nsex,syr,nyr,nyr+15,sage,nage,ngear,
-	                    log(value(ro)),value(steepness),log(value(m)),
-	                    value(log_avgrec),value(log_recinit),rho,vartheta,
-	                    d3_selpar,isel_type  );
+	Scenario  cScenario(narea,
+	                    ngroup,
+	                    nsex,
+	                    syr,
+	                    nyr,
+	                    nyr+15,
+	                    sage,
+	                    nage,
+	                    ngear,
+	                    log(value(ro)),
+	                    value(steepness),
+	                    log(value(m)),
+	                    value(log_avgrec),
+	                    value(log_recinit),
+	                    rho,
+	                    vartheta,
+	                    d3_selpar,
+	                    isel_type  );
 
 	cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
 	cScenario.set_nArea(4);
