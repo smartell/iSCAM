@@ -82,7 +82,8 @@ public:
       const d3_array& _dWt_avg,
       const d3_array& _dWt_mat );
   ~ScenarioData();
-  friend class ScenarioParameters;
+  
+  /* Friends */
 };
 #endif
 
@@ -91,7 +92,7 @@ public:
 
 #ifndef _SCENARIO_PARAMETERS_H
 #define _SCENARIO_PARAMETERS_H
-class ScenarioParameters : public ScenarioData
+class ScenarioParameters 
 {
 private:
   /* Parameters used in the constructor */
@@ -102,19 +103,41 @@ private:
   const dvector&  m_dRinit;
   const double&   m_dRho;
   const double&   m_dVarphi;
-  const dvector&  m_dM_devs;
+  const dvector&  m_dLog_M_devs;
   const dmatrix&  m_dLog_Rbar_devs;
   const dmatrix&  m_dLog_Rinit_devs;
   const d3_array& m_dSelPars;
   const dmatrix&  m_dFt;
 
 public:
-  ScenarioParameters();
+  ScenarioParameters(
+          const dvector&  _dBo,
+          const dvector&  _dSteepness,
+          const dvector&  _dM,
+          const dvector&  _dRbar,
+          const dvector&  _dRinit,
+          const double&   _dRho,
+          const double&   _dVarphi,
+          const dvector&  _dLog_M_devs,
+          const dmatrix&  _dLog_Rbar_devs,
+          const dmatrix&  _dLog_Rinit_devs,
+          const d3_array& _dSelPars,
+          const dmatrix&  _dFt
+                    );
   ~ScenarioParameters();
 
-  /* data */
+  /* Friends */
+
 };
 #endif
+
+
+
+
+
+
+
+
 
 #ifndef MODELDATA_H
 #define MODELDATA_H

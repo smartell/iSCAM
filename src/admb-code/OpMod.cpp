@@ -65,6 +65,42 @@ m_dWt_mat(_dWt_mat)
 
 };
 
+// |---------------------------------------------------------------------------------|
+// | ScenarioParameters
+// |---------------------------------------------------------------------------------|
+// |
+ScenarioParameters::~ScenarioParameters(){};
+
+ScenarioParameters::ScenarioParameters(
+        	const dvector&  _dBo,
+			const dvector&  _dSteepness,
+			const dvector&  _dM,
+			const dvector&  _dRbar,
+			const dvector&  _dRinit,
+			const double&   _dRho,
+			const double&   _dVarphi,
+			const dvector&  _dLog_M_devs,
+			const dmatrix&  _dLog_Rbar_devs,
+			const dmatrix&  _dLog_Rinit_devs,
+			const d3_array& _dSelPars,
+			const dmatrix&  _dFt
+                                       )
+:
+m_dBo(_dBo),
+m_dSteepness(_dSteepness),
+m_dM(_dM),
+m_dRbar(_dRbar),
+m_dRinit(_dRinit),
+m_dRho(_dRho),
+m_dVarphi(_dVarphi),
+m_dLog_M_devs(_dLog_M_devs),
+m_dLog_Rbar_devs(_dLog_Rbar_devs),
+m_dLog_Rinit_devs(_dLog_Rinit_devs),
+m_dSelPars(_dSelPars),
+m_dFt(_dFt)
+{
+
+};
 
 // |---------------------------------------------------------------------------------|
 // | SCENARIO MEMBER FUNCTIONS, CONSTRUCTOR & DESTRUCTOR

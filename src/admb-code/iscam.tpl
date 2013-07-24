@@ -4409,17 +4409,36 @@ FUNCTION void runMSE()
 	                    wt_mat);
 
 
+	/* SCENARIO PARAMETERS */
+	dvector rbar = value(exp(log_avgrec));
+	dvector rinit = value(exp(log_recinit));
+	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
+	for(k=1;k<=ngear;k++)
+	{
+		d3_selpar(k) = value(sel_par(k));
+	}
+	ScenarioParameters cSparams(
+	                            value(bo),
+	                            value(steepness),
+	                            value(m),
+	                            value(rbar),
+	                            value(rinit),
+	                            value(rho),
+	                            value(varphi),
+	                            value(log_m_devs),
+	                            value(log_rec_devs),
+	                            value(init_log_rec_devs),
+	                            d3_selpar,
+	                            value(ft)
+	                            );
+
+
 	// |---------------------------------------------------------------------------------|
 	// | CALL OPERATING MODEL FOR MSE
 	// |---------------------------------------------------------------------------------|
 	// |
 	dvector rho      = value(theta(6));
 	dvector vartheta = value(theta(7));
-	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
-	for(k=1;k<=ngear;k++)
-	{
-		d3_selpar(k) = value(sel_par(k));
-	}
 	
 	Scenario  cScenario(narea,
 	                    ngroup,
