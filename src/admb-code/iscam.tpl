@@ -4406,7 +4406,7 @@ FUNCTION void runMSE()
     s_mseData.nSurveyType = survey_type;
     cout<<survey_data<<endl;
     s_mseData.dSurveyData = &survey_data;
-    cout<<*s_mseData.dSurveyData<<endl;
+    
 	s_mseData.nAgears = na_gears;
 	s_mseData.nAnobs = na_nobs;
 	s_mseData.nAsage = a_sage;

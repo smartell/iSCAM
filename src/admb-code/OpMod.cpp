@@ -6,6 +6,9 @@ test::test(const s_iSCAMdata& data)
 {
 	cout<<"Im here in the test constructor"<<endl;
 	cout<<data.nStock<<endl;
+	d3_array junk = *data.dSurveyData;
+	cout<<junk<<endl;
+	cout<<"Leaving test constructor"<<endl;
 };
 
 // |---------------------------------------------------------------------------------|
