@@ -4,91 +4,65 @@
  * \date Jun 4, 2013
 **/
 
+
+
 #ifndef _SCENARIO_DATA_H
 #define _SCENARIO_DATA_H
-class ScenarioData
+struct s_iSCAMdata
 {
-private:
   // Model dimensions
-  int m_nStock;
-  int m_nArea;
-  int m_nSex;
-  int m_nSyr;
-  int m_nNyr;
-  int m_nPyr;
-  int m_nSage;
-  int m_nNage;
-  int m_nGear;
+  int nStock;
+  int nArea;
+  int nSex;
+  int nSyr;
+  int nNyr;
+  int nPyr;
+  int nSage;
+  int nNage;
+  int nGear;
 
-  dvector m_dAllocation;
+  dvector dAllocation;
 
   // Growth & Maturity data
-  dvector m_d_linf;
-  dvector m_d_vonbk;
-  dvector m_d_to;
-  dvector m_d_a;
-  dvector m_d_b;
-  dvector m_d_ah;
-  dvector m_d_gh;
+  dvector d_linf;
+  dvector d_vonbk;
+  dvector d_to;
+  dvector d_a;
+  dvector d_b;
+  dvector d_ah;
+  dvector d_gh;
 
   // Catch Data
-  int     m_nCtNobs;
-  dmatrix m_dCatchData;
+  int     nCtNobs;
+  dmatrix dCatchData;
 
   // Survey data
-  int      m_nIt;
-  ivector  m_nItNobs;
-  ivector  m_nSurveyType;
-  d3_array m_dSurveyData;
+  int      nIt;
+  ivector  nItNobs;
+  ivector  nSurveyType;
+  d3_array* dSurveyData;
 
   // Composition data
-  int      m_nAgears;
-  ivector  m_nAnobs;
-  ivector  m_nAsage;
-  ivector  m_nAnage;
-  d3_array m_dA;
+  int      nAgears;
+  ivector  nAnobs;
+  ivector  nAsage;
+  ivector  nAnage;
+  d3_array* dA;
 
   // Empirical weight-at-age
-  int      m_nWtNobs;
-  d3_array m_dWt_avg;
-  d3_array m_dWt_mat;
+  int      nWtNobs;
+  d3_array* dWt_avg;
+  d3_array* dWt_mat;
 
-public:
-  ScenarioData(
-      const int&      _nStock,
-      const int&      _nArea,
-      const int&      _nSex,
-      const int&      _nSyr,
-      const int&      _nNyr,
-      const int&      _nPyr,
-      const int&      _nSage,
-      const int&      _nNage,
-      const int&      _nGear,
-      const dvector&  _dAllocation,
-      const dvector&  _d_linf,
-      const dvector&  _d_vonbk,
-      const dvector&  _d_to,
-      const dvector&  _d_a,
-      const dvector&  _d_b,
-      const dvector&  _d_ah,
-      const dvector&  _d_gh,
-      const int&      _nCtNobs,
-      const dmatrix&  _dCatchData,
-      const int&      _nIt,
-      const ivector&  _nItNobs,
-      const ivector&  _nSurveyType,
-      const d3_array& _dSurveyData,
-      const int&      _nWtNobs,
-      const d3_array& _dWt_avg,
-      const d3_array& _dWt_mat );
-  ~ScenarioData();
-  
-  /* Friends */
-  friend class Scenario;
+
 };
 #endif
 
-
+class test
+{
+  public:
+  test(const s_iSCAMdata& data);
+};
 
 
 #ifndef _SCENARIO_PARAMETERS_H
@@ -110,6 +84,7 @@ private:
   const d3_array& m_dSelPars;
   const dmatrix&  m_dFt;
 
+  // ScenarioParameters();
 public:
   ScenarioParameters(
           const dvector&  _dBo,
@@ -266,9 +241,12 @@ public:
 class Scenario: public ModelData, public ModelParams
 {
 private:
-
+  // ScenarioData       m_ScenarioData;
+  // ScenarioParameters m_ScenarioParameters;
+  // Scenario();
 public:
-  Scenario();
+  // Scenario(const ScenarioData& data, const ScenarioParameters& params);
+
   Scenario( const int nStock, 
             const int nArea, 
             const int nSex, 
@@ -289,7 +267,6 @@ public:
             const ivector& sel_type );
 
 
-  Scenario(const ScenarioData& data, const ScenarioParameters& params);
   ~Scenario();
   ivector m_sel_type;
  

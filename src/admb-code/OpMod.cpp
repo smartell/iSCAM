@@ -1,68 +1,11 @@
 #include <admodel.h>
 #include "OpMod.h"
 #include "Selex.h"
-// |---------------------------------------------------------------------------------|
-// | ScenarioData
-// |---------------------------------------------------------------------------------|
-// |
-ScenarioData::~ScenarioData(){};
-ScenarioData::ScenarioData(
-			const int&      _nStock,
-			const int&      _nArea,
-			const int&      _nSex,
-			const int&      _nSyr,
-			const int&      _nNyr,
-			const int&      _nPyr,
-			const int&      _nSage,
-			const int&      _nNage,
-			const int&      _nGear,
-			const dvector&  _dAllocation,
-			const dvector&  _d_linf,
-			const dvector&  _d_vonbk,
-			const dvector&  _d_to,
-			const dvector&  _d_a,
-			const dvector&  _d_b,
-			const dvector&  _d_ah,
-			const dvector&  _d_gh,
-			const int&      _nCtNobs,
-			const dmatrix&  _dCatchData,
-			const int&      _nIt,
-			const ivector&  _nItNobs,
-			const ivector&  _nSurveyType,
-			const d3_array& _dSurveyData,
-			const int&      _nWtNobs,
-			const d3_array& _dWt_avg,
-			const d3_array& _dWt_mat
-                           )
-:
-m_nStock(_nStock),
-m_nArea(_nArea),
-m_nSex(_nSex),
-m_nSyr(_nSyr),
-m_nNyr(_nNyr),
-m_nPyr(_nPyr),
-m_nSage(_nSage),
-m_nNage(_nNage),
-m_nGear(_nGear),
-m_dAllocation(_dAllocation),
-m_d_linf(_d_linf),
-m_d_vonbk(_d_vonbk),
-m_d_to(_d_to),
-m_d_a(_d_a),
-m_d_b(_d_b),
-m_d_ah(_d_ah),
-m_d_gh(_d_gh),
-m_nCtNobs(_nCtNobs),
-m_dCatchData(_dCatchData),
-m_nIt(_nIt),
-m_nItNobs(_nItNobs),
-m_nSurveyType(_nSurveyType),
-m_dSurveyData(_dSurveyData),
-m_nWtNobs(_nWtNobs),
-m_dWt_avg(_dWt_avg),
-m_dWt_mat(_dWt_mat)
+
+test::test(const s_iSCAMdata& data)
 {
-	cout<<"Data is good"<<endl;
+	cout<<"Im here in the test constructor"<<endl;
+	cout<<data.nStock<<endl;
 };
 
 // |---------------------------------------------------------------------------------|
@@ -70,7 +13,7 @@ m_dWt_mat(_dWt_mat)
 // |---------------------------------------------------------------------------------|
 // |
 ScenarioParameters::~ScenarioParameters(){};
-
+// ScenarioParameters::ScenarioParameters(){};
 ScenarioParameters::ScenarioParameters(
         	const dvector&  _dBo,
 			const dvector&  _dSteepness,
@@ -108,11 +51,11 @@ m_dFt(_dFt)
 // |
 Scenario::~Scenario(){};
 
-Scenario::Scenario(const ScenarioData& data, const ScenarioParameters& params)
-{
-	cout<<"Scenario is all set"<<endl;
-	cout<<m_nPyr<<endl;
-}
+// Scenario::Scenario(const ScenarioData& data, const ScenarioParameters& params)
+// {
+// 	cout<<"Scenario is all set"<<endl;
+// 	cout<<m_nPyr<<endl;
+// }
 
 Scenario::Scenario(
             const int nStock, 

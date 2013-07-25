@@ -4379,35 +4379,44 @@ FUNCTION mcmc_output
 //   }
 
 FUNCTION void runMSE()
-	/* SCENARIO DATA */
-	ScenarioData cSdata(
-	                    ngroup,
-	                    narea,
-	                    nsex,
-	                    syr,
-	                    nyr,
-	                    nyr+15,
-	                    sage,
-	                    nage,
-	                    ngear,
-	                    allocation,
-	                    linf,
-	                    vonbk,
-	                    to,
-	                    a,
-	                    b,
-	                    ah,
-	                    gh,
-	                    n_ct_obs,
-	                    catch_data,
-	                    nit,
-	                    nit_nobs,
-	                    survey_type,
-	                    survey_data,
-	                    n_wt_nobs,
-	                    wt_avg,
-	                    wt_mat);
+    cout<<"Top of runMSE"<<endl;
 
+	/* SCENARIO DATA */
+    s_mseData.nStock = ngroup;
+    s_mseData.nArea = narea;
+    s_mseData.nSex = nsex;
+    s_mseData.nSyr = syr;
+    s_mseData.nNyr = nyr;
+    s_mseData.nPyr = nyr+26;
+    s_mseData.nSage = sage;
+    s_mseData.nNage = nage;
+    s_mseData.nGear = ngear;
+    s_mseData.dAllocation = allocation;
+    s_mseData.d_linf = linf;
+    s_mseData.d_vonbk = vonbk;
+    s_mseData.d_to = to;
+    s_mseData.d_a = a;
+    s_mseData.d_b = b;
+    s_mseData.d_ah = ah;
+    s_mseData.d_gh = gh;
+    s_mseData.nCtNobs = n_ct_obs;
+    s_mseData.dCatchData = catch_data;
+    s_mseData.nIt = nit;
+    s_mseData.nItNobs = nit_nobs;
+    s_mseData.nSurveyType = survey_type;
+    cout<<survey_data<<endl;
+    s_mseData.dSurveyData = &survey_data;
+    cout<<*s_mseData.dSurveyData<<endl;
+	s_mseData.nAgears = na_gears;
+	s_mseData.nAnobs = na_nobs;
+	s_mseData.nAsage = a_sage;
+	s_mseData.nAnage = a_nage;
+	s_mseData.dA = &A;
+    s_mseData.nWtNobs = n_wt_nobs;
+    s_mseData.dWt_avg = &wt_avg;
+    s_mseData.dWt_mat = &wt_mat;
+
+    test ctest(s_mseData);
 
 	/* SCENARIO PARAMETERS */
 	dvector rbar     = value(exp(log_avgrec));
@@ -4420,18 +4429,7 @@ FUNCTION void runMSE()
 	{
 		d3_selpar(k) = value(sel_par(k));
 	}
-	cout<<sbo<<endl;
-	cout<<steepness<<endl;
-	cout<<m<<endl;
-	cout<<rbar<<endl;
-	cout<<rinit<<endl;
-	cout<<rho<<endl;
-	cout<<varphi<<endl;
-	cout<<log_m_devs<<endl;
-	cout<<log_rec_devs<<endl;
-	cout<<init_log_rec_devs<<endl;
-	cout<<d3_selpar(1)<<endl;
-	cout<<ft<<endl;
+	
 
 	ScenarioParameters cSparams(
 	                            value(sbo),
@@ -4448,37 +4446,9 @@ FUNCTION void runMSE()
 	                            value(ft)
 	                            );
 
-	Scenario cScenario(cSdata,cSparams);
+	// Scenario cScenario(cSdata,cSparams);
 
-	// |---------------------------------------------------------------------------------|
-	// | CALL OPERATING MODEL FOR MSE
-	// |---------------------------------------------------------------------------------|
-	// |
-	// Scenario  cScenario(narea,
-	//                     ngroup,
-	//                     nsex,
-	//                     syr,
-	//                     nyr,
-	//                     nyr+15,
-	//                     sage,
-	//                     nage,
-	//                     ngear,
-	//                     log(value(ro)),
-	//                     value(steepness),
-	//                     log(value(m)),
-	//                     value(log_avgrec),
-	//                     value(log_recinit),
-	//                     rho,
-	//                     vartheta,
-	//                     d3_selpar,
-	//                     isel_type  );
 
-	// cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
-	// // cScenario.set_nArea(4);
-	// cout<<"Narea\n"<<cScenario.get_nArea()<<endl;
-	// cout<<"log_ro\n"<<cScenario.get_log_ro()<<endl;
-
-	// OperatingModel cOpMod(cScenario);
 
 
 TOP_OF_MAIN_SECTION
@@ -4540,7 +4510,7 @@ GLOBALS_SECTION
 		return fileName;
 	}
 	
-
+	s_iSCAMdata s_mseData;
 
 	// class selex_vector
 	// {
