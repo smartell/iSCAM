@@ -67,43 +67,28 @@ class test
 
 #ifndef _SCENARIO_PARAMETERS_H
 #define _SCENARIO_PARAMETERS_H
-class ScenarioParameters 
+struct s_iSCAMvariables 
 {
-private:
   /* Parameters used in the constructor */
-  const dvector&  m_dBo;
-  const dvector&  m_dSteepness;
-  const dvector&  m_dM;
-  const dvector&  m_dRbar;
-  const dvector&  m_dRinit;
-  const dvector&  m_dRho;
-  const dvector&  m_dVarphi;
-  const dvector&  m_dLog_M_devs;
-  const dmatrix&  m_dLog_Rbar_devs;
-  const dmatrix&  m_dLog_Rinit_devs;
-  const d3_array& m_dSelPars;
-  const dmatrix&  m_dFt;
+  dvector   d_log_ro;
+  dvector   d_steepness;
+  dvector   d_log_m;
+  dvector   d_log_rbar;
+  dvector   d_log_rinit;
+  dvector   d_rho;
+  dvector   d_varphi;
+  dvector   dLog_M_devs;
+  dmatrix   dLog_Rbar_devs;
+  dmatrix   dLog_Rinit_devs;
 
-  // ScenarioParameters();
-public:
-  ScenarioParameters(
-          const dvector&  _dBo,
-          const dvector&  _dSteepness,
-          const dvector&  _dM,
-          const dvector&  _dRbar,
-          const dvector&  _dRinit,
-          const dvector&  _dRho,
-          const dvector&  _dVarphi,
-          const dvector&  _dLog_M_devs,
-          const dmatrix&  _dLog_Rbar_devs,
-          const dmatrix&  _dLog_Rinit_devs,
-          const d3_array& _dSelPars,
-          const dmatrix&  _dFt
-                    );
-  ~ScenarioParameters();
+  ivector   nSel_type;
+  imatrix   nSel_block;
+  d3_array* dSelPars;
+  
 
-  /* Friends */
-  friend class Scenario;
+  dmatrix   dFt;
+  d3_array* d3_Mt;
+
 
 };
 #endif
@@ -277,10 +262,10 @@ public:
 
 #ifndef OPERATINGMODEL_H
 #define OPERATINGMODEL_H
-class OperatingModel //: public Scenario
+class OperatingModel 
 {
 private:
-  // Model dimensions
+  // Model constants
   int nStock;        
   int nArea;
   int nSex;
@@ -291,7 +276,52 @@ private:
   int nNage;
   int nGear;
 
+  // LINKS TO MANAGE ARRAY INDEXING
+  int n_ags;
+  int n_ag;
+  int n_gs;
+  ivector n_area;
+  ivector n_group;
+  ivector n_sex;
+  imatrix pntr_ag;
+  imatrix pntr_gs;
+  d3_array pntr_ags;
+
+
   dvector dAge;
+  // Growth & Maturity data
+  dvector d_linf;
+  dvector d_vonbk;
+  dvector d_to;
+  dvector d_a;
+  dvector d_b;
+  dvector d_ah;
+  dvector d_gh;
+
+  // Catch Data
+  int     nCtNobs;
+  dmatrix dCatchData;
+
+  // Survey data
+  int       nIt;
+  ivector   nItNobs;
+  ivector   nSurveyType;
+  d3_array  dSurveyData;
+
+   // Composition data
+  int      nAgears;
+  ivector  nAnobs;
+  ivector  nAsage;
+  ivector  nAnage;
+  d3_array dA;
+
+   // Empirical weight-at-age
+  int      nWtNobs;
+  d3_array dWt_avg;
+  d3_array dWt_mat;
+
+
+  // Model variables
   dvector dRo;
   dvector dSteepness;
   dvector dM;
@@ -299,25 +329,39 @@ private:
   dvector dInitRec;
   dvector dRho;
   dvector dVartheta;
+  dvector dLog_m_devs;
+  dmatrix dLog_rbar_devs;
+  dmatrix dLog_init_rec_devs;
 
   dvector dKappa;
 
+  dmatrix dFt;
+  d3_array d3_Mt;
+
   // Selectivity parameters
   ivector  nSel_type;
+  imatrix  nSel_block;
   d3_array d3_selPars;
   d5_array d5_logSel;
 
+  // derived variables for SRR 
+  dvector m_so;
+  dvector m_beta;
+  dvector m_dSbo;
 
   // Class aggregations
-  Scenario m_cScenario;
+  // Scenario m_cScenario;
 public:
-  OperatingModel(Scenario &cScenario);
+  // OperatingModel(Scenario &cScenario);
+  OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars);
   
 
   ~OperatingModel();
 
   /* data */
-  void initializeVariables(Scenario& cS);
+  void initializeConstants(const s_iSCAMdata& cS);
+  void initializeVariables(const s_iSCAMvariables& cS);
   void calcSelectivities();
+  void runScenario();
 };
 #endif

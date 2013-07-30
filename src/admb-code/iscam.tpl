@@ -240,24 +240,42 @@ DATA_SECTION
 	init_int ngear;	
 	vector age(sage,nage);
 
-	// linked lists to manage array indexs
+
+
+	// |---------------------------------------------------------------------------------|
+	// | LINKS TO MANAGE ARRAY INDEXING
+	// |---------------------------------------------------------------------------------|
+	// | - n_ags: total number of areas * groups * sex
+	// | - n_ag:  total number of areas * groups
+	// | - n_gs:  total number of groups * sex
+	// | - i_area:  vector of indexes for area for each sex & group combination.
+	// | - i_group: vector of indexes for stock for each sex & area combination.
+	// | - i_sex:   vector of indexes for sex foe each area & group combination.
+	// | - pntr_ag: matrix of indices for area and group.
+	// | - pntr_gs: matrix of indices for group and sex.
+	// | - pntr_ags: d3_array of indices for area group sex.
+	// |	
 	int n_ags;
 	!! n_ags = narea * ngroup * nsex;
 	int n_ag;
 	!! n_ag  = narea * ngroup;
+	int n_gs;
+	!! n_gs  = ngroup * nsex;
 	ivector   i_area(1,n_ags);
 	ivector  i_group(1,n_ags);
 	ivector    i_sex(1,n_ags);
 	imatrix  pntr_ag(1,narea,1,ngroup);
+	imatrix  pntr_gs(1,ngroup,1,nsex);
 	3darray pntr_ags(1,narea,1,ngroup,1,nsex);
 	
 	
 	
 	LOC_CALCS
 		age.fill_seqadd(sage,1);
-		int ig,ih;
+		int ig,ih,is;
 		ig = 0;
 		ih = 0;
+		is = 0;
 		for(f=1; f<=narea; f++)
 		{
 			for(g=1; g<=ngroup; g++)
@@ -271,6 +289,11 @@ DATA_SECTION
 					i_group(ig) = g;
 					i_sex(ig)   = h;
 					pntr_ags(f,g,h) = ig;
+					if(f==1)
+					{
+						is ++;
+						pntr_gs(g,h) = is;
+					}
 				}
 			}
 		}
@@ -289,6 +312,7 @@ DATA_SECTION
 		cout<<"| i_group\t"<<i_group<<endl;
 		cout<<"| i_sex  \t"<<i_sex<<endl;
 		cout<<"| pntr_ag\n"<<pntr_ag<<endl;
+		cout<<"| pntr_gs\n"<<pntr_gs<<endl;
 		cout<<"| pntr_ags\n"<<pntr_ags(1)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		
@@ -704,7 +728,7 @@ DATA_SECTION
 		theta_prior = ivector(column(theta_control,5));
 		ipar_vector(1,2) = ngroup;
 		ipar_vector(6,7) = ngroup;
-		ipar_vector(3)   = nsex;
+		ipar_vector(3)   = n_gs;
 		ipar_vector(4,5) = n_ag;
 	END_CALCS
 	
@@ -1114,7 +1138,7 @@ PARAMETER_SECTION
 	vector steepness(1,ngroup);
 	vector        so(1,ngroup);
 	vector      beta(1,ngroup);
-	vector           m(1,nsex);	
+	vector           m(1,n_gs);	
 	vector  log_avgrec(1,n_ag);			
 	vector log_recinit(1,n_ag);			
 	vector          q(1,nit);
@@ -1237,7 +1261,6 @@ PROCEDURE_SECTION
 
 	initParameters();
 	
-	// calcSelex();
 	calcSelectivities(isel_type);
 	
 	calcTotalMortality();
@@ -1412,23 +1435,6 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 	
 //   }
 
-FUNCTION calcSelex
-  {
-  	// Testing Selex class
-  	int k, ig;
-
-  	for( k = 1; k <= ngear; k++ )
-  	{
-  		Selex cSelex(isel_type(k),age,sel_par(k));
-  		for( ig = 1; ig <= n_ags; ig++ )
-		{
-  			cSelex.fill_selex_array(log_sel(k)(ig));
-  			// cout<<log_sel(k)(ig)(syr)<<endl;
-  		}
-  	}
-
-  	
-  }
 
 FUNCTION void calcSelectivities(const ivector& isel_type)
   {
@@ -1483,7 +1489,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	dvar_matrix ttmp2(sage,nage,syr,nyr);
 	
 	// Selex cSelex(age);
-	logistic_selectivity cLogisticSelex(age);
+	// logistic_selectivity cLogisticSelex(age);
 	log_sel.initialize();
 
 	for(k=1; k<=ngear; k++)
@@ -1510,10 +1516,10 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						// cout<<"Testing selex class"<<endl;
 						// log_sel(k)(ig)(i) = log( cSelex.logistic(sel_par(k)(bpar)) );
-						log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
-						// p1 = mfexp(sel_par(k,bpar,1));
-						// p2 = mfexp(sel_par(k,bpar,2));
-						// log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
+						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
+						p1 = mfexp(sel_par(k,bpar,1));
+						p2 = mfexp(sel_par(k,bpar,2));
+						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
 					}
 					break;
 				
@@ -1522,8 +1528,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					p2 = mfexp(sel_par(k,1,2));
 					for(i=syr; i<=nyr; i++)
 					{
-						// log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
-						log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
+						log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
+						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
 					}
 					break;
 					
@@ -1733,7 +1739,9 @@ FUNCTION calcTotalMortality
 	log_m_devs.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
-		M(ig) = m( i_sex(ig) );
+		g = i_group(ig);
+		h = i_sex(ig);
+		M(ig) = m( pntr_gs(g,h) );
 		if( active( log_m_nodes) )
 		{
 			int nodes = size_count(log_m_nodes);
@@ -4381,70 +4389,99 @@ FUNCTION mcmc_output
 FUNCTION void runMSE()
     cout<<"Top of runMSE"<<endl;
 
+	s_iSCAMdata      s_mseData;
+	s_iSCAMvariables s_mseVars;
+
 	/* SCENARIO DATA */
-    s_mseData.nStock = ngroup;
-    s_mseData.nArea = narea;
-    s_mseData.nSex = nsex;
-    s_mseData.nSyr = syr;
-    s_mseData.nNyr = nyr;
-    s_mseData.nPyr = nyr+26;
-    s_mseData.nSage = sage;
-    s_mseData.nNage = nage;
-    s_mseData.nGear = ngear;
-    s_mseData.dAllocation = allocation;
-    s_mseData.d_linf = linf;
-    s_mseData.d_vonbk = vonbk;
-    s_mseData.d_to = to;
-    s_mseData.d_a = a;
-    s_mseData.d_b = b;
-    s_mseData.d_ah = ah;
-    s_mseData.d_gh = gh;
-    s_mseData.nCtNobs = n_ct_obs;
-    s_mseData.dCatchData = catch_data;
-    s_mseData.nIt = nit;
-    s_mseData.nItNobs = nit_nobs;
-    s_mseData.nSurveyType = survey_type;
-    cout<<survey_data<<endl;
-    s_mseData.dSurveyData = &survey_data;
-    
-	s_mseData.nAgears = na_gears;
-	s_mseData.nAnobs = na_nobs;
-	s_mseData.nAsage = a_sage;
-	s_mseData.nAnage = a_nage;
-	s_mseData.dA = &A;
-    s_mseData.nWtNobs = n_wt_nobs;
-    s_mseData.dWt_avg = &wt_avg;
-    s_mseData.dWt_mat = &wt_mat;
+	s_mseData.nStock      = ngroup;
+	s_mseData.nArea       = narea;
+	s_mseData.nSex        = nsex;
+	s_mseData.nSyr        = syr;
+	s_mseData.nNyr        = nyr;
+	s_mseData.nPyr        = nyr+10;
+	s_mseData.nSage       = sage;
+	s_mseData.nNage       = nage;
+	s_mseData.nGear       = ngear;
+	s_mseData.dAllocation = allocation;
+	s_mseData.d_linf      = linf;
+	s_mseData.d_vonbk     = vonbk;
+	s_mseData.d_to        = to;
+	s_mseData.d_a         = a;
+	s_mseData.d_b         = b;
+	s_mseData.d_ah        = ah;
+	s_mseData.d_gh        = gh;
+	s_mseData.nCtNobs     = n_ct_obs;
+	s_mseData.dCatchData  = catch_data;
+	s_mseData.nIt         = nit;
+	s_mseData.nItNobs     = nit_nobs;
+	s_mseData.nSurveyType = survey_type;
+	s_mseData.dSurveyData = &survey_data;
+	
+	s_mseData.nAgears     = na_gears;
+	s_mseData.nAnobs      = na_nobs;
+	s_mseData.nAsage      = a_sage;
+	s_mseData.nAnage      = a_nage;
+	s_mseData.dA          = &A;
+	s_mseData.nWtNobs     = n_wt_nobs;
+	s_mseData.dWt_avg     = &wt_avg;
+	s_mseData.dWt_mat     = &wt_mat;
 
     test ctest(s_mseData);
 
-	/* SCENARIO PARAMETERS */
-	dvector rbar     = value(exp(log_avgrec));
-	dvector rinit    = value(exp(log_recinit));
-	dvector rho      = value(theta(6));
-	dvector varphi   = value(theta(7));
-	
+    /* SCENARIO PARAMETERS */
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
+	d3_array d3_M(1,ngroup,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
 		d3_selpar(k) = value(sel_par(k));
 	}
+	for( g = 1; g <= ngroup; g++ )
+	{
+		d3_M(g) = value(M(g));
+	}
+
+	s_mseVars.d_log_ro        = value(theta(1));
+	s_mseVars.d_steepness     = value(theta(2));
+	s_mseVars.d_log_m         = value(theta(3));
+	s_mseVars.d_log_rbar      = value(theta(4));
+	s_mseVars.d_log_rinit     = value(theta(5));
+	s_mseVars.d_rho           = value(theta(6));
+	s_mseVars.d_varphi        = value(theta(7));
+	s_mseVars.dLog_M_devs     = value(log_m_devs);
+	s_mseVars.dLog_Rbar_devs  = value(log_rec_devs);
+	s_mseVars.dLog_Rinit_devs = value(init_log_rec_devs);
+	s_mseVars.nSel_type       = isel_type;
+	s_mseVars.nSel_block      = sel_blocks;
+	s_mseVars.dSelPars        = &d3_selpar;
+	s_mseVars.dFt             = value(ft);
+	s_mseVars.d3_Mt			  = &d3_M;
+
+    OperatingModel om(s_mseData,s_mseVars);
+
+    om.runScenario();
+
+	/* SCENARIO PARAMETERS */
+	// dvector rbar     = value(exp(log_avgrec));
+	// dvector rinit    = value(exp(log_recinit));
+	// dvector rho      = value(theta(6));
+	// dvector varphi   = value(theta(7));
+	
 	
 
-	ScenarioParameters cSparams(
-	                            value(sbo),
-	                            value(steepness),
-	                            value(m),
-	                            (rbar),
-	                            (rinit),
-	                            (rho),
-	                            (varphi),
-	                            value(log_m_devs),
-	                            value(log_rec_devs),
-	                            value(init_log_rec_devs),
-	                            d3_selpar,
-	                            value(ft)
-	                            );
+	// ScenarioParameters cSparams(
+	//                             value(sbo),
+	//                             value(steepness),
+	//                             value(m),
+	//                             (rbar),
+	//                             (rinit),
+	//                             (rho),
+	//                             (varphi),
+	//                             value(log_m_devs),
+	//                             value(log_rec_devs),
+	//                             value(init_log_rec_devs),
+	//                             d3_selpar,
+	//                             value(ft)
+	//                             );
 
 	// Scenario cScenario(cSdata,cSparams);
 
@@ -4510,7 +4547,7 @@ GLOBALS_SECTION
 		return fileName;
 	}
 	
-	s_iSCAMdata s_mseData;
+	
 
 	// class selex_vector
 	// {

@@ -1,3 +1,8 @@
+// |---------------------------------------------------------------------------------|
+// | OPERATING MODEL FOR USE WITH ISCAM
+// |---------------------------------------------------------------------------------|
+// |
+
 #include <admodel.h>
 #include "OpMod.h"
 #include "Selex.h"
@@ -11,42 +16,6 @@ test::test(const s_iSCAMdata& data)
 	cout<<"Leaving test constructor"<<endl;
 };
 
-// |---------------------------------------------------------------------------------|
-// | ScenarioParameters
-// |---------------------------------------------------------------------------------|
-// |
-ScenarioParameters::~ScenarioParameters(){};
-// ScenarioParameters::ScenarioParameters(){};
-ScenarioParameters::ScenarioParameters(
-        	const dvector&  _dBo,
-			const dvector&  _dSteepness,
-			const dvector&  _dM,
-			const dvector&  _dRbar,
-			const dvector&  _dRinit,
-			const dvector&  _dRho,
-			const dvector&  _dVarphi,
-			const dvector&  _dLog_M_devs,
-			const dmatrix&  _dLog_Rbar_devs,
-			const dmatrix&  _dLog_Rinit_devs,
-			const d3_array& _dSelPars,
-			const dmatrix&  _dFt
-                                       )
-:
-m_dBo(_dBo),
-m_dSteepness(_dSteepness),
-m_dM(_dM),
-m_dRbar(_dRbar),
-m_dRinit(_dRinit),
-m_dRho(_dRho),
-m_dVarphi(_dVarphi),
-m_dLog_M_devs(_dLog_M_devs),
-m_dLog_Rbar_devs(_dLog_Rbar_devs),
-m_dLog_Rinit_devs(_dLog_Rinit_devs),
-m_dSelPars(_dSelPars),
-m_dFt(_dFt)
-{
-	cout<<"O=k to here dude"<<endl;
-};
 
 // |---------------------------------------------------------------------------------|
 // | SCENARIO MEMBER FUNCTIONS, CONSTRUCTOR & DESTRUCTOR
@@ -101,51 +70,213 @@ ModelParams::~ModelParams(){};
 // |
 
 /* Destructor */
-OperatingModel::~OperatingModel(){};
+OperatingModel::~OperatingModel()
+{
+
+};
 
 /* Constructor */
-OperatingModel::OperatingModel(Scenario &cScenario)
-: m_cScenario(cScenario)
+OperatingModel::OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars)
 {
-	initializeVariables(cScenario);
-	calcSelectivities();
+	initializeConstants(mse_data);
+	initializeVariables(mse_vars);
 }
 
 /* Initialize private member variables based on scenario class */
-void OperatingModel::initializeVariables(Scenario& cS)
+void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 {
 	// Model dimensions
-	nStock = cS.m_nStock;
-	nArea  = cS.m_nArea;
-	nSex   = cS.m_nSex;
-	nSyr   = cS.m_nSyr;
-	nNyr   = cS.m_nNyr;
-	nPyr   = cS.m_nPyr;
-	nSage  = cS.m_nSage;
-	nNage  = cS.m_nNage;
-	nGear  = cS.m_nGear;
+	nStock = cS.nStock;
+	nArea  = cS.nArea;
+	nSex   = cS.nSex;
+	nSyr   = cS.nSyr;
+	nNyr   = cS.nNyr;
+	nPyr   = cS.nPyr;
+	nSage  = cS.nSage;
+	nNage  = cS.nNage;
+	nGear  = cS.nGear;
+
+	// links for array indexing
+	n_ags = nArea * nStock * nSex;
+	n_ag  = nArea * nStock;
+	n_gs  = nStock * nSex;
+	n_area.allocate(1,n_ags);
+	n_group.allocate(1,n_ags);
+	n_sex.allocate(1,n_ags);
+	pntr_ag.allocate(1,nArea,1,nStock);
+	pntr_gs.allocate(1,nStock,1,nSex);
+	pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
+	int f,g,h;
+	int ig = 0;
+	int ih = 0;
+	int is = 0;
+	for( f = 1; f <= nArea; f++ )
+	{
+		for( g = 1; g <= nStock; g++ )
+		{
+			ih ++;
+			pntr_ag(f,g) = ih;
+			for( h = 1; h <= nSex; h++ )
+			{
+				ig ++;
+				n_area(ig)  = f;
+				n_group(ig) = g;
+				n_sex(ig)   = h;
+				pntr_ags(f,g,h) = ig;
+				if ( f==1 )
+				{
+					is ++;
+					pntr_gs(g,h) = is;
+				}
+			}
+		}
+	}
+
 
 	dAge.allocate(nSage,nNage);
-	// dAge.fill_seqadd(nSage,1);
+	dAge.fill_seqadd(nSage,1);
 
+	// Growth & Maturity
+	d_linf  = cS.d_linf;
+	d_vonbk = cS.d_vonbk;
+	d_to   	= cS.d_to;
+	d_a     = cS.d_a;
+	d_b 	= cS.d_b;
+	d_ah 	= cS.d_ah;
+	d_gh 	= cS.d_gh;
 
-	// Leading parameters
-	dRo        = mfexp(cS.m_log_ro);
-	dSteepness = cS.m_steepness;
-	dM         = mfexp(cS.m_log_m);
-	dAvgRec    = mfexp(cS.m_log_avgrec);
-	dInitRec   = mfexp(cS.m_log_initrec);
-	dRho       = mfexp(cS.m_rho);
-	dVartheta  = mfexp(cS.m_vartheta);
+	// Catch Data
+	nCtNobs 	= cS.nCtNobs;
+	dCatchData 	= cS.dCatchData;
 
-	dKappa     = elem_div(4. * dSteepness, 1.-dSteepness);
+	// Survey data
+	nIt         = cS.nIt;
+	nItNobs     = cS.nItNobs;
+	nSurveyType = cS.nSurveyType;
+	dSurveyData.allocate(*cS.dSurveyData);
+	dSurveyData = *cS.dSurveyData;
 
-	// Selectivity parameters
-	nSel_type  = cS.m_sel_type;
-	d3_selPars.allocate(cS.m_selpars);
-	d3_selPars = cS.m_selpars;
+	// Composition data
+	nAgears = cS.nAgears;
+	nAnobs  = cS.nAnobs;
+	nAsage  = cS.nAsage;
+	nAnage  = cS.nAnage;
+	dA.allocate(*cS.dA);
+	dA      = *cS.dA;
+
+	// Empirical weight-at-age
+	nWtNobs = cS.nWtNobs;
+	dWt_avg.allocate(*cS.dWt_avg);
+	dWt_mat.allocate(*cS.dWt_mat);
+	dWt_avg = *cS.dWt_avg;
+	dWt_mat = *cS.dWt_mat;
+
+	cout<<"initializeConstants"<<endl;
+	cout<<pntr_ags<<endl;
 
 }
+
+
+void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
+{
+	// Leading parameters
+	cout<<"initializeVariables"<<endl;
+	dRo                = exp(cS.d_log_ro);
+	dSteepness         = cS.d_steepness;
+	dM                 = exp(cS.d_log_m);
+	dAvgRec            = exp(cS.d_log_rbar);
+	dInitRec           = exp(cS.d_log_rinit);
+	dRho               = cS.d_rho;
+	dVartheta          = sqrt(1.0/cS.d_varphi);
+	dLog_m_devs        = cS.dLog_M_devs;
+	dLog_rbar_devs     = cS.dLog_Rbar_devs;
+	dLog_init_rec_devs = cS.dLog_Rinit_devs;
+	
+	nSel_type  = cS.nSel_type;
+	nSel_block = cS.nSel_block;
+	d3_selPars.allocate(*cS.dSelPars);
+	d3_selPars = *cS.dSelPars;
+	
+	dFt                = cS.dFt;
+	
+	d3_Mt.allocate(*cS.d3_Mt);
+	d3_Mt = *cS.d3_Mt;
+
+	// cout<<dFt<<endl;
+}
+
+void OperatingModel::runScenario()
+{
+	/*
+	PSUEDOCODE:
+		- declare local variables.
+		- initialize stock-recruitment parameters
+		- condition operating model on historical assessment
+		|-- calculate reference points
+		| - calculate harvest control rule
+		| - implement harvest on reference population
+		| - update reference population
+		| - generate data for annual assessment model
+		| - run stock-assessment procedures
+		|-- repeat:
+		- write simulation variables to output file.
+		- write performance statistics to output file.
+	*/
+
+	/*
+	- Local variables
+	*/
+	int f,g,h,i,j,k;
+
+	/*
+	- Initialize stock-recruitment parameters for each stock.
+	- Survivorship and fecundity is based on average mortality & weight-at-age
+	- (so, beta, sbo, ro)
+	*/
+
+	// calcStockRecruitment
+	{
+		double  dt = 0.5;      // get this from cntrl(13) in the control file.
+		double  phib;
+		dvector ma(nSage,nNage);
+		dvector fa(nSage,nNage);
+		dvector lx(nSage,nNage);
+		dvector lw(nSage,nNage);
+
+		m_so.allocate(1,nStock);
+		m_beta.allocate(1,nStock);
+		m_dSbo.allocate(1,nStock);
+		for( g = 1; g <= nStock; g++ )
+		{
+			for( h = 1; h <= nSex; h++ )
+			{
+				
+				// Survivorship
+				lx.initialize();
+				lw.initialize();
+				lx(nSage) = 1.0;
+				lw(nSage) = 1.0;
+				for(j=nSage; j<=nNage; j++)
+				{
+					ma(j) = mean(trans(d3_Mt(g))(j));
+					fa(j) = mean(trans(dWt_mat(g))(j));
+					if(j>nSage)
+					{
+						lx(j) = lx(j-1) * mfexp(-ma(j-1));
+					}
+					lw(j) = lx(j) * mfexp(-ma(j)*dt);
+				}
+				lx(nNage) /= 1.0 - mfexp(-ma(nNage));
+				lw(nNage) = lx(nNage);
+
+				// Average spawning biomass per recruit.
+				phib += lw*fa;
+			}
+		}
+	cout<<ma<<endl;
+	}
+}
+
 
 /* calculate Selectivity coefficients */
 void OperatingModel::calcSelectivities()
@@ -165,19 +296,44 @@ void OperatingModel::calcSelectivities()
 	d5_logSel.allocate(1,nGear,1,nStock,1,nSex,nSyr,nPyr,nSage,nNage);
 
 	cout<<"In calcSelectivities"<<endl;
-	Selex cSelex();
-	logistic_selectivity clogisticSelex(dAge);
+	cout<<nSel_type<<endl;
+	Selex cAgeSelex(dAge);
+	Selex cLenSelex;
+
+	// logistic_selectivity clogisticSelex(dAge);
 	for( k = 1; k <= nGear; k++ )
 	{
 		for( g = 1; g <= nStock; g++ )
 		{
 			for( h = 1; h <= nSex; h++ )
 			{
-				for( i = nSyr; i <= nPyr; i++ )
+				switch(nSel_type(k))
 				{
-					d5_logSel(k,g,h,i) = clogisticSelex(d3_selPars(k,g));
-					
+					default:
+						d5_logSel(k,g,h) = 0.0;
+					break;
+
+					// case 1: logistic curve
+					case 1:
+						cAgeSelex.logistic(d3_selPars(k),nSel_block(k),d5_logSel(k,g,h));
+					break;
+
+					// case 2: selectivity coefficients
+					case 2:
+						cAgeSelex.selcoeff(d3_selPars(k),nSel_block(k),d5_logSel(k,g,h));
+					break;
+
+					// case 11: length-based logistic curve
+					case 11:
+					// Bug here in that there is now length-info in the projection years.
+						cout<<"sex "<<h<<endl;
+						cout<<dWt_avg(h)<<endl;
+						cout<<"SuCK EGGS"<<endl;
+						dmatrix len = pow( dWt_avg(h)/d_a(h), 1./d_b(h) );
+						cLenSelex.logistic(d3_selPars(k),nSel_block(k),len,d5_logSel(k,g,h));
+					break;
 				}
+				cout<<d5_logSel(k,g,h)<<endl;
 			}
 		}
 	}

@@ -15,26 +15,7 @@
  * or continuous changes over year.
 **/
 
-#ifndef LOGISTIC_SELECTIVITY_H
-#define LOGISTIC_SELECTIVITY_H
-class logistic_selectivity
-{
-private: 
-	dvector x;
-	dvector dy;
-	dvar_vector y;
 
-public:
-	logistic_selectivity(){};
-	logistic_selectivity(const dvector & _x);
-	~logistic_selectivity();
-
-	dvector     operator () (const dvector & log_selpar);
-	dvar_vector operator () (const dvar_vector & log_selpar);
-
-
-};
-#endif
 
 #ifndef SELEX_H
 #define SELEX_H
@@ -42,34 +23,33 @@ public:
 class Selex
 {
 private:
-	int         m_selType;
 	dvector     m_x;
 	
 
-	dmatrix     m_dlogsel;
-	dvar_matrix m_dvar_logsel;
-	dvar_matrix m_dvar_selPar;
-
-	// Selectivity classes
-	logistic_selectivity m_plogis;
-
+	
 public:
 	Selex();
-	Selex(const int& _selType, const dvector& _x, const dvar_matrix& _dvar_selPar);
+	Selex(const dvector& _x);
 	~Selex();
 
-	void fill_selex_array(dvar_matrix& log_sel);
+	void set_x(const dvector& _x){m_x = _x;}
+	dvector get_x(){return(m_x);}
 
 	/* logistic prototypes */
 	dvector     logistic( const dvector& x,const double& mu, const double& sd );
 	dvar_vector logistic( const dvector& x,const dvariable& mu, const dvariable& sd );
 	dvar_vector logistic( const dvar_vector& log_selpar );
+	void        logistic( const dmatrix& theta, const ivector& blk, dmatrix& log_sel);
+	void        logistic( const dmatrix& theta, const ivector& blk, const dmatrix& len, dmatrix& log_sel);
+
+	/* selectivity coefficients */
+	void selcoeff( const dmatrix& theta, const ivector& blk, dmatrix& log_sel);
 
 	/* eplogistic */
-	dvector     eplogis( const dvector& x, const double& x1, 
-                        const double& x2, const double& gamma );
-	dvar_vector eplogis( const dvector& x, const dvariable& x1, 
-                            const dvariable& x2, const dvariable& gamma );
+	// dvector     eplogis( const dvector& x, const double& x1, 
+                        // const double& x2, const double& gamma );
+	// dvar_vector eplogis( const dvector& x, const dvariable& x1, 
+                            // const dvariable& x2, const dvariable& gamma );
 
 
 	/* Linear approximation */
