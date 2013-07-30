@@ -171,6 +171,8 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	dWt_avg = *cS.dWt_avg;
 	dWt_mat = *cS.dWt_mat;
 
+	// cntrl vector
+	nCntrl = cS.cntrl;
 	cout<<"initializeConstants"<<endl;
 	cout<<pntr_ags<<endl;
 
@@ -202,7 +204,18 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_Mt.allocate(*cS.d3_Mt);
 	d3_Mt = *cS.d3_Mt;
 
+	d3_St.allocate(*cS.d3_St);
+	d3_St = *cS.d3_St;
+
+	d3_Nt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+
 	// cout<<dFt<<endl;
+	// recruitment compensation
+	m_kappa.allocate(1,nStock);
+	m_so.allocate(1,nStock);
+	m_beta.allocate(1,nStock);
+	m_dSbo.allocate(1,nStock);
+	m_kappa = elem_div(4.0 * dSteepness, 1. - dSteepness);
 }
 
 void OperatingModel::runScenario()
@@ -226,40 +239,120 @@ void OperatingModel::runScenario()
 	/*
 	- Local variables
 	*/
-	int f,g,h,i,j,k;
+	
 
 	/*
 	- Initialize stock-recruitment parameters for each stock.
 	- Survivorship and fecundity is based on average mortality & weight-at-age
 	- (so, beta, sbo, ro)
 	*/
+	calcStockRecruitment();
+	cout<<"Ok apres calcStockRecruitment"<<endl;
 
-	// calcStockRecruitment
+	/*
+	- Condition operating model on historical assessment
+	- Run model from syr-nyr based on input parameters.
+	*/
+	conditionReferenceModel();
+	cout<<"Ok apres conditionReferenceModel"<<endl;
+
+	/*
+	- Calculate reference points that are required for the harvest control rule.
+	*/
+	
+}
+
+/**
+* @brief Condition the reference model for numbers-at-age between syr and nyr
+* @author Steve Martell
+* 
+*/
+void OperatingModel::conditionReferenceModel()
+{
+
+	int f,g,h,i,j,k;
+	int ig,ih;
+	d3_Nt.initialize();
+	for( ig = 1; ig <= n_ags; ig++ )
 	{
-		double  dt = 0.5;      // get this from cntrl(13) in the control file.
-		double  phib;
-		dvector ma(nSage,nNage);
-		dvector fa(nSage,nNage);
-		dvector lx(nSage,nNage);
-		dvector lw(nSage,nNage);
+		f  = n_area(ig);
+		g  = n_group(ig);
+		ih = pntr_ag(f,g);
 
-		m_so.allocate(1,nStock);
-		m_beta.allocate(1,nStock);
-		m_dSbo.allocate(1,nStock);
-		for( g = 1; g <= nStock; g++ )
+		dvector lx(nSage,nNage);
+		dvector tr(nSage,nNage);
+		lx(nSage) = 1.0;
+		for( j = nSage; j <nNage; j++ )
+		{
+			lx(j+1) = lx(j) * exp(-d3_Mt(ig)(nSyr)(j));
+		}
+		lx(nNage) /= 1.0-exp(-d3_Mt(ig)(nSyr,nNage));
+		
+		// initialize unfished conditions.
+		if( nCntrl(5) )
+		{
+			tr = log(dRo(g)) + log(lx);
+		}
+		else if (! nCntrl(5) )
+		{
+			tr(nSage)         = log(dAvgRec(ih)) + dLog_rbar_devs(ih)(nSyr);
+			tr(nSage+1,nNage) = log(dInitRec(ih)) + dLog_init_rec_devs(ih);
+			tr                += log(lx); 
+		}
+
+		// fill numbers-at-age arrays
+		d3_Nt(ig)(nSyr) = 1./nSex * mfexp(tr);
+
+		for( i = nSyr; i <= nNyr; i++ )
+		{
+			if( i > nSyr )
+			{
+				d3_Nt(ig)(i,nSage) = 1./nSex*dAvgRec(ih)*mfexp( dLog_rbar_devs(ih)(i) );
+			}
+			d3_Nt(ig)(i+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(i)(nSage,nNage-1)
+			                                            ,d3_St(ig)(i)(nSage,nNage-1));
+			d3_Nt(ig)(i+1,nNage) += d3_Nt(ig)(i,nNage)*d3_St(ig)(i,nNage);
+		}
+		d3_Nt(ig)(nNyr+1,nSage) = 1./nSex * dAvgRec(ih);
+		
+
+	}
+}
+
+
+void OperatingModel::calcStockRecruitment()
+{
+	int f,g,h,i,j,k;
+	int ig;
+	double  dt = nCntrl(13);      // get this from cntrl(13) in the control file.
+	double  phib;
+	dvector ma(nSage,nNage);
+	dvector fa(nSage,nNage);
+	dvector lx(nSage,nNage);
+	dvector lw(nSage,nNage);
+
+	m_so.allocate(1,nStock);
+	m_beta.allocate(1,nStock);
+	m_dSbo.allocate(1,nStock);
+
+
+	for( g = 1; g <= nStock; g++ )
+	{
+		// Survivorship
+		lx.initialize();
+		lw.initialize();
+		lx(nSage) = 1.0;
+		lw(nSage) = 1.0;
+		phib = 0;
+		for( f = 1; f <= nArea; f++ )
 		{
 			for( h = 1; h <= nSex; h++ )
 			{
-				
-				// Survivorship
-				lx.initialize();
-				lw.initialize();
-				lx(nSage) = 1.0;
-				lw(nSage) = 1.0;
+				ig = pntr_ags(f,g,h);	
 				for(j=nSage; j<=nNage; j++)
 				{
-					ma(j) = mean(trans(d3_Mt(g))(j));
-					fa(j) = mean(trans(dWt_mat(g))(j));
+					ma(j) = mean(trans(d3_Mt(ig))(j));
+					fa(j) = mean(trans(dWt_mat(ig))(j));
 					if(j>nSage)
 					{
 						lx(j) = lx(j-1) * mfexp(-ma(j-1));
@@ -267,16 +360,19 @@ void OperatingModel::runScenario()
 					lw(j) = lx(j) * mfexp(-ma(j)*dt);
 				}
 				lx(nNage) /= 1.0 - mfexp(-ma(nNage));
-				lw(nNage) = lx(nNage);
+				lw(nNage) /= 1.0 - mfexp(-ma(nNage));
 
 				// Average spawning biomass per recruit.
-				phib += lw*fa;
+				phib += 1./(nArea * nSex) * lw*fa;
 			}
 		}
-	cout<<ma<<endl;
+		// Stock-recruitment parameters
+		m_so(g) = m_kappa(g)/phib;
+		m_dSbo(g) = dRo(g) * phib;
+		m_beta(g) = (m_kappa(g)-1.0) / m_dSbo(g);
 	}
+ cout<<"OpMod\n"<<m_beta<<endl; 
 }
-
 
 /* calculate Selectivity coefficients */
 void OperatingModel::calcSelectivities()

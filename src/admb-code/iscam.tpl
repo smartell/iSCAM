@@ -2319,6 +2319,7 @@ FUNCTION void calcStockRecruitment()
 		// | Step 8. // residuals in stock-recruitment curve
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
 	}
+
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
   }
@@ -4426,18 +4427,22 @@ FUNCTION void runMSE()
 	s_mseData.dWt_avg     = &wt_avg;
 	s_mseData.dWt_mat     = &wt_mat;
 
+	s_mseData.cntrl        = cntrl;
+
     test ctest(s_mseData);
 
     /* SCENARIO PARAMETERS */
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
-	d3_array d3_M(1,ngroup,syr,nyr,sage,nage);
+	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
+	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
 		d3_selpar(k) = value(sel_par(k));
 	}
-	for( g = 1; g <= ngroup; g++ )
+	for( g = 1; g <= n_ags; g++ )
 	{
 		d3_M(g) = value(M(g));
+		d3_S(g) = value(S(g));
 	}
 
 	s_mseVars.d_log_ro        = value(theta(1));
@@ -4455,6 +4460,7 @@ FUNCTION void runMSE()
 	s_mseVars.dSelPars        = &d3_selpar;
 	s_mseVars.dFt             = value(ft);
 	s_mseVars.d3_Mt			  = &d3_M;
+	s_mseVars.d3_St           = &d3_S;
 
     OperatingModel om(s_mseData,s_mseVars);
 

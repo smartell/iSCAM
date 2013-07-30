@@ -54,6 +54,8 @@ struct s_iSCAMdata
   d3_array* dWt_avg;
   d3_array* dWt_mat;
 
+  // control vector;
+  dvector cntrl;
 
 };
 #endif
@@ -88,6 +90,7 @@ struct s_iSCAMvariables
 
   dmatrix   dFt;
   d3_array* d3_Mt;
+  d3_array* d3_St;
 
 
 };
@@ -334,7 +337,7 @@ private:
   dmatrix dLog_init_rec_devs;
 
   dvector dKappa;
-
+  dvector nCntrl;
   dmatrix dFt;
   d3_array d3_Mt;
 
@@ -345,9 +348,13 @@ private:
   d5_array d5_logSel;
 
   // derived variables for SRR 
+  dvector m_kappa;
   dvector m_so;
   dvector m_beta;
   dvector m_dSbo;
+
+  d3_array d3_Nt;
+  d3_array d3_St;
 
   // Class aggregations
   // Scenario m_cScenario;
@@ -363,5 +370,10 @@ public:
   void initializeVariables(const s_iSCAMvariables& cS);
   void calcSelectivities();
   void runScenario();
+
+protected:
+  void calcStockRecruitment();
+  void conditionReferenceModel();
+
 };
 #endif
