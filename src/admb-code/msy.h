@@ -114,8 +114,8 @@ public:
 	void        calc_phie(double& _m, dvector& _fa);
 	void        calc_phie(const dmatrix& _m, const dmatrix& _fa);
 	void          calc_bo(double& _m, dvector& _va);
-	void calc_equilibrium(dvector& fe);
-	void calcEquilibrium(const dvector& fe);
+	void calc_equilibrium(const dvector& fe);
+	void  calcEquilibrium(const dvector& fe);
 	void         get_fmsy(dvector& fe);
 	void         get_fmsy(dvector& fe, dvector& ak);
 	

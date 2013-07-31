@@ -156,7 +156,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 }
 
 // calculate survivorship under fished conditions
-void Msy::calc_equilibrium(dvector& fe)
+void Msy::calc_equilibrium(const dvector& fe)
 {
 	/*
 		This is the main engine behind the Msy class.
@@ -403,6 +403,12 @@ void Msy::calcEquilibrium(const dvector& fe)
 		  information in the age-schedules. The basic yield equation for each
 		  fleet k now looks like this:
 		  Ye_k = Re * sum_h Fe_k phiq_{k,h}
+
+		- Add age-specific natural mortality to survivorship calculations.
+		
+		- The major modification here is to wrap the original loops that relied on
+		  selectivity, natural mortality, weight-at-age inside a loop over sex. 
+
 
 
 	*/
