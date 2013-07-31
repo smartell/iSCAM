@@ -37,10 +37,14 @@ private:
 	double  m_ro;
 	double  m_h;
 	double  m_M;
+	dmatrix m_dM;	// Age/sex specific natural mortality rates
 	double  m_rho;  // Fraction of total mortality that occurs before spawning.
 	dvector m_wa;
+	dmatrix m_dWa;
 	dvector m_fa;
+	dmatrix m_dFa;	// sex specific fecundity
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
+	d3_array m_d3_V; // Selectivity for each gear, sex, age.
 	
 	double  m_phie;
 	dvector m_fmsy;
@@ -73,7 +77,9 @@ public:
 		m_M  = 0.3;
 	}
 	Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmatrix V);
-	
+	Msy(double ro, double h, dmatrix m, double rho, dmatrix wa, dmatrix fa,const d3_array *V);
+
+
 	~Msy(){}	// destructor
 	
 	// Getters
@@ -106,8 +112,10 @@ public:
 	// Member functions
 	void        calc_phie();
 	void        calc_phie(double& _m, dvector& _fa);
+	void        calc_phie(const dmatrix& _m, const dmatrix& _fa);
 	void          calc_bo(double& _m, dvector& _va);
 	void calc_equilibrium(dvector& fe);
+	void calcEquilibrium(const dvector& fe);
 	void         get_fmsy(dvector& fe);
 	void         get_fmsy(dvector& fe, dvector& ak);
 	

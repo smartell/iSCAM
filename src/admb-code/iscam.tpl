@@ -2319,7 +2319,7 @@ FUNCTION void calcStockRecruitment()
 		// | Step 8. // residuals in stock-recruitment curve
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
 	}
-
+	
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
 	
   }
@@ -3008,53 +3008,56 @@ FUNCTION void calcReferencePoints()
   	*/
 	int kk,ig;
 	
-	// // | (1) : Matrix of selectivities for directed fisheries.
-	// // |     : log_sel(gear)(n_ags)(year)(age)
-	// // |     : ensure allocation sums to 1.
-	// dvector d_ak(1,nfleet);
-	// d3_array  d_V(1,nfleet,1,n_ags,sage,nage);
-	// for(k=1;k<=nfleet;k++)
-	// {
-	// 	kk      = ifleet(k);
-	// 	d_ak(k) = allocation(kk);
-	// 	for(ig=1;ig<=n_ags;ig++)
-	// 	{
-	// 		d_V(k)(ig) = value( exp(log_sel(kk)(ig)(nyr)) );
+	// | (1) : Matrix of selectivities for directed fisheries.
+	// |     : log_sel(gear)(n_ags)(year)(age)
+	// |     : ensure allocation sums to 1.
+	dvector d_ak(1,nfleet);
+	d3_array  d_V(1,nfleet,1,n_ags,sage,nage);
+	for(k=1;k<=nfleet;k++)
+	{
+		kk      = ifleet(k);
+		d_ak(k) = allocation(kk);
+		for(ig=1;ig<=n_ags;ig++)
+		{
+			d_V(k)(ig) = value( exp(log_sel(kk)(ig)(nyr)) );
 
-	// 	}
-	// }
-	// d_ak /= sum(d_ak);
+		}
+	}
+	COUT(n_ags);
+	d_ak /= sum(d_ak);
 
-	// // | (2) : Average weight and mature spawnign biomass for reference years
-	// // |     : wt_bar(1,n_ags,sage,nage)
-	// dmatrix fa_bar(1,n_ags,sage,nage);
-	// dmatrix  M_bar(1,n_ags,sage,nage);
-	// for(ig=1;ig<=n_ags;ig++)
-	// {
-	// 	fa_bar(ig) = elem_prod(wt_bar(ig),ma(ig));
-	// 	M_bar(ig)  = colsum(value(M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
-	// 	M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
-	// }
+	// | (2) : Average weight and mature spawning biomass for reference years
+	// |     : wt_bar(1,n_ags,sage,nage)
+	dmatrix fa_bar(1,n_ags,sage,nage);
+	dmatrix  M_bar(1,n_ags,sage,nage);
+	for(ig=1;ig<=n_ags;ig++)
+	{
+		fa_bar(ig) = elem_prod(wt_bar(ig),ma(ig));
+		M_bar(ig)  = colsum(value(M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
+		M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
+	}
 	
-	// // | (3) : Initial guess for fmsy for each fleet
-	// dvector ftry(1,nfleet);
-	// ftry  = 0.6 *value(m_bar);
-	// fmsy  = ftry;
+	COUT(mean(M_bar));
+	COUT(nfleet);
+	// | (3) : Initial guess for fmsy for each fleet
+	dvector ftry(1,nfleet);
+	ftry  = 0.6 * mean(M_bar);
+	fmsy  = ftry;
 
 
-	// // | (4) : Instantiate msy class
-	// for(g=1;g<=ngroup;g++)
-	// {
-	// 	double d_ro = value(ro(g));
-	// 	double  d_h = value(steepness(g));
-	// 	double d_rho = cntrl(13);
+	// | (4) : Instantiate msy class
+	for(g=1;g<=ngroup;g++)
+	{
+		double d_ro = value(ro(g));
+		double  d_h = value(steepness(g));
+		double d_rho = cntrl(13);
 
-	// 	dvector d_mbar = M_bar(g);
-	// 	dvector   d_wa = wt_bar(g);
-	// 	dvector   d_fa = fa_bar(g);
+		dvector d_mbar = M_bar(g);
+		dvector   d_wa = wt_bar(g);
+		dvector   d_fa = fa_bar(g);
 
-	// 	Msy cMSY(d_ro,d_h,d_mbar,d_rho,d_wa,d_fa,d_V);
-	// }
+		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
+	}
 
 // 	/* 
 // 	(3) Come up with a reasonable estimate of Fmsy 
@@ -3961,6 +3964,8 @@ REPORT_SECTION
 	if(last_phase())
 	{
 		calcReferencePoints();
+		cout<<"Finished calcReferencePoints"<<endl;
+		// exit(1);
 // 		REPORT(bo);
 // 		REPORT(fmsy);
 // 		REPORT(msy);
