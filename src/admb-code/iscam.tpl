@@ -401,6 +401,7 @@ DATA_SECTION
 		avg_fec /= pf_cntrl(4)-pf_cntrl(3)+1;
 		
 		fa_bar   = colsum(fec.sub(syr,nyr))/(nyr-syr+1);
+		fec(nyr+1) = fa_bar;
 		cout<<avg_wt<<endl;
 		cout<<"avg_fec\n"<<avg_fec<<endl;
 		cout<<"fa_bar\n"<<fa_bar<<endl;
@@ -1767,7 +1768,9 @@ FUNCTION calcStockRecruitment
 		}
 			
 	}
-	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
+	// sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
+	// Changes as per Nathan Taylor's email.
+	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fa_bar;	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
 	sbo = ro*phib;
