@@ -414,16 +414,25 @@ void Msy::calcEquilibrium(const dvector& fe)
 	*/
 	
 	// Indexes for dimensions
-	int i,j,k;
-	int sage,nage,ngear;
-	sage  = m_wa.indexmin();
-	nage  = m_wa.indexmax();
-	ngear = m_V.rowmax();
+	int h,i,j,k;
+	int sage,nage,ngear,ngrp;
+	sage  = m_dWa.colmin();
+	nage  = m_dWa.colmax();
+	ngear = m_d3_V(1).rowmax();
+	ngrp  = m_dWa.rowmax();
 	
 	
 	// Survivorship for fished conditions.
 	dvector   lz(sage,nage);
 	dvector   lw(sage,nage);
+	dvector   za(sage,nage);
+	dvector  pza(sage,nage);
+	dvector   sa(sage,nage);
+	dvector  psa(sage,nage);
+	dvector   oa(sage,nage);
+	dvector  poa(sage,nage);
+
+	dmatrix   qa(1,ngear,sage,nage);
 	dmatrix  dlz(1,ngear,sage,nage);
 	dmatrix d2lz(1,ngear,sage,nage);
 	dmatrix  dlw(1,ngear,sage,nage);
@@ -433,69 +442,74 @@ void Msy::calcEquilibrium(const dvector& fe)
 	dlw.initialize();
 	d2lw.initialize();
 
-	dvector za  = m_M + fe * m_V;
-	dvector pza = m_rho*za;
-	dvector sa  = exp(-za);
-	dvector psa = exp(-pza);
-	dvector oa  = 1.-sa;
-	dvector poa = 1.-elem_prod(sa,psa);
-	dmatrix qa(1,ngear,sage,nage);
-	
-	for(k=1;k<=ngear;k++)
+	for( h = 1; h <= ngrp; h++ )
 	{
-		qa(k)        = elem_div(elem_prod(elem_prod(m_V(k),m_wa),oa),za);
-		dlz(k,sage)  = 0;
-		d2lz(k,sage) = 0;
-		dlw(k,sage)  = -psa(sage)*m_rho*m_V(k)(sage);
-		d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_V(k)(sage));
-	}
-	
-	lz(sage) = 1.0;
-	lw(sage) = 1.0 * psa(sage);
-	for(j=sage+1; j<=nage; j++)
-	{
-		lz(j)   = lz(j-1) * sa(j-1);
-		lw(j)   = lz(j)   * psa(j);
-		if( j==nage )
+		// dvector za  = m_dMt(h) + fe * m_d3_V;
+		za = m_dM(h);
+		for( k = 1; k <= ngear; k++ )
 		{
-			lz(j) = lz(j)/oa(j);
-			lw(j) = lz(j-1)*sa(j-1)*psa(j)/oa(j);
+			za += fe(k) * m_d3_V(k)(h);
+		}
+		pza = m_rho*za;
+		sa  = exp(-za);
+		psa = exp(-pza);
+		oa  = 1.-sa;
+		poa = 1.-elem_prod(sa,psa);
+		for(k=1;k<=ngear;k++)
+		{
+			qa(k)        = elem_div(elem_prod(elem_prod(m_d3_V(k)(h),m_dWa(h)),oa),za);
+			dlz(k,sage)  = 0;
+			d2lz(k,sage) = 0;
+			dlw(k,sage)  = -psa(sage)*m_rho*m_d3_V(k)(h)(sage);
+			d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_d3_V(k)(h)(sage));
 		}
 		
-		for(k=1; k<=ngear; k++)
+		lz(sage) = 1.0;
+		lw(sage) = 1.0 * psa(sage);
+		for(j=sage+1; j<=nage; j++)
 		{
-			// derivatives for survivorship
-			dlz(k)(j)  = sa(j-1) * ( dlz(k)(j-1) - lz(j-1)*m_V(k)(j-1) );
-			d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*m_V(k)(j-1)*m_V(k)(j-1) );
-			
-			// derivatives for spawning survivorship
-			dlw(k)(j)  = -lz(j)*m_rho*m_V(k)(j)*psa(j); 
-			d2lw(k)(j) =  lz(j)*square(m_rho)*square(m_V(k)(j))*psa(j);
-			
-			if( j==nage ) // + group derivatives
+			lz(j)   = lz(j-1) * sa(j-1);
+			lw(j)   = lz(j)   * psa(j);
+			if( j==nage )
 			{
-				dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*m_V(k)(j)*sa(j)/square(oa(j));
-				
-				dlw(k)(j)  = -lz(j-1)*sa(j-1)*m_rho*m_V(k)(j)/oa(j)
-							- lz(j-1)*psa(j)*m_V(k)(j)*sa(j)/square(oa(j));
-				
-				double V1  = m_V(k)(j-1);
-				double V2  = m_V(k)(j);
-				double oa2 = oa(j)*oa(j);
-				
-				d2lz(k)(j) = d2lz(k)(j)/oa(j) 
-							+ 2*lz(j-1)*V1*sa(j-1)*V2*sa(j)/oa2
-							+ 2*lz(j-1)*sa(j-1)*V2*V2*sa(j)*sa(j)/(oa(j)*oa2)
-							+ lz(j-1)*sa(j-1)*V2*V2*sa(j)/oa2;
-				
-				d2lw(k)(j) = lz(j-1)*square(m_rho)*square(V2)*psa(j)/oa(j)
-							+ 2*lz(j-1)*m_rho*square(V2)*psa(j)*sa(j)/oa2
-							+ 2*lz(j-1)*psa(j)*square(V2)*square(sa(j))/(oa(j)*oa2)
-							+ lz(j-1)*psa(j)*square(V2)*sa(j)/oa2;
+				lz(j) = lz(j)/oa(j);
+				lw(j) = lz(j-1)*sa(j-1)*psa(j)/oa(j);
 			}
-		}// gear
-		
-	}// age
+			
+			for(k=1; k<=ngear; k++)
+			{
+				// derivatives for survivorship
+				dlz(k)(j)  = sa(j-1) * ( dlz(k)(j-1) - lz(j-1)*m_d3_V(k)(h)(j-1) );
+				d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*m_d3_V(k)(h)(j-1)*m_d3_V(k)(h)(j-1) );
+				
+				// derivatives for spawning survivorship
+				dlw(k)(j)  = -lz(j)*m_rho*m_d3_V(k)(h)(j)*psa(j); 
+				d2lw(k)(j) =  lz(j)*square(m_rho)*square(m_d3_V(k)(h)(j))*psa(j);
+				
+				if( j==nage ) // + group derivatives
+				{
+					dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*m_d3_V(k)(h)(j)*sa(j)/square(oa(j));
+					
+					dlw(k)(j)  = -lz(j-1)*sa(j-1)*m_rho*m_d3_V(k)(h)(j)/oa(j)
+								- lz(j-1)*psa(j)*m_d3_V(k)(h)(j)*sa(j)/square(oa(j));
+					
+					double V1  = m_d3_V(k)(h)(j-1);
+					double V2  = m_d3_V(k)(h)(j);
+					double oa2 = oa(j)*oa(j);
+					
+					d2lz(k)(j) = d2lz(k)(j)/oa(j) 
+								+ 2*lz(j-1)*V1*sa(j-1)*V2*sa(j)/oa2
+								+ 2*lz(j-1)*sa(j-1)*V2*V2*sa(j)*sa(j)/(oa(j)*oa2)
+								+ lz(j-1)*sa(j-1)*V2*V2*sa(j)/oa2;
+					
+					d2lw(k)(j) = lz(j-1)*square(m_rho)*square(V2)*psa(j)/oa(j)
+								+ 2*lz(j-1)*m_rho*square(V2)*psa(j)*sa(j)/oa2
+								+ 2*lz(j-1)*psa(j)*square(V2)*square(sa(j))/(oa(j)*oa2)
+								+ lz(j-1)*psa(j)*square(V2)*sa(j)/oa2;
+				}
+			}// gear		
+		}// age
+	}// ngrp
 	
 	// Incidence functions and associated derivatives
 	double      ro = m_ro;
