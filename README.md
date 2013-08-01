@@ -14,6 +14,7 @@ Steve Martell and contains contributions or stolen code and ideas from:
 * Carl Walters
 * Rob Kronlund
 * Sean Cox
+* Nathan Taylor
 _____________________________________________________________
 _____________________________________________________________
          Integrated Statistical Catch Age Model (iSCAM)
