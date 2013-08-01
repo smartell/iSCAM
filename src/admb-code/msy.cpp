@@ -13,6 +13,21 @@ Msy::Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmat
 	m_V     = V;
 	
 	m_FAIL  = false;
+	m_sage  = wa.indexmin();
+	m_nage  = wa.indexmax();
+	m_ngear = V.rowmax();
+
+	m_dM.allocate(1,1,m_sage,m_nage);
+	m_dM(1)   = m_M;
+	
+	m_dWa.allocate(1,1,m_sage,m_nage);
+	m_dWa(1)  = wa;
+	
+	m_dFa.allocate(1,1,m_sage,m_nage);
+	m_dFa(1)  = fa;
+	
+	m_d3_V.allocate(1,1,1,m_ngear,m_sage,m_nage);
+	m_d3_V(1) = V;
 	
 	calc_phie();
 }
@@ -56,13 +71,16 @@ void Msy::get_fmsy(dvector& fe)
 	x2 = 3.0e02;
 	m_p      = 1.0;
 	// Spawning biomass per recruit for unfished conditions
-	calc_phie(m_M,m_fa);
-	calc_equilibrium(fe);
+	// calc_phie(m_M,m_fa);
+	// calc_equilibrium(fe);
+	calc_phie(m_dM,m_dFa);
+	calcEquilibrium(fe);
 	do
 	{
 		iter++;
 		fold = m_f;
-		calc_equilibrium(fe);
+		// calc_equilibrium(fe);
+		calcEquilibrium(fe);
 		fe  += m_p;
 		
 		// check boundary conditions
@@ -70,10 +88,11 @@ void Msy::get_fmsy(dvector& fe)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 ) // backtrack 98% of the newton step.
 			{                                 // if outside the boundary conditions.
-				fe[i] -= 0.999*m_p[i];         
+				fe[i] -= 0.999*m_p[i];       
+				cout<<"OOOPS"<<endl;  
 			}
 		}
-		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
@@ -123,20 +142,20 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	x1 = 1.0e-5;
 	x2 = 3.0e02;
 	// Spawning biomass per recruit for unfished conditions
-	calc_phie(m_M,m_fa);
+	calc_phie(m_dM,m_dFa);
 	
 	do
 	{
 		// Run the model with constant fk = fbar to get
 		// lambda multipliers.
 		fk     = fbar;
-		calc_equilibrium(fk);
+		calcEquilibrium(fk);
 		lambda = elem_div(ak,m_ye/sum(m_ye));
 		
 		// Run the model with fk = lambda*fbar to get
 		// derivatives of the total catch equation to update fbar;
 		fk     = fbar*lambda;
-		calc_equilibrium(fk);
+		calcEquilibrium(fk);
 		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
 		
 		fbar   = fbar - m_dYe/m_d2Ye;
@@ -153,12 +172,21 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	}
 	while ( sqrt(square(m_dYe)) >TOL && iter < MAXITER );
 	fe = fk;
+
+	m_fmsy    = fe;
+	m_msy     = m_ye;
+	m_bmsy    = m_be; 
+	m_rmsy    = m_re;
+	m_spr_msy = m_spr;
+	
 }
 
 // calculate survivorship under fished conditions
 void Msy::calc_equilibrium(const dvector& fe)
 {
+	/* TO BE Deprecated in iSCAM */	
 	/*
+
 		This is the main engine behind the Msy class.
 		Using the private member variables, calculate the equilibrium yield
 		for a given fishing mortality rate vector (fe). Also, compute the
@@ -485,7 +513,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_d3_V(h)(k)(sage));
 			qa_m(h)(k)   = qa(k);
 		}
-		
+		cout<<"ngrp< "<<ngrp<<endl;
 		lz(sage) = 1.0/ngrp;
 		lw(sage) = 1.0/ngrp * psa(sage);
 		for(j=sage+1; j<=nage; j++)
@@ -505,14 +533,14 @@ void Msy::calcEquilibrium(const dvector& fe)
 				d2lz(k)(j) = sa(j-1) * ( d2lz(k)(j-1)+ lz(j-1)*m_d3_V(h)(k)(j-1)*m_d3_V(h)(k)(j-1) );
 				
 				// derivatives for spawning survivorship
-				dlw(k)(j)  += -lz(j)*m_rho*m_d3_V(h)(k)(j)*psa(j); 
-				d2lw(k)(j) +=  lz(j)*square(m_rho)*square(m_d3_V(h)(k)(j))*psa(j);
+				dlw(k)(j)  = -lz(j)*m_rho*m_d3_V(h)(k)(j)*psa(j); 
+				d2lw(k)(j) =  lz(j)*square(m_rho)*square(m_d3_V(h)(k)(j))*psa(j);
 				
 				if( j==nage ) // + group derivatives
 				{
 					dlz(k)(j)  = dlz(k)(j)/oa(j) - lz(j-1)*sa(j-1)*m_d3_V(h)(k)(j)*sa(j)/square(oa(j));
 					
-					dlw(k)(j)  += -lz(j-1)*sa(j-1)*m_rho*m_d3_V(h)(k)(j)/oa(j)
+					dlw(k)(j)  = -lz(j-1)*sa(j-1)*m_rho*m_d3_V(h)(k)(j)/oa(j)
 								- lz(j-1)*psa(j)*m_d3_V(h)(k)(j)*sa(j)/square(oa(j));
 					
 					double V1  = m_d3_V(h)(k)(j-1);
@@ -524,7 +552,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 								+ 2*lz(j-1)*sa(j-1)*V2*V2*sa(j)*sa(j)/(oa(j)*oa2)
 								+ lz(j-1)*sa(j-1)*V2*V2*sa(j)/oa2;
 					
-					d2lw(k)(j) += lz(j-1)*square(m_rho)*square(V2)*psa(j)/oa(j)
+					d2lw(k)(j) = lz(j-1)*square(m_rho)*square(V2)*psa(j)/oa(j)
 								+ 2*lz(j-1)*m_rho*square(V2)*psa(j)*sa(j)/oa2
 								+ 2*lz(j-1)*psa(j)*square(V2)*square(sa(j))/(oa(j)*oa2)
 								+ lz(j-1)*psa(j)*square(V2)*sa(j)/oa2;
@@ -635,6 +663,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 	m_re   = re;
 	m_be   = re*phif;
 	m_bi   = re*phisf;
+	m_phif = phif;
 	m_spr  = phif/m_phie;
 	m_dYe  = sum(dye);
 	m_d2Ye = sum(diagonal(d2ye));
@@ -737,5 +766,26 @@ void Msy::calc_phie(const dmatrix& _m, const dmatrix& _fa)
 void Msy::calc_bo(double& _m, dvector& _fa)
 {
 	calc_phie(_m,_fa);
+}
+
+void Msy::calc_bo(const dmatrix& _m, const dmatrix& _fa)
+{
+	calc_phie(_m,_fa);
+}
+
+void Msy::print()
+{
+	cout<<"|------------------------------------------|" <<endl;
+	cout<<"| Bo   = "<<setw(10)<<m_bo                    <<endl;
+	cout<<"| Rmsy = "<<setw(10)<<m_rmsy                  <<endl;
+	cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
+	cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;
+	cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
+	cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
+	cout<<"| bpr  = "<<setw(10)<<m_phif                  <<endl;
+	cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
+	cout<<"| dYe  = "<<setw(10)<<m_f                     <<endl;
+	cout<<"| dYes = "<<setw(10)<<sum(m_f)                <<endl;
+	cout<<"|------------------------------------------|" <<endl;
 }
 

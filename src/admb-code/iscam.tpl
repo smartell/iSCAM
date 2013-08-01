@@ -3065,6 +3065,16 @@ FUNCTION void calcReferencePoints()
 			cMSY.calcEquilibrium(di);
 			
 		}
+
+		bo = cMSY.getBo();
+		cMSY.get_fmsy(fmsy);
+		COUT(bo);
+		cMSY.print();
+		dvector fall = ftry;
+		cMSY.get_fmsy(fall,d_ak);
+		cMSY.print();
+		
+		
 		cout<<"Whaa Hoo, your all clear kid!"<<endl;
 		exit(1);
 	}
@@ -3077,7 +3087,6 @@ FUNCTION void calcReferencePoints()
 // 	dvector ftry(1,nfleet);
 // 	ftry = 0.6*value(m_bar);    // initial guess for Fmsy
 // 	fmsy = ftry;
-// 	fall = ftry;
 	
 	
 // 	/* (4) Instantiate an Msy class object and get_fmsy */
@@ -3090,7 +3099,6 @@ FUNCTION void calcReferencePoints()
 // 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
 	
 // 	bo   = cMSY.getBo();
-// 	cMSY.get_fmsy(fall,d_ak);
 // 	cMSY.get_fmsy(fmsy);
 // 	if(cMSY.getFail())
 // 	cout<<"FAILED TO CONVERGE"<<endl;
@@ -3102,14 +3110,6 @@ FUNCTION void calcReferencePoints()
 	
 	
 	
-// 	cout<<"|------------------------------------------|" <<endl;
-// 	cout<<"| Bo   = "<<setw(10)<<bo                      <<endl;
-// 	cout<<"| Bmsy = "<<setw(10)<<bmsy                    <<endl;
-// 	cout<<"| Fmsy ="<<setw(10)<<fmsy                     <<endl;
-// 	cout<<"| Fall ="<<setw(10)<<fall                     <<endl;
-// 	cout<<"| MSY  ="<<setw(10)<<msy                      <<endl;
-// 	cout<<"| dYe  = "<<setw(10)<<sum(cMSY.getdYe())      <<endl;
-// 	cout<<"|------------------------------------------|" <<endl;
 	
 	
 	

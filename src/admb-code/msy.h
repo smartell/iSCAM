@@ -4,7 +4,7 @@
 #ifndef _MSY_H_
 #define _MSY_H_
 #define MAXITER 300
-#define TOL 1.e-09
+#define TOL 1.e-04
 
 #include <admodel.h>
 #include <fvar.hpp>
@@ -31,7 +31,9 @@
 class Msy
 {
 private:
-	
+	int     m_sage;
+	int     m_nage;
+	int     m_ngear;
 	bool    m_FAIL;
 	
 	double  m_ro;
@@ -47,6 +49,7 @@ private:
 	d3_array m_d3_V; // Selectivity for each gear, sex, age.
 	
 	double  m_phie;
+	double  m_phif;
 	dvector m_fmsy;
 	dvector m_msy;
 	double  m_bmsy;
@@ -114,10 +117,12 @@ public:
 	void        calc_phie(double& _m, dvector& _fa);
 	void        calc_phie(const dmatrix& _m, const dmatrix& _fa);
 	void          calc_bo(double& _m, dvector& _va);
+	void          calc_bo(const dmatrix& _m, const dmatrix& _fa);
 	void calc_equilibrium(const dvector& fe);
 	void  calcEquilibrium(const dvector& fe);
 	void         get_fmsy(dvector& fe);
 	void         get_fmsy(dvector& fe, dvector& ak);
+	void            print();
 	
 };
 
