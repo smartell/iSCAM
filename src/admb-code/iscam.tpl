@@ -3012,14 +3012,14 @@ FUNCTION void calcReferencePoints()
 	// |     : log_sel(gear)(n_ags)(year)(age)
 	// |     : ensure allocation sums to 1.
 	dvector d_ak(1,nfleet);
-	d3_array  d_V(1,nfleet,1,n_ags,sage,nage);
+	d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
 	for(k=1;k<=nfleet;k++)
 	{
 		kk      = ifleet(k);
 		d_ak(k) = allocation(kk);
 		for(ig=1;ig<=n_ags;ig++)
 		{
-			d_V(k)(ig) = value( exp(log_sel(kk)(ig)(nyr)) );
+			d_V(ig)(k) = value( exp(log_sel(kk)(ig)(nyr)) );
 
 		}
 	}
@@ -3057,6 +3057,16 @@ FUNCTION void calcReferencePoints()
 		dvector   d_fa = fa_bar(g);
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
+
+		cout<<"This is red leader, I'm going in!"<<endl;
+		for( i = 1; i <= 100; i++ )
+		{
+			dvector di = (double(i)-1.)/9. * fmsy;
+			cMSY.calcEquilibrium(di);
+			
+		}
+		cout<<"Whaa Hoo, your all clear kid!"<<endl;
+		exit(1);
 	}
 
 // 	/* 
