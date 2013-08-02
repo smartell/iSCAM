@@ -610,7 +610,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			dvector t7  = elem_div(m_d3_V(h)(k),za_m(h));
 			dvector t9  = elem_prod(t5,sa_m(h));
 			dvector t11 = elem_prod(t5,t0);
-			dvector t13 = elem_prod(lz,t5);
+			dvector t13 = elem_prod(lz_m(h),t5);
 			dvector t14 = elem_prod(m_d3_V(h)(k),sa_m(h));
 			dvector t15 = elem_prod(t7,sa_m(h));
 			dvector t17 = elem_prod(m_d3_V(h)(k),t0);
