@@ -3062,12 +3062,12 @@ FUNCTION void calcReferencePoints()
 		Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
 		Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
 		cout<<"This is red leader, I'm going in!"<<endl;
-		// for( i = 1; i <= 100; i++ )
-		// {
-		// 	dvector di = (double(i)-1.)/9. * fmsy;
-		// 	cMSY.calcEquilibrium(di);
+		for( i = 1; i <= 100; i++ )
+		{
+			dvector di = (double(i)-1.)/75. * fmsy;
+			cMSY.calcEquilibrium(di);
 			
-		// }
+		}
 
 		bo = cMSY.getBo();
 		cMSY.get_fmsy(fmsy);
@@ -3077,14 +3077,14 @@ FUNCTION void calcReferencePoints()
 		cout<<"Stay on Target"<<endl;
 		// fmsy = 0.05/nfleet;
 		cMSY.calcEquilibrium(fmsy);
-		dvector y1 = cMSY.getYe();
+		dvector y1 = cMSY.getphiq();
 		// double y1 = cMSY.getRe();
 		// dmatrix y1 = cMSY.getLz();
 		// COUT(y1);
 		
-		double dh = 1.e-6;
+		double dh = 1.e-9;
 		cMSY2.calcEquilibrium(fmsy+dh);
-		dvector dy2 = cMSY2.getYe();
+		dvector dy2 = cMSY2.getphiq();
 		// double dy2 = cMSY2.getRe();
 		// dmatrix dy2 = cMSY2.getLz();
 		
@@ -4566,7 +4566,7 @@ GLOBALS_SECTION
 	#define REPORT(object) report << #object "\n" << object << endl;
     
 	#undef COUT
-	#define COUT(object) cout<<setprecision(8) << #object "\n" << object <<endl;
+	#define COUT(object) cout << #object "\n" << object <<endl;
 
 	#undef TINY
 	#define TINY 1.e-08

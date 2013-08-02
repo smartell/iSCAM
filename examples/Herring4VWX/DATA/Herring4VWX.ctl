@@ -85,7 +85,7 @@
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
-0.50        # 13 -fraction of total mortality that takes place prior to spawning
+0.00        # 13 -fraction of total mortality that takes place prior to spawning
 1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 0           # 15 -switch for IFD selex in simulation
 ##

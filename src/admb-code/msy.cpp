@@ -497,7 +497,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 		za = m_dM(h);
 		for( k = 1; k <= ngear; k++ )
 		{
-			za += fe(k) * m_d3_V(h)(k);
+			za  = za + fe(k) * m_d3_V(h)(k);
 		}
 		za_m(h) = za;
 		pza     = m_rho*za;
@@ -520,7 +520,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			dlw_m(h,k,sage) = 0;
 			qa_m(h)(k)   = qa(k);
 		}
-		// cout<<"ngrp< "<<ngrp<<endl;
+		// cout<<"ngear "<<ngear<<endl;
 		lz(sage) = 1.0/ngrp;
 		lw(sage) = 1.0/ngrp * psa(sage);
 		for(j=sage+1; j<=nage; j++)
@@ -593,8 +593,8 @@ void Msy::calcEquilibrium(const dvector& fe)
 	{	
 		for(k=1; k<=ngear; k++)
 		{
-			cout<<"dlz_m"<<endl;
-			cout<<dlz_m(h)(k) * m_dFa(h)<<endl;
+			// cout<<"dlz_m"<<endl;
+			// cout<<dlz_m(h)(k) * m_dFa(h)<<endl;
 			dphif(k)  += dlz_m(h)(k)  * m_dFa(h);
 			d2phif(k) += d2lz_m(h)(k) * m_dFa(h);
 			//dphif(k)   += dlw_m(h)(k)  * m_dFa(h);
@@ -684,14 +684,15 @@ void Msy::calcEquilibrium(const dvector& fe)
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	cout<<"mean za = "<<mean(za_m)<<endl;
+	// cout<<"mean za = "<<mean(za_m)<<endl;
 
 	// numerical test for dre failed.
 	// numerical test for dphif failed.
     // numerical test for dphiq passed for 1 fleet, fails on 2+ fleets.
 
 
-	cout<<"fe "<<fe<<" re "<<re<<" ye "<<ye<<" dYe "<<dye<<endl;
+	cout<<"fe "<<setw(8)<<fe<<" re "<<setw(8)<<re<<" ye "<<setw(8)<<ye
+	    <<" dye "<<setw(8)<<dye<<endl;
 	// cout<<"dlz_m"<<endl<<dlz_m<<endl;
 
 }
