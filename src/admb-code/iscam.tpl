@@ -3059,6 +3059,8 @@ FUNCTION void calcReferencePoints()
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
 		Msy cMSY2(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
 
+		Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
+		Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
 		cout<<"This is red leader, I'm going in!"<<endl;
 		// for( i = 1; i <= 100; i++ )
 		// {
@@ -3069,19 +3071,40 @@ FUNCTION void calcReferencePoints()
 
 		bo = cMSY.getBo();
 		cMSY.get_fmsy(fmsy);
-		cout<<"Stay on Target"<<endl;
-		cMSY.calcEquilibrium(fmsy);
-		dvector y1 = cMSY.getphiq();
-		// double y1 = cMSY.getphif();
-		COUT(y1);
-		double dh = 1.e-9;
-		cMSY2.calcEquilibrium(fmsy+dh);
-		dvector dy2 = cMSY2.getphiq();
-		// double dy2 = cMSY2.getphif();
-		COUT(y1);
-		COUT(dy2);
-		cout<<(dy2- y1)/dh<<endl;
 		cMSY.print();
+
+
+		cout<<"Stay on Target"<<endl;
+		// fmsy = 0.05/nfleet;
+		cMSY.calcEquilibrium(fmsy);
+		dvector y1 = cMSY.getYe();
+		// double y1 = cMSY.getRe();
+		// dmatrix y1 = cMSY.getLz();
+		// COUT(y1);
+		
+		double dh = 1.e-6;
+		cMSY2.calcEquilibrium(fmsy+dh);
+		dvector dy2 = cMSY2.getYe();
+		// double dy2 = cMSY2.getRe();
+		// dmatrix dy2 = cMSY2.getLz();
+		
+		// COUT(dy2);
+		COUT(fmsy);
+		COUT((dy2-y1)/dh);
+		// cout<<(dy2- y1)/dh<<endl;
+
+		// cout<<"OB1 Kanobe"<<endl;
+		// cOldMsy.calc_equilibrium(fmsy);
+		// dvector oy1 = cOldMsy.getYe();
+		// COUT(oy1);
+		// cOldMsy2.calc_equilibrium(fmsy+dh);
+		// dvector oy2 = cOldMsy2.getYe();
+		// COUT(oy1);
+		// COUT(oy2);
+		// COUT((oy2-oy1)/dh);
+		// cMSY.calcEquilibrium(0.*fmsy);
+		// COUT(ro);
+		// cMSY.print();
 		// dvector fall = ftry;
 		// cMSY.get_fmsy(fall,d_ak);
 		// cMSY.print();

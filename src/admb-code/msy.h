@@ -47,6 +47,7 @@ private:
 	dmatrix m_dFa;	// sex specific fecundity
 	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
 	d3_array m_d3_V; // Selectivity for each gear, sex, age.
+	dmatrix m_lz;   // survivorship under fished conditions.
 	
 	double  m_phie;
 	double  m_phif;
@@ -105,6 +106,7 @@ public:
 	double     getBi() { return m_bi;      }
 	double     getRe() { return m_re;      }
 	double    getSpr() { return m_spr;     }
+	dmatrix    getLz() { return m_lz;      }
 	
 	
 	// Setters

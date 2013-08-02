@@ -383,7 +383,7 @@ void Msy::calc_equilibrium(const dvector& fe)
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	// cout<<"fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
+	cout<<"OB1 fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
 }
 
 
@@ -450,6 +450,8 @@ void Msy::calcEquilibrium(const dvector& fe)
 	ngear = m_d3_V(1).rowmax();
 	ngrp  = m_dWa.rowmax();
 	
+	m_lz.allocate(1,ngrp,sage,nage);
+
 	double      ro = m_ro;
 	double   kappa = 4.0*m_h/(1.0-m_h);  // Beverton-Holt model
 	double     km1 = kappa-1.0;
@@ -486,6 +488,8 @@ void Msy::calcEquilibrium(const dvector& fe)
 	d3_array   qa_m(1,ngrp,1,ngear,sage,nage);
 	d3_array  dlz_m(1,ngrp,1,ngear,sage,nage);
 	d3_array d2lz_m(1,ngrp,1,ngear,sage,nage);
+	d3_array  dlw_m(1,ngrp,1,ngear,sage,nage);
+	d3_array d2lw_m(1,ngrp,1,ngear,sage,nage);
 
 	for( h = 1; h <= ngrp; h++ )
 	{
@@ -511,7 +515,9 @@ void Msy::calcEquilibrium(const dvector& fe)
 			d2lz(k,sage) = 0;
 			d2lz_m(h,k,sage) = 0;
 			dlw(k,sage)  = -psa(sage)*m_rho*m_d3_V(h)(k)(sage);
+			dlw_m(h,k,sage) = 0;
 			d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_d3_V(h)(k)(sage));
+			dlw_m(h,k,sage) = 0;
 			qa_m(h)(k)   = qa(k);
 		}
 		// cout<<"ngrp< "<<ngrp<<endl;
@@ -558,16 +564,20 @@ void Msy::calcEquilibrium(const dvector& fe)
 								+ 2*lz(j-1)*psa(j)*square(V2)*square(sa(j))/(oa(j)*oa2)
 								+ lz(j-1)*psa(j)*square(V2)*sa(j)/oa2;
 				}
-				dlz_m(h,k,j)  = dlz(k)(j);
+				dlz_m(h,k,j)  =  dlz(k)(j);
 				d2lz_m(h,k,j) = d2lz(k)(j);
+				dlw_m(h,k,j)  =  dlw(k)(j);
+				d2lw_m(h,k,j) = d2lw(k)(j);
+
 			}// gear		
 		}// age
 		lz_m(h) = lz;
 		lw_m(h) = lw;
 		phisf += lz * m_dFa(h);
-		phif  += lw * m_dFa(h);
+		phif  += lz * m_dFa(h);
 	}// ngrp
 	phif2 = phif*phif;
+	m_lz  = lz_m;
 	
 	// Incidence functions and associated derivatives
 	dvector  dphif(1,ngear);   dphif.initialize();
@@ -583,13 +593,15 @@ void Msy::calcEquilibrium(const dvector& fe)
 	{	
 		for(k=1; k<=ngear; k++)
 		{
+			cout<<"dlz_m"<<endl;
+			cout<<dlz_m(h)(k) * m_dFa(h)<<endl;
 			dphif(k)  += dlz_m(h)(k)  * m_dFa(h);
 			d2phif(k) += d2lz_m(h)(k) * m_dFa(h);
-			//dphif(k)   = dlw(k)  * m_fa;
-			//d2phif(k)  = d2lw(k) * m_fa;
+			//dphif(k)   += dlw_m(h)(k)  * m_dFa(h);
+			//d2phif(k)  += d2lw_m(h)(k) * m_dFa(h);
 			
 			// per recruit yield
-			phiq(k)   += lz_m(h) * qa_m(h)(k);
+			phiq(k)   +=  lz_m(h) * qa_m(h)(k);
 			if(ngear==1)
 			{
 				// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
@@ -672,11 +684,16 @@ void Msy::calcEquilibrium(const dvector& fe)
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	// cout<<"mean za = "<<mean(za_m)<<endl;
+	cout<<"mean za = "<<mean(za_m)<<endl;
+
 	// numerical test for dre failed.
 	// numerical test for dphif failed.
     // numerical test for dphiq passed for 1 fleet, fails on 2+ fleets.
-	cout<<"fe "<<fe<<" re "<<re<<" ye "<<ye<<" dphiq "<<dphiq<<endl;
+
+
+	cout<<"fe "<<fe<<" re "<<re<<" ye "<<ye<<" dYe "<<dye<<endl;
+	// cout<<"dlz_m"<<endl<<dlz_m<<endl;
+
 }
 
 
