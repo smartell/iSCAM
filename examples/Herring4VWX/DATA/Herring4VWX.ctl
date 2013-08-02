@@ -40,12 +40,12 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-2		1                 # -selectivity type ivector(isel_type) for gear
-4.0		2.05              # -Age/length at 50% selectivity (logistic)
-0.25	0.50              # -STD at 50% selectivity (logistic)
+1		1                 # -selectivity type ivector(isel_type) for gear
+2.05	2.05              # -Age/length at 50% selectivity (logistic)
+0.50	0.50              # -STD at 50% selectivity (logistic)
 5		0					# -No. of age nodes for each gear (0=ignore)
 20		0					# -No. of year nodes for 2d spline(0=ignore)
-2		-2					# -Phase of estimation (-1 for fixed)
+-2		-2					# -Phase of estimation (-1 for fixed)
 12.5	10					# -Penalty wt for 2nd differences w=1/(2*sig^2)
 3.125	10					# -Penalty wt for dome-shaped w=1/(2*sig^2)
 1.0		1.0					# -Penalty wt for time-varying selectivity

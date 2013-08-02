@@ -3023,7 +3023,7 @@ FUNCTION void calcReferencePoints()
 
 		}
 	}
-	COUT(n_ags);
+	// COUT(n_ags);
 	d_ak /= sum(d_ak);
 
 	// | (2) : Average weight and mature spawning biomass for reference years
@@ -3037,8 +3037,8 @@ FUNCTION void calcReferencePoints()
 		M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
 	}
 	
-	COUT(mean(M_bar));
-	COUT(nfleet);
+	// COUT(mean(M_bar));
+	// COUT(nfleet);
 	// | (3) : Initial guess for fmsy for each fleet
 	dvector ftry(1,nfleet);
 	ftry  = 0.6 * mean(M_bar);
@@ -3057,23 +3057,39 @@ FUNCTION void calcReferencePoints()
 		dvector   d_fa = fa_bar(g);
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
+		Msy cMSY2(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
 
 		cout<<"This is red leader, I'm going in!"<<endl;
-		for( i = 1; i <= 100; i++ )
-		{
-			dvector di = (double(i)-1.)/9. * fmsy;
-			cMSY.calcEquilibrium(di);
+		// for( i = 1; i <= 100; i++ )
+		// {
+		// 	dvector di = (double(i)-1.)/9. * fmsy;
+		// 	cMSY.calcEquilibrium(di);
 			
-		}
+		// }
 
 		bo = cMSY.getBo();
 		cMSY.get_fmsy(fmsy);
-		COUT(bo);
+		cout<<"Stay on Target"<<endl;
+		cMSY.calcEquilibrium(fmsy);
+		dvector y1 = cMSY.getphiq();
+		// double y1 = cMSY.getphif();
+		COUT(y1);
+		double dh = 1.e-9;
+		cMSY2.calcEquilibrium(fmsy+dh);
+		dvector dy2 = cMSY2.getphiq();
+		// double dy2 = cMSY2.getphif();
+		COUT(y1);
+		COUT(dy2);
+		cout<<(dy2- y1)/dh<<endl;
 		cMSY.print();
-		dvector fall = ftry;
-		cMSY.get_fmsy(fall,d_ak);
-		cMSY.print();
+		// dvector fall = ftry;
+		// cMSY.get_fmsy(fall,d_ak);
+		// cMSY.print();
 		
+		// fmsy  = 0.2/nfleet;
+		// COUT(fmsy);
+		// cMSY.calcEquilibrium(fmsy);
+		// cMSY.print();
 		
 		cout<<"Whaa Hoo, your all clear kid!"<<endl;
 		exit(1);
@@ -4527,7 +4543,7 @@ GLOBALS_SECTION
 	#define REPORT(object) report << #object "\n" << object << endl;
     
 	#undef COUT
-	#define COUT(object) cout << #object "\n" << object <<endl;
+	#define COUT(object) cout<<setprecision(8) << #object "\n" << object <<endl;
 
 	#undef TINY
 	#define TINY 1.e-08

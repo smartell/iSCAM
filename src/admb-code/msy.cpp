@@ -436,7 +436,8 @@ void Msy::calcEquilibrium(const dvector& fe)
 		
 		- The major modification here is to wrap the original loops that relied on
 		  selectivity, natural mortality, weight-at-age inside a loop over sex. 
-
+		
+		- [] Bug, with ngear > 1 get much lower Re values than if ngear ==1?
 
 
 	*/
@@ -513,7 +514,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			d2lw(k,sage) =  psa(sage)*square(m_rho)*square(m_d3_V(h)(k)(sage));
 			qa_m(h)(k)   = qa(k);
 		}
-		cout<<"ngrp< "<<ngrp<<endl;
+		// cout<<"ngrp< "<<ngrp<<endl;
 		lz(sage) = 1.0/ngrp;
 		lw(sage) = 1.0/ngrp * psa(sage);
 		for(j=sage+1; j<=nage; j++)
@@ -664,14 +665,18 @@ void Msy::calcEquilibrium(const dvector& fe)
 	m_be   = re*phif;
 	m_bi   = re*phisf;
 	m_phif = phif;
+	m_phiq = phiq;
 	m_spr  = phif/m_phie;
 	m_dYe  = sum(dye);
 	m_d2Ye = sum(diagonal(d2ye));
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	
-	cout<<"fe "<<fe<<" re "<<re<<" ye "<<ye<<" dye "<<dye<<endl;
+	// cout<<"mean za = "<<mean(za_m)<<endl;
+	// numerical test for dre failed.
+	// numerical test for dphif failed.
+    // numerical test for dphiq passed for 1 fleet, fails on 2+ fleets.
+	cout<<"fe "<<fe<<" re "<<re<<" ye "<<ye<<" dphiq "<<dphiq<<endl;
 }
 
 
@@ -777,6 +782,7 @@ void Msy::print()
 {
 	cout<<"|------------------------------------------|" <<endl;
 	cout<<"| Bo   = "<<setw(10)<<m_bo                    <<endl;
+	cout<<"| Re   = "<<setw(10)<<m_re                    <<endl;
 	cout<<"| Rmsy = "<<setw(10)<<m_rmsy                  <<endl;
 	cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
 	cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;

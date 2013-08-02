@@ -50,6 +50,7 @@ private:
 	
 	double  m_phie;
 	double  m_phif;
+	dvector m_phiq;
 	dvector m_fmsy;
 	dvector m_msy;
 	double  m_bmsy;
@@ -96,6 +97,8 @@ public:
 	dvector   getMsy() { return m_msy;     }
 	dvector    getYe() { return m_ye;      }
 	dvector   getdYe() { return m_f;       }
+	dvector  getphiq() { return m_phiq;    }
+	double   getphif() { return m_phif;    }
 	double getSprMsy() { return m_spr_msy; }
 	double     getBo() { return m_bo;      }
 	double     getBe() { return m_be;      }
