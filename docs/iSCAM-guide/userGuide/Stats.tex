@@ -1,4 +1,4 @@
-%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
+%!TEX root = /Users/stevenmartell1/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
 \section{Statistical functions \& probability distributions}
 \begin{multicols}{2}
 Many of the statistical functions commonly used in R have been written as negative log likelihoods and are in the \texttt{stats.cxx} library.  In this appendix is the documentation for the available functions in the stats.cxx library.  For the most part I have implemented the function based on the description from the R language, so it is possible to use \texttt{?function} name in R to learn more about the funciton.  Here I provide the formula, the actual code used to implement the function and a description of the variables. Note that some of the functions have been overloaded several times to deal with variables, vectors or a matrix.
@@ -102,6 +102,6 @@ exit 0
 
 Here is the R-script that is used for reading in report files from ADMB.  Currently this is also compiled as an R-package.
 \begin{scriptsize}
-\lstinputlisting[language=R]{../../../src/r-code/read.admb.R}
+\lstinputlisting[language=R]{../../../src/r-code/R/read.admb.R}
 \end{scriptsize}
 %\end{multicols}

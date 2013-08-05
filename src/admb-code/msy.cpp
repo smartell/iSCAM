@@ -500,6 +500,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			za  = za + fe(k) * m_d3_V(h)(k);
 		}
 		za_m(h) = za;
+
 		pza     = m_rho*za;
 		sa      = exp(-za);
 		sa_m(h) = sa;
@@ -575,6 +576,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 		lw_m(h) = lw;
 		phisf += lz * m_dFa(h);
 		phif  += lz * m_dFa(h);
+		cout<<h<< " phif "<<phif<<endl;
 	}// ngrp
 	phif2 = phif*phif;
 	m_lz  = lz_m;
@@ -602,7 +604,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			
 			// per recruit yield
 			phiq(k)   +=  lz_m(h) * qa_m(h)(k);
-			if(ngear==1)
+			if(ngear>=1)  // was (if ngear==1), changed during debugging of nfleet>1
 			{
 				// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
 				t1 = elem_div(elem_prod(elem_prod(lz_m(h),m_dWa(h)),square(m_d3_V(h)(k))),za_m(h));
@@ -649,11 +651,19 @@ void Msy::calcEquilibrium(const dvector& fe)
 	dvector  dye(1,ngear);
 	dmatrix d2ye(1,ngear,1,ngear);
 	dmatrix invJ(1,ngear,1,ngear);
-	
+	// cout<<"Ro =    "<<ro<<endl;
+	// cout<<"kappa = "<<kappa<<endl;
+	// cout<<"phie  = "<<m_phie<<endl;
+	// cout<<"km1   = "<<km1<<endl;
+	// cout<<"phif  = "<<phif<<endl;
 	re   = ro*(kappa-m_phie/phif) / km1;
+	// cout<<"Re =    "<<re<<endl;
 	ye   = re*elem_prod(fe,phiq);
 	dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
 	
+	// cout<<h<< " phif "<<phif<<endl;
+	// cout<<"Sum Ye = "<<sum(ye)<<endl;
+
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
 	{
@@ -673,6 +683,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 	// Set private members
 	m_p    = fstp;
 	m_ye   = ye;
+	// cout<<"Re =    "<<re<<endl;
 	m_re   = re;
 	m_be   = re*phif;
 	m_bi   = re*phisf;
@@ -686,13 +697,13 @@ void Msy::calcEquilibrium(const dvector& fe)
 	
 	// cout<<"mean za = "<<mean(za_m)<<endl;
 
-	// numerical test for dre failed.
+	// numerical test for dre passed for 2+ fleets.
 	// numerical test for dphif failed.
     // numerical test for dphiq passed for 1 fleet, fails on 2+ fleets.
 
 
 	cout<<"fe "<<setw(8)<<fe<<" re "<<setw(8)<<re<<" ye "<<setw(8)<<ye
-	    <<" dye "<<setw(8)<<dye<<endl;
+	    <<" dphiq "<<setw(8)<<dphiq<<endl;
 	// cout<<"dlz_m"<<endl<<dlz_m<<endl;
 
 }
