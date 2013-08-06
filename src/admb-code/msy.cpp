@@ -657,12 +657,12 @@ void Msy::calcEquilibrium(const dvector& fe)
 	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
 	dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
 
-	cout<<"Re     = "<<re<<endl;
-	cout<<"phiq   = "<<phiq<<endl;
-	cout<<"fe     = "<<fe<<endl;
-	cout<<"dre    = "<<dre<<endl;
-	cout<<"dphiq  = "<<dphiq<<endl;
-	cout<<"dye    = "<<dye<<endl;
+	// cout<<"Re     = "<<re<<endl;
+	// cout<<"phiq   = "<<phiq<<endl;
+	// cout<<"fe     = "<<fe<<endl;
+	// cout<<"dre    = "<<dre<<endl;
+	// cout<<"dphiq  = "<<dphiq<<endl;
+	// cout<<"dye    = "<<dye<<endl;
 	
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
