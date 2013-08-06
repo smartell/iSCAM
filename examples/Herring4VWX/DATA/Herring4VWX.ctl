@@ -41,8 +41,8 @@
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
 1		1                 # -selectivity type ivector(isel_type) for gear
-2.05	2.05              # -Age/length at 50% selectivity (logistic)
-0.50	0.50              # -STD at 50% selectivity (logistic)
+4.0		2.05              # -Age/length at 50% selectivity (logistic)
+0.25	0.50              # -STD at 50% selectivity (logistic)
 5		0					# -No. of age nodes for each gear (0=ignore)
 20		0					# -No. of year nodes for 2d spline(0=ignore)
 -2		-2					# -Phase of estimation (-1 for fixed)
@@ -85,7 +85,7 @@
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
-0.00        # 13 -fraction of total mortality that takes place prior to spawning
+0.50        # 13 -fraction of total mortality that takes place prior to spawning
 1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 0           # 15 -switch for IFD selex in simulation
 ##

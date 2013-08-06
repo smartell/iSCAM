@@ -675,9 +675,9 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// |
 	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
-// 	vector fall(1,nfleet);			//Fishing mortality based on allocation
-// 	vector  msy(1,nfleet);			//Maximum sustainable yield
-// 	number bmsy;					//Spawning biomass at MSY
+	vector fall(1,nfleet);			//Fishing mortality based on allocation
+	vector  msy(1,nfleet);			//Maximum sustainable yield
+	number bmsy;					//Spawning biomass at MSY
 // 	number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,na_gears);	//MLE estimate of the variance for age comps
 // 	//catch-age for simulation model (could be declared locally 3d_array)
@@ -2992,6 +2992,14 @@ FUNCTION void calcReferencePoints()
 		  areas, can be unisex or two sex, and can be fished by all fleets given the stock
 		  exists in an area where the fishing gear operates.
 
+		- Aug, 3-6, 2013.
+		  Major effort went into revising this routine as well as the Msy class to 
+		  calculate MSY-based reference points for multiple fleets and multiple sexes.  
+		  I had found a significant bug in the dye calculation where I need to use the 
+		  proper linear algebra to calculate the vector of dye values. This appears to 
+		  be working properly and I've commented out the lines of code where I numerically
+		  checked the derivatives of the catch equation.  This is a major acomplishment.
+
    	PSEUDOCODE: 
    		(1) : Construct array of selectivities (potentially sex based log_sel)
    		(2) : Construct arrays of wt_avg and wt_mat for reference years.
@@ -3023,7 +3031,6 @@ FUNCTION void calcReferencePoints()
 
 		}
 	}
-	// COUT(n_ags);
 	d_ak /= sum(d_ak);
 
 	// | (2) : Average weight and mature spawning biomass for reference years
@@ -3037,15 +3044,20 @@ FUNCTION void calcReferencePoints()
 		M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
 	}
 	
-	// COUT(mean(M_bar));
-	// COUT(nfleet);
 	// | (3) : Initial guess for fmsy for each fleet
+	// |     : set fmsy = 2/3 of M divided by the number of fleets
+	fmsy.initialize();
+	fall.initialize();
+	msy.initialize();
+	bmsy = 0;
+
 	dvector ftry(1,nfleet);
-	ftry  = 0.6 * mean(M_bar);
+	ftry  = 0.6/nfleet * mean(M_bar);
 	fmsy  = ftry;
+	
 
 
-	// | (4) : Instantiate msy class
+	// | (4) : Instantiate msy class for each stock
 	for(g=1;g<=ngroup;g++)
 	{
 		double d_ro = value(ro(g));
@@ -3057,48 +3069,64 @@ FUNCTION void calcReferencePoints()
 		dvector   d_fa = fa_bar(g);
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
-		Msy cMSY2(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
-
-		Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
-		Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
-		cout<<"This is red leader, I'm going in!"<<endl;
-		for( i = 1; i <= 100; i++ )
-		{
-			dvector di = (double(i)-1.)/99. * fmsy;
-			cMSY.calcEquilibrium(di);
-			
-		}
-
-		bo = cMSY.getBo();
+		
 		cMSY.get_fmsy(fmsy);
-		// cout<<setprecision(8)<<endl;
+		bo   = cMSY.getBo();
+		bmsy = cMSY.getBmsy();
+		msy  = cMSY.getMsy();
 		cMSY.print();
-		cout<<"Stay on Target"<<endl;
-		fmsy = 0.09886608/nfleet;
-		cMSY.calcEquilibrium(fmsy);
-		dvector y1 = cMSY.getYe();
-		// double y1 = cMSY.getRe();
-		// dmatrix y1 = cMSY.getLz();
-		// COUT(y1);
+		if(nfleet > 1)
+		{
+			fall  = ftry;
+			cMSY.get_fmsy(fall,allocation);
+			bmsy = cMSY.getBmsy();
+			msy = cMSY.getMsy();
+			cMSY.print();
+		}
 		
-		double dh = 1.e-8;
-		fmsy +=dh;
-		cMSY2.calcEquilibrium(fmsy);
-		dvector dy2 = cMSY2.getYe();
-		// double dy2 = cMSY2.getRe();
-		// dmatrix dy2 = cMSY2.getLz();
+
+		// Msy cMSY2(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
+
+		// Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
+		// Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
+		// cout<<"This is red leader, I'm going in!"<<endl;
+		// for( i = 1; i <= 100; i++ )
+		// {
+		// 	dvector di = (double(i)-1.)/99. * fmsy;
+		// 	cMSY.calcEquilibrium(di);
+			
+		// }
+
+		// bo = cMSY.getBo();
+		// cMSY.get_fmsy(fmsy);
+		// // cout<<setprecision(8)<<endl;
+		// cMSY.print();
+		// cout<<"Stay on Target"<<endl;
+		// fmsy = 0.09886608/nfleet;
+		// cMSY.calcEquilibrium(fmsy);
+		// dvector y1 = cMSY.getYe();
+		// // double y1 = cMSY.getRe();
+		// // dmatrix y1 = cMSY.getLz();
+		// // COUT(y1);
 		
-		// COUT(dy2);
-		COUT(fmsy);
-		COUT((dy2-y1)/dh);
-		cMSY.print();
-		// cout<<(dy2- y1)/dh<<endl;
+		// double dh = 1.e-8;
+		// fmsy +=dh;
+		// cMSY2.calcEquilibrium(fmsy);
+		// dvector dy2 = cMSY2.getYe();
+		// // double dy2 = cMSY2.getRe();
+		// // dmatrix dy2 = cMSY2.getLz();
+		
+		// // COUT(dy2);
+		// COUT(fmsy);
+		// COUT((dy2-y1)/dh);
+		// cMSY.print();
+		// // cout<<(dy2- y1)/dh<<endl;
 
 		
 		
 
-		cout<<"Whaa Hoo, your all clear kid!"<<endl;
-		exit(1);
+		// cout<<"Whaa Hoo, your all clear kid!"<<endl;
+		// exit(1);
 	}
 
 // 	/* 
@@ -3998,11 +4026,11 @@ REPORT_SECTION
 		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		// exit(1);
-// 		REPORT(bo);
-// 		REPORT(fmsy);
-// 		REPORT(msy);
-// 		REPORT(bmsy);
-// 		REPORT(Umsy);
+		REPORT(bo);
+		REPORT(fmsy);
+		REPORT(msy);
+		REPORT(bmsy);
+		// REPORT(Umsy);
 	}
 // 	/*
 // 	Stock status info

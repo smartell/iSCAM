@@ -88,11 +88,10 @@ void Msy::get_fmsy(dvector& fe)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 ) // backtrack 98% of the newton step.
 			{                                 // if outside the boundary conditions.
-				fe[i] -= 0.999*m_p[i];       
-				cout<<"OOOPS"<<endl;  
+				fe[i] -= 0.999*m_p[i];         
 			}
 		}
-		cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
+		// cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
@@ -171,6 +170,9 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
  		
 	}
 	while ( sqrt(square(m_dYe)) >TOL && iter < MAXITER );
+
+	if( iter == MAXITER ) m_FAIL = true;
+
 	fe = fk;
 
 	m_fmsy    = fe;
@@ -353,7 +355,10 @@ void Msy::calc_equilibrium(const dvector& fe)
 	
 	re   = ro*(kappa-m_phie/phif) / km1;
 	ye   = re*elem_prod(fe,phiq);
-	dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
+
+	// Aug 6, 2013, found a bug in my linear algebra.
+	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
+	dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
 	
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
@@ -383,7 +388,7 @@ void Msy::calc_equilibrium(const dvector& fe)
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	cout<<"OB1 fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
+	// cout<<"OB1 fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
 }
 
 
@@ -521,7 +526,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 			dlw_m(h,k,sage) = 0;
 			qa_m(h)(k)   = qa(k);
 		}
-		// cout<<"ngear "<<ngear<<endl;
+		
 		lz(sage) = 1.0/ngrp;
 		lw(sage) = 1.0/ngrp * psa(sage);
 		for(j=sage+1; j<=nage; j++)
@@ -576,7 +581,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 		lw_m(h) = lw;
 		phisf += lz * m_dFa(h);
 		phif  += lz * m_dFa(h);
-		// cout<<h<< " phif "<<phif<<endl;
+		
 	}// ngrp
 	phif2 = phif*phif;
 	m_lz  = lz_m;
@@ -595,8 +600,6 @@ void Msy::calcEquilibrium(const dvector& fe)
 	{	
 		for(k=1; k<=ngear; k++)
 		{
-			// cout<<"dlz_m"<<endl;
-			// cout<<dlz_m(h)(k) * m_dFa(h)<<endl;
 			dphif(k)  += dlz_m(h)(k)  * m_dFa(h);
 			d2phif(k) += d2lz_m(h)(k) * m_dFa(h);
 			//dphif(k)   += dlw_m(h)(k)  * m_dFa(h);
@@ -702,8 +705,8 @@ void Msy::calcEquilibrium(const dvector& fe)
     // numerical test for dphiq passed for 1 fleet, fails on 2+ fleets.
 
 
-	cout<<"fe "<<setw(8)<<fe<<" re "<<setw(8)<<re<<" ye "<<setw(8)<<ye
-	    <<" dye "<<setw(8)<<dye<<endl;
+	// cout<<"fe "<<setw(8)<<fe<<" re "<<setw(8)<<re<<" ye "<<setw(8)<<ye
+	    // <<" dye "<<setw(8)<<dye<<endl;
 	// cout<<"dlz_m"<<endl<<dlz_m<<endl;
 
 }
@@ -810,6 +813,8 @@ void Msy::calc_bo(const dmatrix& _m, const dmatrix& _fa)
 void Msy::print()
 {
 	cout<<"|------------------------------------------|" <<endl;
+	cout<<"| MSY-BASED REFERENCE POINTS               |" <<endl;
+	cout<<"|------------------------------------------|" <<endl;
 	cout<<"| Bo   = "<<setw(10)<<m_bo                    <<endl;
 	cout<<"| Re   = "<<setw(10)<<m_re                    <<endl;
 	cout<<"| Rmsy = "<<setw(10)<<m_rmsy                  <<endl;
@@ -821,6 +826,7 @@ void Msy::print()
 	cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
 	cout<<"| dYe  = "<<setw(10)<<m_f                     <<endl;
 	cout<<"| dYes = "<<setw(10)<<sum(m_f)                <<endl;
+	cout<<"| FAIL = "<<setw(10)<<m_FAIL                  <<endl;
 	cout<<"|------------------------------------------|" <<endl;
 }
 

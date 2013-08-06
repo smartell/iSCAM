@@ -19,6 +19,10 @@
 	allocations for each fleet such that the sum of catches acrosss all fleets
 	is maximized.  There is also an option to determine MSY-based reference points
 	in cases where there are allocation agreements in place.
+
+	LUCIE'S RULE: the derivative of a sum is the sum of its derivatives.
+	Lucie says: there is some nasty calculus in here daddy, are you sure
+	you've got it right?
 	
 © Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
 
