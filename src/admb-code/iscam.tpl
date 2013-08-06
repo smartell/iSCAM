@@ -3085,18 +3085,29 @@ FUNCTION void calcReferencePoints()
 		}
 		
 
+		
+
+		cout<<"This is red leader, I'm going in!"<<endl;
+		i = 0;
+		fmsy = 0.;
+		while( i < 1500 )
+		{	
+			
+			cMSY.calcEquilibrium(fmsy);
+			// cout<<cMSY.getRe()<<endl;
+			cout<<"fmsy ="<<fmsy<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+			<<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
+			fmsy += 0.01;
+			if(cMSY.getRe() < 0 ) break;
+			
+			i ++;
+		}
+		cout<<"Whaa Hoo, your all clear kid!"<<endl;
+
 		// Msy cMSY2(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
 
 		// Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
 		// Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,wt_bar(1),fa_bar(1),d_V(1));
-		// cout<<"This is red leader, I'm going in!"<<endl;
-		// for( i = 1; i <= 100; i++ )
-		// {
-		// 	dvector di = (double(i)-1.)/99. * fmsy;
-		// 	cMSY.calcEquilibrium(di);
-			
-		// }
-
 		// bo = cMSY.getBo();
 		// cMSY.get_fmsy(fmsy);
 		// // cout<<setprecision(8)<<endl;
@@ -3125,7 +3136,6 @@ FUNCTION void calcReferencePoints()
 		
 		
 
-		// cout<<"Whaa Hoo, your all clear kid!"<<endl;
 		// exit(1);
 	}
 
