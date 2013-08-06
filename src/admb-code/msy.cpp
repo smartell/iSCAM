@@ -576,7 +576,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 		lw_m(h) = lw;
 		phisf += lz * m_dFa(h);
 		phif  += lz * m_dFa(h);
-		cout<<h<< " phif "<<phif<<endl;
+		// cout<<h<< " phif "<<phif<<endl;
 	}// ngrp
 	phif2 = phif*phif;
 	m_lz  = lz_m;
@@ -651,19 +651,19 @@ void Msy::calcEquilibrium(const dvector& fe)
 	dvector  dye(1,ngear);
 	dmatrix d2ye(1,ngear,1,ngear);
 	dmatrix invJ(1,ngear,1,ngear);
-	// cout<<"Ro =    "<<ro<<endl;
-	// cout<<"kappa = "<<kappa<<endl;
-	// cout<<"phie  = "<<m_phie<<endl;
-	// cout<<"km1   = "<<km1<<endl;
-	// cout<<"phif  = "<<phif<<endl;
-	re   = ro*(kappa-m_phie/phif) / km1;
-	// cout<<"Re =    "<<re<<endl;
-	ye   = re*elem_prod(fe,phiq);
-	dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
-	
-	// cout<<h<< " phif "<<phif<<endl;
-	// cout<<"Sum Ye = "<<sum(ye)<<endl;
 
+	re   = ro*(kappa-m_phie/phif) / km1;
+	ye   = re*elem_prod(fe,phiq);
+	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
+	dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
+
+	cout<<"Re     = "<<re<<endl;
+	cout<<"phiq   = "<<phiq<<endl;
+	cout<<"fe     = "<<fe<<endl;
+	cout<<"dre    = "<<dre<<endl;
+	cout<<"dphiq  = "<<dphiq<<endl;
+	cout<<"dye    = "<<dye<<endl;
+	
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
 	{
@@ -703,7 +703,7 @@ void Msy::calcEquilibrium(const dvector& fe)
 
 
 	cout<<"fe "<<setw(8)<<fe<<" re "<<setw(8)<<re<<" ye "<<setw(8)<<ye
-	    <<" dphiq "<<setw(8)<<dphiq<<endl;
+	    <<" dye "<<setw(8)<<dye<<endl;
 	// cout<<"dlz_m"<<endl<<dlz_m<<endl;
 
 }

@@ -3071,20 +3071,20 @@ FUNCTION void calcReferencePoints()
 
 		bo = cMSY.getBo();
 		cMSY.get_fmsy(fmsy);
+		// cout<<setprecision(8)<<endl;
 		cMSY.print();
-
 		cout<<"Stay on Target"<<endl;
-		fmsy = 0.1/nfleet;
+		fmsy = 0.09886608/nfleet;
 		cMSY.calcEquilibrium(fmsy);
-		dvector y1 = cMSY.getphiq();
+		dvector y1 = cMSY.getYe();
 		// double y1 = cMSY.getRe();
 		// dmatrix y1 = cMSY.getLz();
 		// COUT(y1);
 		
 		double dh = 1.e-8;
-		fmsy(1) +=dh;
+		fmsy +=dh;
 		cMSY2.calcEquilibrium(fmsy);
-		dvector dy2 = cMSY2.getphiq();
+		dvector dy2 = cMSY2.getYe();
 		// double dy2 = cMSY2.getRe();
 		// dmatrix dy2 = cMSY2.getLz();
 		
