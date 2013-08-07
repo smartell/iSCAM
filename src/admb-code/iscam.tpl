@@ -116,6 +116,11 @@
 //--             age      j                                                    --//
 //--             gear     k                                                    --//
 //--                                                                           --//
+//--  ToDo: add mirror selectivity option so one fishery can assume the same   --//
+//--        Selectivity value as another fishery with informative data.        --//
+//--                                                                           --//
+//--                                                                           --//
+//--                                                                           --//
 //--                                                                           --//
 // ----------------------------------------------------------------------------- //
 
@@ -1876,10 +1881,10 @@ FUNCTION calcAgeComposition
   		  of the variance.
   	
   	TODO list:
-  	[ ] - Merge redundant code from calcCatchAtAge
+  	[x] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[ ] - add plus group if a_nage < nage;
+	[] - add plus group if a_nage < nage;  Aug 7, 2013
 
   	*/
   	
@@ -1922,6 +1927,12 @@ FUNCTION calcAgeComposition
 					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 				}
 				A_hat(kk)(ii) = ca(a_sage(kk),a_nage(kk));
+
+				// | +group if a_nage(kk) < nage
+				if( a_nage(kk) < nage )
+				{
+					A_hat(kk)(ii)(a_nage(kk)) += sum( ca(a_nage(kk)+1,nage) );
+				}
 	  		}
 	  		else if( !h )
 	  		{
@@ -1942,6 +1953,12 @@ FUNCTION calcAgeComposition
 						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 					}
 					A_hat(kk)(ii) += ca(a_sage(kk),a_nage(kk));
+
+					// | +group if a_nage(kk) < nage
+					if( a_nage(kk) < nage )
+					{
+						A_hat(kk)(ii)(a_nage(kk)) += sum( ca(a_nage(kk)+1,nage) );
+					}
 		  		}
 	  		}
 	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
@@ -3069,35 +3086,37 @@ FUNCTION void calcReferencePoints()
 		dvector   d_fa = fa_bar(g);
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,wt_bar,fa_bar,&d_V);
-		
+		cout<<"The death star is approaching"<<endl;
 		cMSY.get_fmsy(fmsy);
+		cout<<"I've got radar lock"<<endl;
 		bo   = cMSY.getBo();
 		bmsy = cMSY.getBmsy();
 		msy  = cMSY.getMsy();
 		cMSY.print();
-		if(nfleet > 1)
-		{
-			fall  = ftry;
-			cMSY.get_fmsy(fall,allocation);
-			bmsy = cMSY.getBmsy();
-			msy = cMSY.getMsy();
-			cMSY.print();
-		}
+		// if(nfleet > 1)
+		// {
+		// 	fall  = ftry;
+		// 	cMSY.get_fmsy(fall,allocation);
+		// 	bmsy = cMSY.getBmsy();
+		// 	msy = cMSY.getMsy();
+		// 	cMSY.print();
+		// }
 		
 
 		
 
 		cout<<"This is red leader, I'm going in!"<<endl;
 		i = 0;
-		fmsy = 0.;
+		dvector fi(1,nfleet);
+		fi = 0.;
 		while( i < 1500 )
 		{	
 			
-			cMSY.calcEquilibrium(fmsy);
+			cMSY.calcEquilibrium(fi);
 			// cout<<cMSY.getRe()<<endl;
-			cout<<"fmsy ="<<fmsy<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+			cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
 			<<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
-			fmsy += 0.01;
+			fi += 0.01;
 			if(cMSY.getRe() < 0 ) break;
 			
 			i ++;
