@@ -3069,7 +3069,7 @@ FUNCTION void calcReferencePoints()
 	bmsy = 0;
 
 	dvector ftry(1,nfleet);
-	ftry  = 0.1/nfleet; //0.6/nfleet * mean(M_bar);
+	ftry  = 0.6/nfleet * mean(M_bar);
 	fmsy  = ftry;
 	
 

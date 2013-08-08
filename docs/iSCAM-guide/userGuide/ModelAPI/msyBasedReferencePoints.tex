@@ -1,4 +1,4 @@
-%!TEX root = /Users/stevenmartell/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
+%!TEX root = /Users/stevenmartell1/Documents/iSCAM-project/docs/iSCAM-guide/userGuide/usrGuide.tex
 The concept of maximum sustainable yield, or MSY, is based on the notion that the underlying stock-size versus productivity can be estimated with some degree of certainty, and that this production function is stationary over time.  For a single fishing fleet, this can easily be represented as the equilibrium catch versus the equilibrium fishing effort (Fig. \ref{fig:iscamFigs_Fig1Quadplot}a), hereafter referred to as a yield curve. In the case of multiple fishing fleets, this yield curve  is not necessarily a smooth function as the total yield summed over all fleets is also a function of the fishing mortality exerted by each of the fleets.  In section \ref{ssub:msy_based_reference_points} a description of the equilibrium yields and MSY-based reference points is given, followed by a description of the numerical methods used to obtain MSY-based reference points when there are two or more fleets fishing simultaneously.
 
 A special class library to implement the MSY-based reference point calculations was developed specifically for \iscam.  The C++ code for this class can be found in \texttt{msy.cpp}.
@@ -171,7 +171,7 @@ To estimate what the appropriate MSY-based fishing mortality rates for two or mo
 \begin{equation}\label{eq:equilYield}
 	 Y_{k} = \sum_j\frac{N_j F_k v_{k,j} w_j (1-\exp(-M-\sum_k F_k v_{k,j}))} {M + \sum_k F_k v_{k,j}},
 \end{equation}
-where $F_k$ is the fishing mortality rate imposed by gear $k$, M is the instantaneous natural mortality rate, $v_{k,j}$ is the age-specific selectivity for gear $k$ and age$j$, and $w_j$ and $N_j$ are the average weight-at-age and numbers-at-age, respectively.  Note that if $k>1$, then \eqref{eq:equilYield} represents of system of nonlinear equations where the roots of these equations $\left(\frac{\partial Y_k}{\partial F_k}=0\right)$ are found with Newton-Raphson.
+where $F_k$ is the fishing mortality rate imposed by gear $k$, M is the instantaneous natural mortality rate, $v_{k,j}$ is the age-specific selectivity for gear $k$ and age $j$, and $w_j$ and $N_j$ are the average weight-at-age and numbers-at-age, respectively.  Note that if $k>1$, then \eqref{eq:equilYield} represents of system of nonlinear equations where the roots of these equations $\left(\frac{\partial Y_k}{\partial F_k}=0\right)$ are found with Newton-Raphson.
 
 \subsubsection{Algorithm for estimating \fmsy\ for multiple fleets} % (fold)
 \label{ssub:algorithm_for_estimating_fmsy_for_multiple_fleets}
