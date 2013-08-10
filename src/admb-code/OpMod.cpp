@@ -6,6 +6,7 @@
 #include <admodel.h>
 #include "OpMod.h"
 #include "Selex.h"
+#include "msy.h"
 
 test::test(const s_iSCAMdata& data)
 {
@@ -247,20 +248,39 @@ void OperatingModel::runScenario()
 	- (so, beta, sbo, ro)
 	*/
 	calcStockRecruitment();
-	cout<<"Ok apres calcStockRecruitment"<<endl;
+	cout<<"Ok apres calcStockRecruitment.   \t tout bon"<<endl;
 
 	/*
 	- Condition operating model on historical assessment
 	- Run model from syr-nyr based on input parameters.
 	*/
 	conditionReferenceModel();
-	cout<<"Ok apres conditionReferenceModel"<<endl;
+	cout<<"Ok apres conditionReferenceModel. \t pas fini"<<endl;
 
 	/*
 	- Calculate reference points that are required for the harvest control rule.
 	*/
-	
+	calcReferencePoints();
+	cout<<"Ok apres clacReferencePoints.      \t pas fini"<<endl;
 }
+
+
+/**
+* @brief calculate reference points.
+* @author Steve Martell
+*/
+void OperatingModel::calcReferencePoints()
+{
+	int f,g,h,i,j,k;
+
+	for( g = 1; g <= nStock; g++ )
+	{
+		// Working here.
+		// Msy cMSY(dRo(g),dSteepness(g),dM(g),dRho(g),dCntrl(13),);
+		
+	}
+}
+
 
 /**
 * @brief Condition the reference model for numbers-at-age between syr and nyr
@@ -315,7 +335,7 @@ void OperatingModel::conditionReferenceModel()
 		}
 		d3_Nt(ig)(nNyr+1,nSage) = 1./nSex * dAvgRec(ih);
 		
-
+		// cout<<d3_Nt(ig)<<endl; // ce code cest bon.
 	}
 }
 

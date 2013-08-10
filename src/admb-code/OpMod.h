@@ -374,6 +374,7 @@ public:
 protected:
   void calcStockRecruitment();
   void conditionReferenceModel();
+  void calcReferencePoints();
 
 };
 #endif
