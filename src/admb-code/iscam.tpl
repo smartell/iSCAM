@@ -4529,9 +4529,11 @@ FUNCTION void runMSE()
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
 	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
 	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
+	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
 		d3_selpar(k) = value(sel_par(k));
+		d4_log_sel(k) = value(log_sel(k));
 	}
 	for( g = 1; g <= n_ags; g++ )
 	{
@@ -4552,6 +4554,7 @@ FUNCTION void runMSE()
 	s_mseVars.nSel_type       = isel_type;
 	s_mseVars.nSel_block      = sel_blocks;
 	s_mseVars.dSelPars        = &d3_selpar;
+	s_mseVars.d4_log_sel      = &d4_log_sel;
 	s_mseVars.dFt             = value(ft);
 	s_mseVars.d3_Mt			  = &d3_M;
 	s_mseVars.d3_St           = &d3_S;

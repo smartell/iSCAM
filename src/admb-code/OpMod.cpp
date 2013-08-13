@@ -133,7 +133,7 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 		}
 	}
 
-
+	dAllocation  = cS.dAllocation;
 	dAge.allocate(nSage,nNage);
 	dAge.fill_seqadd(nSage,1);
 
@@ -200,6 +200,9 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_selPars.allocate(*cS.dSelPars);
 	d3_selPars = *cS.dSelPars;
 	
+	d4_log_sel.allocate(*cS.d4_log_sel);
+	d4_log_sel = *cS.d4_log_sel;
+
 	dFt                = cS.dFt;
 	
 	d3_Mt.allocate(*cS.d3_Mt);
@@ -272,12 +275,44 @@ void OperatingModel::runScenario()
 void OperatingModel::calcReferencePoints()
 {
 	int f,g,h,i,j,k;
+	int ig;
+	double d_rho = nCntrl(13);
+	dvector d_ak(1,nGear);
+	d3_array d_V(1,n_ags,1,nGear,nSage,nNage);
+	for( k = 1; k <= nGear; k++ )
+	{
+		d_ak(k)  = dAllocation(k);
+		for( ig = 1; ig <= n_ags; ig++ )
+		{
+			d_V(ig)(k) = (exp(d4_log_sel(k)(ig)(nNyr)));
+		}
+	}
 
+	// average weight-at-age in referecne points.
+	dmatrix wt_bar(1,n_ags,nSage,nNage);
+	dmatrix fa_bar(1,n_ags,nSage,nNage);
+	dmatrix M_bar(1,n_ags,nSage,nNage);
+	// cout<<"Average weight"<<endl;
+	for( ig = 1; ig <= n_ags; ig++ )
+	{
+		wt_bar(ig) = colsum(dWt_avg(ig))/(nNyr-nSyr+1);
+		fa_bar(ig) = colsum(dWt_mat(ig))/(nNyr-nSyr+1);
+		M_bar(ig)  = colsum(d3_Mt(ig))/(nNyr-nSyr+1);
+	}
+	// cout<<wt_bar<<endl;
+	// cout<<fa_bar<<endl;
+	// cout<<M_bar<<endl;
+	// exit(1);
+	dvector fmsy(1,nGear);
+	fmsy=0.05;
+	/* Instantiate the MSY class for each stock */
 	for( g = 1; g <= nStock; g++ )
 	{
 		// Working here.
-		// Msy cMSY(dRo(g),dSteepness(g),dM(g),dRho(g),dCntrl(13),);
-		
+		Msy cMSY(dRo(g),dSteepness(g),M_bar,d_rho,wt_bar,fa_bar,&d_V);
+		cMSY.get_fmsy(fmsy);
+		cout<<"Chui increase the deflectors"<<endl;
+		cout<<fmsy<<endl;
 	}
 }
 
@@ -395,6 +430,7 @@ void OperatingModel::calcStockRecruitment()
 }
 
 /* calculate Selectivity coefficients */
+// Aug 12. Possibly Deprecate this function.
 void OperatingModel::calcSelectivities()
 {
 	/*

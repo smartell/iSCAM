@@ -1,8 +1,17 @@
 /**
- * \file OpMod.h
- * \author Steve Martell
- * \date Jun 4, 2013
-**/
+* \file OpMod.h
+* \bief This is the operating model code for the population reference model.
+* \author Steve Martell
+* \date Jun 4, 2013
+*
+* DETAILED DESCRIPTION OF THE CLASS OperatingModel
+*  - There is a single constructor that takes two arguments which are the
+*    structs fro the data types (s_iSCAMdata), and the variable types 
+*    (s_iSCAMvariables).  Once instantiated, a few of the methods of the 
+*    OperatingModel class executed to initialize variables that are used 
+*    in the main routines of the OperatingModel class.
+* 
+*/
 
 
 
@@ -83,11 +92,14 @@ struct s_iSCAMvariables
   dmatrix   dLog_Rbar_devs;
   dmatrix   dLog_Rinit_devs;
 
+  /* Selectivity parameters */
   ivector   nSel_type;
   imatrix   nSel_block;
   d3_array* dSelPars;
-  
+  d4_array* d4_log_sel;
 
+  
+  /* Mortality rate arrays */
   dmatrix   dFt;
   d3_array* d3_Mt;
   d3_array* d3_St;
@@ -290,6 +302,8 @@ private:
   imatrix pntr_gs;
   d3_array pntr_ags;
 
+  dvector dAllocation;
+
 
   dvector dAge;
   // Growth & Maturity data
@@ -345,6 +359,7 @@ private:
   ivector  nSel_type;
   imatrix  nSel_block;
   d3_array d3_selPars;
+  d4_array d4_log_sel;
   d5_array d5_logSel;
 
   // derived variables for SRR 
