@@ -344,12 +344,13 @@ void OperatingModel::calcTAC()
 {
 	cout<<"Fmsy\t"<<m_dFmsy<<endl;	
 
-	/* Get stock assessment results */
+	/* Get stock assessment results -> Ian Stewart */
 	m_est_bo.allocate(1,nStock);
 	m_est_fmsy.allocate(1,nStock);
 	m_est_msy.allocate(1,nStock);
 	m_est_bmsy.allocate(1,nStock);
 	m_est_sbt.allocate(1,nStock);
+	m_est_bt.allocate(1,nStock);
 
 	ifstream ifs("iSCAM.res");
 	ifs >> m_est_bo;
@@ -357,8 +358,9 @@ void OperatingModel::calcTAC()
 	ifs >> m_est_msy ;
 	ifs >> m_est_bmsy;
 	ifs >> m_est_sbt ;
-
-	cout<<m_est_sbt<<endl;
+	ifs >> m_est_bt;
+	
+	/* Compute apportionment schedule -> Ray Webster */
 }
 
 

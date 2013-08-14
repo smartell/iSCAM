@@ -1174,6 +1174,7 @@ PARAMETER_SECTION
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
 	// | - qt       -> catchability coefficients (time-varying)
 	// | - sbt      -> spawning stock biomass by group used in S-R relationship.
+	// | - bt       -> average biomass by group used for stock projection
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
@@ -1184,6 +1185,7 @@ PARAMETER_SECTION
 	matrix  it_hat(1,nit,1,nit_nobs);
 	matrix      qt(1,nit,1,nit_nobs);
 	matrix     sbt(1,ngroup,syr,nyr+1);
+	matrix      bt(1,ngroup,syr,nyr+1);
 	matrix      rt(1,ngroup,syr+sage,nyr); 
 	matrix   delta(1,ngroup,syr+sage,nyr);
 
@@ -1819,6 +1821,7 @@ FUNCTION calcNumbersAtAge
 	int ig,ih;
 
 	N.initialize();
+	bt.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		f  = i_area(ig);
@@ -1846,6 +1849,8 @@ FUNCTION calcNumbersAtAge
 		}
 		N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
 		log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
+
+
 		for(i=syr;i<=nyr;i++)
 		{
 			if( i>syr )
@@ -1857,9 +1862,12 @@ FUNCTION calcNumbersAtAge
 			N(ig)(i+1)(sage+1,nage) =++elem_prod(N(ig)(i)(sage,nage-1)
 			                                     ,S(ig)(i)(sage,nage-1));
 			N(ig)(i+1,nage)        +=  N(ig)(i,nage)*S(ig)(i,nage);
+
+			// average biomass for group in year i
+			bt(g)(i) += N(ig)(i) * wt_avg(ig)(i);
 		}
 		N(ig)(nyr+1,sage) = 1./nsex * mfexp( log_avgrec(ih));
-		
+		bt(g)(nyr+1) += N(ig)(nyr+1) * wt_avg(ig)(nyr+1);
 
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
@@ -4048,6 +4056,7 @@ REPORT_SECTION
 	REPORT(so);
 	REPORT(beta);
 	REPORT(sbt);
+	REPORT(bt);
 	REPORT(rt);
 	REPORT(delta);
 
@@ -4088,10 +4097,15 @@ REPORT_SECTION
 		{
 			ofs<<sbt(g)(nyr+1)<<"\t";
 		}
-		cout<<endl;
+		ofs<<endl;
 
 		// projected biomass
-		
+		// The total biomass for each stock
+		for( g = 1; g <= ngroup; g++ )
+		{
+			ofs<<bt(g)(nyr+1)<<"\t";
+		}
+		ofs<<endl;
 	}
 
 

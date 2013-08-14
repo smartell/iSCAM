@@ -380,6 +380,7 @@ private:
   dvector m_est_msy;
   dvector m_est_bmsy;
   dvector m_est_sbt;
+  dvector m_est_bt;
 
 public:
   // OperatingModel(Scenario &cScenario);
