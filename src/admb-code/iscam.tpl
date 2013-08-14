@@ -3125,8 +3125,8 @@ FUNCTION void calcReferencePoints()
 			
 			cMSY.calcEquilibrium(fi);
 			// cout<<cMSY.getRe()<<endl;
-			cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
-			<<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
+			// cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+			// <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
 			fi += 0.01;
 			if(cMSY.getRe() < 0 ) break;
 			
@@ -4061,7 +4061,7 @@ REPORT_SECTION
 	// | MSY-BASED REFERENCE POINTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	if(last_phase())
+	if( last_phase() )
 	{
 		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
@@ -4072,6 +4072,29 @@ REPORT_SECTION
 		REPORT(bmsy);
 		// REPORT(Umsy);
 	}
+
+	// |---------------------------------------------------------------------------------|
+	// | OUTPUT FOR OPERATING MODEL
+	// |---------------------------------------------------------------------------------|
+	// |
+	if( last_phase() )
+	{
+		ofstream ofs("iSCAM.res");
+		ofs<<bo<<endl;
+		ofs<<fmsy<<endl;
+		ofs<<msy<<endl;
+		ofs<<bmsy<<endl;
+		for( g = 1; g <= ngroup; g++ )
+		{
+			ofs<<sbt(g)(nyr+1)<<"\t";
+		}
+		cout<<endl;
+
+		// projected biomass
+		
+	}
+
+
 // 	/*
 // 	Stock status info
 // 	Bstatus = sbt/bmsy;

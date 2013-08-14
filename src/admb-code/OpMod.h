@@ -371,8 +371,16 @@ private:
   d3_array d3_Nt;
   d3_array d3_St;
 
-  // Class aggregations
-  // Scenario m_cScenario;
+  // reference points
+  dvector m_dFmsy;
+
+  // stock assessment results
+  dvector m_est_bo;
+  dvector m_est_fmsy;
+  dvector m_est_msy;
+  dvector m_est_bmsy;
+  dvector m_est_sbt;
+
 public:
   // OperatingModel(Scenario &cScenario);
   OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars);
@@ -394,6 +402,7 @@ protected:
   void implementFisheries();
   void updateReferencePopulation();
   void generateStockAssessmentData();
+  void runStockAssessment();
 
 };
 #endif

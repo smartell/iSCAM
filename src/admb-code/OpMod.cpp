@@ -295,7 +295,20 @@ void OperatingModel::runScenario(const int &seed)
 		*/
 		generateStockAssessmentData();
 		cout<<"Ok apres generateStockAssessmentData \t pas fini"<<endl;
+
+
+		/*
+		- Run stock assessment procedures.
+		*/
+		runStockAssessment();
+		cout<<"Ok apres runStockAssessment          \t pas fini"<<endl;
+
 	}
+}
+
+void OperatingModel::runStockAssessment()
+{
+
 }
 
 void OperatingModel::generateStockAssessmentData()
@@ -329,7 +342,23 @@ Procedure currently used by the IPHC
 */
 void OperatingModel::calcTAC()
 {
-		
+	cout<<"Fmsy\t"<<m_dFmsy<<endl;	
+
+	/* Get stock assessment results */
+	m_est_bo.allocate(1,nStock);
+	m_est_fmsy.allocate(1,nStock);
+	m_est_msy.allocate(1,nStock);
+	m_est_bmsy.allocate(1,nStock);
+	m_est_sbt.allocate(1,nStock);
+
+	ifstream ifs("iSCAM.res");
+	ifs >> m_est_bo;
+	ifs >> m_est_fmsy;
+	ifs >> m_est_msy ;
+	ifs >> m_est_bmsy;
+	ifs >> m_est_sbt ;
+
+	cout<<m_est_sbt<<endl;
 }
 
 
@@ -372,18 +401,17 @@ void OperatingModel::calcReferencePoints()
 		fa_bar(ig) = colsum(dWt_mat(ig))/(nNyr-nSyr+1);
 		M_bar(ig)  = colsum(d3_Mt(ig))/(nNyr-nSyr+1);
 	}
-	// cout<<wt_bar<<endl;
-	// cout<<fa_bar<<endl;
-	// cout<<M_bar<<endl;
-	// exit(1);
-	dvector fmsy(1,nGear);
-	fmsy=0.05;
+	
+	
+	m_dFmsy.allocate(1,nGear);
+	m_dFmsy=0.1 / nGear;
+
 	/* Instantiate the MSY class for each stock */
 	for( g = 1; g <= nStock; g++ )
 	{
 		// Working here.
 		Msy cMSY(dRo(g),dSteepness(g),M_bar,d_rho,wt_bar,fa_bar,&d_V);
-		cMSY.get_fmsy(fmsy);
+		cMSY.get_fmsy(m_dFmsy);
 
 	}
 }
