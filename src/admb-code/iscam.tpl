@@ -13,7 +13,7 @@
 
 ///
 /// \def TINY
-/// \brief A small number (1.e-08)
+/// \brief A small number (1.e-08)`
 ///
 
 // ----------------------------------------------------------------------------- //
@@ -183,6 +183,7 @@ DATA_SECTION
 	// | retro_yrs  : number of terminal years to remove.
 	
 	int SimFlag;  //! Flag for simulation mode */
+	int mseFlag;  //! Flag for management strategy evaluation mode */
 	int rseed;
 	int retro_yrs;
 	LOC_CALCS
@@ -194,20 +195,30 @@ DATA_SECTION
 		//that is required for the simulation model
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-sim",opt))>-1)
 		{
-			SimFlag=1;
-			rseed=atoi(ad_comm::argv[on+1]);
-			//if(SimFlag)exit(1);
+			SimFlag = 1;
+			rseed   = atoi(ad_comm::argv[on+1]);
 		}
 		
 		// command line option for retrospective analysis. "-retro retro_yrs"
 		retro_yrs=0;
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-retro",opt))>-1)
 		{
-			retro_yrs=atoi(ad_comm::argv[on+1]);
+			retro_yrs = atoi(ad_comm::argv[on+1]);
 			cout<<"|____________________________________________________|\n";
 			cout<<"| Implementing Retrospective analysis                |\n";
 			cout<<"|____________________________________________________|\n";
 			cout<<"| Number of retrospective years = "<<retro_yrs<<endl;
+		}
+
+		// Management strategy evaluation.
+		mseFlag = 0;
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-mse",opt))>-1)
+		{
+			mseFlag = 1;
+			rseed   = atoi(ad_comm::argv[on+1]);
+			cout<<"|_________________________________________________|\n";
+			cout<<"|Implementing Management Strategy Evaluation      |\n";
+			cout<<"|_________________________________________________|\n";
 		}
 	END_CALCS
 
@@ -4561,7 +4572,7 @@ FUNCTION void runMSE()
 
     OperatingModel om(s_mseData,s_mseVars);
 
-    om.runScenario();
+    om.runScenario(rseed);
 
 	/* SCENARIO PARAMETERS */
 	// dvector rbar     = value(exp(log_avgrec));
@@ -4813,7 +4824,7 @@ FINAL_SECTION
 
 		
 
-	runMSE();
+	if(mseFlag) runMSE();
 	cout<<"End of class testing"<<endl;
 
 

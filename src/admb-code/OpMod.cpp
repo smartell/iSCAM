@@ -222,7 +222,7 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	m_kappa = elem_div(4.0 * dSteepness, 1. - dSteepness);
 }
 
-void OperatingModel::runScenario()
+void OperatingModel::runScenario(const int &seed)
 {
 	/*
 	PSUEDOCODE:
@@ -260,13 +260,86 @@ void OperatingModel::runScenario()
 	conditionReferenceModel();
 	cout<<"Ok apres conditionReferenceModel. \t pas fini"<<endl;
 
-	/*
-	- Calculate reference points that are required for the harvest control rule.
-	*/
-	calcReferencePoints();
-	cout<<"Ok apres clacReferencePoints.      \t pas fini"<<endl;
+	cout<<nNyr<<"\t"<<nPyr<<endl;
+	for(int i = nNyr; i <= nPyr; i++ )
+	{
+		cout<<"year = "<<i<<endl;
+		/*
+		- Calculate reference points that are required for the harvest control rule.
+		*/
+		calcReferencePoints();
+		cout<<"Ok apres clacReferencePoints.      \t pas fini"<<endl;
+
+		/*
+		- Use Harvest Control Rule to calculate TAC
+		*/
+		calcTAC();
+		cout<<"OK apres calcTAC.              	\t pas fini"<<endl;
+
+		/*
+		- Implement harvest on reference population.
+		- Ensure that actual catch does not exceed available biomass
+		- Implementation errors occur here.
+		*/
+		implementFisheries();
+		cout<<"Ok apres implementFisheries       \t pas fini"<<endl;
+		
+		/*
+		- Update reference population
+		*/	
+		updateReferencePopulation();
+		cout<<"Ok apres updateReferencePopulation \t pas fini"<<endl;
+
+		/*
+		- Generate data for stock assessment.
+		*/
+		generateStockAssessmentData();
+		cout<<"Ok apres generateStockAssessmentData \t pas fini"<<endl;
+	}
 }
 
+void OperatingModel::generateStockAssessmentData()
+{
+
+}
+
+void OperatingModel::updateReferencePopulation()
+{
+
+}
+
+/**
+ @brief Calculate the approprate area based TAC based on 
+        apportioned biomass, and application of harvest rates.
+
+ @author Steve Martell
+ @date   August 13, 2013
+ @location  St Paul Island 
+
+Procedure currently used by the IPHC
+	- 1. Estimate coast-wide biomass.
+	- 2. Apportion biomass in each regulatory area based on survey.
+	- 3. Apply area-specific harvest rates to apportioned biomass.
+		- a. If stock status > 30% Bo use full Frate
+		- b. Frate ramps down to 0 at limit reference point (20% Bo).
+		- c. Frate=0 at or below limit reference point.
+	- 4. Subtract off estimated wastage & bycatch.
+	- 5. For area 2B use catch allocation
+
+*/
+void OperatingModel::calcTAC()
+{
+		
+}
+
+
+void OperatingModel::implementFisheries()
+{
+	/*
+		Author Steve Martell
+
+	*/
+}
 
 /**
 * @brief calculate reference points.
@@ -311,8 +384,7 @@ void OperatingModel::calcReferencePoints()
 		// Working here.
 		Msy cMSY(dRo(g),dSteepness(g),M_bar,d_rho,wt_bar,fa_bar,&d_V);
 		cMSY.get_fmsy(fmsy);
-		cout<<"Chui increase the deflectors"<<endl;
-		cout<<fmsy<<endl;
+
 	}
 }
 

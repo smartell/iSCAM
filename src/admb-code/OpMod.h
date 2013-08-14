@@ -384,12 +384,16 @@ public:
   void initializeConstants(const s_iSCAMdata& cS);
   void initializeVariables(const s_iSCAMvariables& cS);
   void calcSelectivities();
-  void runScenario();
+  void runScenario(const int& seed);
 
 protected:
   void calcStockRecruitment();
   void conditionReferenceModel();
   void calcReferencePoints();
+  void calcTAC();
+  void implementFisheries();
+  void updateReferencePopulation();
+  void generateStockAssessmentData();
 
 };
 #endif

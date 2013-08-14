@@ -42,7 +42,7 @@
 \usepackage{alltt}
 
 % If you want to generate a toc for each chapter (use with book)
-\usepackage{minitoc}
+% \usepackage{minitoc}
 
 % This is now the recommended way for checking for PDFLaTeX:
 \usepackage{ifpdf}
@@ -50,11 +50,13 @@
 % Natbib
 \usepackage[round]{natbib}
 
-% Hyperref
-\usepackage[colorlinks,bookmarks,citecolor=magenta]{hyperref}
-
 % This is a custom iscamx package with the logo defs and fancyhdr
 \usepackage{iscamx}
+
+% Hyperref
+% \usepackage{url}
+\usepackage[colorlinks,bookmarks,citecolor=magenta,linkcolor=blue]{hyperref}
+% \usepackage{hyperref}
 
 %\newif\ifpdf
 %\ifx\pdfoutput\undefined
@@ -73,17 +75,23 @@
 \includegraphics[height=2.53in]{iscamlogo}
 \vfill
 \iscam\ Users Guide \& Documenation\\
-Version 1.01\\
+Version 1.02\\
 \vfill}
 
-\author{Steven Martell\\
-University of British Columbia\\
-Fisheries Centre\\
-2202 Main Mall\\
-Vancouver, BC\\
-V6T 1Z4\\
-Canada\\ 
-\texttt{s.martell@fisheries.ubc.ca}}
+\author{Steven J. D. Martell\\
+International Pacific Halibut Commission\\
+2320 West Commodore Way,\\
+Seattle, WA\\
+98199-1287\\
+\texttt{stevem@iphc.int}
+% University of British Columbia\\
+% Fisheries Centre\\
+% 2202 Main Mall\\
+% Vancouver, BC\\
+% V6T 1Z4\\
+% Canada\\ 
+% \texttt{s.martell@fisheries.ubc.ca}
+}
 
 \date{\small{$^\copyright$  Copyright Steven Martell, \today.  All rights reserved.}}
 
@@ -106,6 +114,7 @@ Canada\\
 	\input{./InputFiles/InputFiles}
 	\input{./ModelAPI/ModelDocumentation}
 	\input{./Examples/Example}
+	\input{./MSE/mse}
 
 %% -References
 \clearpage
@@ -113,7 +122,7 @@ Canada\\
 %\bibliographystyle{plainnat}
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
-\bibliography{/Users/stevenmartell/Documents/ARTICLES/Articles-1}
+\bibliography{/Users/stevenmartell1/Documents/ARTICLES/Articles-1}
 
 %% -Appendix material Model Description --------------------------------
 \newpage
