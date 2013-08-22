@@ -346,8 +346,8 @@ void OperatingModel::calcTAC()
 
 	/* Get stock assessment results -> Ian Stewart */
 	m_est_bo.allocate(1,nStock);
-	m_est_fmsy.allocate(1,nStock);
-	m_est_msy.allocate(1,nStock);
+	m_est_fmsy.allocate(1,nGear);
+	m_est_msy.allocate(1,nGear);
 	m_est_bmsy.allocate(1,nStock);
 	m_est_sbt.allocate(1,nStock);
 	m_est_bt.allocate(1,nStock);
@@ -360,7 +360,9 @@ void OperatingModel::calcTAC()
 	ifs >> m_est_sbt ;
 	ifs >> m_est_bt;
 	
+	/* HARVEST CONTROL RULE */
 	/* Compute apportionment schedule -> Ray Webster */
+
 }
 
 
