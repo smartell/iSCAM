@@ -262,6 +262,8 @@ void Msy::calc_equilibrium(dvector& fe)
 		lz is the survivorship of the total numbers, and lw is the survivorship
 		upto the time of spawning.  The spawning biomass per recruit (phif) depends
 		on the survivorship up to the time of spawning.
+
+		Aug 22, 2013, fixed bug in dirivative of catch equation when nfleet > 1.
 	*/
 	
 	// Indexes for dimensions
@@ -418,7 +420,8 @@ void Msy::calc_equilibrium(dvector& fe)
 	
 	re   = ro*(kappa-m_phie/phif) / km1;
 	ye   = re*elem_prod(fe,phiq);
-	dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
+	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
+	dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
 	
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
