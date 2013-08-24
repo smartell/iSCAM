@@ -2712,7 +2712,7 @@ FUNCTION void simulationModel(const long& seed)
 	// Modified as per Marie Etienne email. Aug 22, 2013.
 	wt.fill_randn(rng); 
 	wt *= tau;
-	wt += 0.5*tau*tau;
+	// wt += 0.5*tau*tau;
 
 	epsilon.fill_randn(rng); 
 	//now loop over surveys and scale the observation errors
