@@ -21,7 +21,7 @@ test::test(const s_iSCAMdata& data)
 // |---------------------------------------------------------------------------------|
 // | SCENARIO MEMBER FUNCTIONS, CONSTRUCTOR & DESTRUCTOR
 // |---------------------------------------------------------------------------------|
-// |
+// | -to be deprecated
 Scenario::~Scenario(){};
 
 // Scenario::Scenario(const ScenarioData& data, const ScenarioParameters& params)
@@ -96,8 +96,10 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	nSage  = cS.nSage;
 	nNage  = cS.nNage;
 	nGear  = cS.nGear;
+	nFleet = cS.nFleet;
 
-	// links for array indexing
+
+	// | links for array indexing
 	n_ags = nArea * nStock * nSex;
 	n_ag  = nArea * nStock;
 	n_gs  = nStock * nSex;
@@ -107,7 +109,8 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	pntr_ag.allocate(1,nArea,1,nStock);
 	pntr_gs.allocate(1,nStock,1,nSex);
 	pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
-	int f,g,h;
+
+	int f,g,h,i,j,k;
 	int ig = 0;
 	int ih = 0;
 	int is = 0;
@@ -132,6 +135,9 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 			}
 		}
 	}
+	cout<<"Houston, we have a problem"<<endl;
+	nFleetIndex.allocate(1,nFleet);
+	nFleetIndex = cS.nFleetIndex;
 
 	dAllocation  = cS.dAllocation;
 	dAge.allocate(nSage,nNage);
@@ -149,6 +155,27 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// Catch Data
 	nCtNobs 	= cS.nCtNobs;
 	dCatchData 	= cS.dCatchData;
+	d3_Ct.allocate(1,n_ags,nSyr,nPyr,1,nGear);
+	d3_Ct.initialize();
+	for(int ii=1;ii<=nCtNobs;ii++)
+	{
+		i = dCatchData(ii)(1);
+		k = dCatchData(ii)(2);
+		f = dCatchData(ii)(3);
+		g = dCatchData(ii)(4);
+		h = dCatchData(ii)(5);
+		if( h==0 )
+		{
+			for(h=1;h<=nSex;h++)
+			{
+				ig = pntr_ags(f,g,h);
+				d3_Ct(ig)(i)(k) = 1./nSex*dCatchData(ii)(7);
+			}
+			
+		} 
+	}
+
+
 
 	// Survey data
 	nIt         = cS.nIt;
@@ -171,7 +198,34 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	dWt_mat.allocate(*cS.dWt_mat);
 	dWt_avg = *cS.dWt_avg;
 	dWt_mat = *cS.dWt_mat;
+	dWt_bar.allocate(1,n_ags,nSage,nNage);
+	dEt_bar.allocate(1,n_ags,nSage,nNage);
+	d3_wt_avg.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	d3_wt_mat.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	dWt_bar.initialize();
+	dEt_bar.initialize();
+	d3_wt_avg.initialize();
+	d3_wt_mat.initialize();
+	for( ig = 1; ig <= n_ags; ig++ )
+	{
+		d3_wt_avg(ig).sub(nSyr,nNyr+1) = dWt_avg(ig);
+		d3_wt_mat(ig).sub(nSyr,nNyr+1) = dWt_mat(ig);
+		
+		dWt_bar(ig) = d3_wt_avg(ig)(nNyr+1);
+		dEt_bar(ig) = d3_wt_mat(ig)(nNyr+1);
 
+		//  For now assume average weight in future 
+		//  Could assume density-dependent growth etc. & overwrite these variables
+		for( i = nNyr+2; i <= nPyr; i++ )
+		{
+			d3_wt_avg(ig)(i) = dWt_bar(ig);
+			d3_wt_mat(ig)(i) = dEt_bar(ig);			
+		}
+		
+		// cout<<"d3_wt_avg\n"<<d3_wt_avg(ig)<<endl;
+		// cout<<"dWt_bar\n"<<dWt_bar(ig)<<endl;
+		// cout<<"dEt_bar\n"<<dEt_bar(ig)<<endl;
+	}
 	// cntrl vector
 	nCntrl = cS.cntrl;
 	cout<<"initializeConstants"<<endl;
@@ -212,6 +266,7 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_St = *cS.d3_St;
 
 	d3_Nt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	d3_Nt.initialize();
 
 	// cout<<dFt<<endl;
 	// recruitment compensation
@@ -261,9 +316,10 @@ void OperatingModel::runScenario(const int &seed)
 	cout<<"Ok apres conditionReferenceModel. \t pas fini"<<endl;
 
 	cout<<nNyr<<"\t"<<nPyr<<endl;
-	for(int i = nNyr; i <= nPyr; i++ )
+	for(int i = nNyr + 1; i <= nPyr; i++ )
 	{
 		cout<<"year = "<<i<<endl;
+		cout<<d3_Nt(1)(i)<<endl;
 		/*
 		- Calculate reference points that are required for the harvest control rule.
 		*/
@@ -274,6 +330,7 @@ void OperatingModel::runScenario(const int &seed)
 		- Use Harvest Control Rule to calculate TAC
 		*/
 		calcTAC();
+		cout<<"Tac = "<<m_dTac<<endl;
 		cout<<"OK apres calcTAC.              	\t pas fini"<<endl;
 
 		/*
@@ -281,7 +338,7 @@ void OperatingModel::runScenario(const int &seed)
 		- Ensure that actual catch does not exceed available biomass
 		- Implementation errors occur here.
 		*/
-		implementFisheries();
+		implementFisheries(i);
 		cout<<"Ok apres implementFisheries       \t pas fini"<<endl;
 		
 		/*
@@ -346,8 +403,8 @@ void OperatingModel::calcTAC()
 
 	/* Get stock assessment results -> Ian Stewart */
 	m_est_bo.allocate(1,nStock);
-	m_est_fmsy.allocate(1,nGear);
-	m_est_msy.allocate(1,nGear);
+	m_est_fmsy.allocate(1,nFleet);
+	m_est_msy.allocate(1,nFleet);
 	m_est_bmsy.allocate(1,nStock);
 	m_est_sbt.allocate(1,nStock);
 	m_est_bt.allocate(1,nStock);
@@ -359,19 +416,67 @@ void OperatingModel::calcTAC()
 	ifs >> m_est_bmsy;
 	ifs >> m_est_sbt ;
 	ifs >> m_est_bt;
-	
+
+	cout<<nStock<<endl;
+	cout<<nFleet<<endl;
+	cout<<m_est_bo<<endl;
+	cout<<m_est_bt<<endl;
 	/* HARVEST CONTROL RULE */
 	/* Compute apportionment schedule -> Ray Webster */
+
+	// SJDM Simple 20% hr for now.
+	m_dTac.allocate(1,nFleet);
+	m_dTac.initialize();
+	int g;
+	for( g = 1; g <= nStock; g++ )
+	{
+		m_dTac += 0.2/nFleet * m_est_bt(g);
+	}
+
 
 }
 
 
-void OperatingModel::implementFisheries()
+void OperatingModel::implementFisheries(const int& iyr)
 {
 	/*
 		Author Steve Martell
+		Notes:
+			- This is going to be a bit tricky due to the number of factors at play.
+			- Essentially this routine must calculate the F-at-age for each gear that
+			  is given a TAC > 0.  Also concerned with bycatch fisheries (the effort
+			  in bycatch fisheries is likely to be independent of halibut stock size).
 
+			- For the directed fishery, the TAC value includes wastage, so must also 
+			  keep track of landed fish, U32 discards, and lost gear.  Use the same model
+			  that is described by Lew Coggins, and the work I did with Bill Pine where
+			  there is a joint probability of capture * (probability of retention + 
+			  (1-probability of retention)*discard mortality) that is a function of size-
+			  at-age and the legal size limit.
+
+			- Aug 27, for now keep it simple  
 	*/
+
+	int f,g,h,i,j,k;
+	int ig;
+	for( ig = 1; ig <= n_ags; ig++ )
+	{
+		 /* 
+		 Given a tac in year iyr, figure out what the F is.
+		 getFishingMortality in Baranov.h arguments are:
+		 	- ct for each fleet
+		 	- Natural mortality by age
+		 	- selectivity for each fleet
+		 	- numbers -at-age 
+		 	- [weight -at-age if catch is in biomass units]
+		 */
+
+		dvector Na = d3_Nt(ig)(iyr);
+		dvector wa = d3_wt_avg(ig)(iyr);
+
+		cout<<"Na\t"<<Na<<endl;
+		cout<<"wa\t"<<wa<<endl;
+	}
 }
 
 /**
@@ -380,17 +485,24 @@ void OperatingModel::implementFisheries()
 */
 void OperatingModel::calcReferencePoints()
 {
-	int f,g,h,i,j,k;
+	/*
+	TO DO:
+		1) add an const int iyr argument to determine average weights
+		at age and maturity at age upto the current assessment year.
+	*/
+
+	int f,g,h,i,j,k,kk;
 	int ig;
 	double d_rho = nCntrl(13);
-	dvector d_ak(1,nGear);
-	d3_array d_V(1,n_ags,1,nGear,nSage,nNage);
-	for( k = 1; k <= nGear; k++ )
+	dvector d_ak(1,nFleet);
+	d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
+	for( k = 1; k <= nFleet; k++ )
 	{
+		kk = nFleetIndex(k);
 		d_ak(k)  = dAllocation(k);
 		for( ig = 1; ig <= n_ags; ig++ )
 		{
-			d_V(ig)(k) = (exp(d4_log_sel(k)(ig)(nNyr)));
+			d_V(ig)(k) = (exp(d4_log_sel(kk)(ig)(nNyr)));
 		}
 	}
 
@@ -407,8 +519,8 @@ void OperatingModel::calcReferencePoints()
 	}
 	
 	
-	m_dFmsy.allocate(1,nGear);
-	m_dFmsy=0.1 / nGear;
+	m_dFmsy.allocate(1,nFleet);
+	m_dFmsy=0.1 / nFleet;
 
 	/* Instantiate the MSY class for each stock */
 	for( g = 1; g <= nStock; g++ )

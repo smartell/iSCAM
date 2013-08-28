@@ -2,8 +2,10 @@
 #| R4iSCAM.R                                                                         |#
 #| AUTHOR: Steven Martell                                                            |#
 #|-----------------------------------------------------------------------------------|#
-#| 
-
+#| NOTES, if using sublime text 3.0
+#|    use ⌘ + \ to set working directory to the directory of the current file.
+#|    use ⌘ + enter to source a single line or highligted lines.
+#|    use ⌘ + B to source entire file.
 
 # |----------------------------------------------------------------------------------|
 # | DEFINITIONS
@@ -16,6 +18,7 @@
 .RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iSCAMViewTracker.txt"
 .BOOLREADFN <- TRUE
+require(ggplot2)
 .THEME      <- theme_bw(12)
 
 # |----------------------------------------------------------------------------------|

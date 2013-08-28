@@ -29,8 +29,10 @@ struct s_iSCAMdata
   int nSage;
   int nNage;
   int nGear;
+  int nFleet;
 
   dvector dAllocation;
+  ivector nFleetIndex;
 
   // Growth & Maturity data
   dvector d_linf;
@@ -66,6 +68,7 @@ struct s_iSCAMdata
   // control vector;
   dvector cntrl;
 
+  
 };
 #endif
 
@@ -118,6 +121,7 @@ struct s_iSCAMvariables
 
 #ifndef MODELDATA_H
 #define MODELDATA_H
+// To be deprecated
 class ModelData
 {
 public:
@@ -178,6 +182,7 @@ public:
 
 #ifndef MODELPARAMS_H
 #define MODELPARAMS_H
+//  To be deprecated
 class ModelParams
 {
 public:
@@ -238,6 +243,7 @@ public:
 
 #ifndef SCENARIO_H
 #define SCENARIO_H
+// To be deprecated
 class Scenario: public ModelData, public ModelParams
 {
 private:
@@ -280,7 +286,10 @@ public:
 class OperatingModel 
 {
 private:
-  // Model constants
+  // |-----------------|
+  // | Model constants |
+  // |-----------------|
+  
   int nStock;        
   int nArea;
   int nSex;
@@ -290,6 +299,7 @@ private:
   int nSage;
   int nNage;
   int nGear;
+  int nFleet;
 
   // LINKS TO MANAGE ARRAY INDEXING
   int n_ags;
@@ -303,6 +313,7 @@ private:
   d3_array pntr_ags;
 
   dvector dAllocation;
+  ivector nFleetIndex;
 
 
   dvector dAge;
@@ -318,6 +329,7 @@ private:
   // Catch Data
   int     nCtNobs;
   dmatrix dCatchData;
+  d3_array d3_Ct;
 
   // Survey data
   int       nIt;
@@ -334,6 +346,8 @@ private:
 
    // Empirical weight-at-age
   int      nWtNobs;
+  dmatrix  dWt_bar;
+  dmatrix  dEt_bar;
   d3_array dWt_avg;
   d3_array dWt_mat;
 
@@ -370,6 +384,9 @@ private:
 
   d3_array d3_Nt;
   d3_array d3_St;
+  d3_array d3_wt_avg;
+  d3_array d3_wt_mat;
+
 
   // reference points
   dvector m_dFmsy;
@@ -381,6 +398,9 @@ private:
   dvector m_est_bmsy;
   dvector m_est_sbt;
   dvector m_est_bt;
+
+protected:
+  dvector m_dTac;
 
 public:
   // OperatingModel(Scenario &cScenario);
@@ -400,7 +420,7 @@ protected:
   void conditionReferenceModel();
   void calcReferencePoints();
   void calcTAC();
-  void implementFisheries();
+  void implementFisheries(const int& iyr);
   void updateReferencePopulation();
   void generateStockAssessmentData();
   void runStockAssessment();

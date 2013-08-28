@@ -93,7 +93,7 @@
 //--                                                                           --//
 //-- Jan 5, 2012 - adding spawn on kelp fishery as catch_type ivector          --//
 //--             - modified the following routines:                            --//
-//--             - calcCatchAtAge                                          --//
+//--             - calcCatchAtAge                                              --//
 //--             - calcTotalMortality                                          --//
 //--                                                                           --//
 //-- Oct 31,2012 - added penalty to time-varying changes in selex for          --//
@@ -994,10 +994,31 @@ DATA_SECTION
 		}
 	END_CALCS
 
+
+	// |---------------------------------------------------------------------------------|
+	// | MANAGEMENT STRATEGY EVALUATION INPUTS
+	// |---------------------------------------------------------------------------------|
+	// |
 	
+
+	LOC_CALCS
+		ifstream ifile("Halibut2012.mse");
+		if(ifile)
+		{
+			cout<<"Vader is happy"<<endl;
+			readMseInputs();
+			
+			
+			exit(1);
+		}
+	END_CALCS
+
+
 	// END OF DATA_SECTION
 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
+
 	
+
 INITIALIZATION_SECTION
   theta theta_ival;
 	
@@ -1237,6 +1258,7 @@ PARAMETER_SECTION
 	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
 	sdreport_vector sd_depletion(1,ngroup);	
 	
+
 PRELIMINARY_CALCS_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Run the model with input parameters to simulate real data.
@@ -1248,27 +1270,12 @@ PRELIMINARY_CALCS_SECTION
 	if(SimFlag) 
 	{
 		initParameters();
+		cout<<theta(2)<<endl;
+		exit(1);
 		simulationModel(rseed);
 	}
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
-
-	// |---------------------------------------------------------------------------------|
-	// | Testing some class objects for an operating model
-	// |---------------------------------------------------------------------------------|
-	// |
-	// ModelDimension cMD(narea,ngroup,nsex,syr,nyr,sage,nage,ngear);
-	// initParameters();
-	// StockParameters cStockPars(narea,ngroup,nsex,syr,nyr,sage,nage,ngear,\
-	//                            value(ro),\
-	//                            value(steepness),\
-	//                            value(m),\
-	//                            value(exp(log_avgrec)),\
-	//                            value(exp(log_recinit)),\
-	//                            value(rho),\
-	//                            value(varphi));
-	// cout<<"End of class testing"<<endl;
-	// exit(1);
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,  200,   500, 25000, 25000
@@ -1313,6 +1320,7 @@ PROCEDURE_SECTION
 	// //duplicate symbol in libdf1b2o.a
 	// //dvariable a=3.0;
 	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
+
 
 
 FUNCTION void calcSdreportVariables()
@@ -4545,6 +4553,8 @@ FUNCTION void runMSE()
 	s_mseData.nSage       = sage;
 	s_mseData.nNage       = nage;
 	s_mseData.nGear       = ngear;
+	s_mseData.nFleet      = nfleet;
+	s_mseData.nFleetIndex = ifleet;
 	s_mseData.dAllocation = allocation;
 	s_mseData.d_linf      = linf;
 	s_mseData.d_vonbk     = vonbk;
@@ -4607,34 +4617,14 @@ FUNCTION void runMSE()
 	s_mseVars.d3_Mt			  = &d3_M;
 	s_mseVars.d3_St           = &d3_S;
 
+
+	// Instantiate the Operating Model Class
     OperatingModel om(s_mseData,s_mseVars);
 
+    // Methods for the class om.
     om.runScenario(rseed);
 
-	/* SCENARIO PARAMETERS */
-	// dvector rbar     = value(exp(log_avgrec));
-	// dvector rinit    = value(exp(log_recinit));
-	// dvector rho      = value(theta(6));
-	// dvector varphi   = value(theta(7));
-	
-	
 
-	// ScenarioParameters cSparams(
-	//                             value(sbo),
-	//                             value(steepness),
-	//                             value(m),
-	//                             (rbar),
-	//                             (rinit),
-	//                             (rho),
-	//                             (varphi),
-	//                             value(log_m_devs),
-	//                             value(log_rec_devs),
-	//                             value(init_log_rec_devs),
-	//                             d3_selpar,
-	//                             value(ft)
-	//                             );
-
-	// Scenario cScenario(cSdata,cSparams);
 
 
 
@@ -4670,6 +4660,10 @@ GLOBALS_SECTION
 	#include "OpMod.h"
 	#include "Selex.h"
 
+	void readMseInputs()
+	  {
+	  	cout<<"yep this worked"<<endl;
+	  }
 
 	time_t start,finish;
 	long hour,minute,second;
