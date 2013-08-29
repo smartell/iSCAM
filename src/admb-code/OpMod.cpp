@@ -269,12 +269,9 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_Nt.initialize();
 
 	// Fishing mortality rates
-	dFt                = cS.dFt;
-	d3_Ft.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
-	d3_Ft.initialize();  //working here, on initializeing fishing mortality rates.
-	int f,g,h,i,j,k;
-	int ig;
-
+	d3_Ft.allocate(*cS.d3_Ft);
+	d3_Ft = *cS.d3_Ft;
+	
 
 	// cout<<dFt<<endl;
 	// recruitment compensation

@@ -103,7 +103,7 @@ struct s_iSCAMvariables
 
   
   /* Mortality rate arrays */
-  dmatrix   dFt;
+  d3_array* d3_Ft;
   d3_array* d3_Mt;
   d3_array* d3_St;
 
@@ -366,9 +366,9 @@ private:
 
   dvector dKappa;
   dvector nCntrl;
-  dmatrix dFt;
-  d3_array d3_Mt;
   d3_array d3_Ft;
+  d3_array d3_Mt;
+  
 
   // Selectivity parameters
   ivector  nSel_type;

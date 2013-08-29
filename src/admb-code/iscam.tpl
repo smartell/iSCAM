@@ -1186,7 +1186,6 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
 	// |---------------------------------------------------------------------------------|
-	// | - ft       -> Mean fishing mortality rates for (gear, year)
 	// | - log_rt   -> age-sage recruitment for initial years and annual recruitment.
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
@@ -1199,7 +1198,6 @@ PARAMETER_SECTION
 	// | - rt          -> predicted sage-recruits based on S-R relationship.
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
-	matrix      ft(1,ngear,syr,nyr);
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nit,1,nit_nobs);
@@ -1214,6 +1212,7 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | THREE DIMENSIONAL ARRAYS
 	// |---------------------------------------------------------------------------------|
+	// | - ft       -> Mean fishing mortality rates for (area-sex, gear, year)
 	// | F          -> Instantaneous fishing mortality rate for (group,year,age)
 	// | M          -> Instantaneous natural mortality rate for (group,year,age)
 	// | Z          -> Instantaneous total  mortalityr rate Z=M+F for (group,year,age)
@@ -1223,6 +1222,7 @@ PARAMETER_SECTION
 	// | - A_nu		-> ragged matrix for age-composition residuals.
 	// | 
 	// |
+	3darray  ft(1,n_ags,1,ngear,syr,nyr);
 	3darray   F(1,n_ags,syr,nyr,sage,nage);
 	3darray   M(1,n_ags,syr,nyr,sage,nage);
 	3darray   Z(1,n_ags,syr,nyr,sage,nage);
@@ -1736,7 +1736,7 @@ FUNCTION calcTotalMortality
 		{
 			ii = pntr_ags(f,g,h);    
 			ftmp = mfexp(log_ft_pars(ig));
-			ft(k,i) = ftmp;
+			ft(ii)(k,i) = ftmp;
 			if( l != 3 )
 			{
 				F(ii)(i) += ftmp*mfexp(log_sel(k)(ii)(i));
@@ -1748,7 +1748,7 @@ FUNCTION calcTotalMortality
 			{
 				ii = pntr_ags(f,g,h);    
 				ftmp = mfexp(log_ft_pars(ig));
-				ft(k,i) = ftmp;
+				ft(ii)(k,i) = ftmp;
 				if( l != 3 )
 				{
 					F(ii)(i) += ftmp*mfexp(log_sel(k)(ii)(i));
@@ -1944,13 +1944,13 @@ FUNCTION calcAgeComposition
 				za = Z(ig)(i);
 				sa = S(ig)(i);
 				na = N(ig)(i);
-				if( ft(k)(i)==0 )
+				if( ft(ig)(k)(i)==0 )
 				{
 					ca = elem_prod(na,0.5*sa);
 				}
 				else
 				{
-					fa = ft(k)(i) * va;
+					fa = ft(ig)(k)(i) * va;
 					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 				}
 				A_hat(kk)(ii) = ca(a_sage(kk),a_nage(kk));
@@ -1970,13 +1970,13 @@ FUNCTION calcAgeComposition
 					za = Z(ig)(i);
 					sa = S(ig)(i);
 					na = N(ig)(i);
-					if( ft(k)(i)==0 )
+					if( ft(ig)(k)(i)==0 )
 					{
 						ca = elem_prod(na,0.5*sa);
 					}
 					else
 					{
-						fa = ft(k)(i) * va;
+						fa = ft(ig)(k)(i) * va;
 						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 					}
 					A_hat(kk)(ii) += ca(a_sage(kk),a_nage(kk));
@@ -2047,7 +2047,7 @@ FUNCTION calcTotalCatch
 				if( h )
 				{
 					ig     = pntr_ags(f,g,h);
-					fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+					fa     = ft(ig)(k)(i) * mfexp(log_sel(k)(ig)(i));
 					za     = Z(ig)(i);
 					sa     = S(ig)(i);
 					ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
@@ -2058,7 +2058,7 @@ FUNCTION calcTotalCatch
 					for(h=1;h<=nsex;h++)
 					{
 						ig     = pntr_ags(f,g,h);
-						fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+						fa     = ft(ig)(k)(i) * mfexp(log_sel(k)(ig)(i));
 						za     = Z(ig)(i);
 						sa     = S(ig)(i);
 						ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
@@ -2071,7 +2071,7 @@ FUNCTION calcTotalCatch
 				if( h )
 				{
 					ig     = pntr_ags(f,g,h);
-					fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+					fa     = ft(ig)(k)(i) * mfexp(log_sel(k)(ig)(i));
 					za     = Z(ig)(i);
 					sa     = S(ig)(i);
 					ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
@@ -2082,7 +2082,7 @@ FUNCTION calcTotalCatch
 					for(h=1;h<=nsex;h++)
 					{
 						ig     = pntr_ags(f,g,h);
-						fa     = ft(k)(i) * mfexp(log_sel(k)(ig)(i));
+						fa     = ft(ig)(k)(i) * mfexp(log_sel(k)(ig)(i));
 						za     = Z(ig)(i);
 						sa     = S(ig)(i);
 						ca     = elem_prod(elem_prod(elem_div(fa,za),1.-sa),N(ig)(i));
@@ -2096,7 +2096,7 @@ FUNCTION calcTotalCatch
 				{
 					ig            = pntr_ags(f,g,h);
 					dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
-					ct(ii)        = (1.-exp(-ft(k)(i))) * ssb;
+					ct(ii)        = (1.-exp(-ft(ig)(k)(i))) * ssb;
 				}
 				else if( !h )
 				{
@@ -2104,7 +2104,7 @@ FUNCTION calcTotalCatch
 					{
 						ig            = pntr_ags(f,g,h);
 						dvariable ssb = N(ig)(i) * wt_mat(ig)(i);
-						ct(ii)       += (1.-exp(-ft(k)(i))) * ssb;
+						ct(ii)       += (1.-exp(-ft(ig)(k)(i))) * ssb;
 					}
 				}
 			break;
@@ -4050,7 +4050,12 @@ REPORT_SECTION
 	// | MORTALITY
 	// |---------------------------------------------------------------------------------|
 	// |
-	REPORT(ft);
+	// REPORT(ft);
+	report<<"ft"<<endl;
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		report<<ft(ig)<<endl;
+	}
 	REPORT(M);
 	REPORT(F);
 	REPORT(Z);
@@ -4587,6 +4592,7 @@ FUNCTION void runMSE()
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
 	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
 	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
+	d3_array d3_ft(1,n_ags,1,ngear,syr,nyr);
 	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 	for(k=1;k<=ngear;k++)
 	{
@@ -4597,6 +4603,7 @@ FUNCTION void runMSE()
 	{
 		d3_M(g) = value(M(g));
 		d3_S(g) = value(S(g));
+		d3_ft(g) = value(ft(g));
 	}
 
 	s_mseVars.d_log_ro        = value(theta(1));
@@ -4613,7 +4620,7 @@ FUNCTION void runMSE()
 	s_mseVars.nSel_block      = sel_blocks;
 	s_mseVars.dSelPars        = &d3_selpar;
 	s_mseVars.d4_log_sel      = &d4_log_sel;
-	s_mseVars.dFt             = value(ft);
+	s_mseVars.d3_Ft           = &d3_ft;
 	s_mseVars.d3_Mt			  = &d3_M;
 	s_mseVars.d3_St           = &d3_S;
 
