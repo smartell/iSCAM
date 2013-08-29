@@ -268,6 +268,9 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_Nt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
 	d3_Nt.initialize();
 
+	d3_Zt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	d3_Zt.initialize();
+
 	// Fishing mortality rates
 	d3_Ft.allocate(*cS.d3_Ft);
 	d3_Ft = *cS.d3_Ft;
@@ -349,7 +352,7 @@ void OperatingModel::runScenario(const int &seed)
 		/*
 		- Update reference population
 		*/	
-		updateReferencePopulation();
+		updateReferencePopulation(i);
 		cout<<"Ok apres updateReferencePopulation \t pas fini"<<endl;
 
 		/*
@@ -378,9 +381,34 @@ void OperatingModel::generateStockAssessmentData()
 
 }
 
-void OperatingModel::updateReferencePopulation()
+/**
+ * @brief Update the refernce population
+ *
+ * @param iyr index for the current assesment/projection year
+ *
+ * @return null
+ */
+void OperatingModel::updateReferencePopulation(const int& iyr)
 {
+	int f,g,h,i,j,k;
+	int ig,ih;
 
+	cout<<"Sheldon cooper is a physists "<<iyr<<endl;
+	for( ig = 1; ig <= n_ags; ig++ )
+	{	
+		f  = n_area(ig);
+		g  = n_group(ig);
+		ih = pntr_ag(f,g);
+
+		cout<<dAvgRec(ih)<<endl;
+		d3_Nt(ig)(iyr+1,nSage) = dAvgRec(ih);
+		
+		dvector st = exp(-d3_Zt(ig)(iyr)(nSage,nNage-1));
+		d3_Nt(ig)(iyr+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(iyr)(nSage,nNage-1),st);
+		d3_Nt(ig)(iyr+1,nNage)     += d3_Nt(ig)(iyr,nNage) * exp(-d3_Zt(ig)(iyr,nNage));
+	}
+	cout<<"The end of a universe"<<endl;
+	// exit(1);
 }
 
 /**
@@ -489,7 +517,11 @@ void OperatingModel::implementFisheries(const int& iyr)
 
 	}
 
-
+	/* Calculate fleet specific fishing mortality rates by group */
+	// TO DO
+	// [ ] - add joint capture probability for size-based selectivity and 32" size limit.
+	// [ ] - add time-varying natural mortality rates.
+	// [ ] - add implementation error.
 	for( ig = 1; ig <= n_ags; ig++ )
 	{
 
@@ -498,7 +530,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 		dvector ma = d3_Mt(ig)(nNyr);
 		dmatrix va = d_V(ig);
 
-		// dvector ct = d3_Ct(ig)(iyr);
+		// Add implementation error here.
 		dvector ct = m_dTac;
 
 
@@ -509,7 +541,15 @@ void OperatingModel::implementFisheries(const int& iyr)
 		cout<<"ct\t"<<ct<<endl;
 
 		dvector ft = getFishingMortality(ct,ma,va,na,wa);
-		cout<<"ft\t"<<ft<<endl;
+		m_dFt = ft;
+
+		// Total mortality
+		d3_Zt(ig)(iyr) = ma;
+		for( k = 1; k <= nFleet; k++ )
+		{
+			d3_Zt(ig)(iyr) += m_dFt(k) * va(k);
+		}
+		cout<<"Zt\t"<<d3_Zt(1)(iyr)<<endl;
 	}
 }
 
@@ -610,6 +650,7 @@ void OperatingModel::conditionReferenceModel()
 
 		for( i = nSyr; i <= nNyr; i++ )
 		{
+			d3_Zt(ig)(i) = -1.0*log(d3_St(ig)(i));
 			if( i > nSyr )
 			{
 				d3_Nt(ig)(i,nSage) = 1./nSex*dAvgRec(ih)*mfexp( dLog_rbar_devs(ih)(i) );
@@ -617,6 +658,7 @@ void OperatingModel::conditionReferenceModel()
 			d3_Nt(ig)(i+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(i)(nSage,nNage-1)
 			                                            ,d3_St(ig)(i)(nSage,nNage-1));
 			d3_Nt(ig)(i+1,nNage) += d3_Nt(ig)(i,nNage)*d3_St(ig)(i,nNage);
+
 		}
 		d3_Nt(ig)(nNyr+1,nSage) = 1./nSex * dAvgRec(ih);
 		

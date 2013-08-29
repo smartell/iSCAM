@@ -384,6 +384,7 @@ private:
   dvector m_dSbo;
 
   d3_array d3_Nt;
+  d3_array d3_Zt;
   d3_array d3_St;
   d3_array d3_wt_avg;
   d3_array d3_wt_mat;
@@ -402,6 +403,7 @@ private:
 
 protected:
   dvector m_dTac;
+  dvector m_dFt;
 
 public:
   // OperatingModel(Scenario &cScenario);
@@ -422,7 +424,7 @@ protected:
   void calcReferencePoints();
   void calcTAC();
   void implementFisheries(const int& iyr);
-  void updateReferencePopulation();
+  void updateReferencePopulation(const int& iyr);
   void generateStockAssessmentData();
   void runStockAssessment();
 
