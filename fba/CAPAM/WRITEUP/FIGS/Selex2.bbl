@@ -1,0 +1,129 @@
+\begin{thebibliography}{}
+
+\bibitem[Beverton and Holt, 1993]{beverton1993dynamics}
+Beverton, R.~J. and Holt, S.~J. (1993).
+\newblock {\em On the dynamics of exploited fish populations}, volume~11.
+\newblock Springer.
+
+\bibitem[Cooke, 1999]{Cooke1999}
+Cooke, J.~G. (1999).
+\newblock Improvement of fishery-management advice through simulation testing
+  of harvest algorithms.
+\newblock {\em ICES Journal of Marine Science}, 56(6):797--810.
+
+\bibitem[De~la Mare, 1986]{de1986simulation}
+De~la Mare, W. (1986).
+\newblock Simulation studies on management procedures.
+\newblock {\em Report of the International Whaling Commission}, 36:429--49.
+
+\bibitem[Fournier et~al., 2011]{fournier2011ad}
+Fournier, D., Skaug, H., Ancheta, J., Ianelli, J., Magnusson, A., Maunder, M.,
+  Nielsen, A., and Sibert, J. (2011).
+\newblock Ad model builder: using automatic differentiation for statistical
+  inference of highly parameterized complex nonlinear models.
+
+\bibitem[Gavaris and Ianelli, 2002]{gavaris2002sif}
+Gavaris, S. and Ianelli, J. (2002).
+\newblock {Statistical Issues in Fisheries' Stock Assessments*}.
+\newblock {\em Scandinavian Journal of Statistics}, 29(2):245--267.
+
+\bibitem[Helser and Martell, 2007]{helser2007stock}
+Helser, T. and Martell, S. (2007).
+\newblock {Stock Assessment of Pacific Hake (whiting) in US and Canadian Waters
+  in 2007}.
+\newblock {\em Pac. Fish. Manage. Counc., Portland, Oreg}, 362.
+
+\bibitem[Hilborn and Walters, 1992]{hilborn1992quantitative}
+Hilborn, R. and Walters, C.~J. (1992).
+\newblock {\em {Quantitative fisheries stock assessment: choice, dynamics and
+  uncertainty}}, volume~2.
+\newblock Springer.
+
+\bibitem[Magnusson and Hilborn, 2007]{magnusson2007mfd}
+Magnusson, A. and Hilborn, R. (2007).
+\newblock {What makes fisheries data informative?}
+\newblock {\em Fish and Fisheries}, 8(4):337--358.
+
+\bibitem[Martell, 2010]{Martell2009}
+Martell, S. (2010).
+\newblock Assessment and management advice for pacific hake in u.s. and
+  canadian waters in 2009.
+\newblock {\em DFO Can. Sci. Advis. Sec. Res. Doc.}, 2010/021:iv+54p.
+
+\bibitem[Martell and Walters, 2002]{martell2002implementing}
+Martell, S. and Walters, C. (2002).
+\newblock {Implementing harvest rate objectives by directly monitoring
+  exploitation rates and estimating changes in catchability}.
+\newblock {\em Bulletin of Marine Science}, 70(2):695--713.
+
+\bibitem[Martell et~al., 2008]{Martell2008pam}
+Martell, S. J.~D., Pine, W.~E., and Walters, C.~J. (2008).
+\newblock Parameterizing age-structured models from a fisheries management
+  perspective.
+\newblock {\em Can. J. Fish. Aquat. Sci.}, 65:1586--1600.
+
+\bibitem[Richards et~al., 1997]{richards1997visualizing}
+Richards, L., Schnute, J., and Olsen, N. (1997).
+\newblock {Visualizing catch-age analysis: a case study}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  54(7):1646--1658.
+
+\bibitem[Schnute and Richards, 1995]{schnute1995influence}
+Schnute, J. and Richards, L. (1995).
+\newblock {The influence of error on population estimates from catch-age
+  models}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  52(10):2063--2077.
+
+\bibitem[Sinclair et~al., 2002]{sinclair2002disentangling}
+Sinclair, A.~F., Swain, D.~P., and Hanson, J.~M. (2002).
+\newblock Disentangling the effects of size-selective mortality, density, and
+  temperature on length-at-age.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  59(2):372--382.
+
+\bibitem[Smith et~al., 1999]{smith1999implementing}
+Smith, A., Sainsbury, K., and Stevens, R. (1999).
+\newblock {Implementing effective fisheries-management systems-management
+  strategy evaluation and the Australian partnership approach}.
+\newblock {\em ICES Journal of Marine Science}, 56(6):967.
+
+\bibitem[Stewart et~al., 2012]{stewart2012assessment}
+Stewart, I.~J., Leaman, B., Martell, S., and Webster, R.~A. (2012).
+\newblock Assessment of the pacific halibut stock at the end of 2012.
+\newblock In {\em International Pacific Halibut Commission Eighty-ninth Annual
+  Meeting}.
+
+\bibitem[Thorson et~al., 2012]{thorson2012stepwise}
+Thorson, J.~T., Zhou, S., Punt, A.~E., and Smith, A.~D. (2012).
+\newblock A stepwise-selected spline approximation to time-varying parameters,
+  with application to occupancy modelling.
+\newblock {\em Methods in Ecology and Evolution}.
+
+\bibitem[Walters and Ludwig, 1994]{walters1994calculation}
+Walters, C. and Ludwig, D. (1994).
+\newblock {Calculation of Bayes posterior probability distributions for key
+  population parameters}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  51(3):713--722.
+
+\bibitem[Walters and Maguire, 1996]{walters1996lessons}
+Walters, C. and Maguire, J. (1996).
+\newblock Lessons for stock assessment from the northern cod collapse.
+\newblock {\em Reviews in Fish Biology and Fisheries}, 6(2):125--137.
+
+\bibitem[Wilberg and Bence, 2006]{wilberg2006performance}
+Wilberg, M. and Bence, J. (2006).
+\newblock {Performance of time-varying catchability estimators in statistical
+  catch-at-age analysis}.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  63(10):2275--2285.
+
+\bibitem[Winters and Wheeler, 1985]{winters1985interaction}
+Winters, G. and Wheeler, J. (1985).
+\newblock Interaction between stock area, stock abundance, and catchability
+  coefficient.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  42(5):989--998.
+
+\end{thebibliography}
