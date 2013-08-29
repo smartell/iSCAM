@@ -272,6 +272,9 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	dFt                = cS.dFt;
 	d3_Ft.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
 	d3_Ft.initialize();  //working here, on initializeing fishing mortality rates.
+	int f,g,h,i,j,k;
+	int ig;
+
 
 	// cout<<dFt<<endl;
 	// recruitment compensation
@@ -286,7 +289,7 @@ void OperatingModel::runScenario(const int &seed)
 {
 	/*
 	PSUEDOCODE:
-		- declare local variables.
+		- declare local variables --> done in the constructor.
 		- initialize stock-recruitment parameters
 		- condition operating model on historical assessment
 		|-- calculate reference points
@@ -442,6 +445,7 @@ void OperatingModel::calcTAC()
 }
 
 
+
 void OperatingModel::implementFisheries(const int& iyr)
 {
 	/*
@@ -508,6 +512,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 		cout<<"ct\t"<<ct<<endl;
 
 		dvector ft = getFishingMortality(ct,ma,va,na,wa);
+		cout<<"ft\t"<<ft<<endl;
 	}
 }
 
