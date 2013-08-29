@@ -4656,7 +4656,7 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	#include "msy.h"
-	#include "baranov.cxx"
+	#include "baranov.h"
 	#include "OpMod.h"
 	#include "Selex.h"
 

@@ -368,13 +368,14 @@ private:
   dvector nCntrl;
   dmatrix dFt;
   d3_array d3_Mt;
+  d3_array d3_Ft;
 
   // Selectivity parameters
   ivector  nSel_type;
   imatrix  nSel_block;
   d3_array d3_selPars;
   d4_array d4_log_sel;
-  d5_array d5_logSel;
+  d5_array d5_logSel;     // deprecate
 
   // derived variables for SRR 
   dvector m_kappa;

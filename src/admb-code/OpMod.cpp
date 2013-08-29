@@ -7,6 +7,7 @@
 #include "OpMod.h"
 #include "Selex.h"
 #include "msy.h"
+#include "baranov.h"
 
 test::test(const s_iSCAMdata& data)
 {
@@ -257,7 +258,6 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d4_log_sel.allocate(*cS.d4_log_sel);
 	d4_log_sel = *cS.d4_log_sel;
 
-	dFt                = cS.dFt;
 	
 	d3_Mt.allocate(*cS.d3_Mt);
 	d3_Mt = *cS.d3_Mt;
@@ -267,6 +267,11 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 
 	d3_Nt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
 	d3_Nt.initialize();
+
+	// Fishing mortality rates
+	dFt                = cS.dFt;
+	d3_Ft.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	d3_Ft.initialize();  //working here, on initializeing fishing mortality rates.
 
 	// cout<<dFt<<endl;
 	// recruitment compensation
@@ -456,26 +461,53 @@ void OperatingModel::implementFisheries(const int& iyr)
 
 			- Aug 27, for now keep it simple  
 	*/
+	 /* 
+	 Given a tac in year iyr, figure out what the F is.
+	 getFishingMortality in Baranov.h arguments are:
+	 	- ct for each fleet
+	 	- Natural mortality by age
+	 	- selectivity for each fleet
+	 	- numbers -at-age 
+	 	- [weight -at-age if catch is in biomass units]
+	 */
 
 	int f,g,h,i,j,k;
-	int ig;
+	int ig,kk;
+
+	/* Get selectivities and allocations for each fleet. */
+	dvector d_ak(1,nFleet);  // Allocation for each fleet.
+	d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
+	for( k = 1; k <= nFleet; k++ )
+	{
+		kk = nFleetIndex(k);
+		d_ak(k) = dAllocation(k);
+		for( ig = 1; ig <= n_ags; ig++ )
+		{
+			d_V(ig)(k) = exp(d4_log_sel(kk)(ig)(nNyr));
+		}
+
+	}
+
+
 	for( ig = 1; ig <= n_ags; ig++ )
 	{
-		 /* 
-		 Given a tac in year iyr, figure out what the F is.
-		 getFishingMortality in Baranov.h arguments are:
-		 	- ct for each fleet
-		 	- Natural mortality by age
-		 	- selectivity for each fleet
-		 	- numbers -at-age 
-		 	- [weight -at-age if catch is in biomass units]
-		 */
 
-		dvector Na = d3_Nt(ig)(iyr);
+		dvector na = d3_Nt(ig)(iyr);
 		dvector wa = d3_wt_avg(ig)(iyr);
+		dvector ma = d3_Mt(ig)(nNyr);
+		dmatrix va = d_V(ig);
 
-		cout<<"Na\t"<<Na<<endl;
+		// dvector ct = d3_Ct(ig)(iyr);
+		dvector ct = m_dTac;
+
+
+		cout<<"Na\t"<<na<<endl;
 		cout<<"wa\t"<<wa<<endl;
+		cout<<"ma\t"<<ma<<endl;
+		cout<<"va\t"<<va<<endl;
+		cout<<"ct\t"<<ct<<endl;
+
+		dvector ft = getFishingMortality(ct,ma,va,na,wa);
 	}
 }
 

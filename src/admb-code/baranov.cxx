@@ -1,7 +1,7 @@
 /*
    Routines for solving the Baranov catch equation.
 */                                                 
-
+// #include "baranov.h"
 #include<admodel.h>
 #define MAXITS 50
 #define MAXF   5.0
