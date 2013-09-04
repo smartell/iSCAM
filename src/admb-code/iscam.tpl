@@ -1264,14 +1264,14 @@ PRELIMINARY_CALCS_SECTION
 	// | Run the model with input parameters to simulate real data.
 	// |---------------------------------------------------------------------------------|
 	// | - nf is a function evaluation counter.
- 	// | 
+ 	// | - SimFlag comes from the -sim command line argument to simulate fake data.
+ 	// |
     nf=0;
   
-	if(SimFlag) 
+	if( SimFlag ) 
 	{
 		initParameters();
-		cout<<theta(2)<<endl;
-		exit(1);
+		
 		simulationModel(rseed);
 	}
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
@@ -3667,6 +3667,7 @@ FUNCTION void simulationModel(const long& seed)
 	dmatrix ft(syr,nyr,1,ngear);
 	dmatrix zt(syr,nyr,sage,nage);
 	dmatrix st(syr,nyr,sage,nage);
+	BaranovCatchEquation cBaranov;
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		for(i=syr;i<=nyr;i++)
@@ -3687,7 +3688,7 @@ FUNCTION void simulationModel(const long& seed)
 			}
 
 			// | [ ] TODO switch statement for catch_type to determine F.
-			ft(i) = getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
+			ft(i) = cBaranov.getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
 			zt(i) = value(M(ig)(i));
 			for(k=1;k<=ngear;k++)
 			{

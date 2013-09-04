@@ -522,6 +522,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 	// [ ] - add joint capture probability for size-based selectivity and 32" size limit.
 	// [ ] - add time-varying natural mortality rates.
 	// [ ] - add implementation error.
+	BaranovCatchEquation cBaranov;
 	for( ig = 1; ig <= n_ags; ig++ )
 	{
 
@@ -540,7 +541,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 		cout<<"va\t"<<va<<endl;
 		cout<<"ct\t"<<ct<<endl;
 
-		dvector ft = getFishingMortality(ct,ma,va,na,wa);
+		dvector ft = cBaranov.getFishingMortality(ct,ma,va,na,wa);
 		m_dFt = ft;
 
 		// Total mortality
