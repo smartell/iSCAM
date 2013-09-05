@@ -15,11 +15,11 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   7.0          0.0     10      2       0       0.0     10.0    #log_ro      ##
+   9.0          0.0     10      2       0       0.0     10.0    #log_ro      ##
    0.75         0.2     1.0     2       3       3.00    2.00    #steepness   ##
    -1.89712    -3.0     2.0    -4       1       -1.203  0.15    #log_m g&b   ##
-   4.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
-   4.0          0.0     10      1       0       0.0     10      #log_recinit ##
+   9.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
+   9.0          0.0     10      1       0       0.0     10      #log_recinit ##
    0.5          0.01    0.99    3       3       3.00    5.00    #rho         ##
    0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
@@ -40,7 +40,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  4       1       2           # 1  -selectivity type ivector(isel_type) for gear
+  4       1       1           # 1  -selectivity type ivector(isel_type) for gear
   8.5     8.5     8.5         # 2  -Age/length at 50% selectivity (logistic)
   0.5     2.5     2.5         # 3  -STD at 50% selectivity (logistic)
   5       7       7           # 4  -No. of age nodes for each gear (0=ignore)

@@ -1131,6 +1131,8 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
+	init_bounded_number gamma_r(0,1,4);
+	!!gamma_r = 0;
 	objective_function_value objfun;
 	
 
@@ -2012,7 +2014,7 @@ FUNCTION calcTotalCatch
   	
   	TODO list:
   	[ ] get rid of the obs_ct, ct, eta array structures, inefficient, better to use
-  	    a matrix, then cbind the predicted catch and residuals for report. (ie. and R
+  	    a matrix, then cbind the predicted catch and residuals for report. (ie. an R
   	    data.frame structure and use melt to ggplot for efficient plots.)
   	*/
   	 int ii,l,ig;
@@ -2363,13 +2365,18 @@ FUNCTION void calcStockRecruitment()
 		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
 
-		// Autocorrelation in recruitment residuals
+		// Autocorrelation in recruitment residuals.
 		// if gamma_r > 0 then 
-		// int byr = syr+sage+1;
-		// delta(g) = log(rt(g)(byr,nyr)) 
-		//          - (1-gamma_r)*log(tmp_rt(byr)) 
-		//          - gamma_r*log(rt(g)(byr-1,nyr-1))
-		//          + 0.5*tau*tau;
+		if( active(gamma_r) )
+		{
+			cout<<"Autocorrelation"<<endl;
+			// double gamma_r = 0.9;
+			int byr = syr+sage+1;
+			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
+									- (1.0-gamma_r)*log(tmp_rt(byr,nyr)) 
+									- gamma_r*log(++rt(g)(byr-1,nyr-1))
+									+ 0.5*tau*tau;			
+		}
 
 
 	}
@@ -3757,7 +3764,7 @@ FUNCTION void simulationModel(const long& seed)
 	// |---------------------------------------------------------------------------------|
 	// | - catch_data is the matrix of observations
 	// |
-
+	COUT(Z);
 	calcTotalCatch();
 	for(ii=1;ii<=n_ct_obs;ii++)
 	{
