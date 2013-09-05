@@ -4587,7 +4587,7 @@ FUNCTION void runMSE()
 
 	s_mseData.cntrl        = cntrl;
 
-    test ctest(s_mseData);
+    
 
     /* SCENARIO PARAMETERS */
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);

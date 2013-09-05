@@ -72,11 +72,6 @@ struct s_iSCAMdata
 };
 #endif
 
-class test
-{
-  public:
-  test(const s_iSCAMdata& data);
-};
 
 
 #ifndef _SCENARIO_PARAMETERS_H
