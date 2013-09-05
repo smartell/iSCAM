@@ -84,7 +84,7 @@ OperatingModel::OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariab
 	initializeVariables(mse_vars);
 }
 
-/* Initialize private member variables based on scenario class */
+/** Initialize private member variables based on scenario class */
 void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 {
 	// Model dimensions
@@ -165,16 +165,23 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 		f = dCatchData(ii)(3);
 		g = dCatchData(ii)(4);
 		h = dCatchData(ii)(5);
-		if( h==0 )
+		int ncut;
+		h == 0? ncut=nSex: ncut=1;
+	
+		for(int hh=1;hh<=nSex;hh++)
 		{
-			for(h=1;h<=nSex;h++)
-			{
-				ig = pntr_ags(f,g,h);
-				d3_Ct(ig)(i)(k) = 1./nSex*dCatchData(ii)(7);
-			}
+			ig = pntr_ags(f,g,hh);
+			d3_Ct(ig)(i)(k) = 1./ncut*dCatchData(ii)(7);
+		}
 			
-		} 
 	}
+	// Protected member catch array required for writing data file
+	int nCount = nCtNobs + (nPyr-nNyr+1)*nSex*nGear;
+	m_nCtNobs  = nCtNobs;  /**< Initialize counter */
+	m_dCatchData.allocate(1,nCount,1,7);
+	m_dCatchData.initialize();
+	m_dCatchData.sub(1,nCtNobs) = dCatchData;
+	
 
 
 
@@ -306,7 +313,7 @@ void OperatingModel::runScenario(const int &seed)
 	/*
 	- Local variables
 	*/
-	
+	m_nSeed = seed;
 
 	/*
 	- Initialize stock-recruitment parameters for each stock.
@@ -358,7 +365,7 @@ void OperatingModel::runScenario(const int &seed)
 		/*
 		- Generate data for stock assessment.
 		*/
-		generateStockAssessmentData();
+		generateStockAssessmentData(i);
 		cout<<"Ok apres generateStockAssessmentData \t pas fini"<<endl;
 
 
@@ -376,14 +383,78 @@ void OperatingModel::runStockAssessment()
 
 }
 
-void OperatingModel::generateStockAssessmentData()
+/** \brief generateStockAssessmentData
+	
+		This routine writes the data file for iSCAM.dat based on the input variables
+		upto iyr.
+	
+	\author  Steve Martell
+	\date Sept 4, 2013
+	\param  iyr terminal year of assessment.
+	
+	\return null
+	\sa
+**/
+void OperatingModel::generateStockAssessmentData(const int& iyr)
 {
+	adstring sim_datafile_name = "Simulated_Data_"+str(m_nSeed)+".dat";
+  	ofstream dfs(sim_datafile_name);
+  	dfs<<"#Model dimensions"<<endl;
+  	dfs<< nArea 		<<endl;
+  	dfs<< nStock		<<endl;
+  	dfs<< nSex			<<endl;
+  	dfs<< nSyr   		<<endl;
+  	dfs<< iyr   		<<endl;
+  	dfs<< nSage  		<<endl;
+  	dfs<< nNage  		<<endl;
+  	dfs<< nGear 		<<endl;
+ 
+  	dfs<<"#Allocation"	<<endl;
+  	dfs<< dAllocation 	<<endl;
+  	
+
+  	dfs<<"#Age-schedule and population parameters"<<endl;
+  	dfs<< d_linf  		<<endl;
+	dfs<< d_vonbk  		<<endl;
+	dfs<< d_to  		<<endl;
+	dfs<< d_a  			<<endl;
+	dfs<< d_b  			<<endl;
+	dfs<< d_ah  		<<endl;
+	dfs<< d_gh  		<<endl;
+
+  	dfs<<"#Observed catch data"<<endl;
+  	dfs<< nCtNobs 		<<endl;
+  	dfs<< dCatchData    <<endl;
+
+ //  	dfs<<"#Abundance indices"	<<endl;
+ //  	dfs<< nit 					<<endl;
+ //  	dfs<< nit_nobs 				<<endl;
+ //  	dfs<< survey_type 			<<endl;
+ //  	dfs<< survey_data 			<<endl;
+
+ //  	dfs<<"#Age composition"		<<endl;
+ //  	dfs<< na_gears				<<endl;
+ //  	dfs<< na_nobs				<<endl;
+ //  	dfs<< a_sage				<<endl;
+ //  	dfs<< a_nage				<<endl;
+ //  	dfs<< A						<<endl;
+
+ //  	dfs<<"#Empirical weight-at-age data"	<<endl;
+ //  	dfs<< n_wt_nobs				<<endl;
+	// dfs<< inp_wt_avg			<<endl;
+
+	// dfs<<"#EOF"	<<endl;
+	// dfs<< 999	<<endl;
+	
+	// | END OF WRITING SIMULATED DATAFILE.
 
 }
 
 /**
- * @brief Update the refernce population
+ * @brief Update the reference population
  *
+ 	\todo movement transition matrix needs to be implemented here.
+ * 
  * @param iyr index for the current assesment/projection year
  *
  * @return null
@@ -393,22 +464,27 @@ void OperatingModel::updateReferencePopulation(const int& iyr)
 	int f,g,h,i,j,k;
 	int ig,ih;
 
-	cout<<"Sheldon cooper is a physists "<<iyr<<endl;
+	
 	for( ig = 1; ig <= n_ags; ig++ )
 	{	
 		f  = n_area(ig);
 		g  = n_group(ig);
 		ih = pntr_ag(f,g);
 
-		cout<<dAvgRec(ih)<<endl;
+		// cout<<dAvgRec(ih)<<endl;
+		// Current recruitment is based on historical average.
+		// Need to add recruitment variation here, environmental effects, 
+		// and stock-recruitment relationship.
+
 		d3_Nt(ig)(iyr+1,nSage) = dAvgRec(ih);
 		
+
+		// Update numbers-at-age.
 		dvector st = exp(-d3_Zt(ig)(iyr)(nSage,nNage-1));
 		d3_Nt(ig)(iyr+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(iyr)(nSage,nNage-1),st);
 		d3_Nt(ig)(iyr+1,nNage)     += d3_Nt(ig)(iyr,nNage) * exp(-d3_Zt(ig)(iyr,nNage));
 	}
-	cout<<"The end of a universe"<<endl;
-	// exit(1);
+	
 }
 
 /**
@@ -489,6 +565,8 @@ void OperatingModel::implementFisheries(const int& iyr)
 			  at-age and the legal size limit.
 
 			- Aug 27, for now keep it simple  
+
+			- Sep 4, update the catch data array for writing to simulated data file.
 	*/
 	 /* 
 	 Given a tac in year iyr, figure out what the F is.
@@ -532,14 +610,18 @@ void OperatingModel::implementFisheries(const int& iyr)
 		dmatrix va = d_V(ig);
 
 		// Add implementation error here.
+		// m_dTac comes from the harvest control rule.
+		// Also need to record the actual catch in m_dCatchData for data file.
 		dvector ct = m_dTac;
 
 
-		cout<<"Na\t"<<na<<endl;
-		cout<<"wa\t"<<wa<<endl;
-		cout<<"ma\t"<<ma<<endl;
-		cout<<"va\t"<<va<<endl;
-		cout<<"ct\t"<<ct<<endl;
+
+
+		// cout<<"Na\t"<<na<<endl;
+		// cout<<"wa\t"<<wa<<endl;
+		// cout<<"ma\t"<<ma<<endl;
+		// cout<<"va\t"<<va<<endl;
+		// cout<<"ct\t"<<ct<<endl;
 
 		dvector ft = cBaranov.getFishingMortality(ct,ma,va,na,wa);
 		m_dFt = ft;
@@ -550,8 +632,9 @@ void OperatingModel::implementFisheries(const int& iyr)
 		{
 			d3_Zt(ig)(iyr) += m_dFt(k) * va(k);
 		}
-		cout<<"Zt\t"<<d3_Zt(1)(iyr)<<endl;
+		// cout<<"Zt\t"<<d3_Zt(1)(iyr)<<endl;
 	}
+
 }
 
 /**
@@ -667,7 +750,16 @@ void OperatingModel::conditionReferenceModel()
 	}
 }
 
+/** \brief Determine stock-recruitment parameters
+	
+	Determine Beverton-Holt SR parameters given Ro and steepness.
 
+		\f$ R = \frac{s_o S}{(1+ b S)} \f$
+
+	\author  Steve Martell
+	
+	\sa
+**/
 void OperatingModel::calcStockRecruitment()
 {
 	int f,g,h,i,j,k;

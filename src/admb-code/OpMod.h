@@ -329,6 +329,7 @@ private:
   // Catch Data
   int     nCtNobs;
   dmatrix dCatchData;
+
   d3_array d3_Ct;
 
   // Survey data
@@ -401,9 +402,12 @@ private:
   dvector m_est_sbt;
   dvector m_est_bt;
 
+  int m_nSeed;    /**< Random number seed */
 protected:
   dvector m_dTac;
   dvector m_dFt;
+  int     m_nCtNobs;
+  dmatrix m_dCatchData;
 
 public:
   // OperatingModel(Scenario &cScenario);
@@ -425,7 +429,7 @@ protected:
   void calcTAC();
   void implementFisheries(const int& iyr);
   void updateReferencePopulation(const int& iyr);
-  void generateStockAssessmentData();
+  void generateStockAssessmentData(const int& iyr);
   void runStockAssessment();
 
 };
