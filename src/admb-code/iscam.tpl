@@ -430,7 +430,7 @@ DATA_SECTION
 	// | - If total catch is asexual (sex=0), pool predicted catch from nsex groups.
 	// | - ft_count    -> Number of estimated fishing mortality rate parameters.
 	// | - catch_array -> An array of observed catch in group(ig) year (row) by gear (col)
-	// | - [ ] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
+	// | - [] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int n_ct_obs;
 	!! COUT(n_ct_obs)
 	init_matrix catch_data(1,n_ct_obs,1,7);
@@ -1131,6 +1131,8 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
+	init_bounded_number gamma_r(0,1,-4);
+	!!gamma_r = 0;
 	objective_function_value objfun;
 	
 
@@ -2012,7 +2014,7 @@ FUNCTION calcTotalCatch
   	
   	TODO list:
   	[ ] get rid of the obs_ct, ct, eta array structures, inefficient, better to use
-  	    a matrix, then cbind the predicted catch and residuals for report. (ie. and R
+  	    a matrix, then cbind the predicted catch and residuals for report. (ie. an R
   	    data.frame structure and use melt to ggplot for efficient plots.)
   	*/
   	 int ii,l,ig;
@@ -2025,7 +2027,8 @@ FUNCTION calcTotalCatch
   	dvar_vector     ca(sage,nage);
   	dvar_vector     sa(sage,nage);
   	dvar_vector     za(sage,nage);
-
+  	
+  	
 
   	for(ii=1;ii<=n_ct_obs;ii++)
 	{
@@ -2276,7 +2279,7 @@ FUNCTION void calcStockRecruitment()
   	TODO list:
   	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
   	[] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
-
+	[ ] - Add autocorrelation in recruitment residuals with parameter \gamma_r.
   	*/
 
   	int ig,ih;
@@ -2360,8 +2363,21 @@ FUNCTION void calcStockRecruitment()
 			break;
 		}
 		
-		// | Step 8. // residuals in stock-recruitment curve
+		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
+
+		// Autocorrelation in recruitment residuals.
+		// if gamma_r > 0 then 
+		if( active(gamma_r) )
+		{
+			int byr = syr+sage+1;
+			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
+									- (1.0-gamma_r)*log(tmp_rt(byr,nyr)) 
+									- gamma_r*log(++rt(g)(byr-1,nyr-1))
+									+ 0.5*tau*tau;			
+		}
+
+
 	}
 	
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
@@ -3507,9 +3523,14 @@ FUNCTION void simulationModel(const long& seed)
     // |---------------------------------------------------------------------------------|
     // | 2) MORTALITY
     // |---------------------------------------------------------------------------------|
+    // | - NOTE only natural mortality is computed at this time.
     // | [ ] - add simulated random-walk in natural mortality rate here.
     // |
     calcTotalMortality();
+    F.initialize();
+    Z.initialize();
+    S.initialize();
+
 
 
     // |---------------------------------------------------------------------------------|
@@ -3662,14 +3683,15 @@ FUNCTION void simulationModel(const long& seed)
 	// | - va  -> matrix of fisheries selectivity coefficients.
 	// | - [ ] TODO: switch statement for catch-type to get Fishing mortality rate.
 	// | - [ ] TODO: Stock-Recruitment model (must loop over area sex for each group).
-	// |
+	// | - bug! ft is a global variable used in calcCatchAtAge and calcTotalCatch
 	dmatrix va(1,ngear,sage,nage);
-	dmatrix ft(syr,nyr,1,ngear);
 	dmatrix zt(syr,nyr,sage,nage);
 	dmatrix st(syr,nyr,sage,nage);
 	BaranovCatchEquation cBaranov;
 	for(ig=1;ig<=n_ags;ig++)
 	{
+		dmatrix tmp_ft(syr,nyr,1,ngear);
+
 		for(i=syr;i<=nyr;i++)
 		{
 			dvector ba = elem_prod(value(N(ig)(i)),wt_avg(ig)(i));
@@ -3688,13 +3710,18 @@ FUNCTION void simulationModel(const long& seed)
 			}
 
 			// | [ ] TODO switch statement for catch_type to determine F.
-			ft(i) = cBaranov.getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
+			tmp_ft(i) = cBaranov.getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
+			cout<<"ct\t"<<ct<<"\ttmp_ft\t"<<tmp_ft(i)<<endl;
 			zt(i) = value(M(ig)(i));
 			for(k=1;k<=ngear;k++)
 			{
-				zt(i) += ft(i,k) * va(k);
+				ft(ig)(k)(i) = tmp_ft(i,k);
+				F(ig)(i) += tmp_ft(i,k) * va(k);
+				zt(i) += tmp_ft(i,k) * va(k);
 			}
 			st(i) = exp(-zt(i));
+			Z(ig)(i) = M(ig)(i) + F(ig)(i);
+			S(ig)(i) = exp(-Z(ig)(i));
 
 			// | [ ] TODO: Stock-Recruitment model
 			/* 
@@ -3720,6 +3747,8 @@ FUNCTION void simulationModel(const long& seed)
 			N(ig)(i+1)(nage) += N(ig)(i)(nage)*st(i)(nage);
 		}
 	}
+
+
 	// |---------------------------------------------------------------------------------|
 	// | 7) CATCH-AT-AGE
 	// |---------------------------------------------------------------------------------|
@@ -3747,12 +3776,13 @@ FUNCTION void simulationModel(const long& seed)
 	// |---------------------------------------------------------------------------------|
 	// | - catch_data is the matrix of observations
 	// |
-
+	COUT(Z(1));
 	calcTotalCatch();
 	for(ii=1;ii<=n_ct_obs;ii++)
 	{
 		catch_data(ii,7) = value(ct(ii)) * exp(eta(ii));
 	}
+	COUT(ct);
 
 	// |---------------------------------------------------------------------------------|
 	// | 9) RELATIVE ABUNDANCE INDICES
