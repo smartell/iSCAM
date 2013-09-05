@@ -49,8 +49,11 @@
 // TODO: add DIC calculation for MCMC routines (in -mcveal phase)                //
 // CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds      //
 //                                                                               //
-//   Hi  Sean
-//  Now I got some cool shite                                                                            
+// TODO: correct the likelihood function as per Roberto's email. See Schnute     //
+//       and Richards (1995) paper. Table 4 when 0<rho<1                         //
+//                                                                               //
+// TODO: Check the recruitment autocorrelation residuals & likelihood.           //
+//                                                                               //
 //                                                                               //
 // ----------------------------------------------------------------------------- //
 //-- CHANGE LOG:                                                               --//
@@ -79,7 +82,7 @@
 //--                                                                           --//
 //-- May 6, 2011- added pre-processor commands to determin PLATFORM            --//
 //--              either "Windows" or "Linux"                                  --//
-//--            - change April 10, 2013 to #if defined _WIN32 etc.            --//
+//--            - change April 10, 2013 to #if defined _WIN32 etc.             --//
 //--                                                                           --//
 //--                                                                           --//
 //-- use -mcmult 1.5 for MCMC with log_m_nodes with SOG herrning               --//
@@ -2214,6 +2217,7 @@ FUNCTION calcSurveyObservations
 		dvar_vector zt = log(it) - log(t1(1,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
 				 q(kk) = mfexp(zbar);
+
 		// | survey residuals
 		epsilon(kk).sub(1,nz) = zt - zbar;
 		 it_hat(kk).sub(1,nz) = q(kk) * t1(1,nz);
@@ -2411,6 +2415,7 @@ FUNCTION calcObjectiveFunction
 		  prior density applied to log(q), and 2 is a random walk in q.
   	[ ] - Allow for annual sig_c values in catch data likelihood.
   	[ ] - Increase dimensionality of sig and tau to ngroup.
+  	[ ] - Correct likelihood for cases when rho > 0 (Schnute & Richards, 1995)
   	*/
 
 
@@ -3648,8 +3653,8 @@ FUNCTION void simulationModel(const long& seed)
 		f  = i_area(ig);
 		g  = i_group(ig);
 		ih = pntr_ag(f,g);
+		
 		lx.initialize();
-		COUT(ig); COUT(n_ags); COUT(ih);
 		lx(sage) = 1.0;
 		for(j=sage;j<nage;j++)
 		{
@@ -3683,7 +3688,8 @@ FUNCTION void simulationModel(const long& seed)
 	// | - va  -> matrix of fisheries selectivity coefficients.
 	// | - [ ] TODO: switch statement for catch-type to get Fishing mortality rate.
 	// | - [ ] TODO: Stock-Recruitment model (must loop over area sex for each group).
-	// | - bug! ft is a global variable used in calcCatchAtAge and calcTotalCatch
+	// | - bug! ft is a global variable used in calcCatchAtAge and calcTotalCatch. FIXED
+	// |
 	dmatrix va(1,ngear,sage,nage);
 	dmatrix zt(syr,nyr,sage,nage);
 	dmatrix st(syr,nyr,sage,nage);
@@ -3711,7 +3717,7 @@ FUNCTION void simulationModel(const long& seed)
 
 			// | [ ] TODO switch statement for catch_type to determine F.
 			tmp_ft(i) = cBaranov.getFishingMortality(ct, value(M(ig)(i)), va, value(N(ig)(i)),wt_avg(ig)(i));
-			cout<<"ct\t"<<ct<<"\ttmp_ft\t"<<tmp_ft(i)<<endl;
+			
 			zt(i) = value(M(ig)(i));
 			for(k=1;k<=ngear;k++)
 			{
@@ -3724,6 +3730,7 @@ FUNCTION void simulationModel(const long& seed)
 			S(ig)(i) = exp(-Z(ig)(i));
 
 			// | [ ] TODO: Stock-Recruitment model
+			// | [ ] TODO: Add autocorrelation.
 			/* 
 			sbt(ig)(i) = (elem_prod(N(ig)(i),exp(-zt(i)*cntrl(13)))*wt_mat(ig)(i));
 			if(i>=syr+sage-1 && !pinfile)
@@ -3757,7 +3764,7 @@ FUNCTION void simulationModel(const long& seed)
 	// |
 	int kk,aa,AA;
 	double age_tau = value(sig);
-	COUT(A(1));
+	
 	calcAgeComposition();
 	for(kk=1;kk<=na_gears;kk++)
 	{
@@ -3776,13 +3783,13 @@ FUNCTION void simulationModel(const long& seed)
 	// |---------------------------------------------------------------------------------|
 	// | - catch_data is the matrix of observations
 	// |
-	COUT(Z(1));
+	
 	calcTotalCatch();
 	for(ii=1;ii<=n_ct_obs;ii++)
 	{
 		catch_data(ii,7) = value(ct(ii)) * exp(eta(ii));
 	}
-	COUT(ct);
+
 
 	// |---------------------------------------------------------------------------------|
 	// | 9) RELATIVE ABUNDANCE INDICES
