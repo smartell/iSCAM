@@ -11,7 +11,6 @@
 #include "baranov.h"
 
 
-
 /** \brief Destructor
 	\author Steven Martell 
 **/
