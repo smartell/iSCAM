@@ -424,7 +424,7 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 
   	dfs<<"#Observed catch data"<<endl;
   	dfs<< nCtNobs 		<<endl;
-  	dfs<< dCatchData    <<endl;
+  	dfs<< dCatchData    <<endl;  
 
  //  	dfs<<"#Abundance indices"	<<endl;
  //  	dfs<< nit 					<<endl;
@@ -614,7 +614,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 		// Also need to record the actual catch in m_dCatchData for data file.
 		dvector ct = m_dTac;
 
-
+		// SM Working here end of Sept 4. 2013
 
 
 		// cout<<"Na\t"<<na<<endl;
