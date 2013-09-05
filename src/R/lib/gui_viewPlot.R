@@ -58,6 +58,15 @@
 	{
 		.plotAgeCompResiduals( M )
 	}
+	else if( plotType=="catchresid" )
+	{
+		.plotCatchResidual( M )
+	}
+	else if( plotType=="surveyresid" )
+	{
+		.plotIndexResidual( M )
+	}
+
 }
 
 # |----------------------------------------------------------------------------------|

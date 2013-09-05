@@ -150,12 +150,12 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 	}
 	
 	
-	
+	browser()
 	
 	closeWin(win)
 	createWin("iscamWin2.txt")
 	
-	setWinVal(list(txtFigDir=.FIGUREDIR))
+	# setWinVal(list(txtFigDir=.FIGUREDIR))
 }
 
 guiView	<- function()

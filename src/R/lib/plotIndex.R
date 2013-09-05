@@ -25,6 +25,29 @@ require(reshape2)
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }
+
+.plotIndexResidual <- function(M)
+{
+	n <- length(M)
+	cat(".plotIndex\n")
+	mdf <- NULL
+	for( i in 1:n )
+	{
+		it <- data.frame( cbind(M[[i]]$survey_data,M[[i]]$epsilon) )
+		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","wt","timing","Residual")
+		it <- data.frame(Model=names(M)[i],it)
+		mdf <- rbind(mdf,it)
+	}
+	print(head(mdf,3))
+	print(mdf)
+	p <- ggplot(mdf,aes(x=factor(Year),Residual,fill=Gear))
+	p <- p + geom_bar(position="dodge")
+	p <- p + labs(x="Year",y="log residual",fill="Gear")
+	p <- p + facet_wrap(~Model,scales="free")
+	print(p + .THEME)
+}
+
+
 # .plotIndex	<- function( repObj, annotate=FALSE )
 # {
 # 	#line plot for relative abundance indices

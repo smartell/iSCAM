@@ -43,12 +43,13 @@ guiView  <- function()
 	require(PBSmodelling)
 	
 	trckExists <- file.exists( .VIEWTRCK )
-	
+	ifiles     <- NULL
 	if (trckExists)
 	{
 		cat( "MSG (.hCamViewSetup): Viewer tracking file ",.VIEWTRCK, " found.\n" )
 		tmp    <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
-		ifiles <- tmp
+		ifiles <<- tmp
+		print(ifiles)
 	}
 	else
 	{
