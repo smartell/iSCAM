@@ -1,7 +1,8 @@
 // |---------------------------------------------------------------------------------|
-// | OPERATING MODEL FOR USE WITH ISCAM
+// | GENERAL OPERATING MODEL FOR USE WITH iSCAM.                                     |
 // |---------------------------------------------------------------------------------|
-// |
+
+
 
 #include <admodel.h>
 #include "OpMod.h"
@@ -9,86 +10,37 @@
 #include "msy.h"
 #include "baranov.h"
 
-test::test(const s_iSCAMdata& data)
-{
-	cout<<"Im here in the test constructor"<<endl;
-	cout<<data.nStock<<endl;
-	d3_array junk = *data.dSurveyData;
-	cout<<junk<<endl;
-	cout<<"Leaving test constructor"<<endl;
-};
 
 
-// |---------------------------------------------------------------------------------|
-// | SCENARIO MEMBER FUNCTIONS, CONSTRUCTOR & DESTRUCTOR
-// |---------------------------------------------------------------------------------|
-// | -to be deprecated
-Scenario::~Scenario(){};
-
-// Scenario::Scenario(const ScenarioData& data, const ScenarioParameters& params)
-// {
-// 	cout<<"Scenario is all set"<<endl;
-// 	cout<<m_nPyr<<endl;
-// }
-
-Scenario::Scenario(
-            const int nStock, 
-         	const int nArea, 
-         	const int nSex, 
-         	const int nSyr, 
-           	const int nNyr, 
-           	const int nPyr, 
-           	const int nSage, 
-           	const int nNage,
-           	const int nGear,
-           	const dvector log_ro, 
-           	const dvector steepness,
-           	const dvector log_m,
-           	const dvector log_avgrec,
-           	const dvector log_initrec,
-           	const dvector rho,
-           	const dvector vartheta,
-           	const d3_array& selpar,
-           	const ivector & sel_type)
-  			: 
-  			ModelData(nStock,nArea,nSex,nSyr,nNyr,nPyr,nSage,nNage,nGear),
-   			ModelParams(log_ro,steepness,log_m, log_avgrec, log_initrec, rho, vartheta,
-   			            selpar), m_sel_type(sel_type)
-
-  {
-    cout<<"In Constructor"<<endl;
-    cout<<m_nStock<<endl;
-    cout<<m_selpars<<endl;
-    cout<<"Leaving constructor"<<endl;
-  }
-
-ModelData::~ModelData(){};
-
-ModelParams::~ModelParams(){};
-
-// |---------------------------------------------------------------------------------|
-// | OPERTATING MODEL MEMBER FUNCTIONS, CONSTRUCTORS, AND DESTRUCTOR
-// |---------------------------------------------------------------------------------|
-// |
-
-/* Destructor */
+/** \brief Destructor
+	\author Steven Martell 
+**/
 OperatingModel::~OperatingModel()
 {
 
 };
 
-/* Constructor */
+/** \brief Constructor 
+	\author Steven Martell
+**/
 OperatingModel::OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars)
 {
 	initializeConstants(mse_data);
 	initializeVariables(mse_vars);
 }
 
-/** Initialize private member variables based on scenario class */
+/** \brief Initialize constants in Operating model
+
+	Initialize private member variables based on scenario class 
+	
+	\author Steven Martell
+**/
 void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 {
-	// Model dimensions
-	nStock = cS.nStock;
+	// |------------------|
+	// | Model dimensions |
+	// |------------------|
+	nStock = cS.nStock;  
 	nArea  = cS.nArea;
 	nSex   = cS.nSex;
 	nSyr   = cS.nSyr;
@@ -136,7 +88,7 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 			}
 		}
 	}
-	cout<<"Houston, we have a problem"<<endl;
+	// cout<<"Houston, we have a problem"<<endl;
 	nFleetIndex.allocate(1,nFleet);
 	nFleetIndex = cS.nFleetIndex;
 
@@ -237,7 +189,7 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// cntrl vector
 	nCntrl = cS.cntrl;
 	cout<<"initializeConstants"<<endl;
-	cout<<pntr_ags<<endl;
+	cout<<"pntr_ags\n"<<pntr_ags<<endl;
 
 }
 

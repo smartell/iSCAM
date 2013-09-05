@@ -2276,7 +2276,7 @@ FUNCTION void calcStockRecruitment()
   	TODO list:
   	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
   	[] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
-
+	[ ] - Add autocorrelation in recruitment residuals with parameter \gamma_r.
   	*/
 
   	int ig,ih;
@@ -2360,8 +2360,18 @@ FUNCTION void calcStockRecruitment()
 			break;
 		}
 		
-		// | Step 8. // residuals in stock-recruitment curve
+		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
+
+		// Autocorrelation in recruitment residuals
+		// if gamma_r > 0 then 
+		// int byr = syr+sage+1;
+		// delta(g) = log(rt(g)(byr,nyr)) 
+		//          - (1-gamma_r)*log(tmp_rt(byr)) 
+		//          - gamma_r*log(rt(g)(byr-1,nyr-1))
+		//          + 0.5*tau*tau;
+
+
 	}
 	
 	if(verbose)cout<<"**** Ok after calcStockRecruitment ****"<<endl;
@@ -4587,7 +4597,7 @@ FUNCTION void runMSE()
 
 	s_mseData.cntrl        = cntrl;
 
-    test ctest(s_mseData);
+    
 
     /* SCENARIO PARAMETERS */
 	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
