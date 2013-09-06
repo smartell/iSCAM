@@ -58,6 +58,10 @@
 	{
 		.plotAgeCompResiduals( M )
 	}
+	else if( plotType=="agesummary" )
+	{
+		.plotAgeSummary( M )
+	}
 	else if( plotType=="catchresid" )
 	{
 		.plotCatchResidual( M )
@@ -69,6 +73,10 @@
 	else if( plotType=="recresid" )
 	{
 		.plotRecruitmentResidual( M )
+	}
+	else if( plotType=="spawnbio" )
+	{
+		.plotSpawnBiomass( M )
 	}
 
 }

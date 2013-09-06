@@ -40,7 +40,7 @@
 0.00        0.00        # -theoretical age at zero length (to)
 6.821e-6    6.821e-6    # -scaler in length-weight allometry
 3.24         3.24       # -power parameter in length-weight allometry
-10.91       10.91       # -age at 50% maturity (approx with log(3.0)/k)
+10.91       1000.       # -age at 50% maturity (approx with log(3.0)/k)
 1.406       1.406       # -std at 50% maturity (CV ~ 0.1)
 ##
 ## ------------------------------------------------------------------------- ##

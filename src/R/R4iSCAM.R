@@ -20,6 +20,7 @@
 .BOOLREADFN <- TRUE
 require(ggplot2)
 .THEME      <- theme_bw(12)
+.UNITS      <- "(mlb)"
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
