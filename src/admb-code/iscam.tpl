@@ -579,6 +579,8 @@ DATA_SECTION
 	// | - construct and fill weight-at-age dev matrix for length-based selex (wt_dev)
 	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (wt_mat)
 	// | [ ] - TODO fix h=0 option for weight-at-age data
+	// | [ ] - TODO need to accomodate ragged arrays, or NA values, or partial wt_avg.
+	// |
 
 	init_int n_wt_nobs;
 	init_matrix inp_wt_avg(1,n_wt_nobs,sage-5,nage);
@@ -604,6 +606,8 @@ DATA_SECTION
 		}
 		
 		// the overwrite wt_avg & wt_mat with existing empirical data
+		// SM Sept 6, 2013. Added option of using NA values (-99.0) for
+		// missing weight-at-age data, or truncated age-data.
 		int iyr;
 		for(i=1;i<=n_wt_nobs;i++)
 		{
@@ -612,6 +616,13 @@ DATA_SECTION
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
 			
+			dvector tmp = inp_wt_avg(i)(sage,nage);
+			COUT(age);
+			COUT(tmp);
+			ivector idx = getIndex(age,tmp);
+			COUT(tmp(idx));
+			exit(1);
+
 			if( h )
 			{
 				ig              = pntr_ags(f,g,h);
@@ -657,14 +668,16 @@ DATA_SECTION
 			}
 			wt_dev(ig) = trans(mtmp);
 		
-			if(min(wt_avg(ig))<=0)
+			if( min(wt_avg(ig))<=0 && min(wt_avg(ig))!=NA )
 			{
 				cout<<"|-----------------------------------------------|"<<endl;
 				cout<<"| ERROR IN INPUT DATA FILE FOR MEAN WEIGHT DATA |"<<endl;
 				cout<<"|-----------------------------------------------|"<<endl;
-				cout<<"| - Cannont have an observed mean weight-at-age\n";
+				cout<<"| - Cannont have an observed mean weight-at-age |"<<endl;
 				cout<<"|   less than or equal to 0.  Please fix. "       <<endl;
-				cout<<"| - Aborting program!"<<endl;
+				cout<<"| - You are permitted to use '-99.0' for missing|"<<endl;
+				cout<<"|   values in your weight-at-age data.          |"<<endl;
+				cout<<"| - Aborting program!                           |"<<endl;
 				cout<<"|-----------------------------------------------|"<<endl;
 				ad_exit(1);
 			}
@@ -1446,6 +1459,19 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 	vcubic_spline_function ffa(ia,spline_coffs);
 	RETURN_ARRAYS_DECREMENT();
 	return(ffa(fa));
+  }
+
+FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
+  {
+	/*interplolation for length-based selectivity coefficeients*/
+	RETURN_ARRAYS_INCREMENT();
+	int nodes=size_count(spline_coffs);
+	dvector ia(1,nodes);
+	ia.fill_seqadd(0,1./(nodes-1));
+	dvector fa = (la-min(la))/(max(la)-min(la));
+	vcubic_spline_function ffa(ia,spline_coffs);
+	RETURN_ARRAYS_DECREMENT();
+	return(value(ffa(fa)));
   }
 
 // FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
@@ -4698,6 +4724,9 @@ GLOBALS_SECTION
 	#undef TINY
 	#define TINY 1.e-08
 
+	#undef NA
+	#define NA -99.0
+
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
@@ -4705,6 +4734,27 @@ GLOBALS_SECTION
 	#include "baranov.h"
 	#include "OpMod.h"
 	#include "Selex.h"
+
+	ivector getIndex(dvector& a, dvector& b)
+	{
+		int i,j,n;
+		n = 0;
+		j = 1;
+		for( i = a.indexmin(); i <= a.indexmax(); i++ )
+		{
+			 if(b(i) != NA) n++;
+		}
+		ivector tmp(1,n);
+		for( i = a.indexmin(); i <= a.indexmax(); i++ )
+		{
+			if(b(i) != NA )
+			{
+				tmp(j++) = a(i);
+			}
+		}
+		
+		return(tmp);
+	}
 
 	void readMseInputs()
 	  {
@@ -4720,6 +4770,7 @@ GLOBALS_SECTION
 	adstring BaseFileName;
 	adstring ReportFileName;
 	
+
 	adstring stripExtension(adstring fileName)
 	{
 		/*
