@@ -1,6 +1,7 @@
 # iSCAM View Tracker File 
 "Select","Label","Description","Control File"
 #The following line is for the Demo example
-TRUE,Demo,       "Flack Lake",../../examples/DEMO/DATA/ControlTemplate
-FALSE,Hake,    "Pacific Hake",../../examples/PacificHake/DATA/2011/PHake2011
-FALSE,Herring, "4VWX Herring",../../examples/Herring4VWX/DATA/Herring4VWX
+TRUE,Demo,         "Flack Lake",../../examples/DEMO/DATA/ControlTemplate
+FALSE,Hake,      "Pacific Hake",../../examples/PacificHake/DATA/2011/PHake2011
+FALSE,Herring,   "4VWX Herring",../../examples/Herring4VWX/DATA/Herring4VWX
+TRUE,Halibut, "Pacific Halibut",../../fba/Halibut2012/DATA/Halibut2012

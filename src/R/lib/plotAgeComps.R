@@ -12,19 +12,24 @@ require(reshape2)
 	for( i in 1:n )
 	{
 		A   <- data.frame(M[[i]]$A)
-		age <- seq(M[[i]]$sage,M[[i]]$nage)
+		age <- seq(min(M[[i]]$a_sage),max(M[[i]]$a_nage))
 		# year gear area group sex
 		A   <- data.frame(Model=names(M)[i],A)
 		colnames(A) <- c("Model","Year","Gear","Area","Group","Sex",paste(age))
 		mdf <- rbind(mdf,A)
+
 	}
 	mdf <- melt(mdf,id.vars=c("Model","Year","Gear","Area","Group","Sex"))
+	BroodYear <- mdf$Year-as.double(mdf$variable)
+	mdf <- cbind(mdf,BroodYear)
 	print(head(mdf,3))
 
 	p <- ggplot(mdf,aes(factor(Year),variable,size=value))
-	p <- p + geom_point(alpha=0.75)
+	p <- p + geom_point(alpha=0.75,aes(colour=factor(BroodYear))) 
+	p <- p + scale_area(range = c(0,20))
 	p <- p + labs(x="Year",y="Age",size="Count")
 	p <- p + facet_wrap(~Model+Sex,scales="free")
+	p <- p + scale_colour_discrete(legend=FALSE)
 	print(p + .THEME)
 }
 

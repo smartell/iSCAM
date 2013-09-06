@@ -19,8 +19,8 @@ require(reshape2)
 	}
 	print(head(mdf,3))
 
-	p <- ggplot(mdf,aes(x=factor(Year),Residual,fill=Gear))
-	p <- p + geom_bar(position="dodge")
+	p <- ggplot(mdf,aes(x=factor(Year),Residual,fill=factor(Gear)))
+	p <- p + geom_bar(width=0.75,position="dodge")
 	p <- p + labs(x="Year",y="log residual")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)

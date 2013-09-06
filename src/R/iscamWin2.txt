@@ -42,7 +42,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 		grid 2 3 relief="flat" padx=2 pady=2 sticky=W
 		radio name=plotType value=catchresid    text="Catch(es)"          function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=surveyresid   text="Survey(s)"          function=.viewPlot mode=character sticky=W  edit=TRUE
-		radio name=plotType value=recresid      text="Recruitment"        function=.mpdView mode=character sticky=W  edit=TRUE
+		radio name=plotType value=recresid      text="Recruitment"        function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=agecompsresid text="Age composition"    function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=lencompresid  text="Length composition" function=.mpdView mode=character sticky=W  edit=FALS
 		null

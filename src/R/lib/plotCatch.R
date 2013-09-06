@@ -18,10 +18,11 @@ require(reshape2)
 		mdf <- rbind(mdf,ct)
 	}
 	print(head(mdf,3))
+	print(tail(mdf,3))
 
-	p <- ggplot(mdf,aes(x=factor(Year),Catch,fill=Gear))
+	p <- ggplot(mdf,aes(x=factor(Year),Catch,fill=factor(Gear)))
 	p <- p + geom_bar(width=0.75,position="dodge")
-	p <- p + labs(x="Year",y="Catch (t)")
+	p <- p + labs(x="Year",y="Catch (t)",fill="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }

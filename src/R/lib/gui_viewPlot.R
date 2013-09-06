@@ -66,6 +66,10 @@
 	{
 		.plotIndexResidual( M )
 	}
+	else if( plotType=="recresid" )
+	{
+		.plotRecruitmentResidual( M )
+	}
 
 }
 
