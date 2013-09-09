@@ -678,7 +678,7 @@ DATA_SECTION
 		// deviations in mean weight-at-age
 		for(ig=1;ig<=n_ags;ig++)
 		{
-			dmatrix mtmp = trans( wt_avg(ig) );
+			dmatrix mtmp = trans( wt_avg(ig)(syr,nyr) );
 			for(j=sage;j<=nage;j++)
 			{
 				if( sum( first_difference(mtmp(j))) )
