@@ -18,14 +18,28 @@ require(ggplot2)
 		wt  <- data.frame(Model=names(M[i]),M[[i]]$wt_avg)
 		
 		colnames(wt) <- c("Model","Year","Area","Stock","Sex",paste(age))
-		mdf <- rbind(mdf,melt(wt,id.vars=c("Model","Year","Area","Stock","Sex")))
+		df  <- melt(wt,id.vars=c("Model","Year","Area","Stock","Sex"))
+		mdf <- rbind(mdf,df)
 	}
+
 	mdf <- cbind(mdf,Cohort=as.factor(mdf$Year-as.double(mdf$variable)))
+	if(diff(range(age)) > 10)
+	{
+		grp <- factor(mdf$variable,levels=pretty(unclass(mdf$variable)))
+		mdf <- cbind(mdf,grp=grp)		
+	}
+	else
+	{
+		grp <- mdf$variable
+		mdf <- cbind(mdf,grp=grp)
+	}
+	
 	print(head(mdf,3))
 
-	p <- ggplot(mdf,aes(x=Year,y=value,col=factor(Sex),linetype=variable))
-	p <- p + stat_smooth(alpha=0.1,lineend="butt") + geom_point()
-	p <- p + labs(x="Year",y="Weight",col="Sex",linetype="Age")
+	p <- ggplot(mdf,aes(x=Year,y=value,col=grp,linetype=factor(Sex),fill=factor(Sex)) )
+	p <- p + stat_smooth(alpha=0.2,lineend="butt",method="loess") 
+	p <- p + geom_point(data=mdf,aes(x=Year,y=value,col=grp))
+	p <- p + labs(x="Year",y="Weight",col="Age",fill="Sex",linetype="Sex")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 	
