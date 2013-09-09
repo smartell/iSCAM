@@ -642,8 +642,15 @@ DATA_SECTION
 				ig                   = pntr_ags(f,g,h);
 				dvector tmp          = inp_wt_avg(i)(sage,nage);
 				ivector idx          = getIndex(age,tmp);
-				wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+				for(int ii = 1; ii <= size_count(idx); ii++ )
+				{
+					 wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+				}
+				//wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
 				wt_mat(ig)(iyr)      = elem_prod(ma(ig),wt_avg(ig)(iyr));
+				//cout<<"Yep \t"<<inp_wt_avg(i)(idx)<<endl;
+				//cout<<"Yep \t"<<tmp(idx)<<endl;
+				//cout<<"Yep \t"<<wt_avg(ig)(iyr)(idx)<<endl;
 			}
 			else if( !h ) 
 			{
