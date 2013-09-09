@@ -616,29 +616,46 @@ DATA_SECTION
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
 			
-			dvector tmp = inp_wt_avg(i)(sage,nage);
-			COUT(age);
-			COUT(tmp);
-			ivector idx = getIndex(age,tmp);
-			COUT(tmp(idx));
-			exit(1);
+			// Attempting to use a cubic spline for smoothing missing data.
+			// dvector tmp = inp_wt_avg(i)(sage,nage);
+			// COUT(age);
+			// COUT(tmp);
+			// ivector idx = getIndex(age,tmp);
+			// COUT(idx);
+			// COUT(tmp(idx));
+			// //dvector cs_wa=cubic_spline(tmp(idx),age);
+			// int nodes=size_count(tmp(idx));
+			// dvector ia(1,nodes);
+			// dvector la = age;
+			// ia.fill_seqadd(0,1./(nodes-1));
+			// //dvector fa = (la-min(la(idx)))/(max(la(idx))-min(la(idx)));
+			// dvector fa = (la-min(la))/(max(la)-min(la));
+			// cubic_spline_function ffa(ia,tmp(idx));
+			// COUT(fa);
+			// dvector cs_wa = (ffa(fa));
+			// COUT(cs_wa);
+			// exit(1);
 
+			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
-				ig              = pntr_ags(f,g,h);
-				wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
-				wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));
+				ig                   = pntr_ags(f,g,h);
+				dvector tmp          = inp_wt_avg(i)(sage,nage);
+				ivector idx          = getIndex(age,tmp);
+				wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+				wt_mat(ig)(iyr)      = elem_prod(ma(ig),wt_avg(ig)(iyr));
 			}
 			else if( !h ) 
 			{
 				for(h=1;h<=nsex;h++)
 				{
-					ig              = pntr_ags(f,g,h);
-					wt_avg(ig)(iyr) = inp_wt_avg(i)(sage,nage);
-					wt_mat(ig)(iyr) = elem_prod(ma(ig),wt_avg(ig)(iyr));		
+					ig                   = pntr_ags(f,g,h);
+					dvector tmp          = inp_wt_avg(i)(sage,nage);
+					ivector idx          = getIndex(age,tmp);
+					wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+					wt_mat(ig)(iyr)      = elem_prod(ma(ig),wt_avg(ig)(iyr));
 				}
 			}
-			
 		}
 
 		// average weight-at-age in projection years
@@ -1464,14 +1481,15 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
   {
 	/*interplolation for length-based selectivity coefficeients*/
-	RETURN_ARRAYS_INCREMENT();
+	//RETURN_ARRAYS_INCREMENT();
 	int nodes=size_count(spline_coffs);
 	dvector ia(1,nodes);
 	ia.fill_seqadd(0,1./(nodes-1));
 	dvector fa = (la-min(la))/(max(la)-min(la));
 	vcubic_spline_function ffa(ia,spline_coffs);
-	RETURN_ARRAYS_DECREMENT();
+	//RETURN_ARRAYS_DECREMENT();
 	return(value(ffa(fa)));
+	//return(1.0*la);
   }
 
 // FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
