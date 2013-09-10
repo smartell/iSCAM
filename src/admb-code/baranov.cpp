@@ -298,7 +298,6 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dvect
 	\return Returns a vector of instantaneous fishing mortality rates.
 	\sa
 **/
-
 dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dvector &ma, const dmatrix &V, const dvector &na, const dvector &wa)
 {
 	

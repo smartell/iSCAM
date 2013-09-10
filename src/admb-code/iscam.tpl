@@ -469,7 +469,11 @@ DATA_SECTION
 					ig = pntr_ags(f,g,h);
 					catch_array(ig)(i)(k) = 1./nsex*catch_data(ii)(7);
 				}
-				
+			}
+			else
+			{
+				ig = pntr_ags(f,g,h);
+				catch_array(ig)(i)(k) = catch_data(ii)(7);
 			} 
 		}
 		
@@ -3838,14 +3842,34 @@ FUNCTION void simulationModel(const long& seed)
 	// | 8) TOTAL CATCH
 	// |---------------------------------------------------------------------------------|
 	// | - catch_data is the matrix of observations
-	// |
+	// | - need to over-write the catch_array with the new errors.
 	
 	calcTotalCatch();
+	catch_array.initialize();
 	for(ii=1;ii<=n_ct_obs;ii++)
 	{
 		catch_data(ii,7) = value(ct(ii)) * exp(eta(ii));
+		i = catch_data(ii)(1);
+		k = catch_data(ii)(2);
+		f = catch_data(ii)(3);
+		g = catch_data(ii)(4);
+		h = catch_data(ii)(5);
+		if( h==0 )
+		{
+			for(h=1;h<=nsex;h++)
+			{
+				ig = pntr_ags(f,g,h);
+				catch_array(ig)(i)(k) = 1./nsex*catch_data(ii)(7);
+			}
+		}
+		else
+		{
+			ig = pntr_ags(f,g,h);
+			catch_array(ig)(i)(k) = catch_data(ii)(7);
+		} 
 	}
-
+	cout<<catch_array(1)<<endl;
+	
 
 	// |---------------------------------------------------------------------------------|
 	// | 9) RELATIVE ABUNDANCE INDICES
