@@ -42,7 +42,7 @@ public:
 	
 	// SM Added 2sex version Sept. 10, 2013.  See Baranov2Sex.R for example.
 	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na);
-	//dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na);
+	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na, const dmatrix &wa);
 	
 };
 
