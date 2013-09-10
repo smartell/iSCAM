@@ -518,6 +518,16 @@ void OperatingModel::implementFisheries(const int& iyr)
 			- Aug 27, for now keep it simple  
 
 			- Sep 4, update the catch data array for writing to simulated data file.
+
+			- Sep 10, 2013. Changed the logic in this routine.  Implemented as follows:
+				- 1) Apportion m_dTac by area (f),
+				- 2) Loop over each area and allocate catch in area (f) to gear (k),
+				- 3) Assemble arguments for BaranovCatchEquation class
+					-> catch by gear,
+					-> natural mortality rate by sex(row) and age(col)
+					-> Selectivity array sex,gear,age
+					-> Numbers by sex(row) and age (col)
+					-> Weight by sex(row) and age (col)
 	*/
 	 /* 
 	 Given a tac in year iyr, figure out what the F is.

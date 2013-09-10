@@ -535,6 +535,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	\param  ma a matrix of instanaenous age-specific natural mortality rates.
 	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
 	\param  na a matrix of numbers-at-age.
+	\param  wa a matrix of weight-at-age.
 	\return description of return value
 	\sa
 **/
