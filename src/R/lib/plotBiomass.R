@@ -14,7 +14,7 @@
 	}
 
 	p <- ggplot(bt,aes(Year,SBt)) + geom_line(width=2)
-	p <- p + geom_point(data=bt,aes(Year,Bo))
+	p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
