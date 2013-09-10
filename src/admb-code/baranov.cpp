@@ -415,6 +415,125 @@ double BaranovCatchEquation::get_ft(const double& ct, const double& m, const dve
 	return(ft);
 }
 
+
+
+/** \brief Get conditional instantaneous fishing mortality rate when sex ratio of catch
+           is unknown.
+	
+		This algorithm adds an additional dimension of sex to the gear-age problem.
+		Use this function in cases
+	
+	\author Steven Martell 
+	\date Sept 10, 2013
+	\param  ct vector of catches for each gear.
+	\param  ma a matrix of instanaenous age-specific natural mortality rates.
+	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  na a matrix of numbers-at-age.
+	\return description of return value
+	\sa
+**/
+dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na)
+{
+
+	int h,i,j,k,its;
+	d3_array V;
+	V.allocate(*_V); //V(1,nsex,1,ngear,1,nage)
+	V = *_V;
+
+	int ngear = size_count(ct);
+	int nsex  = ma.rowmax() - ma.rowmin() + 1;
+
+	dvector   ft(1,ngear);
+	dvector chat(1,ngear);
+	// dvector ctmp(1,ngear);
+	dvector   fx(1,ngear);
+	dmatrix    J(1,ngear,1,ngear);
+	dmatrix invJ(1,ngear,1,ngear);
+	dvector ntmp(1,ngear);
+	dmatrix   ba(1,nsex,na.colmin(),na.colmax());
+	d3_array   F(1,nsex,1,ngear,na.colmin(),na.colmax());
+	
+	
+	
+	// Initial guess for fishing mortality rates based on Pope's approximation;
+	ntmp.initialize();
+	for( k = 1; k <= ngear; k++ )
+	{
+		for( h = 1; h <= nsex; h++ )
+		{
+			ntmp(k) +=  elem_prod(na(h),V(h)(k)) * ( exp(-0.5*ma(h)) );
+		}
+	}
+	ft = elem_div(ct,ntmp);
+	ba = na; //elem_prod(na,wa);
+		
+	// Iterative soln for catch equation using Newton-Raphson
+	for(its=1; its<=MAXITS; its++)
+	{
+		J.initialize();
+		chat.initialize();
+		for( h = 1; h <= nsex; h++ )
+		{
+			 
+			for(i=1;i<=ngear;i++) F(h)(i) =ft(i)*V(h)(i);
+			
+			dvector za = ma(h) + colsum(F(h));
+			dvector sa = exp(-za);
+			dvector oa = (1.-sa);
+			
+			for(i=1;i<=ngear;i++)
+			{
+				for(j=1;j<=ngear;j++)
+				{
+					if(i==j)
+					{
+						dvector k1   =  elem_prod(ba(h),elem_div(V(h)(i),za));
+						dvector k2   =  elem_prod(k1,V(h)(i));
+						dvector k3   =  elem_div(k2,za);
+						double dCdF  = -(k1*oa) - ft(i)*(k2*sa) + ft(i)*(k3*oa);
+						J(i)(j)     += dCdF;
+						chat(i)     += (ft(i)*k1) * oa;
+					}
+					else
+					{
+						dvector t1   = elem_div(elem_prod(ft(i)*ba(h),V(h)(i)),za);
+						dvector t2   = elem_prod(t1,V(h)(j));
+						dvector t3   = elem_div(t2,za);
+						double dCdF  = -(t2*sa) + (t3*oa);
+						J(j)(i)     += dCdF;
+					}
+				}	
+			}
+		}  // end of sex
+		fx   = ct - chat;
+		//The following couts were used to debug the transpose error in the Jacobian.
+		
+		//cout<<"fx = "<<fx<<endl;
+		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
+		invJ = -inv(J);
+		ft  += fx*invJ;
+		
+		if( norm(fx) < TOL || max(ft) > MAXF ) break;
+	}
+	
+	for(i=1;i<=ngear;i++) if(ft(i)>MAXF) ft(i) = MAXF;
+	
+	return (ft);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 // /** get_ft
 //   Solving the baranov catch equation using Newtons method
 //   -this implementation is for multiple fleets where the catch

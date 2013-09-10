@@ -3749,7 +3749,8 @@ FUNCTION void simulationModel(const long& seed)
 	// | - [ ] TODO: switch statement for catch-type to get Fishing mortality rate.
 	// | - [ ] TODO: Stock-Recruitment model (must loop over area sex for each group).
 	// | - bug! ft is a global variable used in calcCatchAtAge and calcTotalCatch. FIXED
-	// |
+	// | - [ ] TODO: fishing mortality rate with sex ratio of catch is unknown and assume
+	// |             the same F value for both male and females.
 	dmatrix va(1,ngear,sage,nage);
 	dmatrix zt(syr,nyr,sage,nage);
 	dmatrix st(syr,nyr,sage,nage);
@@ -3868,8 +3869,8 @@ FUNCTION void simulationModel(const long& seed)
 			catch_array(ig)(i)(k) = catch_data(ii)(7);
 		} 
 	}
-	cout<<catch_array(1)<<endl;
-	
+	// cout<<catch_array(1)<<endl;
+
 
 	// |---------------------------------------------------------------------------------|
 	// | 9) RELATIVE ABUNDANCE INDICES
