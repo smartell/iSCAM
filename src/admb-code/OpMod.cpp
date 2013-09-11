@@ -485,12 +485,12 @@ void OperatingModel::calcTAC()
 	/* Compute apportionment schedule -> Ray Webster */
 
 	// SJDM Simple 20% hr for now.
-	m_dTac.allocate(1,nFleet);
+	m_dTac.allocate(1,nStock);
 	m_dTac.initialize();
 	int g;
 	for( g = 1; g <= nStock; g++ )
 	{
-		m_dTac += 0.2/nFleet * m_est_bt(g);
+		m_dTac(g) = 0.2 * m_est_bt(g);
 	}
 
 
@@ -520,7 +520,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 			- Sep 4, update the catch data array for writing to simulated data file.
 
 			- Sep 10, 2013. Changed the logic in this routine.  Implemented as follows:
-				- 1) Apportion m_dTac by area (f),
+				- 1) Apportion m_dTac by area (f) from each stock (g)
 				- 2) Loop over each area and allocate catch in area (f) to gear (k),
 				- 3) Assemble arguments for BaranovCatchEquation class
 					-> catch by gear,
@@ -528,6 +528,8 @@ void OperatingModel::implementFisheries(const int& iyr)
 					-> Selectivity array sex,gear,age
 					-> Numbers by sex(row) and age (col)
 					-> Weight by sex(row) and age (col)
+				- 4) Calculate Fishing Mortality rates using class BaranovCatchEquation
+				- 5) Calculate Total mortality rate (d3_Zt) 
 	*/
 	 /* 
 	 Given a tac in year iyr, figure out what the F is.
@@ -542,8 +544,61 @@ void OperatingModel::implementFisheries(const int& iyr)
 	int f,g,h,i,j,k;
 	int ig,kk;
 
+	
+	dvector tac(1,nArea);
+	dvector  ct(1,nFleet);
+	dmatrix  ma(1,nSex,nSage,nNage);
+	dmatrix  na(1,nSex,nSage,nNage);
+	dmatrix  wa(1,nSex,nSage,nNage);
+	d3_array d_Va(1,nSex,1,nFleet,nSage,nNage);
+	dmatrix d_alloc(1,nArea,1,nFleet);  // Allocation for each fleet in each area.
+	tac.initialize();
+	na.initialize();
+	for( f = 1; f <= nArea; f++ )
+	{
+		// -1) Apportion catch to each area (f) from each stock (g)
+		for( g = 1; g <= nStock; g++ )
+		{
+		 	tac(f) += m_dTac(g);
+		}
+
+		// -2) Allocate catch in each area (f) to gear (k).
+		//     -[ ] TODO: Will need to add area specific rules here.
+		for( k = 1; k <= nFleet; k++ )
+		{
+			 d_alloc(f,k) = dAllocation(k);
+			 ct(k)        = d_alloc(f,k)*tac(f);
+		}
+
+		// -3) Assemble arguments for BarnovCatchEquation class.
+		// [ ] TODO: allow for time-varying M in future
+		// [ ] TODO: allow for Selectivity to change in future.
+		BaranovCatchEquation cBCE;
+		for( g = 1; g <= nStock; g++ )
+		{
+			for( h = 1; h <= nSex; h++ )
+			{
+				ig    = pntr_ags(f,g,h);
+				ma(h) = d3_Mt(ig)(nNyr);
+				for( k = 1; k <= nFleet; k++ )
+				{
+					kk         = nFleetIndex(k);
+					d_Va(h)(k) = exp(d4_log_sel(kk)(ig)(nNyr));
+				}
+				na(h)+= d3_Nt(ig)(iyr);
+				wa(h) = d3_wt_avg(ig)(iyr);
+			}
+		}
+		// Stuck here trying to decide about differential mortality rates etc among stocks
+
+	}
+
+
+
+	/* DEPRECATE THE CODE BELOW, See Sept 10 Note.*/
+
 	/* Get selectivities and allocations for each fleet. */
-	dvector d_ak(1,nFleet);  // Allocation for each fleet.
+	dvector d_ak(1,nFleet);
 	d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
 	for( k = 1; k <= nFleet; k++ )
 	{
