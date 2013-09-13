@@ -223,7 +223,7 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	d3_St.allocate(*cS.d3_St);
 	d3_St = *cS.d3_St;
 
-	d3_Nt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	d3_Nt.allocate(1,n_ags,nSyr,nPyr+1,nSage,nNage);
 	d3_Nt.initialize();
 
 	d3_Zt.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
@@ -377,11 +377,11 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
   	dfs<< nCtNobs 		<<endl;
   	dfs<< dCatchData    <<endl;  
 
- //  	dfs<<"#Abundance indices"	<<endl;
- //  	dfs<< nit 					<<endl;
- //  	dfs<< nit_nobs 				<<endl;
- //  	dfs<< survey_type 			<<endl;
- //  	dfs<< survey_data 			<<endl;
+  	dfs<<"#Abundance indices"	<<endl;
+  	dfs<< nIt 					<<endl;
+  	dfs<< nItNobs 				<<endl;
+  	dfs<< nSurveyType 			<<endl;
+  	dfs<< dSurveyData 			<<endl;
 
  //  	dfs<<"#Age composition"		<<endl;
  //  	dfs<< na_gears				<<endl;
@@ -435,7 +435,7 @@ void OperatingModel::updateReferencePopulation(const int& iyr)
 		d3_Nt(ig)(iyr+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(iyr)(nSage,nNage-1),st);
 		d3_Nt(ig)(iyr+1,nNage)     += d3_Nt(ig)(iyr,nNage) * exp(-d3_Zt(ig)(iyr,nNage));
 	}
-	
+	cout<<"Got Here"<<endl;
 }
 
 /**
@@ -573,6 +573,8 @@ void OperatingModel::implementFisheries(const int& iyr)
 		// -3) Assemble arguments for BarnovCatchEquation class.
 		// [ ] TODO: allow for time-varying M in future
 		// [ ] TODO: allow for Selectivity to change in future.
+		// [ ]
+		m_dFt.allocate(1,nStock,1,nFleet);
 		BaranovCatchEquation cBCE;
 		for( g = 1; g <= nStock; g++ )
 		{
@@ -588,9 +590,11 @@ void OperatingModel::implementFisheries(const int& iyr)
 				na(h)+= d3_Nt(ig)(iyr);
 				wa(h) = d3_wt_avg(ig)(iyr);
 			}
+			// Potential issue here if nStock > 1, what wa ma vector should be used?
+			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa);
+			cout<<"ft = "<<ft<<endl;
+			m_dFt(g) = ft;
 		}
-		// Stuck here trying to decide about differential mortality rates etc among stocks
-
 	}
 
 
@@ -598,58 +602,58 @@ void OperatingModel::implementFisheries(const int& iyr)
 	/* DEPRECATE THE CODE BELOW, See Sept 10 Note.*/
 
 	/* Get selectivities and allocations for each fleet. */
-	dvector d_ak(1,nFleet);
-	d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
-	for( k = 1; k <= nFleet; k++ )
-	{
-		kk = nFleetIndex(k);
-		d_ak(k) = dAllocation(k);
-		for( ig = 1; ig <= n_ags; ig++ )
-		{
-			d_V(ig)(k) = exp(d4_log_sel(kk)(ig)(nNyr));
-		}
+	// dvector d_ak(1,nFleet);
+	// d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
+	// for( k = 1; k <= nFleet; k++ )
+	// {
+	// 	kk = nFleetIndex(k);
+	// 	d_ak(k) = dAllocation(k);
+	// 	for( ig = 1; ig <= n_ags; ig++ )
+	// 	{
+	// 		d_V(ig)(k) = exp(d4_log_sel(kk)(ig)(nNyr));
+	// 	}
 
-	}
+	// }
 
 	/* Calculate fleet specific fishing mortality rates by group */
 	// TO DO
 	// [ ] - add joint capture probability for size-based selectivity and 32" size limit.
 	// [ ] - add time-varying natural mortality rates.
 	// [ ] - add implementation error.
-	BaranovCatchEquation cBaranov;
-	for( ig = 1; ig <= n_ags; ig++ )
-	{
+	// BaranovCatchEquation cBaranov;
+	// for( ig = 1; ig <= n_ags; ig++ )
+	// {
 
-		dvector na = d3_Nt(ig)(iyr);
-		dvector wa = d3_wt_avg(ig)(iyr);
-		dvector ma = d3_Mt(ig)(nNyr);
-		dmatrix va = d_V(ig);
+	// 	// dvector na = d3_Nt(ig)(iyr);
+	// 	// dvector wa = d3_wt_avg(ig)(iyr);
+	// 	// dvector ma = d3_Mt(ig)(nNyr);
+	// 	// dmatrix va = d_V(ig);
 
-		// Add implementation error here.
-		// m_dTac comes from the harvest control rule.
-		// Also need to record the actual catch in m_dCatchData for data file.
-		dvector ct = m_dTac;
+	// 	// // Add implementation error here.
+	// 	// // m_dTac comes from the harvest control rule.
+	// 	// // Also need to record the actual catch in m_dCatchData for data file.
+	// 	// dvector ct = m_dTac;
 
-		// SM Working here end of Sept 4. 2013
+	// 	// // SM Working here end of Sept 4. 2013
 
 
-		// cout<<"Na\t"<<na<<endl;
-		// cout<<"wa\t"<<wa<<endl;
-		// cout<<"ma\t"<<ma<<endl;
-		// cout<<"va\t"<<va<<endl;
-		// cout<<"ct\t"<<ct<<endl;
+	// 	// // cout<<"Na\t"<<na<<endl;
+	// 	// // cout<<"wa\t"<<wa<<endl;
+	// 	// // cout<<"ma\t"<<ma<<endl;
+	// 	// // cout<<"va\t"<<va<<endl;
+	// 	// // cout<<"ct\t"<<ct<<endl;
 
-		dvector ft = cBaranov.getFishingMortality(ct,ma,va,na,wa);
-		m_dFt = ft;
+	// 	// dvector ft = cBaranov.getFishingMortality(ct,ma,va,na,wa);
+	// 	// m_dFt = ft;
 
-		// Total mortality
-		d3_Zt(ig)(iyr) = ma;
-		for( k = 1; k <= nFleet; k++ )
-		{
-			d3_Zt(ig)(iyr) += m_dFt(k) * va(k);
-		}
-		// cout<<"Zt\t"<<d3_Zt(1)(iyr)<<endl;
-	}
+	// 	// Total mortality
+	// 	d3_Zt(ig)(iyr) = ma;
+	// 	for( k = 1; k <= nFleet; k++ )
+	// 	{
+	// 		d3_Zt(ig)(iyr) += m_dFt(k) * va(k);
+	// 	}
+	// 	// cout<<"Zt\t"<<d3_Zt(1)(iyr)<<endl;
+	// }
 
 }
 
@@ -878,7 +882,7 @@ void OperatingModel::calcSelectivities()
 
 					// case 11: length-based logistic curve
 					case 11:
-					// Bug here in that there is now length-info in the projection years.
+					// Bug here in that there is no length-info in the projection years.
 						cout<<"sex "<<h<<endl;
 						cout<<dWt_avg(h)<<endl;
 						cout<<"SuCK EGGS"<<endl;

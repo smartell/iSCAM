@@ -257,7 +257,7 @@ private:
   int m_nSeed;    /**< Random number seed */
 protected:
   dvector m_dTac;
-  dvector m_dFt;
+  dmatrix m_dFt;
   int     m_nCtNobs;
   dmatrix m_dCatchData;
 
