@@ -21,5 +21,9 @@
 1996 ## - 5) Start year for average recruitment period in projections.
 2011 ## - 6)   End year for average recruitment period in projections.
 
+## ------------------------------------------------------------------------------------ ##
+## MANAGEMENT STRATEGY EVALUATION CONTROLS                                              ##
+## ------------------------------------------------------------------------------------ ##
+2050    ## Terminal year of simulations.
 ## eof
 -999

@@ -165,6 +165,9 @@ DATA_SECTION
 	init_vector tac(1,n_tac);
 	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
+
+	init_vector mse_cntrl(1,1);
+
 	init_int eof_pf;
 	LOC_CALCS
 		if(eof_pf!=-999)
@@ -265,8 +268,8 @@ DATA_SECTION
 	// | - n_ags: total number of areas * groups * sex
 	// | - n_ag:  total number of areas * groups
 	// | - n_gs:  total number of groups * sex
-	// | - i_area:  vector of indexes for area for each sex & group combination.
-	// | - i_group: vector of indexes for stock for each sex & area combination.
+	// | - n_area:  vector of indexes for area for each sex & group combination.
+	// | - n_group: vector of indexes for stock for each sex & area combination.
 	// | - i_sex:   vector of indexes for sex foe each area & group combination.
 	// | - pntr_ag: matrix of indices for area and group.
 	// | - pntr_gs: matrix of indices for group and sex.
@@ -278,8 +281,8 @@ DATA_SECTION
 	!! n_ag  = narea * ngroup;
 	int n_gs;
 	!! n_gs  = ngroup * nsex;
-	ivector   i_area(1,n_ags);
-	ivector  i_group(1,n_ags);
+	ivector   n_area(1,n_ags);
+	ivector  n_group(1,n_ags);
 	ivector    i_sex(1,n_ags);
 	imatrix  pntr_ag(1,narea,1,ngroup);
 	imatrix  pntr_gs(1,ngroup,1,nsex);
@@ -302,8 +305,8 @@ DATA_SECTION
 				for(h=1;h<=nsex;h++)
 				{
 					ig ++;
-					i_area(ig)  = f;
-					i_group(ig) = g;
+					n_area(ig)  = f;
+					n_group(ig) = g;
 					i_sex(ig)   = h;
 					pntr_ags(f,g,h) = ig;
 					if(f==1)
@@ -325,8 +328,8 @@ DATA_SECTION
 		cout<<"| sage   \t"<<sage<<endl;
 		cout<<"| nage   \t"<<nage<<endl;
 		cout<<"| ngear  \t"<<ngear<<endl;
-		cout<<"| i_area \t"<<i_area<<endl;
-		cout<<"| i_group\t"<<i_group<<endl;
+		cout<<"| n_area \t"<<n_area<<endl;
+		cout<<"| n_group\t"<<n_group<<endl;
 		cout<<"| i_sex  \t"<<i_sex<<endl;
 		cout<<"| pntr_ag\n"<<pntr_ag<<endl;
 		cout<<"| pntr_gs\n"<<pntr_gs<<endl;
@@ -352,19 +355,19 @@ DATA_SECTION
 	// | Allocation for each gear in (ngear), use 0 for survey gears.
 	// |---------------------------------------------------------------------------------|
 	// | fsh_flag is used to determine which fleets should be in MSY-based referecen points
-	// | If allocation >0 then set fish flag =1 else 0
-	// | nfleet is the number of non-survey gear fleet with allocations > 0
+	// | If dAllocation >0 then set fish flag =1 else 0
+	// | nfleet is the number of non-survey gear fleet with dAllocations > 0
 	// |
 
 	int nfleet;
-	init_vector allocation(1,ngear);
+	init_vector dAllocation(1,ngear);
 	// init_ivector catch_type(1,ngear);  DEPRECATED
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
-		allocation = allocation/sum(allocation);
+		dAllocation = dAllocation/sum(dAllocation);
 		for(k=1;k<=ngear;k++)
 		{
-			if(allocation(k)>0)
+			if(dAllocation(k)>0)
 				fsh_flag(k)=1;
 			else
 				fsh_flag(k)=0;
@@ -372,14 +375,14 @@ DATA_SECTION
 		nfleet = sum(fsh_flag);
 	END_CALCS
 	
-	ivector ifleet(1,nfleet);
+	ivector nFleetIndex(1,nfleet);
 	LOC_CALCS
 		j = 1;
 		for(k=1; k<=ngear;k++)
 		{
-			if(fsh_flag(k)) ifleet(j++) = k;
+			if(fsh_flag(k)) nFleetIndex(j++) = k;
 		}
-		// cout<<"ifleet index\t"<<ifleet<<endl;
+		// cout<<"nFleetIndex index\t"<<nFleetIndex<<endl;
 	END_CALCS
 	
 	
@@ -389,13 +392,13 @@ DATA_SECTION
 	// | n_ags -> number of areas * groups * sex
 	// |
 
-	init_vector  linf(1,n_ags);
-	init_vector vonbk(1,n_ags);
-	init_vector    to(1,n_ags);
-	init_vector     a(1,n_ags);
-	init_vector     b(1,n_ags);
-	init_vector    ah(1,n_ags);
-	init_vector    gh(1,n_ags);
+	init_vector  d_linf(1,n_ags);
+	init_vector d_vonbk(1,n_ags);
+	init_vector    d_to(1,n_ags);
+	init_vector     d_a(1,n_ags);
+	init_vector     d_b(1,n_ags);
+	init_vector    d_ah(1,n_ags);
+	init_vector    d_gh(1,n_ags);
 	
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -405,21 +408,21 @@ DATA_SECTION
 	  	cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
-		cout<<"| linf  \t"<<linf<<endl;
-	  	cout<<"| vonbk \t"<<vonbk<<endl;
-	  	cout<<"| to    \t"<<to<<endl;
-	  	cout<<"| a     \t"<<a<<endl;
-	  	cout<<"| b     \t"<<b<<endl;
-	  	cout<<"| ah    \t"<<ah<<endl;
-	  	cout<<"| gh    \t"<<gh<<endl;
+		cout<<"| d_linf  \t"<<d_linf<<endl;
+	  	cout<<"| d_vonbk \t"<<d_vonbk<<endl;
+	  	cout<<"| d_to    \t"<<d_to<<endl;
+	  	cout<<"| d_a     \t"<<d_a<<endl;
+	  	cout<<"| d_b     \t"<<d_b<<endl;
+	  	cout<<"| d_ah    \t"<<d_ah<<endl;
+	  	cout<<"| d_gh    \t"<<d_gh<<endl;
 	  	cout<<"| ----------------------- |\n"<<endl;
 
 	  	// length & weight-at-age based on input growth pars
 	  	for(ig=1;ig<=n_ags;ig++)
 	  	{
-	  		la(ig) = linf(ig)*(1. - exp(-vonbk(ig)*(age-to(ig))));
-	  		wa(ig) = a(ig) * pow(la(ig),b(ig));
-	  		ma(ig) = plogis(age,ah(ig),gh(ig));
+	  		la(ig) = d_linf(ig)*(1. - exp(-d_vonbk(ig)*(age-d_to(ig))));
+	  		wa(ig) = d_a(ig) * pow(la(ig),d_b(ig));
+	  		ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
 	  	}
 	END_CALCS
 	
@@ -681,11 +684,11 @@ DATA_SECTION
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			dmatrix mtmp = trans( wt_avg(ig) );
-			COUT(mtmp);
+			//COUT(mtmp);
 
 			for(j=sage;j<=nage;j++)
 			{
-				COUT(sum(first_difference(mtmp(j)(syr,nyr))));
+				//COUT(sum(first_difference(mtmp(j)(syr,nyr))));
 				if( sum( first_difference(mtmp(j)(syr,nyr))) )
 				{
 					mtmp(j) = ( mtmp(j)-mean(mtmp(j)(syr,nyr)) ) 
@@ -737,7 +740,7 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// |
 	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
-	vector fall(1,nfleet);			//Fishing mortality based on allocation
+	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
 // 	number Umsy;					//Exploitation rate at MSY
@@ -1705,7 +1708,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						p1 = mfexp(sel_par(k,bpar,1));
 						p2 = mfexp(sel_par(k,bpar,2));
 
-						dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
+						dvector len = pow(wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 
 						log_sel(k)(ig)(i) = log( plogis(len,p1,p2) );
 					}
@@ -1720,7 +1723,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
 					
-						dvector len = pow(wt_avg(ig)(i)/a(ig),1./b(ig));
+						dvector len = pow(wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 						log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
 					}
 					break;
@@ -1827,7 +1830,7 @@ FUNCTION calcTotalMortality
 	log_m_devs.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
-		g = i_group(ig);
+		g = n_group(ig);
 		h = i_sex(ig);
 		M(ig) = m( pntr_gs(g,h) );
 		if( active( log_m_nodes) )
@@ -1894,8 +1897,8 @@ FUNCTION calcNumbersAtAge
 	bt.initialize();
 	for(ig=1;ig<=n_ags;ig++)
 	{
-		f  = i_area(ig);
-		g  = i_group(ig);
+		f  = n_area(ig);
+		g  = n_group(ig);
 		ih = pntr_ag(f,g);
 
 		dvar_vector lx(sage,nage);
@@ -2835,11 +2838,11 @@ FUNCTION calcObjectiveFunction
 	
 // 	Comments: 
 // 	This code uses a numerical approach to determine a vector of fe_multipliers
-// 	to ensure that the allocation is met for each gear type.
+// 	to ensure that the dAllocation is met for each gear type.
 	
 // 	args:
 // 	fe	-steady state fishing mortality
-// 	ak	-allocation of total ye to gear k.
+// 	ak	-dAllocation of total ye to gear k.
 // 	ro	-unfished sage recruits
 // 	kap	-recruitment compensation ration
 // 	m	-instantaneous natural mortality rate
@@ -2977,7 +2980,7 @@ FUNCTION calcObjectiveFunction
 	
 // 	In the case of multiple fisheries, fe is to be considered as the
 // 	total fishing mortality rate and each fleet is given a specified
-// 	allocation based on its selectivity curve.  The allocation to 
+// 	dAllocation based on its selectivity curve.  The dAllocation to 
 // 	each fleet must be specified a priori.
 	
 // 	args:
@@ -2989,7 +2992,7 @@ FUNCTION calcObjectiveFunction
 // 	wa	-mean weight at age
 // 	fa	-mean fecundity at age
 // 	va	-mean vulnerablity at age for fe gear.
-// 	ak	-allocation of total ye to gear k.
+// 	ak	-dAllocation of total ye to gear k.
 	
 // 	Modified args:
 // 	re	-steady state recruitment
@@ -3077,10 +3080,10 @@ FUNCTION void calcReferencePoints()
 		- Modification for multiple fleets:
     	  	Need to pass a weighted average vector of selectivities
     	  	to the equilibrium routine, where the weights for each
-    	  	selectivity is based on the allocation to each fleet.
+    	  	selectivity is based on the dAllocation to each fleet.
 		
-	 		Perhaps as a default, assign an equal allocation to each
-	 		fleet.  Eventually,user must specify allocation in 
+	 		Perhaps as a default, assign an equal dAllocation to each
+	 		fleet.  Eventually,user must specify dAllocation in 
 	 		control file.  DONE
 		
 	 	- Use selectivity in the terminal year to calculate reference
@@ -3089,7 +3092,7 @@ FUNCTION void calcReferencePoints()
 		- June 8, 2012.  SJDM.  Made the following changes to this routine.
 			1) changed reference points calculations to use the average
 			   weight-at-age and fecundity-at-age.
-			2) change equilibrium calculations to use the catch allocation
+			2) change equilibrium calculations to use the catch dAllocation
 			   for multiple gear types. Not the average vulnerablity... this was wrong.
 	
 		- July 29, 2012.  SJDM Issue1.  New routine for calculating reference points
@@ -3140,13 +3143,13 @@ FUNCTION void calcReferencePoints()
 	
 	// | (1) : Matrix of selectivities for directed fisheries.
 	// |     : log_sel(gear)(n_ags)(year)(age)
-	// |     : ensure allocation sums to 1.
+	// |     : ensure dAllocation sums to 1.
 	dvector d_ak(1,nfleet);
 	d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
 	for(k=1;k<=nfleet;k++)
 	{
-		kk      = ifleet(k);
-		d_ak(k) = allocation(kk);
+		kk      = nFleetIndex(k);
+		d_ak(k) = dAllocation(kk);
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			d_V(ig)(k) = value( exp(log_sel(kk)(ig)(nyr)) );
@@ -3201,7 +3204,7 @@ FUNCTION void calcReferencePoints()
 		// if(nfleet > 1)
 		// {
 		// 	fall  = ftry;
-		// 	cMSY.get_fmsy(fall,allocation);
+		// 	cMSY.get_fmsy(fall,dAllocation);
 		// 	bmsy = cMSY.getBmsy();
 		// 	msy = cMSY.getMsy();
 		// 	cMSY.print();
@@ -3319,8 +3322,8 @@ FUNCTION void calcReferencePoints()
 // 	//cout<<"phiB      \t"<<cMSY.getPhie()<<endl;
 // 	//cout<<"------------------------"<<endl;
 // 	//
-// 	///* (4) Now do it with allocation */
-// 	////cout<<"\nAllocation"<<allocation(ifleet)<<endl;
+// 	///* (4) Now do it with dAllocation */
+// 	////cout<<"\nAllocation"<<dAllocation(nFleetIndex)<<endl;
 // 	//fall = ftry;
 // 	//cMSY.get_fmsy(fall,d_ak);
 // 	////bmsy = cMSY.getBmsy();
@@ -3350,11 +3353,11 @@ FUNCTION void calcReferencePoints()
 // 	//va_bar.initialize();
 // 	//
 // 	//
-// 	///*CHANGED Allow for user to specify allocation among gear types.*/
-// 	///*FIXME:  this allocation should be on the catch on the vulnerabilities*/
+// 	///*CHANGED Allow for user to specify dAllocation among gear types.*/
+// 	///*FIXME:  this dAllocation should be on the catch on the vulnerabilities*/
 // 	//for(j=1;j<=ngear;j++)
 // 	//{
-// 	//	va_bar+=allocation(j)*value(exp(log_sel(j)(nyr)));
+// 	//	va_bar+=dAllocation(j)*value(exp(log_sel(j)(nyr)));
 // 	//	va(j) = value(exp(log_sel(j)(nyr)));
 // 	//}
 // 	//dmatrix V(1,ngear-2,sage,nage);
@@ -3379,14 +3382,14 @@ FUNCTION void calcReferencePoints()
 // 	//	/* Newton-Raphson method to determine MSY-based reference points. */
 // 	//	for(i=1;i<=15;i++)
 // 	//	{
-// 	//		equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+// 	//		equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
 // 	//				avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 // 	//	
 // 	//		fe = fe - dye_df/d2ye_df2;
 // 	//		if(square(dye_df)<1e-12)break;
 // 	//	}
 // 	//	fmsy=fe;
-// 	//	equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+// 	//	equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
 // 	//			avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 // 	//#endif
 // 	//
@@ -3435,7 +3438,7 @@ FUNCTION void calcReferencePoints()
 // 	//			#endif
 // 	//		
 // 	//			#if defined(USE_NEW_EQUILIBRIUM)
-// 	//			equilibrium(fe,allocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
+// 	//			equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
 // 	//					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
 // 	//			#endif
 // 	//			if(re<=0)break;
@@ -3457,8 +3460,8 @@ FUNCTION void calcReferencePoints()
 // 	//cout<<"fa     "<<d_fa<<endl;
 // 	//cout<<"V      "<<d_V<<endl;
 // 	/*
-// 		TODO Need to rethink this, should call equibrium with calc_equilirbium(fe,allocation)
-// 		Then loop over values of F and return fe=lambda*F to satisfy allocation scheme.
+// 		TODO Need to rethink this, should call equibrium with calc_equilirbium(fe,dAllocation)
+// 		Then loop over values of F and return fe=lambda*F to satisfy dAllocation scheme.
 // 	*/
 // 	if(!mceval_phase())
 // 	{
@@ -3708,8 +3711,8 @@ FUNCTION void simulationModel(const long& seed)
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		dvector tr(sage,nage);
-		f  = i_area(ig);
-		g  = i_group(ig);
+		f  = n_area(ig);
+		g  = n_group(ig);
 		ih = pntr_ag(f,g);
 		
 		lx.initialize();
@@ -3766,7 +3769,7 @@ FUNCTION void simulationModel(const long& seed)
 			for(k=1;k<=ngear;k++)
 			{
 				va(k) = exp(value(log_sel(k)(ig)(i)));
-				if( cntrl(15) == 1 && allocation(k) > 0 )
+				if( cntrl(15) == 1 && dAllocation(k) > 0 )
 				{
 					va(k)             = ifdSelex(va(k),ba,0.25);
 					log_sel(k)(ig)(i) = log(va(k));
@@ -3980,17 +3983,17 @@ FUNCTION writeSimulatedDataFile
   	dfs<< ngear 		<<endl;
  
   	dfs<<"#Allocation"	<<endl;
-  	dfs<< allocation 	<<endl;
+  	dfs<< dAllocation 	<<endl;
   	
 
   	dfs<<"#Age-schedule and population parameters"<<endl;
-  	dfs<< linf  		<<endl;
-  	dfs<< vonbk  		<<endl;
-  	dfs<< to  			<<endl;
-  	dfs<< a  			<<endl;
-  	dfs<< b  			<<endl;
-  	dfs<< ah  			<<endl;
-  	dfs<< gh  			<<endl;
+  	dfs<< d_linf  		<<endl;
+  	dfs<< d_vonbk  		<<endl;
+  	dfs<< d_to  			<<endl;
+  	dfs<< d_a  			<<endl;
+  	dfs<< d_b  			<<endl;
+  	dfs<< d_ah  			<<endl;
+  	dfs<< d_gh  			<<endl;
 
   	dfs<<"#Observed catch data"<<endl;
   	dfs<< n_ct_obs 		<<endl;
@@ -4131,8 +4134,8 @@ REPORT_SECTION
 	report<<"wt_avg"<<endl;
 	for(int ig=1;ig<=n_ags;ig++)
 	{
-		f = i_area(ig);
-		g = i_group(ig);
+		f = n_area(ig);
+		g = n_group(ig);
 		h = i_sex(ig);
 		
 		for(i=syr;i<=nyr;i++)
@@ -4256,7 +4259,7 @@ REPORT_SECTION
 // 	{
 // 		if(fmsy(k) >0 )
 // 		{
-// 			j    = ifleet(k);
+// 			j    = nFleetIndex(k);
 // 			Fstatus(j) = value(ft(j)/fmsy(k));
 // 		}
 // 	}
@@ -4334,7 +4337,7 @@ REPORT_SECTION
 // 	3) P(U_{t+1} > 2/3 Fmsy)
 // 	4) P(tac/3+  > 20%)
 	
-// 	Key to the harvest metric is the definition of Umsy and allocation to fleets.
+// 	Key to the harvest metric is the definition of Umsy and dAllocation to fleets.
 	
 // 	Pseudocode:
 // 		1) Calculate reference points (Fmsy, Bmsy)
@@ -4461,7 +4464,7 @@ FUNCTION mcmc_output
 	
 // 	Arguments:
 // 	tac is the total allowable catch that must be allocated 
-// 	to each gear type based on allocation(k)
+// 	to each gear type based on dAllocation(k)
 	
 // 	theta(1) = log_ro
 // 	theta(2) = h
@@ -4525,11 +4528,11 @@ FUNCTION mcmc_output
 // 	p_Z.sub(syr,nyr)   = value( Z.sub(syr,nyr) );
 	
 	
-// 	/* Selectivity and allocation to gears */
+// 	/* Selectivity and dAllocation to gears */
 // 	dmatrix va_bar(1,ngear,sage,nage);
 // 	for(k=1;k<=ngear;k++)
 // 	{
-// 		p_ct(k)   = allocation(k)*tac;
+// 		p_ct(k)   = dAllocation(k)*tac;
 // 		va_bar(k) = exp(value(log_sel(k)(nyr)));
 // 	}
 		
@@ -4676,15 +4679,15 @@ FUNCTION void runMSE()
 	s_mseData.nNage       = nage;
 	s_mseData.nGear       = ngear;
 	s_mseData.nFleet      = nfleet;
-	s_mseData.nFleetIndex = ifleet;
-	s_mseData.dAllocation = allocation;
-	s_mseData.d_linf      = linf;
-	s_mseData.d_vonbk     = vonbk;
-	s_mseData.d_to        = to;
-	s_mseData.d_a         = a;
-	s_mseData.d_b         = b;
-	s_mseData.d_ah        = ah;
-	s_mseData.d_gh        = gh;
+	s_mseData.nFleetIndex = nFleetIndex;
+	s_mseData.dAllocation = dAllocation;
+	s_mseData.d_linf      = d_linf;
+	s_mseData.d_vonbk     = d_vonbk;
+	s_mseData.d_to        = d_to;
+	s_mseData.d_a         = d_a;
+	s_mseData.d_b         = d_b;
+	s_mseData.d_ah        = d_ah;
+	s_mseData.d_gh        = d_gh;
 	s_mseData.nCtNobs     = n_ct_obs;
 	s_mseData.dCatchData  = catch_data;
 	s_mseData.nIt         = nit;
@@ -4743,8 +4746,10 @@ FUNCTION void runMSE()
 
 
 	// Instantiate the Operating Model Class
-    OperatingModel om(s_mseData,s_mseVars);
-
+    //OperatingModel om(s_mseData,s_mseVars);
+    cout<<"This is red leader, Im going in"<<endl;
+    OperatingModel om(s_mseData,s_mseVars,argc,argv);
+    cout<<"Use the force Luke"<<endl;
     // Methods for the class om.
     om.runScenario(rseed);
 

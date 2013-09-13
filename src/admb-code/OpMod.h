@@ -12,7 +12,8 @@
 *    in the main routines of the OperatingModel class.
 * 
 */
-
+#include <admodel.h>
+#include "iscam.htp"
 
 // |---------------------------------------------------------------|
 // | Structures for constants used in the general operating model. |
@@ -26,6 +27,8 @@
   \date `date +%Y-%m-%d`
   \date $LastChangedDate$
   \version $Rev$  \sa
+
+  To be deprecated, now OperatingModel class is derived from model_data
 **/
 struct s_iSCAMdata
 {
@@ -135,7 +138,7 @@ struct s_iSCAMvariables
 // |--------------------------------------------------|
 #ifndef OPERATINGMODEL_H
 #define OPERATINGMODEL_H
-class OperatingModel 
+class OperatingModel : public model_data
 {
 private:
   // |-----------------|
@@ -154,29 +157,29 @@ private:
   int nFleet;
 
   // LINKS TO MANAGE ARRAY INDEXING
-  int n_ags;
-  int n_ag;
-  int n_gs;
-  ivector n_area;
-  ivector n_group;
-  ivector n_sex;
-  imatrix pntr_ag;
-  imatrix pntr_gs;
-  d3_array pntr_ags;
+  // int n_ags;
+  // int n_ag;
+  // int n_gs;
+  // ivector n_area;
+  // ivector n_group;
+  // ivector n_sex;
+  // imatrix pntr_ag;
+  // imatrix pntr_gs;
+  // d3_array pntr_ags;
 
-  dvector dAllocation;
-  ivector nFleetIndex;
+  // dvector dAllocation;
+  // ivector nFleetIndex;
 
 
   dvector dAge;
   // Growth & Maturity data
   dvector d_linf;
   dvector d_vonbk;
-  dvector d_to;
-  dvector d_a;
-  dvector d_b;
-  dvector d_ah;
-  dvector d_gh;
+  // dvector d_to;
+  // dvector d_a;
+  // dvector d_b;
+  // dvector d_ah;
+  // dvector d_gh;
 
   // Catch Data
   int     nCtNobs;
@@ -263,7 +266,10 @@ protected:
 
 public:
   // OperatingModel(Scenario &cScenario);
-  OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars);
+  OperatingModel(const s_iSCAMdata&  mse_data, 
+                 const s_iSCAMvariables& mse_vars,
+                 int argc,
+                 char * argv[]);
   
 
   ~OperatingModel();

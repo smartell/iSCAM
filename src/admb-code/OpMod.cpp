@@ -19,13 +19,29 @@ OperatingModel::~OperatingModel()
 
 };
 
-/** \brief Constructor 
+/** \brief Constructor for operating model
+
+	The Operating Model class is derived from model_data,
+	this is done intentionally such that if new data are added to 
+	iscam, then these data are readily available for the operating
+	model.
+
 	\author Steven Martell
 **/
-OperatingModel::OperatingModel(const s_iSCAMdata&  mse_data, const s_iSCAMvariables& mse_vars)
+OperatingModel::OperatingModel(	const s_iSCAMdata&  mse_data, 
+                               	const s_iSCAMvariables& mse_vars,
+								int argc,
+								char * argv[] )
+								: model_data(argc,argv)
 {
-	initializeConstants(mse_data);
+	initializeConstants(mse_data);  // deprecate, 
 	initializeVariables(mse_vars);
+
+	cout<<" testing the inheritance of model_data"<<endl;
+	cout<<"narea\t"<<narea<<endl;
+	cout<<"pntr_ags\n"<<pntr_ags<<endl;
+	cout<<"catch_array\n"<<catch_array<<endl;
+	// exit(1);
 }
 
 /** \brief Initialize constants in Operating model
@@ -39,70 +55,70 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// |------------------|
 	// | Model dimensions |
 	// |------------------|
-	nStock = cS.nStock;  
-	nArea  = cS.nArea;
-	nSex   = cS.nSex;
-	nSyr   = cS.nSyr;
-	nNyr   = cS.nNyr;
-	nPyr   = cS.nPyr;
-	nSage  = cS.nSage;
-	nNage  = cS.nNage;
-	nGear  = cS.nGear;
-	nFleet = cS.nFleet;
+	nStock = ngroup;       //cS.nStock;  
+	nArea  = narea;        //cS.nArea;
+	nSex   = nsex;         //cS.nSex;
+	nSyr   = syr;          //cS.nSyr;
+	nNyr   = nyr;          //cS.nNyr;
+	nPyr   = mse_cntrl(1); //cS.nPyr;
+	nSage  = sage;         //cS.nSage;
+	nNage  = nage;         //cS.nNage;
+	nGear  = ngear;        //cS.nGear;
+	nFleet = nfleet;       //cS.nFleet;
 
 
 	// | links for array indexing
-	n_ags = nArea * nStock * nSex;
-	n_ag  = nArea * nStock;
-	n_gs  = nStock * nSex;
-	n_area.allocate(1,n_ags);
-	n_group.allocate(1,n_ags);
-	n_sex.allocate(1,n_ags);
-	pntr_ag.allocate(1,nArea,1,nStock);
-	pntr_gs.allocate(1,nStock,1,nSex);
-	pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
+	// n_ags = nArea * nStock * nSex;
+	// n_ag  = nArea * nStock;
+	// n_gs  = nStock * nSex;
+	// n_area.allocate(1,n_ags);
+	// n_group.allocate(1,n_ags);
+	// n_sex.allocate(1,n_ags);
+	// pntr_ag.allocate(1,nArea,1,nStock);
+	// pntr_gs.allocate(1,nStock,1,nSex);
+	// pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
 
-	int f,g,h,i,j,k;
+	// int f,g,h,i,j,k;
 	int ig = 0;
-	int ih = 0;
-	int is = 0;
-	for( f = 1; f <= nArea; f++ )
-	{
-		for( g = 1; g <= nStock; g++ )
-		{
-			ih ++;
-			pntr_ag(f,g) = ih;
-			for( h = 1; h <= nSex; h++ )
-			{
-				ig ++;
-				n_area(ig)  = f;
-				n_group(ig) = g;
-				n_sex(ig)   = h;
-				pntr_ags(f,g,h) = ig;
-				if ( f==1 )
-				{
-					is ++;
-					pntr_gs(g,h) = is;
-				}
-			}
-		}
-	}
+	// int ih = 0;
+	// int is = 0;
+	// for( f = 1; f <= nArea; f++ )
+	// {
+	// 	for( g = 1; g <= nStock; g++ )
+	// 	{
+	// 		ih ++;
+	// 		pntr_ag(f,g) = ih;
+	// 		for( h = 1; h <= nSex; h++ )
+	// 		{
+	// 			ig ++;
+	// 			n_area(ig)  = f;
+	// 			n_group(ig) = g;
+	// 			n_sex(ig)   = h;
+	// 			pntr_ags(f,g,h) = ig;
+	// 			if ( f==1 )
+	// 			{
+	// 				is ++;
+	// 				pntr_gs(g,h) = is;
+	// 			}
+	// 		}
+	// 	}
+	// }
 	// cout<<"Houston, we have a problem"<<endl;
-	nFleetIndex.allocate(1,nFleet);
-	nFleetIndex = cS.nFleetIndex;
+	// nFleetIndex.allocate(1,nFleet);
+	// nFleetIndex = cS.nFleetIndex;
 
-	dAllocation  = cS.dAllocation;
+	// dAllocation  = cS.dAllocation;
 	dAge.allocate(nSage,nNage);
 	dAge.fill_seqadd(nSage,1);
 
 	// Growth & Maturity
-	d_linf  = cS.d_linf;
-	d_vonbk = cS.d_vonbk;
-	d_to   	= cS.d_to;
-	d_a     = cS.d_a;
-	d_b 	= cS.d_b;
-	d_ah 	= cS.d_ah;
-	d_gh 	= cS.d_gh;
+	// linf  = cS.linf;
+	// vonbk = cS.vonbk;
+	// d_to   	= cS.to;
+	// d_a     = cS.d_a;
+	// d_b 	= cS.d_b;
+	// d_ah 	= cS.d_ah;
+	// d_gh 	= cS.d_gh;
 
 	// Catch Data
 	nCtNobs 	= cS.nCtNobs;
