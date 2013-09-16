@@ -559,7 +559,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 	 	- [weight -at-age if catch is in biomass units]
 	 */
 
-	int f,g,h,i,j,k;
+	int f,g,h,k;
 	int ig,kk;
 
 	
@@ -687,7 +687,7 @@ void OperatingModel::calcReferencePoints()
 		at age and maturity at age upto the current assessment year.
 	*/
 
-	int f,g,h,i,j,k,kk;
+	int g,k,kk;
 	int ig;
 	double d_rho = d_iscamCntrl(13);
 	dvector d_ak(1,nFleet);
@@ -737,7 +737,7 @@ void OperatingModel::calcReferencePoints()
 void OperatingModel::conditionReferenceModel()
 {
 
-	int f,g,h,i,j,k;
+	int f,g,i,j;
 	int ig,ih;
 	d3_Nt.initialize();
 	for( ig = 1; ig <= n_ags; ig++ )
@@ -863,11 +863,11 @@ void OperatingModel::calcSelectivities()
 		selectivity parameters defined in the Scenario class.
 	*/
 
-	int f;
+	// int f;
 	int g;
 	int h;
-	int i;
-	int j;
+	// int i;
+	// int j;
 	int k;
 	d5_logSel.allocate(1,nGear,1,nStock,1,nSex,nSyr,nPyr,nSage,nNage);
 

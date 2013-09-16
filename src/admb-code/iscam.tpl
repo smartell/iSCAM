@@ -1776,7 +1776,7 @@ FUNCTION calcTotalMortality
 	[ ] 
   	*/
 
-	int ig,ii,i,k,ki,l;
+	int ig,ii,i,k,l;
 	dvariable ftmp;
 	F.initialize(); 
 	ft.initialize();
@@ -3562,12 +3562,13 @@ FUNCTION void simulationModel(const long& seed)
 	[ ] - TODO: switch statement for catch-type to get Fishing mortality rate.
   	[ ] 
   	*/
-	
+	cout<<global_parfile<<endl;
 	bool pinfile = 0;
 	cout<<"___________________________________________________\n"<<endl;
 	cout<<"  **Implementing Simulation--Estimation trial**    "<<endl;
 	cout<<"___________________________________________________"<<endl;
-	if(norm(log_rec_devs)!=0)
+	//if(norm(log_rec_devs)!=0)
+	if( global_parfile )
 	{
 		cout<<"\tUsing pin file for simulation"<<endl;
 		pinfile = 1;
@@ -3578,7 +3579,7 @@ FUNCTION void simulationModel(const long& seed)
 	
 	
 
-	int ii,ki,ig,ih;
+	int ii,ig,ih;
 	// |---------------------------------------------------------------------------------|
 	// | 1) SELECTIVITY
 	// |---------------------------------------------------------------------------------|
@@ -3793,6 +3794,8 @@ FUNCTION void simulationModel(const long& seed)
 
 			// | [ ] TODO: Stock-Recruitment model
 			// | [ ] TODO: Add autocorrelation.
+
+			if( !pinfile ) COUT("Add stock recruitment Model")
 			/* 
 			sbt(ig)(i) = (elem_prod(N(ig)(i),exp(-zt(i)*d_iscamCntrl(13)))*d3_wt_mat(ig)(i));
 			if(i>=syr+sage-1 && !pinfile)

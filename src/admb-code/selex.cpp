@@ -143,8 +143,8 @@ void Selex::logistic( const dmatrix& theta, const ivector& blk, dmatrix& log_sel
 	int cntr = 1;
 	int r1 = log_sel.rowmin();
 	int r2 = log_sel.rowmax();
-	int c1 = log_sel.colmin();
-	int c2 = log_sel.colmax();
+	// int c1 = log_sel.colmin();
+	// int c2 = log_sel.colmax();
 	double p1,p2;
 	double tiny = 1.e-30;
 
@@ -182,8 +182,8 @@ void Selex::logistic( const dmatrix& theta, const ivector& blk, const dmatrix& l
 	int cntr = 1;
 	int r1 = log_sel.rowmin();
 	int r2 = log_sel.rowmax();
-	int c1 = log_sel.colmin();
-	int c2 = log_sel.colmax();
+	// int c1 = log_sel.colmin();
+	// int c2 = log_sel.colmax();
 	double p1,p2;
 	double tiny = 1.e-30;
 
@@ -371,8 +371,8 @@ static dvariable approx1(const double& v, const dvector& x, const dvar_vector& y
 dvector Selex::linapprox(const dvector& x, const dvector& y, const dvector& xout)
 {
 	// Piece-wise linear approximation for n points in xout between min(x) and max(y):
-	int i,j,k;
-	int n = xout.indexmax() - xout.indexmin() + 1;
+	int k;
+	// int n = xout.indexmax() - xout.indexmin() + 1;
 	double v;
 	dvector yout(xout.indexmin(),xout.indexmax());
 	
@@ -387,8 +387,8 @@ dvector Selex::linapprox(const dvector& x, const dvector& y, const dvector& xout
 dvar_vector Selex::linapprox(const dvector& x, const dvar_vector& y, const dvector& xout)
 {
 	// Piece-wise linear approximation for n points in xout between min(x) and max(y):
-	int i,j,k;
-	int n = xout.indexmax() - xout.indexmin() + 1;
+	int k;
+	// int n = xout.indexmax() - xout.indexmin() + 1;
 	double v;
 	RETURN_ARRAYS_INCREMENT();
 	dvar_vector yout(xout.indexmin(),xout.indexmax());
