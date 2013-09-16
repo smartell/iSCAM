@@ -40,7 +40,7 @@ OperatingModel::OperatingModel(	const s_iSCAMdata&  mse_data,
 	cout<<" testing the inheritance of model_data"<<endl;
 	cout<<"narea\t"<<narea<<endl;
 	cout<<"pntr_ags\n"<<pntr_ags<<endl;
-	cout<<"catch_array\n"<<catch_array<<endl;
+	// cout<<"catch_array\n"<<catch_array<<endl;
 	// exit(1);
 }
 
@@ -65,7 +65,7 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	nNage  = nage;         //cS.nNage;
 	nGear  = ngear;        //cS.nGear;
 	nFleet = nfleet;       //cS.nFleet;
-
+	dAge   = age;
 
 	// | links for array indexing
 	// n_ags = nArea * nStock * nSex;
@@ -79,7 +79,7 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
 
 	// int f,g,h,i,j,k;
-	int ig = 0;
+	// int ig = 0;
 	// int ih = 0;
 	// int is = 0;
 	// for( f = 1; f <= nArea; f++ )
@@ -108,8 +108,8 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// nFleetIndex = cS.nFleetIndex;
 
 	// dAllocation  = cS.dAllocation;
-	dAge.allocate(nSage,nNage);
-	dAge.fill_seqadd(nSage,1);
+	// dAge.allocate(nSage,nNage);
+	// dAge.fill_seqadd(nSage,1);
 
 	// Growth & Maturity
 	// linf  = cS.linf;
@@ -121,27 +121,27 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// d_gh 	= cS.d_gh;
 
 	// Catch Data
-	nCtNobs 	= cS.nCtNobs;
-	dCatchData 	= cS.dCatchData;
-	d3_Ct.allocate(1,n_ags,nSyr,nPyr,1,nGear);
-	d3_Ct.initialize();
-	for(int ii=1;ii<=nCtNobs;ii++)
-	{
-		i = dCatchData(ii)(1);
-		k = dCatchData(ii)(2);
-		f = dCatchData(ii)(3);
-		g = dCatchData(ii)(4);
-		h = dCatchData(ii)(5);
-		int ncut;
-		h == 0? ncut=nSex: ncut=1;
+	// nCtNobs 	= cS.nCtNobs;
+	// dCatchData 	= cS.dCatchData;
+	// d3_Ct.allocate(1,n_ags,nSyr,nPyr,1,nGear);
+	// d3_Ct.initialize();
+	// for(int ii=1;ii<=nCtNobs;ii++)
+	// {
+	// 	i = dCatchData(ii)(1);
+	// 	k = dCatchData(ii)(2);
+	// 	f = dCatchData(ii)(3);
+	// 	g = dCatchData(ii)(4);
+	// 	h = dCatchData(ii)(5);
+	// 	int ncut;
+	// 	h == 0? ncut=nSex: ncut=1;
 	
-		for(int hh=1;hh<=nSex;hh++)
-		{
-			ig = pntr_ags(f,g,hh);
-			d3_Ct(ig)(i)(k) = 1./ncut*dCatchData(ii)(7);
-		}
+	// 	for(int hh=1;hh<=nSex;hh++)
+	// 	{
+	// 		ig = pntr_ags(f,g,hh);
+	// 		d3_Ct(ig)(i)(k) = 1./ncut*dCatchData(ii)(7);
+	// 	}
 			
-	}
+	// }
 	// Protected member catch array required for writing data file
 	int nCount = nCtNobs + (nPyr-nNyr+1)*nSex*nGear;
 	m_nCtNobs  = nCtNobs;  /**< Initialize counter */
@@ -153,17 +153,18 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 
 
 	// Survey data
-	nIt         = cS.nIt;
-	nItNobs     = cS.nItNobs;
-	nSurveyType = cS.nSurveyType;
-	dSurveyData.allocate(*cS.dSurveyData);
-	dSurveyData = *cS.dSurveyData;
+	// nItNobs         = cS.nItNobs;
+	// n_it_obs     = cS.n_it_obs;
+	// n_survey_type = cS.n_survey_type;
+	// d3_survey_data.allocate(*cS.d3_survey_data);
+	// d3_survey_data = *cS.d3_survey_data;
 
+	int ig;
 	// Composition data
-	nAgears = cS.nAgears;
-	nAnobs  = cS.nAnobs;
-	nAsage  = cS.nAsage;
-	nAnage  = cS.nAnage;
+	// nAgears = cS.nAgears;
+	// nAnobs  = cS.nAnobs;
+	// nAsage  = cS.nAsage;
+	// nAnage  = cS.nAnage;
 	dA.allocate(*cS.dA);
 	dA      = *cS.dA;
 
@@ -394,10 +395,10 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
   	dfs<< dCatchData    <<endl;  
 
   	dfs<<"#Abundance indices"	<<endl;
-  	dfs<< nIt 					<<endl;
   	dfs<< nItNobs 				<<endl;
-  	dfs<< nSurveyType 			<<endl;
-  	dfs<< dSurveyData 			<<endl;
+  	dfs<< n_it_nobs 			<<endl;
+  	dfs<< n_survey_type 		<<endl;
+  	dfs<< d3_survey_data 			<<endl;
 
  //  	dfs<<"#Age composition"		<<endl;
  //  	dfs<< na_gears				<<endl;

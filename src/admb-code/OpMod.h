@@ -65,7 +65,7 @@ struct s_iSCAMdata
   // Survey data
   int      nIt;
   ivector  nItNobs;
-  ivector  nSurveyType;
+  ivector  n_survey_type;
   d3_array* dSurveyData;
 
   // Composition data
@@ -173,8 +173,8 @@ private:
 
   dvector dAge;
   // Growth & Maturity data
-  dvector d_linf;
-  dvector d_vonbk;
+  // dvector d_linf;
+  // dvector d_vonbk;
   // dvector d_to;
   // dvector d_a;
   // dvector d_b;
@@ -182,15 +182,15 @@ private:
   // dvector d_gh;
 
   // Catch Data
-  int     nCtNobs;
-  dmatrix dCatchData;
+  // int     nCtNobs;
+  // dmatrix dCatchData;
 
-  d3_array d3_Ct;
+  // d3_array d3_Ct;
 
   // Survey data
-  int       nIt;
-  ivector   nItNobs;
-  ivector   nSurveyType;
+  // int       nIt;
+  // ivector   nItNobs;
+  // ivector   n_survey_type;
   d3_array  dSurveyData;
 
    // Composition data

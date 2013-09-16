@@ -13,11 +13,11 @@ dist:
 	mkdir -p ${DISK}/R
 	mkdir -p ${DISK}/release
 	make     --directory=src/admb-code clean
-	make     --directory=src/admb-code 
-	cp    ./src/admb-code/iscam ${DISK}/debug/
-	make     --directory=src/admb-code clean
 	make     --directory=src/admb-code OPT=TRUE
 	cp    ./src/admb-code/iscam ${DISK}/release/
+	make     --directory=src/admb-code clean
+	make     --directory=src/admb-code 
+	cp    ./src/admb-code/iscam ${DISK}/debug/
 	cp -r ./src/r-code/ ${DISK}/R/
 
 clean:
