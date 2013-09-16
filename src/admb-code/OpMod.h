@@ -141,10 +141,9 @@ struct s_iSCAMvariables
 class OperatingModel : public model_data
 {
 private:
-  // |-----------------|
-  // | Model constants |
-  // |-----------------|
-  
+  // |------------------|
+  // | Model dimensions |
+  // |------------------|
   int nStock;        
   int nArea;
   int nSex;
@@ -157,58 +156,11 @@ private:
   int nFleet;
   dvector dAge;
 
-  // LINKS TO MANAGE ARRAY INDEXING
-  // int n_ags;
-  // int n_ag;
-  // int n_gs;
-  // ivector n_area;
-  // ivector n_group;
-  // ivector n_sex;
-  // imatrix pntr_ag;
-  // imatrix pntr_gs;
-  // d3_array pntr_ags;
+ 
 
-  // dvector dAllocation;
-  // ivector nFleetIndex;
-
-
-  // Growth & Maturity data
-  // dvector d_linf;
-  // dvector d_vonbk;
-  // dvector d_to;
-  // dvector d_a;
-  // dvector d_b;
-  // dvector d_ah;
-  // dvector d_gh;
-
-  // Catch Data
-  // int     nCtNobs;
-  // dmatrix dCatchData;
-
-  // d3_array d3_Ct;
-
-  // Survey data
-  // int       nIt;
-  // ivector   nItNobs;
-  // ivector   n_survey_type;
-  // d3_array  dSurveyData;
-
-   // Composition data
-  // int      nAgears;
-  // ivector  nAnobs;
-  // ivector  nAsage;
-  // ivector  nAnage;
-  // d3_array dA;
-
-   // Empirical weight-at-age
-  // int      nWtNobs;
-  // dmatrix  dWt_bar;
-  // dmatrix  dEt_bar;
-  // d3_array dWt_avg;
-  // d3_array dWt_mat;
-
-
-  // Model variables
+  // |------------------|
+  // | Model variablies |
+  // |------------------|
   dvector dRo;
   dvector dSteepness;
   dvector dM;
@@ -219,9 +171,8 @@ private:
   dvector dLog_m_devs;
   dmatrix dLog_rbar_devs;
   dmatrix dLog_init_rec_devs;
-
   dvector dKappa;
-  // dvector d_iscamCntrl;
+  
   d3_array d3_Ft;
   d3_array d3_Mt;
   
@@ -261,8 +212,24 @@ private:
 protected:
   dvector m_dTac;
   dmatrix m_dFt;
+
+  // | Catch data for assessment.
   int     m_nCtNobs;
   dmatrix m_dCatchData;
+
+  // | Relative abundance index.
+  ivector m_n_it_nobs;
+  d3_array m_d3_survey_data;
+
+  // | Age composition
+  ivector m_n_A_nobs;
+  d3_array m_d3_A;
+
+  // | Empirical weight-at-age data
+  int m_nWtNobs;
+  dmatrix m_imp_wt_avg;
+  d3_array m_d3_wt_avg;
+  d3_array m_d3_wt_mat;
 
 public:
   // OperatingModel(Scenario &cScenario);
@@ -287,6 +254,7 @@ protected:
   void calcTAC();
   void implementFisheries(const int& iyr);
   void updateReferencePopulation(const int& iyr);
+  void calcGrowth(const int& iyr);
   void generateStockAssessmentData(const int& iyr);
   void runStockAssessment();
 

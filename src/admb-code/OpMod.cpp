@@ -67,143 +67,56 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	nFleet = nfleet;       //cS.nFleet;
 	dAge   = age;
 
-	// | links for array indexing
-	// n_ags = nArea * nStock * nSex;
-	// n_ag  = nArea * nStock;
-	// n_gs  = nStock * nSex;
-	// n_area.allocate(1,n_ags);
-	// n_group.allocate(1,n_ags);
-	// n_sex.allocate(1,n_ags);
-	// pntr_ag.allocate(1,nArea,1,nStock);
-	// pntr_gs.allocate(1,nStock,1,nSex);
-	// pntr_ags.allocate(1,nArea,1,nStock,1,nSex);
+	// |----------------------------------------------------------------------|
+	// | Allocate arrays for operating model output and assessment data files |
+	// |----------------------------------------------------------------------|
+	// | Catch data
+	int nCount = (nPyr-nNyr+1);
+	m_nCtNobs  = nCtNobs + nCount*nSex*nGear;  /**< Length of catch array */
 
-	// int f,g,h,i,j,k;
-	// int ig = 0;
-	// int ih = 0;
-	// int is = 0;
-	// for( f = 1; f <= nArea; f++ )
-	// {
-	// 	for( g = 1; g <= nStock; g++ )
-	// 	{
-	// 		ih ++;
-	// 		pntr_ag(f,g) = ih;
-	// 		for( h = 1; h <= nSex; h++ )
-	// 		{
-	// 			ig ++;
-	// 			n_area(ig)  = f;
-	// 			n_group(ig) = g;
-	// 			n_sex(ig)   = h;
-	// 			pntr_ags(f,g,h) = ig;
-	// 			if ( f==1 )
-	// 			{
-	// 				is ++;
-	// 				pntr_gs(g,h) = is;
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// cout<<"Houston, we have a problem"<<endl;
-	// nFleetIndex.allocate(1,nFleet);
-	// nFleetIndex = cS.nFleetIndex;
-
-	// dAllocation  = cS.dAllocation;
-	// dAge.allocate(nSage,nNage);
-	// dAge.fill_seqadd(nSage,1);
-
-	// Growth & Maturity
-	// linf  = cS.linf;
-	// vonbk = cS.vonbk;
-	// d_to   	= cS.to;
-	// d_a     = cS.d_a;
-	// d_b 	= cS.d_b;
-	// d_ah 	= cS.d_ah;
-	// d_gh 	= cS.d_gh;
-
-	// Catch Data
-	// nCtNobs 	= cS.nCtNobs;
-	// dCatchData 	= cS.dCatchData;
-	// d3_Ct.allocate(1,n_ags,nSyr,nPyr,1,nGear);
-	// d3_Ct.initialize();
-	// for(int ii=1;ii<=nCtNobs;ii++)
-	// {
-	// 	i = dCatchData(ii)(1);
-	// 	k = dCatchData(ii)(2);
-	// 	f = dCatchData(ii)(3);
-	// 	g = dCatchData(ii)(4);
-	// 	h = dCatchData(ii)(5);
-	// 	int ncut;
-	// 	h == 0? ncut=nSex: ncut=1;
-	
-	// 	for(int hh=1;hh<=nSex;hh++)
-	// 	{
-	// 		ig = pntr_ags(f,g,hh);
-	// 		d3_Ct(ig)(i)(k) = 1./ncut*dCatchData(ii)(7);
-	// 	}
-			
-	// }
-	// Protected member catch array required for writing data file
-	int nCount = nCtNobs + (nPyr-nNyr+1)*nSex*nGear;
-	m_nCtNobs  = nCtNobs;  /**< Initialize counter */
 	m_dCatchData.allocate(1,nCount,1,7);
 	m_dCatchData.initialize();
 	m_dCatchData.sub(1,nCtNobs) = dCatchData;
 	
+	// | Survey data
+	m_n_it_nobs.allocate(1,nItNobs);
+	m_n_it_nobs = n_it_nobs + nCount*nItNobs;
 
+	m_d3_survey_data.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
+	m_d3_survey_data.initialize();
+	for(int k = 1; k <= nItNobs; k++ )
+	{
+		m_d3_survey_data(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);
+	}
 
+	// | Age composition
+	m_n_A_nobs.allocate(1,nAgears);
+	m_n_A_nobs = n_A_nobs + nCount*nAgears;
 
-	// Survey data
-	// nItNobs         = cS.nItNobs;
-	// n_it_obs     = cS.n_it_obs;
-	// n_survey_type = cS.n_survey_type;
-	// d3_survey_data.allocate(*cS.d3_survey_data);
-	// d3_survey_data = *cS.d3_survey_data;
+	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
+	m_d3_A.initialize();
+	for(int k = 1; k <= nAgears; k++ )
+	{
+		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);
+	}
 
-	// int ig;
-	// Composition data
-	// nAgears = cS.nAgears;
-	// nAnobs  = cS.nAnobs;
-	// nAsage  = cS.nAsage;
-	// nAnage  = cS.nAnage;
-	// dA.allocate(*cS.dA);
-	// dA      = *cS.dA;
+	// |Empirical weight-at-age data (-99 = NA)
+	m_nWtNobs = nWtNobs + nCount*nSex;
 
-	// Empirical weight-at-age
-	// nWtNobs = cS.nWtNobs;
-	// d3_wt_avg.allocate(*cS.d3_wt_avg);
-	// dWt_mat.allocate(*cS.dWt_mat);
-	// d3_wt_avg = *cS.d3_wt_avg;
-	// dWt_mat = *cS.dWt_mat;
-	// dWt_bar.allocate(1,n_ags,nSage,nNage);
-	// dEt_bar.allocate(1,n_ags,nSage,nNage);
-	// d3_wt_avg.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
-	// d3_wt_mat.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
-	// dWt_bar.initialize();
-	// dEt_bar.initialize();
-	// d3_wt_avg.initialize();
-	// d3_wt_mat.initialize();
-	// for( ig = 1; ig <= n_ags; ig++ )
-	// {
-	// 	d3_wt_avg(ig).sub(nSyr,nNyr+1) = d3_wt_avg(ig);
-	// 	d3_wt_mat(ig).sub(nSyr,nNyr+1) = dWt_mat(ig);
-		
-	// 	dWt_bar(ig) = d3_wt_avg(ig)(nNyr+1);
-	// 	dEt_bar(ig) = d3_wt_mat(ig)(nNyr+1);
+	m_imp_wt_avg.allocate(1,m_nWtNobs,sage-5,nage);
+	m_imp_wt_avg.sub(1,nWtNobs) = inp_wt_avg;
 
-	// 	//  For now assume average weight in future 
-	// 	//  Could assume density-dependent growth etc. & overwrite these variables
-	// 	for( i = nNyr+2; i <= nPyr; i++ )
-	// 	{
-	// 		d3_wt_avg(ig)(i) = dWt_bar(ig);
-	// 		d3_wt_mat(ig)(i) = dEt_bar(ig);			
-	// 	}
-		
-	// 	// cout<<"d3_wt_avg\n"<<d3_wt_avg(ig)<<endl;
-	// 	// cout<<"dWt_bar\n"<<dWt_bar(ig)<<endl;
-	// 	// cout<<"dEt_bar\n"<<dEt_bar(ig)<<endl;
-	// }
-	// // cntrl vector
-	// d_iscamCntrl = cS.cntrl;
+	m_d3_wt_avg.allocate(1,n_ags,syr,nPyr+1,sage,nage);
+	m_d3_wt_mat.allocate(1,n_ags,syr,nPyr+1,sage,nage);
+	m_d3_wt_avg.initialize();
+	m_d3_wt_mat.initialize();
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		m_d3_wt_avg(ig).sub(syr,nyr+1) = d3_wt_avg(ig);
+		m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig);
+	}
+
+	
 	cout<<"initializeConstants"<<endl;
 	// cout<<"pntr_ags\n"<<pntr_ags<<endl;
 
@@ -332,6 +245,16 @@ void OperatingModel::runScenario(const int &seed)
 		cout<<"Ok apres updateReferencePopulation \t pas fini"<<endl;
 
 		/*
+		- Growth
+		*/
+		calcGrowth(i);
+		cout<<"Ok apres calcGrowth                \t pas fini"<<endl;
+
+		/*
+		- Movement
+		*/
+
+		/*
 		- Generate data for stock assessment.
 		*/
 		generateStockAssessmentData(i);
@@ -417,6 +340,16 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 	
 	// | END OF WRITING SIMULATED DATAFILE.
 
+}
+
+void OperatingModel::calcGrowth(const int& iyr)
+{
+	// Implement alternative growth models.
+	for(int  ig = 1; ig <= n_ags; ig++ )
+	{
+		m_d3_wt_avg(ig)(iyr+1) = d3_wt_avg(ig)(nNyr+1);
+		m_d3_wt_mat(ig)(iyr+1) = d3_wt_mat(ig)(nNyr+1);
+	}
 }
 
 /**
@@ -606,12 +539,13 @@ void OperatingModel::implementFisheries(const int& iyr)
 					d_Va(h)(k) = exp(d4_log_sel(kk)(ig)(nNyr));
 				}
 				na(h)+= d3_Nt(ig)(iyr);
-				wa(h) = d3_wt_avg(ig)(iyr);
+				wa(h) = m_d3_wt_avg(ig)(iyr);
 			}
 			// Potential issue here if nStock > 1, what wa ma vector should be used?
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa);
 			cout<<"ft = "<<ft<<endl;
 			m_dFt(g) = ft;
+			cout<<"^^^ The shuttle has crashed ^^^"<<endl;
 		}
 	}
 

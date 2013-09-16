@@ -621,26 +621,6 @@ DATA_SECTION
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
 			
-			// Attempting to use a cubic spline for smoothing missing data.
-			// dvector tmp = inp_wt_avg(i)(sage,nage);
-			// COUT(age);
-			// COUT(tmp);
-			// ivector idx = getIndex(age,tmp);
-			// COUT(idx);
-			// COUT(tmp(idx));
-			// //dvector cs_wa=cubic_spline(tmp(idx),age);
-			// int nodes=size_count(tmp(idx));
-			// dvector ia(1,nodes);
-			// dvector la = age;
-			// ia.fill_seqadd(0,1./(nodes-1));
-			// //dvector fa = (la-min(la(idx)))/(max(la(idx))-min(la(idx)));
-			// dvector fa = (la-min(la))/(max(la)-min(la));
-			// cubic_spline_function ffa(ia,tmp(idx));
-			// COUT(fa);
-			// dvector cs_wa = (ffa(fa));
-			// COUT(cs_wa);
-			// exit(1);
-
 			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
