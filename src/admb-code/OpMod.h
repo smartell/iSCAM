@@ -77,11 +77,11 @@ struct s_iSCAMdata
 
   // Empirical weight-at-age
   int      nWtNobs;
-  d3_array* dWt_avg;
-  d3_array* dWt_mat;
+  d3_array* d3_wt_avg;
+  d3_array* d3_wt_mat;
 
   // control vector;
-  dvector cntrl;
+  dvector d_iscamCntrl;
 
   
 };
@@ -155,6 +155,7 @@ private:
   int nNage;
   int nGear;
   int nFleet;
+  dvector dAge;
 
   // LINKS TO MANAGE ARRAY INDEXING
   // int n_ags;
@@ -171,7 +172,6 @@ private:
   // ivector nFleetIndex;
 
 
-  dvector dAge;
   // Growth & Maturity data
   // dvector d_linf;
   // dvector d_vonbk;
@@ -191,21 +191,21 @@ private:
   // int       nIt;
   // ivector   nItNobs;
   // ivector   n_survey_type;
-  d3_array  dSurveyData;
+  // d3_array  dSurveyData;
 
    // Composition data
-  int      nAgears;
-  ivector  nAnobs;
-  ivector  nAsage;
-  ivector  nAnage;
-  d3_array dA;
+  // int      nAgears;
+  // ivector  nAnobs;
+  // ivector  nAsage;
+  // ivector  nAnage;
+  // d3_array dA;
 
    // Empirical weight-at-age
-  int      nWtNobs;
-  dmatrix  dWt_bar;
-  dmatrix  dEt_bar;
-  d3_array dWt_avg;
-  d3_array dWt_mat;
+  // int      nWtNobs;
+  // dmatrix  dWt_bar;
+  // dmatrix  dEt_bar;
+  // d3_array dWt_avg;
+  // d3_array dWt_mat;
 
 
   // Model variables
@@ -221,7 +221,7 @@ private:
   dmatrix dLog_init_rec_devs;
 
   dvector dKappa;
-  dvector nCntrl;
+  // dvector d_iscamCntrl;
   d3_array d3_Ft;
   d3_array d3_Mt;
   
@@ -242,8 +242,8 @@ private:
   d3_array d3_Nt;
   d3_array d3_Zt;
   d3_array d3_St;
-  d3_array d3_wt_avg;
-  d3_array d3_wt_mat;
+  // d3_array d3_wt_avg;
+  // d3_array d3_wt_mat;
 
 
   // reference points

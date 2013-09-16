@@ -159,53 +159,53 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// d3_survey_data.allocate(*cS.d3_survey_data);
 	// d3_survey_data = *cS.d3_survey_data;
 
-	int ig;
+	// int ig;
 	// Composition data
 	// nAgears = cS.nAgears;
 	// nAnobs  = cS.nAnobs;
 	// nAsage  = cS.nAsage;
 	// nAnage  = cS.nAnage;
-	dA.allocate(*cS.dA);
-	dA      = *cS.dA;
+	// dA.allocate(*cS.dA);
+	// dA      = *cS.dA;
 
 	// Empirical weight-at-age
-	nWtNobs = cS.nWtNobs;
-	dWt_avg.allocate(*cS.dWt_avg);
-	dWt_mat.allocate(*cS.dWt_mat);
-	dWt_avg = *cS.dWt_avg;
-	dWt_mat = *cS.dWt_mat;
-	dWt_bar.allocate(1,n_ags,nSage,nNage);
-	dEt_bar.allocate(1,n_ags,nSage,nNage);
-	d3_wt_avg.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
-	d3_wt_mat.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
-	dWt_bar.initialize();
-	dEt_bar.initialize();
-	d3_wt_avg.initialize();
-	d3_wt_mat.initialize();
-	for( ig = 1; ig <= n_ags; ig++ )
-	{
-		d3_wt_avg(ig).sub(nSyr,nNyr+1) = dWt_avg(ig);
-		d3_wt_mat(ig).sub(nSyr,nNyr+1) = dWt_mat(ig);
+	// nWtNobs = cS.nWtNobs;
+	// d3_wt_avg.allocate(*cS.d3_wt_avg);
+	// dWt_mat.allocate(*cS.dWt_mat);
+	// d3_wt_avg = *cS.d3_wt_avg;
+	// dWt_mat = *cS.dWt_mat;
+	// dWt_bar.allocate(1,n_ags,nSage,nNage);
+	// dEt_bar.allocate(1,n_ags,nSage,nNage);
+	// d3_wt_avg.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	// d3_wt_mat.allocate(1,n_ags,nSyr,nPyr,nSage,nNage);
+	// dWt_bar.initialize();
+	// dEt_bar.initialize();
+	// d3_wt_avg.initialize();
+	// d3_wt_mat.initialize();
+	// for( ig = 1; ig <= n_ags; ig++ )
+	// {
+	// 	d3_wt_avg(ig).sub(nSyr,nNyr+1) = d3_wt_avg(ig);
+	// 	d3_wt_mat(ig).sub(nSyr,nNyr+1) = dWt_mat(ig);
 		
-		dWt_bar(ig) = d3_wt_avg(ig)(nNyr+1);
-		dEt_bar(ig) = d3_wt_mat(ig)(nNyr+1);
+	// 	dWt_bar(ig) = d3_wt_avg(ig)(nNyr+1);
+	// 	dEt_bar(ig) = d3_wt_mat(ig)(nNyr+1);
 
-		//  For now assume average weight in future 
-		//  Could assume density-dependent growth etc. & overwrite these variables
-		for( i = nNyr+2; i <= nPyr; i++ )
-		{
-			d3_wt_avg(ig)(i) = dWt_bar(ig);
-			d3_wt_mat(ig)(i) = dEt_bar(ig);			
-		}
+	// 	//  For now assume average weight in future 
+	// 	//  Could assume density-dependent growth etc. & overwrite these variables
+	// 	for( i = nNyr+2; i <= nPyr; i++ )
+	// 	{
+	// 		d3_wt_avg(ig)(i) = dWt_bar(ig);
+	// 		d3_wt_mat(ig)(i) = dEt_bar(ig);			
+	// 	}
 		
-		// cout<<"d3_wt_avg\n"<<d3_wt_avg(ig)<<endl;
-		// cout<<"dWt_bar\n"<<dWt_bar(ig)<<endl;
-		// cout<<"dEt_bar\n"<<dEt_bar(ig)<<endl;
-	}
-	// cntrl vector
-	nCntrl = cS.cntrl;
+	// 	// cout<<"d3_wt_avg\n"<<d3_wt_avg(ig)<<endl;
+	// 	// cout<<"dWt_bar\n"<<dWt_bar(ig)<<endl;
+	// 	// cout<<"dEt_bar\n"<<dEt_bar(ig)<<endl;
+	// }
+	// // cntrl vector
+	// d_iscamCntrl = cS.cntrl;
 	cout<<"initializeConstants"<<endl;
-	cout<<"pntr_ags\n"<<pntr_ags<<endl;
+	// cout<<"pntr_ags\n"<<pntr_ags<<endl;
 
 }
 
@@ -262,6 +262,7 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 
 void OperatingModel::runScenario(const int &seed)
 {
+	cout<<"Top of runScenario"<<endl;
 	/*
 	PSUEDOCODE:
 		- declare local variables --> done in the constructor.
@@ -429,7 +430,7 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
  */
 void OperatingModel::updateReferencePopulation(const int& iyr)
 {
-	int f,g,h,i,j,k;
+	int f,g;//,h,i,j,k;
 	int ig,ih;
 
 	
@@ -688,7 +689,7 @@ void OperatingModel::calcReferencePoints()
 
 	int f,g,h,i,j,k,kk;
 	int ig;
-	double d_rho = nCntrl(13);
+	double d_rho = d_iscamCntrl(13);
 	dvector d_ak(1,nFleet);
 	d3_array d_V(1,n_ags,1,nFleet,nSage,nNage);
 	for( k = 1; k <= nFleet; k++ )
@@ -708,8 +709,8 @@ void OperatingModel::calcReferencePoints()
 	// cout<<"Average weight"<<endl;
 	for( ig = 1; ig <= n_ags; ig++ )
 	{
-		wt_bar(ig) = colsum(dWt_avg(ig))/(nNyr-nSyr+1);
-		fa_bar(ig) = colsum(dWt_mat(ig))/(nNyr-nSyr+1);
+		wt_bar(ig) = colsum(d3_wt_avg(ig))/(nNyr-nSyr+1);
+		fa_bar(ig) = colsum(d3_wt_mat(ig))/(nNyr-nSyr+1);
 		M_bar(ig)  = colsum(d3_Mt(ig))/(nNyr-nSyr+1);
 	}
 	
@@ -755,11 +756,11 @@ void OperatingModel::conditionReferenceModel()
 		lx(nNage) /= 1.0-exp(-d3_Mt(ig)(nSyr,nNage));
 		
 		// initialize unfished conditions.
-		if( nCntrl(5) )
+		if( d_iscamCntrl(5) )
 		{
 			tr = log(dRo(g)) + log(lx);
 		}
-		else if (! nCntrl(5) )
+		else if (! d_iscamCntrl(5) )
 		{
 			tr(nSage)         = log(dAvgRec(ih)) + dLog_rbar_devs(ih)(nSyr);
 			tr(nSage+1,nNage) = log(dInitRec(ih)) + dLog_init_rec_devs(ih);
@@ -799,9 +800,9 @@ void OperatingModel::conditionReferenceModel()
 **/
 void OperatingModel::calcStockRecruitment()
 {
-	int f,g,h,i,j,k;
+	int f,g,h,j;
 	int ig;
-	double  dt = nCntrl(13);      // get this from cntrl(13) in the control file.
+	double  dt = d_iscamCntrl(13);      // get this from cntrl(13) in the control file.
 	double  phib;
 	dvector ma(nSage,nNage);
 	dvector fa(nSage,nNage);
@@ -829,7 +830,8 @@ void OperatingModel::calcStockRecruitment()
 				for(j=nSage; j<=nNage; j++)
 				{
 					ma(j) = mean(trans(d3_Mt(ig))(j));
-					fa(j) = mean(trans(dWt_mat(ig))(j));
+					fa(j) = mean(trans(d3_wt_mat(ig))(j));
+			
 					if(j>nSage)
 					{
 						lx(j) = lx(j-1) * mfexp(-ma(j-1));
@@ -901,9 +903,9 @@ void OperatingModel::calcSelectivities()
 					case 11:
 					// Bug here in that there is no length-info in the projection years.
 						cout<<"sex "<<h<<endl;
-						cout<<dWt_avg(h)<<endl;
+						cout<<d3_wt_avg(h)<<endl;
 						cout<<"SuCK EGGS"<<endl;
-						dmatrix len = pow( dWt_avg(h)/d_a(h), 1./d_b(h) );
+						dmatrix len = pow( d3_wt_avg(h)/d_a(h), 1./d_b(h) );
 						cLenSelex.logistic(d3_selPars(k),nSel_block(k),len,d5_logSel(k,g,h));
 					break;
 				}
