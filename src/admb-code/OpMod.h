@@ -215,6 +215,7 @@ protected:
 
   // | Catch data for assessment.
   int     m_nCtNobs;
+  int     m_nCtNobs_counter;
   dmatrix m_dCatchData;
 
   // | Relative abundance index.
@@ -253,6 +254,7 @@ protected:
   void calcReferencePoints();
   void calcTAC();
   void implementFisheries(const int& iyr);
+  void calcRelativeAbundance(const int& iyr);
   void updateReferencePopulation(const int& iyr);
   void calcGrowth(const int& iyr);
   void generateStockAssessmentData(const int& iyr);

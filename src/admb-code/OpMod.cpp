@@ -74,7 +74,8 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	int nCount = (nPyr-nNyr+1);
 	m_nCtNobs  = nCtNobs + nCount*nSex*nGear;  /**< Length of catch array */
 
-	m_dCatchData.allocate(1,nCount,1,7);
+	m_nCtNobs_counter = nCtNobs;
+	m_dCatchData.allocate(1,m_nCtNobs,1,7);
 	m_dCatchData.initialize();
 	m_dCatchData.sub(1,nCtNobs) = dCatchData;
 	
@@ -237,12 +238,18 @@ void OperatingModel::runScenario(const int &seed)
 		*/
 		implementFisheries(i);
 		cout<<"Ok apres implementFisheries       \t pas fini"<<endl;
-		
+
+		/*
+		- Run Fisheries independent survey.
+		*/
+		calcRelativeAbundance(i);
+
 		/*
 		- Update reference population
 		*/	
 		updateReferencePopulation(i);
 		cout<<"Ok apres updateReferencePopulation \t pas fini"<<endl;
+
 
 		/*
 		- Growth
@@ -292,31 +299,31 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 	adstring sim_datafile_name = "Simulated_Data_"+str(m_nSeed)+".dat";
   	ofstream dfs(sim_datafile_name);
   	dfs<<"#Model dimensions"<<endl;
-  	dfs<< nArea 		<<endl;
-  	dfs<< nStock		<<endl;
-  	dfs<< nSex			<<endl;
-  	dfs<< nSyr   		<<endl;
-  	dfs<< iyr   		<<endl;
-  	dfs<< nSage  		<<endl;
-  	dfs<< nNage  		<<endl;
-  	dfs<< nGear 		<<endl;
+  	dfs<< nArea 		    <<endl;
+  	dfs<< nStock		    <<endl;
+  	dfs<< nSex			    <<endl;
+  	dfs<< nSyr   		    <<endl;
+  	dfs<< iyr   		    <<endl;
+  	dfs<< nSage  		    <<endl;
+  	dfs<< nNage  		    <<endl;
+  	dfs<< nGear 		    <<endl;
  
   	dfs<<"#Allocation"	<<endl;
   	dfs<< dAllocation 	<<endl;
   	
 
   	dfs<<"#Age-schedule and population parameters"<<endl;
-  	dfs<< d_linf  		<<endl;
-	dfs<< d_vonbk  		<<endl;
-	dfs<< d_to  		<<endl;
-	dfs<< d_a  			<<endl;
-	dfs<< d_b  			<<endl;
-	dfs<< d_ah  		<<endl;
-	dfs<< d_gh  		<<endl;
+  	dfs<< d_linf  		                          <<endl;
+	dfs<< d_vonbk  		                          <<endl;
+	dfs<< d_to  		                          <<endl;
+	dfs<< d_a  			                          <<endl;
+	dfs<< d_b  			                          <<endl;
+	dfs<< d_ah  		                          <<endl;
+	dfs<< d_gh  		                          <<endl;
 
-  	dfs<<"#Observed catch data"<<endl;
-  	dfs<< nCtNobs 		<<endl;
-  	dfs<< dCatchData    <<endl;  
+  	dfs<<"#Observed catch data"                 <<endl;
+  	dfs<< m_nCtNobs_counter                     <<endl;
+  	dfs<< m_dCatchData.sub(1,m_nCtNobs_counter) <<endl;  
 
   	dfs<<"#Abundance indices"	<<endl;
   	dfs<< nItNobs 				<<endl;
@@ -340,6 +347,11 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 	
 	// | END OF WRITING SIMULATED DATAFILE.
 
+}
+
+void OperatingModel::calcRelativeAbundance(const int& iyr)
+{
+	// Update m_d3_survey_data
 }
 
 void OperatingModel::calcGrowth(const int& iyr)
@@ -515,10 +527,22 @@ void OperatingModel::implementFisheries(const int& iyr)
 
 		// -2) Allocate catch in each area (f) to gear (k).
 		//     -[ ] TODO: Will need to add area specific rules here.
+		//     -[ ] TODO: add implementation error here.
 		for( k = 1; k <= nFleet; k++ )
 		{
 			 d_alloc(f,k) = dAllocation(k);
 			 ct(k)        = d_alloc(f,k)*tac(f);
+
+			 // Move this to where you actually implemnt the catch 
+			 if( ct(k) > 0 )
+			 {
+			 	m_nCtNobs_counter ++;
+			 	int ii =  m_nCtNobs_counter;
+			 	m_dCatchData(ii,1) = iyr;   // year catch occurred
+			 	m_dCatchData(ii,2) = k;		// gear that caught the fish
+			 	m_dCatchData(ii,3) = f;     // area catch was removed from
+			 	cout<<"Counter"<<m_nCtNobs_counter<<endl;
+			 }
 		}
 
 		// -3) Assemble arguments for BarnovCatchEquation class.
