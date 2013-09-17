@@ -361,7 +361,8 @@ DATA_SECTION
 
 	int nfleet;
 	init_vector dAllocation(1,ngear);
-	// init_ivector catch_type(1,ngear);  DEPRECATED
+	init_ivector catch_sex_composition(1,ngear); 
+	init_ivector catch_type(1,ngear);
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		dAllocation = dAllocation/sum(dAllocation);

@@ -209,6 +209,7 @@ private:
   dvector m_est_bt;
 
   int m_nSeed;    /**< Random number seed */
+
 protected:
   dvector m_dTac;
   dmatrix m_dFt;
@@ -216,10 +217,14 @@ protected:
   // | Catch data for assessment.
   int     m_nCtNobs;
   int     m_nCtNobs_counter;
+  ivector m_catch_sex_composition;
+  ivector m_catch_type;
   dmatrix m_dCatchData;
 
   // | Relative abundance index.
   ivector m_n_it_nobs;
+  ivector m_n_it_counter;
+  dvector m_survey_q;
   d3_array m_d3_survey_data;
 
   // | Age composition
@@ -251,6 +256,7 @@ public:
 protected:
   void calcStockRecruitment();
   void conditionReferenceModel();
+  void calcSurveyCatchability();
   void calcReferencePoints();
   void calcTAC();
   void implementFisheries(const int& iyr);

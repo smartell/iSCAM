@@ -10,7 +10,7 @@
 #include "msy.h"
 #include "baranov.h"
 
-
+double getSurveyQ(const dvector& bt, const dvector& it);
 /** \brief Destructor
 	\author Steven Martell 
 **/
@@ -72,16 +72,20 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	// |----------------------------------------------------------------------|
 	// | Catch data
 	int nCount = (nPyr-nNyr+1);
+	m_nCtNobs_counter = nCtNobs;
+
 	m_nCtNobs  = nCtNobs + nCount*nSex*nGear;  /**< Length of catch array */
 
-	m_nCtNobs_counter = nCtNobs;
 	m_dCatchData.allocate(1,m_nCtNobs,1,7);
 	m_dCatchData.initialize();
 	m_dCatchData.sub(1,nCtNobs) = dCatchData;
-	
+	m_catch_sex_composition = catch_sex_composition;
+	m_catch_type = catch_type;
+
 	// | Survey data
 	m_n_it_nobs.allocate(1,nItNobs);
 	m_n_it_nobs = n_it_nobs + nCount*nItNobs;
+	m_n_it_counter = n_it_nobs;
 
 	m_d3_survey_data.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
 	m_d3_survey_data.initialize();
@@ -172,6 +176,10 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	m_beta.allocate(1,nStock);
 	m_dSbo.allocate(1,nStock);
 	m_kappa = elem_div(4.0 * dSteepness, 1. - dSteepness);
+
+	// survey catchability
+	m_survey_q.allocate(1,nItNobs);
+	m_survey_q.initialize();
 }
 
 void OperatingModel::runScenario(const int &seed)
@@ -213,6 +221,12 @@ void OperatingModel::runScenario(const int &seed)
 	conditionReferenceModel();
 	cout<<"Ok apres conditionReferenceModel. \t pas fini"<<endl;
 
+	/*
+	- Calculate survey catchability coefficients based on data & operating model
+	*/
+	calcSurveyCatchability();
+	cout<<"Ok apres calcSurveyCatchability.   \t pas fini"<<endl;
+
 	cout<<nNyr<<"\t"<<nPyr<<endl;
 	for(int i = nNyr + 1; i <= nPyr; i++ )
 	{
@@ -243,6 +257,7 @@ void OperatingModel::runScenario(const int &seed)
 		- Run Fisheries independent survey.
 		*/
 		calcRelativeAbundance(i);
+		cout<<"Ok apres calcRelativeAbundance     \t pas fini"<<endl;
 
 		/*
 		- Update reference population
@@ -349,10 +364,110 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 
 }
 
+/** \brief Calculate survey catchabiltiy for each relative abundance index.
+	
+		Use the observed abundance indicies and the conditioned operating model
+		to determine the appropriate scaler.
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  description of parameter
+	\param  description of parameter
+	\return description of return value
+	\sa calcRelativeAbundance
+**/
+void OperatingModel::calcSurveyCatchability()
+{
+	int i,k,f,g,h,ig;
+	double di;
+
+	for(int kk = 1; kk <= nItNobs; kk++ )
+	{
+		// | Vulnerable numbers-at-age to survey
+		dmatrix V(1,n_it_nobs(kk),sage,nage);
+		V.initialize();
+
+		for(int ii = 1; ii <= n_it_nobs(kk); ii++ )
+		{
+			i    = d3_survey_data(kk)(ii)(1);  // year
+			k    = d3_survey_data(kk)(ii)(3);  // gear
+			f    = d3_survey_data(kk)(ii)(4);  // area
+			g    = d3_survey_data(kk)(ii)(5);  // stock
+			h    = d3_survey_data(kk)(ii)(6);  // sex
+			di   = d3_survey_data(kk)(ii)(8);  // timing of survey
+
+			dvector na(sage,nage);
+			dvector sa(sage,nage);
+			dvector va(sage,nage);
+			dvector wa(sage,nage);
+			dvector ma(sage,nage);
+			na.initialize();
+			for( h = 1; h <= nsex; h++ )
+			{
+				ig = pntr_ags(f,g,h);
+				va = exp( d4_log_sel(k)(ig)(i) );
+				sa = mfexp( -d3_Zt(ig)(i)*di );
+				na = elem_prod(d3_Nt(ig)(i),sa);
+				wa = d3_wt_avg(ig)(i);
+				ma = d3_wt_mat(ig)(i);
+				switch(n_survey_type(kk))
+				{
+					case 1:
+						V(ii) += elem_prod(na,va);
+					break;
+
+					case 2:
+						V(ii) += elem_prod(elem_prod(na,va),wa);
+					break;
+
+					case 3:
+						V(ii) += elem_prod(elem_prod(na,va),ma);
+					break;
+				}
+			}
+		}
+		dvector it  = trans(d3_survey_data(kk))(2); //relative abundance index
+		dvector wt  = trans(d3_survey_data(kk))(7); //relative weight (multiplier)
+		        wt  = wt / sum(wt);
+		dvector t1  = rowsum(V);
+		dvector zt  = log(it) - log(t1);
+		double zbar = zt * wt;
+		m_survey_q(kk) = exp(zbar);
+		
+	}  // end of nItNobs
+	
+}
+
+
+/** \brief Calculate and append relative abundance index.
+	
+		This routine requires calcSurveyCatchabililty to determine the 
+		appropriate scaler for each of the relativen abundance indices.
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  description of parameter
+	\param  description of parameter
+	\return description of return value
+	\sa
+**/
 void OperatingModel::calcRelativeAbundance(const int& iyr)
 {
 	// Update m_d3_survey_data
+	// m_d3_survey data is a ragged object based on m_n_it_nobs
+
+	
+	m_n_it_counter = m_n_it_counter + 1;
+	for(int kk = 1; kk <= nItNobs; kk++ )
+	{
+		// m_d3_survey_data
+	}
+	// cout<<"q = "<<q<<endl;
+	
+	
+
 }
+
 
 void OperatingModel::calcGrowth(const int& iyr)
 {
@@ -505,7 +620,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 	 */
 
 	int f,g,h,k;
-	int ig,kk;
+	int ig,kk,hh;
 
 	
 	dvector tac(1,nArea);
@@ -532,17 +647,6 @@ void OperatingModel::implementFisheries(const int& iyr)
 		{
 			 d_alloc(f,k) = dAllocation(k);
 			 ct(k)        = d_alloc(f,k)*tac(f);
-
-			 // Move this to where you actually implemnt the catch 
-			 if( ct(k) > 0 )
-			 {
-			 	m_nCtNobs_counter ++;
-			 	int ii =  m_nCtNobs_counter;
-			 	m_dCatchData(ii,1) = iyr;   // year catch occurred
-			 	m_dCatchData(ii,2) = k;		// gear that caught the fish
-			 	m_dCatchData(ii,3) = f;     // area catch was removed from
-			 	cout<<"Counter"<<m_nCtNobs_counter<<endl;
-			 }
 		}
 
 		// -3) Assemble arguments for BarnovCatchEquation class.
@@ -550,6 +654,7 @@ void OperatingModel::implementFisheries(const int& iyr)
 		// [ ] TODO: allow for Selectivity to change in future.
 		// [ ]
 		m_dFt.allocate(1,nStock,1,nFleet);
+		dmatrix _hCt(1,nSex,1,nFleet);
 		BaranovCatchEquation cBCE;
 		for( g = 1; g <= nStock; g++ )
 		{
@@ -566,9 +671,37 @@ void OperatingModel::implementFisheries(const int& iyr)
 				wa(h) = m_d3_wt_avg(ig)(iyr);
 			}
 			// Potential issue here if nStock > 1, what wa ma vector should be used?
-			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa);
+			
+			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa,_hCt);
 			cout<<"ft = "<<ft<<endl;
+			cout<<"hCt = "<<_hCt<<endl;
 			m_dFt(g) = ft;
+
+			// -4) Fill catch data array
+			for( k = 1; k <= nFleet; k++ )
+			{
+				if( ft(k)>0 )
+				{
+					kk = nFleetIndex(k);
+					// determine if the fleet has sex-specific or aggregated catches
+			 		hh = m_catch_sex_composition(k);
+			 		int nn = hh>0?hh:1;
+			 		for(h=1; h<=nn; h++)
+			 		{
+					m_nCtNobs_counter ++;
+					m_dCatchData(m_nCtNobs_counter)(1) = iyr;
+			 		m_dCatchData(m_nCtNobs_counter)(2) = kk;
+			 		m_dCatchData(m_nCtNobs_counter)(3) = f;
+			 		m_dCatchData(m_nCtNobs_counter)(4) = g;
+			 		m_dCatchData(m_nCtNobs_counter)(5) = hh>0?h:0;	
+			 		m_dCatchData(m_nCtNobs_counter)(6) = m_catch_type(k);
+			 		m_dCatchData(m_nCtNobs_counter)(7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+			 		}
+				}
+				
+			}
+			
+
 			cout<<"^^^ The shuttle has crashed ^^^"<<endl;
 		}
 	}

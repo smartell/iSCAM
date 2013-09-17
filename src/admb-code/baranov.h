@@ -23,6 +23,7 @@
 **/
 class BaranovCatchEquation
 {
+	dmatrix m_hCt;
 public:
 	//! Constructor
 	BaranovCatchEquation();
@@ -43,6 +44,10 @@ public:
 	// SM Added 2sex version Sept. 10, 2013.  See Baranov2Sex.R for example.
 	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na);
 	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na, const dmatrix &wa);
+
+	// SM 2sex version which modifes a catch by sex matrix
+	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *p_V, const dmatrix &na, dmatrix &_hCt);
+	dvector getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *p_V, const dmatrix &na, const dmatrix &wa, dmatrix &_hCt);
 	
 };
 

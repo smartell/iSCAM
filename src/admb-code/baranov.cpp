@@ -452,7 +452,8 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	dvector ntmp(1,ngear);
 	dmatrix   ba(1,nsex,na.colmin(),na.colmax());
 	d3_array   F(1,nsex,1,ngear,na.colmin(),na.colmax());
-	
+	m_hCt.allocate(1,nsex,1,ngear);
+	m_hCt.initialize();
 	
 	
 	// Initial guess for fishing mortality rates based on Pope's approximation;
@@ -493,6 +494,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 						double dCdF  = -(k1*oa) - ft(i)*(k2*sa) + ft(i)*(k3*oa);
 						J(i)(j)     += dCdF;
 						chat(i)     += (ft(i)*k1) * oa;
+						m_hCt(h)(i)  = (ft(i)*k1) * oa;
 					}
 					else
 					{
@@ -559,7 +561,8 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	dvector ntmp(1,ngear);
 	dmatrix   ba(1,nsex,na.colmin(),na.colmax());
 	d3_array   F(1,nsex,1,ngear,na.colmin(),na.colmax());
-	
+	m_hCt.allocate(1,nsex,1,ngear);
+	m_hCt.initialize();
 	
 	
 	// Initial guess for fishing mortality rates based on Pope's approximation;
@@ -600,6 +603,8 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 						double dCdF  = -(k1*oa) - ft(i)*(k2*sa) + ft(i)*(k3*oa);
 						J(i)(j)     += dCdF;
 						chat(i)     += (ft(i)*k1) * oa;
+						cout<<"CT = "<<(ft(i)*k1) * oa<<endl;
+						m_hCt(h)(i)  = (ft(i)*k1) * oa;
 					}
 					else
 					{
@@ -630,7 +635,53 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 }
 
 
+/** \brief Get conditional instantaneous fishing mortality rate when sex ratio of catch
+           is unknown.
+	
+		This algorithm adds an additional dimension of sex to the gear-age problem.
+		Use this function in cases where catch is based on numbers.
+	
+	\author Steven Martell 
+	\date Sept 10, 2013
+	\param  ct vector of catches for each gear.
+	\param  ma a matrix of instanaenous age-specific natural mortality rates.
+	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  na a matrix of numbers-at-age.
+	\param  _hCt a matrix of catch by sex(row) by gear(col)
+	\return description of return value
+	\sa
+**/
+dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *p_V, const dmatrix &na, dmatrix &_hCt)
+{
+	dvector ft = getFishingMortality(ct,ma,p_V,na);
+	_hCt = m_hCt;
+	return(ft);
+}
 
+
+/** \brief Get conditional instantaneous fishing mortality rate when sex ratio of catch
+           is unknown.
+	
+		This algorithm adds an additional dimension of sex to the gear-age problem.
+		Use this function in cases where catch is based on weight.
+	
+	\author Steven Martell 
+	\date Sept 10, 2013
+	\param  ct vector of catches for each gear.
+	\param  ma a matrix of instanaenous age-specific natural mortality rates.
+	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  na a matrix of numbers-at-age.
+	\param  wa a matrix of weight-at-age.
+	\param  _hCt a matrix of catch by sex(row) by gear(col)
+	\return description of return value
+	\sa
+**/
+dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *p_V, const dmatrix &na, const dmatrix &wa, dmatrix &_hCt)
+{
+	dvector ft = getFishingMortality(ct,ma,p_V,na,wa);
+	_hCt = m_hCt;
+	return(ft);
+}
 
 
 
