@@ -251,7 +251,7 @@ void OperatingModel::runScenario(const int &seed)
 		- Implementation errors occur here.
 		*/
 		implementFisheries(i);
-		cout<<"Ok apres implementFisheries       \t pas fini"<<endl;
+		cout<<"Ok apres implementFisheries       \t presque fini"<<endl;
 
 		/*
 		- Run Fisheries independent survey.
@@ -449,7 +449,7 @@ void OperatingModel::calcSurveyCatchability()
 	\param  description of parameter
 	\param  description of parameter
 	\return description of return value
-	\sa
+	\sa calcSurveyCatchability
 **/
 void OperatingModel::calcRelativeAbundance(const int& iyr)
 {
@@ -670,8 +670,9 @@ void OperatingModel::implementFisheries(const int& iyr)
 				na(h)+= d3_Nt(ig)(iyr);
 				wa(h) = m_d3_wt_avg(ig)(iyr);
 			}
+
+			// 4) - calculate fishing mortality rate based on baranov catch eqn.
 			// Potential issue here if nStock > 1, what wa ma vector should be used?
-			
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa,_hCt);
 			cout<<"ft = "<<ft<<endl;
 			cout<<"hCt = "<<_hCt<<endl;
@@ -688,22 +689,18 @@ void OperatingModel::implementFisheries(const int& iyr)
 			 		int nn = hh>0?hh:1;
 			 		for(h=1; h<=nn; h++)
 			 		{
-					m_nCtNobs_counter ++;
-					m_dCatchData(m_nCtNobs_counter)(1) = iyr;
-			 		m_dCatchData(m_nCtNobs_counter)(2) = kk;
-			 		m_dCatchData(m_nCtNobs_counter)(3) = f;
-			 		m_dCatchData(m_nCtNobs_counter)(4) = g;
-			 		m_dCatchData(m_nCtNobs_counter)(5) = hh>0?h:0;	
-			 		m_dCatchData(m_nCtNobs_counter)(6) = m_catch_type(k);
-			 		m_dCatchData(m_nCtNobs_counter)(7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+						m_nCtNobs_counter ++;
+						m_dCatchData(m_nCtNobs_counter)(1) = iyr;
+				 		m_dCatchData(m_nCtNobs_counter)(2) = kk;
+				 		m_dCatchData(m_nCtNobs_counter)(3) = f;
+				 		m_dCatchData(m_nCtNobs_counter)(4) = g;
+				 		m_dCatchData(m_nCtNobs_counter)(5) = hh>0?h:0;	
+				 		m_dCatchData(m_nCtNobs_counter)(6) = m_catch_type(k);
+				 		m_dCatchData(m_nCtNobs_counter)(7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
 			 		}
 				}
-				
 			}
-			
-
-			cout<<"^^^ The shuttle has crashed ^^^"<<endl;
-		}
+		}  // end of stock loop
 	}
 
 
