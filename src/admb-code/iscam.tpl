@@ -1468,8 +1468,8 @@ FUNCTION calcAgeProportions
 			A_nu(k,i,a_sage(k)-1)=ig;
 			Ahat(k,i,a_sage(k)-2)=iyr;
 			Ahat(k,i,a_sage(k)-1)=ig;
-			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
-										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
+			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(ig)(iyr)(a_sage(k),a_nage(k))
+										/sum(Chat(ig)(iyr)(a_sage(k),a_nage(k)));
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
