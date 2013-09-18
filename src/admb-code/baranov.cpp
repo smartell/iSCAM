@@ -18,14 +18,17 @@ BaranovCatchEquation::~BaranovCatchEquation()
 		a Newton-Raphson alogrithm to find a vector of fishing mortlity rates (ft) that 
 		predicts the total catch for each fleet.  The Jacobian matrix is computed and 
 		subsequently inverted to compute the Newton step for each fishing rate.
-	
+		
+		BARANOV CATCH EQUATION:
+		\f$ C = \frac{FN(1-exp(-Z))}{Z} \f$
+
 	\author Martell IPHC
 	\date 2012-08-05
 	\param  ct a vector of observed catches, 1 element for each gear.
 	\param  m instananeous natural mortality rate.
 	\param  V a matrix of selectivities (row for each gear, col for each age)
 	\param  na a vector of numbers-at-age at the start of each year
-	\param  wa a vector of mean weight-at-age.
+	
 	\return Returns a vector of instantaneous fishing mortality rates.
 	\sa
 **/
@@ -200,10 +203,10 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const doubl
 	\author Martell IPHC
 	\date 2012-08-05
 	\param  ct a vector of observed catches based on numbers, 1 element for each gear.
-	\param  m age-dependent instananeous natural mortality rate.
+	\param  ma age-dependent instananeous natural mortality rate.
 	\param  V a matrix of selectivities (row for each gear, col for each age)
 	\param  na a vector of numbers-at-age at the start of each year
-	\param  wa a vector of mean weight-at-age.
+	
 	\return Returns a vector of instantaneous fishing mortality rates.
 	\sa
 **/
@@ -291,7 +294,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dvect
 	\author Martell IPHC
 	\date 2012-08-05
 	\param  ct a vector of observed catches based on weight, 1 element for each gear.
-	\param  m age-dependent instananeous natural mortality rate.
+	\param  ma age-dependent instananeous natural mortality rate.
 	\param  V a matrix of selectivities (row for each gear, col for each age)
 	\param  na a vector of numbers-at-age at the start of each year
 	\param  wa a vector of mean weight-at-age.
@@ -427,7 +430,7 @@ double BaranovCatchEquation::get_ft(const double& ct, const double& m, const dve
 	\date Sept 10, 2013
 	\param  ct vector of catches for each gear.
 	\param  ma a matrix of instanaenous age-specific natural mortality rates.
-	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  _V a pointer to a d3_array for age-gear-sex-specific selectivity.
 	\param  na a matrix of numbers-at-age.
 	\return description of return value
 	\sa
@@ -535,7 +538,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	\date Sept 10, 2013
 	\param  ct vector of catches for each gear.
 	\param  ma a matrix of instanaenous age-specific natural mortality rates.
-	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  _V a pointer to a d3_array for age-gear-sex-specific selectivity.
 	\param  na a matrix of numbers-at-age.
 	\param  wa a matrix of weight-at-age.
 	\return description of return value
@@ -645,7 +648,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	\date Sept 10, 2013
 	\param  ct vector of catches for each gear.
 	\param  ma a matrix of instanaenous age-specific natural mortality rates.
-	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  p_V a pointer to a d3_array for age-gear-sex-specific selectivity.
 	\param  na a matrix of numbers-at-age.
 	\param  _hCt a matrix of catch by sex(row) by gear(col)
 	\return description of return value
@@ -669,7 +672,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 	\date Sept 10, 2013
 	\param  ct vector of catches for each gear.
 	\param  ma a matrix of instanaenous age-specific natural mortality rates.
-	\param  V a pointer to a d3_array for age-gear-sex-specific selectivity.
+	\param  p_V a pointer to a d3_array for age-gear-sex-specific selectivity.
 	\param  na a matrix of numbers-at-age.
 	\param  wa a matrix of weight-at-age.
 	\param  _hCt a matrix of catch by sex(row) by gear(col)

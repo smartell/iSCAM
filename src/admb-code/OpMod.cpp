@@ -127,7 +127,16 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 
 }
 
-
+/** \brief Initialize variables in the Operating model.
+	
+	Variables are intialized based on the struct s_iSCAMvariables that the user
+	must define when declaring an OperatingModel class object.
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  cS a struct based on variables declared in iSCAM
+	
+**/
 void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 {
 	// Leading parameters
@@ -366,15 +375,12 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 
 /** \brief Calculate survey catchabiltiy for each relative abundance index.
 	
-		Use the observed abundance indicies and the conditioned operating model
-		to determine the appropriate scaler.
+	Use the observed abundance indicies and the conditioned operating model
+	to determine the appropriate scaler.
 	
 	\author  Steve Martell
-	\date `date +%Y-%m-%d`
-	\param  description of parameter
-	\param  description of parameter
-	\return description of return value
 	\sa calcRelativeAbundance
+	
 **/
 void OperatingModel::calcSurveyCatchability()
 {
@@ -443,9 +449,17 @@ void OperatingModel::calcSurveyCatchability()
 	
 		This routine requires calcSurveyCatchabililty to determine the 
 		appropriate scaler for each of the relativen abundance indices.
+		Setline survey logistics for the Pacific Halibut:
+		Basic catch equation for each station \f$i\f$ in the setline survey is:
+		\f$ C_i = \sum_j P(j) \frac{n_i \ell \alpha + \pi \alpha^2}{A^{(f)}}
+		          N_{a}^{(f)}P(j|a)^{(f)} \f$
+		where i and j are the station and size-class index, respectively.
+		\f$P(j)\f$ is the probability of capturing a fish of length \f$j\$f
+
+
 	
 	\author  Steve Martell
-	\date `date +%Y-%m-%d`
+	\date Sept 17, 2013
 	\param  description of parameter
 	\param  description of parameter
 	\return description of return value
@@ -455,12 +469,19 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 {
 	// Update m_d3_survey_data
 	// m_d3_survey data is a ragged object based on m_n_it_nobs
+	// m_survey_q for gear k is determined in calcSurveyCatchability
 
-	
+	// Survey data header:
+	// 1    2      3     4     5      6    7   8
+	// iyr  index  gear  area  group  sex  wt  timing
+
+	int k;
 	m_n_it_counter = m_n_it_counter + 1;
+	cout<<"it counter"<<m_n_it_counter<<endl;
 	for(int kk = 1; kk <= nItNobs; kk++ )
 	{
-		// m_d3_survey_data
+		k = nSurveyIndex(kk);
+
 	}
 	// cout<<"q = "<<q<<endl;
 	

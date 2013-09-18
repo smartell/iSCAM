@@ -1,7 +1,7 @@
 #include "msy.h"
 
 
-// Constructor with arguments (most likely way user will create an Msy object)
+/// Constructor with arguments (most likely way user will create an Msy object)
 Msy::Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmatrix V)
 {
 	m_ro    = ro;
@@ -32,7 +32,7 @@ Msy::Msy(double ro, double h, double m, double rho, dvector wa, dvector fa, dmat
 	calc_phie();
 }
 
-// Constructor with age/sex-specific mortality fecundity & weight-at-age
+/// Constructor with age/sex-specific mortality fecundity & weight-at-age
 Msy::Msy(double ro, double h, dmatrix m, double rho, dmatrix wa, dmatrix fa, const d3_array *V)
 {
 	m_ro    = ro;
@@ -51,17 +51,26 @@ Msy::Msy(double ro, double h, dmatrix m, double rho, dmatrix wa, dmatrix fa, con
 	calc_phie(m_dM,m_dFa);
 }
 
-// Use Newton-Raphson method to get Fmsy
+/** \brief Use Newton-Raphson method to get Fmsy
+	
+	
+	Iteratively solve the derivative of the catch equation
+	to find values of fe that correspond to dYe.df=0
+	
+	Use Newtons method to interatively solve for fe in the range
+	of x1 to x2.  If fe is outside the range of x1--x2, then use
+	a simple bactrace method method to reduce the step size m_p.
+	
+	
+	\author  Steve Martell
+	\date Sept 18,2013
+	\param  fe vector of fishing mortality rates that is modified
+	\sa calcEquilibrium
+
+**/
 void Msy::get_fmsy(dvector& fe)
 {
-	/*
-		Iteratively solve the derivative of the catch equation
-		to find values of fe that correspond to dYe.df=0
-		
-		Use Newtons method to interatively solve for fe in the range
-		of x1 to x2.  If fe is outside the range of x1--x2, then use
-		a simple bactrace method method to reduce the step size m_p.
-	*/
+	
 	int i;
 	int iter = 0;
 	int n    = size_count(fe);
@@ -415,20 +424,29 @@ void Msy::calc_equilibrium(const dvector& fe)
 
 
 
-// calculate survivorship under fished conditions with sex-specific age-schedules
+/** \brief Equilibrium model conditional on a vector of fishing mortality rates.
+	
+	This is the main engine behind the Msy class.
+	Using the private member variables, calculate the equilibrium yield
+	for a given fishing mortality rate vector (fe). Also, compute the
+	derivative information such that this info can be used to compute 
+	the corresponding MSY-based reference points (Fmsy, MSY, Bmsy).
+	
+	There are two different survivorship calculations inside this routine:
+	lz is the survivorship of the total numbers, and lw is the survivorship
+	upto the time of spawning.  The spawning biomass per recruit (phif) depends
+	on the survivorship up to the time of spawning.
+	
+	\author  Steve Martell
+	\date `July 31, 2013`
+	\param  fe A vector of instantaneous fishing mortality rates.
+	\return NULL
+	\sa calc_phie
+**/
 void Msy::calcEquilibrium(const dvector& fe)
 {
 	/*
-		This is the main engine behind the Msy class.
-		Using the private member variables, calculate the equilibrium yield
-		for a given fishing mortality rate vector (fe). Also, compute the
-		derivative information such that this info can be used to compute 
-		the corresponding MSY-based reference points (Fmsy, MSY, Bmsy).
-		
-		There are two different survivorship calculations inside this routine:
-		lz is the survivorship of the total numbers, and lw is the survivorship
-		upto the time of spawning.  The spawning biomass per recruit (phif) depends
-		on the survivorship up to the time of spawning.
+
 
 		 July 31, 2013.
 		Created by Steve Martell.  Copied from calc_equilibrium

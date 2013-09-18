@@ -24,18 +24,19 @@
 	Lucie says: there is some nasty calculus in here daddy, are you sure
 	you've got it right?
 	
-© Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
+	© Copyright 2012 UBC Fisheries Centre - Martell. All Rights Reserved.
 
-	\author Martell UBC Fisheries Centre
-	\author $Martell$
+	\author Steve Martell
+	\author $Martell
 	\date 2012-07-29
 	\date 2012-08-20
-	\version $Rev$	\sa
+	\version 1.1
+	\sa
 **/
 class Msy
 {
 private:
-	int     m_sage;
+	int     m_sage;  /**< youngest age class*/
 	int     m_nage;
 	int     m_ngear;
 	bool    m_FAIL;
@@ -92,25 +93,25 @@ public:
 	~Msy(){}	// destructor
 	
 	// Getters
-	bool     getFail() { return m_FAIL;    }
+	bool     getFail() { return m_FAIL;    }  /**< Flag for convergence */
 	
-	double     getRo() { return m_ro;      }
-	double   getPhie() { return m_phie;    }
-	dvector  getFmsy() { return m_fmsy;    }
-	double   getBmsy() { return m_bmsy;    }
-	double   getRmsy() { return m_rmsy;    }
-	dvector   getMsy() { return m_msy;     }
-	dvector    getYe() { return m_ye;      }
-	dvector   getdYe() { return m_f;       }
-	dvector  getphiq() { return m_phiq;    }
-	double   getphif() { return m_phif;    }
-	double getSprMsy() { return m_spr_msy; }
-	double     getBo() { return m_bo;      }
-	double     getBe() { return m_be;      }
-	double     getBi() { return m_bi;      }
-	double     getRe() { return m_re;      }
-	double    getSpr() { return m_spr;     }
-	dmatrix    getLz() { return m_lz;      }
+	double     getRo() { return m_ro;      }  /**< Return unfished recruits*/
+	double   getPhie() { return m_phie;    }  /**< Return unfished spawning biomass per recruit*/
+	dvector  getFmsy() { return m_fmsy;    }  /**< Return vector of fishing mortality rates at MSY*/
+	double   getBmsy() { return m_bmsy;    }  /**< Return spawning biomass at MSY*/
+	double   getRmsy() { return m_rmsy;    }  /**< Return recruitment at MSY*/
+	dvector   getMsy() { return m_msy;     }  /**< Return maximum sustainable yield vector*/
+	dvector    getYe() { return m_ye;      }  /**< Return equilibrium yield */
+	dvector   getdYe() { return m_f;       }  /**< Return derivatives of catch vector*/
+	dvector  getphiq() { return m_phiq;    }  /**< Return vector of per-recruit yields*/
+	double   getphif() { return m_phif;    }  /**< Return spawning biomass per recruit*/
+	double getSprMsy() { return m_spr_msy; }  /**< Return Spawning Potential Ratio at MSY*/
+	double     getBo() { return m_bo;      }  /**< Return unfished spawning biomass*/
+	double     getBe() { return m_be;      }  /**< Return equilibrium spawning biomass*/
+	double     getBi() { return m_bi;      }  /**< Return start of the year equilirbiurm spawning biomass*/
+	double     getRe() { return m_re;      }  /**< Return equilibrium recruits*/
+	double    getSpr() { return m_spr;     }  /**< Return Spawning Potential Ratio*/
+	dmatrix    getLz() { return m_lz;      }  /**< Return unfished survivorship vector*/
 	
 	
 	// Setters

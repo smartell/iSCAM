@@ -498,16 +498,11 @@ DATA_SECTION
 	// |
 
 	init_int nItNobs;
-	init_ivector    n_it_nobs(1,nItNobs);
-	init_ivector n_survey_type(1,nItNobs);
+	ivector        nSurveyIndex(1,nItNobs);
+	init_ivector      n_it_nobs(1,nItNobs);
+	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
-	matrix it_wt(1,nItNobs,1,n_it_nobs);
-
-	//init_matrix d3_survey_data(1,nItNobs,1,4);
-// 	imatrix iyr(1,nItNobs,1,n_it_nobs);
-// 	imatrix igr(1,nItNobs,1,n_it_nobs);
-// 	matrix it(1,nItNobs,1,n_it_nobs);
-// 	matrix it_timing(1,nItNobs,1,n_it_nobs);	//timing of the survey (0-1)
+	matrix                it_wt(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
 	LOC_CALCS
@@ -519,6 +514,7 @@ DATA_SECTION
 		for(k=1;k<=nItNobs;k++)
 		{
 			it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
 		double tmp_mu = mean(it_wt);
 		for(k=1;k<=nItNobs;k++)

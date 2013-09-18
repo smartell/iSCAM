@@ -68,6 +68,10 @@
 *.sql
 *.sqlite
 
+#Doxygen directory#
+html/
+
+
 # OS generated files #
 ######################
 .DS_Store
