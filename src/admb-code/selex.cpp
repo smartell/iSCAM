@@ -19,13 +19,21 @@
 #include <contrib.h>
 #include "Selex.h"
 
-
+/** 
+\brief Default destructor	
+**/
 Selex::~Selex(){}
 
+/** 
+\brief Default constructor	
+**/
 Selex::Selex()
 {}
 
 
+/**
+\brief constructor with independent variables set
+**/
 Selex::Selex(const dvector& _x)
 : m_x(_x)
 {
@@ -34,92 +42,52 @@ Selex::Selex(const dvector& _x)
 	
 };
 
-// void Selex::fill_selex_array(dvar_matrix& log_sel)
-// {
-// 	/*
-// 		Fill in the selectivity matrix based on selType and selPars defined during
-// 		instantiation of the class.
-// 	*/
 
+/** \brief logistic function
+	
+	This function returns a dvar_vector of logistic values based on x and mu and sd.
 
-// 	int i,j;
-// 	int r1 = log_sel.rowmin();
-// 	int r2 = log_sel.rowmax();
-// 	int c1 = log_sel.colmin();
-// 	int c2 = log_sel.colmax();
-// 	for( i = r1; i <= r2; i++ )
-// 	{
-// 		switch (m_selType)
-// 		{
-// 			default:
-// 				log_sel(i) = 0;
-// 				break;
-
-// 			case 1:    // logistic
-// 				log_sel(i) = log( logistic( m_dvar_selPar(1)) );
-// 				break;
-
-// 			case 2:
-// 				for( j = c1; j < c2; j++ )
-// 				{
-// 					log_sel(i,j) = m_dvar_selPar(1,j-c1+1);
-// 				}
-// 				log_sel(i)(c2) = log_sel(i)(c2-1);
-// 				break;
-// 		}
-// 	}
-
-// 	cout<<m_selType<<endl;
-// 	cout<<r1<<"\t"<<r2<<"\t"<<c1<<"\t"<<c2<<endl;
-// 	cout<<m_dvar_selPar<<endl;
-// }
-
-// // ------------------------------------------------------------------------------------ //
-// class Selex{
-// private:
-// 	dvariable m_mu;
-// 	dvariable m_sd;
-		
-// public:
-// 	~Selex() {}                                   // destructor
-		
-// 	Selex( const dvariable& mu = 0., const dvariable& sd = 1.0) // default constructor
-// 	{
-// 		m_mu = mu;
-// 		m_sd = sd;
-// 	}
-	
-// 	// Logistic function
-// 	dvector     logistic( const dvector& x,const double& mu, const double& sd );
-// 	dvar_vector logistic( const dvector& x,const dvariable& mu, const dvariable& sd );
-	
-	
-// 	// Exponential logistic
-// 	dvector     eplogis(const dvector& x, const double& x1, const double& x2, const double& gamma);
-// 	dvar_vector eplogis(const dvar_vector& x, const dvariable& x1, const dvariable& x2, const dvariable& gamma);
-	
-	
-// 	// Linear Interoplation
-// 	dvector     linapprox(const dvector& x, const dvector& y, const dvector& xout);
-// 	dvar_vector linapprox(const dvector& x, const dvar_vector& y, const dvector& xout);
-	
-// 	dvariable GetMu()  { return m_mu; }
-// 	dvariable GetSd()  { return m_sd; }
-// };
-// ------------------------------------------------------------------------------------ //
-// Logistic function                                                                    //
-// ------------------------------------------------------------------------------------ //
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	\param  x vector of independent variables.
+	\param  mu mean of the logistic
+	\param  sd standard deviation of the logistic
+	\return dvar_vector of selectivity coefficients
+	\sa
+**/
 dvar_vector Selex::logistic( const dvector& x,const dvariable& mu, const dvariable& sd )
 {
 	return 1./(1.+mfexp(-(x-mu)/sd) );
 }
 
+/** \brief logistic function
+	
+	This function returns a dvar_vector of logistic values based on x and mu and sd.
 
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	\param  x vector of independent variables.
+	\param  mu mean of the logistic
+	\param  sd standard deviation of the logistic
+	\return dvector of selectivity coefficients
+	\sa
+**/
 dvector Selex::logistic( const dvector& x,const double& mu, const double& sd )
 {
 	return 1./(1.+mfexp(-(x-mu)/sd) );
 }
  
+/** \brief logistic function
+	
+	This function returns a dvar_vector of logistic values based mu and sd, where m_x
+	is set in the constructor.
+
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	\param  log_selpar vector of the mean and standard deviation of the logistic, respectively.
+	\return dvar_vector of selectivity coefficients
+	\sa
+**/
 dvar_vector Selex::logistic(const dvar_vector& log_selpar)
 {
 	RETURN_ARRAYS_INCREMENT();
@@ -129,6 +97,19 @@ dvar_vector Selex::logistic(const dvar_vector& log_selpar)
 	return 1./(1.+mfexp(-(m_x-mu)/sd) );
 }
 
+/** \brief logistic function
+	
+	This function modifies a dmatrix of logistic values based on x and mu and sd
+	and time block blk.
+
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	\param  theta matrix of parmeters
+	\param  blk integer vector of block time periods
+	\param  log_sel selectivity cofficients in log space.
+	\return null
+	\sa
+**/
 void Selex::logistic( const dmatrix& theta, const ivector& blk, dmatrix& log_sel)
 {
 	/* 
@@ -164,6 +145,20 @@ void Selex::logistic( const dmatrix& theta, const ivector& blk, dmatrix& log_sel
 	}
 }
 
+/** \brief logistic function
+	
+	This function modifies a dmatrix of logistic values based on x and mu and sd
+	and time block blk.
+
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	\param  theta matrix of parmeters
+	\param  blk integer vector of block time periods
+	\param  len a matrix of mean lengths at age.
+	\param  log_sel selectivity cofficients in log space.
+	\return null
+	\sa
+**/
 void Selex::logistic( const dmatrix& theta, const ivector& blk, const dmatrix& len, dmatrix& log_sel)
 {
 	/*
@@ -204,10 +199,19 @@ void Selex::logistic( const dmatrix& theta, const ivector& blk, const dmatrix& l
 	}
 }
 
-// |---------------------------------------------------------------------------------|
-// | Selectivity Coefficients
-// |---------------------------------------------------------------------------------|
-// |
+/** \brief undocumented function
+	
+		longer description
+	
+	\author  
+	\date `date +%Y-%m-%d`
+	\param  theta matrix of selectivity coefficients 
+	\param  blk integer vector indexing block periods
+	\param  log_sel matrix of selectivity coefficients in log-space that is modified 
+			by this routine.
+	\return null
+	\sa
+**/
 void Selex::selcoeff( const dmatrix& theta, const ivector& blk, dmatrix& log_sel)
 {
 	/*
@@ -298,9 +302,9 @@ void Selex::selcoeff( const dmatrix& theta, const ivector& blk, dmatrix& log_sel
 // }
 
 
-// ------------------------------------------------------------------------------------ //
-// Linear Interpolation using approx function from R libraries                          //
-// ------------------------------------------------------------------------------------ //
+/// ------------------------------------------------------------------------------------ //
+/// Linear Interpolation using approx function from R libraries                          //
+/// ------------------------------------------------------------------------------------ //
 static double approx1(const double& v, const dvector& x, const dvector& y)
 {
     /* Approximate  y(v),  given (x,y)[i], i = 0,..,n-1 */
@@ -334,6 +338,9 @@ static double approx1(const double& v, const dvector& x, const dvector& y)
 	return y[i] + (y[j] - y[i]) * ((v - x[i])/(x[j] - x[i]));
 }/* approx1() */
 
+/// ------------------------------------------------------------------------------------ //
+/// Linear Interpolation using approx function from R libraries                          //
+/// ------------------------------------------------------------------------------------ //
 static dvariable approx1(const double& v, const dvector& x, const dvar_vector& y)
 {
     /* Approximate  y(v),  given (x,y)[i], i = 0,..,n-1 */
@@ -367,7 +374,18 @@ static dvariable approx1(const double& v, const dvector& x, const dvar_vector& y
 	return y[i] + (y[j] - y[i]) * ((v - x[i])/(x[j] - x[i]));
 }/* approx1() */
 
-
+/** \brief Uses linear interpolation between a series of nodes.
+	
+		Piece-wise linear approximation for n points in xout between min(x) and max(y):
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\param x vector of independent points
+	\param y vector of dependent variables
+	\param xout vector of wanted points to interpolate between
+	\return vector of interpolated points at xout.
+	\sa approx1
+**/
 dvector Selex::linapprox(const dvector& x, const dvector& y, const dvector& xout)
 {
 	// Piece-wise linear approximation for n points in xout between min(x) and max(y):
@@ -384,6 +402,18 @@ dvector Selex::linapprox(const dvector& x, const dvector& y, const dvector& xout
 	return yout;
 }
 
+/** \brief Uses linear interpolation between a series of nodes.
+	
+		Piece-wise linear approximation for n points in xout between min(x) and max(y):
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\param x vector of independent points
+	\param y vector of dependent variables
+	\param xout vector of wanted points to interpolate between
+	\return dvar_vector of interpolated points at xout.
+	\sa  approx1
+**/
 dvar_vector Selex::linapprox(const dvector& x, const dvar_vector& y, const dvector& xout)
 {
 	// Piece-wise linear approximation for n points in xout between min(x) and max(y):

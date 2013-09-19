@@ -36,23 +36,23 @@
 class Msy
 {
 private:
-	int     m_sage;  /**< youngest age class*/
-	int     m_nage;
-	int     m_ngear;
-	bool    m_FAIL;
+	int     m_sage;  	//!< youngest age class
+	int     m_nage;		//!< oldest age class
+	int     m_ngear;	//!< number of gears
+	bool    m_FAIL;		//!< Flag for convergence
 	
 	double  m_ro;
 	double  m_h;
 	double  m_M;
-	dmatrix m_dM;	// Age/sex specific natural mortality rates
-	double  m_rho;  // Fraction of total mortality that occurs before spawning.
+	dmatrix m_dM;		//!< Age/sex specific natural mortality rates
+	double  m_rho;  	//!< Fraction of total mortality that occurs before spawning.
 	dvector m_wa;
 	dmatrix m_dWa;
 	dvector m_fa;
-	dmatrix m_dFa;	// sex specific fecundity
-	dmatrix m_V;	// Selectivity for each gear (rows) at age (col)
-	d3_array m_d3_V; // Selectivity for each gear, sex, age.
-	dmatrix m_lz;   // survivorship under fished conditions.
+	dmatrix m_dFa;		//!< sex specific fecundity
+	dmatrix m_V;		//!< Selectivity for each gear (rows) at age (col)
+	d3_array m_d3_V; 	//!< Selectivity for each gear, sex, age.
+	dmatrix m_lz;   	//!<  survivorship under fished conditions.
 	
 	double  m_phie;
 	double  m_phif;
@@ -115,12 +115,12 @@ public:
 	
 	
 	// Setters
-	void set_ro(double ro)   { m_ro = ro; }
-	void  set_m(double m)    { m_M  = m;  }
-	void  set_h(double& h)   { m_h  = h;  }
-	void set_fa(dvector& fa) { m_fa = fa; }
-	void set_wa(dvector& wa) { m_wa = wa; }
-	void  set_V(dmatrix& V)  { m_V  = V;  }
+	void set_ro(double ro)   { m_ro = ro; }	//!< set unfished recruits
+	void  set_m(double m)    { m_M  = m;  }	//!< set natural mortality
+	void  set_h(double& h)   { m_h  = h;  }	//!< set steepness
+	void set_fa(dvector& fa) { m_fa = fa; }	//!< set vector or mature weight-at-age
+	void set_wa(dvector& wa) { m_wa = wa; }	//!< set vector of weight-at-age
+	void  set_V(dmatrix& V)  { m_V  = V;  }	//!< set matrix of selectivities
 	
 	// Member functions
 	void        calc_phie();

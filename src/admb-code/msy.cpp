@@ -118,7 +118,15 @@ void Msy::get_fmsy(dvector& fe)
 }
 
 
-// Calculate msy value given an allocation for each gear type.
+/** \brief Calculate msy value given an allocation for each gear type.
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  fe Vector of fishing mortality rates
+	\param  ak vector of catch allocations (normalized to sum to 1)
+	\return void
+	\sa
+**/
 void Msy::get_fmsy(dvector& fe, dvector& ak)
 {
 	/*
@@ -192,7 +200,17 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 	
 }
 
-// calculate survivorship under fished conditions
+/** \brief Calculate equlibrium values conditional on fe
+	
+		to be deprecated
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  fe vector of fishing mortality rates
+	
+	\return void
+	\sa calcEquilibrium
+**/
 void Msy::calc_equilibrium(const dvector& fe)
 {
 	/* TO BE Deprecated in iSCAM */	
@@ -754,7 +772,14 @@ void Msy::calcEquilibrium(const dvector& fe)
 
 
 
-// calculate unfished Eggs per recruit
+/** \brief calculate unfished Eggs per recruit
+	
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\return void
+	\sa calc_bo
+**/
 void Msy::calc_phie()
 {
 	int i,sage,nage;
@@ -771,6 +796,16 @@ void Msy::calc_phie()
 	m_bo   = m_ro * m_phie;
 }
 
+/** \brief calculate unfished Eggs per recruit
+	
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\param _m natural mortality rate
+	\param _fa mature weight-at-age
+	\return void
+	\sa calc_bo
+**/
 void Msy::calc_phie(double& _m, dvector& _fa)
 {
 	int i,sage,nage;
@@ -789,6 +824,17 @@ void Msy::calc_phie(double& _m, dvector& _fa)
 	m_bo   = m_ro * m_phie;
 }
 
+/** \brief calculate unfished Eggs per recruit
+	
+	Based on mean mature weight-at-age and mean natural mortality rate.
+	
+	\author  Steve Martell
+	\param _m matrix of natural mortality rates
+	\param _fa matrix if mature weight-at-age.
+	\date Sept 19, 2013
+	\return void
+	\sa calc_bo
+**/
 void Msy::calc_phie(const dmatrix& _m, const dmatrix& _fa)
 {
 	int i,j,sage,nage;
@@ -818,16 +864,46 @@ void Msy::calc_phie(const dmatrix& _m, const dmatrix& _fa)
 	
 }
 
+/** \brief calculate unfished spawning biomass
+	
+		longer description
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  _m natural mortality rate
+	\param  _fa mature weight-at-age
+	\return void
+	\sa calc_phie
+**/
 void Msy::calc_bo(double& _m, dvector& _fa)
 {
 	calc_phie(_m,_fa);
 }
 
+/** \brief calculate unfished spawning biomass
+	
+		longer description
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\param  _m natural mortality rate
+	\param  _fa mature weight-at-age
+	\return void
+	\sa calc_phie
+**/
 void Msy::calc_bo(const dmatrix& _m, const dmatrix& _fa)
 {
 	calc_phie(_m,_fa);
 }
 
+/** \brief Print results of msy class
+	
+		Provides on-screen output of member variables
+	
+	\author  Steve Martell
+	\date  Sept 19, 2013
+	
+**/
 void Msy::print()
 {
 	cout<<"|------------------------------------------|" <<endl;

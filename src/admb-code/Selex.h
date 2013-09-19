@@ -17,6 +17,21 @@
 
 
 
+/** \brief  Class object for selectivity functions
+	
+	A series of alternative selectivity functions based on:
+		- Logistic
+		- coefficients
+		- linear approximation
+	
+© Copyright `date +%Y`  - . All Rights Reserved.
+
+	\author  
+	\author $LastChangedBy$
+	\date `date +%Y-%m-%d`
+	\date $LastChangedDate$
+	\version $Rev$	\sa
+**/
 #ifndef SELEX_H
 #define SELEX_H
 
@@ -32,8 +47,8 @@ public:
 	Selex(const dvector& _x);
 	~Selex();
 
-	void set_x(const dvector& _x){m_x = _x;}
-	dvector get_x(){return(m_x);}
+	void set_x(const dvector& _x){m_x = _x;} 	//!< set independent variables
+	dvector get_x(){return(m_x);}				//!< return independent variables
 
 	/* logistic prototypes */
 	dvector     logistic( const dvector& x,const double& mu, const double& sd );

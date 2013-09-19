@@ -1,7 +1,3 @@
-// |---------------------------------------------------------------------------------|
-// | GENERAL OPERATING MODEL FOR USE WITH iSCAM.                                     |
-// |---------------------------------------------------------------------------------|
-
 
 
 #include <admodel.h>
@@ -10,7 +6,7 @@
 #include "msy.h"
 #include "baranov.h"
 
-double getSurveyQ(const dvector& bt, const dvector& it);
+
 /** \brief Destructor
 	\author Steven Martell 
 **/
@@ -191,6 +187,17 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	m_survey_q.initialize();
 }
 
+/** \brief Run simulation scenario based on a random number seed.
+	
+		This is the main function call for runing a simulation scenario.
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\param  seed random number seeed.
+
+	\return null
+	\sa
+**/
 void OperatingModel::runScenario(const int &seed)
 {
 	cout<<"Top of runScenario"<<endl;
@@ -301,6 +308,15 @@ void OperatingModel::runScenario(const int &seed)
 	}
 }
 
+
+/** \brief Calls stock assessment model
+	
+		
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\sa
+**/
 void OperatingModel::runStockAssessment()
 {
 
@@ -351,9 +367,13 @@ void OperatingModel::generateStockAssessmentData(const int& iyr)
 
   	dfs<<"#Abundance indices"	<<endl;
   	dfs<< nItNobs 				<<endl;
-  	dfs<< n_it_nobs 			<<endl;
+  	dfs<< m_n_it_counter        <<endl;
+  	// dfs<< m_n_it_nobs 			<<endl;
   	dfs<< n_survey_type 		<<endl;
-  	dfs<< d3_survey_data 			<<endl;
+  	for( k = 1; k <= nItNobs; k++ )
+  	{
+	  	dfs<< m_d3_survey_data(k).sub(1,m_n_it_counter(k)) <<endl;
+  	}
 
  //  	dfs<<"#Age composition"		<<endl;
  //  	dfs<< na_gears				<<endl;
@@ -447,22 +467,27 @@ void OperatingModel::calcSurveyCatchability()
 
 /** \brief Calculate and append relative abundance index.
 	
-		This routine requires calcSurveyCatchabililty to determine the 
-		appropriate scaler for each of the relativen abundance indices.
-		Setline survey logistics for the Pacific Halibut:
-		Basic catch equation for each station \f$i\f$ in the setline survey is:
-		\f$ C_i = \sum_j P(j) \frac{n_i \ell \alpha + \pi \alpha^2}{A^{(f)}}
-		          N_{a}^{(f)}P(j|a)^{(f)} \f$
-		where i and j are the station and size-class index, respectively.
-		\f$P(j)\f$ is the probability of capturing a fish of length \f$j\$f
+	This routine requires calcSurveyCatchabililty to determine the 
+	appropriate scaler for each of the relativen abundance indices.
+	Setline survey logistics for the Pacific Halibut:
+	Basic catch equation for each station \f$i\f$ in the setline survey is:
 
+	\f$ C_i = \sum_j P(j) \frac{n_i \ell \alpha + \pi \alpha^2}{A^{(f)}}
+	          N_{a}^{(f)}P(j|a)^{(f)} \f$
 
+	where i and j are the station and size-class index, respectively.
+	\f$ P(j)\f$ is the probability of capturing a fish of length \f$j\f$
+
+	PSEUDOCODE:
+		- 1) increment it_counter by 1 at each function evaluation
+		- 2) loop over each survey 
+			- loop over areas sex 
 	
 	\author  Steve Martell
 	\date Sept 17, 2013
-	\param  description of parameter
-	\param  description of parameter
-	\return description of return value
+	\param  iyr current year in operating model
+	
+	\return void
 	\sa calcSurveyCatchability
 **/
 void OperatingModel::calcRelativeAbundance(const int& iyr)
@@ -474,13 +499,31 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	// Survey data header:
 	// 1    2      3     4     5      6    7   8
 	// iyr  index  gear  area  group  sex  wt  timing
-
-	int k;
+	cout<<"Entering calcRelativeAbundance"<<endl;
+	int f,k,ii;
 	m_n_it_counter = m_n_it_counter + 1;
 	cout<<"it counter"<<m_n_it_counter<<endl;
 	for(int kk = 1; kk <= nItNobs; kk++ )
 	{
-		k = nSurveyIndex(kk);
+		dvector na(nSage,nNage);
+		dvector va(nSage,nNage);
+
+		// | get correct index for survey gear
+		k  = nSurveyIndex(kk);
+		ii = m_n_it_counter(kk);
+
+		for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			f  = n_area(ig);
+			g  = n_group(ig);
+			h  = n_sex(ig);
+			na = d3_Nt(ig)(iyr);
+			va = exp( d4_log_sel(k)(ig)(iyr) );
+		}
+
+
+
+		m_d3_survey_data(kk)(ii)(1) = iyr;
 
 	}
 	// cout<<"q = "<<q<<endl;
@@ -490,6 +533,18 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 }
 
 
+
+
+
+/** \brief Calculate growth in year iyr
+	
+	Currently just propagating historical size-at-age.
+	
+	\author  Steve Martell
+	\date    Sept 19, 2013
+	\param  iyr counter for current year in the operating model.
+	
+**/
 void OperatingModel::calcGrowth(const int& iyr)
 {
 	// Implement alternative growth models.
@@ -501,13 +556,13 @@ void OperatingModel::calcGrowth(const int& iyr)
 }
 
 /**
- * @brief Update the reference population
+ *  \brief Update the reference population
  *
  	\todo movement transition matrix needs to be implemented here.
  * 
- * @param iyr index for the current assesment/projection year
+ *  \param iyr index for the current assesment/projection year
  *
- * @return null
+ *  \return null
  */
 void OperatingModel::updateReferencePopulation(const int& iyr)
 {
@@ -534,18 +589,13 @@ void OperatingModel::updateReferencePopulation(const int& iyr)
 		d3_Nt(ig)(iyr+1)(nSage+1,nNage) =++ elem_prod(d3_Nt(ig)(iyr)(nSage,nNage-1),st);
 		d3_Nt(ig)(iyr+1,nNage)     += d3_Nt(ig)(iyr,nNage) * exp(-d3_Zt(ig)(iyr,nNage));
 	}
-	cout<<"Got Here"<<endl;
 }
 
-/**
- @brief Calculate the approprate area based TAC based on 
+
+/** \brief Calculate the approprate area based TAC based on 
         apportioned biomass, and application of harvest rates.
-
- @author Steve Martell
- @date   August 13, 2013
- @location  St Paul Island 
-
-Procedure currently used by the IPHC
+	
+	Procedure currently used by the IPHC
 	- 1. Estimate coast-wide biomass.
 	- 2. Apportion biomass in each regulatory area based on survey.
 	- 3. Apply area-specific harvest rates to apportioned biomass.
@@ -555,7 +605,14 @@ Procedure currently used by the IPHC
 	- 4. Subtract off estimated wastage & bycatch.
 	- 5. For area 2B use catch allocation
 
-*/
+	
+	\author  Steve Martell
+	\date Aug 13, 2013
+	
+	
+	\return void
+	\sa
+**/
 void OperatingModel::calcTAC()
 {
 	cout<<"Fmsy\t"<<m_dFmsy<<endl;	
@@ -596,7 +653,21 @@ void OperatingModel::calcTAC()
 }
 
 
-
+/** \brief Determine fishing mortality rates and catch based on Baranov catch equation.
+	
+	This routine is responsible for determining the annual fishing mortality rates on 
+	the reference population based on the TAC values from the assessment and 
+	implementation errors.  It also specifies the actual catch harvested from the 
+	population.  It calls the Baranov catch equation (getFishingMortality) based on
+	the BaranovCatchEquation class.
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\param  iyr integer index for the current year in the operating model.
+	
+	\return null
+	\sa BaranovCatchEquation
+**/
 void OperatingModel::implementFisheries(const int& iyr)
 {
 	/*
@@ -784,10 +855,16 @@ void OperatingModel::implementFisheries(const int& iyr)
 
 }
 
-/**
-* @brief calculate reference points.
-* @author Steve Martell
-*/
+
+/** \brief Calculate reference points
+	
+		Calculate reference points based on the MSY class
+	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\return void
+	\sa
+**/
 void OperatingModel::calcReferencePoints()
 {
 	/*
@@ -838,11 +915,14 @@ void OperatingModel::calcReferencePoints()
 }
 
 
-/**
-* @brief Condition the reference model for numbers-at-age between syr and nyr
-* @author Steve Martell
-* 
-*/
+/** \brief Condition the reference model
+	
+		Condition the reference model for numbers-at-age between syr and nyr
+	
+	\author  Steve Martell
+	\return void
+	\sa
+**/
 void OperatingModel::conditionReferenceModel()
 {
 
@@ -897,14 +977,15 @@ void OperatingModel::conditionReferenceModel()
 	}
 }
 
-/** \brief Determine stock-recruitment parameters
-	
-	Determine Beverton-Holt SR parameters given Ro and steepness.
 
+/** \brief Derive stock-recruitment parameters
+	
+		Determine Beverton-Holt SR parameters given Ro and steepness.
 		\f$ R = \frac{s_o S}{(1+ b S)} \f$
-
-	\author  Steve Martell
 	
+	\author  Steve Martell
+	\date Sept 19, 2013
+	\return null
 	\sa
 **/
 void OperatingModel::calcStockRecruitment()
@@ -962,8 +1043,15 @@ void OperatingModel::calcStockRecruitment()
  cout<<"OpMod\n"<<m_beta<<endl; 
 }
 
-/* calculate Selectivity coefficients */
-// Aug 12. Possibly Deprecate this function.
+/** \brief calculate Selectivity coefficients
+	
+		Possibly deprecate
+	
+	\author  Steve Martell
+	\date `date +%Y-%m-%d`
+	\return void
+	\sa
+**/
 void OperatingModel::calcSelectivities()
 {
 	/*

@@ -46,42 +46,42 @@ struct s_iSCAMdata
   int nGear;                //!< Number of distinct fleets incl. survey vessels
   int nFleet;               //!< Number of fishing fleets with allocation > 0.
 
-  dvector dAllocation;
-  ivector nFleetIndex;
+  dvector dAllocation;      //!< test        
+  ivector nFleetIndex;      //!< test
 
   // Growth & Maturity data
-  dvector d_linf;
-  dvector d_vonbk;
-  dvector d_to;
-  dvector d_a;
-  dvector d_b;
-  dvector d_ah;
-  dvector d_gh;
+  dvector d_linf;     //!< test
+  dvector d_vonbk;      //!< test
+  dvector d_to;     //!< test
+  dvector d_a;      //!< test
+  dvector d_b;      //!< test
+  dvector d_ah;     //!< test
+  dvector d_gh;     //!< test
 
   // Catch Data
-  int     nCtNobs;
-  dmatrix dCatchData;
+  int     nCtNobs;      //!< test
+  dmatrix dCatchData;     //!< test
 
   // Survey data
-  int      nIt;
-  ivector  nItNobs;
-  ivector  n_survey_type;
-  d3_array* dSurveyData;
+  int      nIt;     //!< test
+  ivector  nItNobs;     //!< test
+  ivector  n_survey_type;     //!< test
+  d3_array* dSurveyData;      //!< test
 
   // Composition data
-  int      nAgears;
-  ivector  nAnobs;
-  ivector  nAsage;
-  ivector  nAnage;
-  d3_array* dA;
+  int      nAgears;     //!< test
+  ivector  nAnobs;      //!< test
+  ivector  nAsage;      //!< test
+  ivector  nAnage;      //!< test
+  d3_array* dA;     //!< test
 
   // Empirical weight-at-age
-  int      nWtNobs;
-  d3_array* d3_wt_avg;
-  d3_array* d3_wt_mat;
+  int      nWtNobs;     //!< test
+  d3_array* d3_wt_avg;      //!< test
+  d3_array* d3_wt_mat;      //!< test
 
   // control vector;
-  dvector d_iscamCntrl;
+  dvector d_iscamCntrl;     //!< test
 
   
 };
@@ -98,28 +98,28 @@ struct s_iSCAMdata
 struct s_iSCAMvariables 
 {
   /* Parameters used in the constructor */
-  dvector   d_log_ro;
-  dvector   d_steepness;
-  dvector   d_log_m;
-  dvector   d_log_rbar;
-  dvector   d_log_rinit;
-  dvector   d_rho;
-  dvector   d_varphi;
-  dvector   dLog_M_devs;
-  dmatrix   dLog_Rbar_devs;
-  dmatrix   dLog_Rinit_devs;
+  dvector   d_log_ro;         //!< Equilibrium unfished recruitment.
+  dvector   d_steepness;      //!< Steepness of the stock-recruitment relationship.
+  dvector   d_log_m;          //!< log of the instantaneous natural mortality rate
+  dvector   d_log_rbar;       //!< Annaul average recruitment
+  dvector   d_log_rinit;      //!< Initial average recruitment
+  dvector   d_rho;            //!< Proportion of variance due to observation error.
+  dvector   d_varphi;         //!< Total precision (1/variance)
+  dvector   dLog_M_devs;      //!< Annual deviates in natural mortality
+  dmatrix   dLog_Rbar_devs;   //!< Annual recruitment deviates
+  dmatrix   dLog_Rinit_devs;  //!< Initial recruitment deviates
 
   /* Selectivity parameters */
-  ivector   nSel_type;
-  imatrix   nSel_block;
-  d3_array* dSelPars;
-  d4_array* d4_log_sel;
+  ivector   nSel_type;      //!< Type of selectivity function
+  imatrix   nSel_block;     //!< Number of selectivity blocks
+  d3_array* dSelPars;       //!< Selectivity parameters
+  d4_array* d4_log_sel;     //!< Selectivity coefficients
 
   
   /* Mortality rate arrays */
-  d3_array* d3_Ft;
-  d3_array* d3_Mt;
-  d3_array* d3_St;
+  d3_array* d3_Ft;          //!< Annual instantaneous fishing mortality rate
+  d3_array* d3_Mt;          //!< Annual instantaneous natural mortality rate
+  d3_array* d3_St;          //!< Annual survival rate
 
 
 };
@@ -211,31 +211,31 @@ private:
   int m_nSeed;    /**< Random number seed */
 
 protected:
-  dvector m_dTac;
-  dmatrix m_dFt;
+  dvector m_dTac;                   //!< Vector of total allowable catch
+  dmatrix m_dFt;                    //!< Vector of annual fishing mortality rates
 
   // | Catch data for assessment.
-  int     m_nCtNobs;
-  int     m_nCtNobs_counter;
-  ivector m_catch_sex_composition;
-  ivector m_catch_type;
-  dmatrix m_dCatchData;
+  int     m_nCtNobs;                //!< total number of catch observations
+  int     m_nCtNobs_counter;        //!< counter for number of catch observations
+  ivector m_catch_sex_composition;  //!< ivector of sex composition of catch for gear
+  ivector m_catch_type;             //!< ivector of catch type for each gear
+  dmatrix m_dCatchData;             //!< matrix of catch observations 
 
   // | Relative abundance index.
-  ivector m_n_it_nobs;
-  ivector m_n_it_counter;
-  dvector m_survey_q;
-  d3_array m_d3_survey_data;
+  ivector m_n_it_nobs;              //!< total number of survey observations
+  ivector m_n_it_counter;           //!< counter for the number of survey observations
+  dvector m_survey_q;               //!< vector of survey catchability coeffients
+  d3_array m_d3_survey_data;        //!< array of survey data
 
   // | Age composition
-  ivector m_n_A_nobs;
-  d3_array m_d3_A;
+  ivector m_n_A_nobs;               //!< integer vector of number of age composition data
+  d3_array m_d3_A;                  //!< Age composition data  
 
   // | Empirical weight-at-age data
-  int m_nWtNobs;
-  dmatrix m_imp_wt_avg;
-  d3_array m_d3_wt_avg;
-  d3_array m_d3_wt_mat;
+  int m_nWtNobs;                    //!< Number of empirical weight-at-age rows
+  dmatrix m_imp_wt_avg;             //!< Average weight-at-age 
+  d3_array m_d3_wt_avg;             //!< Average weight-at-age 
+  d3_array m_d3_wt_mat;             //!< Average mature weight-at-age 
 
 public:
   // OperatingModel(Scenario &cScenario);

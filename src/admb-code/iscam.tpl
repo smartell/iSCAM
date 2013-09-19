@@ -161,7 +161,9 @@ DATA_SECTION
 	// | 6)   end year for recruitment period (not implemented yet)
 	// |
 	!! ad_comm::change_datafile_name(ProjectFileControl);
+	/// | Number of catch options to explore in the decision table.
 	init_int n_tac;
+	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
 	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
@@ -270,7 +272,7 @@ DATA_SECTION
 	// | - n_gs:  total number of groups * sex
 	// | - n_area:  vector of indexes for area for each sex & group combination.
 	// | - n_group: vector of indexes for stock for each sex & area combination.
-	// | - i_sex:   vector of indexes for sex foe each area & group combination.
+	// | - n_sex:   vector of indexes for sex foe each area & group combination.
 	// | - pntr_ag: matrix of indices for area and group.
 	// | - pntr_gs: matrix of indices for group and sex.
 	// | - pntr_ags: d3_array of indices for area group sex.
@@ -283,7 +285,7 @@ DATA_SECTION
 	!! n_gs  = ngroup * nsex;
 	ivector   n_area(1,n_ags);
 	ivector  n_group(1,n_ags);
-	ivector    i_sex(1,n_ags);
+	ivector    n_sex(1,n_ags);
 	imatrix  pntr_ag(1,narea,1,ngroup);
 	imatrix  pntr_gs(1,ngroup,1,nsex);
 	3darray pntr_ags(1,narea,1,ngroup,1,nsex);
@@ -307,7 +309,7 @@ DATA_SECTION
 					ig ++;
 					n_area(ig)  = f;
 					n_group(ig) = g;
-					i_sex(ig)   = h;
+					n_sex(ig)   = h;
 					pntr_ags(f,g,h) = ig;
 					if(f==1)
 					{
@@ -330,7 +332,7 @@ DATA_SECTION
 		cout<<"| ngear  \t"<<ngear<<endl;
 		cout<<"| n_area \t"<<n_area<<endl;
 		cout<<"| n_group\t"<<n_group<<endl;
-		cout<<"| i_sex  \t"<<i_sex<<endl;
+		cout<<"| n_sex  \t"<<n_sex<<endl;
 		cout<<"| pntr_ag\n"<<pntr_ag<<endl;
 		cout<<"| pntr_gs\n"<<pntr_gs<<endl;
 		cout<<"| pntr_ags\n"<<pntr_ags(1)<<endl;
@@ -1808,7 +1810,7 @@ FUNCTION calcTotalMortality
 	for(ig=1;ig<=n_ags;ig++)
 	{
 		g = n_group(ig);
-		h = i_sex(ig);
+		h = n_sex(ig);
 		M(ig) = m( pntr_gs(g,h) );
 		if( active( log_m_nodes) )
 		{
@@ -3499,7 +3501,7 @@ FUNCTION void calcReferencePoints()
 
 FUNCTION void simulationModel(const long& seed)
   {
-  	/*
+  	/**
   	Purpose:  This routine gets called from the PRELIMINARY_CALCS_SECTION if the 
   	          user has specified the -sim command line option.  The random seed
   	          is specifed at the command line.
@@ -4116,7 +4118,7 @@ REPORT_SECTION
 	{
 		f = n_area(ig);
 		g = n_group(ig);
-		h = i_sex(ig);
+		h = n_sex(ig);
 		
 		for(i=syr;i<=nyr;i++)
 		{
@@ -4642,6 +4644,9 @@ FUNCTION mcmc_output
 // 	// cout<<"Finished projection model"<<endl;
 //   }
 
+///
+/// \brief Run the managment strategy Evaluation routine
+///
 FUNCTION void runMSE()
     cout<<"Top of runMSE"<<endl;
 
