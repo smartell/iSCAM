@@ -1,0 +1,12 @@
+/**
+	\mainpage ISCAM
+	\defgroup grp_manual Manual
+*/
+/**
+*/
+
+/**
+	\page p_about  About 
+
+	This is iSCAM, an integrated Statistical Catch Age Model.  It was intiailly developed by Steven Martell, at the University of British Columbia for assessing the abundance of Pacific herring stocks in British Columbia.  Since this initial assessment, the software has continued to evolve, has been used for stock assessment in many other fisheries, and is now being tooled for use with the Pacific halibut fishery and for conducting Management Strategy Evaluation.
+*/
