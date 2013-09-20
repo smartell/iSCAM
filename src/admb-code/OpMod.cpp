@@ -7,6 +7,20 @@
 #include "baranov.h"
 
 
+mse_data::~mse_data()
+{}
+
+mse_data::mse_data(int argc, char * argv[])
+{
+	m_nPyr = 2020;
+	adstring mfile=ad_comm::adprogram_name + ".mse";
+	// To do check argv for -minp for user to change default mse file.
+
+	cifstream cifs(mfile);
+	cifs >> m_nPyr;
+}
+
+
 /** \brief Destructor
 	\author Steven Martell 
 **/
@@ -24,13 +38,13 @@ OperatingModel::~OperatingModel()
 
 	\author Steven Martell
 **/
-OperatingModel::OperatingModel(	const s_iSCAMdata&  mse_data, 
+OperatingModel::OperatingModel(	const s_iSCAMdata&  s_mse_data, 
                                	const s_iSCAMvariables& mse_vars,
 								int argc,
 								char * argv[] )
-								: model_data(argc,argv)
+								: model_data(argc,argv), mse_data(argc,argv)
 {
-	initializeConstants(mse_data);  // deprecate, 
+	initializeConstants(s_mse_data);  // deprecate, 
 	initializeVariables(mse_vars);
 
 	cout<<" testing the inheritance of model_data"<<endl;
@@ -38,6 +52,7 @@ OperatingModel::OperatingModel(	const s_iSCAMdata&  mse_data,
 	cout<<"pntr_ags\n"<<pntr_ags<<endl;
 	// cout<<"catch_array\n"<<catch_array<<endl;
 	// exit(1);
+
 }
 
 /** \brief Initialize constants in Operating model
@@ -56,7 +71,8 @@ void OperatingModel::initializeConstants(const s_iSCAMdata& cS)
 	nSex   = nsex;         //cS.nSex;
 	nSyr   = syr;          //cS.nSyr;
 	nNyr   = nyr;          //cS.nNyr;
-	nPyr   = mse_cntrl(1); //cS.nPyr;
+	// nPyr   = mse_cntrl(1); //cS.nPyr;
+	nPyr   = m_nPyr;
 	nSage  = sage;         //cS.nSage;
 	nNage  = nage;         //cS.nNage;
 	nGear  = ngear;        //cS.nGear;
@@ -155,6 +171,15 @@ void OperatingModel::initializeVariables(const s_iSCAMvariables& cS)
 	
 	d4_log_sel.allocate(*cS.d4_log_sel);
 	d4_log_sel = *cS.d4_log_sel;
+	m_d4_log_sel.allocate(1,nGear,1,n_ags,nSyr,nPyr,nSage,nNage);
+	m_d4_log_sel.initialize();
+	for(int k = 1; k <= nGear; k++ )
+	{
+		for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			 m_d4_log_sel(k)(ig).sub(nSyr,nNyr) = d4_log_sel(k)(ig);
+		}
+	}
 
 	
 	d3_Mt.allocate(*cS.d3_Mt);
@@ -246,8 +271,11 @@ void OperatingModel::runScenario(const int &seed)
 	cout<<nNyr<<"\t"<<nPyr<<endl;
 	for(int i = nNyr + 1; i <= nPyr; i++ )
 	{
-		cout<<"year = "<<i<<endl;
-		cout<<d3_Nt(1)(i)<<endl;
+		/*
+		- Calculate selectivity vectors in m_d4_log_sel;
+		*/
+
+		
 		/*
 		- Calculate reference points that are required for the harvest control rule.
 		*/
@@ -499,6 +527,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	// Survey data header:
 	// 1    2      3     4     5      6    7   8
 	// iyr  index  gear  area  group  sex  wt  timing
+	
 	cout<<"Entering calcRelativeAbundance"<<endl;
 	int f,k,ii;
 	m_n_it_counter = m_n_it_counter + 1;
@@ -507,6 +536,8 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	{
 		dvector na(nSage,nNage);
 		dvector va(nSage,nNage);
+		dvector wa(nSage,nNage);
+		dvector sa(nSage,nNage);
 
 		// | get correct index for survey gear
 		k  = nSurveyIndex(kk);
@@ -518,7 +549,10 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 			g  = n_group(ig);
 			h  = n_sex(ig);
 			na = d3_Nt(ig)(iyr);
-			va = exp( d4_log_sel(k)(ig)(iyr) );
+			// va = exp( d4_log_sel(k)(ig)(iyr) );
+			wa = m_d3_wt_avg(ig)(iyr);
+
+
 		}
 
 
@@ -766,8 +800,8 @@ void OperatingModel::implementFisheries(const int& iyr)
 			// 4) - calculate fishing mortality rate based on baranov catch eqn.
 			// Potential issue here if nStock > 1, what wa ma vector should be used?
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d_Va,na,wa,_hCt);
-			cout<<"ft = "<<ft<<endl;
-			cout<<"hCt = "<<_hCt<<endl;
+			// cout<<"ft = "<<ft<<endl;
+			// cout<<"hCt = "<<_hCt<<endl;
 			m_dFt(g) = ft;
 
 			// -4) Fill catch data array

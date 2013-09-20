@@ -138,7 +138,21 @@ struct s_iSCAMvariables
 // |--------------------------------------------------|
 #ifndef OPERATINGMODEL_H
 #define OPERATINGMODEL_H
-class OperatingModel : public model_data
+class mse_data
+{
+private:
+  int m_nPyr;
+
+public:
+  ~mse_data();
+  mse_data(int argc, char * argv[]);
+
+  friend class OperatingModel;
+
+};
+
+
+class OperatingModel : public model_data, public mse_data
 {
 private:
   // |------------------|
@@ -236,6 +250,9 @@ protected:
   dmatrix m_imp_wt_avg;             //!< Average weight-at-age 
   d3_array m_d3_wt_avg;             //!< Average weight-at-age 
   d3_array m_d3_wt_mat;             //!< Average mature weight-at-age 
+
+  // | Selectivity
+  d4_array m_d4_log_sel;
 
 public:
   // OperatingModel(Scenario &cScenario);
