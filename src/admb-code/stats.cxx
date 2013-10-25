@@ -46,6 +46,9 @@ dvariable dbeta(const dvariable& x, const double a, const double b)
 	//V(x)=ab/((a+b)^2(a+b+1))
 	//b=(E(x)-1)(E(x)^2-E(x)+V(x))/V(x)
 	//a=(E(x)b)/(1-E(x)) 
+	// or for quick paste into R use:
+	//b=(mu-1)*(mu^2-mu+var)/var
+	//a=(mu*b)/(1-mu) 
 	return - gammln(a+b)+(gammln(a)+gammln(b))-(a-1.)*log(x)-(b-1.)*log(1.-x);
 }
 
