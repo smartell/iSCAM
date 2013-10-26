@@ -8,7 +8,8 @@ zip -r CAPAM_MS.zip \
 ../SelexCoverLetter.pdf \
 Selex2.tex \
 Selex2.bbl \
-*.eps
+*.eps \
+ResponseToReviewComments.pdf
 #Selex.pdf \
 #./Introduction/Intro.tex \
 #./Methods/Methods.tex \

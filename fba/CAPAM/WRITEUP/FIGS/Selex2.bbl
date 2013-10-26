@@ -27,6 +27,12 @@ Gavaris, S. and Ianelli, J. (2002).
 \newblock {Statistical Issues in Fisheries' Stock Assessments*}.
 \newblock {\em Scandinavian Journal of Statistics}, 29(2):245--267.
 
+\bibitem[Gudmundsson et~al., 2012]{gudmundsson2012selection}
+Gudmundsson, G., Gunnlaugsson, T., and Hilborn, R. (2012).
+\newblock Selection and estimation of sequential catch-at-age models.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  69(11):1760--1772.
+
 \bibitem[Helser and Martell, 2007]{helser2007stock}
 Helser, T. and Martell, S. (2007).
 \newblock {Stock Assessment of Pacific Hake (whiting) in US and Canadian Waters
@@ -43,14 +49,6 @@ Hilborn, R. and Walters, C.~J. (1992).
 Magnusson, A. and Hilborn, R. (2007).
 \newblock {What makes fisheries data informative?}
 \newblock {\em Fish and Fisheries}, 8(4):337--358.
-
-\bibitem[M{\"a}ntyniemi et~al., 2013]{mantyniemi2013integrated}
-M{\"a}ntyniemi, S., Uusitalo, L., Peltonen, H., Haapasaari, P., and Kuikka, S.
-  (2013).
-\newblock Integrated age-structured length-based stock assessment model with
-  uncertain process variances, structural uncertainty and environmental
-  covariates: case of central baltic herring.
-\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences}, (ja).
 
 \bibitem[Martell, 2010]{Martell2009}
 Martell, S. (2010).
@@ -88,6 +86,12 @@ Schnute, J. and Richards, L. (1995).
   models}.
 \newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
   52(10):2063--2077.
+
+\bibitem[Schnute, 1994]{schnute1994general}
+Schnute, J.~T. (1994).
+\newblock A general framework for developing sequential fisheries models.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences},
+  51(8):1676--1688.
 
 \bibitem[Sinclair et~al., 2002]{sinclair2002disentangling}
 Sinclair, A.~F., Swain, D.~P., and Hanson, J.~M. (2002).
