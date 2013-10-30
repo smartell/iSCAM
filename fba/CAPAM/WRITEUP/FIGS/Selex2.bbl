@@ -50,6 +50,14 @@ Magnusson, A. and Hilborn, R. (2007).
 \newblock {What makes fisheries data informative?}
 \newblock {\em Fish and Fisheries}, 8(4):337--358.
 
+\bibitem[M{\"a}ntyniemi et~al., 2013]{mantyniemi2013integrated}
+M{\"a}ntyniemi, S., Uusitalo, L., Peltonen, H., Haapasaari, P., and Kuikka, S.
+  (2013).
+\newblock Integrated age-structured length-based stock assessment model with
+  uncertain process variances, structural uncertainty and environmental
+  covariates: case of central baltic herring.
+\newblock {\em Canadian Journal of Fisheries and Aquatic Sciences}, (ja).
+
 \bibitem[Martell, 2010]{Martell2009}
 Martell, S. (2010).
 \newblock Assessment and management advice for pacific hake in u.s. and
@@ -73,6 +81,12 @@ Maunder, M.~N. and Harley, S.~J. (2011).
 \newblock Using cross validation model selection to determine the shape of
   nonparametric selectivity curves in fisheries stock assessment models.
 \newblock {\em Fisheries Research}, 110(2):283--288.
+
+\bibitem[Mohn, 1999]{mohn1999retrospective}
+Mohn, R. (1999).
+\newblock {The retrospective problem in sequential population analysis: An
+  investigation using cod fishery and simulated data}.
+\newblock {\em ICES Journal of Marine Science}, 56(4):473.
 
 \bibitem[Richards et~al., 1997]{richards1997visualizing}
 Richards, L., Schnute, J., and Olsen, N. (1997).
