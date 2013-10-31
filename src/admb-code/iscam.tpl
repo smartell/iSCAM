@@ -394,6 +394,7 @@ DATA_SECTION
 		avg_fec /= pf_cntrl(4)-pf_cntrl(3)+1;
 		
 		fa_bar   = colsum(fec.sub(syr,nyr))/(nyr-syr+1);
+		fec(nyr+1) = fa_bar;
 		cout<<avg_wt<<endl;
 		cout<<"avg_fec\n"<<avg_fec<<endl;
 		cout<<"fa_bar\n"<<fa_bar<<endl;
@@ -1460,8 +1461,8 @@ FUNCTION calcAgeProportions
 			A_nu(k,i,a_sage(k)-1)=ig;
 			Ahat(k,i,a_sage(k)-2)=iyr;
 			Ahat(k,i,a_sage(k)-1)=ig;
-			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(k)(iyr)(a_sage(k),a_nage(k))
-										/sum(Chat(k)(iyr)(a_sage(k),a_nage(k)));
+			Ahat(k)(i)(a_sage(k),a_nage(k))=Chat(ig)(iyr)(a_sage(k),a_nage(k))
+										/sum(Chat(ig)(iyr)(a_sage(k),a_nage(k)));
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcAgeProportions ****"<<endl;
@@ -1760,7 +1761,9 @@ FUNCTION calcStockRecruitment
 		}
 			
 	}
-	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
+	// sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fec(nyr+1);	
+	// Changes as per Nathan Taylor's email.
+	sbt(nyr+1) = elem_prod(N(nyr+1),exp(-M_tot(nyr))) * fa_bar;	
 	dvar_vector tmp_st=sbt(syr,nyr-sage).shift(syr+sage);
 	
 	sbo = ro*phib;
@@ -2698,8 +2701,11 @@ FUNCTION void simulationModel(const long& seed)
 		sig=0;
 		tau=0;
 	}
+
+	// Modified as per Marie Etienne email. Aug 22, 2013.
 	wt.fill_randn(rng); 
-	wt *= tau - 0.5*tau*tau;
+	wt *= tau;
+	// wt += 0.5*tau*tau;
 
 	epsilon.fill_randn(rng); 
 	//now loop over surveys and scale the observation errors
@@ -3684,6 +3690,7 @@ GLOBALS_SECTION
 	// #include <contrib.h>
 	// #include <statsLib.h>
 	#include "msy.cpp"
+	#include "logistic_normal.h"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
