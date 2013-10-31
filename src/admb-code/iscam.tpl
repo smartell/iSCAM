@@ -3133,7 +3133,7 @@ FUNCTION writeSimulatedDataFile
 
 
   }
-FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba)
+FUNCTION dvector  (const dvector& va, const dvector& ba)
   {
   	/*
   	This function returns a modified selectivity vector (va) based on
