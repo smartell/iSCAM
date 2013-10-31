@@ -13,12 +13,17 @@ class logistic_normal
 private:
 	int         m_b1;
 	int         m_b2;
+	int         m_B;
+
 	int         m_y1;
 	int         m_y2;
+	int         m_Y;
 
 	double m_dMinimumProportion;
 
 	dvariable   m_nll;
+
+	dvector     m_dWy;		// relative weight for each year.
 
 	dmatrix     m_O;
 	dmatrix     m_Op;

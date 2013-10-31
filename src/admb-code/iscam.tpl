@@ -1859,6 +1859,7 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 			
+			logistic_normal nll_Age(O,P);
 			//CHANGED add a switch statement here to choose form of the likelihood
 			switch(int(cntrl(14)))
 			{
@@ -1868,6 +1869,7 @@ FUNCTION calc_objective_function
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
+
 			}
 			
 			for(i=1;i<=naa/*na_nobs(k)*/;i++)
