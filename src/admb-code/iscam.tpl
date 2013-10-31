@@ -3697,6 +3697,7 @@ GLOBALS_SECTION
 	// #include <contrib.h>
 	// #include <statsLib.h>
 	#include "msy.cpp"
+	#include "logistic_normal.h"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
