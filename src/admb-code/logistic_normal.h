@@ -23,21 +23,28 @@ private:
 
 	dvariable   m_nll;
 
+	ivector     m_nNminp;
 	dvector     m_dWy;		// relative weight for each year.
 
-	dmatrix     m_O;
-	dmatrix     m_Op;
+	imatrix     m_nAgeIndex;// Index for aggregated residuals
+	dmatrix     m_O;		// Raw Data
+	dmatrix     m_Op;		// Proportions
+	dmatrix     m_Ox;		// Logistic transform.
+	dmatrix     m_Oa;		// Aggregated matrix for tail compression and zeros
 
 	dvar_matrix m_E;
 	dvar_matrix m_Ep;
+	dvar_matrix m_Ex;
+	dvar_matrix m_Ea;		// Aggregated matrix for tail compression and zeros
 
 public:
 	~logistic_normal();
 	logistic_normal();
-	logistic_normal(const dmatrix& _O, const dvar_matrix _E);
+	logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
 
 	/* data */
 	dvariable negative_loglikelihood();
+	void aggregate_arrays();
 
 
 	/* setters */

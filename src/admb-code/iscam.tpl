@@ -122,14 +122,15 @@ DATA_SECTION
 	// | 5) start year for recruitment period (not implemented yet)
 	// | 6)   end year for recruitment period (not implemented yet)
 	// |
-	init_int n_pfcntrl;
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	init_int n_tac;
 	init_vector tac(1,n_tac);
 	
+	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
 	
 	init_int eof_pf;
+	!! cout<<eof_pf<<endl;
 	LOC_CALCS
 		if(eof_pf!=-999)
 		{
@@ -175,7 +176,7 @@ DATA_SECTION
 	// ** READ IN MODEL DATA FROM  DataFile                                   ** //
 	// ************************************************************************* //
 	!! ad_comm::change_datafile_name(DataFile);
-
+	!! cout<<DataFile<<endl;
 	
 	// ------------------------------------------------------------------------- //
 	// MODEL DIMENSIONS                                                          //
@@ -1829,7 +1830,7 @@ FUNCTION calc_objective_function
 		//if(active(log_ft_pars))
 		//	nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
 	}
-	
+	if( verbose ) COUT(nlvec(1));
 	
 	//2) likelihood of the survey abundance index (retro)
 	for(k=1;k<=nit;k++)
@@ -1837,7 +1838,7 @@ FUNCTION calc_objective_function
 		dvar_vector sig = (sqrt(rho)*varphi)/it_wt(k);
 		nlvec(2,k)=dnorm(epsilon(k),sig);
 	}
-	
+	if( verbose ) COUT(nlvec(2));
 	
 	
 	//3) likelihood for age-composition data
@@ -1869,6 +1870,9 @@ FUNCTION calc_objective_function
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
+				case 3:
+					nlvec(3,k) = nll_Age.negative_loglikelihood();
+				break;
 
 			}
 			
@@ -1879,7 +1883,7 @@ FUNCTION calc_objective_function
 			}
 		}
 	}
-	
+	if( verbose ) COUT(nlvec(3));
 	
 	
 	//4) likelihood for stock-recruitment relationship
