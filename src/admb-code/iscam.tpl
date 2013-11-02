@@ -827,6 +827,9 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
+	init_bounded_vector log_age_tau2(1,na_gears,0.001,100,3);
+	!! log_age_tau2 = 1./0.5;
+
 	objective_function_value f;
     
 	number ro;					//unfished age-1 recruits
@@ -1842,6 +1845,7 @@ FUNCTION calc_objective_function
 	
 	
 	//3) likelihood for age-composition data
+	dvar_vector atau2 = 1./(log_age_tau2);
 	for(k=1;k<=na_gears;k++)
 	{	
 		if(na_nobs(k)>0){
@@ -1860,7 +1864,7 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 			
-			logistic_normal nll_Age(O,P);
+			logistic_normal cLN_Age(O,P);
 			//CHANGED add a switch statement here to choose form of the likelihood
 			switch(int(cntrl(14)))
 			{
@@ -1871,7 +1875,8 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
 				case 3:
-					nlvec(3,k) = nll_Age.negative_loglikelihood();
+					nlvec(3,k) = cLN_Age.negative_loglikelihood(atau2(k));
+					nu         = cLN_Age.standardized_residuals();
 				break;
 
 			}

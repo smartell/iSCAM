@@ -56,18 +56,70 @@ logistic_normal::logistic_normal(const dmatrix& _O, const dvar_matrix& _E)
 }
 
 
-dvariable logistic_normal::negative_loglikelihood()
+dvariable logistic_normal::negative_loglikelihood(const dvariable& tau2)
 {
-	double t1 = 0.5 * m_Y * (m_B -1.0) * log(2.0*PI);
-	double t3 = sum( log(m_Op) );
-
 	m_nll = 0;
 
-		cout<<"Here I am in the likelihood"<<endl;
-		cout<<t1<<endl;
-		cout<<t3<<endl;
+	int i;
+	m_sig2=tau2;
+
+	for( i = m_y1; i <= m_y2; i++ )
+	{	
+		int    nB     = m_nNminp(i);
+		double t1     = 0.5 * (nB - 1.0) * log(2.0*PI);
+		double t3     = sum( log(m_Oa(i)) );
+		dvariable det = pow(nB * m_sig2, 2.*(nB-1.));
+		dvariable t5  = 0.5 * log(det);
+		dvar_vector w = log(m_Oa(i)(1,nB-1)/m_Oa(i,nB))
+		               -log(m_Ea(i)(1,nB-1)/m_Ea(i,nB));
+		double t7     = (nB - 1.0) * log(m_dWy(i));
+		dvariable t9  = 0.5 * sum( square(w) / (m_sig2/square(m_dWy(i))) );
 		
-	return(0);
+		m_nll        += t1 + t3 + t5 + t7 + t9;
+	}
+
+
+		// cout<<"Here I am in the likelihood"<<endl;
+		// cout<<m_nll<<endl;
+		
+		
+	return(m_nll);
+}
+
+dvar_matrix logistic_normal::standardized_residuals()
+{
+	/*
+		Standardized residuals
+		nu = [log(O/~O) - log(E/~E)]/(Wy m_sig2^0.5)
+		where O & E are the observed and expected proportion vectors
+		~O and ~E is the geometric means of each proporition vectors
+		Wy is the relative weight each year.
+		
+	*/
+	int i,j;
+	double    tilde_O;
+	dvariable tilde_E;
+	m_residual.allocate(m_Op);
+	m_residual.initialize();
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		dvector     oo = m_Oa(i);
+		dvar_vector pp = m_Ea(i);
+		tilde_O = exp( mean(log(oo)) );
+		tilde_E = exp( mean(log(pp)) );
+
+		dvar_vector	w = log(oo/tilde_O) - log(pp/tilde_E);
+		w            /= m_sig2/m_dWy(i);
+		
+		for( j = 1; j <= m_nNminp(i); j++ )
+		{
+			int idx = m_nAgeIndex(i,j);
+			m_residual(i)(idx) = w(j);
+		}
+		cout<<m_sig2<<endl;
+	}
+	
+	return(m_residual);
 }
 
 

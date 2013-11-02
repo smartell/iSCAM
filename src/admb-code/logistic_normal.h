@@ -22,6 +22,7 @@ private:
 	double m_dMinimumProportion;
 
 	dvariable   m_nll;
+	dvariable   m_sig2;
 
 	ivector     m_nNminp;
 	dvector     m_dWy;		// relative weight for each year.
@@ -37,13 +38,16 @@ private:
 	dvar_matrix m_Ex;
 	dvar_matrix m_Ea;		// Aggregated matrix for tail compression and zeros
 
+	dvar_matrix m_residual;
+
 public:
 	~logistic_normal();
 	logistic_normal();
 	logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
 
 	/* data */
-	dvariable negative_loglikelihood();
+	dvariable negative_loglikelihood(const dvariable& tau2);
+	dvar_matrix standardized_residuals();
 	void aggregate_arrays();
 
 
