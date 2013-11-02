@@ -116,7 +116,7 @@ dvar_matrix logistic_normal::standardized_residuals()
 			int idx = m_nAgeIndex(i,j);
 			m_residual(i)(idx) = w(j);
 		}
-		cout<<m_sig2<<endl;
+		
 	}
 	
 	return(m_residual);

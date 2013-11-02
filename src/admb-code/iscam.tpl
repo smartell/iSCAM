@@ -1864,7 +1864,6 @@ FUNCTION calc_objective_function
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
 			
-			logistic_normal cLN_Age(O,P);
 			//CHANGED add a switch statement here to choose form of the likelihood
 			switch(int(cntrl(14)))
 			{
@@ -1875,8 +1874,10 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
 				case 3:
-					nlvec(3,k) = cLN_Age.negative_loglikelihood(atau2(k));
-					nu         = cLN_Age.standardized_residuals();
+					logistic_normal cLN_Age(O,P);
+					nlvec(3,k)  = cLN_Age.negative_loglikelihood(atau2(k));
+					nu          = cLN_Age.standardized_residuals();
+					age_tau2(k) = value(atau2(k));
 				break;
 
 			}
