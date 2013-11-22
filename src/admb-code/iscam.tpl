@@ -1876,6 +1876,7 @@ FUNCTION calc_objective_function
 				case 3:
 					logistic_normal cLN_Age(O,P);
 					nlvec(3,k)  = cLN_Age.negative_loglikelihood(atau2(k));
+					//nlvec(3,k)  = cLN_Age.negative_loglikelihood();
 					nu          = cLN_Age.standardized_residuals();
 					age_tau2(k) = value(atau2(k));
 				break;
