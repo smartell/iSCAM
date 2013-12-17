@@ -1119,7 +1119,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 					p1 = mfexp(sel_par(j,bpar,1));
 					p2 = mfexp(sel_par(j,bpar,2));
-					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny );
+					log_sel(j)(i) = log( my_plogis(age,p1,p2)+tiny );
 				}
 				break;
 			
@@ -1233,7 +1233,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 					dvector len = pow(wt_obs(i)/a,1./b);
 
-					log_sel(j)(i) = log( plogis(len,p1,p2) );
+					log_sel(j)(i) = log( plogis(dvector(len),p1,p2) );
 					// COUT(exp(log_sel(j)(i)- log(mean(exp(log_sel(j)(i))))) );
 				}
 				break;
@@ -3731,9 +3731,35 @@ GLOBALS_SECTION
 		}
 		return fileName;
 	}
-	
 
-
+  template<typename T>
+  class AccumulationTraits;
+  template<>
+  class AccumulationTraits<dvector> {
+  	public:
+  	typedef dvar_vector AccT;
+  };
+  template<>
+  class AccumulationTraits<dvar_vector> {
+  	public:
+  	typedef dvector AccT;
+  };
+  
+  template <typename T1, typename T2>
+  typename AccumulationTraits<T1>::AccT my_plogis(  T1& x,  T2& location,  T2& scale )
+  {
+  	if( scale<=0 ) 
+  	{
+  		cerr<<"Standard deviation is less than or equal to zero in "
+  		"plogis( const dvar_vector& x, const dvariable& location, const dvariable& scale )\n";
+  		return 0;
+  	}
+  	typedef typename AccumulationTraits<T1>::AccT AccT;
+  	AccT logistic = 1./(1.+mfexp((location-x)/scale));
+  	return (logistic);
+  } 
+  
+  
 	// class selex_vector
 	// {
 	// 	private:
