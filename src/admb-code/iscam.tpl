@@ -92,7 +92,7 @@
 //--                                                                           --//
 // ----------------------------------------------------------------------------- //
 
-
+// Don McCleod is the survey expansion into deeper waters the best bang for your buck?
 
 DATA_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -828,7 +828,7 @@ PARAMETER_SECTION
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	init_bounded_vector log_age_tau2(1,na_gears,0.001,100,3);
-	!! log_age_tau2 = 1./0.5;
+	!! log_age_tau2 = -log(0.5);
 
 	objective_function_value f;
     
@@ -946,7 +946,7 @@ PROCEDURE_SECTION
 
 FUNCTION initParameters
   {
-	/*
+	/**
 	This function is used to extract the specific parameter values
 	from the init_bounded_number_vector to the specific variables
 	used in the code.
@@ -1845,7 +1845,7 @@ FUNCTION calc_objective_function
 	
 	
 	//3) likelihood for age-composition data
-	dvar_vector atau2 = 1./(log_age_tau2);
+	dvar_vector atau2 = 1./exp(log_age_tau2);
 	for(k=1;k<=na_gears;k++)
 	{	
 		if(na_nobs(k)>0){
@@ -1875,7 +1875,9 @@ FUNCTION calc_objective_function
 				break;
 				case 3:
 					logistic_normal cLN_Age(O,P);
-					nlvec(3,k)  = cLN_Age.negative_loglikelihood(atau2(k));
+					cLN_Age.set_MinimumProportion(cntrl(6));
+					nlvec(3,k)  = cLN_Age.nll(atau2(k));
+					//nlvec(3,k)  = cLN_Age.negative_loglikelihood(atau2(k));
 					//nlvec(3,k)  = cLN_Age.negative_loglikelihood();
 					nu          = cLN_Age.standardized_residuals();
 					age_tau2(k) = value(atau2(k));

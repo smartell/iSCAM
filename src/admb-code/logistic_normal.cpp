@@ -14,11 +14,16 @@ Descrition:
 	of composition data.  These data are immediately transformed into
 	proportions that sum to 1 in each year.
 
-	I used Aitchison (2003) approach where vector of observations
-	was transformed as:
+	There are 3 different arrays that are constructed from (O) and (E).
+	O_x is the logistic transform O_x = exp(X_b)/sum_b exp(X_b)
+	O_y is based on the Aitchison (2003) approach where vector of 
+	observations was transformed as:
+		O_y = exp(Y_b)/(1+sum_b^{B-1} exp(Y_b)) , for b = 1, ..., B-1
+		O_y = 1 - sum_b^{B-1} O_b               , for b = B
+	O_z is a multivariate normal vector constructed from (O):
+		O_z = exp(Z_b)/sum_b exp(Z_b) - mean[exp(Z_b)/sum_b exp(Z_b)]
 
-		O_b = exp(Y_b)/(1+sum_b^{B-1} exp(Y_b)) , for b = 1, ..., B-1
-		O_b = 1 - sum_b^{B-1} O_b               , for b = B
+
 
 	Then I use the aggregate arrays function to almalgamate 0s and perform
 	tail compression.  An member array of residuals m_w is created in this 
@@ -28,19 +33,28 @@ Descrition:
 
 	Note that each m_w vector (year) is of length (B-1).
 
-	---- LIKELIHOOD ----
+	---- LIKELIHOODS ----
+	There are three separate likelihoods where each differes by the number of
+	weighting parameters used to define the covariance matrix.
+		1) LN1: based on sig2
+		2) LN2: based on sig2, phi_1
+		3) LN3: based on sig2, phi_1, and phi_2.
+
+	In call three cases differences in among year sample sizes are weighted by:
+		W_y = [mean(N)/N_y]^0.5
+	where N_y is sample size each year.
+	
+	-- LN1 --
 	For the simplist likelihood with no correlation and an estimated variance 
 	tau2, the likelihood for each year is given by:
-
+	
 	nll = 0.5(B-1)*ln(2*\pi) + sum(ln(O_b)) + 0.5*ln(|V|) + 
-	      (B-1)*ln(W_y) + 0.5* m_w^2/(V*W_y^2)
+	      (B-1)*ln(W_y) + 0.5* m_w^2/(V*W_y^2).
 
-	Where Wy is the year effect of weight based on relative sample size:
+	where V is the covariance matrix which is just a simple scaler sig2.
+		V = sig2*diag(B)
 
-	W_y = [mean(N)/N_y]^0.5
-
-	And V is the covariance matrix which is just a simple scaler tau2.
-
+	---- METHODS FOR SUPRESSING ZEROS ----
 
 
 **/
@@ -76,11 +90,16 @@ logistic_normal::logistic_normal(const dmatrix& _O, const dvar_matrix& _E)
 	m_dWy.allocate(m_y1,m_y2);
 	m_dWy.initialize();
 
+	// Observed matrixes
 	m_Op.allocate(m_y1,m_y2,m_b1,m_b2);
-	m_Ep.allocate(m_y1,m_y2,m_b1,m_b2);
 	m_Ox.allocate(m_y1,m_y2,m_b1,m_b2);
-	m_Ex.allocate(m_y1,m_y2,m_b1,m_b2);
+	m_Oy.allocate(m_y1,m_y2,m_b1,m_b2);
 	m_Oz.allocate(m_y1,m_y2,m_b1,m_b2);
+
+	// Expected matrixes
+	m_Ep.allocate(m_y1,m_y2,m_b1,m_b2);
+	m_Ex.allocate(m_y1,m_y2,m_b1,m_b2);
+	m_Ey.allocate(m_y1,m_y2,m_b1,m_b2);
 	m_Ez.allocate(m_y1,m_y2,m_b1,m_b2);
 
 	int i;
@@ -88,18 +107,31 @@ logistic_normal::logistic_normal(const dmatrix& _O, const dvar_matrix& _E)
 	int bm1 = m_b2-1;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
-		// Ensure proportions-at-age/size sume to 1.
-		m_Op(i) = m_O(i) / sum( m_O(i) );
-		m_Ep(i) = m_E(i) / sum( m_E(i) );
+		// Ensure proportions-at-age/size sum to 1.
+		m_Op(i)        = m_O(i) / sum( m_O(i) );
+		m_Ep(i)        = m_E(i) / sum( m_E(i) );
 
-		// Logistic transformation using Aitichson's approach
-		m_Ox(i)(l,bm1) = exp(m_Op(i)(l,bm1)) / (1 + sum(exp(m_Op(i)(l,bm1))));
-		m_Ex(i)(l,bm1) = exp(m_Ep(i)(l,bm1)) / (1 + sum(exp(m_Ep(i)(l,bm1))));
-		m_Ox(i)(m_b2)  = 1. - sum(m_Ox(i)(l,bm1));
-		m_Ex(i)(m_b2)  = 1. - sum(m_Ex(i)(l,bm1));
+		
+		// Logistic transformation based on Schnute's approach (Ox)
+		m_Ox(i)        = exp(m_Op(i)) / sum( m_Op(i) );
+		m_Ex(i)        = exp(m_Ep(i)) / sum( m_Ep(i) );
 
-		m_Oz(i) = exp(m_Op(i)) / sum(exp(m_Op(i)));
-		m_Ez(i) = exp(m_Ep(i)) / sum(exp(m_Ep(i)));
+		
+		// Logistic transformation using Aitichson's approach (Oy)
+		m_Oy(i)(l,bm1) = exp(m_Op(i)(l,bm1)) / (1. + sum( exp(m_Op(i)(l,bm1)) ));
+		m_Oy(i)(m_b2)  = 1. - sum( m_Oy(i)(l,bm1) );
+		m_Ey(i)(l,bm1) = exp(m_Ep(i)(l,bm1)) / (1. + sum( exp(m_Ep(i)(l,bm1)) ));
+		m_Ey(i)(m_b2)  = 1. - sum( m_Ey(i)(l,bm1) );
+
+		
+		// Logistic transformation using multivariate normal vector (Oz)
+		double mu_O    = mean(m_Op(i));
+		dvector   Z    = m_Op(i) - mu_O;
+		m_Oz(i)        = exp(Z) / sum( exp(Z) );
+
+		dvariable mu_E = mean(m_Ep(i));
+		dvar_vector Zv = m_Ep(i) - mu_E;
+		m_Ez(i)        = exp(Zv) / sum( exp(Zv) );
 	}
 	
 	// Calculate mean weighting parameters for each year.
@@ -111,14 +143,90 @@ logistic_normal::logistic_normal(const dmatrix& _O, const dvar_matrix& _E)
 	// Minimum proportion to pool into adjacent cohort.
 	m_dMinimumProportion = 0;
 	m_rho = 0.1;
-	aggregate_arrays();
-	cout<<"Ok at the end of the constructor"<<endl;
+	
+	//cout<<"Ok at the end of the constructor"<<endl;
 
+}
+
+dvariable logistic_normal::nll(const dvariable& sig2)
+{
+	/*
+		Returns the negative loglikelihood based on the logistic normal
+		based on the covariance matrix.
+
+		-PSEUDOCODE:
+		 1) suppress 0's or aggregate adjacent bins.
+		 2) compute the covariance matrix
+		 3) compute the negative log-likelihood
+	*/
+
+	// 1) suppress 0's or aggregate adjacent bins.
+	aggregate_arrays();
+
+	int i;
+	m_nll = 0;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		// 2) compute covariance matrix
+		int nB            = m_nNminp(i);
+		dvar_matrix covar = calc_covmat(sig2,nB);
+		dvar_matrix V     = calc_KCK(covar);
+		dvar_matrix inv_V = inv(V);
+
+
+		// 3) compute negative log-likelihood
+		m_nll += 0.5 * (nB-1.) * log(2.*PI);
+		m_nll += sum(log(m_Oa(i)));
+		m_nll += 0.5 * log( det(V) );
+		m_nll += (nB-1.) * log(m_dWy(i));
+		m_nll += (0.5 / (m_dWy(i)*m_dWy(i))) * m_w(i) * inv_V * m_w(i);
+		
+	}
+	return(m_nll);
+}
+
+
+dvar_matrix logistic_normal::calc_covmat(const dvariable& sig2,const int& n)
+{
+	/*
+		Calculate the covariance matrix give sig2
+	
+	*/
+	int i;
+	dvar_matrix Vmat(1,n,1,n);
+	Vmat.initialize();
+	for( i = 1; i <= n; i++ )
+	{
+		 Vmat(i,i) = sig2;
+	}
+	return(Vmat);
+}
+
+dvar_matrix logistic_normal::calc_KCK(const dvar_matrix& V)
+{
+	int j;
+	int n = V.colmax() - V.colmin() + 1;
+	dmatrix I=identity_matrix(1,n-1);
+	dmatrix K(1,n-1,1,n);
+	for( j = 1; j <= n-1; j++ )
+	{
+		 K.colfill(j, extract_column(I,j) );
+	}
+	dvector tmp(1,n-1);
+	tmp = -1;
+	K.colfill(n, tmp);
+
+	dvar_matrix KCK = K * V * trans(K);
+	
+	return(KCK); 
 }
 
 
 dvariable logistic_normal::negative_loglikelihood(const dvariable& tau2)
 {
+
+	aggregate_arrays();
+
 	m_nll = 0;
 
 	int i;
@@ -155,7 +263,7 @@ dvariable logistic_normal::negative_loglikelihood()
 		cout<<m_V(i)<<endl<<endl;
 		cout<<m_w(i)*m_V(i)<<endl<<endl;
 		cout<<(m_w(i)*m_V(i))*m_w(i)<<endl;
-		sws += (m_w(i) * m_V(i)) * m_w(i);
+		sws += (m_w(i) * m_V(i)) * m_w(i);		///> equation A11
 		exit(1);
 	}
 
@@ -238,10 +346,11 @@ void logistic_normal::aggregate_arrays()
 	m_Ea.initialize();
 	m_w.initialize();
 
+	// cout<<"Minimum proportion = "<<m_dMinimumProportion<<endl;
 	for(int i = m_y1; i <= m_y2; i++ )
 	{
-		dvector     oo = m_Op(i);
-		dvar_vector pp = m_Ep(i);
+		dvector     oo = m_Oy(i);
+		dvar_vector pp = m_Ey(i);
 		k = 1;
 		for(int j = m_b1; j <= m_b2; j++ )
 		{

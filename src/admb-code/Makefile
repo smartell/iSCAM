@@ -12,7 +12,7 @@ default:
 	cp iscam ${DISK}/debug
 
 opt:
-	admb -O iscam logistic_normal.cpp
+	admb -f iscam logistic_normal.cpp
 	cp iscam ${DISK}/release
 
 clean:
