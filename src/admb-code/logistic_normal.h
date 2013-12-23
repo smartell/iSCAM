@@ -51,7 +51,9 @@ private:
 	dvar_matrix m_Vinv;
 
 	dvar3_array m_V;				///> Covariance matrix
+	dvar3_array m_C;				///> Correlation matrix
 
+	dvariable calc_sigma_mle();
 	void aggregate_arrays();
 	void correlation_matrix();
 	dvar_matrix calc_covmat(const dvariable& sig2,const int& n);

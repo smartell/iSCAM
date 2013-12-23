@@ -56,6 +56,16 @@ Descrition:
 
 	---- METHODS FOR SUPRESSING ZEROS ----
 
+	---- CONDITIONAL MLE FOR THE VARIANCE SCALER ----
+	The maximum likelihood estimate for sigma can be calculated 
+	conditional on the observed and expected values, as well as the
+	autocorrelation parameters (correlation matrix).
+
+	The variance is given by the correlated weighted sum of squares.
+
+	sig2 = {sum_y (w_y V_y^{-1} w_y)/W_y^2} / sum_y(B_y-1)
+
+	where V_y^{-1} = K C K', where C is the correlation matrix.
 
 **/
 
@@ -185,6 +195,19 @@ dvariable logistic_normal::nll(const dvariable& sig2)
 	return(m_nll);
 }
 
+/**
+	Calculate conditional maximum likelihood estimate of the 
+	variance parameter (sig2) based on the correlation matrix (m_C)
+*/
+dvariable logistic_normal::calc_sigma_mle()
+{
+	int i;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		
+	}
+	return(m_sig2);
+}
 
 dvar_matrix logistic_normal::calc_covmat(const dvariable& sig2,const int& n)
 {
@@ -378,26 +401,43 @@ void logistic_normal::aggregate_arrays()
 }
 
 
+/**
+	Calculate the correlation matrix for each year based on the tail compressed 
+	arrays.
+*/
 void logistic_normal::correlation_matrix()
 {
 	// Calculate the covariance matrix for each year, based on ragged arrays m_w;
 
-	int i,j,k;
+	int i,j,k,n;
 	m_V.allocate(m_y1,m_y2,1,m_nNminp,1,m_nNminp);
+	m_C.allocate(m_y1,m_y2,1,m_nNminp,1,m_nNminp);
 	m_V.initialize();
+	m_C.initialize();
+
 
 	for( i = m_y1; i <= m_y2; i++ )
 	{
-		 dmatrix K = identity_matrix(1,m_nNminp(i));
-		 dvar_matrix C(1,m_nNminp(i),1,m_nNminp(i));
+		n = m_nNminp(i);
+		dmatrix I=identity_matrix(1,n-1);
+		dmatrix K(1,n-1,1,n);
+		for( j = 1; j <= n-1; j++ )
+		{
+			 K.colfill(j, extract_column(I,j) );
+		}
+		dvector tmp(1,n-1);
+		tmp = -1;
+		K.colfill(n, tmp);
+		 //dmatrix K = identity_matrix(1,m_nNminp(i));
+		 //dvar_matrix C(1,m_nNminp(i),1,m_nNminp(i));
 		 for( j = 1; j <= m_nNminp(i); j++ )
 		 {
 		 	 for( k = 1; k <= m_nNminp(i); k++ )
 		 	 {
-		 	 	C(j,k) = pow(m_rho,abs(double(j)-double(k)));
+		 	 	m_C(i)(j,k) = pow(m_rho,abs(double(j)-double(k)));
 		 	 }
 		 }
-		 m_V(i) = K * C * trans(K);
+		 m_V(i) = K * m_ C(i) * trans(K);
 	}	
 
 }

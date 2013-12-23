@@ -1897,7 +1897,7 @@ FUNCTION calc_objective_function
 	
 	//4) likelihood for stock-recruitment relationship
 	dvariable tau = sqrt(1.-rho)*varphi;
-	if(active(theta(1)))
+	if( active(theta(1)) || active(theta(2)) )
 		nlvec(4,1)=dnorm(delta,tau);
 	
 	
