@@ -27,6 +27,8 @@
 ##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
+## Use -ve phase and gear number to mirror another gear.
+## eg. Gear 3 mirrors gear one, then set phase to -1 for gear 3
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
 ##      1) logistic selectivity parameters                                   ##
 ##      2) selectivity coefficients                                          ##
@@ -41,12 +43,13 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
+## FSH    BTS    AVO    JAP    EIT
    2      2      2      2      2     # 1  -selectivity type ivector(isel_type) for gear
    3.5    3.5    3.5    3.5    3.5   # 2  -Age/length at 50% selectivity (logistic)
    0.5    0.5    0.5    0.5    0.5   # 3  -STD at 50% selectivity (logistic)
    7      7      7      7      7     # 4  -No. of age nodes for each gear (0=ignore)
    12     12     12     12     12    # 5  -No. of year nodes for 2d spline(0=ignore)
-   3      3     -3     -3      3     # 6  -Phase of estimation (-1 for fixed)
+   3      3     -5     -1      3     # 6  -Phase of estimation (-1 for fixed)
    12.5   12.5   12.5   12.5   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 9  -Penalty wt for time-varying selectivity
@@ -86,7 +89,7 @@
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
 0.50        # 13 -fraction of total mortality that takes place prior to spawning
-3           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom,3=logistic_normal)
+1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom,3=logistic_normal)
 0           # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##

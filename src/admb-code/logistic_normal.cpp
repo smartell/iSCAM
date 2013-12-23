@@ -387,7 +387,7 @@ void logistic_normal::aggregate_arrays()
 				m_Oa(i,k) += oo(j);
 				m_Ea(i,k) += pp(j);
 
-				if(k <=m_nNminp(i)) m_nAgeIndex(i,k) = j;
+				if(k <=m_nNminp(i)) m_nAgeIndex(i,k) = k;
 				if(k < m_nNminp(i)) k++;
 			}
 		}
@@ -437,7 +437,7 @@ void logistic_normal::correlation_matrix()
 		 	 	m_C(i)(j,k) = pow(m_rho,abs(double(j)-double(k)));
 		 	 }
 		 }
-		 m_V(i) = K * m_ C(i) * trans(K);
+		 m_V(i) = K * m_C(i) * trans(K);
 	}	
 
 }

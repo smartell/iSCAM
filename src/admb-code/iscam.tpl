@@ -1085,10 +1085,12 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		empirical weight-at-age data, then calculate selectivity based on 
 		mean length.
 
-		TODO: Add a mirror option.
+		TODO: Add a mirror option.  If(!active(selpar(j)) then mirror.
 	*/
 
 	int i,j,k,byr,bpar;
+	int kgear;
+	int nSelectivityType;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -1107,28 +1109,45 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		dvector ia(1,age_nodes(j));
 		byr = 1;
 		bpar = 0;
-		switch(isel_type(j))
+
+		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		if(sel_phz(j) < 0)
+		{
+			//cout<<"Need to add mirror"<<endl;
+			kgear = abs(sel_phz(j));
+			cout<<"gear = "<<j<<" gear mirror = "<<kgear<<endl;
+			nSelectivityType = abs(isel_type(kgear));
+			//exit(1);
+		}
+		else
+		{
+			kgear = j;
+			nSelectivityType = isel_type(j);
+		}
+
+		switch( nSelectivityType )
 		{
 			case 1:
 				// logistic selectivity for case 1 or 6
 				for(i=syr; i<=nyr; i++)
 				{
-					if( i == sel_blocks(j,byr) )
+					if( i == sel_blocks(kgear,byr) )
 					{
 						bpar ++;
-						if( byr < n_sel_blocks(j) ) byr++;
+						if( byr < n_sel_blocks(kgear) ) byr++;
 					}
 
-					p1 = mfexp(sel_par(j,bpar,1));
-					p2 = mfexp(sel_par(j,bpar,2));
+					p1 = mfexp(sel_par(kgear,bpar,1));
+					p2 = mfexp(sel_par(kgear,bpar,2));
 					log_sel(j)(i) = log( my_plogis(age,p1,p2)+tiny );
 				}
 				break;
 			
 			case 6:
 				// logistic selectivity for case 1 or 6
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
+				p1 = mfexp(sel_par(kgear,1,1));
+				p2 = mfexp(sel_par(kgear,1,2));
 				for(i=syr; i<=nyr; i++)
 				{
 					log_sel(j)(i) = log( plogis(age,p1,p2) );
@@ -1139,14 +1158,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				// age-specific selectivity coefficients
 				for(i=syr; i<=nyr; i++)
 				{
-					if( i == sel_blocks(j,byr) )
+					if( i == sel_blocks(kgear,byr) )
 					{
 						bpar ++;
-						if( byr < n_sel_blocks(j) ) byr++;
+						if( byr < n_sel_blocks(kgear) ) byr++;
 					}
 					for(k=sage;k<=nage-1;k++)
 					{
-						log_sel(j)(i)(k)   = sel_par(j)(bpar)(k-sage+1);
+						log_sel(j)(i)(k)   = sel_par(kgear)(bpar)(k-sage+1);
 					}
 					log_sel(j)(i,nage) = log_sel(j)(i,nage-1);
 				}
@@ -1157,11 +1176,11 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				// log_sel(j)(syr)=cubic_spline( sel_par(j)(1) );
 				for(i=syr; i<nyr; i++)
 				{
-					if( i==sel_blocks(j,byr) )
+					if( i==sel_blocks(kgear,byr) )
 					{
 						bpar ++;	
-						log_sel(j)(i)=cubic_spline( sel_par(j)(bpar) );
-						if( byr < n_sel_blocks(j) ) byr++;
+						log_sel(j)(i)=cubic_spline( sel_par(kgear)(bpar) );
+						if( byr < n_sel_blocks(kgear) ) byr++;
 					}
 					log_sel(j)(i+1) = log_sel(j)(i);
 				}
@@ -1171,7 +1190,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				// time-varying cubic spline every year
 				for(i=syr; i<=nyr; i++)
 				{
-					log_sel(j)(i) = cubic_spline(sel_par(j)(i-syr+1));
+					log_sel(j)(i) = cubic_spline(sel_par(kgear)(i-syr+1));
 				}
 				
 				//jlog_sel(j) = cubic_spline(sel_par(j)(1));
@@ -1184,10 +1203,10 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				
 			case 5:		
 				// time-varying bicubic spline
-				ia.fill_seqadd( 0,1./(age_nodes(j)-1) );
-				iy.fill_seqadd( 0,1./(yr_nodes(j)-1) );
+				ia.fill_seqadd( 0,1./(age_nodes(kgear)-1) );
+				iy.fill_seqadd( 0,1./(yr_nodes(kgear)-1) );
 				// bicubic_spline function is located in stats.cxx library
-				bicubic_spline( iy,ia,sel_par(j),tmp2 );
+				bicubic_spline( iy,ia,sel_par(kgear),tmp2 );
 				log_sel(j) = tmp2; 
 				break;
 				
@@ -1196,8 +1215,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				// CHANGED This is not working and should not be used. (May 5, 2011)
 				// SJDM:  I was not able to get this to run very well.
 				// AUG 5, CHANGED so it no longer has the random walk component.
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
+				p1 = mfexp(sel_par(kgear,1,1));
+				p2 = mfexp(sel_par(kgear,1,2));
 				
 				for(i = syr; i<=nyr; i++)
 				{
@@ -1210,9 +1229,9 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				//Alternative time-varying selectivity based on weight 
 				//deviations (wt_dev) wt_dev is a matrix(syr,nyr+1,sage,nage)
 				//p3 is the coefficient that describes variation in log_sel.
-				p1 = mfexp(sel_par(j,1,1));
-				p2 = mfexp(sel_par(j,1,2));
-				p3 = sel_par(j,1,3);
+				p1 = mfexp(sel_par(kgear,1,1));
+				p2 = mfexp(sel_par(kgear,1,2));
+				p3 = sel_par(kgear,1,3);
 				
 				for(i=syr; i<=nyr; i++)
 				{
@@ -1225,13 +1244,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				//logistic selectivity based on mean length-at-age				
 				for(i=syr; i<=nyr; i++)
 				{
-					if( i == sel_blocks(j,byr) )
+					if( i == sel_blocks(kgear,byr) )
 					{
 						bpar ++;
-						if( byr < n_sel_blocks(j) ) byr++;
+						if( byr < n_sel_blocks(kgear) ) byr++;
 					}
-					p1 = mfexp(sel_par(j,bpar,1));
-					p2 = mfexp(sel_par(j,bpar,2));
+					p1 = mfexp(sel_par(kgear,bpar,1));
+					p2 = mfexp(sel_par(kgear,bpar,2));
 
 					dvector len = pow(wt_obs(i)/a,1./b);
 
@@ -1245,14 +1264,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				//based on cubic spline interpolation
 				for(i=syr; i<=nyr; i++)
 				{
-					if( i == sel_blocks(j,byr) )
+					if( i == sel_blocks(kgear,byr) )
 					{
 						bpar ++;
-						if( byr < n_sel_blocks(j) ) byr++;
+						if( byr < n_sel_blocks(kgear) ) byr++;
 					}
 				
 					dvector len = pow(wt_obs(i)/a,1./b);
-					log_sel(j)(i)=cubic_spline( sel_par(j)(bpar), len );
+					log_sel(j)(i)=cubic_spline( sel_par(kgear)(bpar), len );
 				}
 				break;
 				
