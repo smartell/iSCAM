@@ -1084,6 +1084,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		allometric relationship w_a = a*l_a^b; to get mean length-at-age from
 		empirical weight-at-age data, then calculate selectivity based on 
 		mean length.
+
+		TODO: Add a mirror option.
 	*/
 
 	int i,j,k,byr,bpar;
