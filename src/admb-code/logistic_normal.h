@@ -19,13 +19,16 @@ private:
 	int         m_y2;				///> index for last year 
 	int         m_Y;    			///> total number of years (rows)
 
+	double m_eps;                   ///> small constant to add to proportions.
 	double m_dMinimumProportion;	///> smallest proportion for aggregation.
 
 
 	dvariable   m_nll;				///> negative loglikelihood
-	dvariable   m_sig2;				///> variance weighting parameter
+	dvariable   m_sig2;				///> variance weighting parameter.
+	dvariable   m_sig;              ///> stdev weighting parameter.
 	dvariable   m_rho;				///> correlation coefficient.
 
+	ivector     m_nB2;				///> integer vector for # of rows in ragged O & E.
 	ivector     m_nNminp;			///> index for aggregated proportions
 	dvector     m_dWy;				///> relative weight for each year.
 
@@ -44,16 +47,27 @@ private:
 	dvar_matrix m_Ez;         		///> Lostitic transform for residual calculations.
 	dvar_matrix m_Ea;				///> Aggregated matrix for tail compression and zeros
 
-	dvar_matrix m_residual;			///> residuals.
+	dmatrix m_residual;			    ///> residuals.
 	dvar_matrix m_w;        		///> Residual relative to O_{By}
+	dvar_matrix m_s;				///> Residual based on multivariate normal.
 	dvar_matrix m_covar;
 	dvar_matrix m_Vmat;
 	dvar_matrix m_Vinv;
 
-	dvar3_array m_V;				///> Covariance matrix
+	dvar3_array m_V;				///> Covariance matrix for likelihood
 	dvar3_array m_C;				///> Correlation matrix
+	d3_array    m_S;				///> Covariance matrix for std residuals
 
 	dvariable calc_sigma_mle();
+	void add_constant(const double& eps);
+	void aggregate_and_compress_arrays();
+	
+	void compute_relative_weights();
+	void compute_residual_arrays();
+	void compute_covariance_arrays();
+	void compute_mle_sigma();
+	void compute_negative_loglikelihood();
+	void compute_standardized_residuals();
 	void aggregate_arrays();
 	void correlation_matrix();
 	dvar_matrix calc_covmat(const dvariable& sig2,const int& n);
@@ -63,16 +77,24 @@ public:
 	~logistic_normal();
 	logistic_normal();
 	logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
+	logistic_normal(const dmatrix& _O,const dvar_matrix _E,
+                    const double _minProportion,const double& eps=0);
 
 	/* data */
 	dvariable nll(const dvariable& sig2);
-	dvariable negative_loglikelihood(const dvariable& tau2);
-	dvariable negative_loglikelihood();
+	// dvariable negative_loglikelihood(const dvariable& tau2);
+	// dvariable negative_loglikelihood();
 	dvar_matrix standardized_residuals();
 
 
 	/* setters */
 	void set_MinimumProportion(double &p) {m_dMinimumProportion = p;}
+
+	/* getters */
+	dvariable get_nll()       { return(m_nll);      }
+	dmatrix   get_residuals() { return(m_residual); }
+	double get_sig2()         { return(value(m_sig2)); }
+	double get_sig()          { return(value(m_sig));  }
 };
 
 

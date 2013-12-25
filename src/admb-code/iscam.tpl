@@ -752,7 +752,7 @@ PARAMETER_SECTION
 	//!! for(int i=1;i<=npar;i++) theta(i)=theta_ival(i);
 	
 	//Selectivity parameters (A very complicated ragged array)
-	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
+	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-10.,10.,sel_phz);
 	LOC_CALCS
 		//initial values for logistic selectivity parameters
 		//set phase to -1 for fixed selectivity.
@@ -827,7 +827,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
-	init_bounded_vector log_age_tau2(1,na_gears,0.001,100,3);
+	init_bounded_vector log_age_tau2(1,na_gears,0.001,100,-3);
 	!! log_age_tau2 = -log(0.5);
 
 	objective_function_value f;
@@ -1114,18 +1114,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		// based on the absolute value of sel_phz.
 		if(sel_phz(j) < 0)
 		{
-			//cout<<"Need to add mirror"<<endl;
 			kgear = abs(sel_phz(j));
-			cout<<"gear = "<<j<<" gear mirror = "<<kgear<<endl;
-			nSelectivityType = abs(isel_type(kgear));
-			//exit(1);
 		}
 		else
 		{
 			kgear = j;
-			nSelectivityType = isel_type(j);
 		}
 
+		nSelectivityType = isel_type(kgear);
 		switch( nSelectivityType )
 		{
 			case 1:
@@ -1190,7 +1186,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				// time-varying cubic spline every year
 				for(i=syr; i<=nyr; i++)
 				{
-					log_sel(j)(i) = cubic_spline(sel_par(kgear)(i-syr+1));
+					log_sel(j)(i) = cubic_spline( sel_par(kgear)(i-syr+1) );
 				}
 				
 				//jlog_sel(j) = cubic_spline(sel_par(j)(1));
@@ -1895,13 +1891,18 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
 				case 3:
-					logistic_normal cLN_Age(O,P);
-					cLN_Age.set_MinimumProportion(cntrl(6));
-					nlvec(3,k)  = cLN_Age.nll(atau2(k));
-					//nlvec(3,k)  = cLN_Age.negative_loglikelihood(atau2(k));
-					//nlvec(3,k)  = cLN_Age.negative_loglikelihood();
-					nu          = cLN_Age.standardized_residuals();
-					age_tau2(k) = value(atau2(k));
+					logistic_normal cLN_Age(O,P,cntrl(6));
+					nlvec(3,k)  = cLN_Age.get_nll();
+					nu          = cLN_Age.get_residuals();
+					age_tau2(k) = cLN_Age.get_sig2();
+					
+
+					//logistic_normal cLN_Age(O,P);
+					//cLN_Age.set_MinimumProportion(cntrl(6));
+					//nlvec(3,k)  = cLN_Age.nll(atau2(k));
+					//nu          = cLN_Age.standardized_residuals();
+					//age_tau2(k) = value(atau2(k));
+
 				break;
 
 			}
@@ -1972,7 +1973,7 @@ FUNCTION calc_objective_function
 	
 	// CONSTRAINT FOR SELECTIVITY DEV VECTORS
 	// Ensure vector of sel_par sums to 0. (i.e., a dev_vector)
-	// TODO for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
+	// CHANGED for isel_type==2 ensure mean 0 as well (ie. a dev_vector)
 	
 	for(k=1;k<=ngear;k++)
 	{
@@ -1992,7 +1993,8 @@ FUNCTION calc_objective_function
 					lvec(1)+=10000.0*s*s;
 				}
 			}
-			if( isel_type(k)==4 ||
+			if( isel_type(k)==2 ||
+			    isel_type(k)==4 ||
 			 	isel_type(k)==3 || 
 				isel_type(k)==12 )
 			{
@@ -3702,7 +3704,7 @@ FUNCTION void projection_model(const double& tac);
 
 TOP_OF_MAIN_SECTION
 	time(&start);
-	arrmblsize = 50000000;
+	arrmblsize = 200000000;
 	gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7);
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
