@@ -922,8 +922,9 @@ PROCEDURE_SECTION
 	calcSurveyObservations();
 	
 	calcStockRecruitment();
-	
+
 	calc_objective_function();
+
 
 	sd_depletion=sbt(nyr)/sbo;
 	
@@ -1615,7 +1616,6 @@ FUNCTION calcSurveyObservations
 	//survey abudance index residuals
 	epsilon.initialize();
 	pit.initialize();
-	
 	for(i=1;i<=nit;i++)
 	{	
 		int nx=0;		//counter for retrospective analysis
@@ -1891,11 +1891,11 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
 				case 3:
-					logistic_normal cLN_Age(O,P,cntrl(6));
+					logistic_normal cLN_Age(O,P,cntrl(6),1.e-6);
+					
 					nlvec(3,k)  = cLN_Age.get_nll();
 					nu          = cLN_Age.get_residuals();
 					age_tau2(k) = cLN_Age.get_sig2();
-					
 
 					//logistic_normal cLN_Age(O,P);
 					//cLN_Age.set_MinimumProportion(cntrl(6));

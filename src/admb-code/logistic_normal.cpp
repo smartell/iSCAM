@@ -112,8 +112,8 @@ logistic_normal::~logistic_normal()
 logistic_normal::logistic_normal()
 {}
 
-logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix _E,
-                                 const double _minProportion,const double& eps)
+logistic_normal::logistic_normal(const dmatrix _O,const dvar_matrix _E,
+                                 const double _minProportion,const double eps)
 : m_O(_O), m_E(_E), m_eps(eps), m_dMinimumProportion(_minProportion)
 {
 	m_y1 = m_O.rowmin();
@@ -129,6 +129,7 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix _E,
 	{
 		// add constant
 		add_constant(eps);
+
 	}
 	else if( eps == 0.0 )
 	{
@@ -136,27 +137,26 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix _E,
 		aggregate_and_compress_arrays();
 	}
 
-	adtimer gprof;
+	
 	
 
 	// 3). Compute relative weights
 	compute_relative_weights();
-	cout<<"A\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
+	// cout<<"A\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
 	// 4). Compute residual arrays
 	compute_residual_arrays();
 
 	// 5). Compute vector of covariance arrays for each year.
 	compute_covariance_arrays();
-	cout<<"B\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
+	// cout<<"B\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
 	// 6). Compute the conditional mle of sigma.
 	compute_mle_sigma();
-
 	// 7). Compute negative loglikelihood.
 	compute_negative_loglikelihood();
-	cout<<"C\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
+	// cout<<"C\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
 	// 8). Compute standardized residuals.
 	compute_standardized_residuals();
-	cout<<"D\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
+	// cout<<"D\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
 }
 
 
@@ -250,9 +250,15 @@ void logistic_normal::compute_mle_sigma()
 	{
 		double wt = m_dWy(i) * m_dWy(i);
 		SS       += ( m_w(i) * inv(m_V(i)) * m_w(i) ) / wt;
+		// SS       += ( m_w(i) * m_w(i) ) / wt;
+		cout<<inv(m_V(i))<<endl;
+		exit(1);
 	}
 	m_sig2 = SS/sum(m_nB2-1);
 	m_sig  = pow(m_sig2,0.5);
+
+	cout<<m_sig<<endl;
+	exit(1);
 }
 
 
@@ -267,43 +273,55 @@ void logistic_normal::compute_mle_sigma()
 **/
 void logistic_normal::compute_covariance_arrays()
 {
+	cout<<"Start "<<m_gprof.get_elapsed_time_and_reset()<<endl;
 	// V_y = K C K'   (Eq. A3 in Francis paper)
+	// G_y = F'H^{-1} VH^{-1} F; (Eq. A7 in Francis paper)
+
 	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
 	m_V.initialize();
+	m_S.allocate(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
+	m_S.initialize();
+	// int maxN = max(m_nB2);
+	// dmatrix I = identity_matrix(1,maxN-1);
 
 	int i,j,k,nb;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		nb = m_nB2(i);
 		dmatrix tK(1,nb,1,nb-1);
+		dmatrix tF(1,nb,1,nb-1);
+		dmatrix J(1,nb,1,nb);
+		J              = 1;
 		dmatrix I      = identity_matrix(1,nb-1);
-		tK.sub(1,nb-1) = I;
+		tK.sub(1,nb-1) = I.sub(1,nb-1);
+		tF.sub(1,nb-1) = I.sub(1,nb-1);
 		tK(nb)         = -1;
+		tF(nb)         = 1;
+		dmatrix Hinv   = inv(I + 1);
+		dmatrix FHinv  = tF * Hinv;
 		dmatrix K      = trans(tK);
 		dmatrix C      = identity_matrix(1,nb);
 		
-		m_V(i) = K * C * tK;         	// Eq. A3 		
+		m_V(i) = K * C * tK;         	// Eq. A3
+		m_S(i) = FHinv * value(m_V(i)) * trans(FHinv);  		
 	}
 
-	// G_y = F'H^{-1} VH^{-1} F; (Eq. A7 in Francis paper)
-	m_S.allocate(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
-	m_S.initialize();
 
-	for( i = m_y1; i <= m_y2; i++ )
-	{
-		nb            = m_nB2(i);
-		dmatrix tF(1,nb,1,nb-1);
-		dmatrix J(1,nb,1,nb);
-		dmatrix I     = identity_matrix(1,nb-1);
-		J             = 1;
-		tF.sub(1,nb-1)= I;
-		tF(nb)        = 1;
+	// for( i = m_y1; i <= m_y2; i++ )
+	// {
+	// 	nb            = m_nB2(i);
+	// 	dmatrix tF(1,nb,1,nb-1);
+	// 	dmatrix J(1,nb,1,nb);
+	// 	dmatrix I     = identity_matrix(1,nb-1);
+	// 	J             = 1;
+	// 	tF.sub(1,nb-1)= I;
+	// 	tF(nb)        = 1;
 		
-		dmatrix Hinv  = inv(I + 1);
-		dmatrix FHinv = tF * Hinv;
-		m_S(i)        = FHinv * value(m_V(i)) * trans(FHinv); 
-	}
-
+	// 	dmatrix Hinv  = inv(I + 1);
+	// 	dmatrix FHinv = tF * Hinv;
+	// 	m_S(i)        = FHinv * value(m_V(i)) * trans(FHinv); 
+	// }
+	cout<<"End "<<m_gprof.get_elapsed_time()<<endl;
 }
 
 
@@ -357,6 +375,7 @@ void logistic_normal::add_constant(const double& eps)
 	m_Ep.allocate(m_E);
 	m_nB2.allocate(m_y1,m_y2);
 	m_nB2 = m_Op.colmax();
+	m_nAgeIndex.allocate(m_y1,m_y2,m_b1,m_nB2);
 
 	for( i = m_y1; i <= m_y2; i++ )
 	{
@@ -365,6 +384,8 @@ void logistic_normal::add_constant(const double& eps)
 
 		m_E(i)  = m_E(i) + eps;
 		m_Ep(i) = m_E(i) / sum(m_E(i));
+
+		m_nAgeIndex(i).fill_seqadd(m_b1,1);
 	}
 }
 

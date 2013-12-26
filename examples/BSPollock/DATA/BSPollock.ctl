@@ -66,10 +66,10 @@
 ##          1 - normal prior density for log(q)                              ##
 ##          2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
-1                   # -number of surveys (nits)
-0                   # -prior type (see legend above)
-0                   # -prior log(mean)
-0                   # -prior sd
+4                   # -set this equal to the number of surveys (nits)
+0  0  0  0          # -prior type (see legend above)
+0  0  0  0          # -prior log(mean)
+0  0  0  0          # -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 

@@ -53,7 +53,7 @@ private:
 	dvar_matrix m_covar;
 	dvar_matrix m_Vmat;
 	dvar_matrix m_Vinv;
-
+	adtimer m_gprof;
 	dvar3_array m_V;				///> Covariance matrix for likelihood
 	dvar3_array m_C;				///> Correlation matrix
 	d3_array    m_S;				///> Covariance matrix for std residuals
@@ -77,8 +77,8 @@ public:
 	~logistic_normal();
 	logistic_normal();
 	logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
-	logistic_normal(const dmatrix& _O,const dvar_matrix _E,
-                    const double _minProportion,const double& eps=0);
+	logistic_normal(const dmatrix _O,const dvar_matrix _E,
+                    const double _minProportion,const double eps=0);
 
 	/* data */
 	dvariable nll(const dvariable& sig2);
