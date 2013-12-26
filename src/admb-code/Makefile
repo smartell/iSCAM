@@ -8,7 +8,7 @@ ifndef DISK
 endif
 
 default:
-	admb -s iscam logistic_normal.cpp
+	admb iscam logistic_normal.cpp
 	cp iscam ${DISK}/debug
 
 opt:

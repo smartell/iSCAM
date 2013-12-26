@@ -136,26 +136,27 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix _E,
 		aggregate_and_compress_arrays();
 	}
 
+	adtimer gprof;
 	
 
 	// 3). Compute relative weights
 	compute_relative_weights();
-
+	cout<<"A\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
 	// 4). Compute residual arrays
 	compute_residual_arrays();
 
 	// 5). Compute vector of covariance arrays for each year.
 	compute_covariance_arrays();
-
+	cout<<"B\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
 	// 6). Compute the conditional mle of sigma.
 	compute_mle_sigma();
 
 	// 7). Compute negative loglikelihood.
 	compute_negative_loglikelihood();
-
+	cout<<"C\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
 	// 8). Compute standardized residuals.
 	compute_standardized_residuals();
-	// cout<<"Here I am "<<endl;
+	cout<<"D\t"<<gprof.get_elapsed_time_and_reset()<<endl;;
 }
 
 
