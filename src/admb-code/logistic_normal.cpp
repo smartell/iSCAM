@@ -69,7 +69,7 @@ Descrition:
 	
 
 	—————————————————————————————————————————————————————————————————————————————————————
-	PSUEDOCODE FOR IMPLEMENTATION
+	PSUEDOCODE FOR IMPLEMENTATION OF THE NEGATIVE LOG-LIKELIHOOD
 	—————————————————————————————————————————————————————————————————————————————————————
 	1). In the constructor, suppress 0s using:
 		a) add a constant and renormalize the rows of _O and _E.
@@ -137,39 +137,136 @@ logistic_normal::logistic_normal(const dmatrix _O,const dvar_matrix _E,
 		aggregate_and_compress_arrays();
 	}
 
-	
-	
-
-	// 3). Compute relative weights
+	// 3). Compute relative weights (m_dWy)
 	compute_relative_weights();
-	// cout<<"A\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
-	// 4). Compute residual arrays
-	compute_residual_arrays();
+	
+	// 4). Compute residual arrays (specific only to the likelihood)
+	//compute_residual_arrays();
 
 	// 5). Compute vector of covariance arrays for each year.
-	compute_covariance_arrays();
-	// cout<<"B\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
+	//compute_correlation_matrix();
+	
 	// 6). Compute the conditional mle of sigma.
-	compute_mle_sigma();
+	//compute_mle_sigma();
+
 	// 7). Compute negative loglikelihood.
-	compute_negative_loglikelihood();
-	// cout<<"C\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
+	//compute_negative_loglikelihood();
+	
 	// 8). Compute standardized residuals.
-	compute_standardized_residuals();
+	//compute_standardized_residuals();
 	// cout<<"D\t"<<m_gprof.get_elapsed_time_and_reset()<<endl;;
 }
 
+/**
+ * No autocorrelation LN1
+ * Compute negative loglikelihood:
+ *      nll  = t1 + t2 + t3 + t4 + t5 + t6; where:
+ *      bym1 = sum_y(B_y-1);
+ *      t1   = 0.5*log(2pi) * bym1;
+ *      t2   = sum_{by} log(O_{by});
+ *      t3   = log(sigma) * bym1;
+ *      t4   = 0.5*sum_y log(det(V_y))
+ *      t5   = sum_y (By-1)*log(W_y)
+ *      t6   = 0.5*sigma^{-2}* sum_y (w'_y V_y^{-1} w_y)/W_y^2
+**/
+void logistic_normal::compute_negative_loglikelihood()
+{
+	// 4). Compute residual arrays (specific only to the likelihood)
+	compute_residual_arrays();
+	// 5). Compute vector of covariance arrays for each year. (V_y)
+	compute_correlation_matrix();
 
+	// 6). Compute the conditional mle of sigma.
+	compute_mle_sigma();
+
+	// 7). Compute negative loglikelihood.
+	m_nll.initialize();
+
+	double bym1 = sum(dvector(m_nB2) - 1.);
+	double t1   = 0.5 * log(2. * PI) * bym1;
+	double t2   = sum( log(m_Op) );
+	dvariable t3   = log(m_sig) * bym1;
+	dvariable t4   = 0;
+	dvariable t5   = 0;
+	dvariable t6   = 0;
+	for(int i = m_y1; i <= m_y2; i++ )
+	{
+		// scale covariance matrix
+		for(int j = m_b1; j < m_nB2(i); j++ )
+		{
+			m_V(i)(j,j) *= m_sig2;
+		}
+		dvar_matrix Vinv = inv(m_V(i));
+
+		t4 += 0.5*log( det(m_V(i)) );
+		t5 += (m_nB2(i)-1) * log(m_dWy(i));
+		t6 += (0.5/(m_dWy(i)*m_dWy(i))) * m_w(i) * Vinv * m_w(i);
+	}
+
+	m_nll = t1 + t2 + t3 + t4 + t5 + t6;
+}
+
+
+/**
+ * Template fucntion to return the product of an array.
+**/
 template <typename T1, typename T2>
 T2 prod(T1 x, T2 count)
 {	
+	RETURN_ARRAYS_INCREMENT();
 	T2 p = x(1);
 	for(int i = 2; i <= count; i++ )
 	{
 		p *= x(i);
 	}
+	RETURN_ARRAYS_DECREMENT();
 	return(p);
 }
+
+
+
+
+
+/**
+ * Conditional maximum likelihood estimate of the variance scaler:
+ *  sigma = [{sum_y (w_y' V^{-1} w_y)/ W_y^2} / sum_y (B_y-1) ]^0.5
+ *
+ * Conditional on the covariance matrix V and the weights W_y
+**/
+void logistic_normal::compute_mle_sigma()
+{
+	int i;
+
+	dvariable SS = 0;
+	double wt2;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		wt2 = m_dWy(i) * m_dWy(i);
+		SS += ( m_w(i) * inv(m_V(i)) * m_w(i) ) / wt2;
+	}
+	m_sig2 = SS/sum(m_nB2-1);
+	m_sig  = pow(m_sig2,0.5);
+}
+
+
+/**
+ * Compute covariance array for no autocorrelation case
+ * This just sets m_V to an identity matrix + 1.
+**/
+void logistic_normal::compute_correlation_matrix()
+{
+	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
+	m_V.initialize();
+
+	int i,nb;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		nb = m_nB2(i);
+		dmatrix I = identity_matrix(m_b1,nb-1);
+		m_V(i) = 1 + I;
+	}
+}
+
 
 /**
  * Compute standardized residuals.
@@ -177,6 +274,11 @@ T2 prod(T1 x, T2 count)
 **/
 void logistic_normal::compute_standardized_residuals()
 {
+
+	// Assumed the covariance matrix (m_V) has already been calculated.
+	// when the likelihood was called.
+	
+
 	m_residual.allocate(m_O);
 	m_residual.initialize();
 
@@ -192,7 +294,17 @@ void logistic_normal::compute_standardized_residuals()
 		double gEmean = pow(prod(value(m_Ep(i)),n),1./n);
 		dvector   t2  = log(value(m_Ep(i))/gEmean);
 
-		dvector sd    = sqrt(diagonal(m_S(i)));
+		dmatrix  I = identity_matrix(m_b1,n-1);
+
+		dmatrix tF(m_b1,n,m_b1,n-1);
+		tF.sub(m_b1,n-1) = I;
+		tF(n)         = 1;
+
+		dmatrix  Hinv    = inv(I + 1);
+		dmatrix FHinv    = tF * Hinv;
+		dmatrix     G    = FHinv * value(m_V(i)) * trans(FHinv);
+		
+		dvector sd    = sqrt(diagonal(G));
 		for( j = m_b1; j <= m_nB2(i); j++ )
 		{
 			k = m_nAgeIndex(i)(j);
@@ -200,67 +312,6 @@ void logistic_normal::compute_standardized_residuals()
 		}
 	}
 }
-
-/**
- * Compute negative loglikelihood:
- *      nll  = t1 + t2 + t3 + t4 + t5 + t6; where:
- *      bym1 = sum_y(B_y-1);
- *      t1   = 0.5*log(2pi) * bym1;
- *      t2   = sum_{by} log(O_{by});
- *      t3   = log(sigma) * bym1;
- *      t4   = 0.5*sum_y log(det(V_y))
- *      t5   = sum_y (By-1)*log(W_y)
- *      t6   = 0.5*sigma^{-2}* sum_y (w'_y V_y^{-1} w_y)/W_y^2
-**/
-void logistic_normal::compute_negative_loglikelihood()
-{
-	m_nll.initialize();
-
-	double bym1 = sum(dvector(m_nB2) - 1.);
-	double t1   = 0.5 * log(2. * PI) * bym1;
-	double t2   = sum( log(m_Op) );
-	dvariable t3   = log(m_sig) * bym1;
-	dvariable t4   = 0;
-	dvariable t5   = 0;
-	dvariable t6   = 0;
-	for(int i = m_y1; i <= m_y2; i++ )
-	{
-		t4 += 0.5*log( det(m_V(i)) );
-		t5 += (m_nB2(i)-1) * log(m_dWy(i));
-		t6 += 0.5/m_sig2 * (m_w(i) * inv(m_V(i)) * m_w(i)) / (m_dWy(i)*m_dWy(i));
-	}
-
-	m_nll = t1 + t2 + t3 + t4 + t5 + t6;
-}
-
-
-
-/**
- * Conditional maximum likelihood estimate of the variance scaler:
- *  sigma = [{sum_y (w_y' V^{-1} w_y)/ W_y^2} / sum_y (B_y-1) ]^0.5
- *
- * Conditional on the covariance matrix V and the weights W_y
-**/
-void logistic_normal::compute_mle_sigma()
-{
-	int i;
-	//cout<<m_dWy<<endl;
-	dvariable SS = 0;
-	for( i = m_y1; i <= m_y2; i++ )
-	{
-		double wt = m_dWy(i) * m_dWy(i);
-		SS       += ( m_w(i) * inv(m_V(i)) * m_w(i) ) / wt;
-		// SS       += ( m_w(i) * m_w(i) ) / wt;
-		cout<<inv(m_V(i))<<endl;
-		exit(1);
-	}
-	m_sig2 = SS/sum(m_nB2-1);
-	m_sig  = pow(m_sig2,0.5);
-
-	cout<<m_sig<<endl;
-	exit(1);
-}
-
 
 /**
  * Compute the covariance arrays.
@@ -271,40 +322,40 @@ void logistic_normal::compute_mle_sigma()
 
  * Computes the V_y and S_y arrays for likleihood and residuals.
 **/
-void logistic_normal::compute_covariance_arrays()
+void logistic_normal::compute_covariance_arrays(const dvariable rho)
 {
 	cout<<"Start "<<m_gprof.get_elapsed_time_and_reset()<<endl;
 	// V_y = K C K'   (Eq. A3 in Francis paper)
 	// G_y = F'H^{-1} VH^{-1} F; (Eq. A7 in Francis paper)
 
-	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
-	m_V.initialize();
-	m_S.allocate(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
-	m_S.initialize();
-	// int maxN = max(m_nB2);
-	// dmatrix I = identity_matrix(1,maxN-1);
+	// m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
+	// m_V.initialize();
+	// m_S.allocate(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
+	// m_S.initialize();
+	// // int maxN = max(m_nB2);
+	// // dmatrix I = identity_matrix(1,maxN-1);
 
-	int i,j,k,nb;
-	for( i = m_y1; i <= m_y2; i++ )
-	{
-		nb = m_nB2(i);
-		dmatrix tK(1,nb,1,nb-1);
-		dmatrix tF(1,nb,1,nb-1);
-		dmatrix J(1,nb,1,nb);
-		J              = 1;
-		dmatrix I      = identity_matrix(1,nb-1);
-		tK.sub(1,nb-1) = I.sub(1,nb-1);
-		tF.sub(1,nb-1) = I.sub(1,nb-1);
-		tK(nb)         = -1;
-		tF(nb)         = 1;
-		dmatrix Hinv   = inv(I + 1);
-		dmatrix FHinv  = tF * Hinv;
-		dmatrix K      = trans(tK);
-		dmatrix C      = identity_matrix(1,nb);
+	// int i,j,k,nb;
+	// for( i = m_y1; i <= m_y2; i++ )
+	// {
+	// 	nb = m_nB2(i);
+	// 	dmatrix tK(1,nb,1,nb-1);
+	// 	dmatrix tF(1,nb,1,nb-1);
+	// 	dmatrix J(1,nb,1,nb);
+	// 	J              = 1;
+	// 	dmatrix I      = identity_matrix(1,nb-1);
+	// 	tK.sub(1,nb-1) = I.sub(1,nb-1);
+	// 	tF.sub(1,nb-1) = I.sub(1,nb-1);
+	// 	tK(nb)         = -1;
+	// 	tF(nb)         = 1;
+	// 	dmatrix Hinv   = inv(I + 1);
+	// 	dmatrix FHinv  = tF * Hinv;
+	// 	dmatrix K      = trans(tK);
+	// 	dmatrix C      = identity_matrix(1,nb);
 		
-		m_V(i) = K * C * tK;         	// Eq. A3
-		m_S(i) = FHinv * value(m_V(i)) * trans(FHinv);  		
-	}
+	// 	m_V(i) = K * C * tK;         	// Eq. A3
+	// 	m_S(i) = FHinv * value(m_V(i)) * trans(FHinv);  		
+	// }
 
 
 	// for( i = m_y1; i <= m_y2; i++ )
@@ -343,23 +394,20 @@ void logistic_normal::compute_relative_weights()
 **/
 void logistic_normal::compute_residual_arrays()
 {
-	m_w.allocate(m_y1,m_y2,1,m_nB2-1);
-	m_s.allocate(m_y1,m_y2,1,m_nB2);
+	m_w.allocate(m_y1,m_y2,m_b1,m_nB2-1);
+	// m_s.allocate(m_y1,m_y2,1,m_nB2);
 
 	m_w.initialize();
-	m_s.initialize();
+	// m_s.initialize();
 	int i;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		// matrix of log_residuals for likelihood.
 		int nB = m_nB2(i);
+		
 		m_w(i) = log(m_Op(i)(m_b1,nB-1)/m_Op(i,nB))
 		        -log(m_Ep(i)(m_b1,nB-1)/m_Ep(i,nB));
-
-		// matrix of log_residuals for standardized residuals.
-		// based on multivariate normal
-		m_s(i) = log(m_Op(i)) - log(m_Ep(i));
-		m_s(i) = m_s(i) - mean(m_s(i));
+		
 	}
 }
 
@@ -611,8 +659,8 @@ dvar_matrix logistic_normal::calc_KCK(const dvar_matrix& V)
 {
 	int j;
 	int n = V.colmax() - V.colmin() + 1;
-	dmatrix I=identity_matrix(1,n-1);
-	dmatrix K(1,n-1,1,n);
+	dmatrix I=identity_matrix(m_b1,n-1);
+	dmatrix K(m_b1,n-1,m_b1,n);
 	for( j = 1; j <= n-1; j++ )
 	{
 		 K.colfill(j, extract_column(I,j) );
@@ -803,7 +851,7 @@ void logistic_normal::correlation_matrix()
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		n = m_nNminp(i);
-		dmatrix I=identity_matrix(1,n-1);
+		dmatrix I=identity_matrix(m_b1,n-1);
 		dmatrix K(1,n-1,1,n);
 		for( j = 1; j <= n-1; j++ )
 		{

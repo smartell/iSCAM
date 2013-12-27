@@ -1891,18 +1891,15 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 				break;
 				case 3:
-					logistic_normal cLN_Age(O,P,cntrl(6),1.e-6);
+					// class object for the logistic normal likelihood.
+					logistic_normal cLN_Age(O,P,cntrl(6),0);
 					
 					nlvec(3,k)  = cLN_Age.get_nll();
-					nu          = cLN_Age.get_residuals();
 					age_tau2(k) = cLN_Age.get_sig2();
-
-					//logistic_normal cLN_Age(O,P);
-					//cLN_Age.set_MinimumProportion(cntrl(6));
-					//nlvec(3,k)  = cLN_Age.nll(atau2(k));
-					//nu          = cLN_Age.standardized_residuals();
-					//age_tau2(k) = value(atau2(k));
-
+					if(last_phase())
+					{
+						nu      = cLN_Age.get_residuals();
+					}
 				break;
 
 			}

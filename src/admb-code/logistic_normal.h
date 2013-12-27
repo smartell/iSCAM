@@ -56,7 +56,7 @@ private:
 	adtimer m_gprof;
 	dvar3_array m_V;				///> Covariance matrix for likelihood
 	dvar3_array m_C;				///> Correlation matrix
-	d3_array    m_S;				///> Covariance matrix for std residuals
+	// d3_array    m_S;				///> Covariance matrix for std residuals
 
 	dvariable calc_sigma_mle();
 	void add_constant(const double& eps);
@@ -64,7 +64,8 @@ private:
 	
 	void compute_relative_weights();
 	void compute_residual_arrays();
-	void compute_covariance_arrays();
+	void compute_correlation_matrix();
+	void compute_covariance_arrays(const dvariable rho);
 	void compute_mle_sigma();
 	void compute_negative_loglikelihood();
 	void compute_standardized_residuals();
@@ -91,8 +92,8 @@ public:
 	void set_MinimumProportion(double &p) {m_dMinimumProportion = p;}
 
 	/* getters */
-	dvariable get_nll()       { return(m_nll);      }
-	dmatrix   get_residuals() { return(m_residual); }
+	dvariable get_nll()       { compute_negative_loglikelihood(); return(m_nll);      }
+	dmatrix   get_residuals() { compute_standardized_residuals(); return(m_residual); }
 	double get_sig2()         { return(value(m_sig2)); }
 	double get_sig()          { return(value(m_sig));  }
 };
