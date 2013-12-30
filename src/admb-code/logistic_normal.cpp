@@ -173,16 +173,16 @@ void logistic_normal::compute_negative_loglikelihood()
 {
 	// 4). Compute residual arrays (specific only to the likelihood)
 	compute_residual_arrays();
+
 	// 5). Compute vector of covariance arrays for each year. (V_y)
 	compute_correlation_matrix();
 
 	// 6). Compute the conditional mle of sigma.
 	compute_mle_sigma();
-
 	// 7). Compute negative loglikelihood.
 	m_nll.initialize();
 
-	double bym1 = sum(dvector(m_nB2) - 1.);
+	double bym1 = sum( dvector(m_nB2-m_b1) - 1.);
 	double t1   = 0.5 * log(2. * PI) * bym1;
 	double t2   = sum( log(m_Op) );
 	dvariable t3   = log(m_sig) * bym1;
@@ -197,11 +197,18 @@ void logistic_normal::compute_negative_loglikelihood()
 			m_V(i)(j,j) *= m_sig2;
 		}
 		dvar_matrix Vinv = inv(m_V(i));
+		// cout<<m_nB2(i)-m_b1+1<<endl;
 
+		// Bug 129 in ADMB, I fixed it in the source code.
+		// cout<<"Ah hem\n"<<m_V(i)
+		// <<"\n"<<m_V(i).colmin()
+		// <<"\n"<<m_V(i).colmax()<<endl;
+		// cout<<"determinent of m_V(i)\n"<<det(m_V(i))<<endl;
 		t4 += 0.5*log( det(m_V(i)) );
-		t5 += (m_nB2(i)-1) * log(m_dWy(i));
+		t5 += (m_nB2(i)-m_b1-1) * log(m_dWy(i));
 		t6 += (0.5/(m_dWy(i)*m_dWy(i))) * m_w(i) * Vinv * m_w(i);
 	}
+
 
 	m_nll = t1 + t2 + t3 + t4 + t5 + t6;
 }
@@ -448,7 +455,7 @@ void logistic_normal::aggregate_and_compress_arrays()
 	int i;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
-		int n = 0;  // number of non-zero observations in each year
+		int n = m_b1-1;  // index for maximum column each year for ragged objects
 		for(int j = m_b1; j <= m_b2; j++ )
 		{
 			double op = m_O(i,j)/sum(m_O(i));
@@ -507,7 +514,7 @@ void logistic_normal::aggregate_and_compress_arrays()
 
 
 
-
+// THE CODE BELOW IS TO BE DEPRECATED
 
 logistic_normal::logistic_normal(const dmatrix& _O, const dvar_matrix& _E)
 : m_O(_O), m_E(_E)

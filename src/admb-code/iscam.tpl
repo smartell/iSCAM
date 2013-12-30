@@ -1895,6 +1895,7 @@ FUNCTION calc_objective_function
 					logistic_normal cLN_Age(O,P,cntrl(6),0);
 					
 					nlvec(3,k)  = cLN_Age.get_nll();
+					cout<<"Stuck Here"<<endl;
 					age_tau2(k) = cLN_Age.get_sig2();
 					if(last_phase())
 					{
