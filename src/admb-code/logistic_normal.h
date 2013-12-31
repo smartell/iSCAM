@@ -56,7 +56,9 @@ private:
 	adtimer m_gprof;
 	dvar3_array m_V;				///> Covariance matrix for likelihood
 	dvar3_array m_C;				///> Correlation matrix
-	// d3_array    m_S;				///> Covariance matrix for std residuals
+	
+
+	logistic_normal();
 
 	dvariable calc_sigma_mle();
 	void add_constant(const double& eps);
@@ -65,31 +67,30 @@ private:
 	void compute_relative_weights();
 	void compute_residual_arrays();
 	void compute_correlation_matrix();
-	void compute_covariance_arrays(const dvariable rho);
+	
 	void compute_mle_sigma();
 	void compute_negative_loglikelihood();
 	void compute_standardized_residuals();
-	void aggregate_arrays();
-	void correlation_matrix();
-	dvar_matrix calc_covmat(const dvariable& sig2,const int& n);
-	dvar_matrix calc_KCK(const dvar_matrix& V);
+	// void aggregate_arrays();
+	// void correlation_matrix();
+	// dvar_matrix calc_covmat(const dvariable& sig2,const int& n);
+	// dvar_matrix calc_KCK(const dvar_matrix& V);
 
 public:
 	~logistic_normal();
-	logistic_normal();
-	logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
+	// logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
 	logistic_normal(const dmatrix _O,const dvar_matrix _E,
                     const double _minProportion,const double eps=0);
 
 	/* data */
-	dvariable nll(const dvariable& sig2);
+	// dvariable nll(const dvariable& sig2);
 	// dvariable negative_loglikelihood(const dvariable& tau2);
 	// dvariable negative_loglikelihood();
-	dvar_matrix standardized_residuals();
+	// dvar_matrix standardized_residuals();
 
 
 	/* setters */
-	void set_MinimumProportion(double &p) {m_dMinimumProportion = p;}
+	// void set_MinimumProportion(double &p) {m_dMinimumProportion = p;}
 
 	/* getters */
 	dvariable get_nll()       { compute_negative_loglikelihood(); return(m_nll);      }
