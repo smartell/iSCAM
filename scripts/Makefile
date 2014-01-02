@@ -3,7 +3,7 @@
 # Author: Steve Martell & John Sibert
 # —————————————————————— INSTRUCTIONS ———————————————————————— #
 # 1. Set the EXEC variable to the name of the program.         #
-# 2. List additional .cpp files required by EXEC in SRCS       #
+# 2. List additional .cpp files required by EXEC in SRCS macro #
 # 3. Set the ADMB_HOME path to your distribution of ADMB.      #
 # 4. To make executables with ADMB "safe" library type: make   #
 # 5. Optimized executables type: make OPT=TRUE                 #
@@ -93,10 +93,10 @@ rules:
 	@echo LDFLAGS = $(LDFLAGS)
 
 
-# does this if no target is specified on command line
+# Some help for the naive
 help:
-	@echo No target specified.
-	@echo Usage: make target, e. g. make simple
+	@echo Set:   EXEC target to the BaseName of your tpl script.
+	@echo Usage: make <OPT=TRUE>
 	@echo        specify OPT=TRUE to build optimized version
 
 
