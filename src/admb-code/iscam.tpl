@@ -1830,7 +1830,7 @@ FUNCTION calc_objective_function
 		-6) penalized likelihood for fishery selectivities
 	*/
 	int i,j,k;
-	double o=1.e-10;
+	//double o=1.e-10;
 
 	dvar_vector lvec(1,7); 
 	lvec.initialize();
@@ -1893,7 +1893,7 @@ FUNCTION calc_objective_function
 				case 3:
 					// class object for the logistic normal likelihood.
 					// Jan 3, 2014, trying to optimize the code in logistic_normal class
-					logistic_normal cLN_Age(O,P,cntrl(6),0);
+					logistic_normal cLN_Age(&O,&P,cntrl(6),0);
 					
 					nlvec(3,k)  = cLN_Age.get_nll();
 					age_tau2(k) = cLN_Age.get_sig2();
@@ -2157,7 +2157,7 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	DEPRECATE THIS FUNCTION.  NOW DONE IN THE MSY CLASS
 	
 	*/
-	int i,j,k;
+	int j,k;
 	int nage    = max(age);
 	int sage    = min(age);
 	double  dre_df;
@@ -2177,8 +2177,8 @@ FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro,
 	lx          = pow(exp(-m),age-double(sage));
 	lx(nage)   /=(1.-exp(-m));
 	double phie = lx*fa;		// eggs per recruit
-	double so   = kap/phie;
-	double beta = (kap-1.)/(ro*phie);
+	//double so   = kap/phie;
+	//double beta = (kap-1.)/(ro*phie);
 	lambda      = ak/mean(ak);	// multiplier for fe for each gear
 	
 	
@@ -2305,8 +2305,8 @@ FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, 
 	dvector qa=elem_prod(elem_div(va,za),sa);
 	
 	double phie = lx*fa;		//eggs per recruit
-	double so = kap/phie;
-	double beta = (kap-1.)/(ro*phie);
+	//double so = kap/phie;
+	//double beta = (kap-1.)/(ro*phie);
 	
 	
 	double dlz_df = 0, dphif_df = 0;
@@ -3521,7 +3521,7 @@ FUNCTION void projection_model(const double& tac);
 	*/
 	static int runNo=0;
 	runNo ++;
-	int i,j,k;
+	int i,k;
 	int pyr = nyr+1;	//projection year.
 	
 	// --derive stock recruitment parameters

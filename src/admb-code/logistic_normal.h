@@ -79,7 +79,7 @@ private:
 public:
 	~logistic_normal();
 	// logistic_normal(const dmatrix& _O, const dvar_matrix& _E);
-	logistic_normal(const dmatrix _O,const dvar_matrix _E,
+	logistic_normal(const dmatrix *_O,const dvar_matrix *_E,
                     const double _minProportion,const double eps=0);
 
 	/* data */

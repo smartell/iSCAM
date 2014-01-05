@@ -112,9 +112,9 @@ logistic_normal::~logistic_normal()
 logistic_normal::logistic_normal()
 {}
 
-logistic_normal::logistic_normal(const dmatrix _O,const dvar_matrix _E,
+logistic_normal::logistic_normal(const dmatrix *_O,const dvar_matrix *_E,
                                  const double _minProportion,const double _eps)
-: m_O(_O), m_E(_E), m_eps(_eps), m_dMinimumProportion(_minProportion)
+: m_O(*_O), m_E(*_E), m_eps(_eps), m_dMinimumProportion(_minProportion)
 {
 	m_y1 = m_O.rowmin();
 	m_y2 = m_O.rowmax();

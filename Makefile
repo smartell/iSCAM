@@ -14,7 +14,7 @@ dist:
 	mkdir -p ${DISK}/release
 	make  --directory=./src/admb-code 
 	cp    ./src/admb-code/iscam ${DISK}/debug
-	touch ./src/admb-code/iscam.tpl
+	make  clean --directory=./src/admb-code
 	make  --directory=./src/admb-code OPT=TRUE 
 	cp    ./src/admb-code/iscam ${DISK}/release
 	cp -r ./src/r-code/ ${DISK}/R/
