@@ -99,5 +99,21 @@ public:
 	double get_sig()          { return(value(m_sig));  }
 };
 
+/**
+ * Template fucntion to return the product of an array.
+**/
+template <typename T1, typename T2>
+T2 prod(T1 x, T2 count)
+{	
+	RETURN_ARRAYS_INCREMENT();
+	int lb = x.indexmin();
+	T2 p = x(lb);
+	for(int i = lb+1; i <= count; i++ )
+	{
+		p *= x(i);
+	}
+	RETURN_ARRAYS_DECREMENT();
+	return(p);
+}
 
 #endif

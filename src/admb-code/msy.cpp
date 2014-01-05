@@ -204,7 +204,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		   approaches zero (TOL).
 		
 	*/
-	int i;
+	// int i;
 	int n = size_count(fe);
 	int iter =1;
 	ak             = ak/sum(ak);
@@ -267,7 +267,7 @@ void Msy::calc_equilibrium(dvector& fe)
 	*/
 	
 	// Indexes for dimensions
-	int i,j,k;
+	int j,k;
 	int sage,nage,ngear;
 	sage  = m_wa.indexmin();
 	nage  = m_wa.indexmax();

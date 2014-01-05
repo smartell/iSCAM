@@ -39,11 +39,11 @@ RM=rm -f
 # make the "safe" version by default
 # to make "the optimized" version, type  `make OPT=TRUE
 ifeq ($(OPT),TRUE)
-  CC_OPT = -O3 -DOPT_LIB
+  CC_OPT = -O3 -Wall -DOPT_LIB
   LDFLAGS = -O3 
   LDLIBS  = $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a
 else
-  CC_OPT = -O3 -DSAFE_ALL
+  CC_OPT = -O3 -Wall -DSAFE_ALL
   LDFLAGS = -O3 -g
   LDLIBS  = $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a
 endif

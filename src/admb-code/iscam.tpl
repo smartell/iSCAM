@@ -1137,7 +1137,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 					p1 = mfexp(sel_par(kgear,bpar,1));
 					p2 = mfexp(sel_par(kgear,bpar,2));
-					log_sel(j)(i) = log( my_plogis(age,p1,p2)+tiny );
+					log_sel(j)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
 				}
 				break;
 			
@@ -1147,7 +1147,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				p2 = mfexp(sel_par(kgear,1,2));
 				for(i=syr; i<=nyr; i++)
 				{
-					log_sel(j)(i) = log( plogis(age,p1,p2) );
+					log_sel(j)(i) = log( plogis<dvar_vector>(age,p1,p2) );
 				}
 				break;
 				
@@ -1233,7 +1233,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 				for(i=syr; i<=nyr; i++)
 				{
 					tmp2(i) = p3*wt_dev(i);
-					log_sel(j)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
+					log_sel(j)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
 				}
 				break;
 				
@@ -1251,7 +1251,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 					dvector len = pow(wt_obs(i)/a,1./b);
 
-					log_sel(j)(i) = log( plogis(dvector(len),p1,p2) );
+					log_sel(j)(i) = log( plogis<dvar_vector>(dvector(len),p1,p2) );
 					// COUT(exp(log_sel(j)(i)- log(mean(exp(log_sel(j)(i))))) );
 				}
 				break;
@@ -1892,10 +1892,10 @@ FUNCTION calc_objective_function
 				break;
 				case 3:
 					// class object for the logistic normal likelihood.
+					// Jan 3, 2014, trying to optimize the code in logistic_normal class
 					logistic_normal cLN_Age(O,P,cntrl(6),0);
 					
 					nlvec(3,k)  = cLN_Age.get_nll();
-					cout<<"Stuck Here"<<endl;
 					age_tau2(k) = cLN_Age.get_sig2();
 					if(last_phase())
 					{
@@ -3723,7 +3723,7 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	// #include <contrib.h>
+	#include <contrib.h>
 	// #include <statsLib.h>
 	#include "msy.cpp"
 	#include "logistic_normal.h"
@@ -3775,7 +3775,8 @@ GLOBALS_SECTION
   	if( scale<=0 ) 
   	{
   		cerr<<"Standard deviation is less than or equal to zero in "
-  		"plogis( const dvar_vector& x, const dvariable& location, const dvariable& scale )\n";
+  		"plogis( const dvar_vector& x, const dvariable& location, "
+  		        "const dvariable& scale )\n";
   		return 0;
   	}
   	typedef typename AccumulationTraits<T1>::AccT AccT;
@@ -3843,7 +3844,7 @@ GLOBALS_SECTION
 	#else
 	  int nvar1=initial_params::nvarcalc(); // get the number of active parameters
 	#endif
-	  int nvar;
+	  int nvar = 0;
 	  
 	  pifs_psave= new
 	    uistream((char*)(ad_comm::adprogram_name + adstring(".psv")));
