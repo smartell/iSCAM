@@ -73,6 +73,8 @@ $(EXEC): $(OBJS)
 # Build the cpp file from the tpl
 $(EXEC).cpp: $(TPLS)
 	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
+	gsed -i '/friend class model_parameters;/ a\
+    \ \ friend class OperatingModel;' $(EXEC).htp
 
 
 

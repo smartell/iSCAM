@@ -1589,7 +1589,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
 						p1 = mfexp(sel_par(k,bpar,1));
 						p2 = mfexp(sel_par(k,bpar,2));
-						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny );
+						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
 					}
 					break;
 				
@@ -1598,7 +1598,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					p2 = mfexp(sel_par(k,1,2));
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = log( plogis(age,p1,p2) );
+						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2) );
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
 					}
 					break;
@@ -1672,7 +1672,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i=syr; i<=nyr; i++)
 					{
 						tmp2(i) = p3*d3_wt_dev(ig)(i);
-						log_sel(k)(ig)(i) = log( plogis(age,p1,p2)+tiny ) + tmp2(i);
+						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
 					}
 					break;
 					
@@ -1689,7 +1689,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 
-						log_sel(k)(ig)(i) = log( plogis(len,p1,p2) );
+						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
 					}
 					break;
 					
@@ -2537,6 +2537,9 @@ FUNCTION calcObjectiveFunction
 				break;
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),d_iscamCntrl(6));
+				break;
+				case 3:
+					// insert logistic normal liklihood here.
 				break;
 			}
 			
@@ -4776,6 +4779,7 @@ GLOBALS_SECTION
 	#include "baranov.h"
 	#include "OpMod.h"
 	#include "Selex.h"
+	#include "logistic_normal.h"
 
 	ivector getIndex(dvector& a, dvector& b)
 	{
