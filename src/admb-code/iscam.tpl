@@ -736,6 +736,8 @@ DATA_SECTION
 	
 INITIALIZATION_SECTION
  theta theta_ival;
+ phi1  0.50;
+ phi2  0.00;
 	
 PARAMETER_SECTION
 	//Leading parameters
@@ -827,8 +829,13 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
-	init_bounded_vector log_age_tau2(1,na_gears,0.001,100,-3);
-	!! log_age_tau2 = -log(0.5);
+	// Correlation coefficients for age composition
+	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,2);
+	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,2);
+
+
+	//init_bounded_vector log_age_tau2(1,na_gears,0.001,100,-3);
+	//!! log_age_tau2 = -log(0.5);
 
 	objective_function_value f;
     
@@ -926,7 +933,9 @@ PROCEDURE_SECTION
 	calc_objective_function();
 
 
+
 	sd_depletion=sbt(nyr)/sbo;
+	
 	
 	if(mc_phase())
 	{
@@ -1862,7 +1871,7 @@ FUNCTION calc_objective_function
 	
 	
 	//3) likelihood for age-composition data
-	dvar_vector atau2 = 1./exp(log_age_tau2);
+	// dvar_vector atau2 = 1./exp(log_age_tau2);
 	for(k=1;k<=na_gears;k++)
 	{	
 		if(na_nobs(k)>0){
@@ -1893,13 +1902,27 @@ FUNCTION calc_objective_function
 				case 3:
 					// class object for the logistic normal likelihood.
 					// Jan 3, 2014, trying to optimize the code in logistic_normal class
+					
 					logistic_normal cLN_Age(&O,&P,cntrl(6),0);
 					
-					nlvec(3,k)  = cLN_Age.get_nll();
-					age_tau2(k) = cLN_Age.get_sig2();
+					if( !active(phi1(k)) )                      // LN1 Model
+					{
+						nlvec(3,k)  = cLN_Age();	
+					}
+					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
+					{
+						nlvec(3,k)   = cLN_Age(phi1(k));	
+					}
+					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
+					{
+						nlvec(3,k)   = cLN_Age(phi1(k),phi2(k));	
+					}
+
+					// Residual
 					if(last_phase())
 					{
-						nu      = cLN_Age.get_residuals();
+						nu          = cLN_Age.get_residuals();
+						age_tau2(k) = cLN_Age.get_sig2();
 					}
 				break;
 

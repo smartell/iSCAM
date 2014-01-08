@@ -90,7 +90,7 @@
     RETURN_ARRAYS_INCREMENT();
     dvar_vector rho(1,kk-1);
     for(int i=1;i<=kk-1;i++)
-      rho(i)= pow(phi1,i);
+      rho(i)= pow(phi1,i);  // horrible parameterization. phi1 easily becomes nan
     RETURN_ARRAYS_DECREMENT();   
     return(rho);
   }

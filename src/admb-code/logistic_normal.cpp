@@ -114,11 +114,11 @@ logistic_normal::logistic_normal()
 
 logistic_normal::logistic_normal(const dmatrix *_O,const dvar_matrix *_E,
                                  const double _minProportion,const double _eps)
-: m_O(*_O), m_E(*_E), m_eps(_eps), m_dMinimumProportion(_minProportion)
+: m_eps(_eps), m_dMinimumProportion(_minProportion), m_O(*_O), m_E(*_E)
 {
+	
 	m_y1 = m_O.rowmin();
 	m_y2 = m_O.rowmax();
-	m_Y  = m_y2 - m_y1 + 1;
 
 	m_b1 = m_O.colmin();
 	m_b2 = m_O.colmax();
@@ -153,7 +153,64 @@ logistic_normal::logistic_normal(const dmatrix *_O,const dvar_matrix *_E,
 }
 
 /**
- * No autocorrelation LN1
+ * No Autocorrelation LN1 model
+**/
+dvariable& logistic_normal::operator()()
+{
+	// 4). Compute residual arrays (specific only to the likelihood)
+	compute_residual_arrays();
+
+	// 5). Compute vector of covariance arrays for each year. (V_y)
+	// 6). Compute the conditional mle of sigma.
+	compute_covariance_matrix();
+
+	// 7). Compute negative loglikelihood.
+	compute_negative_loglikelihood();
+
+	return(m_nll);
+}	
+
+/**
+ * Autocorrelation LN2 model
+**/
+dvariable& logistic_normal::operator()(const dvariable& phi)
+{
+	// 4). Compute residual arrays (specific only to the likelihood)
+	compute_residual_arrays();
+
+	// 5). Compute vector of covariance arrays for each year. (V_y)
+	compute_covariance_matrix(phi);
+
+	// 6). Compute the conditional mle of sigma.
+	//compute_mle_sigma();
+
+	// 7). Compute negative loglikelihood.
+	compute_negative_loglikelihood();
+	
+	return(m_nll);
+}	
+
+/**
+ * Autocorrelation LN3 model
+**/
+dvariable& logistic_normal::operator()(const dvariable& phi, const dvariable& psi)
+{
+	// 4). Compute residual arrays (specific only to the likelihood)
+	compute_residual_arrays();
+
+	// 5). Compute vector of covariance arrays for each year. (V_y)
+	compute_covariance_matrix(phi,psi);
+
+	// 6). Compute the conditional mle of sigma.
+	//compute_mle_sigma();
+
+	// 7). Compute negative loglikelihood.
+	compute_negative_loglikelihood();
+	
+	return(m_nll);
+}
+
+/**
  * Compute negative loglikelihood:
  *      nll  = t1 + t2 + t3 + t4 + t5 + t6; where:
  *      bym1 = sum_y(B_y-1);
@@ -166,15 +223,7 @@ logistic_normal::logistic_normal(const dmatrix *_O,const dvar_matrix *_E,
 **/
 void logistic_normal::compute_negative_loglikelihood()
 {
-	// 4). Compute residual arrays (specific only to the likelihood)
-	compute_residual_arrays();
 
-	// 5). Compute vector of covariance arrays for each year. (V_y)
-	compute_correlation_matrix();
-
-	// 6). Compute the conditional mle of sigma.
-	compute_mle_sigma();
-	// 7). Compute negative loglikelihood.
 	m_nll.initialize();
 	
 	double bym1 = sum( dvector(m_nB2-m_b1) - 1.);
@@ -186,11 +235,6 @@ void logistic_normal::compute_negative_loglikelihood()
 	dvariable t6   = 0;
 	for(int i = m_y1; i <= m_y2; i++ )
 	{
-		// scale covariance matrix
-		for(int j = m_b1; j < m_nB2(i); j++ )
-		{
-			m_V(i)(j,j) *= m_sig2;
-		}
 		dvar_matrix Vinv = inv(m_V(i));
 
 		t4 += 0.5*log( det(m_V(i)) );
@@ -215,37 +259,194 @@ void logistic_normal::compute_negative_loglikelihood()
  *
  * Conditional on the covariance matrix V and the weights W_y
 **/
-void logistic_normal::compute_mle_sigma()
+void logistic_normal::compute_mle_sigma(const dvar3_array& dCor)
 {
 	int i;
 
-	dvariable SS = 0;
+	dvariable SS = 0.0;
 	double wt2;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		wt2 = m_dWy(i) * m_dWy(i);
-		SS += ( m_w(i) * inv(m_V(i)) * m_w(i) ) / wt2;
+		SS += ( m_w(i) * inv(dCor(i)) * m_w(i) ) / wt2;
 	}
-	m_sig2 = SS/sum(m_nB2-1);
+
+	m_sig2 = SS/sum(m_nB2-m_b1);
 	m_sig  = pow(m_sig2,0.5);
 }
 
 
 /**
- * Compute covariance array for no autocorrelation case
+ * Compute covariance array (m_V) for no autocorrelation case
  * This just sets m_V to an identity matrix + 1.
+ *
+ * SJDM.  Appears to be working fine if eps = 0.
+ *        If eps > 0, can have a larges m_sig2 depending on value of eps.
 **/
-void logistic_normal::compute_correlation_matrix()
+void logistic_normal::compute_covariance_matrix()
 {
 	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
 	m_V.initialize();
-
+	
 	int i,nb;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		nb = m_nB2(i);
 		dmatrix I = identity_matrix(m_b1,nb-1);
 		m_V(i) = 1 + I;
+	}
+
+	// compute mle estimate of sigma
+	compute_mle_sigma(m_V);
+	
+	// scale covariance matrix
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		for(int j = m_b1; j < m_nB2(i); j++ )
+		{
+			m_V(i)(j,j) *= m_sig2;
+		}
+	}
+	
+}
+
+/**
+ * Compute the covvariance array for AR1 case
+ * This is based on the parameter rho.
+ * This is done in two steps:
+ * 1) fist calculate the correlation matrix dCor given phi
+ * 2) Get the mle estimate of m_sig2 given the correlation.
+**/
+void logistic_normal::compute_covariance_matrix(const dvariable& phi)
+{
+	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
+	m_V.initialize();
+
+	dvar3_array dCor(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
+	dCor.initialize();
+
+	int i,j,k,nb;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		nb = m_nB2(i);
+		dCor(i) = identity_matrix(m_b1,nb);
+
+		// 2). Compute the vector of coefficients.
+		dvar_vector drho(m_b1,nb);
+		for( j = m_b1; j <= nb; j++ )
+		{
+			drho(j) = pow(phi,j-m_b1+1);
+		}
+		
+		// 3). Compute correlation matrix dCor
+		for( j = m_b1; j <= nb; j++ )
+		{
+			for( k = m_b1; k <= nb; k++ )
+			{
+				if( j != k ) dCor(i)(j,k) = drho(m_b1+abs(j-k));
+			}
+		}
+		m_V(i) = trans(trans(dCor(i).sub(m_b1,nb-1)).sub(m_b1,nb-1));
+	}
+		
+	// compute mle estimate of sigma
+	compute_mle_sigma(m_V);
+	// cout<<"Got to here sigma = "<<m_sig<<endl;
+
+
+	for( i = m_y1; i <= m_y2; i++ )
+	{	
+		nb = m_nB2(i);
+		for( j = m_b1; j <= nb; j++ )
+		{
+			dCor(i).rowfill(j, extract_row(dCor(i),j)*m_sig );
+		}
+		for( k = m_b1; k <= nb; k++ )
+		{
+			dCor(i).colfill(k, extract_column(dCor(i),k)*m_sig );
+		}
+		//cout<<dCor(i)<<endl;
+
+		// Kmat
+		dmatrix I = identity_matrix(m_b1,nb-1);
+		dmatrix tKmat(m_b1,nb,m_b1,nb-1);
+		tKmat.sub(m_b1,nb-1) = I;
+		tKmat(nb) = -1;
+		dmatrix Kmat = trans(tKmat);
+		m_V(i) = Kmat * dCor(i) * tKmat;
+	}
+}
+
+/**
+ * Compute the covvariance array for AR2 case
+ * This is based on the parameters rho and psi.
+ * Note that phi1 is bounded (-1,1)
+ * Then set  phi2 = -1 + (1 + |phi1|)*psi
+ * and psi is bounded (0,1)
+ * This implies the upper bound for phi2 is 1.0 when |phi1|= 1 and psi = 1
+**/
+void logistic_normal::compute_covariance_matrix(const dvariable& phi1, const dvariable& psi)
+{
+	m_V.allocate(m_y1,m_y2,m_b1,m_nB2-1,m_b1,m_nB2-1);
+	m_V.initialize();
+
+	dvar3_array dCor(m_y1,m_y2,m_b1,m_nB2,m_b1,m_nB2);
+	dCor.initialize();
+
+	int i,j,k,nb;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		nb = m_nB2(i);
+		// dmatrix I = identity_matrix(m_b1,nb-1);
+		// m_V(i) = I;
+		dCor(i) = identity_matrix(m_b1,nb);
+
+		// 2). Compute the vector of coefficients.
+		dvariable phi2 = -1. + (1. + sfabs(phi1)) * psi;
+		dvar_vector drho(m_b1-1,nb-1);
+		
+		drho = 1.0;
+		drho(m_b1) = phi1 / (1.0 - phi2);
+		for( j = m_b1+1; j <= nb-1; j++ )
+		{
+			drho(j) = phi1*drho(j-1) + phi2*drho(j-2);
+		}
+
+		// 3). Compute correlation matrix m_V
+		for( j = m_b1; j < nb; j++ )
+		{
+			for( k = m_b1; k < nb; k++ )
+			{
+				//if( j != k ) m_V(i)(j,k) = drho(m_b1+abs(j-k));
+				if( j != k ) dCor(i)(j,k) = drho(m_b1+abs(j-k));
+			}
+		}
+		m_V(i) = trans(trans(dCor(i).sub(m_b1,nb-1)).sub(m_b1,nb-1));
+	}
+
+	// compute mle estimate of sigma
+	compute_mle_sigma(m_V);
+
+	for( i = m_y1; i <= m_y2; i++ )
+	{	
+		nb = m_nB2(i);
+		for( j = m_b1; j < nb; j++ )
+		{
+			m_V(i).rowfill(j, extract_row(m_V(i),j) * m_sig );
+		}
+
+		for( k = m_b1; k < nb; k++ )
+		{
+			m_V(i).colfill(k, extract_column( m_V(i),k ) * m_sig );
+		}
+
+		// Kmat
+		dmatrix I = identity_matrix(m_b1,nb-1);
+		dmatrix tKmat(m_b1,nb,m_b1,nb-1);
+		tKmat.sub(m_b1,nb-1) = I;
+		tKmat(nb) = -1;
+		dmatrix Kmat = trans(tKmat);
+		m_V(i) = Kmat * dCor(i) * tKmat;
 	}
 }
 
@@ -260,7 +461,6 @@ void logistic_normal::compute_standardized_residuals()
 	// Assumed the covariance matrix (m_V) has already been calculated.
 	// when the likelihood was called.
 	
-
 	m_residual.allocate(m_O);
 	m_residual.initialize();
 
@@ -326,8 +526,8 @@ void logistic_normal::compute_residual_arrays()
 		// matrix of log_residuals for likelihood.
 		int nB = m_nB2(i);
 		
-		m_w(i) = log(m_Op(i)(m_b1,nB-1)/m_Op(i,nB))
-		        -log(m_Ep(i)(m_b1,nB-1)/m_Ep(i,nB));
+		m_w(i) = ( log(m_Op(i)(m_b1,nB-1)) - log(m_Op(i,nB)) )
+		        -( log(m_Ep(i)(m_b1,nB-1)) - log(m_Ep(i,nB)) );
 		
 	}
 }
