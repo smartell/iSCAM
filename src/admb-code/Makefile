@@ -1,11 +1,34 @@
-## Make file for building iSCAM
-## Author: Steven Martell
-# SRCS = msy.cpp OpMod.cpp Selex.cpp baranov.cpp
+# A Generic Makefile for ADMB programs that also includes additonal libraries.
+# Developed for Mac OSx using the clang++ compiler
+# Author: Steve Martell & John Sibert
+# —————————————————————— INSTRUCTIONS ———————————————————————— #
+# 1. Set the EXEC variable to the name of the program.         #
+# 2. List additional .cpp files required by EXEC in SRCS macro #
+# 3. Set the ADMB_HOME path to your distribution of ADMB.      #
+# 4. To make executables with ADMB "safe" library type: make   #
+# 5. Optimized executables type: make OPT=TRUE                 #
+# ———————————————————————————————————————————————————————————— #
 EXEC = iscam
-OBJS = $(EXEC).o msy.o OpMod.o Selex.o baranov.o
-SRCS = $(OBJS:.o=.cpp)  #!!!
+SRCS = $(EXEC).cpp          \
+		logistic_normal.cpp \
+		msy.cpp OpMod.cpp   \
+		Selex.cpp           \
+		baranov.cpp
+OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl
+DEPS = $(SRCS:.cpp=.depends)
 
+# Export the path to your ADMB dist directory
+export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
+
+# establish the C++ compiler (on Mac OSX use clang++)
+CC=clang
+CXX=clang++
+# and linker
+LL = $(CC)
+LD = $(CXX)
+# Remove macro
+RM=rm -f
 
 # identify some extra file name suffixes
 .SUFFIXES: .tpl .cpp .o .obj
@@ -13,69 +36,49 @@ TPLS = $(EXEC).tpl
 # tell make not to delete these intermediate targets
 .PRECIOUS: %.cpp %.o %.obj
 
-# make some special targets
-.PHONY: help info clean depend dust
+# make some special PHONY targets
+.PHONY: all help rules clean
 
-# Export the path to your ADMB dist directory
-export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
-
-
-# establish the C++ compiler
-CC=g++
-# and linker
-LL=$(CC)
-
+# set up ADMB flags and appropriate libraries
+# make the "safe" version by default
+# to make "the optimized" version, type  `make OPT=TRUE
 ifeq ($(OPT),TRUE)
-  CC_OPT = -O3 -DOPT_LIB
-  LFLAGS = $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a
+  CC_OPT = -O3 -Wall -DOPT_LIB
+  LDFLAGS = -O3 
+  LDLIBS  = $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a
 else
-  CC_OPT = -Wall -ggdb -DSAFE_ALL
-  LFLAGS = $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a
+  CC_OPT = -O3 -Wall -DSAFE_ALL
+  LDFLAGS = -O3 -g
+  LDLIBS  = $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a
 endif
 
-#CFLAGS = -c -O3 -D__GNUDOS__ -Dlinux -DSAFE_ALL -DUSE_LAPLACE -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include
-CFLAGS = -c $(CC_OPT) -D__GNUDOS__ -Dlinux -DUSE_LAPLACE -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include
+# set general compiler flags
+CXXFLAGS = $(CC_OPT) -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include
 
+# this is the default target
 all: $(EXEC)
 
-run: $(EXEC)
-	./$(EXEC)	
+# link the object file into the executable 
+$(EXEC): $(OBJS)
+	$(LD) $(LDFLAGS) -o  $@ $(OBJS) $(LDLIBS)
 
 
-$(EXEC): $(EXEC).cpp .depend $(OBJS)
-	$(LL) $(LFLAGS) -o $@ $(OBJS)
-	
+# Advanced Auto Dependency Generation
+# Check compiler options for generating phony targets (-MP -MD for clang compiler on OSX)
+%.o : %.cpp
+	$(CXX) -MP -MD -c -o $@ $< $(CXXFLAGS)
 
-depend: .depend
+-include $(OBJS:%.o=%.d)
 
-.depend: cmd = $(CC) -MM -MF depend $(var); cat depend >> .depend;
-.depend: 
-	@echo "Generating dependencies ..."
-	@$(foreach var, $(SRCS), $(cmd))
-	@rm -f depend
-
--include .depend
-
-%.o: %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
-%: %.cpp
-	$(CC) $(CFLAGS) -o $@ $<
-
+# Build the cpp file from the tpl
 $(EXEC).cpp: $(TPLS)
-	@echo ------ Making tpl2cpp: $(TPLS)    ------
 	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
-	gsed -i '/friend class model_parameters;/ a\
-    \ \ friend class OperatingModel;' $(EXEC).htp
 
 
 
+clean: 
+	$(RM) $(OBJS) $(EXEC).cpp
 
-
-help:
-	@echo No target specified.
-	@echo Usage: make target, e. g. make simple
-	@echo        specify OPT=TRUE to build optimized version
 
 # generate some information about what your are doing
 rules:
@@ -86,18 +89,19 @@ rules:
 	@echo OPT = $(OPT)
 	@echo CC_OPT = $(CC_OPT)
 	@echo PWD = $(PWD)
-	@echo OSTYPE = $(OSTYPE)
-	@echo OS     = $(OS)
 	@echo ADMB_HOME = $(ADMB_HOME)
 	@echo CC = $(CC)
 	$(CC) --version
-	@echo LL = $(LL)
-	@echo CFLAGS = $(CFLAGS)
-	@echo LFLAGS = $(LFLAGS)
+	@echo LD = $(LD)
+	@echo CXXFLAGS = $(CXXFLAGS)
+	@echo LDFLAGS = $(LDFLAGS)
 
-clean:
-	rm -f $(EXEC).[bcehlps]* $(EXEC) $(OBJS) 
 
-dust: 
-	rm -f *.r* *.p0* *.b* *.cor *.b0* *.eva *.std *.par *.log
+# Some help for the naive
+help:
+	@echo Set:   EXEC target to the BaseName of your tpl script.
+	@echo Usage: make <OPT=TRUE>
+	@echo        specify OPT=TRUE to build optimized version
+
+
 
