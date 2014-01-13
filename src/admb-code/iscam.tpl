@@ -516,6 +516,21 @@ DATA_SECTION
 		theta_prior=ivector(column(theta_control,5));
 	END_CALCS
 	
+
+	// ***************************************************
+	// ** Read control parameters for composition data
+	// ***************************************************
+	// nCompIndex
+	init_ivector nCompIndex(1,na_gears);
+	init_ivector nCompLikelihood(1,na_gears);
+	init_vector  dMinP(1,na_gears);
+	init_vector  dEps(1,na_gears);
+	init_ivector nPhz_phi1(1,na_gears);
+	init_ivector nPhz_phi2(1,na_gears);
+	init_int check;
+	!! if(check != -12345) {cout<<"Error reading composition controls\n"<<endl; exit(1);}
+
+
 	
 	// ***************************************************
 	// ** Read selectivity parameter options
@@ -527,6 +542,9 @@ DATA_SECTION
 	// type 5 = bicubic spline with age_nodes adn yr_nodes
 	// type 6 = fixed logistic by turning sel_phz to (-ve)
 	// type 7 = logistic (3pars) as a function of body weight.
+	// type 8 = logistic with weight deviations (3 parameters)                    
+	// type 11 = logistic selectivity with 2 parameters based on mean length      
+	// type 12 = length-based selectivity coefficients with spline interpolation  
 	init_matrix selex_controls(1,10,1,ngear);
 	!! COUT(selex_controls);
 
@@ -830,8 +848,8 @@ PARAMETER_SECTION
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	// Correlation coefficients for age composition
-	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,-2);
-	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,-2);
+	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,nPhz_phi1);
+	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,nPhz_phi2);
 
 
 
@@ -1892,19 +1910,22 @@ FUNCTION calc_objective_function
 			nu.initialize();
 			
 			//CHANGED add a switch statement here to choose form of the likelihood
-			switch(int(cntrl(14)))
+			//switch(int(cntrl(14)))
+			switch(nCompLikelihood(k))
 			{
 				case 1:
-					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
+					//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),cntrl(6));
+					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 2:
-					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
+					//nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
+					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
 					// class object for the logistic normal likelihood.
 					// Jan 3, 2014, trying to optimize the code in logistic_normal class
 					
-					logistic_normal cLN_Age(&O,&P,cntrl(6),0);
+					logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
 					
 					if( !active(phi1(k)) )                      // LN1 Model
 					{
