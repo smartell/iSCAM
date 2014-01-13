@@ -22,13 +22,13 @@
 // CHANGED add option for using empirical weight-at-age data                     //
 // TODO:    add gtg options for length based fisheries                          //
 // CHANGED add time varying natural mortality rate with splines                  //
-// TODO:    add cubic spline interpolation for time varying M                   //
+// DONE:    add cubic spline interpolation for time varying M                   //
 // CHANGED  Fix the type 6 selectivity implementation. not working.              //
 // TODO:  fix cubic spline selectivity for only years when data avail            //
 // CHANGED: fixed a bug in the simulation model log_ft_pars goes out             //
 //        of bounds.                                                             //
 // TODO: write a projection routine and verify equilibrium calcs                 //
-// TODO: add DIC calculation for MCMC routines (in -mcveal phase)                //
+// FIXED: add DIC calculation for MCMC routines (in -mcveal phase)                //
 // CHANGED: add SOK fishery a) egg fishing mort 2) bycatch for closed ponds      //
 //                                                                               //
 //                                                                               //
@@ -690,7 +690,7 @@ DATA_SECTION
 	// 	nsim_sel_blocks = ivector(sim_ctrl(3));
 	// END_CALCS
 	// init_imatrix sim_sel_blocks(1,ngear,1,nsim_sel_blocks);
-	// // TODO modify calcSelectivities to include sim_sel_blocks.
+	// // DONE modify calcSelectivities to include sim_sel_blocks.
 
 	init_int eofc;
 	LOC_CALCS
