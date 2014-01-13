@@ -85,8 +85,8 @@
 //--                                                                           --//
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
-//-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
-//--              - Should probably use a separate simulation control file.    --//               
+//-- TODO: - add logistic_normal likelihood options to the control file        --//
+//--       - need phase switch for phi1 and phi2 for each gear with comp data  --//
 //--                                                                           --//
 //--                                                                           --//
 //--                                                                           --//
@@ -830,8 +830,9 @@ PARAMETER_SECTION
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	// Correlation coefficients for age composition
-	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,2);
-	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,2);
+	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,-2);
+	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,-2);
+
 
 
 	//init_bounded_vector log_age_tau2(1,na_gears,0.001,100,-3);
@@ -890,7 +891,6 @@ PARAMETER_SECTION
 	
 	3darray log_sel(1,ngear,syr,nyr,sage,nage);		//selectivity coefficients for each gear type.
 	3darray Chat(1,ngear,syr,nyr,sage,nage);		//predicted catch-at-age
-	
 	sdreport_number sd_depletion;	
 	
 PRELIMINARY_CALCS_SECTION
@@ -907,6 +907,7 @@ PRELIMINARY_CALCS_SECTION
     simulationModel(rseed);
   }
   if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
+
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,200,500,25000,25000
@@ -931,7 +932,7 @@ PROCEDURE_SECTION
 	calcStockRecruitment();
 
 	calc_objective_function();
-
+	
 
 
 	sd_depletion=sbt(nyr)/sbo;

@@ -8,6 +8,14 @@
 #ifndef LOGISTIC_NORMAL_H
 #define LOGISTIC_NORMAL_H
 
+class foo
+{
+	int bar;
+public:
+	foo(){bar=1;}
+	int get_bar(){return bar;}
+};
+
 class logistic_normal
 {
 private:
