@@ -24,6 +24,24 @@
    5.00         0.01  500.0     3       4       0.01    0.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
+## ------------------------------------------------------------------------- ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
+## ------------------------------------------------------------------------- ##
+## Likelihood type for each gear:
+##     -1 : multivariate logistic (dmvlogistic)
+##     -2 : multinomial, sample size based on input data
+##     -3 : logistic_normal, 3 flavors, no autocorrelation, AR1, AR2.
+## ------------------------------------------------------------------------- ##
+## Number of columns == na_gears.
+   1 						## Gear Index
+   3                        ## Likelihood type
+   0.00                     ## Minimum proportion for aggregation
+   0.00                     ## Small constant to add to comps & renormalize
+   -2                       ## phase for phi1 estimation: bounded (-1,1) AR1
+   -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
+   -12345                   ## int check (-12345)
+## ------------------------------------------------------------------------- ##
+##																			 ##
 ##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
@@ -41,15 +59,18 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-1                               # -selectivity type ivector(isel_type) for gear
-3.5                             # -Age/length at 50% selectivity (logistic)
-0.25                            # -STD at 50% selectivity (logistic)
-0								# -No. of age nodes for each gear (0=ignore)
-0								# -No. of year nodes for 2d spline(0=ignore)
--2								# -Phase of estimation (-1 for fixed)
-2.0								# -Penalty wt for 2nd differences w=1/(2*sig^2)
-3.12							# -Penalty wt for dome-shaped w=1/(2*sig^2)
+	1		        # 1  -selectivity type ivector(isel_type) for gear
+	3.5		        # 2  -Age/length at 50% selectivity (logistic)
+	0.25	        # 3  -STD at 50% selectivity (logistic)
+	7				# 4  -No. of age nodes for each gear (0=ignore)
+	12				# 5  -No. of year nodes for 2d spline(0=ignore)
+	3				# 6  -Phase of estimation (-1 for fixed)
+	12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	12.5 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+	12.5			# 9  -Penalty wt for time-varying selectivity
+	1               # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
+1965
 ##
 ##
 ##
@@ -84,6 +105,7 @@
 3	  # 12 -number of estimated nodes for deviations in natural mortality    ##
 0.0	  # 13 -fraction of total mortality that takes place prior to spawning   ##
 1     # 14 -switch for age-comp likelihood (1=dmvlogistic,2=dmultinom)       ##
+0     # 15 -switch for IFD distribution in selectivity simulations			 ##
 ##                                                                           ##
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)

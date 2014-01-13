@@ -1,0 +1,241 @@
+%!TEX root=../Selex.tex
+\section*{Methods} % (fold)
+\label{sec:methods}
+
+
+Simulated data were generated from an age-structured simulation model largely based on the 2010 Pacific hake assessment.  Simulated data were based on three alternative selectivity scenarios: (1) constant over time, (2) selectivity changes at four specific time-periods (blocks), and (3) selectivity changes continuously over time where the commercial fishery targets the most abundant cohort in each year.  First, we describe the model structure used to simulate data and estimate model parameters, followed by a description of the MSY-based reference points, and lastly the detailed description of the various scenario combinations explored.
+
+\subsection*{Model description} % (fold)
+\label{sub:model_description}
+
+A statistical catch-age model was used to both generate simulated data sets and estimate model parameters based on simulated data. These simulation-estimation experiments were based on data from the Pacific hake fishery from 1977 to 2009, using the historical catch time series from US and Canada combined and the empirical weight-at-age data from this fishery available at the time \citep{Martell2009}.  The model was written in AD Model Builder \citep{fournier2011ad} and all model code and data are available from a code repository (see CAPAM branch at \url{https://github.com/smartell/iSCAM}).
+
+Input data for the model consist of fishery removals along with age-composition information and empirical weight-at-age data from the commercial fishery.  In addition to the commercial data, a fisheries independent survey also exists and includes a relative index of abundance and age-composition information.  The actual acoustic survey for Pacific hake historically occurred every three years prior to 2001, then every two years, and since 2011 has occurred every year. For the simulation-estimation experiments we assume that fishery-independent abundance and age-composition information exist for all years.
+
+Parameters for the simulation-estimation experiments were based on the maximum likelihood estimates of the initial numbers-at-age and annual recruitment deviations from the 2010 assessment  \citep{Martell2009}. The annual relative abundance data was assumed to be proportional to the available biomass and to have log-normal measurement errors:
+\begin{equation}\label{eq:surveyIndex}
+	I_t = q e^{\sigma_1\epsilon_t - 0.5\sigma_1^2} \sum_a \nu_a N_{a,t}  W_a 
+\end{equation}
+where the random deviate is $\epsilon \sim N(0,1)$, $\sigma$ is the standard error, $\nu_a$ is the age-specific proportion that this selected by the acoustic sampling gear, $N_{a,t}$ is the numbers-at-age, and $W_a$ is the average weight-at-age.  For simplicity, the scaling parameter was fixed at $q=1$.
+
+Age-composition data for both commercial and survey samples were randomly drawn from a multivariate distribution with a probability of $p_{a,t}$ of sampling an age-$a$ fish in a given year $t$.  The age-proportion samples must sum to 1 in each year, and random samples were based on the the following:
+
+\begin{align}
+	x_{a,t} &= \ln(\hat{p}_{a,t}) + \sigma_2 \epsilon_{a,t} - \frac{1}{A}
+	\left[\sum_a \ln(\hat{p}_{a,t}) + \sigma_2 \epsilon_{a,t} \right],\nonumber \\ 
+	p_{a,t} &= \dfrac{e^{x_{a,t}}}{\sum_{a} e^{x_{a,t}} } \label{eq:ageProportion}
+\end{align}
+
+where $\epsilon_{a,t}$ is a standard random normal deviate, $\sigma_2$ is the standard error, $\hat{p}$ is the expectation of the proportion-at-age in year $t$ in the sampled catch.
+
+True parameter values used in the simulation model are listed in Table~\ref{table:simulationpars}.  Annual fishing mortality rates were conditioned on the observed catch from the Pacific hake fishery and it was assumed that both natural mortality and fishing mortality occur simultaneously.  Simulated age-specific fishing mortality rates were based on the annual age-specific selectivity which differs among three alternative simulation scenarios (see description in the Scenarios subsection).
+
+\begin{table}[!tbh]
+	\caption{Parameters used for simulation model in the integrated statistical catch-age model.}
+	\label{table:simulationpars}
+	\begin{center}
+		\begin{tabular}{l|cl}
+		\hline
+
+		\hline
+		\textbf{Description} & \textbf{Symbol} & \textbf{Value} \\
+		\hline	
+			 Unfished age-1 recruits 			& $R_o$ 	 & 3.353 \\
+			 Steepness (Beverton-Holt) 			& $h$ 		 & 0.727 \\
+			 Natural mortality rate 			& $M$		 & 0.230 \\
+			 Average age-1 recruitment			& $\bar{R}$	 & 1.300 \\
+			 Initial recruitment 				& $\dot{R}$  & 0.428 \\
+			 Survey standard deviation 	   		& $\sigma_1$ & 0.300 \\
+			 Standard deviation in recruitment	& $\sigma_R$ & 1.120 \\
+			 Age at 50\% selectivity in survey  & $\hat{a}$  & 2.500 \\
+			 Std dev. in 50\% selectivity in survey  & $\hat{g}$  & 0.500 \\
+			 Std dev. in age-sampling error          & $\sigma_2$ & 0.300\\
+		\hline
+
+		\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+
+% subsection model_description (end)
+
+\subsubsection*{Parameter estimation} % (fold)
+\label{ssub:parameter_estimation}
+Model parameters were estimated using maximum likelihood methods where the objective function includes additional penalties to constrain the shape of the selectivity curve and how much it is allowed to vary over time (Table \ref{tab:likelihoods}). There are 6 major components to the objective function that is being minimized: (1) the likelihood of the observed catch \eqref{eq:L1.1}, (2) the likelihood of the relative abundance index \eqref{eq:L1.2}, (3) the likelihood of the age-composition information \eqref{eq:L1.3}, (4) the likelihood of the stock-recruitment estimates given the values of steepness and unfished age-1 recruits \eqref{eq:L1.4}, (5) prior densities in negative log space for estimated model parameters\eqref{eq:L1.5}, and (6) penalties and constraints for selectivity coefficients \eqref{eq:L1.6}.  
+\begin{table}[!tbh]
+	\tableEq
+	\caption{Calculations for the various components of the objective function ($f(\Theta)$) that is being minimized in the integrated statistical catch age model.}\label{tab:likelihoods}
+	\begin{align}
+		\hline \nonumber\\
+		&\mbox{Residuals}\nonumber\\
+		w_t&= \ln(\hat{C}_t) - \ln(C_t)\label{eq:T1.1}\\
+		z_t&= \ln(I_t) - \ln(B_t) - \frac{1}{I}\sum_{t\in I}\left[\ln(I_t) - \ln(B_t)\right]\label{eq:T1.2}\\
+		\eta_{t,a}&= \ln(\hat{p}_{a,t}) - \ln(p_{a,t})
+				 - \frac{1}{A}\sum_{a=1}^A [\ln(\hat{p}_{a,t}) - \ln(p_{a,t})]
+				 \label{eq:T1.3}\\
+		%
+		\delta_t &= \ln(N_{1,t}) - \ln(f(R_o,h,B_{t-1})) \quad
+		\mbox{for $t > 1$}\label{eq:T1.4}\\[1ex]
+		% 
+		&\mbox{Negative loglikelihoods}\nonumber\\
+		\ell(C)& = T [\ln(\sigma_C) + 0.5\ln(2 \pi) ] +\sum_{t=1}^T
+		\frac{w_t^2}{2\sigma_C^2} \label{eq:L1.1}\\
+		% 
+		\ell(I)& = I[\ln(\sigma_1) + 0.5\ln(2 \pi) ] + \sum_{t \in I}
+		\frac{z_t^2}{2\sigma_C^2} \label{eq:L1.2} \\
+		% 
+		\ell(P)& = (A-1)T \ln\left(\frac{1}{(A-1)T}\sum_{a\in p_{a,t}} 
+		\sum_{t\in p_{a,t}} \eta_{t,a}^2 \right)\label{eq:L1.3} \\
+		% 
+		\ell(R)& = (T-1)[\ln(\sigma_R) + 0.5\ln(2 \pi) ] + \sum_{t =2}^T
+		\frac{\delta_t^2}{2\sigma_R^2} \label{eq:L1.4} \\
+		% 
+		{p}(\Theta) & = R_o \propto U(-5,15) + h\propto \beta(3,2)
+			+ \bar{R} \propto U(-5,15) +\dot{R} \propto U(-5,15)
+			\label{eq:L1.5}\\
+		% 
+		\mathrm{P} & = \phantom{+} \lambda^{(1)}_k \sum_{a=3}^{A-1}(v_{a,t}-2v_{a-1,t} + v_{a-2,t})^2
+		\nonumber\\
+		\phantom{P} & \phantom{=}+ \lambda^{(2)}\sum_{A=1}^{A-1}
+		\begin{cases}
+			(v_{a,t}-v_{a+1,t})^2\quad \mbox{if}\quad v_{a,t} > v_{a+1,t}\\
+			0\phantom{ (v_{a,t}-v_{a+1,t})} \quad \mbox{if} \quad v_{a,t} \leq v_{a+1,t}
+		\end{cases}\nonumber\\
+		\phantom{P} & \phantom{=}+ \lambda_k^{(3)} \sum_{t-3}^T
+		(v_{a,t}-2v_{a,t-1} + v_{a,t-2})^2
+		 \label{eq:L1.6}\\[1ex]
+		% 
+		&\mbox{Objective function}\nonumber\\
+		f(\Theta)& = \ell(C) + \ell(I) + \ell(P) + \ell(R) +{p}(\Theta) + \mathrm{P}\\
+		\hline \nonumber
+	\end{align}
+	\normalEq
+\end{table}
+
+The observed catch data are assumed to have a lognormal error structure and the standard deviation in the residuals between observed and predicted log catch is fixed at 0.0707 for all years. The likelihood for the relative abundance data is assumed to have lognormal errors and the variance of the residuals is an estimated parameter.  Note that the conditional maximum likelihood estimate for $q$ is used in the likelihood calculation \citep{walters1994calculation}, and we use a weak informative prior of $\ln(q) \sim N(0,0.75)$ for the derived value of $q$ in our simulation studies to stabilize the scaling parameters in Monte Carlo trials.  Tests with this weak informative prior and a uniform prior on the true Pacific hake data yielded very similar MLE estimates.
+
+The likelihood for age-composition information collected from commercial fisheries and the fisheries independent survey was assumed to come from a  multivariate logistic distribution, and these data were weighted by the conditional maximum likelihood of the variance.  Residual difference between observed ($\hat{p}_{a,t}$) and predicted ($p_{a,t}$) age-proportions were calculated using \eqref{eq:T1.3} with the constraint that $\sum_a \eta_{a,t} = 0$.  The advantage of this approach over a multinomial likelihood with a fixed effective sample size, is that the age-composition data are scaled by assigning all additional lack of fit to process error, and therefore weighted consistent with the model structure \citep{schnute1995influence}. An important point to note about the calculation of the age-composition residuals in \eqref{eq:T1.3} is that the function is undefined if $\hat{p}_{a,t}=0$.  The addition of a small constant to both the observed and predicted proportions seems like a reasonable solution; however, in cases where year-classes are extremely weak and only partially selected by the fishing gear, the assumed value of the constant can influence the overall result.  To avoid this problem, we alter the definition of an age-class in years where the observed proportion-at-age is 0 and pool this cohort into the adjacent age-class.  In our simulation testing, this grouping of age classes was much more robust for parameter estimation and did not appear to produce any significant biases in comparison to methods that add a small constant.  Similar results were also obtained by \cite{richards1997visualizing}, but in their simulation studies they explored pooling adjacent year classes if the observed proportion was less than 2\%.  For the case of Pacific hake, recruitment variation is sufficiently large that a weak year class following a strong year class could artificially be treated as two strong year classes. 
+
+Annual age-1 recruitment was estimated via a mean recruitment value and a vector of deviates that were constrained to sum to 0.  The integrated statistical catch age-model also jointly estimates the parameters of the resulting stock recruitment relationship given estimates of annual age-1 recruits and the  spawning stock biomass.  Residual deviations between annual recruitment and recruitment based on a Beverton-Holt stock recruitment model were calculated using \eqref{eq:T1.4}, and the unfished age-1 recruits ($R_o$) and steepness parameters ($h$) were jointly estimated based on the negative log likelihood \eqref{eq:L1.4}.  The variance parameter for recruitment deviations $\sigma_R^2$ was based on the 2007 stock assessment \citep{helser2007stock}.
+
+Uniform priors were assumed for all the estimated parameters with the exception of an informative beta distribution for the steepness parameter in the interval 0.2--1.0, and informative priors for the variance parameters.  The expected value for the steepness prior was set at 0.6 with a standard deviation of 0.161.  For the variance parameters, we adopted a variance partitioning approach for estimating observation and process error variance. The estimated quantities consist of the total precision $\varphi^2$ and the proportion of the total variance that is associated with the observation errors $\rho$ and the total variance is partitioned as:  
+
+\begin{align}
+	\sigma^2_1 &= \rho/\varphi^2 \nonumber \\
+	\sigma^2_R   &= (1-\rho)/\varphi^2 \label{eq:variance}
+\end{align}
+The advantage of this approach over estimating $\sigma_1^2$ and $\sigma_R^2$ directly is increased numerical stability.  For the total precision an informative Gamma distribution was used as the prior $\varphi^2 \sim \Gamma(14.87,20.0)$ and a beta prior for the variance ratio $\rho \sim \beta(5.76,80.34)$. 
+
+A likelihood penalty for the selectivity parameters is defined in \eqref{eq:L1.6}.  Note that in \eqref{eq:L1.6} there are three terms, the first of which is a penalty on the second differences between the age-specific coefficients to ensure a smooth pattern.  The second term is a penalty on the amount of dome-shaped selectivity (often necessary when jointly estimating natural mortality rates).  The third term is a second difference penalty on how age-specific coefficients vary over time.  In each case, the user must specify the relative weights ($\lambda$) for each of these penalties.   For example, and infinitely large value of $\lambda^{(3)}$ would imply that selectivity coefficients are invariant over time.  For the simulation-estimation experiment, values for $\lambda^{(1)}$ and $\lambda^{(2)}$ were set at 12.5, which corresponds to a coefficient of variation of roughly 0.20.  The value of $\lambda^{(3)}$ was set at 1.0, which is equivalent to a CV of 0.71 and allows for a lot of variability in selectivity at a given age over time.
+
+
+% 	1.6         -5.0    15       3       1       1.6    0.50    #log_ro/msy 
+% 	0.65        0.2     1.0      4       3       3       2      #steepness/fmsy
+%    -1.469676   -5.0    0.0     -2       1       -1.469  0.015   #log.m
+% 	1.2         -5.0    15       1       0       -5.0    15     #log_avgrec
+% 	1.40        -5.0    15       1       0       -5.0    15     #log_recinit
+% 	0.03090235  0.001   0.999   -3       3       5.00    20.0   #rho
+% #	0.75        0.01    10.00    5       4       7.725587    10.0   #kappa (precision)
+% 	0.7725587   0.01    10.00   -5       4       15.45117    20.0   #kappa (precision)
+
+% subsubsection parameter_estimation (end)
+
+
+
+
+
+\subsection*{Reference points} % (fold)
+\label{sub:reference_points}
+Reference points based on long-term maximum sustainable yield (MSY-based reference points) were calculated assuming steady-state conditions.  It was assumed that removals from the fishery independent survey were negligible.  The fishing mortality rate that produced the maximum sustainable yield was determined by setting the derivative of the catch equation to 0 and solving for $F_{\rm{MSY}}$.  MSY was subsequently determined by calculating the steady-state catch using $F_{\rm{MSY}}$.  Similarly, $B_{\rm{MSY}}$ was determined by calculating the steady-state spawning biomass under a fishing mortality rate of $F_{\rm{MSY}}$. Detailed descriptions of the steady state calculations for MSY-based reference points can be found in \cite{Martell2008pam}.
+
+ All MSY-based reference points were based on the estimated selectivity value in the terminal year of the assessment.  In cases where selectivity is assumed to remain constant over time, the estimated MSY-based reference points vary with minor updates to population parameters as the time series increases in length.  However, in cases where selectivity is assumed to vary over time, MSY-based reference points become highly uncertain as the uncertainty in selectivity in the terminal year is a function of how much selectivity is allowed to vary.
+
+
+% subsection reference_points (end)
+
+\subsection*{Scenarios} % (fold)
+\label{sub:scenarios}
+% Some stuff from earlier:
+% For each simulated data set, four alternative assessment models using different assumptions about selectivity were taking into consideration.  Initial numbers-at-age and annual recruitment deviates were fixed at the maximum likelihood estimates in all simulations; the only difference between simulations are the observation errors. 
+
+
+
+Three alternative datasets were generated with the simulation model using: (1) fixed length-based selectivity based on an asymptotic logistic function and observed length-at-age data from commercial samples, (2) four discrete time blocks where the same asymptotic length-based function changes in 1986, 1999, and 2001, and (3) continuous changes in selectivity each year where the fishery targets cohorts based on Ideal Free Distribution (IFD).  We refer to these as scenario (1), scenario (2) and scenario (3), throughout the text.  For simulations (1) and (3) the length-at-50\% vulnerability for the logistic function was set at 40 cm and a standard deviation of 1.5.  For the discrete time blocks, the length-at-50\% vulnerability ($L_{50}$) was set at 45, 40, 50 and 40 cm for each of the four blocks, respectively.  The standard deviations in $L_{50}$ were fixed at 2.5, 1.9, 2.5, and 3.0 cm, respectively.  For the IFD selectivity model, the age-specific selectivity coefficients were based on age-specific biomass that is vulnerable to the fishing gear.  Given a vector of selectivity coefficients $v_a$ (based on the same length-based logistic function used in the other scenarios), the age-specific selectivity coefficients each year were based on the relative biomass-at-age $b_a$ in a given year, and rescaled such that the mean of the vector is equal to 0 in log-space:
+\begin{equation}\label{eq:ifsSelex}
+	\omega_a = \ln(v_a) + 0.25\ln(b_a) - 
+	\frac{1}{A}\sum_{a=1}^A \left[ \ln(v_a) + 0.25\ln(b_a)\right]
+\end{equation}
+The coefficient of 0.25 is an arbitrary scaling of the biomass-at-age that would relate price premiums to larger size fish.  The larger the price premium the less dome-shaped the selectivity curve would be because there is a financial incentive to target larger more valuable fish that are less abundant.  In any case, the unique feature of \eqref{eq:ifsSelex} is that it allows for modal and multi-modal selectivity curves based on the relative abundance of each cohort (Figure \ref{fig:simSelex}).
+
+\begin{figure}[!tbh]
+	\begin{center}
+		\includegraphics[width=0.37\textwidth]{../FIGS/fig:simSelex1.png}
+		\hspace{-1.25cm}
+		\includegraphics[width=0.37\textwidth]{../FIGS/fig:simSelex2.png}
+		\hspace{-1.25cm}
+		\includegraphics[width=0.37\textwidth]{../FIGS/fig:simSelex3.png}
+	\end{center}
+	\caption{True selectivity curves used to generate simulated data sets for scenario 1 (left), scenario 2 (middle), scenario 3 (right).}
+	\label{fig:simSelex}
+\end{figure}
+
+Four alternative selectivity states were assumed in the assessment model (denoted by the letters a-d).  For the fixed scenario, model (a), the probability of catching an individual of a given length was assumed to be constant over time.  Length-based selectivity was based on estimating seven equally spaced selectivity coefficients (or knots) starting at the length at age-1 and ending at the length of age-15.  A cubic spline function was then used to interpolate between these knots to get the corresponding age-specific selectivity values based on the empirical length-at-age from fisheries samples.  An additional penalty was added to the objective function to ensure a smooth function and penalize  dome-shape selectivity curve; values for $\lambda^{(1)}$ and $\lambda^{(2)}$ were both set at 12.5 which is roughly equivalent to a 20\% coefficient of variation.  The resulting simulated age-based selectivities change with changes in the observed length-at-age data over time.
+
+The same selectivity penalty weights were also applied to model (b), which estimates the same seven spline knots for four time blocks, one of which is only two years in length (1999 and 2000).  In this case there are a total of 28 selectivity coefficients being estimated.  Here, we assume the timing of the discrete changes in selectivity corresponds to some known event and the years in which selectivity changes were correctly specified.  
+
+For model (c) the same penalized seven spline knots are estimated for each year based on age (not length), resulting in a total of 231 estimated age-based selectivity parameters representing 495 age-year combinations.  An additional penalty weight of $\lambda^{(3)}=1.0$ (CV=0.707) was added to the time varying selectivity option to constrain how rapidly age-specific selectivity coefficients can change over time.  Near identical results were  obtained with $\lambda^{(3)}=0.01$, but estimation convergence in Monte Carlo trials was less likely with no constraint in annual changes in selectivity due to potential confounding in the terminal year selectivity and terminal year fishing mortality rate.  Note that as $\lambda^{(3)}\rightarrow 0$, the model is analogous to a Virtual Population Analysis (VPA) where the catch-at-age data is assumed known without error.
+
+An alternative to the annual time-varying selectivity is to interpolate in 2-dimensions where a series of knots for both age and year are the estimated parameters, and the age-year selectivity coefficients are interpolated using a 2-dimensional bicubic spline.  For comparison with model (c), model (d) is based on estimating seven knots for the age-dimension and 12 knots for the time-dimension, for a total of 84 estimated selectivity coefficients.  In this case the penalty weights for smoothing, dome-shaped, and time-varying changes in age-based selectivity were the same as that used for model (c).  
+
+The model permutations and combinations are summarized in Table \ref{tab:scenarios}, along with the total number of estimated and implied parameters for each of the four assessment models.  The additional 67 implied parameters correspond to the use of conditional maximum likelihood estimates for the survey scaling parameter $q$ and 66 additional variance terms for the measurement error in the survey and commercial age-composition data.  Unless otherwise noted, figures and additional tables maintain the same layout as Table \ref{tab:scenarios} where the true states of selectivity are in the rows, and assumed states in the assessment models are represented in the columns.
+
+\begin{table}[!tbh]
+	\caption{List of model scenarios and labels associated with each scenario explored.  For example, scenario 2a is based on simulated data with a fixed selectivity curve, but assumes 3 discrete time blocks in the assessment model.}
+	\label{tab:scenarios}
+	\begin{center}
+		\begin{tabular}{r|cccc}
+		\hline
+
+		\hline
+		
+		&\multicolumn{4}{c}{\textbf{\underline{Assumed selectivity states}}}\\
+		\textbf{\textbf{\underline{True states}}}
+		&\textbf{Fixed (a)} & \textbf{Discrete (b)} & \textbf{Continuous (c)} & \textbf{Bicubic spline (d)} \\
+		\hline
+		 \textbf{Fixed (1)}      & 1a & 1b & 1c & 1d\\
+		 \textbf{Discrete (2)}   & 2a & 2b & 2c & 2d\\
+		 \textbf{Continuous (3)} & 3a & 3b & 3c & 3d\\
+		\hline
+
+		\hline
+		No. of parameters & 95 & 116 & 319 & 172\\
+		Implied parameters & 67 &67 &67 & 67 \\
+		\hline
+		Total  & 162 & 183 &  386 & 239 \\
+		\hline
+
+		\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+Taking into consideration that the appropriate structural assumption about selectivity may not be known, we examine three criteria for choosing the appropriate selectivity parameterization.  The first criterion compares how well each model configuration explains simulated data (statistical fit) based on the effective number of parameters and the  Deviance Information Criterion (DIC).  The second criterion is based on retrospective performance based on Monte Carlo trials. Finally, we examine the precision and bias of estimated reference points based on the same Monte Carlo trials.
+
+To summarize the retrospective results from Monte Carlo trials, the mean bias and mean absolute bias are calculated based on the following:
+\begin{align}
+    \mu_1   &= \frac{1}{4} \sum_{t=2005}^{2009} \frac{B_t^y-B_t^{2010}}{B_t^{2010}}\label{eq:5}\\
+    \mu_2 &= \frac{1}{4} \sum_{t=2005}^{2009}\left| \frac{B_t^y-B_t^{2010}}{B_t^{2010}}\right|, \label{eq:6}
+\end{align}
+and we use $\Omega$ to summarize both statistics as the relative distance between the mean bias (precision) and absolute bias (variance):
+\begin{equation} \label{eq:7}
+    \Omega = \sqrt{\mu_1^2 + \mu_2^2 }.	
+\end{equation}
+In the Monte Carlo trials, the model with the lowest average $\Omega$ would correspond to the least variable and least biased with respect to retrospective performance.  We also examine the mean absolute deviations of the distribution of $\mu_2$ statistics for each model run as a measure of variability in retrospective bias. % \citep{schweigert2009stock}.
+
+
+% subsection scenarios (end)
+
+
+
+% section methods (end)

@@ -1,0 +1,152 @@
+
+R version 2.15.1 (2012-06-22) -- "Roasted Marshmallows"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i386-apple-darwin9.8.0/i386 (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[R.app GUI 1.52 (6188) i386-apple-darwin9.8.0]
+
+[Workspace restored from /Users/stevenmartell1/.RData]
+[History restored from /Users/stevenmartell1/.Rhistory]
+
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+Loading required package: PBSmodelling
+Loading Tcl/Tk interface ... done
+
+PBS Modelling 2.63.229 -- Copyright (C) 2005-2010 Fisheries and Oceans Canada
+
+A complete user guide 'PBSmodelling-UG.pdf' is located at 
+ /Library/Frameworks/R.framework/Versions/2.15/Resources/library/PBSmodelling/doc/PBSmodelling-UG.pdf 
+
+Packaged on 2011-09-09 
+Pacific Biological Station, Nanaimo
+
+TRUEMSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+Error in .createWidget.image(list(ID = ".1.2.f1.1.1", env = <environment>),  : 
+  unable to open image "./logo/iscamLogo.gif" - file does not exist
+> guiView()
+FALSEError in data.frame(`Report Files` = .REPFILES, Select = TRUE) : 
+  object '.REPFILES' not found
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+TRUEMSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+Error in .createWidget.image(list(ID = ".2.2.f1.1.1", env = <environment>),  : 
+  unable to open image "./logo/iscamLogo.gif" - file does not exist
+> guiView()
+TRUEMSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Error in eval(expr, envir, enclos) : 
+  object 'iSCAMViewTracker.txt' not found
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+TRUEMSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+Error in file(file, "r") : cannot open the connection
+In addition: Warning message:
+In file(file, "r") :
+  cannot open file 'iscamWin2.txt': No such file or directory
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+TRUEMSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+Error in file(file, "r") : cannot open the connection
+In addition: Warning message:
+In file(file, "r") :
+  cannot open file 'iscamWin2.txt': No such file or directory
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+[1] ".mpdView"
+  Select Label         Description                              Control.File
+1   TRUE  Demo          Flack Lake  ../../examples/DEMO/DATA/ControlTemplate
+Error : could not find function "read.admb"
+> source('/Users/stevenmartell1/Documents/iSCAM-project/src/R/R4iSCAM.R')
+Type: 
+ guiView()
+ to start the iSCAM gui
+> guiView()
+MSG (.hCamViewSetup): Viewer tracking file  iSCAMViewTracker.txt  found.
+[1] ".mpdView"
+  Select Label         Description                              Control.File
+1   TRUE  Demo          Flack Lake  ../../examples/DEMO/DATA/ControlTemplate
+Error in file(file, "r") : cannot open the connection
+In addition: Warning message:
+In file(file, "r") :
+  cannot open file ' ../../examples/DEMO/DATA/ControlTemplate.par': No such file or directory
+> pwd
+Error: object 'pwd' not found
+> dir("../../examples/DEMO/DATA/")
+ [1] "admodel.cov"            "admodel.dep"            "admodel.hes"           
+ [4] "ControlTemplate.cor"    "ControlTemplate.ctl"    "ControlTemplate.par"   
+ [7] "ControlTemplate.proj"   "ControlTemplate.rep"    "ControlTemplate.std"   
+[10] "DataTemplate.dat"       "eigv.rpt"               "fmin.log"              
+[13] "iscam"                  "iscam.b01"              "iscam.b02"             
+[16] "iscam.b03"              "iscam.bar"              "iscam.cor"             
+[19] "iscam.eva"              "iscam.log"              "iscam.p01"             
+[22] "iscam.p02"              "iscam.p03"              "iscam.par"             
+[25] "iscam.r01"              "iscam.r02"              "iscam.r03"             
+[28] "iscam.rep"              "iscam.std"              "Makefile"              
+[31] "ProjectionTemplate.pfc" "RUN.dat"                "variance"              
+> 

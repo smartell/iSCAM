@@ -1,5 +1,5 @@
 ____
-# iSCAM (integrated Statistical Catch Age Model)
+# iSCAM (integrated Statistical Catch Age Model) using AD Model Builder
 ![iscam](https://github.com/smartell/iSCAM/tree/master/src/r-code/logo/iscamLogoSmall.png)
 iSCAM is and Integrated Statistical Catch Age Model for use in 
 fisheries stock assessment. The software was originally written by 
@@ -14,6 +14,7 @@ Steve Martell and contains contributions or stolen code and ideas from:
 * Carl Walters
 * Rob Kronlund
 * Sean Cox
+* Nathan Taylor
 _____________________________________________________________
 _____________________________________________________________
          Integrated Statistical Catch Age Model (iSCAM)
@@ -106,8 +107,8 @@ The rest of us simpletons stuck with UNIX-based systems, it just works!
       git config --global alias.ci commit
       git config --global alias.lol "log --oneline --graph"
 
-version control system resources:
-=================================
+### Version control system resources:
+
 Before using git, I would highly recommend spending some time 
 learning how to use git.  There are many online resources and
 most of them can be found at: http://git-scm.com/documentation
@@ -117,9 +118,37 @@ A video tutorial: http://www.youtube.com/watch?v=ZDR433b0HJY
 Another good [cheatsheet](http://cheat.errtheblog.com/s/git/)
 
 
+## Compiling code using Makefiles:
+There are several [GNU Makefiles](http://www.gnu.org/software/make/manual/make.html) throughout the directories in the iSCAM project that will greatly simplify recompiling the iscam code and running multiple models in parallel using the -j option in the Makefiles.
 
-Setting up a new project in fba:
-================================
+The first makefile is in the iSCAM-project root directory (shown below).  At the command line in the iSCAM-project directory, if you type make, the makefile will create a _dist_ directory and subdirectories, compile optimized and safe versions of the iSCAM.tpl file, then copy these files into the _dist/release_ and _dist/debug_ directories.
+
+
+      ## Makefile for building distribtion folder for iscam
+      ## TODO add verify target to run example models.
+      .PHONY: dist clean
+
+
+      ifndef DISK
+        DISK=dist
+      endif
+
+
+      dist:
+        mkdir -p ${DISK}/debug
+        mkdir -p ${DISK}/R
+        mkdir -p ${DISK}/release
+        make --directory=src/admb-code --file=linux.mak 
+        make --directory=src/admb-code --file=linux.mak opt
+        cp -r ./src/r-code/ ${DISK}/R/
+
+      clean:
+        make --directory=src/admb-code --file=linux.mak clean
+        rm -r dist
+
+---
+## Setting up a new project in fba:
+
 - fba is a directory (short for "full blown assessments" ) that 
   contains project folders with a specific directory structure.
   It is important to maintain this directory structure within
@@ -127,15 +156,27 @@ Setting up a new project in fba:
   relative paths for maintaining inputs and outputs to automate
   much of the running of iSCAM and its outputs.
 
-- to set up a new project, use the makeproject shell script
+- To set up a new project, use the makeproject shell script (linux or MacOSX)
   when you are inside the fba directory only.
   For example:
-    cd fba
-	./makeproject MyAssessment  
+
+        cd fba
+    	./makeproject MyAssessment  
+
   It may be necessary to change the permissions if you are 
   running MacOSX, eg: type "chmod 755 makeproject" in terminal
   at the fba directory to allow execution permissions for 
   makeproject.
+
+- The shell script will create a number of directories including _DATA_ and copy various makefiles and default control and data files that will allow you to run the default model.  If you then navigate to the _MyAssessment/DATA_ directory, you can now simply type:
+
+        make
+
+and this will copy the executable, and run the model inside the _DATA_ directory.
+
+
+
+
 
 ---
 # Contributing
@@ -176,7 +217,7 @@ Creating a branch is not strictly necessary, but it makes it easy to delete your
 
 ### Useful Commands
 
-If a lot of changes has happened upstream you can replay your local changes on top of these, this is done with `rebase`, e.g.:
+If a lot of changes have happened upstream you can replay your local changes on top of these, this is done with `rebase`, e.g.:
 
 	git fetch upstream
 	git rebase upstream/master

@@ -3,7 +3,7 @@
 ## targets:
 
 ## Macros
-SUBDIR = modelD modelE modelF
+SUBDIR = BIO Daphne
 TARGET = 
 
 .PHONY: default $(SUBDIR) mcmc
