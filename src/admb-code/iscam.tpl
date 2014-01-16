@@ -2568,6 +2568,13 @@ FUNCTION calcObjectiveFunction
 				break;
 				case 3:
 					// insert logistic normal liklihood here.
+					logistic_normal cdlogisticNormal( &O,&P,d_iscamCntrl(6) );
+					nlvec(3,k) = cdlogisticNormal();
+					if( last_phase() )
+					{
+						age_tau2(k) = cdlogisticNormal.get_sig2();
+						nu          = cdlogisticNormal.get_residuals();
+					}
 				break;
 			}
 			
