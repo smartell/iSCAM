@@ -1325,6 +1325,8 @@ PROCEDURE_SECTION
 	calcTotalCatch();
 	
 	calcAgeComposition();
+
+	calcLengthComposition();
 	
 	calcSurveyObservations();
 	
@@ -2040,6 +2042,32 @@ FUNCTION calcAgeComposition
 
   }	
 
+FUNCTION calcLengthComposition
+  {
+  	/*
+	Purpose:  This function calculates the predicted length-composition samples (B) for 
+  	          both directed commercial fisheries and survey age-composition data. For 
+  	          all years of data specified in the B matrix, calculated the predicted 
+  	          proportions-at-length in the sampled catch-at-length.  If no catch-length 
+  	          data exist for a particular year i, for gear k (i.e. no directed fishery or 
+  	          from a survey sample process that does not have an appreciable F), then 
+  	          calculate the predicted proportion based on:
+  	          							N(i) * sel(group,gear,year) * ALK(i)
+  	          where ALK is the Age-Length Transition Key.
+  	Author: Steven Martell
+
+  	Arguments:  none
+
+  	NOTES: 	To calculate the length composition, the catch-at-age vector is multiplied by
+  			an Age_length transition key.  In theory, A_hat from the calcAgeComposition 
+  			routine can be multiplied by the ALK.
+
+  	TODO List:
+  	[ ] - write this function. and Let Robyn Forrest know about it.
+  	*/
+
+
+  }
 
 FUNCTION calcTotalCatch
   {
