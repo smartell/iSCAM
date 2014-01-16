@@ -26,7 +26,10 @@
 ## Allocation for each gear in (ngear), use 0 for survey gears.              ##
 ## ------------------------------------------------------------------------- ##
 1
-##
+## m_catch_sex_comp(1,nfleet): 0 sex:aggregated, 1 or 2 for female or male.
+   0 
+## catch_type(1,ngear): 1 catch in weight, 2 catch in numbers, 3 catch in spawn
+   1 
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##

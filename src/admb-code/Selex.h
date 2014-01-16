@@ -1,3 +1,5 @@
+#include <admodel.h>
+#include "iscam.htp"
 
 
 /**
