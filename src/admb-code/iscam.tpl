@@ -593,6 +593,7 @@ DATA_SECTION
 	3darray d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_wt_dev(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_wt_mat(1,n_ags,syr,nyr+1,sage,nage);
+	3darray d3_len_age(1,n_ags,syr,nyr+1,sage,nage);
 // 	vector fa_bar(sage,nage);				//average fecundity-at-age for all years.
 // 	vector avg_fec(sage,nage);				//average fecundity-at-age
 // 	vector avg_wt(sage,nage);				//average weight-at-age
@@ -600,12 +601,15 @@ DATA_SECTION
 		d3_wt_avg.initialize();
 		d3_wt_dev.initialize();
 		d3_wt_mat.initialize();
+		d3_len_age.initialize();
+
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			for(int i=syr;i<=nyr;i++)
 			{
 				d3_wt_avg(ig)(i) = wa(ig);
 				d3_wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
+				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
 			}
 		}
 		
@@ -626,9 +630,11 @@ DATA_SECTION
 				ig                   = pntr_ags(f,g,h);
 				dvector tmp          = inp_wt_avg(i)(sage,nage);
 				ivector idx          = getIndex(age,tmp);
-				for(int ii = 1; ii <= size_count(idx); ii++ )
+				for( int ii = 1; ii <= size_count(idx); ii++ )
 				{
-					 d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+					d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+					d3_len_age(ig)(iyr)(idx(ii))= pow(d3_wt_avg(ig)(iyr)(idx(ii))
+					                                  /d_a(ig),1./d_b(ig));
 				}
 				//d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
 				d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
@@ -645,6 +651,8 @@ DATA_SECTION
 					ivector idx          = getIndex(age,tmp);
 					d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
 					d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
+					d3_len_age(ig)(iyr)(idx) = pow(d3_wt_avg(ig)(iyr)(idx)
+					                               /d_a(ig),1./d_b(ig));
 				}
 			}
 		}
@@ -656,6 +664,7 @@ DATA_SECTION
 			dWt_bar(ig)       /= pf_cntrl(4)-pf_cntrl(3)+1;
 			d3_wt_avg(ig)(nyr+1) = dWt_bar(ig);
 			d3_wt_mat(ig)(nyr+1) = elem_prod(dWt_bar(ig),ma(ig));
+			d3_len_age(ig)(nyr+1) = pow(dWt_bar(ig)/d_a(ig),1./d_b(ig));
 		}
 		
 		
@@ -2066,6 +2075,84 @@ FUNCTION calcLengthComposition
   	[ ] - write this function. and Let Robyn Forrest know about it.
   	*/
 
+  	int ii,ig,kk;
+  	dvar_vector va(sage,nage);
+  	dvar_vector fa(sage,nage);
+  	dvar_vector sa(sage,nage);
+  	dvar_vector za(sage,nage);
+  	dvar_vector ca(sage,nage);
+  	dvar_vector na(sage,nage);
+  	A_hat.initialize();
+
+  	 for(kk=1;kk<=nAgears;kk++)
+  	 {
+  	 	for(ii=1;ii<=n_A_nobs(kk);ii++)
+  	 	{
+	  		i = d3_A(kk)(ii)(n_A_sage(kk)-5);
+	  		k = d3_A(kk)(ii)(n_A_sage(kk)-4);
+	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
+	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
+	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
+	  		
+	  		// | trap for retrospecitve analysis.
+	  		if(i > nyr) continue;
+
+	  		if( h )
+	  		{
+				ig = pntr_ags(f,g,h);
+				va = mfexp(log_sel(k)(ig)(i));
+				za = Z(ig)(i);
+				sa = S(ig)(i);
+				na = N(ig)(i);
+				if( ft(ig)(k)(i)==0 )
+				{
+					ca = elem_prod(na,0.5*sa);
+				}
+				else
+				{
+					fa = ft(ig)(k)(i) * va;
+					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
+				}
+				A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
+
+				// | +group if n_A_nage(kk) < nage
+				if( n_A_nage(kk) < nage )
+				{
+					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
+				}
+	  		}
+	  		else if( !h )
+	  		{
+	  			for(h=1;h<=nsex;h++)
+	  			{
+					ig = pntr_ags(f,g,h);
+					va = mfexp(log_sel(k)(ig)(i));
+					za = Z(ig)(i);
+					sa = S(ig)(i);
+					na = N(ig)(i);
+					if( ft(ig)(k)(i)==0 )
+					{
+						ca = elem_prod(na,0.5*sa);
+					}
+					else
+					{
+						fa = ft(ig)(k)(i) * va;
+						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
+					}
+					A_hat(kk)(ii) += ca(n_A_sage(kk),n_A_nage(kk));
+
+					// | +group if n_A_nage(kk) < nage
+					if( n_A_nage(kk) < nage )
+					{
+						A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
+					}
+		  		}
+	  		}
+	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
+  	 	}
+  	}
+  	
+	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
 
   }
 
@@ -2087,7 +2174,7 @@ FUNCTION calcTotalCatch
   	    a matrix, then cbind the predicted catch and residuals for report. (ie. an R
   	    data.frame structure and use melt to ggplot for efficient plots.)
   	*/
-  	 int ii,l,ig;
+  	int ii,l,ig;
   	double d_ct;
 
   	ct.initialize();
