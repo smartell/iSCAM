@@ -25,6 +25,24 @@
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
+## ------------------------------------------------------------------------- ##
+## Likelihood type for each gear:
+##     -1 : multivariate logistic (dmvlogistic)
+##     -2 : multinomial, sample size based on input data
+##     -3 : logistic_normal, 3 flavors, no autocorrelation, AR1, AR2.
+## ------------------------------------------------------------------------- ##
+## Number of columns == na_gears.
+   1 						## Gear Index
+   3                        ## Likelihood type
+   0.00                     ## Minimum proportion for aggregation
+   0.00                     ## Small constant to add to comps & renormalize
+   -2                       ## phase for phi1 estimation: bounded (-1,1) AR1
+   -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
+   -12345                   ## int check (-12345)
+## ------------------------------------------------------------------------- ##
+##
+## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
 ##      1) logistic selectivity parameters                                   ##
@@ -73,7 +91,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

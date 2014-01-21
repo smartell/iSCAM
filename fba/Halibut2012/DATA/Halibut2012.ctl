@@ -25,6 +25,24 @@
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
+## ------------------------------------------------------------------------- ##
+## Likelihood type for each gear:
+##     -1 : multivariate logistic (dmvlogistic)
+##     -2 : multinomial, sample size based on input data
+##     -3 : logistic_normal, 3 flavors, no autocorrelation, AR1, AR2.
+## ------------------------------------------------------------------------- ##
+## Number of columns == na_gears.
+  1    1    1    1    3    3    3    3     ## Gear Index
+  3    3    3    3    3    3    3    3     ## Likelihood type
+  0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00  ## Minimum proportion for aggregation
+  0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00  ## Small constant to add to comps & renormalize
+  -2   -2   -2   -2   -2   -2   -2   -2    ## phase for phi1 estimation: bounded (-1,1) AR1
+  -2   -2   -2   -2   -2   -2   -2   -2    ## phase for phi2 estimation: bounded (0,1)  AR2 
+  -12345                                   ## int check (-12345)
+## ------------------------------------------------------------------------- ##
+##
+## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
 ##      1) logistic selectivity parameters                                   ##

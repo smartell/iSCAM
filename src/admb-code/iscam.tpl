@@ -787,6 +787,22 @@ DATA_SECTION
 	END_CALCS
 	
 	// |---------------------------------------------------------------------------------|
+	// | CONTROLS PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears                  |
+	// |---------------------------------------------------------------------------------|
+	// |
+	
+	init_ivector nCompIndex(1,nAgears);
+	init_ivector nCompLikelihood(1,nAgears);
+	init_vector  dMinP(1,nAgears);
+	init_vector  dEps(1,nAgears);
+	init_ivector nPhz_phi1(1,nAgears);
+	init_ivector nPhz_phi2(1,nAgears);
+	init_int check;
+	!! if(check != -12345) {cout<<"Error reading composition controls\n"<<endl; exit(1);}
+
+
+
+	// |---------------------------------------------------------------------------------|
 	// | CONTROLS FOR SELECTIVITY OPTIONS
 	// |---------------------------------------------------------------------------------|
 	// | - 12 different options for modelling selectivity which are summarized here:
@@ -1164,13 +1180,27 @@ PARAMETER_SECTION
 	!! int  n_m_devs = d_iscamCntrl(12);
 	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	
+
+	// |---------------------------------------------------------------------------------|
+	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
+	// |---------------------------------------------------------------------------------|
+	// | phi1 is the AR1 coefficient
+	// | phi2 used in AR2 process.
+	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
+	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
+
+	// |---------------------------------------------------------------------------------|
+	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
+	// |---------------------------------------------------------------------------------|
+	// | gamma_r: what fraction of the residual from year t-2 carries over to t-1.
+	init_bounded_number gamma_r(0,1,-4);
+	!!gamma_r = 0;
+
 	// |---------------------------------------------------------------------------------|
 	// | OBJECTIVE FUNCTION VALUE
 	// |---------------------------------------------------------------------------------|
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
-	init_bounded_number gamma_r(0,1,-4);
-	!!gamma_r = 0;
 	objective_function_value objfun;
 	
 
@@ -1358,11 +1388,7 @@ PROCEDURE_SECTION
 		mcmc_output();
 	}
 	
-	// //The following causes a linker error
-	// //duplicate symbol in libdf1b2o.a
-	// //dvariable a=3.0;
-	// //cout<<"testing gammln(dvariable)"<<gammln(a)<<endl;
-
+	if( verbose ) {cout<<"End of main function calls"<<endl;}
 
 
 FUNCTION void calcSdreportVariables()
@@ -1378,7 +1404,7 @@ FUNCTION void calcSdreportVariables()
 		
 	
 	TODO list:
-	[ ] - Calculate spawning biomass depletion for each group.
+	[] - Calculate spawning biomass depletion for each group.
 	*/
 	sd_depletion.initialize();
 
@@ -1386,7 +1412,7 @@ FUNCTION void calcSdreportVariables()
 	{
 		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
 	}
-
+	if( verbose ) { cout<<"Ok after calcSdreportVariables "<<endl;}
   }
 FUNCTION void initParameters()
   {
@@ -2438,7 +2464,7 @@ FUNCTION void calcStockRecruitment()
   	TODO list:
   	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
   	[] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
-	[ ] - Add autocorrelation in recruitment residuals with parameter \gamma_r.
+	[] - Add autocorrelation in recruitment residuals with parameter \gamma_r.
   	*/
 
   	int ig,ih;
@@ -2640,29 +2666,47 @@ FUNCTION calcObjectiveFunction
 				if(iyr<=nyr) naa++;
 			}
 			
-			dmatrix O     = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
 			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); 
 			nu.initialize();
 			
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
-			switch(int(d_iscamCntrl(14)))
+			//switch(int(d_iscamCntrl(14)))
+			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),d_iscamCntrl(6));
+					//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),d_iscamCntrl(6));
+					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 2:
-					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),d_iscamCntrl(6));
+					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
 					// insert logistic normal liklihood here.
-					logistic_normal cdlogisticNormal( &O,&P,d_iscamCntrl(6) );
-					nlvec(3,k) = cdlogisticNormal();
-					if( last_phase() )
+					logistic_normal cLN_Age( &O,&P,dMinP(k),dEps(k) );
+					
+
+					if( !active(phi1(k)) )                      // LN1 Model
 					{
-						age_tau2(k) = cdlogisticNormal.get_sig2();
-						nu          = cdlogisticNormal.get_residuals();
+						nlvec(3,k)  = cLN_Age();	
 					}
+					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
+					{
+						nlvec(3,k)   = cLN_Age(phi1(k));	
+					}
+					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
+					{
+						nlvec(3,k)   = cLN_Age(phi1(k),phi2(k));	
+					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLN_Age.get_residuals();
+						age_tau2(k) = cLN_Age.get_sig2();
+					}
+
 				break;
 			}
 			
@@ -4424,7 +4468,7 @@ REPORT_SECTION
 	// exit(1);
 	#endif
 	
-  }
+  }  // REPORT_SECTION END
 	
 // FUNCTION decision_table
 //   {
