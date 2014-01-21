@@ -1412,8 +1412,10 @@ FUNCTION void calcSdreportVariables()
 	{
 		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
 	}
-	if( verbose ) { cout<<"Ok after calcSdreportVariables "<<endl;}
+	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
+
+
 FUNCTION void initParameters()
   {
 	/*
@@ -4204,7 +4206,7 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mp
   }
 
 REPORT_SECTION
-  {
+  
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	report<<DataFile<<endl;
 	report<<ControlFile<<endl;
@@ -4468,7 +4470,7 @@ REPORT_SECTION
 	// exit(1);
 	#endif
 	
-  }  // REPORT_SECTION END
+   // REPORT_SECTION END
 	
 // FUNCTION decision_table
 //   {
