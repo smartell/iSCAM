@@ -163,6 +163,7 @@ DATA_SECTION
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	/// | Number of catch options to explore in the decision table.
 	init_int n_tac;
+	!! COUT(n_tac);
 	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
 	init_int n_pfcntrl;
