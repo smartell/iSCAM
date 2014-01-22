@@ -1366,7 +1366,7 @@ PROCEDURE_SECTION
 	
 	calcAgeComposition();
 
-	calcLengthComposition();
+	//calcLengthComposition();  // WIP: need to add variables for length comps
 	
 	calcSurveyObservations();
 	
@@ -2181,7 +2181,7 @@ FUNCTION calcLengthComposition
   	 	}
   	}
   	
-	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcLengthComposition ****"<<endl;
 
   }
 
@@ -4370,10 +4370,11 @@ REPORT_SECTION
 		// REPORT(Umsy);
 	}
 
+	cout<<"You got to the end of the report section"<<endl;
 	// |---------------------------------------------------------------------------------|
 	// | OUTPUT FOR OPERATING MODEL
 	// |---------------------------------------------------------------------------------|
-	// |
+	// | Move to final section?
 	if( last_phase() )
 	{
 		ofstream ofs("iSCAM.res");
@@ -4442,7 +4443,6 @@ REPORT_SECTION
 // 	REPORT(future_bt4);
 	
 
-	
 	if(verbose)cout<<"END of Report Section..."<<endl;
 	
 	/*IN the following, I'm renaming the report file
