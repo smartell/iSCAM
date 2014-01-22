@@ -4207,6 +4207,7 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mp
 
 REPORT_SECTION
   
+  	cout<<"You got here"<<endl;
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	report<<DataFile<<endl;
 	report<<ControlFile<<endl;
@@ -4446,29 +4447,29 @@ REPORT_SECTION
 	
 	/*IN the following, I'm renaming the report file
 	in the case where retrospective analysis is occurring*/
-	#if defined __APPLE__ || defined __linux
-	if( retro_yrs && last_phase() )
-	{
-		//adstring rep="iscam.ret"+str(retro_yrs);
-		//rename("iscam.rep",rep);
-		adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
-		system(copyrep);
-	}
-	// cout<<"Ya hoo"<<endl;
-	//exit(1);
-	#endif
-
-	#if defined _WIN32 || defined _WIN64
-	if( retro_yrs && last_phase() )
-	{
-		//adstring rep="iscam.ret"+str(retro_yrs);
-		//rename("iscam.rep",rep);
-		adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
-		system(copyrep);
-	}
-	// cout<<"Windows"<<endl;
-	// exit(1);
-	#endif
+	//#if defined __APPLE__ || defined __linux
+	//if( retro_yrs && last_phase() )
+	//{
+	//	//adstring rep="iscam.ret"+str(retro_yrs);
+	//	//rename("iscam.rep",rep);
+	//	adstring copyrep = "cp iscam.rep iscam.ret"+str(retro_yrs);
+	//	system(copyrep);
+	//}
+	//// cout<<"Ya hoo"<<endl;
+	////exit(1);
+	//#endif
+//
+//	//#if defined _WIN32 || defined _WIN64
+//	//if( retro_yrs && last_phase() )
+//	//{
+//	//	//adstring rep="iscam.ret"+str(retro_yrs);
+//	//	//rename("iscam.rep",rep);
+//	//	adstring copyrep = "copy iscam.rep iscam.ret"+str(retro_yrs);
+//	//	system(copyrep);
+//	//}
+//	//// cout<<"Windows"<<endl;
+//	//// exit(1);
+	//#endif
 	
    // REPORT_SECTION END
 	
@@ -5151,6 +5152,7 @@ GLOBALS_SECTION
 	
 	
 FINAL_SECTION
+	cout<<"Here I am "<<endl;
 	time(&finish);
 	elapsed_time=difftime(finish,start);
 	hour=long(elapsed_time)/3600;
