@@ -97,6 +97,7 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dvector Wy = compute_relative_weights(O);
 	
 	// 3) Compute covariance matrix V_y = K C K'
+	cout<<" Whats up"<<endl;
 	d3_array Vy = compute_correlation_matrix(n_Age);
 
 	exit(1);
@@ -110,21 +111,18 @@ d3_array compute_correlation_matrix(const dmatrix &n_Age)
 	y1 = n_Age.rowmin();
 	y2 = n_Age.rowmax();
 	ivector b1(y1,y2);
-	ivector b2(y2,y2);
+	ivector b2(y1,y2);
 	for( i = y1; i <= y2; i++ )
 	{
 		b1(i) = min(n_Age(i));
 		b2(i) = max(n_Age(i));
 	}
 
-	cout<<y2<<endl;
-	cout<<b1<<endl;
-	cout<<b2<<endl;
-
 	d3_array V;
 	V.allocate(y1,y2,b1,b2,b1,b2);
 	V.initialize();
-	cout<<V<<endl;
+	
+	// Now compute the correlation matrix C, and set V = K C K'
 	return (V);
 }
 
