@@ -1878,7 +1878,7 @@ FUNCTION calc_objective_function
 		//if(active(log_ft_pars))
 		//	nlvec(1,k)=dnorm(log(obs_ct(k).sub(syr,nyr)+o)-log(ct(k).sub(syr,nyr)+o),sig_c);
 	}
-	if( verbose ) COUT(nlvec(1));
+	// if( verbose ) COUT(nlvec(1));
 	
 	//2) likelihood of the survey abundance index (retro)
 	for(k=1;k<=nit;k++)
@@ -1886,7 +1886,7 @@ FUNCTION calc_objective_function
 		dvar_vector sig = (sqrt(rho)*varphi)/it_wt(k);
 		nlvec(2,k)=dnorm(epsilon(k),sig);
 	}
-	if( verbose ) COUT(nlvec(2));
+	// if( verbose ) COUT(nlvec(2));
 	
 	
 	//3) likelihood for age-composition data
@@ -1908,7 +1908,6 @@ FUNCTION calc_objective_function
 			//dvar_matrix nu=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa); //residuals
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
-			logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
 			
 			//CHANGED add a switch statement here to choose form of the likelihood
 			//switch(int(cntrl(14)))
@@ -1922,10 +1921,15 @@ FUNCTION calc_objective_function
 					//nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
+				case 4:
+					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),age_tau2(k));
+				break; 
+				/*
 				case 3:
 					// class object for the logistic normal likelihood.
 					// Jan 3, 2014, trying to optimize the code in logistic_normal class
 					
+					logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
 					
 					if( !active(phi1(k)) )                      // LN1 Model
 					{
@@ -1947,10 +1951,7 @@ FUNCTION calc_objective_function
 						age_tau2(k) = cLN_Age.get_sig2();
 					}
 				break;
-
-				case 4:
-					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k));
-				break; 
+				*/
 
 			}
 			
@@ -1961,7 +1962,7 @@ FUNCTION calc_objective_function
 			}
 		}
 	}
-	if( verbose ) COUT(nlvec(3));
+	// if( verbose ) COUT(nlvec(3));
 	
 	
 	//4) likelihood for stock-recruitment relationship
@@ -2152,6 +2153,7 @@ FUNCTION calc_objective_function
 		pvec(2) += 0.5*norm2(log_m_nodes);
 	}
 	
+	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
 	if(verbose)
 	{
@@ -2163,7 +2165,6 @@ FUNCTION calc_objective_function
 	f=sum(nlvec)+sum(lvec)+sum(priors)+sum(pvec)+sum(qvec);
 	//cout<<f<<endl;
 	nf++;
-	if(verbose)cout<<"**** Ok after calc_objective_function ****"<<endl;
 	
   }
 
@@ -3776,7 +3777,7 @@ GLOBALS_SECTION
 	// #include <statsLib.h>
 	#include "msy.cpp"
 	#include "logistic_normal.h"
-	#include "LogisticNormal.cpp"
+	#include "LogisticNormal.h"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
@@ -3784,6 +3785,7 @@ GLOBALS_SECTION
 	double elapsed_time;
 	bool mcmcPhase = 0;
 	bool mcmcEvalPhase = 0;
+	adtimer runtime;
 	
 	adstring BaseFileName;
 	adstring ReportFileName;
@@ -3993,6 +3995,8 @@ FINAL_SECTION
 	cout<<"--Runtime: ";
 	cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
 	cout<<"--Number of function evaluations: "<<nf<<endl;
+	cout<<"--Runtime in milliseconds: ";
+    cout<<runtime.get_elapsed_time_and_reset()<<endl;
 	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
 	cout<<"*******************************************"<<endl;
 

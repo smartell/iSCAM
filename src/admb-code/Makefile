@@ -9,7 +9,7 @@
 # 5. Optimized executables type: make OPT=TRUE                 #
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
-SRCS = $(EXEC).cpp logistic_normal.cpp
+SRCS = $(EXEC).cpp LogisticNormal.cpp
 OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl
 DEPS = $(SRCS:.cpp=.depends)

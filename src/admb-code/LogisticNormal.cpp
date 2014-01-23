@@ -1,30 +1,10 @@
 #include <admodel.h>
+#include "LogisticNormal.h"
 
 /*
 	Implementation of the logistic normal negative loglikelihood.
 */
-dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
-dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age);
-dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
-dvector compute_relative_weights(const dmatrix &O);
-d3_array compute_correlation_matrix(const dmatrix &n_Age);
-dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
-dvariable compute_weighted_sumofsquares(const dvector &Wy, const dvar_matrix &wwy,const d3_array &V);
-dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
-                              const double &minp, const double &eps);
 
-template <typename T>
-void add_constant_normalize(T M, const double &eps)
-{
-	int i,y1,y2;
-	y1 = M.rowmin();
-	y2 = M.rowmax();
-	for( i = y1; i <= y2; i++ )
-	{
-		M(i) = M(i) + eps;
-		M(i) = M(i) / sum(M(i));
-	}
-}
 
 /**
  * Psuedocode:
@@ -73,10 +53,13 @@ void aggregate(dmatrix M, const double &minp)
 
 
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
-                              const double &minp, const double &eps)
+                              const double &minp, const double &eps,
+                              double &age_tau2)
 {
+	int i,y1,y2;
 	RETURN_ARRAYS_INCREMENT();
-	dvariable nll;
+	y1 = O.rowmin();
+	y2 = O.rowmax();
 
 	// 1) (aggregate || add constant) && compress tails
 	dmatrix n_Age  = get_tail_compressed_index(O,minp);
@@ -84,9 +67,9 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dvar_matrix Ep = tail_compress(E,n_Age);
 	if( eps )
 	{
-		cout<<"adding constant"<<endl;
-		add_constant_normalize(O,eps);
-		add_constant_normalize(E,eps);
+		// cout<<"adding constant"<<endl;
+		add_constant_normalize(Op,eps);
+		add_constant_normalize(Ep,eps);
 	}
 	else
 	{
@@ -108,12 +91,23 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dvariable ssw = compute_weighted_sumofsquares(Wy,wwy,Vy);
 
 	// 6) Compute MLE of variance
-	double bm1 = size_count(wwy);
-	cout<<bm1<<endl;
-	dvariable sigma = ssw / bm1;
+	double bm1 = size_count(Op) - (y2-y1+1.0);
+	dvariable sigma2 = ssw / bm1;
+	dvariable sigma  = sqrt(sigma2);
+	age_tau2         = value(sigma2);
+	
+	// 7) Compute nll_logistic_normal
+	dvariable nll;
+	nll  = 0.5 * log(2.0 * PI) * bm1;
+	nll += sum( log(Op) );
+	nll += log(sigma) * bm1;
+	for( i = y1; i <= y2; i++ )
+	{
+		nll += 0.5 * log(det(Vy(i)));
+		nll += (size_count(Op(i))-1) * log(Wy(i));
+	}
+	nll += 0.5 / sigma2 * ssw;
 
-
-	exit(1);
 	RETURN_ARRAYS_DECREMENT();
 	return nll;
 }
