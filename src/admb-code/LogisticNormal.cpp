@@ -9,6 +9,7 @@ dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
 dvector compute_relative_weights(const dmatrix &O);
 d3_array compute_correlation_matrix(const dmatrix &n_Age);
 dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
+dvariable compute_weighted_sumofsquares(const dvector &Wy, const dvar_matrix &wwy,const d3_array &V);
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
                               const double &minp, const double &eps);
 
@@ -36,7 +37,7 @@ void add_constant_normalize(T M, const double &eps)
  * 7) Compute nll_logistic_normal
 **/
 
-/* FIXME Need to rethink this algorithm */
+/* FIXME Need to rethink this algorithm  TEMPLATE? */
 void aggregate(dmatrix M, const double &minp)
 {
 	int i,y1,y2;
@@ -103,16 +104,41 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	// 4) Compute residual differences (w_y)
 	dvar_matrix wwy = compute_residual_difference(Op,Ep);
 
+	// 5) Compute weighted sum of squares (wSS)
+	dvariable ssw = compute_weighted_sumofsquares(Wy,wwy,Vy);
+
+	// 6) Compute MLE of variance
+	
 	exit(1);
 	RETURN_ARRAYS_DECREMENT();
 	return nll;
 }
 
+dvariable compute_weighted_sumofsquares(const dvector &Wy, 
+                                        const dvar_matrix &wwy,
+                                        const d3_array &V)
+{
+	int i,y1,y2;
+	RETURN_ARRAYS_INCREMENT();
+	y1 = wwy.rowmin();
+	y2 = wwy.rowmax();
+
+	dvariable ssw = 0;
+	for( i = y1; i <= y2; i++ )
+	{
+		dmatrix Vinv = inv(V(i));
+		ssw += (wwy(i) * Vinv * wwy(i))/Wy(i);
+	}
+
+	RETURN_ARRAYS_DECREMENT();
+	return ssw;
+}
 
 dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E)
 {
 	int i,y1,y2;
 	
+	RETURN_ARRAYS_INCREMENT();
 
 	y1 = O.rowmin();
 	y2 = O.rowmax();
@@ -123,7 +149,7 @@ dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E)
 		b1(i) = O(i).indexmin();
 		b2(i) = O(i).indexmax();
 	}
-
+	
 	dvar_matrix ww(y1,y2,b1,b2-1);
 	ww.initialize();
 	
@@ -131,11 +157,14 @@ dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E)
 	{
 		int l = b1(i);
 		int u = b2(i);
-		// stock here
-		ww(i)(l,u-1) = O(i)(l,u-1) - E(i)(l,u-1);
-		// ww(i) = ( log(O(i)(b1(i),b2(i)-1)) - log(O(i,b2(i))) )
-		      // - ( log(E(i)(b1(i),b2(i)-1)) - log(E(i,b2(i))) );
+		
+		dvector     t1 = O(i);
+		dvar_vector t2 = E(i);
+		ww(i) = (log(t1(l,u-1)) - log(t1(u)))
+		      - (log(t2(l,u-1)) - log(t2(u)));
 	}
+
+	RETURN_ARRAYS_DECREMENT();
 	return(ww);
 }
 
@@ -283,6 +312,6 @@ dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp)
 			}
 		}
 	}
-	cout<<n_Age<<endl;
+	
 	return (n_Age);
 }
