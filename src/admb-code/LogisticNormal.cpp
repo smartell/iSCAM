@@ -108,7 +108,11 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dvariable ssw = compute_weighted_sumofsquares(Wy,wwy,Vy);
 
 	// 6) Compute MLE of variance
-	
+	double bm1 = size_count(wwy);
+	cout<<bm1<<endl;
+	dvariable sigma = ssw / bm1;
+
+
 	exit(1);
 	RETURN_ARRAYS_DECREMENT();
 	return nll;
@@ -127,7 +131,7 @@ dvariable compute_weighted_sumofsquares(const dvector &Wy,
 	for( i = y1; i <= y2; i++ )
 	{
 		dmatrix Vinv = inv(V(i));
-		ssw += (wwy(i) * Vinv * wwy(i))/Wy(i);
+		ssw += (wwy(i) * Vinv * wwy(i))/ (Wy(i)*Wy(i));
 	}
 
 	RETURN_ARRAYS_DECREMENT();
