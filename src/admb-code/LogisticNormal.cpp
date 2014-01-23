@@ -205,67 +205,7 @@ dvector compute_relative_weights(const dmatrix &O)
 	return(Wy);
 }
 
-dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age)
-{
-	int i,y1,y2;
-	int b1,b2;
 
-	y1 = O.rowmin();
-	y2 = O.rowmax();
-	b1 = O.colmin();
-	b2 = O.colmax();
-
-	dmatrix P;
-	P.allocate(n_Age);
-	P.initialize();
-	
-	for( i = y1; i <= y2; i++ )
-	{
-		ivector ix = n_Age(i);
-		dvector px = O(i)/sum(O(i));
-		P(i)(min(ix),max(ix)) = px(ix);
-		if( min(ix) > b1 )
-		{
-			P(i)(min(ix)) = sum(px(b1,min(ix)));
-		}
-		if( max(ix) < b2 )
-		{
-			P(i)(max(ix)) = sum(px(max(ix),b2));
-		}
-	}
-	return(P);
-}
-
-dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age)
-{
-	int i,y1,y2;
-	int b1,b2;
-
-	y1 = O.rowmin();
-	y2 = O.rowmax();
-	b1 = O.colmin();
-	b2 = O.colmax();
-
-	dvar_matrix P;
-	P.allocate(n_Age);
-	P.initialize();
-	
-	for( i = y1; i <= y2; i++ )
-	{
-		ivector ix = n_Age(i);
-		dvar_vector px = O(i)/sum(O(i));
-		P(i)(min(ix),max(ix)) = px(ix);
-		if( min(ix) > b1 )
-		{
-			P(i)(min(ix)) = sum(px(b1,min(ix)));
-		}
-		if( max(ix) < b2 )
-		{
-			P(i)(max(ix)) = sum(px(max(ix),b2));
-		}
-	}
-	return(P);
-}
 
 dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp)
 {

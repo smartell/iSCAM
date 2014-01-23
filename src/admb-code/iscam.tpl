@@ -3776,7 +3776,7 @@ GLOBALS_SECTION
 	#include <contrib.h>
 	// #include <statsLib.h>
 	#include "msy.cpp"
-	#include "logistic_normal.h"
+	//#include "logistic_normal.h"
 	#include "LogisticNormal.h"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
