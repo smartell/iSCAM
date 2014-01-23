@@ -1908,6 +1908,7 @@ FUNCTION calc_objective_function
 			//dvar_matrix nu=trans(trans(Ahat(k)).sub(a_sage(k),a_nage(k))).sub(1,naa); //residuals
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); //residuals
 			nu.initialize();
+			logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
 			
 			//CHANGED add a switch statement here to choose form of the likelihood
 			//switch(int(cntrl(14)))
@@ -1925,7 +1926,6 @@ FUNCTION calc_objective_function
 					// class object for the logistic normal likelihood.
 					// Jan 3, 2014, trying to optimize the code in logistic_normal class
 					
-					logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
 					
 					if( !active(phi1(k)) )                      // LN1 Model
 					{
@@ -1947,6 +1947,10 @@ FUNCTION calc_objective_function
 						age_tau2(k) = cLN_Age.get_sig2();
 					}
 				break;
+
+				case 4:
+					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k));
+				break; 
 
 			}
 			
@@ -3772,6 +3776,7 @@ GLOBALS_SECTION
 	// #include <statsLib.h>
 	#include "msy.cpp"
 	#include "logistic_normal.h"
+	#include "LogisticNormal.cpp"
 	//#include "stats.cxx"
 	#include "baranov.cxx"
 	time_t start,finish;
