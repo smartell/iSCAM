@@ -8,6 +8,7 @@ dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age);
 dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
 dvector compute_relative_weights(const dmatrix &O);
 d3_array compute_correlation_matrix(const dmatrix &n_Age);
+dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
                               const double &minp, const double &eps);
 
@@ -97,14 +98,50 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dvector Wy = compute_relative_weights(O);
 	
 	// 3) Compute covariance matrix V_y = K C K'
-	cout<<" Whats up"<<endl;
 	d3_array Vy = compute_correlation_matrix(n_Age);
+	
+	// 4) Compute residual differences (w_y)
+	dvar_matrix wwy = compute_residual_difference(Op,Ep);
 
 	exit(1);
 	RETURN_ARRAYS_DECREMENT();
 	return nll;
 }
 
+
+dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E)
+{
+	int i,y1,y2;
+	
+
+	y1 = O.rowmin();
+	y2 = O.rowmax();
+	ivector b1(y1,y2);
+	ivector b2(y1,y2);
+	for( i = y1; i <= y2; i++ )
+	{
+		b1(i) = O(i).indexmin();
+		b2(i) = O(i).indexmax();
+	}
+
+	dvar_matrix ww(y1,y2,b1,b2-1);
+	ww.initialize();
+	
+	for( i = y1; i <= y2; i++ )
+	{
+		int l = b1(i);
+		int u = b2(i);
+		// stock here
+		ww(i)(l,u-1) = O(i)(l,u-1) - E(i)(l,u-1);
+		// ww(i) = ( log(O(i)(b1(i),b2(i)-1)) - log(O(i,b2(i))) )
+		      // - ( log(E(i)(b1(i),b2(i)-1)) - log(E(i,b2(i))) );
+	}
+	return(ww);
+}
+
+/**
+ * No Autocorrelation case
+**/
 d3_array compute_correlation_matrix(const dmatrix &n_Age)
 {
 	int i,y1,y2;
@@ -119,10 +156,15 @@ d3_array compute_correlation_matrix(const dmatrix &n_Age)
 	}
 
 	d3_array V;
-	V.allocate(y1,y2,b1,b2,b1,b2);
+	V.allocate(y1,y2,b1,b2-1,b1,b2-1);
 	V.initialize();
 	
 	// Now compute the correlation matrix C, and set V = K C K'
+	// Which is just the 1+identity matrix (i.e. no covariance structure)
+	for( i = y1; i <= y2; i++ )
+	{
+		V(i) = 1 + identity_matrix(b1(i),b2(i)-1);
+	}
 	return (V);
 }
 
@@ -241,5 +283,6 @@ dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp)
 			}
 		}
 	}
+	cout<<n_Age<<endl;
 	return (n_Age);
 }
