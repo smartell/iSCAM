@@ -353,6 +353,8 @@ DATA_SECTION
 
 	init_3darray A(1,na_gears,1,na_nobs,a_sage-2,a_nage);
 	
+
+
 	//Mean weight-at-age data (units are kg) (if exists)
 	init_int n_wt_nobs;
 	init_matrix tmp_wt_obs(1,n_wt_nobs,sage-1,nage);
@@ -925,6 +927,8 @@ PRELIMINARY_CALCS_SECTION
     simulationModel(rseed);
   }
   if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
+
+
 
 
 RUNTIME_SECTION
@@ -1924,6 +1928,11 @@ FUNCTION calc_objective_function
 				case 3:
 					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),age_tau2(k));
 				break; 
+
+				case 4:
+					logistic_normal cLN(O,P,dMinP(k),dEps(k));
+					nlvec(3,k) = cLN();
+				break;
 				/*
 				case 3:
 					// class object for the logistic normal likelihood.

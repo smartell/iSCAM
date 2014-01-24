@@ -17,8 +17,117 @@
  * 7) Compute nll_logistic_normal
 **/
 
+// Constructor
+logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
+	                			const double _minp,const double _eps)
+: minp(_minp),eps(_eps),m_O(_O),m_E(_E)
+{
+	m_y1 = m_O.rowmin();
+	m_y2 = m_O.rowmax();
+	m_b1 = m_O.colmin();
+	m_b2 = m_O.colmax();
 
+	m_nAidx = get_tail_compressed_index(m_O,minp);
+	m_Op    = tail_compress(m_O,m_nAidx);
+	m_Ep    = tail_compress(m_E,m_nAidx);
+	if( eps )
+	{
+		add_constant_normalize(m_Op,eps);
+		add_constant_normalize(m_Ep,eps);
+	}
+	else if ( eps == 0 )
+	{
+		aggregate(m_Op,m_Ep,minp);
+	}
 
+	m_nb1.allocate(m_y1,m_y2);
+	m_nb2.allocate(m_y1,m_y2);
+	for(int i = m_y1; i <= m_y2; i++ )
+	{
+		m_nb1(i) = min(m_nAidx(i));
+		m_nb2(i) = max(m_nAidx(i));
+	}
+	m_V.allocate(m_y1,m_y2,m_nb1,m_nb2-1,m_nb1,m_nb2-1);
+	m_V.initialize();
+
+	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
+
+	m_Wy = compute_relative_weights(m_O);
+
+	compute_likelihood_residuals();
+
+}
+
+void logistic_normal::compute_likelihood_residuals()
+{
+	int i;
+	m_ww.allocate(m_y1,m_y2,m_nb1,m_nb2-1);
+	m_ww.initialize();
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		int l = m_nb1(i);
+		int u = m_nb2(i);
+		m_ww(i) = log(m_Op(i)(l,u-1)) - log(m_Op(i,u))
+				- log(m_Ep(i)(l,u-1)) - log(m_Ep(i,u));
+	}
+}
+
+dvariable logistic_normal::operator() ()
+{
+	m_nll = 0;
+
+	// Construct covariance (m_V)
+	compute_correlation_array();
+
+	// Compute weighted sum of squares
+	compute_weighted_sumofsquares();
+
+	// mle of the variance
+	m_sigma2 = m_wss / m_bm1; 
+	m_sigma  = sqrt(m_sigma2);
+
+	// compute negative loglikelihood
+	m_nll = negative_log_likelihood();
+	return m_nll;
+}
+
+dvariable logistic_normal::negative_log_likelihood()
+{
+	// 7) Compute nll_logistic_normal
+	dvariable nll;
+	nll  = 0.5 * log(2.0 * PI) * m_bm1;
+	nll += sum( log(m_Op) );
+	nll += log(m_sigma) * m_bm1;
+
+	for(int i = m_y1; i <= m_y2; i++ )
+	{
+		nll += 0.5 * log(det(m_V(i)));
+		nll += (size_count(m_Op(i))-1) * log(m_Wy(i));
+	}
+	nll += 0.5 / m_sigma2 * m_wss;
+	return nll;
+}
+
+void logistic_normal::compute_weighted_sumofsquares()
+{
+	int i;
+	m_wss=0;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		dvar_matrix Vinv = inv(m_V(i));
+		m_wss += (m_ww(i) * Vinv * m_ww(i)) / (m_Wy(i) * m_Wy(i));
+	}
+}
+
+void logistic_normal::compute_correlation_array()
+{
+	int i;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		m_V(i) = 1 + identity_matrix(m_nb1(i),m_nb2(i)-1);
+	}
+	
+}
 
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
                               const double &minp, const double &eps,

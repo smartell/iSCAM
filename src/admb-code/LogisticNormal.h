@@ -104,6 +104,50 @@ Descrition:
 #ifndef __LOGISTIC_NORMAL_H
 #define __LOGISTIC_NORMAL_H
 
+class logistic_normal
+{
+private:
+	int m_y1;
+	int m_y2;
+	int m_b1;
+	int m_b2;
+	double minp;
+	double eps;
+	double m_bm1;
+	ivector m_nb1;
+	ivector m_nb2;
+	dvector m_Wy;
+
+	dvariable m_wss;	///> weighted sum of squares  
+	dvariable m_nll;
+	dvariable m_sigma;
+	dvariable m_sigma2;
+
+
+	dmatrix m_O;
+	dmatrix m_Op;
+	dmatrix m_nAidx;
+
+	dvar_matrix m_E;
+	dvar_matrix m_Ep;
+	dvar_matrix m_ww;
+
+	dvar3_array m_V;
+
+	logistic_normal();
+	dvariable negative_log_likelihood();
+	void compute_correlation_array();
+	void compute_likelihood_residuals();
+	void compute_weighted_sumofsquares();
+public:
+	logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
+	                const double _minp,const double _seps=0);
+
+	dvariable operator() ();
+
+};
+
+
 void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
 dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
 dvector compute_relative_weights(const dmatrix &O);
