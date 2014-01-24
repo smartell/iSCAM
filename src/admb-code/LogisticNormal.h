@@ -150,6 +150,8 @@ public:
 
 void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
 dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
+// dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age);
+// dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
 dvector compute_relative_weights(const dmatrix &O);
 d3_array compute_correlation_matrix(const dmatrix &n_Age);
 dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
@@ -183,15 +185,17 @@ T tail_compress(const T &O,const dmatrix &n_Age)
 	b2 = O.colmax();
 
 	T P;
-	T px = O;
 	P.allocate(n_Age);
 	P.initialize();
+	T px;
+	px.allocate(O);
+	px.initialize();
 	
 	for( i = y1; i <= y2; i++ )
 	{
 		ivector ix = n_Age(i);
 		// dvector px = O(i)/sum(O(i));
-		px(i) = px(i)/sum(px(i));
+		px(i) = O(i)/sum(O(i));
 		P(i)(min(ix),max(ix)) = px(i)(ix);
 		if( min(ix) > b1 )
 		{
@@ -202,6 +206,7 @@ T tail_compress(const T &O,const dmatrix &n_Age)
 			P(i)(max(ix)) = sum(px(i)(max(ix),b2));
 		}
 	}
+	// cout<<"Tail compress\n"<<O<<endl<<"End"<<endl;
 	return(P);
 }
 

@@ -53,8 +53,9 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
 
 	m_Wy = compute_relative_weights(m_O);
-
+	
 	compute_likelihood_residuals();
+	
 
 }
 
@@ -67,8 +68,8 @@ void logistic_normal::compute_likelihood_residuals()
 	{
 		int l = m_nb1(i);
 		int u = m_nb2(i);
-		m_ww(i) = log(m_Op(i)(l,u-1)) - log(m_Op(i,u))
-				- log(m_Ep(i)(l,u-1)) - log(m_Ep(i,u));
+		m_ww(i) = (log(m_Op(i)(l,u-1)) - log(m_Op(i,u)))
+				- (log(m_Ep(i)(l,u-1)) - log(m_Ep(i,u)));
 	}
 }
 
@@ -94,6 +95,7 @@ dvariable logistic_normal::operator() ()
 dvariable logistic_normal::negative_log_likelihood()
 {
 	// 7) Compute nll_logistic_normal
+	RETURN_ARRAYS_INCREMENT();
 	dvariable nll;
 	nll  = 0.5 * log(2.0 * PI) * m_bm1;
 	nll += sum( log(m_Op) );
@@ -105,6 +107,7 @@ dvariable logistic_normal::negative_log_likelihood()
 		nll += (size_count(m_Op(i))-1) * log(m_Wy(i));
 	}
 	nll += 0.5 / m_sigma2 * m_wss;
+	RETURN_ARRAYS_DECREMENT();
 	return nll;
 }
 
@@ -126,8 +129,10 @@ void logistic_normal::compute_correlation_array()
 	{
 		m_V(i) = 1 + identity_matrix(m_nb1(i),m_nb2(i)-1);
 	}
-	
 }
+
+
+
 
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
                               const double &minp, const double &eps,

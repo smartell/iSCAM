@@ -24,7 +24,7 @@
    0.8          0.01    5.0     4       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
-## ------------------------------------------------------------------------- ##
+## ------------------------------------------------------------------------ ##
 ## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
 ## ------------------------------------------------------------------------- ##
 ## Likelihood type for each gear:
@@ -34,7 +34,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1 						## Gear Index
-   4                        ## Likelihood type
+   1                        ## Likelihood type
    0.010                    ## Minimum proportion for aggregation & tail compression
    0.000                    ## Small constant to add to comps & renormalize
    -2                       ## phase for phi1 estimation: bounded (-1,1) AR1
