@@ -73,6 +73,11 @@ void logistic_normal::compute_likelihood_residuals()
 	}
 }
 
+
+/**
+ * Returns the negative loglikelihood for the logistic normal distribution
+ * assuming no autocorrelation in the composition data.
+**/
 dvariable logistic_normal::operator() ()
 {
 	m_nll = 0;
@@ -91,6 +96,33 @@ dvariable logistic_normal::operator() ()
 	m_nll = negative_log_likelihood();
 	return m_nll;
 }
+
+/**
+ * Returns the negative loglikelihood for the logistic normal distribution
+ * assuming AR1 autocorrelation in the composition data.
+**/
+dvariable logistic_normal::operator() (const dvariable &phi)
+{
+	m_nll = 0;
+
+	// Construct covariance (m_V)
+	compute_correlation_array(phi);
+
+	// Compute weighted sum of squares
+	compute_weighted_sumofsquares();
+
+	// mle of the variance
+	m_sigma2 = m_wss / m_bm1; 
+	m_sigma  = sqrt(m_sigma2);
+
+	// compute negative loglikelihood
+	m_nll = negative_log_likelihood();
+	return m_nll;
+}
+
+
+
+
 
 dvariable logistic_normal::negative_log_likelihood()
 {
@@ -131,6 +163,38 @@ void logistic_normal::compute_correlation_array()
 	}
 }
 
+void logistic_normal::compute_correlation_array(const dvariable &phi)
+{
+	int i,j,k;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		int l = m_nb1(i);
+		int u = m_nb2(i);
+		
+		dvar_vector rho(l,u);
+		for( j = l, k = 1; j <= u; j++, k++ )
+		{
+			rho(j) = pow(phi,k);
+		}
+
+		dvar_matrix C = identity_matrix(l,u);
+		for( j = l; j <= u; j++ )
+		{
+			for( k = l; k <= u; k++ )
+			{
+				if(j != k) C(j,k) = rho(l+abs(j-k));
+			}
+		}
+
+		dvar_matrix I = identity_matrix(l,u-1);
+		dvar_matrix tK(l,u,l,u-1);
+		tK.sub(l,u-1) = I;
+		tK(u)         = -1;
+		dvar_matrix K = trans(tK);
+		m_V(i) = K * C * tK;
+	}
+		
+}
 
 
 

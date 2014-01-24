@@ -1931,7 +1931,15 @@ FUNCTION calc_objective_function
 
 				case 4:
 					logistic_normal cLN(O,P,dMinP(k),dEps(k));
-					nlvec(3,k) = cLN();
+					if( !active(phi1(k)) )
+					{
+						nlvec(3,k) = cLN();
+					}
+					//if( active(phi1(k)) && !active(phi2(k)) )
+					{
+						nlvec(3,k) = cLN(phi1(k));
+					}
+					age_tau2(k) = cLN.get_sigma2();
 				break;
 				/*
 				case 3:

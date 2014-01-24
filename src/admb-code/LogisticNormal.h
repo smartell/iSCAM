@@ -137,6 +137,7 @@ private:
 	logistic_normal();
 	dvariable negative_log_likelihood();
 	void compute_correlation_array();
+	void compute_correlation_array(const dvariable &phi);
 	void compute_likelihood_residuals();
 	void compute_weighted_sumofsquares();
 public:
@@ -144,14 +145,17 @@ public:
 	                const double _minp,const double _seps=0);
 
 	dvariable operator() ();
+	dvariable operator() (const dvariable &phi);
+
+
+	double    get_sigma () { return value(m_sigma ); }
+	double    get_sigma2() { return value(m_sigma2); }
 
 };
 
 
 void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
 dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
-// dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age);
-// dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
 dvector compute_relative_weights(const dmatrix &O);
 d3_array compute_correlation_matrix(const dmatrix &n_Age);
 dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
@@ -194,7 +198,6 @@ T tail_compress(const T &O,const dmatrix &n_Age)
 	for( i = y1; i <= y2; i++ )
 	{
 		ivector ix = n_Age(i);
-		// dvector px = O(i)/sum(O(i));
 		px(i) = O(i)/sum(O(i));
 		P(i)(min(ix),max(ix)) = px(i)(ix);
 		if( min(ix) > b1 )
@@ -206,7 +209,7 @@ T tail_compress(const T &O,const dmatrix &n_Age)
 			P(i)(max(ix)) = sum(px(i)(max(ix),b2));
 		}
 	}
-	// cout<<"Tail compress\n"<<O<<endl<<"End"<<endl;
+	
 	return(P);
 }
 
