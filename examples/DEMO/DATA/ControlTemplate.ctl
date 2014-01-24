@@ -34,9 +34,9 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1 						## Gear Index
-   4                        ## Likelihood type
+   3                        ## Likelihood type
    0.001                    ## Minimum proportion for aggregation & tail compression
-   0.0001                   ## Small constant to add to comps & renormalize
+   0.000                    ## Small constant to add to comps & renormalize
    -2                       ## phase for phi1 estimation: bounded (-1,1) AR1
    -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
    -12345                   ## int check (-12345)

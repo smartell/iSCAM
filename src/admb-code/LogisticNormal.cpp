@@ -17,38 +17,6 @@
  * 7) Compute nll_logistic_normal
 **/
 
-/* FIXME Need to rethink this algorithm  TEMPLATE? */
-void aggregate(dmatrix M, const double &minp)
-{
-	int i,y1,y2;
-	int j,b1,b2;
-
-	y1 = M.rowmin();
-	y2 = M.rowmax();
-
-	dmatrix tmpM = M;
-	tmpM.initialize();
-
-	for( i = y1; i <= y2; i++ )
-	{
-		b1 = M.indexmin(); 
-		b2 = M.indexmax();
-		int k=b1;
-		for( j = b1; j <= b2; j++ )
-		{
-			if( M(i,j) <= minp )
-			{
-				tmpM(i)(k) += M(i,j);
-			} 
-			else
-			{
-				tmpM(i)(k) += M(i,j);
-				if( k < b2 ) k++;
-			}
-		}
-	}
-	M = tmpM;
-}
 
 
 
@@ -65,6 +33,8 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	dmatrix n_Age  = get_tail_compressed_index(O,minp);
 	dmatrix Op     = tail_compress(O,n_Age);
 	dvar_matrix Ep = tail_compress(E,n_Age);
+	
+	
 	if( eps )
 	{
 		// cout<<"adding constant"<<endl;
@@ -73,11 +43,10 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	}
 	else
 	{
-		// TODO Need to re-think this one.
-		cout<<"aggregating cohorts"<<endl;
-		//aggregate(O,minp);
+		// cout<<"aggregating cohorts"<<endl;
+		aggregate(Op,Ep,minp);
 	}
-	
+
 	// 2) Compute relative weights for each year W_y
 	dvector Wy = compute_relative_weights(O);
 	
@@ -110,6 +79,35 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 
 	RETURN_ARRAYS_DECREMENT();
 	return nll;
+}
+/**
+ * What is done here is that proportions less than minp are pooled with the adjacent
+ * younger cohort, and split evenly to each age, and the sample size is halved.
+ * This approximates the likelihood of ages 4 and 5 (eg.) as ages 4-5.
+**/
+void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp)
+{
+	int i,y1,y2;
+	int j,b1,b2;
+
+	y1 = Op.rowmin();
+	y2 = Op.rowmax();
+
+	for( i = y1; i <= y2; i++ )
+	{
+		b1 = Op(i).indexmin();
+		b2 = Op(i).indexmax();
+		for( j = b1+1; j <= b2; j++ )
+		{
+			if( Op(i,j) < minp )
+			{
+				double    tmpO = 0.5*(Op(i,j) + Op(i,j-1));
+				dvariable tmpE = 0.5*(Ep(i,j) + Ep(i,j-1));
+				Op(i)(j-1,j) = tmpO;
+				Ep(i)(j-1,j) = tmpE;
+			}
+		}
+	}
 }
 
 dvariable compute_weighted_sumofsquares(const dvector &Wy, 

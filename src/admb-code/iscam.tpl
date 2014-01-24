@@ -1921,7 +1921,7 @@ FUNCTION calc_objective_function
 					//nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
-				case 4:
+				case 3:
 					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),age_tau2(k));
 				break; 
 				/*
@@ -3836,6 +3836,7 @@ GLOBALS_SECTION
   	return (logistic);
   } 
   
+  	
   
 	// class selex_vector
 	// {
