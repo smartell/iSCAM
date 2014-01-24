@@ -104,10 +104,8 @@ Descrition:
 #ifndef __LOGISTIC_NORMAL_H
 #define __LOGISTIC_NORMAL_H
 
-dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
-// dmatrix tail_compress(const dmatrix &O,const dmatrix &n_Age);
-// dvar_matrix tail_compress(const dvar_matrix &O,const dmatrix &n_Age);
 void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
+dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
 dvector compute_relative_weights(const dmatrix &O);
 d3_array compute_correlation_matrix(const dmatrix &n_Age);
 dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
