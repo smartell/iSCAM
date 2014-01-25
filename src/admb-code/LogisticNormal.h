@@ -137,7 +137,7 @@ private:
 	logistic_normal();
 	dvariable negative_log_likelihood();
 	void compute_correlation_array();
-	void compute_correlation_array(const dvariable &phi);
+	void compute_correlation_array(const prevariable *phi);
 	void compute_likelihood_residuals();
 	void compute_weighted_sumofsquares();
 public:
@@ -145,7 +145,8 @@ public:
 	                const double _minp,const double _seps=0);
 
 	dvariable operator() ();
-	dvariable operator() (const dvariable &phi);
+	dvariable operator() (const prevariable *phi);
+
 
 
 	double    get_sigma () { return value(m_sigma ); }

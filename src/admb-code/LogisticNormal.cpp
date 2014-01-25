@@ -101,7 +101,7 @@ dvariable logistic_normal::operator() ()
  * Returns the negative loglikelihood for the logistic normal distribution
  * assuming AR1 autocorrelation in the composition data.
 **/
-dvariable logistic_normal::operator() (const dvariable &phi)
+dvariable logistic_normal::operator() (const prevariable *phi)
 {
 	m_nll = 0;
 
@@ -163,9 +163,10 @@ void logistic_normal::compute_correlation_array()
 	}
 }
 
-void logistic_normal::compute_correlation_array(const dvariable &phi)
+void logistic_normal::compute_correlation_array(const prevariable *phi)
 {
 	int i,j,k;
+	RETURN_ARRAYS_INCREMENT();
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		int l = m_nb1(i);
@@ -174,7 +175,8 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 		dvar_vector rho(l,u);
 		for( j = l, k = 1; j <= u; j++, k++ )
 		{
-			rho(j) = pow(phi,k);
+			// rho(j) = pow(*phi,k);
+			rho(j) = mfexp( k * log(*phi) );
 		}
 
 		dvar_matrix C = identity_matrix(l,u);
@@ -186,14 +188,14 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 			}
 		}
 
-		dvar_matrix I = identity_matrix(l,u-1);
-		dvar_matrix tK(l,u,l,u-1);
+		dmatrix I = identity_matrix(l,u-1);
+		dmatrix tK(l,u,l,u-1);
 		tK.sub(l,u-1) = I;
 		tK(u)         = -1;
-		dvar_matrix K = trans(tK);
+		dmatrix K = trans(tK);
 		m_V(i) = K * C * tK;
 	}
-		
+	RETURN_ARRAYS_DECREMENT();	
 }
 
 
