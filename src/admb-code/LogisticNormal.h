@@ -145,7 +145,8 @@ public:
 	                const double _minp,const double _seps=0);
 
 	dvariable operator() ();
-	dvariable operator() (const prevariable phi);
+	dvariable operator() (const dvariable &sigma2);
+	dvariable operator() (const dvariable &theta ,const dvariable &phi);
 
 
 

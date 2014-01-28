@@ -39,7 +39,8 @@
    4                        ## Likelihood type
    0.002                    ## Minimum proportion for aggregation & tail compression
    0.0000                   ## Small constant to add to comps & renormalize
-   -2                       ## phase for phi1 estimation: bounded (-1,1) AR1
+    1                       ## phase for log_age_tau2 estimation.
+    2                       ## phase for phi1 estimation: bounded (-1,1) AR1
    -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
    -12345                   ## int check (-12345)
 ## ------------------------------------------------------------------------- ##

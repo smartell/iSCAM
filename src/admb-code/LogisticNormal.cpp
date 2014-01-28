@@ -105,9 +105,33 @@ dvariable logistic_normal::operator() ()
 
 /**
  * Returns the negative loglikelihood for the logistic normal distribution
+ * assuming no autocorrelation and estimates the variance parameter sigma.
+**/
+dvariable logistic_normal::operator() (const dvariable &sigma2)
+{
+	m_nll = 0;
+
+	// Construct covariance (m_V)
+	compute_correlation_array();
+
+	// Compute weighted sum of squares
+	compute_weighted_sumofsquares();
+
+	// estimated variance
+	m_sigma = sqrt(sigma2);
+	m_sigma2 = sigma2;
+
+	// compute negative loglikelihood
+	m_nll = negative_log_likelihood();
+	return m_nll;
+}
+
+
+/**
+ * Returns the negative loglikelihood for the logistic normal distribution
  * assuming AR1 autocorrelation in the composition data.
 **/
-dvariable logistic_normal::operator() (const prevariable phi)
+dvariable logistic_normal::operator() (const dvariable &theta,const dvariable &phi)
 {
 	m_nll = 0;
 
@@ -117,9 +141,10 @@ dvariable logistic_normal::operator() (const prevariable phi)
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
 
-	// mle of the variance
-	m_sigma2 = m_wss / m_bm1; 
-	m_sigma  = sqrt(m_sigma2);
+	// estimated variance
+	m_sigma2  = (theta) / (1.-phi);
+	m_sigma = sqrt(m_sigma2);
+	cout<<m_sigma<<endl;
 
 	// compute negative loglikelihood
 	m_nll = negative_log_likelihood();
@@ -173,6 +198,7 @@ void logistic_normal::compute_correlation_array(const prevariable phi)
 {
 	int i,j,k;
 	RETURN_ARRAYS_INCREMENT();
+	// cout<<phi<<endl;
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		int l = m_nb1(i);

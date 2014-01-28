@@ -527,6 +527,7 @@ DATA_SECTION
 	init_ivector nCompLikelihood(1,na_gears);
 	init_vector  dMinP(1,na_gears);
 	init_vector  dEps(1,na_gears);
+	init_ivector nPhz_age_tau2(1,na_gears);
 	init_ivector nPhz_phi1(1,na_gears);
 	init_ivector nPhz_phi2(1,na_gears);
 	init_int check;
@@ -850,13 +851,11 @@ PARAMETER_SECTION
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	// Correlation coefficients for age composition
+	init_bounded_number_vector log_age_tau2(1,na_gears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,na_gears,0.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,nPhz_phi2);
 
 
-
-	//init_bounded_vector log_age_tau2(1,na_gears,0.001,100,-3);
-	//!! log_age_tau2 = -log(0.5);
 
 	objective_function_value f;
     
@@ -1894,7 +1893,7 @@ FUNCTION calc_objective_function
 	
 	
 	//3) likelihood for age-composition data
-	// dvar_vector atau2 = 1./exp(log_age_tau2);
+	dvar_vector dvar_age_tau2 = 1./exp(log_age_tau2);
 	for(k=1;k<=na_gears;k++)
 	{	
 		if(na_nobs(k)>0){
@@ -1929,20 +1928,22 @@ FUNCTION calc_objective_function
 					//nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
-				case 3:
-					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
-						                                 age_tau2(k));
-					//if( active(phi1(k)) && !active(phi2(k)) )
-					//{
-					//	
-					//	
-					//	nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
-					//	                                 age_tau2(k),phi1(k));	
-					//}
+				case 3: // logistic normal with no autocorrelation
+					if( !active(log_age_tau2(k)) )
+					{
+						//nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
+						//	                                 age_tau2(k));
+						nlvec(3,k) = cLN();
+					}
+					else if( active(log_age_tau2(k)) )
+					{
+						nlvec(3,k) = cLN(dvar_age_tau2(k));
+					}
+					age_tau2 = cLN.get_sigma2();
 				break; 
 
 				case 4:  // AR1 case for the logistic normal
-					nlvec(3,k) = cLN(phi1(k));
+					nlvec(3,k) = cLN(dvar_age_tau2(k),phi1(k));
 					age_tau2(k) = cLN.get_sigma2();
 				break;
 
