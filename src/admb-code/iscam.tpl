@@ -757,7 +757,7 @@ DATA_SECTION
 	
 INITIALIZATION_SECTION
  theta theta_ival;
- phi1  0.25;
+ phi1  0.99;
  phi2  0.00;
 	
 PARAMETER_SECTION
@@ -852,7 +852,7 @@ PARAMETER_SECTION
 	
 	// Correlation coefficients for age composition
 	init_bounded_number_vector log_age_tau2(1,na_gears,-4.65,5.30,nPhz_age_tau2);
-	init_bounded_number_vector phi1(1,na_gears,0.0,1.0,nPhz_phi1);
+	init_bounded_number_vector phi1(1,na_gears,-1.,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,nPhz_phi2);
 
 
@@ -1945,6 +1945,10 @@ FUNCTION calc_objective_function
 				case 4:  // AR1 case for the logistic normal
 					nlvec(3,k) = cLN(dvar_age_tau2(k),phi1(k));
 					age_tau2(k) = cLN.get_sigma2();
+
+					//nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
+					//                                dvar_age_tau2(k),phi1(k));
+					//age_tau2(k) = value(dvar_age_tau2(k));
 				break;
 
 				case 5: // AR2 case for the logistic normal.

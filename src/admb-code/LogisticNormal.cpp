@@ -136,15 +136,15 @@ dvariable logistic_normal::operator() (const dvariable &theta,const dvariable &p
 	m_nll = 0;
 
 	// Construct covariance (m_V)
+	// cout<<theta<<"\t"<<phi<<endl;
 	compute_correlation_array(phi);
 
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
 
 	// estimated variance
-	m_sigma2  = (theta) / (1.-phi);
-	m_sigma = sqrt(m_sigma2);
-	cout<<m_sigma<<endl;
+	m_sigma  = sqrt(theta) / (1.0-phi);
+	m_sigma2 = square(m_sigma);
 
 	// compute negative loglikelihood
 	m_nll = negative_log_likelihood();
@@ -194,22 +194,30 @@ void logistic_normal::compute_correlation_array()
 	}
 }
 
-void logistic_normal::compute_correlation_array(const prevariable phi)
+void logistic_normal::compute_correlation_array(const dvariable &phi)
 {
 	int i,j,k;
-	RETURN_ARRAYS_INCREMENT();
-	// cout<<phi<<endl;
+	//RETURN_ARRAYS_INCREMENT();
+	// cout<<boundpin(phi,-1,1)<<endl;
+	dvar_vector rho(min(m_nb1),max(m_nb2));
+	rho.initialize();
+	for( j = min(m_nb1), k=1; j <= max(m_nb2); j++, k++ )
+	{
+		rho(j) = pow(phi,k);
+	}
+
+
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		int l = m_nb1(i);
 		int u = m_nb2(i);
 		
-		dvar_vector rho(l,u);
-		for( j = l, k = 1; j <= u; j++, k++ )
-		{
-			rho(j) = pow(phi,k);
-			// rho(j) = mfexp( k * log(*phi) );
-		}
+		// dvar_vector rho(l,u);
+		// rho.initialize();
+		// for( j = l, k = 1; j <= u; j++, k++ )
+		// {
+		// 	rho(j) = pow(phi,k);
+		// }
 
 		dvar_matrix C = identity_matrix(l,u);
 		for( j = l; j <= u; j++ )
@@ -226,8 +234,10 @@ void logistic_normal::compute_correlation_array(const prevariable phi)
 		tK(u)         = -1;
 		dmatrix K = trans(tK);
 		m_V(i) = K * C * tK;
+		
 	}
-	RETURN_ARRAYS_DECREMENT();	
+
+	//RETURN_ARRAYS_DECREMENT();	
 }
 
 
@@ -365,6 +375,69 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 	return nll;
 }
 
+/**
+ * Implementing the LN2 version.
+**/
+dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
+                              const double &minp, const double &eps,
+                              const dvariable &theta, const dvariable &phi)
+{
+	int i,y1,y2;
+	RETURN_ARRAYS_INCREMENT();
+	y1 = O.rowmin();
+	y2 = O.rowmax();
+
+	// 1) (aggregate || add constant) && compress tails
+	dmatrix n_Age  = get_tail_compressed_index(O,minp);
+	dmatrix Op     = tail_compress(O,n_Age);
+	dvar_matrix Ep = tail_compress(E,n_Age);
+	
+	
+	if( eps )
+	{
+		// cout<<"adding constant"<<endl;
+		add_constant_normalize(Op,eps);
+		add_constant_normalize(Ep,eps);
+	}
+	else
+	{
+		// cout<<"aggregating cohorts"<<endl;
+		aggregate(Op,Ep,minp);
+	}
+
+	// 2) Compute relative weights for each year W_y
+	dvector Wy = compute_relative_weights(O);
+	
+	// 3) Compute covariance matrix V_y = K C K'
+	dvar3_array Vy = compute_correlation_matrix(n_Age,phi);
+	
+	// 4) Compute residual differences (w_y)
+	dvar_matrix wwy = compute_residual_difference(Op,Ep);
+
+	// 5) Compute weighted sum of squares (wSS)
+	dvariable ssw = compute_weighted_sumofsquares(Wy,wwy,Vy);
+
+	// 6) Compute variance
+	double bm1 = size_count(Op) - (y2-y1+1.0);
+	dvariable sigma = sqrt(theta) / (1.0-phi);
+	dvariable sigma2 = square(sigma);
+	
+	
+	// 7) Compute nll_logistic_normal
+	dvariable nll;
+	nll  = 0.5 * log(2.0 * PI) * bm1;
+	nll += sum( log(Op) );
+	nll += log(sigma) * bm1;
+	for( i = y1; i <= y2; i++ )
+	{
+		nll += 0.5 * log(det(Vy(i)));
+		nll += (size_count(Op(i))-1) * log(Wy(i));
+	}
+	nll += 0.5 / sigma2 * ssw;
+
+	RETURN_ARRAYS_DECREMENT();
+	return nll;
+}
 
 
 

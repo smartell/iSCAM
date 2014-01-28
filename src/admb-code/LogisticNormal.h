@@ -137,7 +137,7 @@ private:
 	logistic_normal();
 	dvariable negative_log_likelihood();
 	void compute_correlation_array();
-	void compute_correlation_array(const prevariable phi);
+	void compute_correlation_array(const dvariable &phi);
 	void compute_likelihood_residuals();
 	void compute_weighted_sumofsquares();
 public:
@@ -170,6 +170,9 @@ dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E,
 dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
                               const double &minp, const double &eps,
                               double &age_tau2, const dvariable &phi);
+dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
+                              const double &minp, const double &eps,
+                              const dvariable &theta, const dvariable &phi);
 
 template <typename T>
 void add_constant_normalize(T M, const double &eps)
