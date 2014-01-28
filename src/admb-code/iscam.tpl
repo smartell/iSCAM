@@ -756,7 +756,7 @@ DATA_SECTION
 	
 INITIALIZATION_SECTION
  theta theta_ival;
- phi1  0.50;
+ phi1  0.25;
  phi2  0.00;
 	
 PARAMETER_SECTION
@@ -850,7 +850,7 @@ PARAMETER_SECTION
 	//init_bounded_vector log_m_devs(syr+1,nyr,-5.0,5.0,m_dev_phz);
 	
 	// Correlation coefficients for age composition
-	init_bounded_number_vector phi1(1,na_gears,-1.0,1.0,nPhz_phi1);
+	init_bounded_number_vector phi1(1,na_gears,0.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,na_gears,0.0,1.0,nPhz_phi2);
 
 
@@ -1915,6 +1915,10 @@ FUNCTION calc_objective_function
 			
 			//CHANGED add a switch statement here to choose form of the likelihood
 			//switch(int(cntrl(14)))
+			
+
+			logistic_normal cLN(O,P,dMinP(k),dEps(k));
+
 			switch(nCompLikelihood(k))
 			{
 				case 1:
@@ -1926,19 +1930,24 @@ FUNCTION calc_objective_function
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
-					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),age_tau2(k));
+					nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
+						                                 age_tau2(k));
+					//if( active(phi1(k)) && !active(phi2(k)) )
+					//{
+					//	
+					//	
+					//	nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
+					//	                                 age_tau2(k),phi1(k));	
+					//}
 				break; 
 
-				case 4:
-					logistic_normal cLN(O,P,dMinP(k),dEps(k));
-					if( !active(phi1(k)) )
-					{
-						nlvec(3,k) = cLN();
-					}
-					//if( active(phi1(k)) && !active(phi2(k)) )
-					{
-						nlvec(3,k) = cLN(&phi1(k));
-					}
+				case 4:  // AR1 case for the logistic normal
+					nlvec(3,k) = cLN(phi1(k));
+					age_tau2(k) = cLN.get_sigma2();
+				break;
+
+				case 5: // AR2 case for the logistic normal.
+					nlvec(3,k) = cLN(phi1(k));
 					age_tau2(k) = cLN.get_sigma2();
 				break;
 				/*
