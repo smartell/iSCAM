@@ -123,6 +123,7 @@ private:
 	dvariable m_sigma;
 	dvariable m_sigma2;
 
+	imatrix m_nAgeIndex;
 
 	dmatrix m_O;
 	dmatrix m_Op;
@@ -140,9 +141,11 @@ private:
 	void compute_correlation_array(const dvariable &phi);
 	void compute_likelihood_residuals();
 	void compute_weighted_sumofsquares();
+	void aggregate_and_compress_arrays();
+
 public:
 	logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
-	                const double _minp,const double _seps=0);
+	                const double _minp,const double _eps=0);
 
 	dvariable operator() ();
 	dvariable operator() (const dvariable &sigma2);
@@ -182,10 +185,11 @@ void add_constant_normalize(T M, const double &eps)
 	y2 = M.rowmax();
 	for( i = y1; i <= y2; i++ )
 	{
-		M(i) = M(i) + eps;
+		M(i) = M(i) / sum(M(i)) + eps;
 		M(i) = M(i) / sum(M(i));
 	}
 }
+
 
 template <typename T>
 T tail_compress(const T &O,const dmatrix &n_Age)

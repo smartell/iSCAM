@@ -5,10 +5,10 @@
 	Implementation of the logistic normal negative loglikelihood.
 
 	The overloaded operator () can have the following args:
-	()             -no args, and compute the MLE of the variance
+	()             -no args, anompute the MLE of the variance
 	(sig)          -estimate the variance
 	(sig,phi1)     -AR1 process
-	(sig,phi1,phi2)-AR2 process
+	(sig,phi1,phi2)-AR2 procd cess
 */
 
 
@@ -33,31 +33,45 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	m_b1 = m_O.colmin();
 	m_b2 = m_O.colmax();
 
-	m_nAidx = get_tail_compressed_index(m_O,minp);
-	m_Op    = tail_compress(m_O,m_nAidx);
-	m_Ep    = tail_compress(m_E,m_nAidx);
-	if( eps )
-	{
-		add_constant_normalize(m_Op,eps);
-		add_constant_normalize(m_Ep,eps);
+	if(eps)
+	{	
+		add_constant_normalize(m_O,eps);
+		add_constant_normalize(m_E,eps);
 	}
-	else if ( eps == 0 )
-	{
-		aggregate(m_Op,m_Ep,minp);
-	}
+	aggregate_and_compress_arrays();
 
-	m_nb1.allocate(m_y1,m_y2);
-	m_nb2.allocate(m_y1,m_y2);
-	for(int i = m_y1; i <= m_y2; i++ )
-	{
-		m_nb1(i) = min(m_nAidx(i));
-		m_nb2(i) = max(m_nAidx(i));
-	}
+	
+	// // The following compression breaks the derivative chain for LN2 & LN3 models.
+	// // Treat _O as a ragged objects and get m_nAidx from that.
+	// m_nAidx = get_tail_compressed_index(m_O,minp);
+	// // cout<<m_nAidx<<endl;
+	// // exit(1);
+	// m_Op    = tail_compress(m_O,m_nAidx);
+	// m_Ep    = tail_compress(m_E,m_nAidx);
+	// if( eps )
+	// {
+	// 	add_constant_normalize(m_Op,eps);
+	// 	add_constant_normalize(m_Ep,eps);
+	// }
+	// else if ( eps == 0 )
+	// {
+	// 	aggregate(m_Op,m_Ep,minp);
+	// }
+
+	// m_nb1.allocate(m_y1,m_y2);
+	// m_nb2.allocate(m_y1,m_y2);
+	// for(int i = m_y1; i <= m_y2; i++ )
+	// {
+	// 	m_nb1(i) = min(m_nAidx(i));
+	// 	m_nb2(i) = max(m_nAidx(i));
+	// }
+	
+
 	m_V.allocate(m_y1,m_y2,m_nb1,m_nb2-1,m_nb1,m_nb2-1);
 	m_V.initialize();
 
 	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
-
+	
 	m_Wy = compute_relative_weights(m_O);
 	
 	compute_likelihood_residuals();
@@ -118,8 +132,8 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
 	compute_weighted_sumofsquares();
 
 	// estimated variance
-	m_sigma = sqrt(sigma2);
 	m_sigma2 = sigma2;
+	m_sigma = sqrt(m_sigma2);
 
 	// compute negative loglikelihood
 	m_nll = negative_log_likelihood();
@@ -131,7 +145,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
  * Returns the negative loglikelihood for the logistic normal distribution
  * assuming AR1 autocorrelation in the composition data.
 **/
-dvariable logistic_normal::operator() (const dvariable &theta,const dvariable &phi)
+dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &phi)
 {
 	m_nll = 0;
 
@@ -143,8 +157,8 @@ dvariable logistic_normal::operator() (const dvariable &theta,const dvariable &p
 	compute_weighted_sumofsquares();
 
 	// estimated variance
-	m_sigma  = sqrt(theta) / (1.0-phi);
-	m_sigma2 = square(m_sigma);
+	m_sigma2  = sigma2;// / (1.0-phi);
+	m_sigma   = sqrt(m_sigma2);
 
 	// compute negative loglikelihood
 	m_nll = negative_log_likelihood();
@@ -239,6 +253,85 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 
 	//RETURN_ARRAYS_DECREMENT();	
 }
+
+/**
+ * This function aggregates adjacent cohorts if the proportion of each
+ * cohort is less than minp. This routine also allocates m_Op and m_Ep.
+**/
+void logistic_normal::aggregate_and_compress_arrays()
+{
+	// Determine the max column index for each year in the array.
+	int i,j;
+	m_nb1.allocate(m_y1,m_y2);
+	m_nb2.allocate(m_y1,m_y2);
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		m_nb1(i) = m_O(i).indexmin();
+		int n = m_nb1(i)-1;
+		double sumO = sum(m_O(i));
+		for( j = m_nb1(i); j <= m_O(i).indexmax(); j++ )
+		{
+			double p = m_O(i,j) / sumO;
+			if( p > minp ) n++;
+		}
+		m_nb2(i) = n;
+	}
+
+	// Now allocate arrays
+	m_Op.allocate(m_y1,m_y2,m_nb1,m_nb2);
+	m_Ep.allocate(m_y1,m_y2,m_nb1,m_nb2);
+	m_Op.initialize();
+	m_Ep.initialize();
+	m_nAgeIndex.allocate(m_y1,m_y2,m_nb1,m_nb2);
+
+	// Now aggregate observed and expected proprtions.
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		dvector     oo = m_O(i) / sum(m_O(i));
+		dvar_vector ee = m_E(i) / sum(m_E(i));
+		int k = m_nb1(i);
+		for( j = m_nb1(i); j <= m_O(i).indexmax(); j++ )
+		{
+			if( oo(j) <= minp )
+			{
+				m_Op(i)(k) += oo(j);
+				m_Ep(i)(k) += ee(j);
+			}
+			else
+			{
+				m_Op(i)(k) += oo(j);
+				m_Ep(i)(k) += ee(j);
+				if( k <= m_nb2(i) ) m_nAgeIndex(i,k) = k;
+				if( k <  m_nb2(i) ) k++;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
