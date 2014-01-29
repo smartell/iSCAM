@@ -149,6 +149,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 {
 	m_nll = 0;
 
+	get_rho(phi);
 	// Construct covariance (m_V)
 	// cout<<theta<<"\t"<<phi<<endl;
 	compute_correlation_array(phi);
@@ -165,7 +166,31 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 	return m_nll;
 }
 
+/**
+ * Returns the negative loglikelihood for the logistic normal distribution
+ * assuming AR1 autocorrelation in the composition data.
+**/
+dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &phi,
+                                       const dvariable &psi)
+{
+	m_nll = 0;
 
+	
+	// Construct covariance (m_V)
+	// cout<<theta<<"\t"<<phi<<endl;
+	compute_correlation_array(phi);
+
+	// Compute weighted sum of squares
+	compute_weighted_sumofsquares();
+
+	// estimated variance
+	m_sigma2  = sigma2;// / (1.0-phi);
+	m_sigma   = sqrt(m_sigma2);
+
+	// compute negative loglikelihood
+	m_nll = negative_log_likelihood();
+	return m_nll;
+}
 
 
 
@@ -208,37 +233,43 @@ void logistic_normal::compute_correlation_array()
 	}
 }
 
+void logistic_normal::get_rho(const dvariable &phi)
+{
+	int j,k;
+	m_rho.allocate(min(m_nb1),max(m_nb2));
+	m_rho.initialize();
+	for( j = min(m_nb1), k=1; j <= max(m_nb2); j++, k++ )
+	{
+		m_rho(j) = pow(phi,k);
+	}
+}
+
+
+
 void logistic_normal::compute_correlation_array(const dvariable &phi)
 {
 	int i,j,k;
 	//RETURN_ARRAYS_INCREMENT();
 	// cout<<boundpin(phi,-1,1)<<endl;
-	dvar_vector rho(min(m_nb1),max(m_nb2));
-	rho.initialize();
-	for( j = min(m_nb1), k=1; j <= max(m_nb2); j++, k++ )
-	{
-		rho(j) = pow(phi,k);
-	}
+	// dvar_vector rho(min(m_nb1),max(m_nb2));
+	// rho.initialize();
+	// for( j = min(m_nb1), k=1; j <= max(m_nb2); j++, k++ )
+	// {
+	// 	rho(j) = pow(phi,k);
+	// }
 
 
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		int l = m_nb1(i);
 		int u = m_nb2(i);
-		
-		// dvar_vector rho(l,u);
-		// rho.initialize();
-		// for( j = l, k = 1; j <= u; j++, k++ )
-		// {
-		// 	rho(j) = pow(phi,k);
-		// }
 
 		dvar_matrix C = identity_matrix(l,u);
 		for( j = l; j <= u; j++ )
 		{
 			for( k = l; k <= u; k++ )
 			{
-				if(j != k) C(j,k) = rho(l-1+abs(j-k));
+				if(j != k) C(j,k) = m_rho(l-1+abs(j-k));
 			}
 		}
 
@@ -251,7 +282,6 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 		
 	}
 
-	//RETURN_ARRAYS_DECREMENT();	
 }
 
 /**

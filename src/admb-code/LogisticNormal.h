@@ -129,6 +129,8 @@ private:
 	dmatrix m_Op;
 	dmatrix m_nAidx;
 
+	dvar_vector m_rho;
+
 	dvar_matrix m_E;
 	dvar_matrix m_Ep;
 	dvar_matrix m_ww;
@@ -137,6 +139,8 @@ private:
 
 	logistic_normal();
 	dvariable negative_log_likelihood();
+	void get_rho(const dvariable &phi);
+
 	void compute_correlation_array();
 	void compute_correlation_array(const dvariable &phi);
 	void compute_likelihood_residuals();
@@ -150,6 +154,8 @@ public:
 	dvariable operator() ();
 	dvariable operator() (const dvariable &sigma2);
 	dvariable operator() (const dvariable &theta ,const dvariable &phi);
+	dvariable operator() (const dvariable &theta ,const dvariable &phi,
+	                      const dvariable &psi);
 
 
 
