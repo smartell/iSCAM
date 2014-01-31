@@ -231,3 +231,35 @@ You can use `-i` with `rebase` for an “interactive” rebase. This allows you 
 
 	git rebase -i upstream/master
 
+
+### Simple Git instructions
+
+To update or fetch changes on the repository use the following routine:
+
+  git checkout <branch-name>
+  git pull
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
