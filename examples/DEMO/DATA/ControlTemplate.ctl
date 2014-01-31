@@ -36,7 +36,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1 						## Gear Index
-   4                        ## Likelihood type
+   3                        ## Likelihood type
    0.000                    ## Minimum proportion for aggregation & tail compression
    0.0000                   ## Small constant to add to comps & renormalize
     1                       ## phase for log_age_tau2 estimation.
@@ -96,7 +96,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

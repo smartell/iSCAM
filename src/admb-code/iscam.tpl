@@ -1917,7 +1917,6 @@ FUNCTION calc_objective_function
 			
 
 			logistic_normal cLN(O,P,dMinP(k),dEps(k));
-
 			switch(nCompLikelihood(k))
 			{
 				case 1:
@@ -1928,11 +1927,10 @@ FUNCTION calc_objective_function
 					//nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),cntrl(6));
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
+
 				case 3: // logistic normal with no autocorrelation
 					if( !active(log_age_tau2(k)) )
 					{
-						//nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
-						//	                                 age_tau2(k));
 						nlvec(3,k) = cLN();
 					}
 					else if( active(log_age_tau2(k)) )
@@ -1940,50 +1938,19 @@ FUNCTION calc_objective_function
 						nlvec(3,k) = cLN(dvar_age_tau2(k));
 					}
 					age_tau2 = cLN.get_sigma2();
+					nu = cLN.get_standardized_residuals();
+			cout<<"Ok to here"<<endl;
 				break; 
-
 				case 4:  // AR1 case for the logistic normal
 					nlvec(3,k) = cLN(dvar_age_tau2(k),phi1(k));
 					age_tau2(k) = cLN.get_sigma2();
-
-					//nlvec(3,k) = nll_logistic_normal(O,P,dMinP(k),dEps(k),
-					//                                dvar_age_tau2(k),phi1(k));
-					//age_tau2(k) = value(dvar_age_tau2(k));
+					nu = cLN.get_standardized_residuals();
 				break;
-
 				case 5: // AR2 case for the logistic normal.
-					nlvec(3,k) = cLN(phi1(k));
+					nlvec(3,k) = cLN(phi1(k),phi2(k));
 					age_tau2(k) = cLN.get_sigma2();
+					nu = cLN.get_standardized_residuals();
 				break;
-				/*
-				case 3:
-					// class object for the logistic normal likelihood.
-					// Jan 3, 2014, trying to optimize the code in logistic_normal class
-					
-					logistic_normal cLN_Age(&O,&P,dMinP(k),dEps(k));
-					
-					if( !active(phi1(k)) )                      // LN1 Model
-					{
-						nlvec(3,k)  = cLN_Age();	
-					}
-					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
-					{
-						nlvec(3,k)   = cLN_Age(phi1(k));	
-					}
-					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
-					{
-						nlvec(3,k)   = cLN_Age(phi1(k),phi2(k));	
-					}
-
-					// Residual
-					if(last_phase())
-					{
-						nu          = cLN_Age.get_residuals();
-						age_tau2(k) = cLN_Age.get_sig2();
-					}
-				break;
-				*/
-
 			}
 			
 			for(i=1;i<=naa/*na_nobs(k)*/;i++)

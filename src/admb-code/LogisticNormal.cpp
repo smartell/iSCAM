@@ -362,6 +362,7 @@ void logistic_normal::aggregate_and_compress_arrays()
 /**
  * Compute the standardized residuals.
  * res{_by} = [log(O_{by}/\tilde(O)) - log(E_{by}/\tilde(E))] / (W_y G_y^{0.5})
+ * Note that this matrix is of the same dimensions as the input matrix m_O.
  * Pseudocode:
  * 1). calculate \tilde(O) & \tilde(E)
 **/
@@ -374,30 +375,30 @@ void logistic_normal::std_residuals()
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		// geometric means of each vector.
-		double n  = m_nb2(i) - m_nb1(i) + 1.;
+		int l = m_nb1(i);
+		int u = m_nb2(i);
+		
 		double tO = geomean<double>(m_Op(i));
 		dvector t1 = m_Op(i)/tO;
 		double tE = geomean<double>(value(m_Ep(i)));
 		dvector t2 = value(m_Ep(i))/tE;
-
-		dmatrix  I = identity_matrix(m_nb1(i),n-1);
-
-		dmatrix tF(m_nb1(i),n,m_nb1(i),n-1);
-		tF.sub(m_b1,n-1) = I;
-		tF(n)            = 1;
-
+		
+		dmatrix  I = identity_matrix(l,u-1);
+		
+		dmatrix tF(l,u,l,u-1);
+		tF.sub(l,u-1) = I;
+		tF(u)         = 1;
+		
 		dmatrix  Hinv    = inv(I + 1);
 		dmatrix FHinv    = tF * Hinv;
 		dmatrix     G    = FHinv * value(m_V(i)) * trans(FHinv);
-
-		dvector sd    = sqrt(diagonal(G));
+		dvector sd       = sqrt(diagonal(G));
 		for( j = m_nb1(i); j <= m_nb2(i); j++ )
 		{
 			k = m_nAgeIndex(i)(j);
 			m_std_residual(i)(k) = (t1(j)-t2(j)) / (sd(j)*m_Wy(i));
 		}
-	}
-}
+	}}
 
 
 

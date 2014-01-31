@@ -127,6 +127,7 @@ private:
 
 	dmatrix m_O;
 	dmatrix m_Op;
+	dmatrix m_Oz;
 	dmatrix m_nAidx;
 	dmatrix m_std_residual;
 
@@ -134,8 +135,8 @@ private:
 
 	dvar_matrix m_E;
 	dvar_matrix m_Ep;
+	dvar_matrix m_Ez;
 	dvar_matrix m_ww;
-
 	dvar3_array m_V;
 
 	logistic_normal();
@@ -165,9 +166,10 @@ public:
 
 
 	// Return the estimated (or mle) of the variance
-	double    get_sigma () { return value(m_sigma ); }
-	double    get_sigma2() { return value(m_sigma2); }
-	dmatrix   get_standardized_residuals() { std_residuals(); return m_std_residual; }
+	double      get_sigma () { return value(m_sigma ); }
+	double      get_sigma2() { return value(m_sigma2); }
+	dmatrix     get_standardized_residuals() { std_residuals(); return m_std_residual; }
+	
 
 };
 

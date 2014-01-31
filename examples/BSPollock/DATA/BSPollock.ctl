@@ -38,7 +38,7 @@
    0.00  0.00  0.00         ## Minimum proportion for aggregation
    0.00  0.00  0.00         ## Small constant to add to comps & renormalize
    1    -1    -1            ## phase for log_age_tau2 estimation.
-   2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
+  -2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
   -2    -1    -1            ## phase for phi2 estimation: bounded (0,1)  AR2 
    -12345                   ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
@@ -96,7 +96,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-0           # 1  -verbose ADMB output (0=off, 1=on)
+1           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.
