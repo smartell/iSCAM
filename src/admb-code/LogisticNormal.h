@@ -139,18 +139,21 @@ private:
 
 	logistic_normal();
 	dvariable negative_log_likelihood();
+	void get_rho();
 	void get_rho(const dvariable &phi);
+	void get_rho(const dvariable &phi, const dvariable &psi);
 
 	void compute_correlation_array();
-	void compute_correlation_array(const dvariable &phi);
 	void compute_likelihood_residuals();
 	void compute_weighted_sumofsquares();
 	void aggregate_and_compress_arrays();
 
 public:
+	// Constructor
 	logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	                const double _minp,const double _eps=0);
 
+	// Four alternative methods for calculating the nll.
 	dvariable operator() ();
 	dvariable operator() (const dvariable &sigma2);
 	dvariable operator() (const dvariable &theta ,const dvariable &phi);
@@ -158,7 +161,7 @@ public:
 	                      const dvariable &psi);
 
 
-
+	// Return the estimated (or mle) of the variance
 	double    get_sigma () { return value(m_sigma ); }
 	double    get_sigma2() { return value(m_sigma2); }
 

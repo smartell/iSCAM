@@ -33,6 +33,7 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	m_b1 = m_O.colmin();
 	m_b2 = m_O.colmax();
 
+	// 1). Aggregate and compress arrays, add small constant if eps > 0
 	if(eps)
 	{	
 		add_constant_normalize(m_O,eps);
@@ -41,37 +42,15 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	aggregate_and_compress_arrays();
 
 	
-	// // The following compression breaks the derivative chain for LN2 & LN3 models.
-	// // Treat _O as a ragged objects and get m_nAidx from that.
-	// m_nAidx = get_tail_compressed_index(m_O,minp);
-	// // cout<<m_nAidx<<endl;
-	// // exit(1);
-	// m_Op    = tail_compress(m_O,m_nAidx);
-	// m_Ep    = tail_compress(m_E,m_nAidx);
-	// if( eps )
-	// {
-	// 	add_constant_normalize(m_Op,eps);
-	// 	add_constant_normalize(m_Ep,eps);
-	// }
-	// else if ( eps == 0 )
-	// {
-	// 	aggregate(m_Op,m_Ep,minp);
-	// }
-
-	// m_nb1.allocate(m_y1,m_y2);
-	// m_nb2.allocate(m_y1,m_y2);
-	// for(int i = m_y1; i <= m_y2; i++ )
-	// {
-	// 	m_nb1(i) = min(m_nAidx(i));
-	// 	m_nb2(i) = max(m_nAidx(i));
-	// }
-	
-
+	// Now that we now the dimensions of each array, allocate
+	// memory for the covariance matrixes.
 	m_V.allocate(m_y1,m_y2,m_nb1,m_nb2-1,m_nb1,m_nb2-1);
 	m_V.initialize();
 
+	// Total number of bins minus 1.
 	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
 	
+	// Relative weights to assign to each year.
 	m_Wy = compute_relative_weights(m_O);
 	
 	compute_likelihood_residuals();
@@ -102,6 +81,9 @@ dvariable logistic_normal::operator() ()
 {
 	m_nll = 0;
 
+	// Get correlation vector rho
+	get_rho();
+
 	// Construct covariance (m_V)
 	compute_correlation_array();
 
@@ -125,6 +107,9 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
 {
 	m_nll = 0;
 
+	// Get correlation vector rho
+	get_rho();
+	
 	// Construct covariance (m_V)
 	compute_correlation_array();
 
@@ -149,10 +134,11 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 {
 	m_nll = 0;
 
+	// Get correlation vector rho
 	get_rho(phi);
+
 	// Construct covariance (m_V)
-	// cout<<theta<<"\t"<<phi<<endl;
-	compute_correlation_array(phi);
+	compute_correlation_array();
 
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
@@ -175,10 +161,12 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 {
 	m_nll = 0;
 
-	
+	// Get correlation vector rho
+	get_rho(phi,psi);
+	cout<<m_rho<<endl;
+
 	// Construct covariance (m_V)
-	// cout<<theta<<"\t"<<phi<<endl;
-	compute_correlation_array(phi);
+	compute_correlation_array();
 
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
@@ -224,13 +212,19 @@ void logistic_normal::compute_weighted_sumofsquares()
 	}
 }
 
-void logistic_normal::compute_correlation_array()
+// void logistic_normal::compute_correlation_array()
+// {
+// 	int i;
+// 	for( i = m_y1; i <= m_y2; i++ )
+// 	{
+// 		m_V(i) = 1 + identity_matrix(m_nb1(i),m_nb2(i)-1);
+// 	}
+// }
+
+void logistic_normal::get_rho()
 {
-	int i;
-	for( i = m_y1; i <= m_y2; i++ )
-	{
-		m_V(i) = 1 + identity_matrix(m_nb1(i),m_nb2(i)-1);
-	}
+	m_rho.allocate(min(m_nb1),max(m_nb2));
+	m_rho = 1.0;
 }
 
 void logistic_normal::get_rho(const dvariable &phi)
@@ -244,20 +238,47 @@ void logistic_normal::get_rho(const dvariable &phi)
 	}
 }
 
+void logistic_normal::get_rho(const dvariable &phi, const dvariable &psi)
+{
+	int j;
+	int lb = min(m_nb1);
+	int ub = max(m_nb2);
+	m_rho.allocate(lb,ub);
+	m_rho.initialize();
+	dvar_vector tmp(lb-1,ub);
+	tmp = 1.0;
+	dvariable phi2 = -1. + (1. + sfabs(phi)) * psi;
+	tmp(lb) = phi /(1.0-phi2);
+	for( j = lb+1; j <= ub; j++ )
+	{
+		tmp(j) = phi*tmp(j-1) + phi2*tmp(j-2);
+	}
+	for( j = lb; j <= ub; j++ )
+	{
+		m_rho(j) = tmp(j);
+	}
+}
 
 
-void logistic_normal::compute_correlation_array(const dvariable &phi)
+/**
+ * Compute the vector of correlation matrixes for each year based on the
+ * vector of m_rho values.  If there is no correlation then use a simple identity
+ * matrix plus 1.  Else, C is the correlation matrix that is used to calculate the
+ * covariance matrix m_V(in year i).
+**/
+void logistic_normal::compute_correlation_array()
 {
 	int i,j,k;
-	//RETURN_ARRAYS_INCREMENT();
-	// cout<<boundpin(phi,-1,1)<<endl;
-	// dvar_vector rho(min(m_nb1),max(m_nb2));
-	// rho.initialize();
-	// for( j = min(m_nb1), k=1; j <= max(m_nb2); j++, k++ )
-	// {
-	// 	rho(j) = pow(phi,k);
-	// }
+	
 
+	if ( sum(first_difference(m_rho)) == 0 )
+	{
+		for( i = m_y1; i <= m_y2; i++ )
+		{
+			m_V(i) = 1 + identity_matrix(m_nb1(i),m_nb2(i)-1);
+		}
+		return; 
+	}
 
 	for( i = m_y1; i <= m_y2; i++ )
 	{
@@ -272,14 +293,12 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 				if(j != k) C(j,k) = m_rho(l-1+abs(j-k));
 			}
 		}
-
 		dmatrix I = identity_matrix(l,u-1);
 		dmatrix tK(l,u,l,u-1);
 		tK.sub(l,u-1) = I;
 		tK(u)         = -1;
 		dmatrix K = trans(tK);
 		m_V(i) = K * C * tK;
-		
 	}
 
 }
@@ -287,6 +306,7 @@ void logistic_normal::compute_correlation_array(const dvariable &phi)
 /**
  * This function aggregates adjacent cohorts if the proportion of each
  * cohort is less than minp. This routine also allocates m_Op and m_Ep.
+ *  
 **/
 void logistic_normal::aggregate_and_compress_arrays()
 {
