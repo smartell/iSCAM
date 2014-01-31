@@ -240,6 +240,7 @@ To update or fetch changes on the repository use the following routine:
 
 	git pull
 
+Use this git update-index --skip-worktree FILENAME to ignore file
 
 
 
