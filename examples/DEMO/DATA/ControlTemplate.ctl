@@ -62,16 +62,16 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	3		        # 1  -selectivity type ivector(isel_type) for gear
-	3.5		        # 2  -Age/length at 50% selectivity (logistic)
-	0.5		        # 3  -STD at 50% selectivity (logistic)
-	7				# 4  -No. of age nodes for each gear (0=ignore)
-	12				# 5  -No. of year nodes for 2d spline(0=ignore)
-	3				# 6  -Phase of estimation (-1 for fixed)
-	1			    # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-	1 			    # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	1			    # 9  -Penalty wt for time-varying selectivity
-	1               # 10 -n_sel_blocks (number of selex blocks)
+  3		          # 1  -selectivity type ivector(isel_type) for gear
+  3.5		        # 2  -Age/length at 50% selectivity (logistic)
+  0.5		        # 3  -STD at 50% selectivity (logistic)
+  7				      # 4  -No. of age nodes for each gear (0=ignore)
+  12				    # 5  -No. of year nodes for 2d spline(0=ignore)
+  3				      # 6  -Phase of estimation (-1 for fixed)
+  1			    # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+  1 			    # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+  1			    # 9  -Penalty wt for time-varying selectivity
+  1               # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## START OF TIME BLOCKS FOR -n_sel_blocks), each row for each gear.
 1968
@@ -96,7 +96,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-1           # 1  -verbose ADMB output (0=off, 1=on)
+0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

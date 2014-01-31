@@ -30,15 +30,17 @@
 ## Likelihood type for each gear:
 ##     -1 : multivariate logistic (dmvlogistic)
 ##     -2 : multinomial, sample size based on input data
-##     -3 : logistic_normal, 3 flavors, no autocorrelation, AR1, AR2.
+##     -3 : logistic_normal, 2 flavors, mle of sigma, or estimate sigma.
+##     -4 : logistic_normal with AR1, must have positive phase for phi1
+##     -5 : logistic_normal wiht AR2, must have positive phase for phi2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1     2     5            ## Gear Index
-   3     1     1            ## Likelihood type
+   4     1     1            ## Likelihood type
    0.00  0.00  0.00         ## Minimum proportion for aggregation
    0.00  0.00  0.00         ## Small constant to add to comps & renormalize
    1    -1    -1            ## phase for log_age_tau2 estimation.
-  -2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
+   2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
   -2    -1    -1            ## phase for phi2 estimation: bounded (0,1)  AR2 
    -12345                   ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
@@ -96,7 +98,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-1           # 1  -verbose ADMB output (0=off, 1=on)
+0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

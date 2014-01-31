@@ -141,6 +141,8 @@ private:
 
 	logistic_normal();
 	dvariable negative_log_likelihood();
+	dvector compute_relative_weights(const dmatrix &O);
+	
 	void get_rho();
 	void get_rho(const dvariable &phi);
 	void get_rho(const dvariable &phi, const dvariable &psi);
@@ -160,8 +162,8 @@ public:
 	// Four alternative methods for calculating the nll.
 	dvariable operator() ();
 	dvariable operator() (const dvariable &sigma2);
-	dvariable operator() (const dvariable &theta ,const dvariable &phi);
-	dvariable operator() (const dvariable &theta ,const dvariable &phi,
+	dvariable operator() (const dvariable &sigma2 ,const dvariable &phi);
+	dvariable operator() (const dvariable &sigma2 ,const dvariable &phi,
 	                      const dvariable &psi);
 
 
@@ -222,40 +224,40 @@ T1 geomean(T x)
 	return(pow(p,1./n));
 }
 
-template <typename T>
-T tail_compress(const T &O,const dmatrix &n_Age)
-{
-	int i,y1,y2;
-	int b1,b2;
+// template <typename T>
+// T tail_compress(const T &O,const dmatrix &n_Age)
+// {
+// 	int i,y1,y2;
+// 	int b1,b2;
 
-	y1 = O.rowmin();
-	y2 = O.rowmax();
-	b1 = O.colmin();
-	b2 = O.colmax();
+// 	y1 = O.rowmin();
+// 	y2 = O.rowmax();
+// 	b1 = O.colmin();
+// 	b2 = O.colmax();
 
-	T P;
-	P.allocate(n_Age);
-	P.initialize();
-	T px;
-	px.allocate(O);
-	px.initialize();
+// 	T P;
+// 	P.allocate(n_Age);
+// 	P.initialize();
+// 	T px;
+// 	px.allocate(O);
+// 	px.initialize();
 	
-	for( i = y1; i <= y2; i++ )
-	{
-		ivector ix = n_Age(i);
-		px(i) = O(i)/sum(O(i));
-		P(i)(min(ix),max(ix)) = px(i)(ix);
-		if( min(ix) > b1 )
-		{
-			P(i)(min(ix)) = sum(px(i)(b1,min(ix)));
-		}
-		if( max(ix) < b2 )
-		{
-			P(i)(max(ix)) = sum(px(i)(max(ix),b2));
-		}
-	}
+// 	for( i = y1; i <= y2; i++ )
+// 	{
+// 		ivector ix = n_Age(i);
+// 		px(i) = O(i)/sum(O(i));
+// 		P(i)(min(ix),max(ix)) = px(i)(ix);
+// 		if( min(ix) > b1 )
+// 		{
+// 			P(i)(min(ix)) = sum(px(i)(b1,min(ix)));
+// 		}
+// 		if( max(ix) < b2 )
+// 		{
+// 			P(i)(max(ix)) = sum(px(i)(max(ix),b2));
+// 		}
+// 	}
 	
-	return(P);
-}
+// 	return(P);
+// }
 
 #endif

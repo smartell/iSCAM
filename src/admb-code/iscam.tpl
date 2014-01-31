@@ -1939,7 +1939,6 @@ FUNCTION calc_objective_function
 					}
 					age_tau2 = cLN.get_sigma2();
 					nu = cLN.get_standardized_residuals();
-			cout<<"Ok to here"<<endl;
 				break; 
 				case 4:  // AR1 case for the logistic normal
 					nlvec(3,k) = cLN(dvar_age_tau2(k),phi1(k));
@@ -1947,7 +1946,7 @@ FUNCTION calc_objective_function
 					nu = cLN.get_standardized_residuals();
 				break;
 				case 5: // AR2 case for the logistic normal.
-					nlvec(3,k) = cLN(phi1(k),phi2(k));
+					nlvec(3,k) = cLN(dvar_age_tau2(k),phi1(k),phi2(k));
 					age_tau2(k) = cLN.get_sigma2();
 					nu = cLN.get_standardized_residuals();
 				break;
