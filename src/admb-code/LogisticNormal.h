@@ -128,6 +128,7 @@ private:
 	dmatrix m_O;
 	dmatrix m_Op;
 	dmatrix m_nAidx;
+	dmatrix m_std_residual;
 
 	dvar_vector m_rho;
 
@@ -142,6 +143,8 @@ private:
 	void get_rho();
 	void get_rho(const dvariable &phi);
 	void get_rho(const dvariable &phi, const dvariable &psi);
+
+	void std_residuals();
 
 	void compute_correlation_array();
 	void compute_likelihood_residuals();
@@ -164,6 +167,7 @@ public:
 	// Return the estimated (or mle) of the variance
 	double    get_sigma () { return value(m_sigma ); }
 	double    get_sigma2() { return value(m_sigma2); }
+	dmatrix   get_standardized_residuals() { std_residuals(); return m_std_residual; }
 
 };
 
@@ -199,6 +203,22 @@ void add_constant_normalize(T M, const double &eps)
 	}
 }
 
+/**
+ * Template fucntion to return the product of an array.
+**/
+template <typename T1,typename T>
+T1 geomean(T x)
+{	
+	int lb = x.indexmin();
+	int ub = x.indexmax();
+	int n  = ub - lb + 1;
+	T1 p = x(lb);
+	for(int i = lb+1; i <= ub; i++ )
+	{
+		p *= x(i);
+	}
+	return(pow(p,1./n));
+}
 
 template <typename T>
 T tail_compress(const T &O,const dmatrix &n_Age)

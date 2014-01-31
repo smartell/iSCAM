@@ -47,15 +47,16 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	m_V.allocate(m_y1,m_y2,m_nb1,m_nb2-1,m_nb1,m_nb2-1);
 	m_V.initialize();
 
+
 	// Total number of bins minus 1.
 	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
 	
 	// Relative weights to assign to each year.
 	m_Wy = compute_relative_weights(m_O);
 	
+	// Residuals for use in likelihood calculations
 	compute_likelihood_residuals();
 	
-
 }
 
 void logistic_normal::compute_likelihood_residuals()
@@ -163,7 +164,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 
 	// Get correlation vector rho
 	get_rho(phi,psi);
-	cout<<m_rho<<endl;
+	// cout<<m_rho<<endl;
 
 	// Construct covariance (m_V)
 	compute_correlation_array();
@@ -358,7 +359,45 @@ void logistic_normal::aggregate_and_compress_arrays()
 	}
 }
 
+/**
+ * Compute the standardized residuals.
+ * res{_by} = [log(O_{by}/\tilde(O)) - log(E_{by}/\tilde(E))] / (W_y G_y^{0.5})
+ * Pseudocode:
+ * 1). calculate \tilde(O) & \tilde(E)
+**/
+void logistic_normal::std_residuals()
+{
+	m_std_residual.allocate(m_O);
+	m_std_residual.initialize();
 
+	int i,j,k;
+	for( i = m_y1; i <= m_y2; i++ )
+	{
+		// geometric means of each vector.
+		double n  = m_nb2(i) - m_nb1(i) + 1.;
+		double tO = geomean<double>(m_Op(i));
+		dvector t1 = m_Op(i)/tO;
+		double tE = geomean<double>(value(m_Ep(i)));
+		dvector t2 = value(m_Ep(i))/tE;
+
+		dmatrix  I = identity_matrix(m_nb1(i),n-1);
+
+		dmatrix tF(m_nb1(i),n,m_nb1(i),n-1);
+		tF.sub(m_b1,n-1) = I;
+		tF(n)            = 1;
+
+		dmatrix  Hinv    = inv(I + 1);
+		dmatrix FHinv    = tF * Hinv;
+		dmatrix     G    = FHinv * value(m_V(i)) * trans(FHinv);
+
+		dvector sd    = sqrt(diagonal(G));
+		for( j = m_nb1(i); j <= m_nb2(i); j++ )
+		{
+			k = m_nAgeIndex(i)(j);
+			m_std_residual(i)(k) = (t1(j)-t2(j)) / (sd(j)*m_Wy(i));
+		}
+	}
+}
 
 
 
