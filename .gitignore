@@ -13,11 +13,16 @@
 *.rep
 *.par
 *.std
+*.eva
 *.mcmc
 *.mcrt
 *.mcst
 *.sim
 *.proj
+*.ret*
+*.p[0-9]*
+*.r[0-9]*
+*.b[0-9]*
 
 # Latex Stuff
 *.aux
@@ -34,6 +39,7 @@
 
 # R stuff
 *.Rhistory
+*.Rdata
 
 # Compiled Object files
 *.slo
