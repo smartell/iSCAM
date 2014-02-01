@@ -795,7 +795,7 @@ DATA_SECTION
 	init_ivector nCompLikelihood(1,nAgears);
 	init_vector  dMinP(1,nAgears);
 	init_vector  dEps(1,nAgears);
-	init_vector  nPhz_age_tau2(1,nAgears);
+	init_ivector nPhz_age_tau2(1,nAgears);
 	init_ivector nPhz_phi1(1,nAgears);
 	init_ivector nPhz_phi2(1,nAgears);
 	init_int check;
@@ -2708,8 +2708,8 @@ FUNCTION calcObjectiveFunction
 					// Residual
 					if(last_phase())
 					{
-						nu          = cLN_Age.get_std_residuals();
-						age_tau2(k) = cLN_Age.get_sig2();
+						nu          = cLN_Age.get_standardized_residuals();
+						age_tau2(k) = cLN_Age.get_sigma2();
 					}
 
 				break;
@@ -4952,7 +4952,7 @@ GLOBALS_SECTION
 	#include "baranov.h"
 	#include "OpMod.h"
 	#include "Selex.h"
-	#include "logistic_normal.h"
+	#include "LogisticNormal.h"
 
 	ivector getIndex(dvector& a, dvector& b)
 	{
