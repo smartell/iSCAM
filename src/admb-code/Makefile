@@ -10,7 +10,7 @@
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
 SRCS = $(EXEC).cpp          \
-		logistic_normal.cpp \
+		LogisticNormal.cpp \
 		msy.cpp 			\
 		baranov.cpp	selex.cpp \
 		OpMod.cpp    		

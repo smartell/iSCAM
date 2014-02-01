@@ -795,6 +795,7 @@ DATA_SECTION
 	init_ivector nCompLikelihood(1,nAgears);
 	init_vector  dMinP(1,nAgears);
 	init_vector  dEps(1,nAgears);
+	init_vector  nPhz_age_tau2(1,nAgears);
 	init_ivector nPhz_phi1(1,nAgears);
 	init_ivector nPhz_phi2(1,nAgears);
 	init_int check;
@@ -1184,8 +1185,10 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
 	// |---------------------------------------------------------------------------------|
+	// | log_age_tau2 is the variance of the composition errors.
 	// | phi1 is the AR1 coefficient
 	// | phi2 used in AR2 process.
+	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
 
@@ -2686,7 +2689,7 @@ FUNCTION calcObjectiveFunction
 				break;
 				case 3:
 					// insert logistic normal liklihood here.
-					logistic_normal cLN_Age( &O,&P,dMinP(k),dEps(k) );
+					logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					
 
 					if( !active(phi1(k)) )                      // LN1 Model
@@ -2705,7 +2708,7 @@ FUNCTION calcObjectiveFunction
 					// Residual
 					if(last_phase())
 					{
-						nu          = cLN_Age.get_residuals();
+						nu          = cLN_Age.get_std_residuals();
 						age_tau2(k) = cLN_Age.get_sig2();
 					}
 
