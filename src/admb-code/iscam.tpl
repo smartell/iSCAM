@@ -2678,6 +2678,7 @@ FUNCTION calcObjectiveFunction
 			
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
+			logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
@@ -2688,14 +2689,18 @@ FUNCTION calcObjectiveFunction
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
-					// insert logistic normal liklihood here.
-					logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
-					
-
 					if( !active(phi1(k)) )                      // LN1 Model
 					{
 						nlvec(3,k)  = cLN_Age();	
 					}
+					else
+					{
+						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
+					}
+				break;
+
+				case 4:
+					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
 						nlvec(3,k)   = cLN_Age(phi1(k));	
