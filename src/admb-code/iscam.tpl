@@ -1517,6 +1517,19 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 	return(ffa(fa));
   }
 
+/**
+ * @brief cubic spline interpolation
+ * @details Uses cubic spline interpolatoin for data type variables based on a 
+ * vector of spline coefficients, or nodes, and independent points.  
+ * The nodes are rescaled to 0-1.  This function does not extrapolate beyond the 
+ * independent points.
+ * 
+ * @param spline_coffs a data vector of spline coefficients (nodes)
+ * @param la a vector of independent points for use in interpolation.
+ * 
+ * @return A data vector containing the interpolated points.
+ */
+
 FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
   {
 	/*interplolation for length-based selectivity coefficeients*/

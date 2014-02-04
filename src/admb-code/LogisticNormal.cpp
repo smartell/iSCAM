@@ -11,7 +11,7 @@
 	(sig,phi1,phi2)-AR2 procd cess
 */
 
-
+	
 /**
  * Psuedocode:
  * 1) (aggregate || add constant) && compress tails
