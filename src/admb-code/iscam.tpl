@@ -134,13 +134,13 @@ DATA_SECTION
 	// | STRINGS FOR INPUT FILES                                                         |
 	// |---------------------------------------------------------------------------------|
 	/// | DataFile.dat           : data to condition the assessment model on     
-	init_adstring DataFile;      
+	init_adstring DataFile;      ///< String for the input datafile name.
 	/// | ControlFile.ctl        : controls for phases, selectivity options 
-	init_adstring ControlFile;
+	init_adstring ControlFile;	 ///< String for the control file.
 	/// | ProjectFileControl.pfc : used for stock projections under TAC
-	init_adstring ProjectFileControl;
+	init_adstring ProjectFileControl;  ///< String for the projection file.
 	/// | BaseFileName           : file prefix used for all iSCAM model output
-	!! BaseFileName   = stripExtension(ControlFile);
+	!! BaseFileName = stripExtension(ControlFile);  ///< BaseName given by the control file
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
@@ -162,7 +162,8 @@ DATA_SECTION
 	// |
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	/// | Number of catch options to explore in the decision table.
-	init_int n_tac;
+	init_int n_tac; ///< Number of catch options to explore in the decision table.
+					///<
 	!! COUT(n_tac);
 	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
@@ -189,10 +190,10 @@ DATA_SECTION
 	// | SimFlag    : if user specifies -sim, then turn SimFlag on.
 	// | retro_yrs  : number of terminal years to remove.
 	
-	int SimFlag;  //! Flag for simulation mode */
-	int mseFlag;  //! Flag for management strategy evaluation mode */
-	int rseed;
-	int retro_yrs;
+	int SimFlag;  ///< Flag for simulation mode
+	int mseFlag;  ///< Flag for management strategy evaluation mode
+	int rseed;    ///< Random number seed for simulated data.
+	int retro_yrs;///< Number of years to look back from terminal year.
 	LOC_CALCS
 		SimFlag=0;
 		rseed=999;
@@ -253,15 +254,15 @@ DATA_SECTION
 	int j;
 	int k;
 
-	init_int narea;
-	init_int ngroup;
-	init_int nsex;
-	init_int syr;
-	init_int nyr;	
-	init_int sage;
-	init_int nage;
-	init_int ngear;	
-	vector age(sage,nage);
+	init_int narea;			
+	init_int ngroup;			
+	init_int nsex;			
+	init_int syr;			
+	init_int nyr;				
+	init_int sage;			
+	init_int nage;			
+	init_int ngear;				
+	vector age(sage,nage);			
 
 
 
@@ -1216,7 +1217,7 @@ PARAMETER_SECTION
     // | - sig         -> STD of the observation errors in relative abundance data.
     // | - tau         -> STD of the process errors (recruitment deviations).
     // |
-	number m_bar;				
+	number m_bar;	///< Average natural mortality rate.			
 	number rho;					
 	number varphi				
 	number sig;					
@@ -1394,9 +1395,7 @@ PROCEDURE_SECTION
 	if( verbose ) {cout<<"End of main function calls"<<endl;}
 
 
-FUNCTION void calcSdreportVariables()
-  {
-	/*
+	/**
 	Purpose:  This function calculates the sdreport variables.
 	Author: Steven Martell
 	
@@ -1407,8 +1406,10 @@ FUNCTION void calcSdreportVariables()
 		
 	
 	TODO list:
-	[] - Calculate spawning biomass depletion for each group.
+	  [] - Calculate spawning biomass depletion for each group.
 	*/
+FUNCTION void calcSdreportVariables()
+  {
 	sd_depletion.initialize();
 
 	for(g=1;g<=ngroup;g++)
@@ -1419,32 +1420,32 @@ FUNCTION void calcSdreportVariables()
   }
 
 
+  	/**
+  	Purpose: This function extracts the specific parameter values from the theta vector
+  	       to initialize the leading parameters in the model.
+  	Author: Steven Martell
+  	
+  	Arguments:
+  		None
+  	
+  	NOTES:
+  		- You must call this routine before running the simulation model to generate 
+  		  fake data, otherwise you'll have goofy initial values for your leading parameters.
+  		- Variance partitioning:
+  	  Estimating total variance as = 1/precision
+  	  and partition variance by rho = sig^2/(sig^2+tau^2).
+  	  
+  	  E.g. if sig = 0.2 and tau =1.12 then
+  	  rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
+  	  the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
+  	
+  	TODO list:
+  	[ ] - Alternative parameterization using MSY and FMSY as leading parameters (Martell).
+  	[*] - avg recruitment limited to area, may consider ragged object for area & stock.
+  	
+  	*/
 FUNCTION void initParameters()
   {
-	/*
-	Purpose: This function extracts the specific parameter values from the theta vector
-	       to initialize the leading parameters in the model.
-	Author: Steven Martell
-
-	Arguments:
-		None
-
-	NOTES:
-		- You must call this routine before running the simulation model to generate 
-		  fake data, otherwise you'll have goofy initial values for your leading parameters.
-		- Variance partitioning:
-	  Estimating total variance as = 1/precision
-	  and partition variance by rho = sig^2/(sig^2+tau^2).
-	  
-	  E.g. if sig = 0.2 and tau =1.12 then
-	  rho = 0.2^2/(0.2^2+1.12^2) = 0.03090235
-	  the total variance is kappa^2 = sig^2 + tau^2 = 1.2944
-
-	TODO list:
-	[ ] - Alternative parameterization using MSY and FMSY as leading parameters (Martell).
-	[*] - avg recruitment limited to area, may consider ragged object for area & stock.
-
-	*/
 
 	
   	
@@ -1549,9 +1550,7 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 //   }
 
 
-FUNCTION void calcSelectivities(const ivector& isel_type)
-  {
-  	/*
+  	/**
   	Purpose: This function loops over each of ngears and calculates the corresponding
   	         selectivity coefficients for that gear in each year.  It uses a switch 
   	         statement based on isel_type to determine which selectivty function to use
@@ -1590,6 +1589,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	    age (j), and sex (h) indexing.
 
   	*/
+FUNCTION void calcSelectivities(const ivector& isel_type)
+  {
 	
 
 	int ig,i,j,k,byr,bpar;
@@ -1770,9 +1771,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	
   }	
 	
-FUNCTION calcTotalMortality
-  {
-  	/*
+  	/**
   	Purpose: This function calculates fishing mortality, total mortality and annual
   	         surivival rates S=exp(-Z) for each age and year based on fishing mortality
   	         and selectivity coefficients.  Z also is updated with time-varying 
@@ -1797,6 +1796,8 @@ FUNCTION calcTotalMortality
 	[ ] Calculate average M for reference point calculations based on pfc file.
 	[ ] 
   	*/
+FUNCTION calcTotalMortality
+  {
 
 	int ig,ii,i,k,l;
 	dvariable ftmp;
@@ -1888,9 +1889,7 @@ FUNCTION calcTotalMortality
   }
 	
 	
-FUNCTION calcNumbersAtAge
-  {
-  	/*
+  	/**
   	Purpose: This function initializes the numbers-at-age matrix in syr
   	         based on log_rinit and log_init_rec_devs, the annual recruitment
   	         based on log_rbar and log_rec_devs, and updates the number-at-age
@@ -1913,6 +1912,8 @@ FUNCTION calcNumbersAtAge
   	[ ] - Restrict log_avgrec and rec_devs to area and group dimensions (remove sex).
   	[ ] - Initialize from unfished conditions (d_iscamCntrl 5 flag is true then rt(syr) = ro)
   	*/
+FUNCTION calcNumbersAtAge
+  {
 	int ig,ih;
 
 	N.initialize();
@@ -1972,9 +1973,7 @@ FUNCTION calcNumbersAtAge
 
 
 
-FUNCTION calcAgeComposition
-  {
-  	/*
+  	/**
   	Purpose:  This function calculates the predicted age-composition samples (A) for 
   	          both directed commercial fisheries and survey age-composition data. For 
   	          all years of data specified in the A matrix, calculated the predicted 
@@ -2002,6 +2001,8 @@ FUNCTION calcAgeComposition
 
   	*/
   	
+FUNCTION calcAgeComposition
+  {
   	int ii,ig,kk;
   	dvar_vector va(sage,nage);
   	dvar_vector fa(sage,nage);
@@ -2310,9 +2311,7 @@ FUNCTION calcTotalCatch
 
 
 	
-FUNCTION calcSurveyObservations
-  {
-  	/*
+  	/**
   	Purpose:  This function computes the mle for survey q, calculates the survey 
   	          residuals (epsilon).
   	Author: Steven Martell
@@ -2321,28 +2320,34 @@ FUNCTION calcSurveyObservations
   		None
   	
   	NOTES:
-		- Oct 31, 2010, added retrospective counter.
+  		- Oct 31, 2010, added retrospective counter.
   		- Nov 22, 2010, adding multiple surveys. 
-  		  Still need to check with retrospective option
+  		Still need to check with retrospective option
   		- Nov 30, 2010, adjust the suvery biomass by the fraction of Z that has occurred 
-	      when the survey was conducted. For herring spawning biomass this would be 
-	      after the fishery has taken place.
-	    - Dec 6, 2010, modified predicted survey biomass to accomodate empirical
-	      weight-at-age data (d3_wt_avg).
-	    - May 11, 2011.  Vivian Haist pointed out an error in survey biomass comparison.
-		  The spawning biomass was not properly calculated in this routine. I.e. its 
-		  different than the spawning biomass in the stock-recruitment routine. (Based on 
-		  fecundity which changes with time when given empirical weight-at-age data.)
-		- Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
-		  fishery that would remove potential spawn that would not be surveyed.
-		- d3_survey_data: (iyr index(it) gear area group sex wt timing)
-		- for MLE of survey q, using weighted mean of zt to calculate q.
+  		when the survey was conducted. For herring spawning biomass this would be 
+  		after the fishery has taken place.
+  		- Dec 6, 2010, modified predicted survey biomass to accomodate empirical
+  		weight-at-age data (d3_wt_avg).
+  		- May 11, 2011.  Vivian Haist pointed out an error in survey biomass comparison.
+  		The spawning biomass was not properly calculated in this routine. I.e. its 
+  		different than the spawning biomass in the stock-recruitment routine. (Based on 
+  		fecundity which changes with time when given empirical weight-at-age data.)
+  		- Jan 6, 2012.  CHANGED corrected spawn survey observations to include a roe 
+  		fishery that would remove potential spawn that would not be surveyed.
+  		- d3_survey_data: (iyr index(it) gear area group sex wt timing)
+  		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	[] - add capability to accomodate priors for survey q's.
-  	[ ] - verify q_prior=2 option for random walk in q.
-  	[ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
-	*/
+  	    [] - add capability to accomodate priors for survey q's.
+  	    [ ] - verify q_prior=2 option for random walk in q.
+  	    [ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
+ 
+  	TODO LIST:
+	  [ ] - add capability to accompodate priors for survey catchabiliyt coefficients.
+
+  */
+FUNCTION calcSurveyObservations
+  {
 	
 	int ii,kk,ig,nz;
 	double di;
@@ -2427,23 +2432,20 @@ FUNCTION calcSurveyObservations
 	
   }
 
-/// 
-/// @fn Calculates stock recruitment residuals.
-/// @author Steve Martell
-///
-FUNCTION void calcStockRecruitment()
-  {
-  	/*
+  
+  	/**
 	Purpose:  
 		This function is used to derive the underlying stock-recruitment 
 		relationship that is ultimately used in determining MSY-based reference 
 		points.  The objective of this function is to determine the appropriate 
 		Ro, Bo and steepness values of either the Beverton-Holt or Ricker  Stock-
 		Recruitment Model:
+
 		Beverton-Holt Model
-		Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau)
+		\f$ Rt=k*Ro*St/(Bo+(k-1)*St)*exp(delta-0.5*tau*tau) \f$
+
 		Ricker Model
-		Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau)
+		\f$ Rt=so*St*exp(-beta*St)*exp(delta-0.5*tau*tau) \f$
 			
 		The definition of a stock is based on group only. At this point, spawning biomass
 		from all areas for a given group is the assumed stock, and the resulting
@@ -2467,10 +2469,13 @@ FUNCTION void calcStockRecruitment()
   			
   	
   	TODO list:
-  	[] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
-  	[] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup
-	[] - Add autocorrelation in recruitment residuals with parameter \gamma_r.
+	  [] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
+	  [] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup.
+	  [] - Add autocorrelation in recruitment residuals with parameter \f$ \gamma_r \f$.
+
   	*/
+FUNCTION void calcStockRecruitment()
+  {
 
   	int ig,ih;
   	rt.initialize();
@@ -3679,8 +3684,6 @@ FUNCTION void calcReferencePoints()
 
 
 
-FUNCTION void simulationModel(const long& seed)
-  {
   	/**
   	Purpose:  This routine gets called from the PRELIMINARY_CALCS_SECTION if the 
   	          user has specified the -sim command line option.  The random seed
@@ -3721,6 +3724,8 @@ FUNCTION void simulationModel(const long& seed)
 	[ ] - TODO: switch statement for catch-type to get Fishing mortality rate.
   	[ ] 
   	*/
+FUNCTION void simulationModel(const long& seed)
+  {
 	cout<<global_parfile<<endl;
 	bool pinfile = 0;
 	cout<<"___________________________________________________\n"<<endl;
@@ -4111,18 +4116,16 @@ FUNCTION void simulationModel(const long& seed)
 
 
 
-
-FUNCTION writeSimulatedDataFile
-  {
-  	/*
+  	/**
   	Purpose:  This function writes a simulated data file based on the simulation
-			  model output when the user specifies the -sim option.  This is only
-	          necessary if the user wishes to perform a retrospecrtive analysis on
-	          simulated data. 
+  		  model output when the user specifies the -sim option.  This is only
+  	      necessary if the user wishes to perform a retrospecrtive analysis on
+  	      simulated data. 
+
   	Author: Steven Martell
   	
   	Arguments:
-  		seed -> the random number seed that is concatenated into the file name.
+  	\param	seed -> the random number seed that is concatenated into the file name.
   	
   	NOTES:
   		
@@ -4130,8 +4133,8 @@ FUNCTION writeSimulatedDataFile
   	TODO list:
   	[ ] 
   	*/
-
-
+FUNCTION writeSimulatedDataFile
+  {
   	adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
   	ofstream dfs(sim_datafile_name);
   	dfs<<"#Model dimensions"<<endl;
@@ -4186,17 +4189,15 @@ FUNCTION writeSimulatedDataFile
 
 
 
-FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mpow)
-  {
-  	/*
+  	/**
   	Purpose:  This function returns a modified selectivity vector (va) based on
   			  the assumption that age-based selectivity will operate on the principle
   	          of ideal free distribution.
   	Author: Steven Martell
   	
   	Arguments:
-  		va -> age-specific vulnerability
-  		ba -> age-specific biomass (relative abundance is fine)
+  	\param	va -> age-specific vulnerability
+  	\param	ba -> age-specific biomass (relative abundance is fine)
   	
   	NOTES:
   		
@@ -4204,6 +4205,8 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mp
   	TODO list:
   	[ ] 
   	*/
+FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mpow)
+  {
 
   	dvector pa(sage,nage);
 
