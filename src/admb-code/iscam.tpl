@@ -2107,7 +2107,7 @@ FUNCTION calc_objective_function
 	
 	//** Legacy **  By accident took Rick Methot's bag from Nantes.
 	//301 787 0241  Richard Methot cell phone.
-	//ibis charles du gaulle at
+	//ibis charles de gaulle at
 	//01 49 19 19 20
 	
 	/*
