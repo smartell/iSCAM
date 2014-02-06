@@ -34,7 +34,7 @@
 ##
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-   1 						## Gear Index
+   1 						       ## Gear Index
    3                        ## Likelihood type
    0.00                     ## Minimum proportion for aggregation
    0.00                     ## Small constant to add to comps & renormalize

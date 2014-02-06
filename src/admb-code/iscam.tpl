@@ -1517,19 +1517,19 @@ FUNCTION dvar_vector cubic_spline(const dvar_vector& spline_coffs, const dvector
 	return(ffa(fa));
   }
 
-/**
- * @brief cubic spline interpolation
- * @details Uses cubic spline interpolatoin for data type variables based on a 
- * vector of spline coefficients, or nodes, and independent points.  
- * The nodes are rescaled to 0-1.  This function does not extrapolate beyond the 
- * independent points.
- * 
- * @param spline_coffs a data vector of spline coefficients (nodes)
- * @param la a vector of independent points for use in interpolation.
- * 
- * @return A data vector containing the interpolated points.
- */
-
+  /**
+   * @brief cubic spline interpolation
+   * @details Uses cubic spline interpolatoin for data type variables based on a 
+   * vector of spline coefficients, or nodes, and independent points.  
+   * The nodes are rescaled to 0-1.  This function does not extrapolate beyond the 
+   * independent points.
+   * 
+   * @param spline_coffs a data vector of spline coefficients (nodes)
+   * @param la a vector of independent points for use in interpolation.
+   * 
+   * @return A data vector containing the interpolated points.
+   */
+  
 FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
   {
 	/*interplolation for length-based selectivity coefficeients*/
@@ -4844,100 +4844,102 @@ FUNCTION mcmc_output
 ///
 /// \brief Run the managment strategy Evaluation routine
 ///
+
+
 FUNCTION void runMSE()
-    cout<<"Top of runMSE"<<endl;
+//    cout<<"Top of runMSE"<<endl;//
 
-	s_iSCAMdata      s_mseData;
-	s_iSCAMvariables s_mseVars;
+//	s_iSCAMdata      s_mseData;
+//	s_iSCAMvariables s_mseVars;//
 
-	/* SCENARIO DATA */
-	s_mseData.nStock      = ngroup;
-	s_mseData.nArea       = narea;
-	s_mseData.nSex        = nsex;
-	s_mseData.nSyr        = syr;
-	s_mseData.nNyr        = nyr;
-	s_mseData.nPyr        = nyr+10;
-	s_mseData.nSage       = sage;
-	s_mseData.nNage       = nage;
-	s_mseData.nGear       = ngear;
-	s_mseData.nFleet      = nfleet;
-	s_mseData.nFleetIndex = nFleetIndex;
-	s_mseData.dAllocation = dAllocation;
-	s_mseData.d_linf      = d_linf;
-	s_mseData.d_vonbk     = d_vonbk;
-	s_mseData.d_to        = d_to;
-	s_mseData.d_a         = d_a;
-	s_mseData.d_b         = d_b;
-	s_mseData.d_ah        = d_ah;
-	s_mseData.d_gh        = d_gh;
-	s_mseData.nCtNobs     = nCtNobs;
-	s_mseData.dCatchData  = dCatchData;
-	s_mseData.nIt         = nItNobs;
-	s_mseData.nItNobs     = n_it_nobs;
-	s_mseData.n_survey_type = n_survey_type;
-	s_mseData.dSurveyData = &d3_survey_data;
-	
-	s_mseData.nAgears     = nAgears;
-	s_mseData.nAnobs      = n_A_nobs;
-	s_mseData.nAsage      = n_A_sage;
-	s_mseData.nAnage      = n_A_nage;
-	s_mseData.dA          = &d3_A;
-	s_mseData.nWtNobs     = nWtNobs;
-	s_mseData.d3_wt_avg     = &d3_wt_avg;
-	s_mseData.d3_wt_mat     = &d3_wt_mat;
+//	/* SCENARIO DATA */
+//	s_mseData.nStock      = ngroup;
+//	s_mseData.nArea       = narea;
+//	s_mseData.nSex        = nsex;
+//	s_mseData.nSyr        = syr;
+//	s_mseData.nNyr        = nyr;
+//	s_mseData.nPyr        = nyr+10;
+//	s_mseData.nSage       = sage;
+//	s_mseData.nNage       = nage;
+//	s_mseData.nGear       = ngear;
+//	s_mseData.nFleet      = nfleet;
+//	s_mseData.nFleetIndex = nFleetIndex;
+//	s_mseData.dAllocation = dAllocation;
+//	s_mseData.d_linf      = d_linf;
+//	s_mseData.d_vonbk     = d_vonbk;
+//	s_mseData.d_to        = d_to;
+//	s_mseData.d_a         = d_a;
+//	s_mseData.d_b         = d_b;
+//	s_mseData.d_ah        = d_ah;
+//	s_mseData.d_gh        = d_gh;
+//	s_mseData.nCtNobs     = nCtNobs;
+//	s_mseData.dCatchData  = dCatchData;
+//	s_mseData.nIt         = nItNobs;
+//	s_mseData.nItNobs     = n_it_nobs;
+//	s_mseData.n_survey_type = n_survey_type;
+//	s_mseData.dSurveyData = &d3_survey_data;
+//	
+//	s_mseData.nAgears     = nAgears;
+//	s_mseData.nAnobs      = n_A_nobs;
+//	s_mseData.nAsage      = n_A_sage;
+//	s_mseData.nAnage      = n_A_nage;
+//	s_mseData.dA          = &d3_A;
+//	s_mseData.nWtNobs     = nWtNobs;
+//	s_mseData.d3_wt_avg     = &d3_wt_avg;
+//	s_mseData.d3_wt_mat     = &d3_wt_mat;//
 
-	s_mseData.d_iscamCntrl        = d_iscamCntrl;
+//	s_mseData.d_iscamCntrl        = d_iscamCntrl;//
 
-    
+//    //
 
-    /* SCENARIO PARAMETERS */
-	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
-	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
-	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
-	d3_array d3_ft(1,n_ags,1,ngear,syr,nyr);
-	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
-	for(k=1;k<=ngear;k++)
-	{
-		d3_selpar(k) = value(sel_par(k));
-		d4_log_sel(k) = value(log_sel(k));
-	}
-	for( g = 1; g <= n_ags; g++ )
-	{
-		d3_M(g) = value(M(g));
-		d3_S(g) = value(S(g));
-		d3_ft(g) = value(ft(g));
-	}
+//    /* SCENARIO PARAMETERS */
+//	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
+//	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
+//	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
+//	d3_array d3_ft(1,n_ags,1,ngear,syr,nyr);
+//	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
+//	for(k=1;k<=ngear;k++)
+//	{
+//		d3_selpar(k) = value(sel_par(k));
+//		d4_log_sel(k) = value(log_sel(k));
+//	}
+//	for( g = 1; g <= n_ags; g++ )
+//	{
+//		d3_M(g) = value(M(g));
+//		d3_S(g) = value(S(g));
+//		d3_ft(g) = value(ft(g));
+//	}//
 
-	s_mseVars.d_log_ro        = value(theta(1));
-	s_mseVars.d_steepness     = value(theta(2));
-	s_mseVars.d_log_m         = value(theta(3));
-	s_mseVars.d_log_rbar      = value(theta(4));
-	s_mseVars.d_log_rinit     = value(theta(5));
-	s_mseVars.d_rho           = value(theta(6));
-	s_mseVars.d_varphi        = value(theta(7));
-	s_mseVars.dLog_M_devs     = value(log_m_devs);
-	s_mseVars.dLog_Rbar_devs  = value(log_rec_devs);
-	s_mseVars.dLog_Rinit_devs = value(init_log_rec_devs);
-	s_mseVars.nSel_type       = isel_type;
-	s_mseVars.nSel_block      = sel_blocks;
-	s_mseVars.dSelPars        = &d3_selpar;
-	s_mseVars.d4_log_sel      = &d4_log_sel;
-	s_mseVars.d3_Ft           = &d3_ft;
-	s_mseVars.d3_Mt			  = &d3_M;
-	s_mseVars.d3_St           = &d3_S;
+//	s_mseVars.d_log_ro        = value(theta(1));
+//	s_mseVars.d_steepness     = value(theta(2));
+//	s_mseVars.d_log_m         = value(theta(3));
+//	s_mseVars.d_log_rbar      = value(theta(4));
+//	s_mseVars.d_log_rinit     = value(theta(5));
+//	s_mseVars.d_rho           = value(theta(6));
+//	s_mseVars.d_varphi        = value(theta(7));
+//	s_mseVars.dLog_M_devs     = value(log_m_devs);
+//	s_mseVars.dLog_Rbar_devs  = value(log_rec_devs);
+//	s_mseVars.dLog_Rinit_devs = value(init_log_rec_devs);
+//	s_mseVars.nSel_type       = isel_type;
+//	s_mseVars.nSel_block      = sel_blocks;
+//	s_mseVars.dSelPars        = &d3_selpar;
+//	s_mseVars.d4_log_sel      = &d4_log_sel;
+//	s_mseVars.d3_Ft           = &d3_ft;
+//	s_mseVars.d3_Mt			  = &d3_M;
+//	s_mseVars.d3_St           = &d3_S;//
+//
 
-
-	// Instantiate the Operating Model Class
-    //OperatingModel om(s_mseData,s_mseVars);
-    cout<<"This is red leader, Im going in"<<endl;
-    OperatingModel om(s_mseData,s_mseVars,argc,argv);
-    cout<<"Use the force Luke"<<endl;
-    // Methods for the class om.
-    om.runScenario(rseed);
-
-
-
-
+//	// Instantiate the Operating Model Class
+//    //OperatingModel om(s_mseData,s_mseVars);
+//    cout<<"This is red leader, Im going in"<<endl;
+//    OperatingModel om(s_mseData,s_mseVars,argc,argv);
+//    cout<<"Use the force Luke"<<endl;
+//    // Methods for the class om.
+//    om.runScenario(rseed);//
+//
+//
+//
+//
 
 
 TOP_OF_MAIN_SECTION
@@ -4971,7 +4973,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include "msy.h"
 	#include "baranov.h"
-	#include "OpMod.h"
+	//#include "OpMod.h"
 	#include "Selex.h"
 	#include "LogisticNormal.h"
 
