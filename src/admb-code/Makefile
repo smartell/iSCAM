@@ -10,9 +10,10 @@
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
 SRCS = $(EXEC).cpp          \
-		LogisticNormal.cpp  \
-		msy.cpp 			\
-		baranov.cpp	selex.cpp 
+		lib/LogisticNormal.cpp  \
+		lib/msy.cpp 			\
+		lib/baranov.cpp \
+			selex.cpp 
 		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl

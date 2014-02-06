@@ -1,7 +1,7 @@
 #include <admodel.h>
 #include "LogisticNormal.h"
 
-/*
+/**
 	Implementation of the logistic normal negative loglikelihood.
 
 	The overloaded operator () can have the following args:
@@ -10,7 +10,7 @@
 	(sig,phi1)     -AR1 process
 	(sig,phi1,phi2)-AR2 procd cess
 
-	todo: laksdlasd
+	TODO:
 
 	
 */
@@ -26,7 +26,7 @@
  * 7) Compute nll_logistic_normal
 **/
 
-// Constructor
+/** Constructor */
 logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 	                			const double _minp,const double _eps)
 : minp(_minp),eps(_eps),m_O(_O),m_E(_E)

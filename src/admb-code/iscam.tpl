@@ -170,7 +170,7 @@ DATA_SECTION
 	init_int n_pfcntrl;
 	init_vector pf_cntrl(1,n_pfcntrl);
 
-	init_vector mse_cntrl(1,1);
+	//init_vector mse_cntrl(1,1);
 
 	init_int eof_pf;
 	LOC_CALCS
@@ -365,8 +365,10 @@ DATA_SECTION
 
 	int nfleet;
 	init_vector dAllocation(1,ngear);
-	init_ivector catch_sex_composition(1,ngear); 
-	init_ivector catch_type(1,ngear);
+	
+	//init_ivector catch_sex_composition(1,ngear); 
+	//init_ivector catch_type(1,ngear);
+
 	ivector fsh_flag(1,ngear);
 	LOC_CALCS
 		dAllocation = dAllocation/sum(dAllocation);
@@ -4973,9 +4975,9 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include "lib/msy.h"
 	#include "lib/baranov.h"
-	//#include "OpMod.h"
+	#include "lib/LogisticNormal.h"
 	#include "Selex.h"
-	#include "LogisticNormal.h"
+	//#include "OpMod.h"
 
 	ivector getIndex(dvector& a, dvector& b)
 	{
