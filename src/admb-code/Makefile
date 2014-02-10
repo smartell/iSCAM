@@ -10,10 +10,11 @@
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
 SRCS = $(EXEC).cpp          \
-		logistic_normal.cpp \
-		msy.cpp 			\
-		baranov.cpp	selex.cpp \
-		OpMod.cpp    		
+		lib/LogisticNormal.cpp  \
+		lib/msy.cpp 			\
+		lib/baranov.cpp \
+			selex.cpp 
+		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl
 DEPS = $(SRCS:.cpp=.depends)
@@ -73,8 +74,8 @@ $(EXEC): $(OBJS)
 # Build the cpp file from the tpl
 $(EXEC).cpp: $(TPLS)
 	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
-	gsed -i '/friend class model_parameters;/ a\
-	\ \ friend class OperatingModel;' $(EXEC).htp
+	 # gsed -i '/friend class model_parameters;/ a\
+	 # \ \ friend class OperatingModel;' $(EXEC).htp
 
 
 
