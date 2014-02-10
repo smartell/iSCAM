@@ -211,7 +211,7 @@ DATA_SECTION
 		// for a new project.
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
 		{
-			generate_new_files();
+			//generate_new_files();
 		}
 
 
@@ -4549,16 +4549,16 @@ REPORT_SECTION
 // 	// cout<<"Ok to here"<<endl;
 //   }
 	
-FUNCTION generate_new_files
-  {
-  	ofstream ofs("Datafile.dat");
-  		ofs <<"# Model dimensions"<<endl;
+// FUNCTION generate_new_files
+//   {
+//   	ofstream ofs("Datafile.dat");
+//   		ofs <<"# Model dimensions"<<endl;
   		
 
-  	ofstream cfs("ControlFile.ctl");
+//   	ofstream cfs("ControlFile.ctl");
 
-  	ofstream pfs("ProjectionFile.pfs");
-  }
+//   	ofstream pfs("ProjectionFile.pfs");
+//   }
 
 FUNCTION mcmc_output
 //   {
