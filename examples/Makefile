@@ -3,7 +3,11 @@
 ## targets:
 
 ## Macros
-SUBDIR = ECODETECTIVE/DATA Herring4VWX/DATA LingcodSRA/DATA PacificHake/DATA
+SUBDIR = DEMO/DATA             \
+		 ECODETECTIVE/DATA     \
+         Herring4VWX/DATA      \
+         LingcodSRA/DATA       \
+         PacificHake/DATA
 TARGET = make
 
 
