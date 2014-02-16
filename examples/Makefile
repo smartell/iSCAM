@@ -7,7 +7,9 @@ SUBDIR = DEMO/DATA             \
 		 ECODETECTIVE/DATA     \
          Herring4VWX/DATA      \
          LingcodSRA/DATA       \
-         PacificHake/DATA
+         PacificHake/DATA      \
+         BSPollock/DATA
+
 TARGET = make
 
 
