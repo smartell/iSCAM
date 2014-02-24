@@ -18,6 +18,13 @@
  */
 
 namespace mse {
+
+
+	/**
+	 * @brief Class for storing data for operating model
+	 * @details [long description]
+	 * @return NULL
+	 */
 	class omData{
 	private:
 		// |------------------|
@@ -37,6 +44,9 @@ namespace mse {
 		omData();
 	   ~omData();
 
+	   // |---------|
+	   // | Setters |
+	   // |---------|
 	   void set_nStock(const int &n) { m_nStock = n; }
 	   void set_nArea (const int &n) { m_nArea  = n; }
 	   void set_nSex  (const int &n) { m_nSex   = n; }
@@ -47,9 +57,14 @@ namespace mse {
 	   void set_nGear (const int &n) { m_nGear  = n; }
 	   void set_nFleet(const int &n) { m_nFleet = n; }
 
-	   friend class OperatingModel;
+	   // friend class OperatingModel;
 	};
 
+	/**
+	 * @brief Class for storing variables for operating model
+	 * @details [long description]
+	 * 
+	 */
 	class omVariables{
 
 	};
@@ -60,6 +75,8 @@ namespace mse {
 		omVariables  m_vars;
 	protected:
 	public:
+		~OperatingModel();
+		OperatingModel(const omData& md, const omVariables& mv);
 
 	};
 } // mse namespace
