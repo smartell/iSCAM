@@ -4849,6 +4849,21 @@ FUNCTION mcmc_output
 
 
 FUNCTION void runMSE()
+
+	mse::omData md;
+	md.set_nStock(ngroup);
+	md.set_nArea(narea);
+	md.set_nSex(nsex);
+	md.set_nSyr(syr);
+	md.set_nNyr(nyr);
+	md.set_nSage(sage);
+	md.set_nNage(nage);
+	md.set_nGear(ngear);
+	md.set_nFleet(nfleet);
+
+
+
+
 //    cout<<"Top of runMSE"<<endl;//
 
 //	s_iSCAMdata      s_mseData;
@@ -4977,6 +4992,8 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
 	#include "lib/LogisticNormal.h"
 	#include "Selex.h"
+	#include "lib/selex.hpp"
+	#include "lib/milka.h"
 	//#include "OpMod.h"
 
 	ivector getIndex(dvector& a, dvector& b)

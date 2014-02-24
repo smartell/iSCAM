@@ -13,7 +13,8 @@ SRCS = $(EXEC).cpp          \
 		lib/LogisticNormal.cpp  \
 		lib/msy.cpp 			\
 		lib/baranov.cpp \
-			selex.cpp 
+		lib/milka.cpp   \
+			selex.cpp   \
 		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl
