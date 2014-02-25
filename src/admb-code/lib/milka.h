@@ -40,24 +40,24 @@ namespace mse {
 		int m_nGear;
 		int m_nFleet;
 
+	    //friend class OperatingModel;
 	public:
 		omData();
-	   ~omData();
+		~omData();
 
-	   // |---------|
-	   // | Setters |
-	   // |---------|
-	   void set_nStock(const int &n) { m_nStock = n; }
-	   void set_nArea (const int &n) { m_nArea  = n; }
-	   void set_nSex  (const int &n) { m_nSex   = n; }
-	   void set_nSyr  (const int &n) { m_nSyr   = n; }
-	   void set_nNyr  (const int &n) { m_nNyr   = n; }
-	   void set_nSage (const int &n) { m_nSage  = n; }
-	   void set_nNage (const int &n) { m_nNage  = n; }
-	   void set_nGear (const int &n) { m_nGear  = n; }
-	   void set_nFleet(const int &n) { m_nFleet = n; }
+		// |---------|
+		// | Setters |
+		// |---------|
+		void set_nStock(const int &n) { m_nStock = n; cout<<n<<endl;}
+		void set_nArea (const int &n) { m_nArea  = n; }
+		void set_nSex  (const int &n) { m_nSex   = n; }
+		void set_nSyr  (const int &n) { m_nSyr   = n; }
+		void set_nNyr  (const int &n) { m_nNyr   = n; }
+		void set_nSage (const int &n) { m_nSage  = n; }
+		void set_nNage (const int &n) { m_nNage  = n; }
+		void set_nGear (const int &n) { m_nGear  = n; }
+		void set_nFleet(const int &n) { m_nFleet = n; }
 
-	   // friend class OperatingModel;
 	};
 
 	/**
@@ -66,17 +66,31 @@ namespace mse {
 	 * 
 	 */
 	class omVariables{
+	private:
+		dvector m_log_Ro;
+		friend class OperatingModel;
+	public:
+		omVariables();
+		~omVariables();
 
+		void set_log_Ro(const dvector &n) { m_log_Ro = n; }
 	};
 
-	class OperatingModel{
+	class OperatingModel
+	{
 	private:
+		int          m_nSeed;
 		omData       m_data;
 		omVariables  m_vars;
+		
 	protected:
+		
 	public:
 		~OperatingModel();
-		OperatingModel(const omData& md, const omVariables& mv);
+
+		OperatingModel(const omData& md, const omVariables& mv, const int &seed);
+
+		void runScenario(const int &seed);
 
 	};
 } // mse namespace

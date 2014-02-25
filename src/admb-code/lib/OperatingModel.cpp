@@ -45,10 +45,22 @@ using namespace mse;
  * @param md Model Data
  * @param mv Model Variables
  */
-OperatingModel::OperatingModel(const omData& md, const omVariables& mv)
-:m_data(md), m_vars(mv)
+OperatingModel::OperatingModel(const omData& md, const omVariables& mv, const int& seed)
+:m_data(md), m_vars(mv), m_nSeed(seed)
 {
-
+	cout<<"In the constructor"<<endl;
+	//cout<<"nArea\n"<<m_nArea<<endl;
+	exit(1);	
 }
 
+
+
 OperatingModel::~OperatingModel(){}
+
+void OperatingModel::runScenario(const int &seed)
+{
+	
+}
+
+
+

@@ -4850,6 +4850,7 @@ FUNCTION mcmc_output
 
 FUNCTION void runMSE()
 
+	// Operating model data
 	mse::omData md;
 	md.set_nStock(ngroup);
 	md.set_nArea(narea);
@@ -4861,8 +4862,18 @@ FUNCTION void runMSE()
 	md.set_nGear(ngear);
 	md.set_nFleet(nfleet);
 
+	// Operating model variables
+	mse::omVariables mv;
+	COUT(narea);
+	mv.set_log_Ro( value(theta(1)) );
 
+	// Operating model class
+	mse::OperatingModel om(md,mv,rseed);
 
+	om.runScenario(rseed);
+	//mse::OperatingModel;
+
+	COUT("DONE");
 
 //    cout<<"Top of runMSE"<<endl;//
 

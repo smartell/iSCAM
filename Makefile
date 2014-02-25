@@ -12,6 +12,7 @@ dist:
 	mkdir -p ${DISK}/debug
 	mkdir -p ${DISK}/R
 	mkdir -p ${DISK}/release
+	mkdir -p ${DISK}/scripts
 	make     --directory=src/admb-code clean
 	make     --directory=src/admb-code OPT=TRUE
 	cp    ./src/admb-code/iscam ${DISK}/release/
@@ -19,6 +20,7 @@ dist:
 	make     --directory=src/admb-code 
 	cp    ./src/admb-code/iscam ${DISK}/debug/
 	cp -r ./src/r-code/ ${DISK}/R/
+	cp    ./scripts/DataTemplate.dat ${DISK}/scripts/
 
 clean:
 	#make --directory=src/admb-code --file=linux.mak clean

@@ -13,4 +13,10 @@ omData::~omData(){
 
 }
 
+omVariables::omVariables(){
 
+}
+
+omVariables::~omVariables(){
+
+}
