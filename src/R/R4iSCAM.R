@@ -14,9 +14,10 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 .PWD        <- "~/Documents/iSCAM-project/src/R"
-.FIGUREDIR  <- "../FIGS/"
+# .FIGUREDIR  <- "../FIGS/"
+.FIGUREDIR  <- "../logo/"
 .RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
-.VIEWTRCK   <- "iSCAMViewTracker.txt"
+.VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
 require(ggplot2)
 .THEME      <- theme_bw(12)
@@ -48,15 +49,17 @@ guiView  <- function()
 	if (trckExists)
 	{
 		cat( "MSG (.hCamViewSetup): Viewer tracking file ",.VIEWTRCK, " found.\n" )
-		tmp    <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
-		ifiles <<- tmp
+		ifiles <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
+		# ifiles <- tmp
 		print(ifiles)
+		# browser()
 	}
 	else
 	{
 		cat( .VIEWTRCK," does not exist, please check file name. ")
 	}
 	if(exists(".PBSmod")) closeWin(win)
+		
 	createWin("iscamWin2.txt")
 	
 	setWinVal(list(txtFigDir=.FIGUREDIR))
