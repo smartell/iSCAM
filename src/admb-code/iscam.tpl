@@ -4388,6 +4388,9 @@ REPORT_SECTION
 	REPORT(bt);
 	REPORT(rt);
 	REPORT(delta);
+	
+	dmatrix rep_rt = value( exp(trans(trans(log_rt).sub(syr,nyr))) );
+	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
 	// | ABUNDANCE IN NUMBERS 

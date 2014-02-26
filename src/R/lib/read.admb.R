@@ -69,6 +69,7 @@ function(fn)
 	ifile=scan(fn,what="character",flush=TRUE,blank.lines.skip=FALSE,quiet=TRUE)
 	idx=sapply(as.double(ifile),is.na)
 	vnam=ifile[idx] #list names
+	# cat(vnam)
 	nv=length(vnam) #number of objects
 	A=list()
 	ir=0
@@ -90,7 +91,8 @@ function(fn)
 			# }
 			# cname <- paste(1:ncols)
 			# dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,col.names=cname))
-			dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE))
+			# cat("\n ir ",ir," irr ",irr)
+			dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,row.names = NULL))
 		} 
 			
 
