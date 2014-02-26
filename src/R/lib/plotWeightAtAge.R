@@ -15,7 +15,7 @@ require(ggplot2)
 	for(i in 1:n)
 	{
 		age <- seq(M[[i]]$sage,M[[i]]$nage)
-		wt  <- data.frame(Model=names(M[i]),M[[i]]$wt_avg)
+		wt  <- data.frame(Model=names(M[i]),M[[i]]$d3_wt_avg)
 		
 		colnames(wt) <- c("Model","Year","Area","Stock","Sex",paste(age))
 		df  <- melt(wt,id.vars=c("Model","Year","Area","Stock","Sex"))

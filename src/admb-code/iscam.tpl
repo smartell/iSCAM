@@ -207,6 +207,14 @@ DATA_SECTION
 			rseed   = atoi(ad_comm::argv[on+1]);
 		}
 		
+		// Catarina implementing a new command for generating new data control and pfc file
+		// for a new project.
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
+		{
+			//generate_new_files();
+		}
+
+
 		// command line option for retrospective analysis. "-retro retro_yrs"
 		retro_yrs=0;
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-retro",opt))>-1)
@@ -2717,6 +2725,13 @@ FUNCTION calcObjectiveFunction
 					{
 						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLN_Age.get_standardized_residuals();
+						age_tau2(k) = cLN_Age.get_sigma2();
+					}
 				break;
 
 				case 4:
@@ -4541,6 +4556,17 @@ REPORT_SECTION
 // 	// cout<<"Ok to here"<<endl;
 //   }
 	
+// FUNCTION generate_new_files
+//   {
+//   	ofstream ofs("Datafile.dat");
+//   		ofs <<"# Model dimensions"<<endl;
+  		
+
+//   	ofstream cfs("ControlFile.ctl");
+
+//   	ofstream pfs("ProjectionFile.pfs");
+//   }
+
 FUNCTION mcmc_output
 //   {
 // 	if(nf==1){
