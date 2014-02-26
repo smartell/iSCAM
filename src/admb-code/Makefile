@@ -20,7 +20,7 @@ TPLS = $(EXEC).tpl
 DEPS = $(SRCS:.cpp=.depends)
 
 # Export the path to your ADMB dist directory
-export ADMB_HOME=/Users/catarinawor//admb-trunk/build/dist
+export ADMB_HOME=/Users/catarinawor/admb-trunk/build/dist
 
 # establish the C++ compiler (on Mac OSX use clang++)
 CC=clang

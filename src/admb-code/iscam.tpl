@@ -194,6 +194,7 @@ DATA_SECTION
 	int mseFlag;  ///< Flag for management strategy evaluation mode
 	int rseed;    ///< Random number seed for simulated data.
 	int retro_yrs;///< Number of years to look back from terminal year.
+	int NewFiles;
 	LOC_CALCS
 		SimFlag=0;
 		rseed=999;
@@ -209,9 +210,11 @@ DATA_SECTION
 		
 		// Catarina implementing a new command for generating new data control and pfc file
 		// for a new project.
+		NewFiles = 0;
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
 		{
-			//generate_new_files();
+			NewFiles = 1;
+			NewFileName = ad_comm::argv[on+1];
 		}
 
 
@@ -414,6 +417,22 @@ DATA_SECTION
 	init_vector     d_b(1,n_ags);
 	init_vector    d_ah(1,n_ags);
 	init_vector    d_gh(1,n_ags);
+	init_int 		n_MAT;
+	int t1;
+	int t2;
+	LOC_CALCS
+		if(n_MAT)
+		{
+			t1 = sage;
+			t2 = nage;
+		}
+		else
+		{
+			t1 = 0;
+			t2 = 0;
+		}
+	END_CALCS 
+	init_vector 	d_maturityVector(t1,t2);
 	
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -437,7 +456,15 @@ DATA_SECTION
 	  	{
 	  		la(ig) = d_linf(ig)*(1. - exp(-d_vonbk(ig)*(age-d_to(ig))));
 	  		wa(ig) = d_a(ig) * pow(la(ig),d_b(ig));
-	  		ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
+
+	  		if(n_MAT==0)
+	  		{
+	  			ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
+	  		}
+	  		else if(n_MAT>0)
+	  		{
+	  			ma(ig) = d_maturityVector;
+	  		}
 	  	}
 	END_CALCS
 	
@@ -471,6 +498,7 @@ DATA_SECTION
 		cout<<dCatchData.sub(nCtNobs-3,nCtNobs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		d3_Ct.initialize();
+		
 		for(int ii=1;ii<=nCtNobs;ii++)
 		{
 			i = dCatchData(ii)(1);
@@ -491,8 +519,8 @@ DATA_SECTION
 				ig = pntr_ags(f,g,h);
 				d3_Ct(ig)(i)(k) = dCatchData(ii)(7);
 			} 
+			//if(verbose)  cout<<"Ok after reading catch data"<<ii<<" "<<ig <<" "<<n_ags<<endl;
 		}
-		
 	END_CALCS
 	
 
@@ -701,13 +729,14 @@ DATA_SECTION
 			}
 			d3_wt_dev(ig) = trans(mtmp);
 		
-			if( min(d3_wt_avg(ig))<=0 && min(d3_wt_avg(ig))!=NA )
+			
+			if( min(d3_wt_avg(ig))<=0.000 && min(d3_wt_avg(ig))!=NA )
 			{
 				cout<<"|-----------------------------------------------|"<<endl;
 				cout<<"| ERROR IN INPUT DATA FILE FOR MEAN WEIGHT DATA |"<<endl;
 				cout<<"|-----------------------------------------------|"<<endl;
-				cout<<"| - Cannont have an observed mean weight-at-age |"<<endl;
-				cout<<"|   less than or equal to 0.  Please fix. "       <<endl;
+				cout<<"| - Cannot have an observed mean weight-at-age  |"<<endl;
+				cout<<"|   less than or equal to 0.  Please fix.       |"<<endl;
 				cout<<"| - You are permitted to use '-99.0' for missing|"<<endl;
 				cout<<"|   values in your weight-at-age data.          |"<<endl;
 				cout<<"| - Aborting program!                           |"<<endl;
@@ -1358,8 +1387,15 @@ PRELIMINARY_CALCS_SECTION
 		
 		simulationModel(rseed);
 	}
+	
+	if (NewFiles)
+	{
+		generate_new_files();	
+	}
+	
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
+
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,  200,   500, 25000, 25000
@@ -4549,16 +4585,43 @@ REPORT_SECTION
 // 	// cout<<"Ok to here"<<endl;
 //   }
 	
-// FUNCTION generate_new_files
-//   {
-//   	ofstream ofs("Datafile.dat");
-//   		ofs <<"# Model dimensions"<<endl;
-  		
+FUNCTION generate_new_files
+   {
 
-//   	ofstream cfs("ControlFile.ctl");
+   	ofstream rd("RUN.dat");
+		rd<<NewFileName + ".dat"<<endl;
+		rd<<NewFileName + ".ctl"<<endl;
+		rd<<NewFileName + ".pfc"<<endl;
 
-//   	ofstream pfs("ProjectionFile.pfs");
-//   }
+
+
+	#if defined __APPLE__ || defined __linux
+
+	adstring bscmddat = "cp ../lib/iscam.dat" + NewFileName +".dat";
+		system(bscmddat);
+
+	adstring bscmdctl = "cp ../lib/ iscam.ctl" + NewFileName +".ctl";
+		system(bscmdctl);
+
+	adstring bscmdpfc = "cp ../lib/ iscam.PFC" + NewFileName +".pfc";
+		system(bscmdpfc);	
+
+	#endif
+
+	#if defined _WIN32 || defined _WIN64
+
+	adstring bscmddat = "copy ../lib/iscam.dat" + NewFileName +".dat";
+		system(bscmddat);
+
+	adstring bscmdctl = "copy ../lib/ iscam.ctl" + NewFileName +".ctl";
+		system(bscmdctl);
+
+	adstring bscmdpfc = "copy ../lib/ iscam.PFC" + NewFileName +".pfc";
+		system(bscmdpfc);	
+
+	#endif
+
+  }
 
 FUNCTION mcmc_output
 //   {
@@ -5032,7 +5095,7 @@ GLOBALS_SECTION
 	
 	adstring BaseFileName;
 	adstring ReportFileName;
-	
+	adstring NewFileName;
 
 	adstring stripExtension(adstring fileName)
 	{
