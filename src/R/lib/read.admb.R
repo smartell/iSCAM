@@ -30,19 +30,22 @@ function(ifile)
 	ret$nopar<-as.integer(parfile[1]) 
 	ret$nlogl<-parfile[2] 
 	ret$maxgrad<-parfile[3] 
-	file<-paste(ifile,'.cor', sep='') 
-	lin<-readLines(file) 
-	ret$npar<-length(lin)-2 
-	ret$logDetHess<-as.numeric(strsplit(lin[1], '=')[[1]][2]) 
-	sublin<-lapply(strsplit(lin[1:ret$npar+2], ' '),function(x)x[x!='']) 
-	ret$names<-unlist(lapply(sublin,function(x)x[2])) 
-	ret$est<-as.numeric(unlist(lapply(sublin,function(x)x[3]))) 
-	ret$std<-as.numeric(unlist(lapply(sublin,function(x)x[4]))) 
-	ret$cor<-matrix(NA, ret$npar, ret$npar) 
-	corvec<-unlist(sapply(1:length(sublin), function(i)sublin[[i]][5:(4+i)])) 
-	ret$cor[upper.tri(ret$cor, diag=TRUE)]<-as.numeric(corvec) 
-	ret$cor[lower.tri(ret$cor)] <- t(ret$cor)[lower.tri(ret$cor)] 
-	ret$cov<-ret$cor*(ret$std%o%ret$std)
+	file<-paste(ifile,'.cor', sep='')
+	if(file.exists(ifile))
+	{
+		lin<-readLines(file) 
+		ret$npar<-length(lin)-2 
+		ret$logDetHess<-as.numeric(strsplit(lin[1], '=')[[1]][2]) 
+		sublin<-lapply(strsplit(lin[1:ret$npar+2], ' '),function(x)x[x!='']) 
+		ret$names<-unlist(lapply(sublin,function(x)x[2])) 
+		ret$est<-as.numeric(unlist(lapply(sublin,function(x)x[3]))) 
+		ret$std<-as.numeric(unlist(lapply(sublin,function(x)x[4]))) 
+		ret$cor<-matrix(NA, ret$npar, ret$npar) 
+		corvec<-unlist(sapply(1:length(sublin), function(i)sublin[[i]][5:(4+i)])) 
+		ret$cor[upper.tri(ret$cor, diag=TRUE)]<-as.numeric(corvec) 
+		ret$cor[lower.tri(ret$cor)] <- t(ret$cor)[lower.tri(ret$cor)] 
+		ret$cov<-ret$cor*(ret$std%o%ret$std)		
+	}
 	return(ret)
 }
 
