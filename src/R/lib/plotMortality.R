@@ -1,7 +1,33 @@
 # Steven Martell
 # Sept 6,  2012
 
-.plotMortality	<- function( repObj, annotate=FALSE )
+.plotMortality <- function( M )
+{
+	n <- length(M)
+	cat(".plotMortality\n")
+
+	mdf <- NULL
+	for(i in 1:n)
+	{
+		nn  <- length(M[[i]]$yr)
+		if(M[[i]]$nsex==2) sex = c(rep('Female',nn),rep('Male',nn))
+		zt  <- data.frame(Model=names(M)[i],Year=M[[i]]$yr,Mt=rowMeans(M[[i]]$M))
+		zt  <- data.frame(zt,Ft=rowMeans(M[[i]]$F),Sex=sex)
+		mdf <- rbind(mdf,melt(zt,id.vars=c("Model","Year","Sex")))
+	}
+	print(head(mdf,3))
+
+	p <- ggplot(mdf,aes(Year,value,fill=variable)) 
+	p <- p + geom_area(position='stack',alpha=0.7)
+	p <- p + labs(x="Year",y="Mean instantaneous mortality rate")
+	p <- p + scale_fill_brewer(palette="Blues")
+	p <- p + facet_wrap(Model~Sex,scales="free")
+	print(p + .THEME)
+  
+}
+
+
+.plotOldMortality	<- function( repObj, annotate=FALSE )
 {
 	# SJDM June 5, 2011 Changed to plot Average M and sum of average Fs by gear
 	#plot average total mortality,  fishing mortality & natural mortality

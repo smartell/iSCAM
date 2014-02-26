@@ -52,7 +52,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 		label "MAXIMUM LIKELIHOOD ESTIMATES" font="Times"  sticky=W
 		grid 4 3 relief="flat" padx=2 pady=2 sticky=W
 		radio name=plotType value=spawnbio      text="Spawn Biomass"        function=.viewPlot mode=character sticky=W  edit=TRUE
-		radio name=plotType value=mortality     text="Mortality"            function=.mpdView mode=character sticky=W  edit=TRUE
+		radio name=plotType value=mortality     text="Mortality"            function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=recruitment   text="Recruitment"          function=.mpdView mode=character sticky=W  edit=TRUE
 		radio name=plotType value=depletion     text="Depletion"            function=.mpdView mode=character sticky=W  edit=TRUE
 		radio name=plotType value=selectivity   text="Selectivities(s)"     function=.mpdView mode=character sticky=W  edit=TRUE

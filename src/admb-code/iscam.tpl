@@ -2761,6 +2761,13 @@ FUNCTION calcObjectiveFunction
 					{
 						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLN_Age.get_standardized_residuals();
+						age_tau2(k) = cLN_Age.get_sigma2();
+					}
 				break;
 
 				case 4:

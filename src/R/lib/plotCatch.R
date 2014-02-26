@@ -12,7 +12,7 @@ require(reshape2)
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		ct <- data.frame(M[[i]]$catch_data)
+		ct <- data.frame(M[[i]]$dCatchData)
 		colnames(ct) <- c("Year","Gear","Area","Group","Sex","Type","Catch")
 		ct <- data.frame(Model=names(M)[i],ct)
 		mdf <- rbind(mdf,ct)
@@ -21,7 +21,7 @@ require(reshape2)
 	print(tail(mdf,3))
 
 	p <- ggplot(mdf,aes(x=factor(Year),Catch,fill=factor(Gear)))
-	p <- p + geom_bar(width=0.75,position="dodge")
+	p <- p + geom_bar(width=0.75,position="dodge",stat='identity')
 	p <- p + labs(x="Year",y="Catch (t)",fill="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)

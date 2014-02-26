@@ -78,6 +78,10 @@
 	{
 		.plotSpawnBiomass( M )
 	}
+	else if( plotType=="mortality" )
+	{
+		.plotMortality( M )
+	}
 
 }
 

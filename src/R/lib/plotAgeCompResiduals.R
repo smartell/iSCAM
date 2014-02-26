@@ -7,9 +7,9 @@
 	#A is the observed age-comps
 	#Ahat is the predicted age-comps (proportions)
 	with( repObj, {
-		if(!is.null(repObj$A)){
-			nagear = unique(A[, 2])
-			xrange = range(A[, 1])
+		if(!is.null(repObj$d3_A)){
+			nagear = unique(d3_A[, 2])
+			xrange = range(d3_A[, 1])
 			#par(mfcol=c(length(nagear), 1))
 			j=0
 			for(i in nagear)
