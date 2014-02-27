@@ -452,16 +452,17 @@ DATA_SECTION
 	  	cout<<"| ----------------------- |\n"<<endl;
 
 	  	// length & weight-at-age based on input growth pars
+	  	ma.initialize();
 	  	for(ig=1;ig<=n_ags;ig++)
 	  	{
 	  		la(ig) = d_linf(ig)*(1. - exp(-d_vonbk(ig)*(age-d_to(ig))));
 	  		wa(ig) = d_a(ig) * pow(la(ig),d_b(ig));
-
+	  		h = n_sex(ig);
 	  		if(n_MAT==0)
 	  		{
 	  			ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
 	  		}
-	  		else if(n_MAT>0)
+	  		else if( n_MAT>0 && h !=2 )
 	  		{
 	  			ma(ig) = d_maturityVector;
 	  		}
@@ -4424,6 +4425,9 @@ REPORT_SECTION
 	REPORT(bt);
 	REPORT(rt);
 	REPORT(delta);
+	
+	dmatrix rep_rt = value( exp(trans(trans(log_rt).sub(syr,nyr))) );
+	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
 	// | ABUNDANCE IN NUMBERS 

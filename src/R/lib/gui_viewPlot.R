@@ -82,6 +82,10 @@
 	{
 		.plotMortality( M )
 	}
+	else if( plotType=="recruitment" )
+	{
+		.plotRecruitment( M )
+	}
 
 }
 
@@ -95,7 +99,7 @@
 {
 	cat("\n Reading",fn,"\n")
 	tmp      <- read.admb(fn)
-
+	cat("OK\n")
 	# | simulation file
 	simfile  <- paste(fn,".sim",sep="")
 	if(file.exists(simfile))
@@ -119,6 +123,7 @@
 	tmp$retSbt <- retSbt
 
 	save(tmp,file=paste(fn,".RData",sep=""))
+	cat("\n Finished reading ",fn,"\n")
 	return(tmp)
 }
 

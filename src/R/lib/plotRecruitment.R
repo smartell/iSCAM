@@ -1,7 +1,27 @@
 # Steven Martell
 # Sept 2,  2011
 
-.plotRecruitment	<- function( repObj )
+# Feb 26, 2014
+.plotRecruitment <- function( M )
+{
+	n <- length(M)
+	cat(".plotRecruitment\n")
+
+	mdf <- NULL
+	for(i in 1:n)
+	{
+		rt <- data.frame(Model=names(M)[i],Year=M[[i]]$yr,Rt=M[[i]]$rep_rt)
+		mdf <- rbind(mdf,rt)
+	}
+
+	p <- ggplot(mdf,aes(factor(Year),Rt))
+	p <- p + geom_bar(width=0.75,stat='identity')
+	p <- p + labs(x="Year",y=paste("Recruitment"))
+	p <- p + facet_wrap(~Model,scales="free")
+	print(p + .THEME)
+}
+
+.plotOldRecruitment	<- function( repObj )
 {
 	#plot age-a recruits.
 	with(repObj, {

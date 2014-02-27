@@ -15,13 +15,14 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   7.0          0.0     10      2       0       0.0     12.0        #log_ro      ##
-   0.75         0.2     1.0     2       3       3.00    2.00       #steepness   ##
+   7.0          0.0     10      4       0       0.0     12.0        #log_ro      ##
+   0.75         0.2     1.0     4       3       3.00    2.00       #steepness   ##
    -1.89712    -3.0     2.0    -4       1       -1.203  0.15       #log_m g&b   ##
-   6.5          0.0     10      1       0       0.0     12         #log_avgrec  ##
-   7.5          0.0     10      1       0       0.0     12         #log_recinit ##
-   0.5          0.01    0.99   -3       3       3.00    5.00       #rho         ##
-   1.8          0.01    5.0    -3       4       1.01    1.01       #vartheta    ##
+   6.5          0.0     10      1       0       0.0     10         #log_avgrec  ##
+   7.5          0.0     10      1       0       0.0     10         #log_recinit ##
+   0.05         0.01    0.99    3       3       3.00    5.00       #rho         ##
+   0.8          0.01    5.0     3       4       1.01    1.01       #vartheta    ##
+
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -35,14 +36,14 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-   1  6   6           ## Gear Index
-   3  3   3                       ## Likelihood type
-   0.000  0.000   0.000                    ## Minimum proportion for aggregation & tail compression
-   0.0000 0.0000 0.0000                   ## Small constant to add to comps & renormalize
-   -1  -1  -1                      ## phase for log_age_tau2 estimation.
-   -2  -2   -2                     ## phase for phi1 estimation: bounded (-1,1) AR1
-   -2  -2   -2                     ## phase for phi2 estimation: bounded (0,1)  AR2 
-   -12345                   ## int check (-12345)
+   1  6   6                         ## Gear Index
+   1  3   3                         ## Likelihood type
+   0.000  0.000   0.000             ## Minimum proportion for aggregation & tail compression
+   0.0000 0.0000 0.0000             ## Small constant to add to comps & renormalize
+   -1  -1   -1                      ## phase for log_age_tau2 estimation.
+   -2  -2   -2                      ## phase for phi1 estimation: bounded (-1,1) AR1
+   -2  -2   -2                      ## phase for phi2 estimation: bounded (0,1)  AR2 
+   -12345                           ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
 ##
@@ -62,13 +63,13 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	1  1	1  1  1  1 	        # 1  -selectivity type ivector(isel_type) for gear
-	9.5  4.0   6.0  8.0  8.0  6.0		        # 2  -Age/length at 50% selectivity (logistic)
-	0.5    2.5   2.5  2.5  2.5	 0.5       # 3  -STD at 50% selectivity (logistic)
-	0  0  0  0  0  0				# 4  -No. of age nodes for each gear (0=ignore)
-	0  0  0  0  0  0				# 5  -No. of year nodes for 2d spline(0=ignore)
+	11  1	1  1  1  11 	         # 1  -selectivity type ivector(isel_type) for gear
+	82  4.0   6.0  8.0  8.0  65.0 # 2  -Age/length at 50% selectivity (logistic)
+	5.5    2.5   2.5  2.5  2.5	 5.5       # 3  -STD at 50% selectivity (logistic)
+	0  0  0  0  0  5				# 4  -No. of age nodes for each gear (0=ignore)
+	0  0  0  0  0  10				# 5  -No. of year nodes for 2d spline(0=ignore)
 	3	 -3  -3  -3  -3  3		# 6  -Phase of estimation (-1 for fixed)
-	0.0  0.0  0.0  0.0  0.0  0.0			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	0.0  0.0  0.0  0.0  0.0  12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	200.0  200.0  200.0  200.0  200.0  200.0		# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 	12.5  12.5  12.5  12.5  12.5  12.5			# 9  -Penalty wt for time-varying selectivity
 	1  1  1  1  1  1               # 10 -n_sel_blocks (number of selex blocks)
