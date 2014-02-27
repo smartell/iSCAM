@@ -16,12 +16,12 @@
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
    7.0          0.0     10      4       0       0.0     12.0        #log_ro      ##
-   0.75         0.2     1.0    -2       3       3.00    2.00       #steepness   ##
+   0.75         0.2     1.0     4       3       3.00    2.00       #steepness   ##
    -1.89712    -3.0     2.0    -4       1       -1.203  0.15       #log_m g&b   ##
    6.5          0.0     10      1       0       0.0     10         #log_avgrec  ##
    7.5          0.0     10      1       0       0.0     10         #log_recinit ##
-   0.05         0.01    0.99   -3       3       3.00    5.00       #rho         ##
-   0.8          0.01    5.0    -3       4       1.01    1.01       #vartheta    ##
+   0.05         0.01    0.99    3       3       3.00    5.00       #rho         ##
+   0.8          0.01    5.0     3       4       1.01    1.01       #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -35,14 +35,14 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-   1  6   6           ## Gear Index
-   1  1   1                       ## Likelihood type
-   0.000  0.000   0.000           ## Minimum proportion for aggregation & tail compression
-   0.0000 0.0000 0.0000           ## Small constant to add to comps & renormalize
-   -1  -1  -1                      ## phase for log_age_tau2 estimation.
-   -2  -2   -2                     ## phase for phi1 estimation: bounded (-1,1) AR1
-   -2  -2   -2                     ## phase for phi2 estimation: bounded (0,1)  AR2 
-   -12345                   ## int check (-12345)
+   1  6   6                         ## Gear Index
+   1  3   3                         ## Likelihood type
+   0.000  0.000   0.000             ## Minimum proportion for aggregation & tail compression
+   0.0000 0.0000 0.0000             ## Small constant to add to comps & renormalize
+   -1  -1   -1                      ## phase for log_age_tau2 estimation.
+   -2  -2   -2                      ## phase for phi1 estimation: bounded (-1,1) AR1
+   -2  -2   -2                      ## phase for phi2 estimation: bounded (0,1)  AR2 
+   -12345                           ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
 ##
