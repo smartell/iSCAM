@@ -107,7 +107,7 @@
 0.07      # 4  -std in observed catches in last phase.
 0         # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00      # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.20      # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.30      # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10      # 8  -std in mean fishing mortality in first phase
 2.00      # 9  -std in mean fishing mortality in last phase
 -3        # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
