@@ -36,10 +36,10 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1     2     5            ## Gear Index
-   3     1     1            ## Likelihood type
+   4     3     3            ## Likelihood type
    0.00  0.00  0.00         ## Minimum proportion for aggregation
-   0.00  0.00  0.00         ## Small constant to add to comps & renormalize
-   1    -1    -1            ## phase for log_age_tau2 estimation.
+   0.001  0.0001  0.0001         ## Small constant to add to comps & renormalize
+   2    -1    -1            ## phase for log_age_tau2 estimation.
    2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
   -2    -1    -1            ## phase for phi2 estimation: bounded (0,1)  AR2 
    -12345                   ## int check (-12345)
@@ -66,12 +66,12 @@
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
 ## FSH    BTS    AVO    JAP    EIT
-   2      2      2      2      2     # 1  -selectivity type ivector(isel_type) for gear
+   4      2      2      2      2     # 1  -selectivity type ivector(isel_type) for gear
    3.5    3.5    3.5    3.5    3.5   # 2  -Age/length at 50% selectivity (logistic)
    0.5    0.5    0.5    0.5    0.5   # 3  -STD at 50% selectivity (logistic)
    7      7      7      7      7     # 4  -No. of age nodes for each gear (0=ignore)
    12     12     12     12     12    # 5  -No. of year nodes for 2d spline(0=ignore)
-   3      3     -5     -1      3     # 6  -Phase of estimation (-1 for fixed)
+   2      3     -5     -1      3     # 6  -Phase of estimation (-1 for fixed)
    12.5   12.5   12.5   12.5   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 9  -Penalty wt for time-varying selectivity

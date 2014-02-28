@@ -41,6 +41,8 @@
 3.0				# -power parameter in length-weight allometry
 3.5      		# -age at 50% maturity (approx with log(3.0)/k)
 0.50  			# -std at 50% maturity (CV ~ 0.1)
+0              # flag mat vec  (if nmat==1) then read this vector, else if nmat==0, ignore it.
+0              # Mat vector
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
