@@ -13,7 +13,7 @@
 # | .PWD       <- Global Parent Working Directory for R-scripts
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
-.PWD        <- "~/Documents/iSCAM-project/src/R"
+.PWD        <- "~/Documents/iSCAM/src/R"
 # .FIGUREDIR  <- "../FIGS/"
 .FIGUREDIR  <- "../logo/"
 .RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")

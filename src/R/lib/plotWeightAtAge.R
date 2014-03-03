@@ -11,7 +11,7 @@ require(ggplot2)
 {
 	n   <- length(M)
 	mdf <- NULL
-
+	cat("Plot weight at age")
 	for(i in 1:n)
 	{
 		age <- seq(M[[i]]$sage,M[[i]]$nage)
