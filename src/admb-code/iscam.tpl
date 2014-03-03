@@ -2749,6 +2749,7 @@ FUNCTION calcObjectiveFunction
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
 			logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
+			logistic_student_t cLST_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
@@ -2794,6 +2795,13 @@ FUNCTION calcObjectiveFunction
 						age_tau2(k) = cLN_Age.get_sigma2();
 					}
 
+				break;
+
+				case 5:
+					if( !active(phi1(k)) )
+					{
+						nlvec(3,k) = cLST_Age();
+					}
 				break;
 			}
 			

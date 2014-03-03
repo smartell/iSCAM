@@ -9,10 +9,11 @@
 # 5. Optimized executables type: make OPT=TRUE                 #
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
-SRCS = $(EXEC).cpp          \
-		lib/LogisticNormal.cpp  \
-		lib/msy.cpp 			\
-		lib/baranov.cpp \
+SRCS = $(EXEC).cpp               \
+		lib/LogisticNormal.cpp   \
+		lib/LogisticStudentT.cpp \
+  		lib/msy.cpp 			 \
+		lib/baranov.cpp          \
 			selex.cpp 
 		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)

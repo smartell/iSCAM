@@ -15,6 +15,7 @@ Steve Martell and contains contributions or stolen code and ideas from:
 * Rob Kronlund
 * Sean Cox
 * Nathan Taylor
+* Catarina Wor
 
 _____________________________________________________________
 _____________________________________________________________

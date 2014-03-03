@@ -84,7 +84,7 @@ void logistic_normal::compute_likelihood_residuals()
 dvariable logistic_normal::operator() ()
 {
 	m_nll = 0;
-
+	
 	// Get correlation vector rho
 	get_rho();
 
