@@ -163,6 +163,8 @@ private:
 	void compute_weighted_sumofsquares();
 	void aggregate_and_compress_arrays();
 
+	friend class logistic_student_t;
+
 public:
 	// Constructor
 	logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
@@ -185,23 +187,37 @@ public:
 };
 
 
-void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
-dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
-dvector compute_relative_weights(const dmatrix &O);
-dvar3_array compute_correlation_matrix(const dmatrix &n_Age);
-dvar3_array compute_correlation_matrix(const dmatrix &n_Age,const dvariable &phi);
-dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
-dvariable compute_weighted_sumofsquares(const dvector &Wy, const dvar_matrix &wwy,
-                                        const dvar3_array &V);
-dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
-                              const double &minp, const double &eps,
-                              double &age_tau2);
-dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
-                              const double &minp, const double &eps,
-                              double &age_tau2, const dvariable &phi);
-dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
-                              const double &minp, const double &eps,
-                              const dvariable &theta, const dvariable &phi);
+class logistic_student_t: public logistic_normal
+{
+private:
+	dvariable m_v;  // degrees of freedom.
+	dvariable negative_log_likelihood();
+
+public:
+	logistic_student_t(const dmatrix& _O,const dvar_matrix& _E,
+	                   const double _minp,const double _eps=0);
+
+	dvariable operator() ();
+
+};
+
+// void aggregate(dmatrix Op, dvar_matrix Ep, const double &minp);
+// dmatrix get_tail_compressed_index(const dmatrix &O, const double &minp);
+// dvector compute_relative_weights(const dmatrix &O);
+// dvar3_array compute_correlation_matrix(const dmatrix &n_Age);
+// dvar3_array compute_correlation_matrix(const dmatrix &n_Age,const dvariable &phi);
+// dvar_matrix compute_residual_difference(const dmatrix &O, const dvar_matrix &E);
+// dvariable compute_weighted_sumofsquares(const dvector &Wy, const dvar_matrix &wwy,
+//                                         const dvar3_array &V);
+// dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
+//                               const double &minp, const double &eps,
+//                               double &age_tau2);
+// dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
+//                               const double &minp, const double &eps,
+//                               double &age_tau2, const dvariable &phi);
+// dvariable nll_logistic_normal(const dmatrix &O, const dvar_matrix &E, 
+//                               const double &minp, const double &eps,
+//                               const dvariable &theta, const dvariable &phi);
 
 template <typename T>
 void add_constant_normalize(T M, const double &eps)

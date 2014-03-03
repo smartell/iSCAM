@@ -84,7 +84,7 @@ void logistic_normal::compute_likelihood_residuals()
 dvariable logistic_normal::operator() ()
 {
 	m_nll = 0;
-
+	
 	// Get correlation vector rho
 	get_rho();
 
@@ -137,7 +137,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
 dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &phi)
 {
 	m_nll = 0;
-
+	cout<<phi<<endl;
 	// Get correlation vector rho
 	get_rho(phi);
 

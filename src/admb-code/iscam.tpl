@@ -432,8 +432,12 @@ DATA_SECTION
 			t2 = 0;
 		}
 	END_CALCS 
+	!! COUT(n_MAT);
+	!! COUT(t1);
+	!! COUT(t2);
 	init_vector 	d_maturityVector(t1,t2);
-	
+	!! COUT(d_maturityVector);
+
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
@@ -1125,6 +1129,7 @@ DATA_SECTION
 
 INITIALIZATION_SECTION
   theta theta_ival;
+  phi1 0.01;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -1512,7 +1517,7 @@ FUNCTION void initParameters()
 	rho       = theta(6,1);
 	varphi    = sqrt(1.0/theta(7,1));
 	sig       = sqrt(rho) * varphi;
-	tau       = sqrt(1-rho) * varphi;
+	tau       = sqrt(1.0-rho) * varphi;
 
 	for(ih=1;ih<=n_ag;ih++)
 	{
@@ -2752,6 +2757,7 @@ FUNCTION calcObjectiveFunction
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
 			logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
+			logistic_student_t cLST_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
@@ -2783,11 +2789,11 @@ FUNCTION calcObjectiveFunction
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
-						nlvec(3,k)   = cLN_Age(phi1(k));	
+						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
 					}
 					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
 					{
-						nlvec(3,k)   = cLN_Age(phi1(k),phi2(k));	
+						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
 					}
 
 					// Residual
@@ -2798,6 +2804,13 @@ FUNCTION calcObjectiveFunction
 					}
 
 				break;
+
+				case 5:
+					if( !active(phi1(k)) )
+					{
+						nlvec(3,k) = cLST_Age();
+					}
+				break;
 			}
 			
 			// | Extract residuals.
@@ -2807,7 +2820,6 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
-	
 	
 	// |---------------------------------------------------------------------------------|
 	// | STOCK-RECRUITMENT LIKELIHOOD COMPONENT
