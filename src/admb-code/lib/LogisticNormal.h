@@ -198,6 +198,7 @@ public:
 	                   const double _minp,const double _eps=0);
 
 	dvariable operator() ();
+	dvariable operator() (const dvariable& _df);
 
 };
 

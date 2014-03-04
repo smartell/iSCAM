@@ -2798,9 +2798,20 @@ FUNCTION calcObjectiveFunction
 				break;
 
 				case 5:
-					if( !active(phi1(k)) )
+					if( !active(log_age_tau2(k)) )
 					{
 						nlvec(3,k) = cLST_Age();
+					}
+					else
+					{
+						nlvec(3,k) = cLST_Age(exp(log_age_tau2(k)));
+					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLST_Age.get_standardized_residuals();
+						age_tau2(k) = cLST_Age.get_sigma2();
 					}
 				break;
 			}

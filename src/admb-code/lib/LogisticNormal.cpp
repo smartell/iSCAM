@@ -52,7 +52,8 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 
 
 	// Total number of bins minus 1.
-	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
+	double Y = m_y2-m_y1+1.0;
+	m_bm1 = Y*(size_count(m_Op) - Y);
 	
 	// Relative weights to assign to each year.
 	m_Wy = compute_relative_weights(m_O);
@@ -84,7 +85,7 @@ void logistic_normal::compute_likelihood_residuals()
 dvariable logistic_normal::operator() ()
 {
 	m_nll = 0;
-	
+
 	// Get correlation vector rho
 	get_rho();
 
