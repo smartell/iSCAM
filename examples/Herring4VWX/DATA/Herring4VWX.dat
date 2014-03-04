@@ -37,6 +37,9 @@
 	3.089			# -power parameter in length-weight allometry
 	2.055			# -age at 50% maturity (approx with log(3.0)/k)
 	0.05			# -std at 50% maturity (CV ~ 0.1)
+   0                       # -(if n_MAT==1) use the following vector for maturity
+   0                       #mat vec
+
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
