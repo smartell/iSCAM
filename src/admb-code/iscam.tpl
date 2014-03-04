@@ -668,7 +668,7 @@ DATA_SECTION
 			f   = inp_wt_avg(i,sage-3);
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
-			
+			cout<<h<<endl;
 			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
@@ -689,18 +689,26 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-				for(h=1;h<=nsex;h++)
+					cout<<h<<endl;
+				
+				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
 					dvector tmp          = inp_wt_avg(i)(sage,nage);
 					ivector idx          = getIndex(age,tmp);
-					d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+					// Problem, array indexed differ, must loop over idx;
+					// d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+					for( int ii = 1; ii <= size_count(idx); ii++)
+					{
+						d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+						d3_len_age(ig)(iyr)(idx(ii)) = pow(d3_wt_avg(ig)(iyr)(idx(ii))
+						                               /d_a(ig),1./d_b(ig));
+					}
 					d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
-					d3_len_age(ig)(iyr)(idx) = pow(d3_wt_avg(ig)(iyr)(idx)
-					                               /d_a(ig),1./d_b(ig));
 				}
 			}
 		}
+		
 
 		// average weight-at-age in projection years
 		for(ig=1;ig<=n_ags;ig++)
@@ -5101,13 +5109,16 @@ GLOBALS_SECTION
 	#include "Selex.h"
 	//#include "OpMod.h"
 
-	ivector getIndex(dvector& a, dvector& b)
+	ivector getIndex(const dvector& a, const dvector& b)
 	{
 		int i,j,n;
 		n = 0;
 		j = 1;
 		for( i = a.indexmin(); i <= a.indexmax(); i++ )
 		{
+			// cout<<"Luke I am your father"<<endl;
+			// cout<<i<<endl;
+			// exit(1);
 			 if(b(i) != NA) n++;
 		}
 		ivector tmp(1,n);
