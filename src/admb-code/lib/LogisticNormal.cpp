@@ -168,13 +168,13 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 
 	// Get correlation vector rho
 	get_rho(phi,psi);
-	// cout<<m_rho<<endl;
 
 	// Construct covariance (m_V)
 	compute_correlation_array();
 
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
+	
 
 	// estimated variance
 	m_sigma2  = sigma2;// / (1.0-phi);
@@ -211,6 +211,7 @@ void logistic_normal::compute_weighted_sumofsquares()
 {
 	int i;
 	m_wss=0;
+
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		dvar_matrix Vinv = inv(m_V(i));

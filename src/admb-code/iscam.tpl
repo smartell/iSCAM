@@ -1131,6 +1131,7 @@ DATA_SECTION
 INITIALIZATION_SECTION
   theta theta_ival;
   phi1 0.01;
+  phi2 0.05;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -2770,7 +2771,7 @@ FUNCTION calcObjectiveFunction
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
-					if( !active(phi1(k)) )                      // LN1 Model
+					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
 						nlvec(3,k)  = cLN_Age();	
 					}

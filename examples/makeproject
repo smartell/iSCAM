@@ -12,7 +12,8 @@ mkdir $1/R
 ## don't forget to add to the git repository
 
 ## copy R-code directory into ./R/
-cp -r ../src/r-code/ $1/R
+#cp -r ../src/r-code/ $1/R
+cp -r ../src/R/  $1/R
 cp ../src/r-code/logo/iScamLogo.eps $1/MISC
 
 ## Copy Beamer template to PRESENTATION FOLDER
