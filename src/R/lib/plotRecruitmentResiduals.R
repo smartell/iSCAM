@@ -16,11 +16,7 @@ require(reshape2)
 	for( i in 1:n )
 	{
 		D  <- M[[i]]
-		sage <- D$sage
-		if(sage>0)
-			rt <- data.frame( t(rbind(D$yr[-sage],D$rt,D$delta)) )
-		else if(sage==0)
-			rt <- data.frame( t(rbind(D$yr,D$rt,D$delta)) )
+		rt <- data.frame( t(rbind(D$yr[-(1:D$sage)],D$rt,D$delta)) )
 		# ng <- (dim(rt)[2]-1)/2 # special case when ngroups > 1
 		colnames(rt) <- c("Year","Recruitment","Residual")
 		rt <- data.frame(Model=names(M)[i],rt)
