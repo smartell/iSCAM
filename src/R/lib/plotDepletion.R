@@ -10,7 +10,7 @@
 		yrange=c(0,1.1*max(yy, na.rm=TRUE))
 		
 		plot(xx, yy, type="n", axes=FALSE,
-			xlab="Year", ylab="Spawning depletion",main=paste(stock), 
+			xlab="Year", ylab="Spawning depletion",main=paste("stock"), 
 			ylim=yrange)
 		lines(xx, yy)
 		rlvl=c(1.0, 0.8, 0.4)
