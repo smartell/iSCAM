@@ -6,7 +6,7 @@ logistic_student_t::logistic_student_t(const dmatrix& _O,const dvar_matrix& _E,
 	                				   const double _minp,const double _eps)
 :logistic_normal(_O,_E,_minp,_eps)
 {
-	m_v = 30.0;
+	m_v = 300000.0;
 }
 
 dvariable logistic_student_t::operator () ()
@@ -71,7 +71,7 @@ dvariable logistic_student_t::negative_log_likelihood()
 	// 7) Compute nll using student t-distrbution.
 	// v is the degrees of freedom.
 	
-	cout<<"Student T"<<endl;
+	cout<<"Student T, df = "<<m_v<<endl;
 	RETURN_ARRAYS_INCREMENT();
 	dvariable v = m_v;
 	int p;
