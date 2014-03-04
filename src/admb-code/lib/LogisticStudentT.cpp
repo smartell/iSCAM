@@ -78,9 +78,10 @@ dvariable logistic_student_t::negative_log_likelihood()
   	dvariable nll = 0.0;
   	for(int i = m_y1; i <= m_y2; i++ )
   	{
-  		p    = size_count(m_Op(i)) -1;
+  		p    = size_count(m_Op(i)) - 1;
+  		const double lppi2 = 0.5*p*log(PI);
   		nll += -1.0 * gammln(0.5*(v + p));
-  		nll += gammln(0.5*v) + 0.5*p*log(v) + 0.5*p*log(PI);
+  		nll += gammln(0.5*v) + 0.5*p*log(v) + lppi2;
   		nll += 0.5*log(det(m_V(i)));
   	}
 	nll += 0.5*(p+v) * log(1.0 + m_wss/v);

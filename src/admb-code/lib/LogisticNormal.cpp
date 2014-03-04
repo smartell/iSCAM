@@ -53,7 +53,7 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 
 	// Total number of bins minus 1.
 	double Y = m_y2-m_y1+1.0;
-	m_bm1 = Y*(size_count(m_Op) - Y);
+	m_bm1 = (size_count(m_Op) - Y);
 	
 	// Relative weights to assign to each year.
 	m_Wy = compute_relative_weights(m_O);
@@ -192,6 +192,7 @@ dvariable logistic_normal::negative_log_likelihood()
 	// 7) Compute nll_logistic_normal
 	RETURN_ARRAYS_INCREMENT();
 	dvariable nll;
+	
 	nll  = 0.5 * log(2.0 * PI) * m_bm1;
 	nll += sum( log(m_Op) );
 	nll += log(m_sigma) * m_bm1;

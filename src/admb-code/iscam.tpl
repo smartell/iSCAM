@@ -843,6 +843,7 @@ DATA_SECTION
 	init_ivector nPhz_age_tau2(1,nAgears);
 	init_ivector nPhz_phi1(1,nAgears);
 	init_ivector nPhz_phi2(1,nAgears);
+	init_ivector nPhz_df(1,nAgears);
 	init_int check;
 	!! if(check != -12345) {cout<<"Error reading composition controls\n"<<endl; exit(1);}
 
@@ -1237,6 +1238,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -2798,13 +2800,13 @@ FUNCTION calcObjectiveFunction
 				break;
 
 				case 5:
-					if( !active(log_age_tau2(k)) )
+					if( !active(log_degrees_of_freedom(k)) )
 					{
 						nlvec(3,k) = cLST_Age();
 					}
 					else
 					{
-						nlvec(3,k) = cLST_Age(exp(log_age_tau2(k)));
+						nlvec(3,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
 					}
 
 					// Residual
@@ -4450,6 +4452,10 @@ REPORT_SECTION
 	REPORT(delta);
 	
 	dmatrix rep_rt = value( exp(trans(trans(log_rt).sub(syr,nyr))) );
+	for(int ig = 1; ig <= n_ag; ig++ )
+	{
+		rep_rt(ig)(syr) = value( exp( log_rt(ig)(syr-nage+sage) ) );
+	}
 	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
