@@ -668,7 +668,7 @@ DATA_SECTION
 			f   = inp_wt_avg(i,sage-3);
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
-			cout<<h<<endl;
+			
 			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
