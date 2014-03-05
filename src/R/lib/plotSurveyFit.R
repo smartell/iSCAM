@@ -43,3 +43,38 @@
 		}
 	})
 }
+
+
+
+.plotSurveyfit <- function(M)
+{
+	n <- length(M)
+	cat(".plotSurveyfit\n")
+	mdf <- NULL
+	for( i in 1:n )
+	{
+		it <- data.frame(cbind(M[[i]]$d3_survey_data,M[[i]]$it_hat))
+		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","wt","timing","Index_hat")
+		it <- data.frame(Model=names(M)[i],it)
+		mdf <- rbind(mdf,it)
+	}
+	print(head(mdf,3))
+
+	p <- ggplot(mdf) + geom_point(aes(Year,Index,colour = "Observed", name=" "))
+	p <- p + geom_line(aes(Year,Index_hat,colour="Predicted"))
+	p <- p + theme_set(theme_bw(12))
+	p <- p + theme(legend.title=element_blank())
+	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
+	p <- p + facet_wrap(~Model,scales="free")
+	print(p)
+	#print(p + .THEME)
+}
+
+
+
+
+
+
+
+
+
