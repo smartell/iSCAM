@@ -3460,6 +3460,7 @@ FUNCTION void calcReferencePoints()
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 		cout<<"The death star is approaching"<<endl;
+		cout<<fmsy<<endl;
 		cMSY.get_fmsy(fmsy);
 		cout<<"I've got radar lock"<<endl;
 		bo   = cMSY.getBo();
@@ -3487,8 +3488,8 @@ FUNCTION void calcReferencePoints()
 			
 			cMSY.calcEquilibrium(fi);
 			// cout<<cMSY.getRe()<<endl;
-			// cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
-			// <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
+			 cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+			 <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
 			fi += 0.01;
 			if(cMSY.getRe() < 0 ) break;
 			
@@ -4479,7 +4480,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		calcReferencePoints();
+		//calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		// exit(1);
 		REPORT(bo);
