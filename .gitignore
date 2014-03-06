@@ -1,36 +1,102 @@
-variance
-*.res
-*.bar
-*.cpp
-*.cov
-*.cor
-*.dep
-*.hes
-*.rpt
-*.log
-*.aux
-*.out
-*.cpp
-*.pdf
-*.txt
-*.eva
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
 *.exe
+*.o
+*.so
+*.cpp
 *.htp
 *.obj
-*.par
+variance
+dist/
+
+# iSCAM output
+*.psv
+*.cor
+*.cov
+*.dep
+*.eql
+*.hes
+*.tmp
+*.rpt
+*.bar
 *.rep
+*.par
 *.std
-*.b0*
-*.b1*
-*.b2*
-*.eq*
+*.eva
+*.mcmc
+*.mcrt
+*.mcst
+*.sim
+*.proj
+*.ret*
+*.p[0-9]*
+*.r[0-9]*
+*.b[0-9]*
+*.res
+
+# Latex Stuff
+*.aux
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.top
+*.toi
 *.d
-*.p0*
-*.p1*
-*.p2*
-*.r0*
-*.r1*
-*.r2*
+*.dvi
+
+# R stuff
+*.Rhistory
+*.Rdata
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
 
 .RData
 .RHistory
