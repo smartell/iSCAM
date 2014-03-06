@@ -3398,7 +3398,10 @@ FUNCTION void calcReferencePoints()
 	  	(5) : Use Msy object to get reference points.
 
 		
-
+	slx::Selex<dvar_vector> * ptr;  //Pointer to Selex base class
+  ptr = new slx::LogisticCurve<dvar_vector,dvariable>(mu,sd);
+  log_sel = ptr->logSelectivity(age);
+  delete ptr;
 
   	TODO list:
   	[ ] - allow user to specify which selectivity years are used in reference point
@@ -3406,11 +3409,14 @@ FUNCTION void calcReferencePoints()
   	*/
 	int kk,ig;
 	
+	
+
 	// | (1) : Matrix of selectivities for directed fisheries.
 	// |     : log_sel(gear)(n_ags)(year)(age)
 	// |     : ensure dAllocation sums to 1.
 	dvector d_ak(1,nfleet);
 	d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
+	dvar3_array  dvar_V(1,n_ags,1,nfleet,sage,nage);
 	for(k=1;k<=nfleet;k++)
 	{
 		kk      = nFleetIndex(k);
@@ -3418,6 +3424,7 @@ FUNCTION void calcReferencePoints()
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			d_V(ig)(k) = value( exp(log_sel(kk)(ig)(nyr)) );
+			dvar_V(ig)(k) =( exp(log_sel(kk)(ig)(nyr)) );
 
 		}
 	}
@@ -3441,6 +3448,8 @@ FUNCTION void calcReferencePoints()
 	msy.initialize();
 	bmsy = 0;
 
+	dvar_vector dftry(1,nfleet);
+
 	dvector ftry(1,nfleet);
 	ftry  = 0.6/nfleet * mean(M_bar);
 	fmsy  = ftry;
@@ -3458,15 +3467,29 @@ FUNCTION void calcReferencePoints()
 		dvector   d_wa = dWt_bar(g);
 		dvector   d_fa = fa_bar(g);
 
+		//Pointer to the base class
+		rfp::referencePoints<dvariable,dvar_vector,dvar_matrix> * pMSY; 
+		pMSY = new rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array>
+		(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		dvar_vector dfmsy = pMSY->getFmsy(dftry);
+		delete pMSY;
+		
+		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
+		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		//dvar_vector dfmsy =c_MSY.getFmsy(dftry);
+
+
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-		cout<<"The death star is approaching"<<endl;
-		cout<<fmsy<<endl;
-		cMSY.get_fmsy(fmsy);
-		cout<<"I've got radar lock"<<endl;
-		bo   = cMSY.getBo();
-		bmsy = cMSY.getBmsy();
-		msy  = cMSY.getMsy();
-		cMSY.print();
+		//cout<<"The death star is approaching"<<endl;
+		//cout<<fmsy<<endl;
+		//cMSY.get_fmsy(fmsy);
+		//cout<<"I've got radar lock"<<endl;
+		//bo   = cMSY.getBo();
+		//bmsy = cMSY.getBmsy();
+		//msy  = cMSY.getMsy();
+		//cMSY.print();
+		
+
 		// if(nfleet > 1)
 		// {
 		// 	fall  = ftry;
@@ -3479,23 +3502,23 @@ FUNCTION void calcReferencePoints()
 
 		
 
-		cout<<"This is red leader, I'm going in!"<<endl;
-		i = 0;
-		dvector fi(1,nfleet);
-		fi = 0.;
-		while( i < 1500 )
-		{	
-			
-			cMSY.calcEquilibrium(fi);
-			// cout<<cMSY.getRe()<<endl;
-			 cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
-			 <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
-			fi += 0.01;
-			if(cMSY.getRe() < 0 ) break;
-			
-			i ++;
-		}
-		cout<<"Whaa Hoo, your all clear kid!"<<endl;
+		//cout<<"This is red leader, I'm going in!"<<endl;
+		//i = 0;
+		//dvector fi(1,nfleet);
+		//fi = 0.;
+		//while( i < 1500 )
+		//{	
+		//	
+		//	cMSY.calcEquilibrium(fi);
+		//	// cout<<cMSY.getRe()<<endl;
+		//	 cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+		//	 <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
+		//	fi += 0.01;
+		//	if(cMSY.getRe() < 0 ) break;
+		//	
+		//	i ++;
+		//}
+		//cout<<"Whaa Hoo, your all clear kid!"<<endl;
 
 		// Msy cMSY2(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 
@@ -4480,9 +4503,9 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		//calcReferencePoints();
+		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
-		// exit(1);
+		exit(1);
 		REPORT(bo);
 		REPORT(fmsy);
 		REPORT(msy);
@@ -5106,9 +5129,11 @@ GLOBALS_SECTION
 	#include <time.h>
 	#include <string.h>
 	#include "lib/msy.h"
+	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
 	#include "lib/LogisticNormal.h"
 	#include "Selex.h"
+
 	//#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
