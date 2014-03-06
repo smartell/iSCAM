@@ -22,10 +22,12 @@ namespace rfp {
 	class referencePoints 
 	{
 	private:
+		T  m_ro;
 		T1 m_fe;
 
 	public:
-		
+		referencePoints(const T &ro)
+		: m_ro(ro) {}
 
 		// Pure virtual functions... set = 0;
 		virtual const T1 getFmsy(const T1 &fe) const = 0;
