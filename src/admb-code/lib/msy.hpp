@@ -52,7 +52,7 @@ namespace rfp {
 	 * @tparam T3 3d_array
 	 */
 	template<class T, class T1, class T2, class T3>
-	class msy : public referencePoints<T,T1,T2>
+	class msy //: public referencePoints<T,T1,T2>
 	{  
 	private:
 		// Indexes for dimensions
@@ -80,7 +80,7 @@ namespace rfp {
 		T3 m_Va;		/// Selectivity-at-age.
 
 		void calcPhie();
-		void calcSurvivorship(const T1 &fe) const;
+		void calcSurvivorship(const T1 &fe);
 		
 		//void calcEquilibrium(const T1 &fe);
 
@@ -116,23 +116,25 @@ namespace rfp {
 			cout<<"In constructor\n"<<m_phie<<endl;
 		}
 
-		virtual const T1 getFmsy(const T1 &fe) const
-		{
-			calcSurvivorship(fe);
-
-			return 0;
-		}
+		
+		virtual const T1 getFmsy(const T1 &fe);
 		
 	};
 
+	template<class T, class T1, class T2, class T3>
+	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 & fe)
+	{
+		calcSurvivorship(fe);
+		return(0);	
+	}
 
 	template<class T, class T1, class T2, class T3>
-	void msy<T,T1,T2,T3>::calcSurvivorship(const T1 &fe) const
+	void msy<T,T1,T2,T3>::calcSurvivorship(const T1 &fe)
 	{
 		cout<<"Working on this routine"<<endl;
 		int j,h,k;
 		T phif = 0.0;
-		m_phif = 0;
+		
 
 		T1 pza(m_sage,m_nage);
 		T1 psa(m_sage,m_nage);
@@ -249,9 +251,9 @@ namespace rfp {
 			phif += lz(h) * m_Fa(h);
 
 		} // m_nGrp
-		
+		m_phif = phif;
 
-		cout<<phif<<endl;
+		cout<<m_phif<<endl;
 		cout<<"End of CalcSurvivorship"<<endl;
 	}
 
