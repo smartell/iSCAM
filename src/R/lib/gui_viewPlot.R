@@ -94,7 +94,14 @@
 	{
 		.plotSurveyFit( M )
 	}
-
+	else if( plotType=="ssbretro" )
+	{
+		.plotSSBretrospective( M )
+	}
+	else if( plotType=="ssbsquid" )
+	{
+		.plotSSBsquid( M )
+	}
 }
 
 # |----------------------------------------------------------------------------------|
@@ -115,20 +122,23 @@
 		tmp$sim      <- read.rep(simfile)
 	}
 	# | retrospective results
-	retfile <- paste(fn,".ret",1:10,sep="")
+	retfile <- paste(fn,".ret",1:15,sep="")
 	retSbt <- list()
+	retYrs  <- list()
 	i <- 0
 	for(ifn in retfile)
 	{
 		if(file.exists(ifn))
 		{
 			i <- i + 1
-			sbt <- read.rep(ifn)$sbt
-			nn  <- 1:(length(sbt)-1)
-			retSbt[[i]] <- sbt[nn]
+			A  <- read.rep(ifn)
+			nn  <- 1:(length(A$sbt)-1)
+			retSbt[[i]] <- A$sbt[nn]
+			retYrs[[i]] <- A$yrs[nn]
 		}
 	}
 	tmp$retSbt <- retSbt
+	tmp$retYrs <- retYrs
 
 	save(tmp,file=paste(fn,".RData",sep=""))
 	cat("\n Finished reading ",fn,"\n")
