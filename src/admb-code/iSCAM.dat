@@ -1,7 +1,4 @@
-../../Examples/ArrowtoothFlounder/DATA/template.dat
-../../Examples/ArrowtoothFlounder/DATA/template.ctl
-../../Examples/ArrowtoothFlounder/DATA/template.pfc
-#../../Examples/DEMO/DATA/DataTemplate.dat
-#../../Examples/DEMO/DATA/ControlTemplate.ctl
-#../../Examples/DEMO/DATA/ProjectionTemplate.pfc
+../../Examples/DEMO/DATA/DataTemplate.dat
+../../Examples/DEMO/DATA/ControlTemplate.ctl
+../../Examples/DEMO/DATA/ProjectionTemplate.pfc
 
