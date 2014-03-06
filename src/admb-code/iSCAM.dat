@@ -1,6 +1,3 @@
-#Examples/PacificHake/PHake2011.dat		#Data file name
-#Examples/PacificHake/PHake2011.ctl		#Control file name
-
-../../Examples/Hake/NamibianHake.dat
-../../Examples/Hake/NamibianHake.ctl
+../../Examples/ArrowtoothFlounder/DATA/arf.dat
+../../Examples/ArrowtoothFlounder/DATA/arf.ctl
 

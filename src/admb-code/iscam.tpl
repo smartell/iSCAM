@@ -4973,9 +4973,12 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include "lib/msy.h"
-	#include "lib/baranov.h"
-	#include "lib/LogisticNormal.h"
+//	#include "lib/msy.h"
+	#include "lib/msy.cpp"
+//	#include "lib/baranov.h"
+	#include "lib/baranov.cpp"
+//	#include "lib/LogisticNormal.h"
+	#include "lib/LogisticNormal.cpp"
 	#include "Selex.h"
 	//#include "OpMod.h"
 
