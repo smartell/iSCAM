@@ -3453,6 +3453,7 @@ FUNCTION void calcReferencePoints()
 	dvector ftry(1,nfleet);
 	ftry  = 0.6/nfleet * mean(M_bar);
 	fmsy  = ftry;
+	dftry = ftry;
 	
 
 
@@ -3468,15 +3469,15 @@ FUNCTION void calcReferencePoints()
 		dvector   d_fa = fa_bar(g);
 
 		//Pointer to the base class
-		rfp::referencePoints<dvariable,dvar_vector,dvar_matrix> * pMSY; 
-		pMSY = new rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array>
-		(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
-		dvar_vector dfmsy = pMSY->getFmsy(dftry);
-		delete pMSY;
+		//rfp::referencePoints<dvariable,dvar_vector,dvar_matrix> * pMSY; 
+		//pMSY = new rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array>
+		//(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
+		//delete pMSY;
 		
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
-		//dvar_vector dfmsy =c_MSY.getFmsy(dftry);
+		dvar_vector dfmsy =c_MSY.getFmsy(dftry);
 
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
