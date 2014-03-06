@@ -1,7 +1,26 @@
 # Steven Martell
 # September 2,  2012
 
-.plotDepletion	<- function( repObj, annotate=FALSE )
+.plotDepletion <- function( M )
+{
+	n <- length( M )
+	cat(".plotDepletion")
+	mdf <- NULL
+	for(i in 1:n)
+	{
+		df <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,Dt=M[[i]]$sbt/M[[i]]$sbo)
+		mdf <- rbind(mdf,df)
+	}
+
+	p <- ggplot(mdf,aes(x=Year,y=Dt)) + geom_line()
+	p <- p + labs(x="Year",y="Spawning biomass depletion")
+	p <- p + ylim(0,max(mdf$Dt))
+	p <- p + facet_wrap(~Model,scales="free")
+	print(p + .THEME)
+}
+
+
+.plotOldDepletion	<- function( repObj, annotate=FALSE )
 {
 	#plot the spawning biomass depletion level & reference points
 	with(repObj, {

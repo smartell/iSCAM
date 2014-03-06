@@ -13,14 +13,15 @@
 # | .PWD       <- Global Parent Working Directory for R-scripts
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
-.PWD        <- "~/Documents/iSCAM/src/R"
+.PWD        <- "~/Documents/iSCAM-project/src/R"
+setwd(.PWD)
 # .FIGUREDIR  <- "../FIGS/"
 .FIGUREDIR  <- "../logo/"
 .RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
 require(ggplot2)
-.THEME      <- theme_bw(12)
+.THEME      <- theme_bw(18)
 .UNITS      <- "(mlb)"
 
 # |----------------------------------------------------------------------------------|

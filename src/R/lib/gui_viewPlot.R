@@ -86,6 +86,14 @@
 	{
 		.plotRecruitment( M )
 	}
+	else if( plotType=="depletion" )
+	{
+		.plotDepletion( M )
+	}
+	else if( plotType=="surveyfit" )
+	{
+		.plotSurveyFit( M )
+	}
 
 }
 

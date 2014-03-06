@@ -4504,9 +4504,9 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		calcReferencePoints();
+		//calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
-		exit(1);
+		//exit(1);
 		REPORT(bo);
 		REPORT(fmsy);
 		REPORT(msy);
