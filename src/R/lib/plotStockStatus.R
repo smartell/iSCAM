@@ -16,18 +16,21 @@
 		Ffmsy <- apply(M[[i]]$ft,2,sum)/M[[i]]$fmsy
 
 		df <- data.frame(Model=names(M[i]),Year=M[[i]]$yr,Bbmsy=Bbmsy,Ffmsy=Ffmsy)
-		
+		df <- df[order(df$Year),]
+
 		mdf <- rbind(mdf,df)
 
 	}
 
 	print(head(mdf,3))
 
-	p <- ggplot(mdf) + geom_point(aes(Bbmsy,Ffmsy,color=Year))
+	p <- ggplot(mdf) + geom_point(aes(Bbmsy,Ffmsy, color=Year))
 	p <- p + ylim(0,2) + xlim(0,max(Bbmsy))
 	p <- p + geom_vline(aes(xintercept=1))
 	p <- p + geom_hline(aes(yintercept=1))
-	p<- p + geom_line(aes(Bbmsy,Ffmsy))
+	p <- p + geom_path(aes(Bbmsy,Ffmsy,color=Year))
+	p <- p + geom_point(aes(x=Bbmsy[length(Year)],y=Ffmsy[length(Year)]),size=4,color="Red")
+	p <- p + geom_text(aes(label=Year[length(Year)], x=Bbmsy[length(Year)],y=Ffmsy[length(Year)]),hjust=0, vjust=0)
 	p <- p + labs(x=expression(paste("B/","B"["MSY"])),y=expression(paste("F/","F"["MSY"])))
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
