@@ -56,13 +56,13 @@ grid 1 1 relief="flat" pady=5 padx=5
 		radio name=plotType value=recruitment   text="Recruitment"          function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=depletion     text="Depletion"            function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=selectivity   text="Selectivities(s)"     function=.mpdView mode=character sticky=W  edit=TRUE
-		radio name=plotType value=stockrecruit  text="Stock-Recruitment"    function=.mpdView mode=character sticky=W  edit=TRUE
+		radio name=plotType value=stockrecruit  text="Stock-Recruitment"    function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=surveyfit     text="Survey(s)"            function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=ssbretro      text="SSB retrospective"    function=.mpdView mode=character sticky=W  edit=TRUE
-		radio name=plotType value=productivity  text="Recruits per Spawner" function=.mpdView mode=character sticky=W  edit=TRUE
+		radio name=plotType value=productivity  text="Recruits per Spawner" function=.viewPlot mode=character sticky=W  edit=TRUE
 		null
 		null
-		radio name=plotType value=kobeplot      text="Stock status (KOBE)"  function=.mpdView mode=character sticky=W  edit=TRUE
+		radio name=plotType value=kobeplot      text="Stock status (KOBE)"  function=.viewPlot mode=character sticky=W  edit=TRUE
 		
 		# RowCol (4 1)
 		grid 2 1 relief="flat" sticky=W
