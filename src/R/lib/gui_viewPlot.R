@@ -102,6 +102,10 @@
 	{
 		.plotSSBsquid( M )
 	}
+	else if( plotType=="selectivity" )
+	{
+		.plotSelectivity( M )
+	}
 }
 
 # |----------------------------------------------------------------------------------|
