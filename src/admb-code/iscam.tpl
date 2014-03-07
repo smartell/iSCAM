@@ -3475,20 +3475,20 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
-		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
-		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
-		dvar_vector dfmsy =c_MSY.getFmsy(dftry);
+		//rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
+		//c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		//dvar_vector dfmsy =c_MSY.getFmsy(dftry);
 
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 		//cout<<"The death star is approaching"<<endl;
 		//cout<<fmsy<<endl;
-		//cMSY.get_fmsy(fmsy);
+		cMSY.get_fmsy(fmsy);
 		//cout<<"I've got radar lock"<<endl;
-		//bo   = cMSY.getBo();
-		//bmsy = cMSY.getBmsy();
-		//msy  = cMSY.getMsy();
-		//cMSY.print();
+		bo   = cMSY.getBo();
+		bmsy = cMSY.getBmsy();
+		msy  = cMSY.getMsy();
+		cMSY.print();
 		
 
 		// if(nfleet > 1)
@@ -4504,7 +4504,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		//calcReferencePoints();
+		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
