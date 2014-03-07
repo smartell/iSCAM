@@ -3475,6 +3475,7 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
+		cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);

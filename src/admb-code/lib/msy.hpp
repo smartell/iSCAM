@@ -1,7 +1,10 @@
 #ifndef _MSY_H
 #define _MSY_H
 
-#define MAXITER 300
+#ifdef MAXITER
+#undef MAXITER
+#define MAXITER 100
+#endif
 #define TOL     1.e-04
 
 #include <admodel.h>
@@ -64,14 +67,17 @@ namespace rfp {
 
 		T m_ro;
 		T m_bo;
+		T m_be;			/// Equilibrium biomass
 		T m_h;
 		T m_rho;	    /// Fraction of mortality that occurs before spawning.
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.
+		T m_bmsy;		/// Spawning biomass at MSY
 
 		T1 m_fe;		/// Fishing mortality rate
 		T1 m_fstp;
 		T1 m_ye;		/// Equilibrium yield.
+		T1 m_msy;		/// Maximum Sustainable yield for each gear
 
 
 		T2 m_lz;		/// Survivorship under fished conditions
@@ -109,18 +115,21 @@ namespace rfp {
 
 			m_nGrp = m_Ma.rowmax() - m_Ma.rowmin() + 1;
 			m_nGear = m_Va(1).rowmax();
-			cout<<"NGEAR "<<m_nGear<<endl;
+			//cout<<"NGEAR "<<m_nGear<<endl;
 			
 			m_sage = m_Ma.colmin();
 			m_nage = m_Ma.colmax();
 
 			calcPhie();
 
-			cout<<"In constructor\n"<<m_phie<<endl;
+			//cout<<"In constructor\n"<<m_phie<<endl;
 		}
-
-		
 		virtual const T1 getFmsy(const T1 &fe);
+
+		// Getters
+		virtual const T  getBmsy() {return m_bmsy;}
+		virtual const T1 getMsy()  {return m_msy; }
+		
 		
 	};
 
@@ -133,15 +142,17 @@ namespace rfp {
 		{
 			calcEquilibrium(m_fe);
 			m_fe = m_fe + m_fstp;
-			cout<<"fmsy = "<<m_fe<<endl;
+			cout<<iter<<" fmsy = "<<m_fe<<endl;
 		}
+		m_msy = m_ye;
+		m_bmsy = m_be;
 		return(m_fe);	
 	}
 
 	template<class T, class T1, class T2, class T3>
 	void msy<T,T1,T2,T3>::calcEquilibrium(const T1 &fe)
 	{
-		cout<<"Working on this routine"<<endl;
+		//cout<<"Working on this routine"<<endl;
 		int j,h,k;
 		T phif = 0.0;
 		
@@ -171,14 +182,14 @@ namespace rfp {
 		T3  dlw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
 		T3 d2lw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
 
-		cout<<m_Va<<endl;
+		//cout<<m_Va<<endl;
 		for( h = 1; h <= m_nGrp; h++ )
 		{
 			za(h) = m_Ma(h);
 			for( k = 1; k <= m_nGear; k++ )
 			{
 				za(h) = za(h) + fe(k) * m_Va(h)(k);
-				cout<<h<<" "<<k<<endl;
+				//cout<<h<<" "<<k<<endl;
 			}
 			sa(h) = exp(-za(h));
 			oa(h) = 1.0 - sa(h);
@@ -330,6 +341,7 @@ namespace rfp {
 
 		// Equilibrium calculations
 		T    re;
+		T    be;
 		T1   ye(1,m_nGear);
 		T1 fstp(1,m_nGear);
 		T1  dye(1,m_nGear);
@@ -339,6 +351,7 @@ namespace rfp {
 		// Equilibrium rectuis, yield and first derivative of ye
 		re   = m_ro*(kappa-m_phie/phif) / km1;
 		ye   = re*elem_prod(fe,phiq);
+		be   = re * phif;
 		dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
 
 		// Jacobian matrix (2nd derivative of the catch equations)
@@ -361,8 +374,10 @@ namespace rfp {
 
 		// Set private member variables
 		m_fstp = fstp;
-		cout<<"Newton step\n"<<fstp<<endl;
-		cout<<"End of CalcSurvivorship"<<endl;
+		m_ye   = ye;
+		m_be   = be;
+		//cout<<"Newton step\n"<<fstp<<endl;
+		//cout<<"End of CalcSurvivorship"<<endl;
 	}
 
 	/**
@@ -397,7 +412,7 @@ namespace rfp {
 		}
 		m_lx = lx;
 		m_bo = m_ro * m_phie;
-		cout<<"Bo = "<<m_bo<<endl;
+		//cout<<"Bo = "<<m_bo<<endl;
 		
 	}
 
