@@ -35,8 +35,8 @@
 ## ------------------------------------------------------------------------- ##
 ## Need one value for each area and sex.
 ##
-68.160118   68.160118   # -asymptotic length (linf)  
-0.272789    0.272789    # -brody growth coefficient (k)
+68.160118   58.160118   # -asymptotic length (linf)  
+0.272789    0.252789    # -brody growth coefficient (k)
 -1.219753   -1.219753   # -theoretical age at zero length (to)
 1.e-5       1.e-5       # -scaler in length-weight allometry
 3.0         3.0         # -power parameter in length-weight allometry

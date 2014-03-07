@@ -3475,10 +3475,10 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
-		//rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
-		//c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
-		//dvar_vector dfmsy =c_MSY.getFmsy(dftry);
-
+		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
+		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
+		cout<<dfmsy<<endl;
 
 		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 		//cout<<"The death star is approaching"<<endl;

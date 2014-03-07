@@ -690,11 +690,11 @@ void Msy::calcEquilibrium(const dvector& fe)
 	dmatrix d2ye(1,ngear,1,ngear);
 	dmatrix invJ(1,ngear,1,ngear);
 
-	cout<<"Ro = "<<ro<<endl;
-	cout<<"kappa="<<kappa<<endl;
-	cout<<"phie=" <<m_phie<<endl;
-	cout<<"phif = "<<phif<<endl;
-	cout<<"km1 = "<<km1<<endl;
+	// cout<<"Ro = "<<ro<<endl;
+	// cout<<"kappa="<<kappa<<endl;
+	// cout<<"phie=" <<m_phie<<endl;
+	// cout<<"phif = "<<phif<<endl;
+	// cout<<"km1 = "<<km1<<endl;
 
 
 	re   = ro*(kappa-m_phie/phif) / km1;
@@ -702,12 +702,12 @@ void Msy::calcEquilibrium(const dvector& fe)
 	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
 	dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
 
-	cout<<"Re     = "<<re<<endl;
-	cout<<"phiq   = "<<phiq<<endl;
-	cout<<"fe     = "<<fe<<endl;
-	cout<<"dre    = "<<dre<<endl;
-	cout<<"dphiq  = "<<dphiq<<endl;
-	cout<<"dye    = "<<dye<<endl;
+	// cout<<"Re     = "<<re<<endl;
+	// cout<<"phiq   = "<<phiq<<endl;
+	// cout<<"fe     = "<<fe<<endl;
+	// cout<<"dre    = "<<dre<<endl;
+	// cout<<"dphiq  = "<<dphiq<<endl;
+	// cout<<"dye    = "<<dye<<endl;
 	
 	// Caclculate Jacobian matrix (2nd derivative of the catch equation)
 	for(j=1; j<=ngear; j++)
@@ -723,9 +723,9 @@ void Msy::calcEquilibrium(const dvector& fe)
 	}
 
 	// Newton-Raphson step.
-	cout<<"Second Derivatives \n"<<d2ye <<endl;
+	// cout<<"Second Derivatives \n"<<d2ye <<endl;
 	invJ   = -inv(d2ye);
-	cout<<"B"<<endl;
+	//cout<<"B"<<endl;
 	fstp   = invJ * dye;  
 	
 	// Set private members

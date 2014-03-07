@@ -70,9 +70,12 @@ namespace rfp {
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.
 
 		T1 m_fe;		/// Fishing mortality rate
+		T1 m_fstp;
 		T1 m_ye;		/// Equilibrium yield.
 
 
+		T2 m_lz;		/// Survivorship under fished conditions
+		T2 m_lx; 		/// Survivorship upder unfished conditions
 		T2 m_Ma;		/// Natural mortality rate matrix.
 		T2 m_Wa;		/// Weight-at-age matrix.
 		T2 m_Fa;		/// Fecundity-at-age matrix.
@@ -80,7 +83,7 @@ namespace rfp {
 		T3 m_Va;		/// Selectivity-at-age.
 
 		void calcPhie();
-		void calcSurvivorship(const T1 &fe);
+		void calcEquilibrium(const T1 &fe);
 		
 		//void calcEquilibrium(const T1 &fe);
 
@@ -124,12 +127,19 @@ namespace rfp {
 	template<class T, class T1, class T2, class T3>
 	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 & fe)
 	{
-		calcSurvivorship(fe);
-		return(0);	
+		calcEquilibrium(fe);
+		m_fe = fe + m_fstp;
+		for(int iter=1; iter<=MAXITER; iter++)
+		{
+			calcEquilibrium(m_fe);
+			m_fe = m_fe + m_fstp;
+			cout<<"fmsy = "<<m_fe<<endl;
+		}
+		return(m_fe);	
 	}
 
 	template<class T, class T1, class T2, class T3>
-	void msy<T,T1,T2,T3>::calcSurvivorship(const T1 &fe)
+	void msy<T,T1,T2,T3>::calcEquilibrium(const T1 &fe)
 	{
 		cout<<"Working on this routine"<<endl;
 		int j,h,k;
@@ -251,9 +261,107 @@ namespace rfp {
 			phif += lz(h) * m_Fa(h);
 
 		} // m_nGrp
-		m_phif = phif;
+		m_phif  = phif;
+		m_lz    = lz;
 
-		cout<<m_phif<<endl;
+		// Incidence functions and associated derivatives
+		T1  dphif(1,m_nGear);   dphif.initialize();
+		T1 d2phif(1,m_nGear);  d2phif.initialize();
+		T1   phiq(1,m_nGear);    phiq.initialize();
+		T1  dphiq(1,m_nGear);   dphiq.initialize();
+		T1 d2phiq(1,m_nGear);  d2phiq.initialize();
+		T1    dre(1,m_nGear);     dre.initialize();
+		T1   d2re(1,m_nGear);    d2re.initialize();
+		T1     t1(m_sage,m_nage);    t1.initialize();
+
+		for( h = 1; h <= m_nGrp; h++ )
+		{
+			for( k = 1; k <= m_nGear; k++ )
+			{
+				dphif(k)  += dlz_m(h)(k)  * m_Fa(h);
+				d2phif(k) += d2lz_m(h)(k) * m_Fa(h);
+				//dphif(k)   += dlw_m(h)(k)  * m_Fa(h);
+				//d2phif(k)  += d2lw_m(h)(k) * m_Fa(h);
+
+				// per recruit yield
+				phiq(k)   +=  lz(h) * qa_m(h)(k);
+				if(m_nGear>=1)  // was (if ngear==1), changed during debugging of nfleet>1
+				{
+					// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
+					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),square(m_Va(h)(k))),za(h));
+				}
+				else
+				{
+					// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
+					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),m_Va(h)(k)),za(h));
+				}
+				T1 t0 = elem_div(oa(h),za(h));
+				T1 t3 = sa(h)-t0;
+				dphiq(k)  += qa_m(h)(k)*dlz_m(h)(k) + t1 * t3;
+
+				// 2nd derivative for per recruit yield (nasty)
+				T1 t2  = 2. * dlz_m(h)(k);
+				T1 V2  = elem_prod(m_Va(h)(k),m_Va(h)(k));
+				T1 t5  = elem_div(elem_prod(m_Wa(h),V2),za(h));
+				T1 t7  = elem_div(m_Va(h)(k),za(h));
+				T1 t9  = elem_prod(t5,sa(h));
+				T1 t11 = elem_prod(t5,t0);
+				T1 t13 = elem_prod(lz(h),t5);
+				T1 t14 = elem_prod(m_Va(h)(k),sa(h));
+				T1 t15 = elem_prod(t7,sa(h));
+				T1 t17 = elem_prod(m_Va(h)(k),t0);
+				T1 t18 = elem_div(t17,za(h));
+				d2phiq(k)  += d2lz_m(h)(k)*qa_m(h)(k) 
+							+ t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 
+							+ 2.*t13*t18;
+			} // m_nGear
+		} // m_nGrp
+
+		// 1st & 2nd partial derivatives for recruitment
+		T phif2 = square(m_phif);
+		T kappa = 4.0*m_h/(1.-m_h);
+		T km1   = kappa - 1.0;
+		for( k = 1; k <= m_nGear; k++ )
+		{
+			dre(k)      = m_ro*m_phie*dphif(k)/(phif2*km1);
+			d2re(k)     = -2.*m_ro*m_phie*dphif(k)*dphif(k)/(phif2*phif*km1) 
+						+ m_ro*m_phie*d2phif(k)/(phif2*km1);		
+		}	
+
+		// Equilibrium calculations
+		T    re;
+		T1   ye(1,m_nGear);
+		T1 fstp(1,m_nGear);
+		T1  dye(1,m_nGear);
+		T2 d2ye(1,m_nGear,1,m_nGear);
+		T2 invJ(1,m_nGear,1,m_nGear);
+
+		// Equilibrium rectuis, yield and first derivative of ye
+		re   = m_ro*(kappa-m_phie/phif) / km1;
+		ye   = re*elem_prod(fe,phiq);
+		dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
+
+		// Jacobian matrix (2nd derivative of the catch equations)
+		for(j=1; j<=m_nGear; j++)
+		{
+			for(k=1; k<=m_nGear; k++)
+			{
+				d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
+				if(k == j)
+				{
+					d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(j);
+				}
+			} 
+		}
+
+		// Inverse of the Jacobi
+		invJ = -inv(d2ye);
+		fstp = invJ * dye;
+
+
+		// Set private member variables
+		m_fstp = fstp;
+		cout<<"Newton step\n"<<fstp<<endl;
 		cout<<"End of CalcSurvivorship"<<endl;
 	}
 
@@ -287,6 +395,7 @@ namespace rfp {
 			 }
 			 m_phie += 1./(m_nGrp) * lx(i) * m_Fa(i);
 		}
+		m_lx = lx;
 		m_bo = m_ro * m_phie;
 		cout<<"Bo = "<<m_bo<<endl;
 		
