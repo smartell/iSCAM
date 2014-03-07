@@ -94,6 +94,18 @@
 	{
 		.plotSurveyFit( M )
 	}
+	else if( plotType=="stockrecruit" )
+	{
+		.plotStockRecruit( M )
+	}
+	else if( plotType=="productivity" )
+	{
+		.plotRecruitsPerSpawner( M )
+	}
+	else if( plotType=="kobeplot" )
+	{
+		.plotStockStatus( M )
+	}	
 	else if( plotType=="ssbretro" )
 	{
 		.plotSSBretrospective( M )
