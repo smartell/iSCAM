@@ -136,13 +136,14 @@ namespace rfp {
 	template<class T, class T1, class T2, class T3>
 	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 & fe)
 	{
-		calcEquilibrium(fe);
-		m_fe = fe + m_fstp;
+		//calcEquilibrium(fe);
+		m_fe = fe;// + m_fstp;
 		for(int iter=1; iter<=MAXITER; iter++)
 		{
 			calcEquilibrium(m_fe);
 			m_fe = m_fe + m_fstp;
 			cout<<iter<<" fmsy = "<<m_fe<<endl;
+			//if(iter==6) exit(1);
 		}
 		m_msy = m_ye;
 		m_bmsy = m_be;
@@ -213,8 +214,8 @@ namespace rfp {
 			}
 
 			// Survivorship
-			lz(h)(m_sage) = 1.0/m_nGrp;
-			lw(h)(m_sage) = 1.0/m_nGrp * psa(m_sage);
+			lz(h)(m_sage) = 1.0;//m_nGrp;
+			lw(h)(m_sage) = 1.0;//m_nGrp * psa(m_sage);
 			for( j = m_sage+1; j <= m_nage; j++ )
 			{
 				lz(h,j) = lz(h,j-1) * sa(h,j-1);
@@ -249,7 +250,7 @@ namespace rfp {
 						T V2  	   = m_Va(h)(k)(j);
 						T oa2 	   = oa(h)(j)*oa(h)(j);
 						
-						d2lz(k)(j) = d2lz(k)(j)/oa(h)(j) 
+						d2lz(k)(j) = d2lz(k)(j-1)*sa(h)(j-1)/oa(h)(j) 
 									+ 2*lz(h)(j-1)*V1*sa(h)(j-1)*V2*sa(h)(j)/oa2
 									+ 2*lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)*sa(h)(j)
 									/(oa(h)(j)*oa2)
@@ -296,7 +297,8 @@ namespace rfp {
 
 				// per recruit yield
 				phiq(k)   +=  lz(h) * qa_m(h)(k);
-				if(m_nGear>=1)  // was (if ngear==1), changed during debugging of nfleet>1
+				// changed back to ngear==1 to be consistent with spreadsheet.
+				if(m_nGear==1)  // was (if ngear==1), changed during debugging of nfleet>1
 				{
 					// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
 					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),square(m_Va(h)(k))),za(h));
@@ -352,7 +354,9 @@ namespace rfp {
 		re   = m_ro*(kappa-m_phie/phif) / km1;
 		ye   = re*elem_prod(fe,phiq);
 		be   = re * phif;
-		dye  = re*phiq + elem_prod(fe,phiq)*dre + (fe*re)*dphiq;
+		dye  = re*phiq 
+			  + elem_prod(elem_prod(fe,phiq),dre) 
+			  + re*elem_prod(fe,dphiq);
 
 		// Jacobian matrix (2nd derivative of the catch equations)
 		for(j=1; j<=m_nGear; j++)
@@ -369,13 +373,32 @@ namespace rfp {
 
 		// Inverse of the Jacobi
 		invJ = -inv(d2ye);
-		fstp = invJ * dye;
+		fstp = dye * invJ;
 
 
 		// Set private member variables
 		m_fstp = fstp;
 		m_ye   = ye;
 		m_be   = be;
+
+		// Uncomment for debugging.
+		// cout<<setprecision(8)<<endl;
+		// cout<<"Re     = "<<re<<endl;
+		// cout<<"phie   = "<<m_phie<<endl;
+		// cout<<"phif   = "<<m_phif<<endl;
+		// cout<<"fe     = "<<fe<<endl;
+		// cout<<"dphif  = "<<dphif<<endl;
+		// cout<<"ddphif = "<<d2phif<<endl;  	// minor diff  FIXED
+		// cout<<"ye     = "<<ye<<endl;
+		// cout<<"phiq   = "<<phiq<<endl;
+		// cout<<"dphiq  = "<<dphiq<<endl;   	// Bug: FIXED for ngear > 1
+		// cout<<"d2phiq = "<<d2phiq<<endl;  	// OK
+		// cout<<"dre    = "<<dre<<endl;		// OK
+		// cout<<"dye    = "<<dye<<endl;     	// Bug -> FIXED.
+		// cout<<"Jacobi\n "<<d2ye<<endl;
+		// cout<<"invJ \n  "<<invJ<<endl;
+		cout<<"fstp   = "<<fstp<<endl;		// Bug -> FIXED.
+		//cout<<"d2lz_m = "<<d2lz_m<<endl;  // plus group is different.
 		//cout<<"Newton step\n"<<fstp<<endl;
 		//cout<<"End of CalcSurvivorship"<<endl;
 	}
@@ -412,7 +435,8 @@ namespace rfp {
 		}
 		m_lx = lx;
 		m_bo = m_ro * m_phie;
-		//cout<<"Bo = "<<m_bo<<endl;
+		// cout<< "lx\n"<<lx<<endl;
+		// cout<<"Bo = "<<m_bo<<endl;
 		
 	}
 

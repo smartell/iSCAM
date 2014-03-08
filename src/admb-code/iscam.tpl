@@ -195,6 +195,7 @@ DATA_SECTION
 	int rseed;    ///< Random number seed for simulated data.
 	int retro_yrs;///< Number of years to look back from terminal year.
 	int NewFiles;
+	int testMSY;
 	LOC_CALCS
 		SimFlag=0;
 		rseed=999;
@@ -239,6 +240,16 @@ DATA_SECTION
 			cout<<"|Implementing Management Strategy Evaluation      |\n";
 			cout<<"|_________________________________________________|\n";
 		}
+
+		// Test MSY
+		testMSY = 0;
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-msy",opt))>-1)
+		{
+			cout<<"Testing MSY calculations with Spreadsheet MSF.xlsx"<<endl;
+			testMSY = 1;
+			
+		}
+
 	END_CALCS
 
 
@@ -1397,7 +1408,10 @@ PRELIMINARY_CALCS_SECTION
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
     nf=0;
-  
+  	if( testMSY )
+  	{
+  		testMSYxls();
+  	}
 	if( SimFlag ) 
 	{
 		initParameters();
@@ -3794,9 +3808,36 @@ FUNCTION void calcReferencePoints()
 // 	//exit(1);
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
   }
-	
 
+  /**
+   * This is a simple test routine for comparing the MSY class output to the 
+   * MSF.xlsx spreadsheet that was used to develop the multiple fleet msy 
+   * method.  Its a permanent feature of the iscam code for testing.
+   */	
+FUNCTION void testMSYxls()
 
+	double ro = 1.0;
+	double steepness = 0.75;
+	double d_rho = 0.0;
+	dmatrix m_bar(1,1,1,20);
+	m_bar = 0.30;
+	dmatrix dWt_bar(1,1,1,20);
+	dWt_bar(1).fill("{0.005956243,0.035832542,0.091848839,0.166984708,0.252580458,0.341247502,0.427643719,0.508367311,0.581557922,0.646462315,0.703062177,0.751788795,0.793319224,0.828438536,0.857951642,0.882630331,0.903184345,0.920248191,0.934377843,0.946053327}");
+	dmatrix fa_bar(1,1,1,20);
+	fa_bar(1).fill("{0,0,0,0,0.252580458,0.341247502,0.427643719,0.508367311,0.581557922,0.646462315,0.703062177,0.751788795,0.793319224,0.828438536,0.857951642,0.882630331,0.903184345,0.920248191,0.934377843,0.946053327}");
+	d3_array dvar_V(1,1,1,2,1,20);
+	dvar_V(1)(1).fill("{0.000552779,0.006692851,0.07585818,0.5,0.92414182,0.993307149,0.999447221,0.999954602,0.999996273,0.999999694,0.999999975,0.999999998,1,1,1,1,1,1,1,1}");
+	dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
+
+	dvector dftry(1,2);
+	dftry = 0.01;
+	cout<<"Initial Fe "<<dftry<<endl;
+	rfp::msy<double,dvector,dmatrix,d3_array> 
+	c_MSY(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
+	dvar_vector dfmsy = c_MSY.getFmsy(dftry);
+	cout<<dfmsy<<endl;
+
+	exit(1);
 
 
 
