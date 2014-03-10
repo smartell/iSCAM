@@ -1,21 +1,22 @@
 require(ggplot2)
 require(reshape2)
-
-.plotSurveyFit <- function(M)
+# fixed a plotting bug when NA present.
+plotSurveyFit <- function(M)
 {
 	n <- length(M)
 	cat(".plotSurveyfit\n")
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,M[[i]]$it_hat)
+		it <- na.omit(as.vector(t(M[[1]]$it_hat)))
+		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it)
 		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing","Index_hat")
 		mdf <- rbind(mdf,df)
 	}
 	print(head(mdf,3))
 
-	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=Gear),size=2)
-	p <- p + geom_line(aes(Year,Index_hat,color=Gear),size=2)
+	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=Gear),size=1)
+	p <- p + geom_line(aes(Year,Index_hat,color=Gear),size=1)
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
