@@ -67,7 +67,9 @@ namespace rfp {
 
 		T m_ro;
 		T m_bo;
+		T m_rmsy;
 		T m_be;			/// Equilibrium biomass
+		T m_re;
 		T m_h;
 		T m_rho;	    /// Fraction of mortality that occurs before spawning.
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
@@ -77,6 +79,7 @@ namespace rfp {
 		T m_d2Ye;		/// Second derivative of total yield.
 
 		T1 m_fe;		/// Fishing mortality rate
+		T1 m_fmsy;      /// Fishing mortality rate at MSY
 		T1 m_fstp;
 		T1 m_ye;		/// Equilibrium yield for each gear.
 		T1 m_msy;		/// Maximum Sustainable yield for each gear
@@ -130,11 +133,36 @@ namespace rfp {
 		virtual const T1 getFmsy(const T1 &fe, const T1 &ak);
 
 		// Getters
+		virtual const T  getBo()   {return m_bo;  }
+		virtual const T  getRt()   {return m_re;  }
+		virtual const T  getRmsy() {return m_rmsy;}
 		virtual const T  getBmsy() {return m_bmsy;}
 		virtual const T1 getMsy()  {return m_msy; }
 		
+		void print();
 		
 	};
+	template<class T,class T1,class T2,class T3>
+	void msy<T,T1,T2,T3>::print()
+	{
+		cout<<"|------------------------------------------|" <<endl;
+		cout<<"| MSY-BASED REFERENCE POINTS               |" <<endl;
+		cout<<"|------------------------------------------|" <<endl;
+		cout<<"| Bo   = "<<setw(10)<<m_bo                    <<endl;
+		cout<<"| Re   = "<<setw(10)<<m_re                    <<endl;
+		cout<<"| Rmsy = "<<setw(10)<<m_rmsy                  <<endl;
+		cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
+		cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;
+		cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
+		// cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
+		// cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
+		// cout<<"| bpr  = "<<setw(10)<<m_phif                  <<endl;
+		// cout<<"| dYe  = "<<setw(10)<<m_f                     <<endl;
+		// cout<<"| dYes = "<<setw(10)<<sum(m_f)                <<endl;
+		// cout<<"| FAIL = "<<setw(10)<<m_FAIL                  <<endl;
+		cout<<"|------------------------------------------|" <<endl;
+	}
+
 
 	/**
 	 * @brief Calculate Fmsy given fixed allocation.
@@ -182,6 +210,7 @@ namespace rfp {
 
 		}
 		m_fe = fk;
+		m_rmsy = m_re; 
 		return m_fe;
 	}
 
@@ -216,6 +245,7 @@ namespace rfp {
 		}
 		m_msy = m_ye;
 		m_bmsy = m_be;
+		m_fmsy = m_fe;
 		return(m_fe);	
 	}
 
@@ -449,6 +479,7 @@ namespace rfp {
 		m_fstp = fstp;
 		m_ye   = ye;
 		m_be   = be;
+		m_re   = re;
 		m_dYe  = sum(dye);
 		m_d2Ye = sum(diagonal(d2ye));
 

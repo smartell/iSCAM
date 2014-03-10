@@ -1142,7 +1142,6 @@ DATA_SECTION
 INITIALIZATION_SECTION
   theta theta_ival;
   phi1 0.01;
-  phi2 0.05;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -3493,17 +3492,19 @@ FUNCTION void calcReferencePoints()
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
-		cout<<dfmsy<<endl;
+		bo  = c_MSY.getBo();
+		//cout<<dfmsy<<endl;
+		c_MSY.print();
 
-		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-		//cout<<"The death star is approaching"<<endl;
-		//cout<<fmsy<<endl;
-		cMSY.get_fmsy(fmsy);
-		//cout<<"I've got radar lock"<<endl;
-		bo   = cMSY.getBo();
-		bmsy = cMSY.getBmsy();
-		msy  = cMSY.getMsy();
-		cMSY.print();
+		// Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
+		// //cout<<"The death star is approaching"<<endl;
+		// //cout<<fmsy<<endl;
+		// cMSY.get_fmsy(fmsy);
+		// //cout<<"I've got radar lock"<<endl;
+		// bo   = cMSY.getBo();
+		// bmsy = cMSY.getBmsy();
+		// msy  = cMSY.getMsy();
+		// cMSY.print();
 		
 
 		// if(nfleet > 1)

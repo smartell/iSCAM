@@ -254,16 +254,28 @@ void logistic_normal::get_rho(const dvariable &phi, const dvariable &psi)
 	m_rho.initialize();
 	dvar_vector tmp(lb-1,ub);
 	tmp = 1.0;
-	dvariable phi2 = -1. + (1. + sfabs(phi)) * psi;
-	tmp(lb) = phi /(1.0-phi2);
+	dvariable phi1 = 2.0 * phi;
+	dvariable phi2 = -1. + (2. - fabs(phi1)) * psi;
+	tmp(lb) = phi1 /(1.0-phi2);
+
+	if(phi2 <= -1.0 || phi2 >= (1.-fabs(phi1)))
+	{
+		cout<<"Phi1 = "<<phi<<endl;
+		cout<<"Phi2 = "<<psi<<endl;
+		cout<<"Invalid value for phi2"<<endl;
+		exit(1);
+	}
 	for( j = lb+1; j <= ub; j++ )
 	{
-		tmp(j) = phi*tmp(j-1) + phi2*tmp(j-2);
+		tmp(j) = phi1*tmp(j-1) + phi2*tmp(j-2);
 	}
 	for( j = lb; j <= ub; j++ )
 	{
 		m_rho(j) = tmp(j);
 	}
+	cout<<"phi1 "<<phi1<<endl;
+	cout<<"phi2 "<<phi2<<endl;
+	cout<<m_rho<<endl;
 }
 
 
