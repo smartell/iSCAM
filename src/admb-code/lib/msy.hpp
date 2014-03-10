@@ -73,10 +73,12 @@ namespace rfp {
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.
 		T m_bmsy;		/// Spawning biomass at MSY
+		T m_dYe;		/// Derivative of total yield.
+		T m_d2Ye;		/// Second derivative of total yield.
 
 		T1 m_fe;		/// Fishing mortality rate
 		T1 m_fstp;
-		T1 m_ye;		/// Equilibrium yield.
+		T1 m_ye;		/// Equilibrium yield for each gear.
 		T1 m_msy;		/// Maximum Sustainable yield for each gear
 
 
@@ -125,6 +127,7 @@ namespace rfp {
 			//cout<<"In constructor\n"<<m_phie<<endl;
 		}
 		virtual const T1 getFmsy(const T1 &fe);
+		virtual const T1 getFmsy(const T1 &fe, const T1 &ak);
 
 		// Getters
 		virtual const T  getBmsy() {return m_bmsy;}
@@ -133,17 +136,83 @@ namespace rfp {
 		
 	};
 
+	/**
+	 * @brief Calculate Fmsy given fixed allocation.
+	 * @details Calculate Fmsy for a given allocation vector ak.
+	 * This function returns a vector fishing mortality rates that
+	 * will maximize the sum of yeilds over all fleets.
+	 * 
+	 * @param fe Fishing mortality rate
+	 * @param ak Allocation to each fleet
+	 * @tparam T double
+	 * @tparam T2 Matrix
+	 * @tparam T3 3darray
+	 * @return Returns a vector of fishing mortality rates.
+	 */
+	template<class T, class T1, class T2, class T3>
+	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 &fe, const T1 &ak)
+	{
+		T lb = 1.0e-10;
+		T ub = 5.0e+01;
+		
+		T fbar  = mean(fe);
+		T1 fk = fe;
+		T1 pk = ak / sum(ak);	//proportion of total catch
+		T1 lambda = pk / mean(pk);
+		m_fe = fe;
+
+		for(int iter = 1; iter <= MAXITER; iter++ )
+		{
+			fk = fbar;
+			calcEquilibrium(fk);
+			lambda = elem_div(pk,m_ye/sum(m_ye));
+
+			fk = fbar * lambda/mean(lambda);
+			calcEquilibrium(fk);
+
+			fbar = fbar - m_dYe/m_d2Ye;
+			cout<<iter<<" fbar "<<fbar<<" dYe "<<m_dYe<<" fk "<<fk;
+			cout<<" pk = "<<m_ye/sum(m_ye)<<endl;
+
+			// Backtrack if necessary;
+			if( (lb-fbar)*(fbar-ub) < 0.0 )
+			{
+				fbar += 0.98 * m_dYe/m_d2Ye;
+			}
+
+		}
+		m_fe = fk;
+		return m_fe;
+	}
+
 	template<class T, class T1, class T2, class T3>
 	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 & fe)
 	{
-		//calcEquilibrium(fe);
-		m_fe = fe;// + m_fstp;
+		int n = size_count(fe);
+		T lb = 1.0e-10;
+		T ub = 5.0e+01;
+		T delta = 1.0;
+		T1 ftry = fe;
+
+		m_fe = fe;
 		for(int iter=1; iter<=MAXITER; iter++)
 		{
 			calcEquilibrium(m_fe);
-			m_fe = m_fe + m_fstp;
-			cout<<iter<<" fmsy = "<<m_fe<<endl;
-			//if(iter==6) exit(1);
+			m_fe = m_fe +  m_fstp;
+			
+			// Backtrack if outside boundary conditions
+			for(int i = 1; i <= n; i++ )
+			{
+				T bt = (lb-m_fe(i))*(m_fe(i)-ub);
+				if( bt < 0.0 )
+				{
+					delta    = 0.99;
+					m_fe(i) -= delta*m_fstp(i);
+				}
+			}
+			//cout<<iter<<" delta = "<<delta<<" fmsy = "<<m_fe<<endl;
+			
+			
 		}
 		m_msy = m_ye;
 		m_bmsy = m_be;
@@ -380,6 +449,8 @@ namespace rfp {
 		m_fstp = fstp;
 		m_ye   = ye;
 		m_be   = be;
+		m_dYe  = sum(dye);
+		m_d2Ye = sum(diagonal(d2ye));
 
 		// Uncomment for debugging.
 		// cout<<setprecision(8)<<endl;
@@ -397,7 +468,7 @@ namespace rfp {
 		// cout<<"dye    = "<<dye<<endl;     	// Bug -> FIXED.
 		// cout<<"Jacobi\n "<<d2ye<<endl;
 		// cout<<"invJ \n  "<<invJ<<endl;
-		cout<<"fstp   = "<<fstp<<endl;		// Bug -> FIXED.
+		// cout<<"fstp   = "<<fstp<<endl;		// Bug -> FIXED.
 		//cout<<"d2lz_m = "<<d2lz_m<<endl;  // plus group is different.
 		//cout<<"Newton step\n"<<fstp<<endl;
 		//cout<<"End of CalcSurvivorship"<<endl;

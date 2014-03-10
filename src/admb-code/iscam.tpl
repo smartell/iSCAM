@@ -3830,12 +3830,21 @@ FUNCTION void testMSYxls()
 	dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
 
 	dvector dftry(1,2);
-	dftry = 0.01;
+	dftry = 0.01 ;
 	cout<<"Initial Fe "<<dftry<<endl;
 	rfp::msy<double,dvector,dmatrix,d3_array> 
 	c_MSY(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
-	dvar_vector dfmsy = c_MSY.getFmsy(dftry);
-	cout<<dfmsy<<endl;
+	dvector dfmsy = c_MSY.getFmsy(dftry);
+	cout<<"Fmsy = "<<dfmsy<<endl;
+
+
+	dvector ak(1,2);
+	ak = 0.5;
+	ak(2) = 0.5 ;
+	rfp::msy<double,dvector,dmatrix,d3_array>
+	c_MSYk(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
+	dvector dkmsy = c_MSYk.getFmsy(dftry,ak);
+	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
 	exit(1);
 

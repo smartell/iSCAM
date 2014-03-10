@@ -171,7 +171,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		// derivatives of the total catch equation to update fbar;
 		fk     = fbar*lambda;
 		calcEquilibrium(fk);
-		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
+		cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
 		
 		fbar   = fbar - m_dYe/m_d2Ye;
 		iter++;
