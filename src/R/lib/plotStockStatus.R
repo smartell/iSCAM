@@ -13,7 +13,7 @@
 	for( i in 1:n )
 	{
 		Bbmsy <- M[[i]]$bt[1:length(M[[i]]$yr)]/M[[i]]$bmsy
-		Ffmsy <- apply(M[[i]]$ft,2,sum)/M[[i]]$fmsy
+		Ffmsy <- apply(M[[i]]$ft,2,sum)/sum(M[[i]]$fmsy)
 
 		df <- data.frame(Model=names(M[i]),Year=M[[i]]$yr,Bbmsy=Bbmsy,Ffmsy=Ffmsy)
 		df <- df[order(df$Year),]
