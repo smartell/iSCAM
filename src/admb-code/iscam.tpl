@@ -3493,9 +3493,12 @@ FUNCTION void calcReferencePoints()
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		bo  = c_MSY.getBo();
+		//dvector d_Ye = c_MSY.getdYe();
 		//cout<<dfmsy<<endl;
 		c_MSY.print();
 
+		c_MSY2(ro(g),steepness(g),d_rho,M_bar+0.01,dWt_bar,fa_bar,dvar_V);
+		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		// Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 		// //cout<<"The death star is approaching"<<endl;
 		// //cout<<fmsy<<endl;
