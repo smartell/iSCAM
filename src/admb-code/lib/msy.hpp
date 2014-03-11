@@ -138,7 +138,7 @@ namespace rfp {
 		virtual const T  getRmsy() {return m_rmsy;}
 		virtual const T  getBmsy() {return m_bmsy;}
 		virtual const T1 getMsy()  {return m_msy; }
-		virtual const T1 getdYe()  {return m_dYe; }
+		//virtual const T1 getdYe()  {return m_dYe; }
 		
 		void print();
 		
