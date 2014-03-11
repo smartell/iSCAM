@@ -15,8 +15,8 @@ plotSurveyFit <- function(M)
 	}
 	print(head(mdf,3))
 
-	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=Gear),size=1)
-	p <- p + geom_line(aes(Year,Index_hat,color=Gear),size=1)
+	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=factor(Gear)),size=1)
+	p <- p + geom_line(aes(Year,Index_hat,color=factor(Gear)),size=1)
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)

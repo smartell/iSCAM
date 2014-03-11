@@ -5,7 +5,11 @@
 #undef MAXITER
 #define MAXITER 100
 #endif
+
+#ifdef TOL
+#undef TOL
 #define TOL     1.e-04
+#endif
 
 #include <admodel.h>
 #include <fvar.hpp>
@@ -200,7 +204,7 @@ namespace rfp {
 
 			fbar = fbar - m_dYe/m_d2Ye;
 			cout<<iter<<" fbar "<<fbar<<" dYe "<<m_dYe<<" fk "<<fk;
-			cout<<" pk = "<<m_ye/sum(m_ye)<<endl;
+			cout<<" lambda = "<<lambda<<" ak = "<<m_ye/sum(m_ye)<<endl;
 
 			// Backtrack if necessary;
 			if( (lb-fbar)*(fbar-ub) < 0.0 )
@@ -214,6 +218,18 @@ namespace rfp {
 		return m_fe;
 	}
 
+	/**
+	 * @brief get Fmsy vector
+	 * @details Use Newton Raphson method to determine Fmsy while maximizing the sum
+	 * of yields for all fleets.  Uses a backtrack method if estimates of Fmsy are 
+	 * outsize the lower and upper bounds.
+	 * 
+	 * @param fe vector of fishing mortality rates
+	 * @tparam T Number
+	 * @tparam T2 Matrix
+	 * @tparam T3 d3_array
+	 * @return Returns Fmsy.
+	 */
 	template<class T, class T1, class T2, class T3>
 	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 & fe)
 	{

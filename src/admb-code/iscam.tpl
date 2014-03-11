@@ -3473,8 +3473,8 @@ FUNCTION void calcReferencePoints()
 	// | (4) : Instantiate msy class for each stock
 	for(g=1;g<=ngroup;g++)
 	{
-		double d_ro = value(ro(g));
-		double  d_h = value(steepness(g));
+		//double d_ro = value(ro(g));
+		//double  d_h = value(steepness(g));
 		double d_rho = d_iscamCntrl(13);
 
 		dvector d_mbar = M_bar(g);
@@ -3831,7 +3831,7 @@ FUNCTION void testMSYxls()
 	dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
 
 	dvector dftry(1,2);
-	dftry = 0.01 ;
+	dftry = 0.1 ;
 	cout<<"Initial Fe "<<dftry<<endl;
 	rfp::msy<double,dvector,dmatrix,d3_array> 
 	c_MSY(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
@@ -3841,7 +3841,7 @@ FUNCTION void testMSYxls()
 
 	dvector ak(1,2);
 	ak = 0.5;
-	ak(2) = 0.5 ;
+	ak(2) = 1-ak(1);
 	rfp::msy<double,dvector,dmatrix,d3_array>
 	c_MSYk(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
 	dvector dkmsy = c_MSYk.getFmsy(dftry,ak);
@@ -4466,6 +4466,29 @@ REPORT_SECTION
 	REPORT(d3_A);
 	REPORT(A_hat);
 	REPORT(A_nu);
+
+	if( int(nCompLikelihood(k)) )
+	{
+		report<<"Neff"<<endl;
+		for(k = 1; k<=nAgears; k++)
+		{
+			int naa=0;
+			int iyr;
+			//retrospective counter
+			for(i=1;i<=n_A_nobs(k);i++)
+			{
+				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				if(iyr<=nyr) naa++;
+			}
+			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			for(j = 1; j<= n_A_nobs(k); j++)
+			{
+		COUT("HERE")
+				report<<sum(O(j))<<"\t"<<neff(O(j)/sum(O(j)),P(j))<<endl;
+			}	
+		}
+	}
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";
