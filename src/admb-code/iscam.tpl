@@ -4484,7 +4484,6 @@ REPORT_SECTION
 			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
 			for(j = 1; j<= n_A_nobs(k); j++)
 			{
-		COUT("HERE")
 				report<<sum(O(j))<<"\t"<<neff(O(j)/sum(O(j)),P(j))<<endl;
 			}	
 		}
