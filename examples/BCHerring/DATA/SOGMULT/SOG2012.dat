@@ -284,6 +284,8 @@
 2  2  2
 ## ivector(na_gears) of oldest age-class + group
 10 10 10
+## Effective sample size from iterative re-weighting (nscaler)
+207.795 293.148 135.169
 ## year gear area group sex | data columns (numbers or proportions)
    1951 1    1    1     0     326   4413  2371  556   110   27 8  2  0
    1952 1    1    1     0     1008  4997  2262  608   119   24 6  1  0

@@ -1,0 +1,123 @@
+window name=iscamView title="iSCAM Viewer 2.0"
+
+#-----------------------------------------------------------------------------#
+# TOP OF WINDOW                                                               #
+#-----------------------------------------------------------------------------#
+grid 1 1 relief="flat" pady=5 padx=5
+	#-- widget 1a
+	object name=ifiles pady=2 padx=5 sticky=W font="Times 10" rowshow=5 \
+	rowlabels=FALSE width="5 10 16 30" sticky=W function=.readFile
+	
+	#-- widget 1b
+	#image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+#-----------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------#
+# NOTEBOOK TABS                                                               #
+#-----------------------------------------------------------------------------#
+	notebook tabs="Plots Tables Tools" name=nb width=520 height=600 \
+	font="Times" padx=2 pady=2
+
+	#-------------------------------------------------------------------------#
+	# PLOT TAB                                                                #
+	#-------------------------------------------------------------------------#
+	grid 2 1
+	#-------------------------------------------------------------------------#
+	grid 6 1 toptitle="Select radio button to display plot" relief="solid" topfont="Times" padx=2 pady=2 sticky=W
+	
+		# RowCol (1 1) Input data
+		grid 2 1 relief="flat" sticky=W
+		label "INPUT DATA" font="Times" sticky=W
+		grid 2 3  relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=catch       text="Catch"              function=.viewPlot mode=character sticky=W  edit=TRUE           
+		radio name=plotType value=survey	  text="Survey index"       function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=agecomps	  text="Age composition"    function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=lengthcomps text="Length composition" function=.viewPlot mode=character sticky=W  edit=FALSE
+		radio name=plotType value=weightatage text="Weight-at-age"      function=.viewPlot mode=character sticky=W  edit=TRUE
+		null
+		
+		# RowCol (2 1) Residuals
+		grid 2 1 relief="flat" sticky=W
+		label "RESIDUALS (observed - predicted)"  font="Times"  sticky=W
+		grid 2 3 relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=catchresid    text="Catch(es)"          function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=surveyresid   text="Survey(s)"          function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=recresid      text="Recruitment"        function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=agecompsresid text="Age composition"    function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=agesummary    text="Age summary"        function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=lencompresid  text="Length composition" function=.viewPlot mode=character sticky=W  edit=FALS
+		
+		# RowCol (3 1) Maximum Likelihood Estimates
+		grid 2 1 relief="flat" sticky=W
+		label "MAXIMUM LIKELIHOOD ESTIMATES" font="Times"  sticky=W
+		grid 4 3 relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=spawnbio      text="Spawn Biomass"        function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=mortality     text="Mortality"            function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=recruitment   text="Recruitment"          function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=depletion     text="Depletion"            function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=selectivity   text="Selectivities(s)"     function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=stockrecruit  text="Stock-Recruitment"    function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=surveyfit     text="Survey(s)"            function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=ssbretro      text="SSB retrospective"    function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=productivity  text="Recruits per Spawner" function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=ssbsquid      text="SSB squid plot"       function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=kobeplot      text="Stock status (KOBE)"  function=.viewPlot mode=character sticky=W  edit=TRUE
+		null
+
+		# RowCol (4 1)
+		grid 2 1 relief="flat" sticky=W
+		label "MARGINAL POSTERIORS & MCMC DIAGNOSTICS" font="Times"  sticky=W
+		grid 3 3 relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=parameters    text="Leading parameters"		function=.mpdView mode=character sticky=W edit=TRUE
+		radio name=plotType value=refpoints     text="Reference points" 		function=.mpdView mode=character sticky=W edit=TRUE
+		radio name=plotType value=sbmcmc        text="Spawning stock biomass" 	function=.mpdView mode=character sticky=W edit=TRUE
+		radio name=plotType value=depletionmcmc text="Spawning depletion"	 	function=.mpdView mode=character sticky=W edit=TRUE
+		null
+		null
+		radio name=plotType value=traceplot     text="Trace plots" 				function=.mpdView mode=character sticky=W edit=TRUE
+		radio name=plotType value=mcmcpairs     text="Pairs plots" 				function=.mpdView mode=character sticky=W edit=TRUE
+		null
+		
+		# RowCol (5 1)
+		grid 2 1 relief="flat" sticky=W
+		label "FORECASTS & PROJECTIONS" font="Times"  sticky=W
+		grid 1 3 relief="flat" padx=2 pady=2 sticky=W
+		radio name=plotType value=risktable     text="Risk Table"	 			function=.mpdView mode=character sticky=W edit=TRUE
+		null
+		null
+		
+		# RowCol (6 1)
+		grid 2 2 relief="flat" sticky=W
+		button text="Save Images" sticky=E function=.saveImages padx=2 pady=2 sticky=W
+		entry name=txtFigDir value=Directory width=43 mode=character sticky=W
+		check name=chkPDF checked=FALSE text="PDF format" mode=logical 
+		check name=chkPNG checked=TRUE  text="PNG format" mode=logical 
+		
+	#-------------------------------------------------------------------------#
+		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+	#-------------------------------------------------------------------------#
+	
+	
+	#-------------------------------------------------------------------------#
+	# TABLES TAB                                                              #
+	#-------------------------------------------------------------------------#
+	grid 2 1
+	#-------------------------------------------------------------------------#
+	grid 2 1 toptitle="Select radio button to produce table" relief="solid" topfont="Times" padx=2 pady=2 sticky=W
+	
+	# RowCol (1 1) Input data
+	grid 2 1 relief="flat" sticky=W
+	label "INPUT DATA" font="Times" sticky=W
+	grid 1 3  relief="flat" padx=2 pady=2 sticky=W
+	radio name=tableType value=catch       text="Catch"              function=.iscamTable mode=character sticky=W  edit=TRUE
+	null
+	null
+	null
+	
+	#-------------------------------------------------------------------------#
+		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+	#-------------------------------------------------------------------------#
+	
+
+
+	label "Under Construction"

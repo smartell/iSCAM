@@ -202,6 +202,8 @@
 9 40 32 18			  # Number of rows in the matrix   ivector(na_nobs)
 1 1	1  1          # Youngest age column			     ivector(a_sage)
 8 15	15	15         # Oldest age column +group       ivector(a_nage)
+## Effective sample size from iterative re-weighting (nscaler)
+8.20852 9.05717 6.94546 5.66875
 ## year gear age colums (numbers or proportions, cols sum to sample size)
 ## year gear area group sex | data columns (numbers or proportions)
    1964 1    1    1     0     0.25321  1.05571  1.6556   1.9361   0.95442   2.684070   1.207640  0.2532100  #0.000000  0.000000  0.000000 0.000000 0.0000000 0.00000000 0.000000

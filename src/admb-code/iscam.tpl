@@ -588,17 +588,19 @@ DATA_SECTION
 	// | AGE COMPOSITION DATA (ragged object)
 	// |---------------------------------------------------------------------------------|
 	// | - nAgears    -> number of age-composition matrixes, one for each gear.
-	// | - n_A_nobs    -> ivector for number of rows in age composition (A) matrix
-	// | n_A_sage       -> imatrix for starting age in each row
-	// | n_A_nage	      -> imatrix for plus group age in each row
+	// | - n_A_nobs   -> ivector for number of rows in age composition (A) matrix
+	// | n_A_sage     -> imatrix for starting age in each row
+	// | n_A_nage	  -> imatrix for plus group age in each row
+	// | inp_nscaler  -> effective sample size for iterative re-weighting in multinomial.
 	// | icol_A       -> number of columns for each row in A.
 	// | A            -> array of data (year,gear,area,group,sex|Data...)
-	// | d3_A_obs        -> array of catch-age data only.
+	// | d3_A_obs     -> array of catch-age data only.
 	// |
 	init_int nAgears
 	init_ivector n_A_nobs(1,nAgears);	
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
+	init_vector  inp_nscaler(1,nAgears);
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
 	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
@@ -612,7 +614,13 @@ DATA_SECTION
 			cout<<"| ----------------------- |\n"<<endl;
 			for(k=1;k<=nAgears;k++)
 			{
-				d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
+				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
+				for( i = 1; i <= n_A_nobs(k); i++ )
+				{
+					 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+				}
+				d3_A_obs(k) = tmp;
+				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 			}
 		}
 		else
@@ -864,7 +872,7 @@ DATA_SECTION
 	init_ivector nPhz_phi2(1,nAgears);
 	init_ivector nPhz_df(1,nAgears);
 	init_int check;
-	!! if(check != -12345) {cout<<"Error reading composition controls\n"<<endl; exit(1);}
+	!! if(check != -12345) {COUT(check);cout<<"Error reading composition controls\n"<<endl; exit(1);}
 
 
 
@@ -1704,8 +1712,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			dvector iy(1,yr_nodes(k));
 			dvector ia(1,age_nodes(k));
 			byr  = 1;
-			bpar = 0;
-			
+			bpar = 0; 
+
 			switch(isel_type(k))
 			{
 				case 1: //logistic selectivity (2 parameters)
@@ -1859,6 +1867,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
+
+  	
 	
   	/**
   	Purpose: This function calculates fishing mortality, total mortality and annual
@@ -2777,7 +2787,6 @@ FUNCTION calcObjectiveFunction
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),d_iscamCntrl(6));
 					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 2:
@@ -2821,7 +2830,7 @@ FUNCTION calcObjectiveFunction
 
 				break;
 
-				case 5:
+				case 5: // Logistic-normal with student-t
 					if( !active(log_degrees_of_freedom(k)) )
 					{
 						nlvec(3,k) = cLST_Age();
@@ -4467,9 +4476,14 @@ REPORT_SECTION
 	REPORT(A_hat);
 	REPORT(A_nu);
 
+
+	/// The following is a total hack job to get the effective sample size
+	/// for the multinomial distributions.
 	if( int(nCompLikelihood(k)) )
 	{
 		report<<"Neff"<<endl;
+		dvector nscaler(1,nAgears);
+		nscaler.initialize();
 		for(k = 1; k<=nAgears; k++)
 		{
 			int naa=0;
@@ -4482,11 +4496,16 @@ REPORT_SECTION
 			}
 			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
 			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+
 			for(j = 1; j<= n_A_nobs(k); j++)
 			{
-				report<<sum(O(j))<<"\t"<<neff(O(j)/sum(O(j)),P(j))<<endl;
+				double effectiveN = neff(O(j)/sum(O(j)),P(j));
+				report<<sum(O(j))<<"\t"<<effectiveN<<endl;
+				nscaler(k) += effectiveN;
 			}	
+			nscaler(k) /= naa;
 		}
+		REPORT(nscaler);
 	}
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
