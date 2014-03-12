@@ -20,7 +20,7 @@
    -1.203973    -3.0    2.0     4       1       -1.203  0.05    #log_m       ##
    7.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
    7.0          0.0     10      1       0       0.0     10      #log_recinit ##
-   0.85          0.01    0.99    3       3       3.00    5.00    #rho         ##
+   0.5          0.01    0.99    3       3       3.00    5.00    #rho         ##
    0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
@@ -72,7 +72,7 @@
    0.5    0.5    0.5    0.5    0.5   # 3  -STD at 50% selectivity (logistic)
    7      7      7      7      7     # 4  -No. of age nodes for each gear (0=ignore)
    12     12     12     12     12    # 5  -No. of year nodes for 2d spline(0=ignore)
-   1      3     -5     -1      3     # 6  -Phase of estimation (-1 for fixed)
+   3      3     -5     -1      3     # 6  -Phase of estimation (-1 for fixed)
    12.5   12.5   12.5   12.5   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
    12.5   12.5   12.5   12.5   12.5  # 9  -Penalty wt for time-varying selectivity

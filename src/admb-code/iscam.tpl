@@ -1690,7 +1690,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
   {
 	
 
-	int ig,i,j,k,byr,bpar;
+	int ig,i,j,k,byr,bpar,kgear;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -1703,8 +1703,15 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	// logistic_selectivity cLogisticSelex(age);
 	log_sel.initialize();
 
-	for(k=1; k<=ngear; k++)
+	for(kgear=1; kgear<=ngear; kgear++)
 	{
+		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		k  = kgear;
+		if(sel_phz(k) < 0)
+		{
+			k = abs(sel_phz(kgear));
+		}
 
 		for( ig = 1; ig <= n_ags; ig++ )
 		{
@@ -1713,7 +1720,6 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			dvector ia(1,age_nodes(k));
 			byr  = 1;
 			bpar = 0; 
-
 			switch(isel_type(k))
 			{
 				case 1: //logistic selectivity (2 parameters)
@@ -1730,7 +1736,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
 						p1 = mfexp(sel_par(k,bpar,1));
 						p2 = mfexp(sel_par(k,bpar,2));
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
 					}
 					break;
 				
@@ -1739,7 +1745,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					p2 = mfexp(sel_par(k,1,2));
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2) );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2) );
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
 					}
 					break;
@@ -1756,7 +1762,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						{
 							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
 						}
-						log_sel(k)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
+						log_sel(kgear)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
 					}
 					break;
 					
@@ -1769,14 +1775,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						log_sel(k)(ig)(i+1) = log_sel(k)(ig)(i);
+						log_sel(kgear)(ig)(i+1) = log_sel(k)(ig)(i);
 					}
 					break;
 					
 				case 4:	// time-varying cubic spline every year				
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
+						log_sel(kgear)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
 					}
 					break;
 					
@@ -1784,7 +1790,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					ia.fill_seqadd( 0,1./(age_nodes(k)-1) );
 					iy.fill_seqadd( 0,1./( yr_nodes(k)-1) );	
 					bicubic_spline( iy,ia,sel_par(k),tmp2 );
-					log_sel(k)(ig) = tmp2; 
+					log_sel(kgear)(ig) = tmp2; 
 					break;
 					
 				case 7:
@@ -1798,7 +1804,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i = syr; i<=nyr; i++)
 					{
 						dvar_vector tmpwt=log(d3_wt_avg(ig)(i)*1000)/mean(log(d3_wt_avg(ig)*1000.));
-						log_sel(k)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
+						log_sel(kgear)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
 					}	 
 					break;
 					
@@ -1813,7 +1819,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i=syr; i<=nyr; i++)
 					{
 						tmp2(i) = p3*d3_wt_dev(ig)(i);
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
 					}
 					break;
 					
@@ -1830,7 +1836,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
 					}
 					break;
 					
@@ -1844,13 +1850,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						}
 					
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
-						log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
+						log_sel(kgear)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
 					}
 					break;
 					
 					
 				default:
-					log_sel(k)(ig)=0;
+					log_sel(kgear)(ig)=0;
 					break;
 					
 			}  // switch
@@ -1858,7 +1864,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
-				log_sel(k)(ig)(i) -= log( mean(mfexp(log_sel(k)(ig)(i))) );
+				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
 		}
@@ -4479,12 +4485,12 @@ REPORT_SECTION
 
 	/// The following is a total hack job to get the effective sample size
 	/// for the multinomial distributions.
-	if( int(nCompLikelihood(k)) )
+	report<<"Neff"<<endl;
+	dvector nscaler(1,nAgears);
+	nscaler.initialize();
+	for(k = 1; k<=nAgears; k++)
 	{
-		report<<"Neff"<<endl;
-		dvector nscaler(1,nAgears);
-		nscaler.initialize();
-		for(k = 1; k<=nAgears; k++)
+		if( int(nCompLikelihood(k)) )
 		{
 			int naa=0;
 			int iyr;

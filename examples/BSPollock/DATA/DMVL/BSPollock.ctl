@@ -39,8 +39,8 @@
    1      1     1     1            ## Likelihood type
    0.00   0.00  0.00  0.00         ## Minimum proportion for aggregation
    0.001  0.001  0.0001  0.0001    ## Small constant to add to comps & renormalize
-   2      2    -1    -1            ## phase for log_age_tau2 estimation.
-   2      2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
+  -2     -2    -1    -1            ## phase for log_age_tau2 estimation.
+  -2     -2    -1    -1            ## phase for phi1 estimation: bounded (-1,1) AR1
   -2     -2    -1    -1            ## phase for phi2 estimation: bounded (0,1)  AR2 
   -2     -2     -2     -2         ## phase for degrees of freedom for student T.
    -12345                   ## int check (-12345)
