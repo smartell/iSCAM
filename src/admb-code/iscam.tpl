@@ -3508,6 +3508,7 @@ FUNCTION void calcReferencePoints()
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		bo  = c_MSY.getBo();
+		//dvector d_Ye = c_MSY.getdYe();
 		//cout<<dfmsy<<endl;
 		c_MSY.print();
 

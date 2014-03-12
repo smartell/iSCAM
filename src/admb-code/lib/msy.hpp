@@ -142,6 +142,7 @@ namespace rfp {
 		virtual const T  getRmsy() {return m_rmsy;}
 		virtual const T  getBmsy() {return m_bmsy;}
 		virtual const T1 getMsy()  {return m_msy; }
+		//virtual const T1 getdYe()  {return m_dYe; }
 		
 		void print();
 		
@@ -158,10 +159,10 @@ namespace rfp {
 		cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
 		cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;
 		cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
+		cout<<"| dYe  = "<<setw(10)<<m_dYe                   <<endl;
 		// cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
 		// cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
 		// cout<<"| bpr  = "<<setw(10)<<m_phif                  <<endl;
-		// cout<<"| dYe  = "<<setw(10)<<m_f                     <<endl;
 		// cout<<"| dYes = "<<setw(10)<<sum(m_f)                <<endl;
 		// cout<<"| FAIL = "<<setw(10)<<m_FAIL                  <<endl;
 		cout<<"|------------------------------------------|" <<endl;
