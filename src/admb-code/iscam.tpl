@@ -615,9 +615,12 @@ DATA_SECTION
 			for(k=1;k<=nAgears;k++)
 			{
 				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
-				for( i = 1; i <= n_A_nobs(k); i++ )
+				if(inp_nscaler(k) > 0)
 				{
-					 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+					for( i = 1; i <= n_A_nobs(k); i++ )
+					{
+						 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+					}
 				}
 				d3_A_obs(k) = tmp;
 				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
@@ -4512,8 +4515,8 @@ REPORT_SECTION
 			}	
 			nscaler(k) /= naa;
 		}
-		REPORT(nscaler);
 	}
+	REPORT(nscaler);
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";

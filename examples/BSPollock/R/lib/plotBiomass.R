@@ -10,14 +10,14 @@
 	for(i in 1:n)
 	{
 		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,SBt=M[[i]]$sbt)
-		bt <- data.frame(bt,Bo=M[[i]]$bo)
+		bt <- data.frame(bt,SBo=M[[i]]$sbo)
 		mdf <- rbind(mdf,bt)
 	}
 
 	p <- ggplot(mdf,aes(Year,SBt)) + geom_line(width=2)
-	p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
+	p <- p + geom_line(data=mdf,aes(Year,SBo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
-	p <- p + facet_wrap(~Model,scales="free")
+	p <- p + facet_wrap(~Model)
 	print(p + .THEME)
 }
 

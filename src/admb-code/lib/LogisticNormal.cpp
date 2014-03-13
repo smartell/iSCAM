@@ -138,7 +138,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
 dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &phi)
 {
 	m_nll = 0;
-	cout<<phi<<endl;
+	// cout<<phi<<endl;
 	// Get correlation vector rho
 	get_rho(phi);
 
@@ -273,9 +273,9 @@ void logistic_normal::get_rho(const dvariable &phi, const dvariable &psi)
 	{
 		m_rho(j) = tmp(j);
 	}
-	cout<<"phi1 "<<phi1<<endl;
-	cout<<"phi2 "<<phi2<<endl;
-	cout<<m_rho<<endl;
+	// cout<<"phi1 "<<phi1<<endl;
+	// cout<<"phi2 "<<phi2<<endl;
+	// cout<<m_rho<<endl;
 }
 
 
