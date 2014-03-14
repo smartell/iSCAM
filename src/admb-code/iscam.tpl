@@ -804,10 +804,10 @@ DATA_SECTION
 	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
-// 	number Umsy;					//Exploitation rate at MSY
+ // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
-// 	//catch-age for simulation model (could be declared locally 3d_array)
-// 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
+ // 	//catch-age for simulation model (could be declared locally 3d_array)
+ // 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
 	
@@ -3503,11 +3503,15 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
+		dvariable best;
+
 		cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		bo  = c_MSY.getBo();
+		best = c_MSY.getBmsy();
+		bmsy = value(best);
 		//dvector d_Ye = c_MSY.getdYe();
 		//cout<<dfmsy<<endl;
 		c_MSY.print();
