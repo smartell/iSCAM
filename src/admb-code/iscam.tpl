@@ -615,9 +615,12 @@ DATA_SECTION
 			for(k=1;k<=nAgears;k++)
 			{
 				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
-				for( i = 1; i <= n_A_nobs(k); i++ )
+				if(inp_nscaler(k) > 0)
 				{
-					 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+					for( i = 1; i <= n_A_nobs(k); i++ )
+					{
+						 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+					}
 				}
 				d3_A_obs(k) = tmp;
 				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
@@ -3503,15 +3506,14 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
-		dvariable best;
 
 		cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		bo  = c_MSY.getBo();
-		best = c_MSY.getBmsy();
-		bmsy = value(best);
+		dvariable dbmsy = c_MSY.getBmsy();
+		bmsy = value(dbmsy);
 		//dvector d_Ye = c_MSY.getdYe();
 		//cout<<dfmsy<<endl;
 		c_MSY.print();
@@ -4490,6 +4492,8 @@ REPORT_SECTION
 
 	/// The following is a total hack job to get the effective sample size
 	/// for the multinomial distributions.
+
+	// TODO Fix the retro spective bug here near line 4507 (if iyr<=nyr)
 	report<<"Neff"<<endl;
 	dvector nscaler(1,nAgears);
 	nscaler.initialize();
@@ -4503,21 +4507,23 @@ REPORT_SECTION
 			for(i=1;i<=n_A_nobs(k);i++)
 			{
 				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
-				if(iyr<=nyr) naa++;
+				if(iyr<=nyr) naa++; else continue;
 			}
+			
 			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
 			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
-
-			for(j = 1; j<= n_A_nobs(k); j++)
+			
+			for(j = 1; j<= naa; j++)
 			{
 				double effectiveN = neff(O(j)/sum(O(j)),P(j));
 				report<<sum(O(j))<<"\t"<<effectiveN<<endl;
 				nscaler(k) += effectiveN;
 			}	
+			
 			nscaler(k) /= naa;
 		}
-		REPORT(nscaler);
 	}
+	REPORT(nscaler);
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";

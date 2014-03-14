@@ -93,7 +93,7 @@ function(fn)
 			# 	#print(paste(1:ncols))
 			# }
 			# cname <- paste(1:ncols)
-			# dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,col.names=cname))
+			# dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,col.names=cname,row.names=NULL))
 			# cat("\n ir ",ir," irr ",irr)
 			dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,row.names = NULL))
 		} 
