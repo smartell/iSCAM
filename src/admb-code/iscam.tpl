@@ -711,7 +711,7 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-					cout<<h<<endl;
+					//cout<<h<<endl;
 				
 				for(int h=1;h<=nsex;h++)
 				{
@@ -813,13 +813,7 @@ DATA_SECTION
  // 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONTROL FILE
@@ -1047,10 +1041,6 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
-
-
-
-
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -3870,15 +3860,6 @@ FUNCTION void testMSYxls()
 	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
 	exit(1);
-
-
-
-
-
-
-
-
-
 
 
 

@@ -16,7 +16,7 @@
 7
 ## ival         lb    ub      phz			prior  p1      		p2   		#parameter   ##
 	1.6   			-5.0 	15       4 		0     -5.0    		15.  		#log_ro     ##
-	0.65  			 0.2    1.0      4 		3     3       		2    		#steepness   ##
+	0.85  			 0.2    1.0      4 		3     3       		2    		#steepness   ##
 	-1.469			-5.0   	0.0      2 		1     -1.469  		0.05 		#log_m g&b   ##
 	1.6   			-5.0    15       1 		0     -5.0    		15   		#log_avgrec  ##
 	1.0   			 0.0    15       1 		0     -5.0    		15   		#log_recinit ##
@@ -36,7 +36,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 1  		 2 	                 ## Gear Index
-3  		 3                   ## Likelihood type?
+1 		 1                   ## Likelihood type?
 0.000 	 0.000               ## Minimum proportion for aggregation & tail compression
 0.0000   0.0000              ## Small constant to add to comps & renormalize
 1   1                        ## phase for log_age_tau2 estimation.
@@ -63,7 +63,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	5 	3		        # 1  -selectivity type ivector(isel_type) for gear
+	3 	3		        # 1  -selectivity type ivector(isel_type) for gear
 	2.5		3.5	        # 2  -Age/length at 50% selectivity (logistic)
 	1.0		0.532 	        # 3  -STD at 50% selectivity (logistic)
 	5 	5				# 4  -No. of age nodes for each gear (0=ignore)
@@ -103,7 +103,7 @@
 0.0707      # 4  -std in observed catches in last phase.
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.30        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.01        # 8  -std in mean fishing mortality in first phase
 2.00        # 9  -std in mean fishing mortality in last phase
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
