@@ -72,7 +72,7 @@
 	3	 -3  -3  -3  -3  3		# 6  -Phase of estimation (-1 for fixed)
 	0.0  0.0  0.0  0.0  0.0  12.5			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	200.0  200.0  200.0  200.0  200.0  200.0		# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	12.5  12.5  12.5  12.5  12.5  12.5			# 9  -Penalty wt for time-varying selectivity
+	50.5  12.5  12.5  12.5  50.5  12.5			# 9  -Penalty wt for time-varying selectivity
 	1  1  1  1  1  1               # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
