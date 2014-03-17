@@ -8,7 +8,7 @@ require(reshape2)
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		it <- na.omit(as.vector(t(M[[1]]$it_hat)))
+		it <- na.omit(as.vector(t(M[[i]]$it_hat)))
 		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it)
 		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing","Index_hat")
 		mdf <- rbind(mdf,df)
