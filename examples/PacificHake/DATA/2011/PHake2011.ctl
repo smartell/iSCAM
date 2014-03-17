@@ -19,9 +19,30 @@
 	0.65        0.2     1.0      4       3       3       2       #steepness/fmsy
 	-1.469      -5.0    0.0      2       1       -1.469  0.05    #log.m
 	1.6         -5.0    15       1       0       -5.0    15      #log_avgrec
-	1.60        -5.0    15       1     0         -5.0    15      #log_recinit
+	1.60        -5.0    15       1     	 0       -5.0    15      #log_recinit
 	0.2         0.001   0.999    3       3       12.0    52.8    #rho
 	1.25        0.01    10.      3       4       39.0625 62.5    #kappa (precision)
+## ------------------------------------------------------------------------- ##
+##
+## ------------------------------------------------------------------------- ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
+## ------------------------------------------------------------------------- ##
+## Likelihood type for each gear:
+##     -1 : multivariate logistic (dmvlogistic)
+##     -2 : multinomial, sample size based on input data
+##     -3 : logistic_normal, no autocorrelation, AR1, AR2.
+##     -4 : logistic_normal, AR1
+##     -5 : logistic_normal, AR2
+## ------------------------------------------------------------------------- ##
+## Number of columns == na_gears.
+   1      2            ## Gear Index
+   3      3                        ## Likelihood type
+   0.000  0.000                    ## Minimum proportion for aggregation & tail compression
+   0.0000 0.0000                   ## Small constant to add to comps & renormalize
+    1      1                       ## phase for log_age_tau2 estimation.
+    2      2                       ## phase for phi1 estimation: bounded (-1,1) AR1
+   -2     -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
+   -12345                   ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 ##
 ##

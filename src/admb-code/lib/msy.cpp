@@ -45,7 +45,6 @@ Msy::Msy(double ro, double h, dmatrix m, double rho, dmatrix wa, dmatrix fa, con
 	m_d3_V.allocate(*V);
 	m_d3_V  = *V;
 
-	
 	m_FAIL  = false;
 
 	calc_phie(m_dM,m_dFa);
@@ -75,10 +74,10 @@ void Msy::get_fmsy(dvector& fe)
 	int iter = 0;
 	int n    = size_count(fe);
 	double x1, x2;
-	dvector fold(1,n);
-	x1 = 1.0e-5;
-	x2 = 3.0e02;
-	m_p      = 1.0;
+	
+	x1 = 1.0e-5;  /// lower bound
+	x2 = 3.0e02;  /// upper bound
+	m_p      = 0.0;
 	// Spawning biomass per recruit for unfished conditions
 	// calc_phie(m_M,m_fa);
 	// calc_equilibrium(fe);
@@ -87,20 +86,20 @@ void Msy::get_fmsy(dvector& fe)
 	do
 	{
 		iter++;
-		fold = m_f;
+		
 		// calc_equilibrium(fe);
 		calcEquilibrium(fe);
 		fe  += m_p;
+		//cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 		
 		// check boundary conditions
 		for(i = 1; i<=n; i++)
 		{
 			if( (x1-fe[i])*(fe[i]-x2) < 0.0 ) // backtrack 98% of the newton step.
 			{                                 // if outside the boundary conditions.
-				fe[i] -= 0.999*m_p[i];         
+				fe[i] -= 0.999*m_p[i]; 
 			}
 		}
-		// cout<<iter<<" fe "<<fe<<" f "<<m_f<<endl;
 		
 	}
 	while ( norm(m_f) > TOL && iter < MAXITER );
@@ -172,7 +171,7 @@ void Msy::get_fmsy(dvector& fe, dvector& ak)
 		// derivatives of the total catch equation to update fbar;
 		fk     = fbar*lambda;
 		calcEquilibrium(fk);
-		//cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
+		cout<<iter<<" fbar "<<fbar<<" dYe "<<fabs(m_dYe)<<" fk "<<fk<<endl;
 		
 		fbar   = fbar - m_dYe/m_d2Ye;
 		iter++;
@@ -415,7 +414,7 @@ void Msy::calc_equilibrium(const dvector& fe)
 	m_g    = diagonal(d2ye);		//Gradient vector
 	m_f    = dye;   				//Value of the function to minimize
 	
-	// cout<<"OB1 fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
+	cout<<"OB1 fe "<<fe<<" ye "<<ye<<" dye "<<dye<<endl;
 }
 
 
@@ -691,6 +690,13 @@ void Msy::calcEquilibrium(const dvector& fe)
 	dmatrix d2ye(1,ngear,1,ngear);
 	dmatrix invJ(1,ngear,1,ngear);
 
+	// cout<<"Ro = "<<ro<<endl;
+	// cout<<"kappa="<<kappa<<endl;
+	// cout<<"phie=" <<m_phie<<endl;
+	// cout<<"phif = "<<phif<<endl;
+	// cout<<"km1 = "<<km1<<endl;
+
+
 	re   = ro*(kappa-m_phie/phif) / km1;
 	ye   = re*elem_prod(fe,phiq);
 	// dye  = re*phiq + elem_prod(fe,elem_prod(phiq,dre)) + elem_prod(fe,re*dphiq);
@@ -715,8 +721,11 @@ void Msy::calcEquilibrium(const dvector& fe)
 			}
 		} 
 	}
+
 	// Newton-Raphson step.
+	// cout<<"Second Derivatives \n"<<d2ye <<endl;
 	invJ   = -inv(d2ye);
+	//cout<<"B"<<endl;
 	fstp   = invJ * dye;  
 	
 	// Set private members
@@ -860,7 +869,8 @@ void Msy::calc_phie(const dmatrix& _m, const dmatrix& _fa)
 	}
 
 	// [] TODO: check the discrepency between bo here and bo in calcStockRecruitment.
-	m_bo = m_ro * m_phie;	
+	m_bo = m_ro * m_phie;
+	cout<<m_bo<<endl;
 	
 }
 

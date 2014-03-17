@@ -1,0 +1,7 @@
+# iSCAM View Tracker File 
+"Select","Label","Description","Control File"
+#The following line is for the Demo example
+TRUE,MULT,         "BS Pollock",../DATA/MULT/BSPollock
+TRUE,LNM1,         "BS Pollock",../DATA/LNM1/BSPollock
+TRUE,LNM2,         "BS Pollock",../DATA/LNM2/BSPollock
+TRUE,DMVL,         "BS Pollock",../DATA/DMVL/BSPollock

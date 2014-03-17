@@ -27,6 +27,7 @@
 ## ------------------------------------------------------------------------- ##
 1
 ##
+##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -34,13 +35,15 @@
 ## ------------------------------------------------------------------------- ##
 ## Need one value for each area and sex.
 ##
-68.160118   68.160118   # -asymptotic length (linf)  
-0.272789    0.272789    # -brody growth coefficient (k)
+68.160118   58.160118   # -asymptotic length (linf)  
+0.272789    0.252789    # -brody growth coefficient (k)
 -1.219753   -1.219753   # -theoretical age at zero length (to)
 1.e-5       1.e-5       # -scaler in length-weight allometry
 3.0         3.0         # -power parameter in length-weight allometry
-4.027334    4.027334    # -age at 50% maturity (approx with log(3.0)/k)
-0.402       0.402       # -std at 50% maturity (CV ~ 0.1)
+4.027334    0.0         # -age at 50% maturity (approx with log(3.0)/k)
+0.402       1000        # -std at 50% maturity (CV ~ 0.1)
+0                       # -(if n_MAT==1) use the following vector for maturity
+0           #mat vec
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
@@ -103,6 +106,8 @@
 3
 ## ivector(na_gears) of oldest age-class + group
 9
+## effective sample size for multinomial
+0
 ## year gear area group sex | data columns (numbers or proportions)
    1968 1    1    1     0     13 129  646  954  99 19  4
    1969 1    1    1     0     19 169  416 1031 243 47 18
