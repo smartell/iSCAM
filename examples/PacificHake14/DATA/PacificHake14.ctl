@@ -1,5 +1,5 @@
 ## ------------------------------------------------------------------------- ##
-## CONTROL FILE TEMPLATE                                                     ##
+## CONTROL FILE TEMPLATE                                                      ##
 ## ------------------------------------------------------------------------- ##
 ##
 ##
@@ -63,7 +63,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	3 	3		        # 1  -selectivity type ivector(isel_type) for gear
+	5 	3		        # 1  -selectivity type ivector(isel_type) for gear
 	2.5		3.5	        # 2  -Age/length at 50% selectivity (logistic)
 	1.0		0.532 	        # 3  -STD at 50% selectivity (logistic)
 	5 	5				# 4  -No. of age nodes for each gear (0=ignore)
@@ -103,7 +103,7 @@
 0.0707      # 4  -std in observed catches in last phase.
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.10        # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.01        # 8  -std in mean fishing mortality in first phase
 2.00        # 9  -std in mean fishing mortality in last phase
 -3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
