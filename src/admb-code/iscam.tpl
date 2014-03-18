@@ -5238,15 +5238,15 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-	#include "lib/msy.cpp"
-	#include "lib/baranov.cpp"
-	#include "lib/LogisticNormal.cpp"
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-	#include "lib/LogisticNormal.h"
+  #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-
+	#include "lib/msy.cpp"
+	#include "lib/baranov.cpp"
+	#include "lib/LogisticNormal.cpp"
+  #include "lib/LogisticStudentT.cpp"
 	//#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
