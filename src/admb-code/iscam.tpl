@@ -194,6 +194,8 @@ DATA_SECTION
 	int mseFlag;  ///< Flag for management strategy evaluation mode
 	int rseed;    ///< Random number seed for simulated data.
 	int retro_yrs;///< Number of years to look back from terminal year.
+	int NewFiles;
+	int testMSY;
 	LOC_CALCS
 		SimFlag=0;
 		rseed=999;
@@ -207,6 +209,16 @@ DATA_SECTION
 			rseed   = atoi(ad_comm::argv[on+1]);
 		}
 		
+		// Catarina implementing a new command for generating new data control and pfc file
+		// for a new project.
+		NewFiles = 0;
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
+		{
+			NewFiles = 1;
+			NewFileName = ad_comm::argv[on+1];
+		}
+
+
 		// command line option for retrospective analysis. "-retro retro_yrs"
 		retro_yrs=0;
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-retro",opt))>-1)
@@ -228,6 +240,16 @@ DATA_SECTION
 			cout<<"|Implementing Management Strategy Evaluation      |\n";
 			cout<<"|_________________________________________________|\n";
 		}
+
+		// Test MSY
+		testMSY = 0;
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-msy",opt))>-1)
+		{
+			cout<<"Testing MSY calculations with Spreadsheet MSF.xlsx"<<endl;
+			testMSY = 1;
+			
+		}
+
 	END_CALCS
 
 
@@ -406,7 +428,27 @@ DATA_SECTION
 	init_vector     d_b(1,n_ags);
 	init_vector    d_ah(1,n_ags);
 	init_vector    d_gh(1,n_ags);
-	
+	init_int 		n_MAT;
+	int t1;
+	int t2;
+	LOC_CALCS
+		if(n_MAT)
+		{
+			t1 = sage;
+			t2 = nage;
+		}
+		else
+		{
+			t1 = 0;
+			t2 = 0;
+		}
+	END_CALCS 
+	!! COUT(n_MAT);
+	!! COUT(t1);
+	!! COUT(t2);
+	init_vector 	d_maturityVector(t1,t2);
+	!! COUT(d_maturityVector);
+
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
@@ -425,11 +467,20 @@ DATA_SECTION
 	  	cout<<"| ----------------------- |\n"<<endl;
 
 	  	// length & weight-at-age based on input growth pars
+	  	ma.initialize();
 	  	for(ig=1;ig<=n_ags;ig++)
 	  	{
 	  		la(ig) = d_linf(ig)*(1. - exp(-d_vonbk(ig)*(age-d_to(ig))));
 	  		wa(ig) = d_a(ig) * pow(la(ig),d_b(ig));
-	  		ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
+	  		h = n_sex(ig);
+	  		if(n_MAT==0)
+	  		{
+	  			ma(ig) = plogis(age,d_ah(ig),d_gh(ig));
+	  		}
+	  		else if( n_MAT>0 && h !=2 )
+	  		{
+	  			ma(ig) = d_maturityVector;
+	  		}
 	  	}
 	END_CALCS
 	
@@ -463,6 +514,7 @@ DATA_SECTION
 		cout<<dCatchData.sub(nCtNobs-3,nCtNobs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
 		d3_Ct.initialize();
+		
 		for(int ii=1;ii<=nCtNobs;ii++)
 		{
 			i = dCatchData(ii)(1);
@@ -483,8 +535,8 @@ DATA_SECTION
 				ig = pntr_ags(f,g,h);
 				d3_Ct(ig)(i)(k) = dCatchData(ii)(7);
 			} 
+			//if(verbose)  cout<<"Ok after reading catch data"<<ii<<" "<<ig <<" "<<n_ags<<endl;
 		}
-		
 	END_CALCS
 	
 
@@ -536,17 +588,19 @@ DATA_SECTION
 	// | AGE COMPOSITION DATA (ragged object)
 	// |---------------------------------------------------------------------------------|
 	// | - nAgears    -> number of age-composition matrixes, one for each gear.
-	// | - n_A_nobs    -> ivector for number of rows in age composition (A) matrix
-	// | n_A_sage       -> imatrix for starting age in each row
-	// | n_A_nage	      -> imatrix for plus group age in each row
+	// | - n_A_nobs   -> ivector for number of rows in age composition (A) matrix
+	// | n_A_sage     -> imatrix for starting age in each row
+	// | n_A_nage	  -> imatrix for plus group age in each row
+	// | inp_nscaler  -> effective sample size for iterative re-weighting in multinomial.
 	// | icol_A       -> number of columns for each row in A.
 	// | A            -> array of data (year,gear,area,group,sex|Data...)
-	// | d3_A_obs        -> array of catch-age data only.
+	// | d3_A_obs     -> array of catch-age data only.
 	// |
 	init_int nAgears
 	init_ivector n_A_nobs(1,nAgears);	
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
+	init_vector  inp_nscaler(1,nAgears);
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
 	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
@@ -560,7 +614,16 @@ DATA_SECTION
 			cout<<"| ----------------------- |\n"<<endl;
 			for(k=1;k<=nAgears;k++)
 			{
-				d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
+				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
+				if(inp_nscaler(k) > 0)
+				{
+					for( i = 1; i <= n_A_nobs(k); i++ )
+					{
+						 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
+					}
+				}
+				d3_A_obs(k) = tmp;
+				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 			}
 		}
 		else
@@ -648,18 +711,26 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-				for(h=1;h<=nsex;h++)
+					//cout<<h<<endl;
+				
+				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
 					dvector tmp          = inp_wt_avg(i)(sage,nage);
 					ivector idx          = getIndex(age,tmp);
-					d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+					// Problem, array indexed differ, must loop over idx;
+					// d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+					for( int ii = 1; ii <= size_count(idx); ii++)
+					{
+						d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+						d3_len_age(ig)(iyr)(idx(ii)) = pow(d3_wt_avg(ig)(iyr)(idx(ii))
+						                               /d_a(ig),1./d_b(ig));
+					}
 					d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
-					d3_len_age(ig)(iyr)(idx) = pow(d3_wt_avg(ig)(iyr)(idx)
-					                               /d_a(ig),1./d_b(ig));
 				}
 			}
 		}
+		
 
 		// average weight-at-age in projection years
 		for(ig=1;ig<=n_ags;ig++)
@@ -693,13 +764,14 @@ DATA_SECTION
 			}
 			d3_wt_dev(ig) = trans(mtmp);
 		
-			if( min(d3_wt_avg(ig))<=0 && min(d3_wt_avg(ig))!=NA )
+			
+			if( min(d3_wt_avg(ig))<=0.000 && min(d3_wt_avg(ig))!=NA )
 			{
 				cout<<"|-----------------------------------------------|"<<endl;
 				cout<<"| ERROR IN INPUT DATA FILE FOR MEAN WEIGHT DATA |"<<endl;
 				cout<<"|-----------------------------------------------|"<<endl;
-				cout<<"| - Cannont have an observed mean weight-at-age |"<<endl;
-				cout<<"|   less than or equal to 0.  Please fix. "       <<endl;
+				cout<<"| - Cannot have an observed mean weight-at-age  |"<<endl;
+				cout<<"|   less than or equal to 0.  Please fix.       |"<<endl;
 				cout<<"| - You are permitted to use '-99.0' for missing|"<<endl;
 				cout<<"|   values in your weight-at-age data.          |"<<endl;
 				cout<<"| - Aborting program!                           |"<<endl;
@@ -735,19 +807,13 @@ DATA_SECTION
 	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
-// 	number Umsy;					//Exploitation rate at MSY
+ // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
-// 	//catch-age for simulation model (could be declared locally 3d_array)
-// 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
+ // 	//catch-age for simulation model (could be declared locally 3d_array)
+ // 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONTROL FILE
@@ -801,8 +867,9 @@ DATA_SECTION
 	init_ivector nPhz_age_tau2(1,nAgears);
 	init_ivector nPhz_phi1(1,nAgears);
 	init_ivector nPhz_phi2(1,nAgears);
+	init_ivector nPhz_df(1,nAgears);
 	init_int check;
-	!! if(check != -12345) {cout<<"Error reading composition controls\n"<<endl; exit(1);}
+	!! if(check != -12345) {COUT(check);cout<<"Error reading composition controls\n"<<endl; exit(1);}
 
 
 
@@ -974,10 +1041,6 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
-
-
-
-
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -1079,6 +1142,7 @@ DATA_SECTION
 
 INITIALIZATION_SECTION
   theta theta_ival;
+  phi1 0.01;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -1194,6 +1258,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -1343,15 +1408,25 @@ PRELIMINARY_CALCS_SECTION
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
     nf=0;
-  
+  	if( testMSY )
+  	{
+  		testMSYxls();
+  	}
 	if( SimFlag ) 
 	{
 		initParameters();
 		
 		simulationModel(rseed);
 	}
+	
+	if (NewFiles)
+	{
+		generate_new_files();	
+	}
+	
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
+
 
 RUNTIME_SECTION
     maximum_function_evaluations 100,  200,   500, 25000, 25000
@@ -1459,7 +1534,7 @@ FUNCTION void initParameters()
 	rho       = theta(6,1);
 	varphi    = sqrt(1.0/theta(7,1));
 	sig       = sqrt(rho) * varphi;
-	tau       = sqrt(1-rho) * varphi;
+	tau       = sqrt(1.0-rho) * varphi;
 
 	for(ih=1;ih<=n_ag;ih++)
 	{
@@ -1608,7 +1683,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
   {
 	
 
-	int ig,i,j,k,byr,bpar;
+	int ig,i,j,k,byr,bpar,kgear;
 	double tiny=1.e-10;
 	dvariable p1,p2,p3;
 	dvar_vector age_dev=age;
@@ -1621,8 +1696,15 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	// logistic_selectivity cLogisticSelex(age);
 	log_sel.initialize();
 
-	for(k=1; k<=ngear; k++)
+	for(kgear=1; kgear<=ngear; kgear++)
 	{
+		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		k  = kgear;
+		if(sel_phz(k) < 0)
+		{
+			k = abs(sel_phz(kgear));
+		}
 
 		for( ig = 1; ig <= n_ags; ig++ )
 		{
@@ -1630,8 +1712,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			dvector iy(1,yr_nodes(k));
 			dvector ia(1,age_nodes(k));
 			byr  = 1;
-			bpar = 0;
-			
+			bpar = 0; 
 			switch(isel_type(k))
 			{
 				case 1: //logistic selectivity (2 parameters)
@@ -1648,7 +1729,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(bpar)) );
 						p1 = mfexp(sel_par(k,bpar,1));
 						p2 = mfexp(sel_par(k,bpar,2));
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny );
 					}
 					break;
 				
@@ -1657,7 +1738,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					p2 = mfexp(sel_par(k,1,2));
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2) );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2) );
 						// log_sel(k)(ig)(i) = log( cLogisticSelex(sel_par(k)(1)) );
 					}
 					break;
@@ -1674,7 +1755,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						{
 							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
 						}
-						log_sel(k)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
+						log_sel(kgear)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
 					}
 					break;
 					
@@ -1687,14 +1768,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						log_sel(k)(ig)(i+1) = log_sel(k)(ig)(i);
+						log_sel(kgear)(ig)(i+1) = log_sel(k)(ig)(i);
 					}
 					break;
 					
 				case 4:	// time-varying cubic spline every year				
 					for(i=syr; i<=nyr; i++)
 					{
-						log_sel(k)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
+						log_sel(kgear)(ig)(i) = cubic_spline(sel_par(k)(i-syr+1));
 					}
 					break;
 					
@@ -1702,7 +1783,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					ia.fill_seqadd( 0,1./(age_nodes(k)-1) );
 					iy.fill_seqadd( 0,1./( yr_nodes(k)-1) );	
 					bicubic_spline( iy,ia,sel_par(k),tmp2 );
-					log_sel(k)(ig) = tmp2; 
+					log_sel(kgear)(ig) = tmp2; 
 					break;
 					
 				case 7:
@@ -1716,7 +1797,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i = syr; i<=nyr; i++)
 					{
 						dvar_vector tmpwt=log(d3_wt_avg(ig)(i)*1000)/mean(log(d3_wt_avg(ig)*1000.));
-						log_sel(k)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
+						log_sel(kgear)(ig)(i) = log( plogis(tmpwt,p1,p2)+tiny );
 					}	 
 					break;
 					
@@ -1731,7 +1812,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					for(i=syr; i<=nyr; i++)
 					{
 						tmp2(i) = p3*d3_wt_dev(ig)(i);
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(age,p1,p2)+tiny ) + tmp2(i);
 					}
 					break;
 					
@@ -1748,7 +1829,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 
-						log_sel(k)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
+						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
 					}
 					break;
 					
@@ -1762,13 +1843,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						}
 					
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
-						log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
+						log_sel(kgear)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
 					}
 					break;
 					
 					
 				default:
-					log_sel(k)(ig)=0;
+					log_sel(kgear)(ig)=0;
 					break;
 					
 			}  // switch
@@ -1776,7 +1857,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
-				log_sel(k)(ig)(i) -= log( mean(mfexp(log_sel(k)(ig)(i))) );
+				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
 		}
@@ -1785,6 +1866,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
+
+  	
 	
   	/**
   	Purpose: This function calculates fishing mortality, total mortality and annual
@@ -2699,17 +2782,17 @@ FUNCTION calcObjectiveFunction
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
 			logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
+			logistic_student_t cLST_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					//nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),d_iscamCntrl(6));
 					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
-					if( !active(phi1(k)) )                      // LN1 Model
+					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
 						nlvec(3,k)  = cLN_Age();	
 					}
@@ -2717,17 +2800,24 @@ FUNCTION calcObjectiveFunction
 					{
 						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLN_Age.get_standardized_residuals();
+						age_tau2(k) = cLN_Age.get_sigma2();
+					}
 				break;
 
 				case 4:
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
-						nlvec(3,k)   = cLN_Age(phi1(k));	
+						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
 					}
 					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
 					{
-						nlvec(3,k)   = cLN_Age(phi1(k),phi2(k));	
+						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
 					}
 
 					// Residual
@@ -2738,6 +2828,24 @@ FUNCTION calcObjectiveFunction
 					}
 
 				break;
+
+				case 5: // Logistic-normal with student-t
+					if( !active(log_degrees_of_freedom(k)) )
+					{
+						nlvec(3,k) = cLST_Age();
+					}
+					else
+					{
+						nlvec(3,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
+					}
+
+					// Residual
+					if(last_phase())
+					{
+						nu          = cLST_Age.get_standardized_residuals();
+						age_tau2(k) = cLST_Age.get_sigma2();
+					}
+				break;
 			}
 			
 			// | Extract residuals.
@@ -2747,7 +2855,6 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
-	
 	
 	// |---------------------------------------------------------------------------------|
 	// | STOCK-RECRUITMENT LIKELIHOOD COMPONENT
@@ -3312,7 +3419,10 @@ FUNCTION void calcReferencePoints()
 	  	(5) : Use Msy object to get reference points.
 
 		
-
+	slx::Selex<dvar_vector> * ptr;  //Pointer to Selex base class
+  ptr = new slx::LogisticCurve<dvar_vector,dvariable>(mu,sd);
+  log_sel = ptr->logSelectivity(age);
+  delete ptr;
 
   	TODO list:
   	[ ] - allow user to specify which selectivity years are used in reference point
@@ -3320,11 +3430,14 @@ FUNCTION void calcReferencePoints()
   	*/
 	int kk,ig;
 	
+	
+
 	// | (1) : Matrix of selectivities for directed fisheries.
 	// |     : log_sel(gear)(n_ags)(year)(age)
 	// |     : ensure dAllocation sums to 1.
 	dvector d_ak(1,nfleet);
 	d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
+	dvar3_array  dvar_V(1,n_ags,1,nfleet,sage,nage);
 	for(k=1;k<=nfleet;k++)
 	{
 		kk      = nFleetIndex(k);
@@ -3332,6 +3445,7 @@ FUNCTION void calcReferencePoints()
 		for(ig=1;ig<=n_ags;ig++)
 		{
 			d_V(ig)(k) = value( exp(log_sel(kk)(ig)(nyr)) );
+			dvar_V(ig)(k) =( exp(log_sel(kk)(ig)(nyr)) );
 
 		}
 	}
@@ -3355,31 +3469,56 @@ FUNCTION void calcReferencePoints()
 	msy.initialize();
 	bmsy = 0;
 
+	dvar_vector dftry(1,nfleet);
+
 	dvector ftry(1,nfleet);
 	ftry  = 0.6/nfleet * mean(M_bar);
 	fmsy  = ftry;
+	dftry = ftry;
 	
 
 
 	// | (4) : Instantiate msy class for each stock
 	for(g=1;g<=ngroup;g++)
 	{
-		double d_ro = value(ro(g));
-		double  d_h = value(steepness(g));
+		//double d_ro = value(ro(g));
+		//double  d_h = value(steepness(g));
 		double d_rho = d_iscamCntrl(13);
 
 		dvector d_mbar = M_bar(g);
 		dvector   d_wa = dWt_bar(g);
 		dvector   d_fa = fa_bar(g);
 
-		Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-		cout<<"The death star is approaching"<<endl;
-		cMSY.get_fmsy(fmsy);
-		cout<<"I've got radar lock"<<endl;
-		bo   = cMSY.getBo();
-		bmsy = cMSY.getBmsy();
-		msy  = cMSY.getMsy();
-		cMSY.print();
+		//Pointer to the base class
+		//rfp::referencePoints<dvariable,dvar_vector,dvar_matrix> * pMSY; 
+		//pMSY = new rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array>
+		//(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
+		//delete pMSY;
+		
+
+		cout<<"Initial Fe "<<dftry<<endl;
+		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
+		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
+		bo  = c_MSY.getBo();
+		dvariable dbmsy = c_MSY.getBmsy();
+		bmsy = value(dbmsy);
+		//dvector d_Ye = c_MSY.getdYe();
+		//cout<<dfmsy<<endl;
+		c_MSY.print();
+
+		// Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
+		// //cout<<"The death star is approaching"<<endl;
+		// //cout<<fmsy<<endl;
+		// cMSY.get_fmsy(fmsy);
+		// //cout<<"I've got radar lock"<<endl;
+		// bo   = cMSY.getBo();
+		// bmsy = cMSY.getBmsy();
+		// msy  = cMSY.getMsy();
+		// cMSY.print();
+		
+
 		// if(nfleet > 1)
 		// {
 		// 	fall  = ftry;
@@ -3392,23 +3531,23 @@ FUNCTION void calcReferencePoints()
 
 		
 
-		cout<<"This is red leader, I'm going in!"<<endl;
-		i = 0;
-		dvector fi(1,nfleet);
-		fi = 0.;
-		while( i < 1500 )
-		{	
-			
-			cMSY.calcEquilibrium(fi);
-			// cout<<cMSY.getRe()<<endl;
-			// cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
-			// <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
-			fi += 0.01;
-			if(cMSY.getRe() < 0 ) break;
-			
-			i ++;
-		}
-		cout<<"Whaa Hoo, your all clear kid!"<<endl;
+		//cout<<"This is red leader, I'm going in!"<<endl;
+		//i = 0;
+		//dvector fi(1,nfleet);
+		//fi = 0.;
+		//while( i < 1500 )
+		//{	
+		//	
+		//	cMSY.calcEquilibrium(fi);
+		//	// cout<<cMSY.getRe()<<endl;
+		//	 cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
+		//	 <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
+		//	fi += 0.01;
+		//	if(cMSY.getRe() < 0 ) break;
+		//	
+		//	i ++;
+		//}
+		//cout<<"Whaa Hoo, your all clear kid!"<<endl;
 
 		// Msy cMSY2(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
 
@@ -3682,18 +3821,45 @@ FUNCTION void calcReferencePoints()
 // 	//exit(1);
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
   }
-	
+
+  /**
+   * This is a simple test routine for comparing the MSY class output to the 
+   * MSF.xlsx spreadsheet that was used to develop the multiple fleet msy 
+   * method.  Its a permanent feature of the iscam code for testing.
+   */	
+FUNCTION void testMSYxls()
+
+	double ro = 1.0;
+	double steepness = 0.75;
+	double d_rho = 0.0;
+	dmatrix m_bar(1,1,1,20);
+	m_bar = 0.30;
+	dmatrix dWt_bar(1,1,1,20);
+	dWt_bar(1).fill("{0.005956243,0.035832542,0.091848839,0.166984708,0.252580458,0.341247502,0.427643719,0.508367311,0.581557922,0.646462315,0.703062177,0.751788795,0.793319224,0.828438536,0.857951642,0.882630331,0.903184345,0.920248191,0.934377843,0.946053327}");
+	dmatrix fa_bar(1,1,1,20);
+	fa_bar(1).fill("{0,0,0,0,0.252580458,0.341247502,0.427643719,0.508367311,0.581557922,0.646462315,0.703062177,0.751788795,0.793319224,0.828438536,0.857951642,0.882630331,0.903184345,0.920248191,0.934377843,0.946053327}");
+	d3_array dvar_V(1,1,1,2,1,20);
+	dvar_V(1)(1).fill("{0.000552779,0.006692851,0.07585818,0.5,0.92414182,0.993307149,0.999447221,0.999954602,0.999996273,0.999999694,0.999999975,0.999999998,1,1,1,1,1,1,1,1}");
+	dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
+
+	dvector dftry(1,2);
+	dftry = 0.1 ;
+	cout<<"Initial Fe "<<dftry<<endl;
+	rfp::msy<double,dvector,dmatrix,d3_array> 
+	c_MSY(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
+	dvector dfmsy = c_MSY.getFmsy(dftry);
+	cout<<"Fmsy = "<<dfmsy<<endl;
 
 
+	dvector ak(1,2);
+	ak = 0.5;
+	ak(2) = 1-ak(1);
+	rfp::msy<double,dvector,dmatrix,d3_array>
+	c_MSYk(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
+	dvector dkmsy = c_MSYk.getFmsy(dftry,ak);
+	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
-
-
-
-
-
-
-
-
+	exit(1);
 
 
 
@@ -4304,6 +4470,42 @@ REPORT_SECTION
 	REPORT(A_hat);
 	REPORT(A_nu);
 
+
+	/// The following is a total hack job to get the effective sample size
+	/// for the multinomial distributions.
+
+	// TODO Fix the retro spective bug here near line 4507 (if iyr<=nyr)
+	report<<"Neff"<<endl;
+	dvector nscaler(1,nAgears);
+	nscaler.initialize();
+	for(k = 1; k<=nAgears; k++)
+	{
+		if( int(nCompLikelihood(k)) )
+		{
+			int naa=0;
+			int iyr;
+			//retrospective counter
+			for(i=1;i<=n_A_nobs(k);i++)
+			{
+				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				if(iyr<=nyr) naa++; else continue;
+			}
+			
+			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			
+			for(j = 1; j<= naa; j++)
+			{
+				double effectiveN = neff(O(j)/sum(O(j)),P(j));
+				report<<sum(O(j))<<"\t"<<effectiveN<<endl;
+				nscaler(k) += effectiveN;
+			}	
+			
+			nscaler(k) /= naa;
+		}
+	}
+	REPORT(nscaler);
+
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";
 	REPORT(inp_wt_avg);
@@ -4373,6 +4575,13 @@ REPORT_SECTION
 	REPORT(bt);
 	REPORT(rt);
 	REPORT(delta);
+	
+	dmatrix rep_rt = value( exp(trans(trans(log_rt).sub(syr,nyr))) );
+	for(int ig = 1; ig <= n_ag; ig++ )
+	{
+		rep_rt(ig)(syr) = value( exp( log_rt(ig)(syr-nage+sage) ) );
+	}
+	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
 	// | ABUNDANCE IN NUMBERS 
@@ -4388,7 +4597,7 @@ REPORT_SECTION
 	{
 		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
-		// exit(1);
+		//exit(1);
 		REPORT(bo);
 		REPORT(fmsy);
 		REPORT(msy);
@@ -4541,6 +4750,44 @@ REPORT_SECTION
 // 	// cout<<"Ok to here"<<endl;
 //   }
 	
+FUNCTION generate_new_files
+   {
+
+   	ofstream rd("RUN.dat");
+		rd<<NewFileName + ".dat"<<endl;
+		rd<<NewFileName + ".ctl"<<endl;
+		rd<<NewFileName + ".pfc"<<endl;
+
+
+
+	#if defined __APPLE__ || defined __linux
+
+	adstring bscmddat = "cp ../lib/iscam.dat" + NewFileName +".dat";
+		system(bscmddat);
+
+	adstring bscmdctl = "cp ../lib/ iscam.ctl" + NewFileName +".ctl";
+		system(bscmdctl);
+
+	adstring bscmdpfc = "cp ../lib/ iscam.PFC" + NewFileName +".pfc";
+		system(bscmdpfc);	
+
+	#endif
+
+	#if defined _WIN32 || defined _WIN64
+
+	adstring bscmddat = "copy ../lib/iscam.dat" + NewFileName +".dat";
+		system(bscmddat);
+
+	adstring bscmdctl = "copy ../lib/ iscam.ctl" + NewFileName +".ctl";
+		system(bscmdctl);
+
+	adstring bscmdpfc = "copy ../lib/ iscam.PFC" + NewFileName +".pfc";
+		system(bscmdpfc);	
+
+	#endif
+
+  }
+
 FUNCTION mcmc_output
 //   {
 // 	if(nf==1){
@@ -4973,22 +5220,27 @@ GLOBALS_SECTION
 	#include <admodel.h>
 	#include <time.h>
 	#include <string.h>
-//	#include "lib/msy.h"
-	#include "lib/msy.cpp"
-//	#include "lib/baranov.h"
-	#include "lib/baranov.cpp"
-//	#include "lib/LogisticNormal.h"
-	#include "lib/LogisticNormal.cpp"
+	#include "lib/msy.h"
+	#include "lib/msy.hpp"
+	#include "lib/baranov.h"
+  #include "lib/LogisticNormal.h"
 	#include "Selex.h"
+	#include "lib/msy.cpp"
+	#include "lib/baranov.cpp"
+	#include "lib/LogisticNormal.cpp"
+  #include "lib/LogisticStudentT.cpp"
 	//#include "OpMod.h"
 
-	ivector getIndex(dvector& a, dvector& b)
+	ivector getIndex(const dvector& a, const dvector& b)
 	{
 		int i,j,n;
 		n = 0;
 		j = 1;
 		for( i = a.indexmin(); i <= a.indexmax(); i++ )
 		{
+			// cout<<"Luke I am your father"<<endl;
+			// cout<<i<<endl;
+			// exit(1);
 			 if(b(i) != NA) n++;
 		}
 		ivector tmp(1,n);
@@ -5016,7 +5268,7 @@ GLOBALS_SECTION
 	
 	adstring BaseFileName;
 	adstring ReportFileName;
-	
+	adstring NewFileName;
 
 	adstring stripExtension(adstring fileName)
 	{
