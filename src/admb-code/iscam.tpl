@@ -711,7 +711,7 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-					cout<<h<<endl;
+					//cout<<h<<endl;
 				
 				for(int h=1;h<=nsex;h++)
 				{
@@ -807,19 +807,13 @@ DATA_SECTION
 	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
-// 	number Umsy;					//Exploitation rate at MSY
+ // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
-// 	//catch-age for simulation model (could be declared locally 3d_array)
-// 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
+ // 	//catch-age for simulation model (could be declared locally 3d_array)
+ // 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONTROL FILE
@@ -1047,10 +1041,6 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
-
-
-
-
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -3506,6 +3496,7 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
+
 		cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
@@ -3869,15 +3860,6 @@ FUNCTION void testMSYxls()
 	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
 	exit(1);
-
-
-
-
-
-
-
-
-
 
 
 
