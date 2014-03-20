@@ -31,13 +31,14 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1       2     ## Gear Index
-   3       3     ## Likelihood type
+   2       2     ## Likelihood type
    0.0   0.0     ## Minimum proportion for aggregation & tail compression
    0.0   0.0     ## Small constant to add to comps & renormalize
    1       1     ## phase for log_age_tau2 estimation.
    2       2     ## phase for phi1 estimation: bounded (-1,1) AR1
   -2      -2     ## phase for phi2 estimation: bounded (0,1)  AR2
-  -12345  -12345 ## int check (-12345)
+  -2      -2     ## phase for degrees of freedom for student T.
+  -12345         ## int check (-12345), one value only, not one for each gear
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -67,9 +68,8 @@
  12.5  12.5      # 9  -Penalty wt for time-varying selectivity
   1     1        #10  -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
-## Start year of each time block: 1 row for each gear
-1963
-2004
+## Start year of each time block: 1 column for each gear
+1963 1963
 ##
 ##
 ##

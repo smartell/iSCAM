@@ -108,7 +108,7 @@
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
 //-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
-//--              - Should probably use a separate simulation control file.    --//               
+//--              - Should probably use a separate simulation control file.    --//
 //--                                                                           --//
 //-- April 16, - Created new IPHC branch for developing sex/area/group         --//
 //--           - INDEXS:                                                       --//
@@ -580,9 +580,6 @@ DATA_SECTION
 			it_wt(k) = it_wt(k)/tmp_mu;
 		}
 	END_CALCS
-	
-	
-
 
 	// |---------------------------------------------------------------------------------|
 	// | AGE COMPOSITION DATA (ragged object)
@@ -597,12 +594,14 @@ DATA_SECTION
 	// | d3_A_obs     -> array of catch-age data only.
 	// |
 	init_int nAgears
-	init_ivector n_A_nobs(1,nAgears);	
+	init_ivector n_A_nobs(1,nAgears);
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
 	init_vector  inp_nscaler(1,nAgears);
+  // The 5 in the next command is to remove the first 5 columns
+  // from the age comp 'data' because they are not the actual ages,
+  // but the header data.
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
-	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 )
@@ -634,9 +633,6 @@ DATA_SECTION
 		}
 	END_CALCS
 
-	
-
-
 	// |---------------------------------------------------------------------------------|
 	// | EMPIRICAL WEIGHT_AT_AGE DATA
 	// |---------------------------------------------------------------------------------|
@@ -655,7 +651,7 @@ DATA_SECTION
 
 	init_int nWtNobs;
 	init_matrix inp_wt_avg(1,nWtNobs,sage-5,nage);
-	
+
 	matrix  dWt_bar(1,n_ags,sage,nage);
 	3darray d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_wt_dev(1,n_ags,syr,nyr+1,sage,nage);
@@ -679,7 +675,7 @@ DATA_SECTION
 				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
 			}
 		}
-		
+
 		// the overwrite d3_wt_avg & d3_wt_mat with existing empirical data
 		// SM Sept 6, 2013. Added option of using NA values (-99.0) for
 		// missing weight-at-age data, or truncated age-data.
@@ -690,7 +686,7 @@ DATA_SECTION
 			f   = inp_wt_avg(i,sage-3);
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
-			
+
 			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
@@ -712,7 +708,7 @@ DATA_SECTION
 			else if( !h ) 
 			{
 					cout<<h<<endl;
-				
+
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
