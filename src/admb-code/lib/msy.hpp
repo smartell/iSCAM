@@ -216,6 +216,9 @@ namespace rfp {
 		}
 		m_fe = fk;
 		m_rmsy = m_re; 
+		m_fmsy = m_fe;
+		m_bmsy = m_be;
+		m_msy  = m_ye;
 		return m_fe;
 	}
 
@@ -393,14 +396,17 @@ namespace rfp {
 		m_lz    = lz;
 
 		// Incidence functions and associated derivatives
-		T1  dphif(1,m_nGear);   dphif.initialize();
-		T1 d2phif(1,m_nGear);  d2phif.initialize();
-		T1   phiq(1,m_nGear);    phiq.initialize();
-		T1  dphiq(1,m_nGear);   dphiq.initialize();
-		T1 d2phiq(1,m_nGear);  d2phiq.initialize();
-		T1    dre(1,m_nGear);     dre.initialize();
-		T1   d2re(1,m_nGear);    d2re.initialize();
-		T1     t1(m_sage,m_nage);    t1.initialize();
+		T1   dphif(1,m_nGear);   dphif.initialize();
+		T1  d2phif(1,m_nGear);  d2phif.initialize();
+		T1    phiq(1,m_nGear);    phiq.initialize();
+		T1   dphiq(1,m_nGear);   dphiq.initialize();
+		T1  djphiq(1,m_nGear);  djphiq.initialize();
+		T1  d2phiq(1,m_nGear);  d2phiq.initialize();
+		T1 dj2phiq(1,m_nGear); dj2phiq.initialize();
+		T1     dre(1,m_nGear);     dre.initialize();
+		T1    d2re(1,m_nGear);    d2re.initialize();
+		T1      t1(m_sage,m_nage);  t1.initialize();
+		T1      tj(m_sage,m_nage);  tj.initialize();
 
 		for( h = 1; h <= m_nGrp; h++ )
 		{
@@ -423,10 +429,14 @@ namespace rfp {
 				{
 					// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
 					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),m_Va(h)(k)),za(h));
+
+					// djphiq = wa*oa*va(i)/dlz/za + lz*wa*va(i)*va(j)*sa/za - lz*wa*va(i)*va(j)*oa/za^2
+
 				}
 				T1 t0 = elem_div(oa(h),za(h));
 				T1 t3 = sa(h)-t0;
 				dphiq(k)  += qa_m(h)(k)*dlz_m(h)(k) + t1 * t3;
+				// djphiq(k) += qa_m(h)(k)*dlz_m(h)(k) + 
 
 				// 2nd derivative for per recruit yield (nasty)
 				T1 t2  = 2. * dlz_m(h)(k);
