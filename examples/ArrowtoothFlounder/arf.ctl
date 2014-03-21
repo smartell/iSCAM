@@ -10,13 +10,13 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   1.0          0.0     10      2       0       0.0     10.0    #log_ro      ##
+   5.0          0.0     10      2       0       0.0     10.0    #log_ro      ##
    0.75         0.2     1.0     2       3       3.0     2.0     #steepness   ##
-   -1.203973    -3.0    2.0     4       1       -1.203  0.15    #log_m g&b   ##
-   1.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
-   1.0          0.0     10      1       0       0.0     10      #log_recinit ##
-   0.5          0.01    0.99    3       3       3.0     5.0     #rho         ##
-   0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
+   -1.61        -3.0    1.0     1       1       -1.6     0.3    #log_m g&b   ##
+   1.0          0.0     10.      1       0       0.0     10      #log_avgrec  ##
+   1.0          0.0     10.      1       0       0.0     10      #log_recinit ##
+   0.1          0.01    0.99    4       3       3.0     5.0     #rho         ##
+   0.8          0.01    5.0     3       4       7.5    6.0    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -57,7 +57,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  2     2        # 1  -selectivity type ivector(isel_type) for gear
+  1     1        # 1  -selectivity type ivector(isel_type) for gear
   3.5   3.5      # 2  -Age/length at 50% selectivity (logistic)
   0.5   0.5      # 3  -STD at 50% selectivity (logistic)
   7     7        # 4  -No. of age nodes for each gear (0=ignore)
@@ -81,19 +81,19 @@
 ##       2 - random walk in q                                                ##
 ## ------------------------------------------------------------------------- ##
 1        # -number of surveys (nits)
-0        # -prior type (see legend above)
-0        # -prior log(mean)
-0        # -prior sd
+1        # -prior type (see legend above)
+0.0        # -prior log(mean)
+0.5        # -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-  1          # 1  -verbose ADMB output (0=off, 1=on)
+  0          # 1  -verbose ADMB output (0=off, 1=on)
   1          # 2  -recruitment model (1=beverton-holt, 2=ricker)
   0.100      # 3  -std in observed catches in first phase.
   0.0707     # 4  -std in observed catches in last phase.
-  1          # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
+  0          # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
   0.00       # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
   0.20       # 7  -Mean fishing mortality for regularizing the estimates of Ft
   0.10       # 8  -std in mean fishing mortality in first phase
