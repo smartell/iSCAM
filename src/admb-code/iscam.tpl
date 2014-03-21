@@ -3863,7 +3863,7 @@ FUNCTION void testMSYxls()
 
 
 	dvector ak(1,2);
-	ak = 0.80667863;
+	ak = 0.3;
 	ak(2) = 1-ak(1);
 	rfp::msy<double,dvector,dmatrix,d3_array>
 	c_MSYk(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
@@ -3871,6 +3871,10 @@ FUNCTION void testMSYxls()
 	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
 	c_MSYk.print();
+
+	dvector akmsy = c_MSYk.getFmsy(dftry);
+	c_MSYk.print();
+
 	exit(1);
 
 

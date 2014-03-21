@@ -81,11 +81,13 @@ namespace rfp {
 		T m_bmsy;		/// Spawning biomass at MSY
 		T m_dYe;		/// Derivative of total yield.
 		T m_d2Ye;		/// Second derivative of total yield.
+		T m_fbar_stp;	/// Newton step for average F.
 
 		T1 m_fe;		/// Fishing mortality rate
 		T1 m_fmsy;      /// Fishing mortality rate at MSY
 		T1 m_fstp;		/// Newton step size
 		T1 m_ye;		/// Equilibrium yield for each gear.
+		T1 m_dye;		/// Derivative of catch equation for each gear.
 		T1 m_msy;		/// Maximum Sustainable yield for each gear.
 		T1 m_allocation;/// Allocation of ye to each gear.
 		T1 m_ak;        /// Input allocation.
@@ -156,14 +158,19 @@ namespace rfp {
 		cout<<"|------------------------------------------|" <<endl;
 		cout<<"| MSY-BASED REFERENCE POINTS               |" <<endl;
 		cout<<"|------------------------------------------|" <<endl;
-		cout<<"| Bo   = "<<setw(10)<<m_bo                    <<endl;
-		cout<<"| Re   = "<<setw(10)<<m_re                    <<endl;
-		cout<<"| Rmsy = "<<setw(10)<<m_rmsy                  <<endl;
-		cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
-		cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;
-		cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
-		cout<<"| Alloc= "<<setw(10)<<m_allocation            <<endl;
-		cout<<"| dYe  = "<<setw(10)<<m_dYe                   <<endl;
+		cout<<"| Bo         = "<<setw(10)<<m_bo              <<endl;
+		cout<<"| Re         = "<<setw(10)<<m_re              <<endl;
+		cout<<"| Rmsy       = "<<setw(10)<<m_rmsy            <<endl;
+		cout<<"| Bmsy       = "<<setw(10)<<m_bmsy            <<endl;
+		cout<<"| Fmsy       = "<<setw(10)<<m_fmsy            <<endl;
+		cout<<"| MSY        = "<<setw(10)<<m_msy             <<endl;
+		cout<<"| ∑MSY       = "<<setw(10)<<sum(m_msy)        <<endl;
+		cout<<"| Allocation = "<<setw(10)<<m_allocation      <<endl;
+		cout<<"|------------------------------------------|" <<endl;
+		cout<<"| DIAGNOSTICS                              |" <<endl;
+		cout<<"|------------------------------------------|" <<endl;
+		cout<<"| dye/dfe    = "<<setw(10)<<m_dye             <<endl;
+		cout<<"| ∑dye/dfe   = "<<setw(10)<<m_dYe             <<endl;
 		// cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
 		// cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
 		// cout<<"| bpr  = "<<setw(10)<<m_phif                  <<endl;
@@ -208,14 +215,16 @@ namespace rfp {
 			fk = fbar * lambda/mean(lambda);
 			calcEquilibrium(fk);
 
-			fbar = fbar - m_dYe/m_d2Ye;
+			// fbar = fbar - m_dYe/m_d2Ye;
+			fbar -= m_fbar_stp;
 			cout<<iter<<" fbar "<<fbar<<" dYe "<<m_dYe<<" fk "<<fk;
 			cout<<" lambda = "<<lambda<<" ak = "<<m_ye/sum(m_ye)<<endl;
 
 			// Backtrack if necessary;
 			if( (lb-fbar)*(fbar-ub) < 0.0 )
 			{
-				fbar += 0.98 * m_dYe/m_d2Ye;
+				// fbar += 0.98 * m_dYe/m_d2Ye;
+				fbar += 0.98 * m_fbar_stp;
 			}
 
 		}
@@ -248,7 +257,7 @@ namespace rfp {
 		T ub = 5.0e+01;
 		T delta = 1.0;
 		T1 ftry = fe;
-
+		m_ak.deallocate();
 		m_fe = fe;
 		for(int iter=1; iter<=MAXITER; iter++)
 		{
@@ -469,7 +478,7 @@ namespace rfp {
 				} // m_nGear kk loop
 			} // m_nGear k loop
 		} // m_nGrp
-		cout<<"\n"<<d2phiq<<endl;
+		
 		// 1st & 2nd partial derivatives for recruitment
 		T phif2 = square(m_phif);
 		T kappa = 4.0*m_h/(1.-m_h);
@@ -484,9 +493,9 @@ namespace rfp {
 		// Equilibrium calculations
 		T    re;
 		T    be;
-		T1   ye(1,m_nGear);
-		T1 fstp(1,m_nGear);
-		T1  dye(1,m_nGear);
+		T1    ye(1,m_nGear);
+		T1  fstp(1,m_nGear);
+		T1   dye(1,m_nGear);
 		T2 d2ye(1,m_nGear,1,m_nGear);
 		T2 invJ(1,m_nGear,1,m_nGear);
 
@@ -514,15 +523,45 @@ namespace rfp {
 		// Inverse of the Jacobi
 		invJ = -inv(d2ye);
 		fstp = dye * invJ;
-
-
 		// Set private member variables
 		m_fstp = fstp;
 		m_ye   = ye;
 		m_be   = be;
 		m_re   = re;
+		m_rmsy = m_re;
+		m_dye  = dye;
 		m_dYe  = sum(dye);
 		m_d2Ye = sum(diagonal(d2ye));
+
+		// Derivative based on fixed allocations
+		// dye_ak = ak*dre*∑(fk*phik) + ak*re*(∑phik + Fi*dphi[i]/dFi + Fj*dphi[j]/dFi)
+		T1 dye_ak(1,m_nGear);
+		T2 d2ye_ak(1,m_nGear,1,m_nGear);
+		if(allocated(m_ak)) 
+		{	
+			//cout<<"Allocated"<<endl;
+			for( k = 1; k <= m_nGear; k++ )
+			{
+
+				dye_ak(k) = m_ak(k)*dre(k)*(fe*phiq)
+				          + m_ak(k)*re * (sum(phiq) + fe*dphiq(k));
+
+				          // The above may also be fe*column(dphiq,k)?? 
+				// Now the second derivative
+				for( kk = 1; kk <= m_nGear; kk++ )
+				{
+					d2ye_ak(k)(kk) = m_ak(k)*d2re(kk)*(fe*phiq)
+					               + 2.0*m_ak(k)*dre(kk)*( sum(phiq)+fe*dphiq(kk) ) 
+					               + m_ak(k)*re*( 2.0*sum(diagonal(dphiq))+fe*d2phiq(kk) );
+				}
+
+			}	
+			m_fbar_stp = sum(dye_ak)/sum(diagonal(d2ye_ak));
+			m_dye      = dye_ak;
+			m_dYe      = sum(dye_ak);
+			m_d2Ye     = sum(diagonal(d2ye_ak));
+			// cout<<sum(dye_ak)/sum(diagonal(d2ye_ak))<<endl;
+		}
 
 		// Uncomment for debugging.
 		// cout<<setprecision(8)<<endl;
