@@ -39,6 +39,10 @@ dist/
 *.r[0-9]*
 *.b[0-9]*
 *.res
+*.ecm
+*.hst
+*.mc2
+*.mcm
 
 # Latex Stuff
 *.aux
