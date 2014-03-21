@@ -117,29 +117,28 @@
 ## 2 = survey is proportional to vulnerable biomass
 ## 3 = survey is proportional to spawning biomass (e.g., a spawn survey)
 ##
-## survey_data:
+## survey_data: 
 ##                                        survey
 ## iyr     index(it) gear area group sex  wt    timing
-   1995     1517.948  2     1     1     0  1.0      0.5
-   1998     1342.740  2     1     1     0  1.0      0.5
-   2010     918.622   2     1     1     0  1.0      0.5
-   2003     2520.641  2     1     1     0  1.0      0.5
-   2005     1754.722  2     1     1     0  1.0      0.5
-   2007     1122.809  2     1     1     0  1.0      0.5
-   2009     1612.027  2     1     1     0  1.0      0.5
-   2011     521.476   2     1     1     0  1.0      0.5
-   2012     1380.724  2     1     1     0  1.0      0.5
-   2013     2422.661  2     1     1     0  1.0      0.5
-##
-## ------------------------------------------------------------------------- ##
+   1995     1517.948  2     1     1     0   1.0171498      0.5
+   1998     1342.740  2     1     1     0   1.3650087      0.5
+   2001     918.622   2     1     1     0   0.7940673      0.5
+   2003     2520.641  2     1     1     0   0.9895064      0.5
+   2005     1754.722  2     1     1     0   0.8079348      0.5
+   2007     1122.809  2     1     1     0   0.8817426      0.5
+   2009     1612.027  2     1     1     0   0.4947519      0.5
+   2011     521.476   2     1     1     0   0.6173086      0.5
+   2012     1380.724  2     1     1     0   1.4166569      0.5
+   2013     2422.661  2     1     1     0   1.6158731      0.5
+##-------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-2       # Number of gears with age-comps int(na_gears)
-39 10 # Number of rows in the matrix   ivector(na_gears)
-## ivector(na_gears) of youngest age-class
-1  1
-## ivector(na_gears) of oldest age-class + group
-15    15
+2       ## Number of gears with age-comps int(na_gears)
+39  10  ##Number of rows in the matrix   ivector(na_gears)
+1  1    ## ivector(na_gears) of youngest age-class
+15  15  ## ivector(na_gears) of oldest age-class + group
+## Effective sample size from iterative re-weighting (nscaler)
+54.1366 26.9417
 ## year gear area group sex | data columns (numbers or proportions) -fisheries
 1975  1  1  1  0  0.046 0.338 0.074 0.012 0.254 0.055 0.080 0.105 0.010 0.006 0.009 0.005 0.000 0.005 0.000
 1976  1  1  1  0  0.001 0.013 0.145 0.067 0.041 0.246 0.098 0.089 0.121 0.054 0.043 0.041 0.011 0.024 0.007

@@ -25,7 +25,7 @@
 	print(head(mdf,3))
 
 	p <- ggplot(mdf) + geom_point(aes(Bbmsy,Ffmsy, color=Year))
-	p <- p + ylim(0,2) + xlim(0,max(Bbmsy))
+	p <- p + ylim(0,max(Ffmsy)) + xlim(0,max(Bbmsy))
 	p <- p + geom_vline(aes(xintercept=1))
 	p <- p + geom_hline(aes(yintercept=1))
 	p <- p + geom_path(aes(Bbmsy,Ffmsy,color=Year))
