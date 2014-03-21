@@ -4,7 +4,7 @@
 
 ## Macros
 SUBDIR = DEMO/DATA             \
-		 ECODETECTIVE/DATA     \
+         ECODETECTIVE/DATA     \
          Herring4VWX/DATA      \
          LingcodSRA/DATA       \
          PacificHake/DATA      \
