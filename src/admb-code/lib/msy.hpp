@@ -84,10 +84,11 @@ namespace rfp {
 
 		T1 m_fe;		/// Fishing mortality rate
 		T1 m_fmsy;      /// Fishing mortality rate at MSY
-		T1 m_fstp;
+		T1 m_fstp;		/// Newton step size
 		T1 m_ye;		/// Equilibrium yield for each gear.
-		T1 m_msy;		/// Maximum Sustainable yield for each gear
-
+		T1 m_msy;		/// Maximum Sustainable yield for each gear.
+		T1 m_allocation;/// Allocation of ye to each gear.
+		T1 m_ak;        /// Input allocation.
 
 		T2 m_lz;		/// Survivorship under fished conditions
 		T2 m_lx; 		/// Survivorship upder unfished conditions
@@ -142,11 +143,13 @@ namespace rfp {
 		virtual const T  getRmsy() {return m_rmsy;}
 		virtual const T  getBmsy() {return m_bmsy;}
 		virtual const T1 getMsy()  {return m_msy; }
+		virtual const T1 getAllocation() {return m_allocation; }
 		//virtual const T1 getdYe()  {return m_dYe; }
 		
 		void print();
 		
 	};
+
 	template<class T,class T1,class T2,class T3>
 	void msy<T,T1,T2,T3>::print()
 	{
@@ -159,6 +162,7 @@ namespace rfp {
 		cout<<"| Bmsy = "<<setw(10)<<m_bmsy                  <<endl;
 		cout<<"| Fmsy = "<<setw(10)<<m_fmsy                  <<endl;
 		cout<<"| MSY  = "<<setw(10)<<m_msy                   <<endl;
+		cout<<"| Alloc= "<<setw(10)<<m_allocation            <<endl;
 		cout<<"| dYe  = "<<setw(10)<<m_dYe                   <<endl;
 		// cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
 		// cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
@@ -193,6 +197,7 @@ namespace rfp {
 		T1 pk = ak / sum(ak);	//proportion of total catch
 		T1 lambda = pk / mean(pk);
 		m_fe = fe;
+		m_ak = ak;
 
 		for(int iter = 1; iter <= MAXITER; iter++ )
 		{
@@ -219,6 +224,7 @@ namespace rfp {
 		m_fmsy = m_fe;
 		m_bmsy = m_be;
 		m_msy  = m_ye;
+		m_allocation = m_msy/sum(m_msy);
 		return m_fe;
 	}
 
@@ -264,6 +270,7 @@ namespace rfp {
 			
 		}
 		m_msy = m_ye;
+		m_allocation = m_msy/sum(m_msy);
 		m_bmsy = m_be;
 		m_fmsy = m_fe;
 		return(m_fe);	
