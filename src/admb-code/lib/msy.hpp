@@ -273,7 +273,7 @@ namespace rfp {
 	void msy<T,T1,T2,T3>::calcEquilibrium(const T1 &fe)
 	{
 		//cout<<"Working on this routine"<<endl;
-		int j,h,k;
+		int j,h,k,kk;
 		T phif = 0.0;
 		
 
@@ -399,14 +399,15 @@ namespace rfp {
 		T1   dphif(1,m_nGear);   dphif.initialize();
 		T1  d2phif(1,m_nGear);  d2phif.initialize();
 		T1    phiq(1,m_nGear);    phiq.initialize();
-		T1   dphiq(1,m_nGear);   dphiq.initialize();
-		T1  djphiq(1,m_nGear);  djphiq.initialize();
-		T1  d2phiq(1,m_nGear);  d2phiq.initialize();
-		T1 dj2phiq(1,m_nGear); dj2phiq.initialize();
+		
+		
 		T1     dre(1,m_nGear);     dre.initialize();
 		T1    d2re(1,m_nGear);    d2re.initialize();
-		T1      t1(m_sage,m_nage);  t1.initialize();
+		// T1      t1(m_sage,m_nage);  t1.initialize();
 		T1      tj(m_sage,m_nage);  tj.initialize();
+
+		T2   dphiq(1,m_nGear,1,m_nGear);   dphiq.initialize();
+		T2  d2phiq(1,m_nGear,1,m_nGear);  d2phiq.initialize();
 
 		for( h = 1; h <= m_nGrp; h++ )
 		{
@@ -419,43 +420,49 @@ namespace rfp {
 
 				// per recruit yield
 				phiq(k)   +=  lz(h) * qa_m(h)(k);
-				// changed back to ngear==1 to be consistent with spreadsheet.
-				if(m_nGear==1)  // was (if ngear==1), changed during debugging of nfleet>1
-				{
-					// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
-					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),square(m_Va(h)(k))),za(h));
-				}
-				else
-				{
+
+				for( kk = 1; kk <= m_nGear; kk++ )
+				{	
+					/*				
+					// changed back to ngear==1 to be consistent with spreadsheet.
+					if(m_nGear==1)  // was (if ngear==1), changed during debugging of nfleet>1
+					{
+						// dphiq = wa*oa*va*dlz/za + lz*wa*va^2*sa/za - lz*wa*va^2*oa/za^2
+						t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),square(m_Va(h)(k))),za(h));
+					}
+					else
+					{
+						// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
+						t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),m_Va(h)(k)),za(h));
+
+						// djphiq = wa*oa*va(i)/dlz/za + lz*wa*va(i)*va(j)*sa/za - lz*wa*va(i)*va(j)*oa/za^2
+					}*/
 					// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
-					t1 = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),m_Va(h)(k)),za(h));
+					T1 va2 = elem_prod(m_Va(h)(k),m_Va(h)(kk));
+					T1 t0  = elem_div(oa(h),za(h));
+					T1 t1  = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),va2),za(h));
+					T1 t3  = sa(h)-t0;
+					dphiq(k)(kk)  += qa_m(h)(k)*dlz_m(h)(kk) + t1 * t3;
 
-					// djphiq = wa*oa*va(i)/dlz/za + lz*wa*va(i)*va(j)*sa/za - lz*wa*va(i)*va(j)*oa/za^2
-
-				}
-				T1 t0 = elem_div(oa(h),za(h));
-				T1 t3 = sa(h)-t0;
-				dphiq(k)  += qa_m(h)(k)*dlz_m(h)(k) + t1 * t3;
-				// djphiq(k) += qa_m(h)(k)*dlz_m(h)(k) + 
-
-				// 2nd derivative for per recruit yield (nasty)
-				T1 t2  = 2. * dlz_m(h)(k);
-				T1 V2  = elem_prod(m_Va(h)(k),m_Va(h)(k));
-				T1 t5  = elem_div(elem_prod(m_Wa(h),V2),za(h));
-				T1 t7  = elem_div(m_Va(h)(k),za(h));
-				T1 t9  = elem_prod(t5,sa(h));
-				T1 t11 = elem_prod(t5,t0);
-				T1 t13 = elem_prod(lz(h),t5);
-				T1 t14 = elem_prod(m_Va(h)(k),sa(h));
-				T1 t15 = elem_prod(t7,sa(h));
-				T1 t17 = elem_prod(m_Va(h)(k),t0);
-				T1 t18 = elem_div(t17,za(h));
-				d2phiq(k)  += d2lz_m(h)(k)*qa_m(h)(k) 
-							+ t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 
-							+ 2.*t13*t18;
-			} // m_nGear
+					// 2nd derivative for per recruit yield (nasty)
+					T1 t2  = 2. * dlz_m(h)(kk);
+					T1 V2  = elem_prod(m_Va(h)(k),m_Va(h)(kk));
+					T1 t5  = elem_div(elem_prod(m_Wa(h),V2),za(h));
+					T1 t7  = elem_div(m_Va(h)(kk),za(h));
+					T1 t9  = elem_prod(t5,sa(h));
+					T1 t11 = elem_prod(t5,t0);
+					T1 t13 = elem_prod(lz(h),t5);
+					T1 t14 = elem_prod(m_Va(h)(kk),sa(h));
+					T1 t15 = elem_prod(t7,sa(h));
+					T1 t17 = elem_prod(m_Va(h)(kk),t0);
+					T1 t18 = elem_div(t17,za(h));
+					d2phiq(k)(kk)  += d2lz_m(h)(kk)*qa_m(h)(k) 
+								+ t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 
+								+ 2.*t13*t18;
+				} // m_nGear kk loop
+			} // m_nGear k loop
 		} // m_nGrp
-
+		cout<<"\n"<<d2phiq<<endl;
 		// 1st & 2nd partial derivatives for recruitment
 		T phif2 = square(m_phif);
 		T kappa = 4.0*m_h/(1.-m_h);
@@ -476,23 +483,23 @@ namespace rfp {
 		T2 d2ye(1,m_nGear,1,m_nGear);
 		T2 invJ(1,m_nGear,1,m_nGear);
 
-		// Equilibrium rectuis, yield and first derivative of ye
+		// Equilibrium recruits, yield and first derivative of ye
 		re   = m_ro*(kappa-m_phie/phif) / km1;
 		ye   = re*elem_prod(fe,phiq);
 		be   = re * phif;
 		dye  = re*phiq 
 			  + elem_prod(elem_prod(fe,phiq),dre) 
-			  + re*elem_prod(fe,dphiq);
+			  + re*elem_prod(fe,diagonal(dphiq));
 
 		// Jacobian matrix (2nd derivative of the catch equations)
 		for(j=1; j<=m_nGear; j++)
 		{
 			for(k=1; k<=m_nGear; k++)
 			{
-				d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(k) + fe(j)*re*d2phiq(k);
+				d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) + 2.*fe(j)*dre(k)*dphiq(j)(k) + fe(j)*re*d2phiq(j)(k);
 				if(k == j)
 				{
-					d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(j);
+					d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(k)(j);
 				}
 			} 
 		}
