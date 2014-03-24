@@ -38,10 +38,10 @@
 57.93       85.0        # -asymptotic length (linf), from Spies and Turnock
 0.172       0.161       # -brody growth coefficient (k), from AFSC
 -2.172      0.812       # -theoretical age at zero length (to), from AFSC
-3.2232      3.2232      # -scalar in length-weight allometry, from Spies and Turnock, grams and cm
-0.003915    0.003915    # -power parameter in length-weight allometry, from Spies and Turnock
-37          31          # -age at 50% maturity (approx with log(3.0)/k), from AFSC
-3.402       3.402       # -std at 50% maturity (CV ~ 0.1), completely fabricated values 3.402
+0.000003915    0.0000003915      # -scalar in length-weight allometry, from Spies and Turnock, kg and cm
+3.2232      3.2232    # -power parameter in length-weight allometry, from Spies and Turnock
+9           6          # -age at 50% maturity (approx with log(3.0)/k), from AFSC
+0.2         0.2       # -std at 50% maturity (CV ~ 0.1), completely fabricated values 
 0
 0
 ##
@@ -123,11 +123,11 @@
 ## survey_data:
 ##                                        survey
 ## iyr     index(it) gear area group sex  wt    timing
-   2004     8814.0   2    1    1     0    1.0   0.5
-   2006     8373.0   2    1    1     0    1.0   0.5
-   2008     6951.0   2    1    1     0    1.0   0.5
-   2010    15210.0   2    1    1     0    1.0   0.5
-   2012     5672.0   2    1    1     0    1.0   0.5
+   2004     8.814   2    1    1     0    1.0   0.5
+   2006     8.373   2    1    1     0    1.0   0.5
+   2008     6.951   2    1    1     0    1.0   0.5
+   2010    15.210   2    1    1     0    1.0   0.5
+   2012     5.672   2    1    1     0    1.0   0.5
 ##
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
