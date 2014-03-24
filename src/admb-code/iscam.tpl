@@ -144,7 +144,7 @@ DATA_SECTION
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
-
+	// Hi chris
 	
 	// |---------------------------------------------------------------------------------|
 	// | READ IN PROJECTION FILE CONTROLS                                         
@@ -705,8 +705,8 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-					cout<<h<<endl;
-				
+					//cout<<h<<endl;
+
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -4300,7 +4300,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		calcReferencePoints();
+		//calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);

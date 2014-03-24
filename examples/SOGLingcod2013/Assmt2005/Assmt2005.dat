@@ -23,7 +23,7 @@
 5        # -number of gears            (ngear)
 ##
 ## ------------------------------------------------------------------------- ##
-## Allocation for each gear in (ngear), use 0 for survey gears.              ##
+## Allocation for each gear in (ngear), use 0 for survey gears. 
 ## ------------------------------------------------------------------------- ##
 0	0	1	0	0
 ##
