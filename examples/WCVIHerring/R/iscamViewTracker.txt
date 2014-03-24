@@ -1,0 +1,5 @@
+# iSCAM View Tracker File 
+"Select","Label","Description","Control File"
+#The following line is for the Demo example
+TRUE,WCVI,         "WCVI 2011",../DATA/WCVI2011
+
