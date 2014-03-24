@@ -16,6 +16,7 @@
 
 	p <- ggplot(mdf,aes(x=Year,y=as.double(variable),z=exp(value)/max(exp(value))))
 	p <- p + stat_contour(aes(colour = ..level..))
+	p <- p + labs(x="Year",y="Age",color="Selectivity")
 	# p <- p + stat_contour(geom="polygon", aes(fill=exp(value)))
 	p <- p + facet_wrap(~Model+Gear+Sex,scale="free")
 	print(p + .THEME)
