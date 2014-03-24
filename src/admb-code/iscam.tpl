@@ -1826,7 +1826,8 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 
 						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
-					}
+						//log_sel(kgear)(ig)(i) = log( plogis(len,p1,p2) );
+					}	cout<<"Death star is approaching"<<endl;
 					break;
 					
 				case 12: // cubic spline length-based coefficients.
@@ -4302,7 +4303,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		//calcReferencePoints();
+		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
@@ -4930,12 +4931,12 @@ GLOBALS_SECTION
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-  #include "lib/LogisticNormal.h"
+    #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-	#include "lib/msy.cpp"
-	#include "lib/baranov.cpp"
-	#include "lib/LogisticNormal.cpp"
-  #include "lib/LogisticStudentT.cpp"
+	//#include "lib/msy.cpp"
+	//#include "lib/baranov.cpp"
+	//#include "lib/LogisticNormal.cpp"
+	//#include "lib/LogisticStudentT.cpp"
 	//#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
