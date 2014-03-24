@@ -38,9 +38,9 @@
 //             Variables    -> lowercase                                         //
 //                                                                               //
 // CHANGED add option for using empirical weight-at-age data                     //
-// TODO:    add gtg options for length based fisheries                          //
+// TODO:   ? add gtg options for length based fisheries                          //
 // CHANGED add time varying natural mortality rate with splines                  //
-// TODO:    add cubic spline interpolation for time varying M                   //
+// TODO:   ? add cubic spline interpolation for time varying M                   //
 // CHANGED  Fix the type 6 selectivity implementation. not working.              //
 // TODO:  fix cubic spline selectivity for only years when data avail            //
 // CHANGED: fixed a bug in the simulation model log_ft_pars goes out             //
@@ -492,7 +492,7 @@ DATA_SECTION
 	// | - If total catch is asexual (sex=0), pool predicted catch from nsex groups.
 	// | - ft_count    -> Number of estimated fishing mortality rate parameters.
 	// | - d3_Ct -> An array of observed catch in group(ig) year (row) by gear (col)
-	// | - [] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
+	// | - [?] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int nCtNobs;
 	!! COUT(nCtNobs)
 	init_matrix dCatchData(1,nCtNobs,1,7);
@@ -1489,7 +1489,7 @@ PROCEDURE_SECTION
 		
 	
 	TODO list:
-	  [] - Calculate spawning biomass depletion for each group.
+	  [?] - Calculate spawning biomass depletion for each group.
 	*/
 FUNCTION void calcSdreportVariables()
   {
@@ -2101,7 +2101,7 @@ FUNCTION calcNumbersAtAge
   	[x] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[] - add plus group if n_A_nage < nage;  Aug 7, 2013
+	[?] - add plus group if n_A_nage < nage;  Aug 7, 2013
 
   	*/
   	
@@ -2442,7 +2442,7 @@ FUNCTION calcTotalCatch
   		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	    [] - add capability to accomodate priors for survey q's.
+  	    [?] - add capability to accomodate priors for survey q's.
   	    [ ] - verify q_prior=2 option for random walk in q.
   	    [ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
  
@@ -2573,9 +2573,9 @@ FUNCTION calcSurveyObservations
   			
   	
   	TODO list:
-	  [] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
-	  [] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup.
-	  [] - Add autocorrelation in recruitment residuals with parameter \f$ \gamma_r \f$.
+	  [?] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
+	  [?] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup.
+	  [?] - Add autocorrelation in recruitment residuals with parameter \f$ \gamma_r \f$.
 
   	*/
 FUNCTION void calcStockRecruitment()
@@ -2938,7 +2938,7 @@ FUNCTION calcObjectiveFunction
 	// |---------------------------------------------------------------------------------|
 	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
 	// |---------------------------------------------------------------------------------|
-	// | [] - TODO for isel_type==2 ensure mean 0 as well.
+	// | [?] - TODO for isel_type==2 ensure mean 0 as well.
 	// |
 	for(k=1;k<=ngear;k++)
 	{
@@ -3913,7 +3913,7 @@ FUNCTION void testMSYxls()
  		10) write simulated data to file.
 
   	TODO list:
-	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
+	[?] - March 9, 2013.  Fix simulation model to generate consistent data when 
 		  doing retrospective analyses on simulated datasets.
 	[ ] - TODO: Stock-Recruitment model.
 	[ ] - TODO: switch statement for catch-type to get Fishing mortality rate.
