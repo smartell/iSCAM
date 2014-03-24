@@ -68,7 +68,7 @@
 0.2	0.2	360	0.2	0.2     # 3  -STD at 50% selectivity (logistic)
 0	0	0	0	0       # 4  -No. of age nodes for each gear (0=ignore)
 0	0	0	0	0       # 5  -No. of year nodes for 2d spline(0=ignore)
--1	-1	-1	-1	-1      # 6  -Phase of estimation (-1 for fixed)
+-0	-0	-0	-1	-2      # 6  -Phase of estimation (-1 for fixed)
 2	2	2	2	2	# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 2 	2	2	2	2	# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 12	12	12	12	12      # 9  -Penalty wt for time-varying selectivity
@@ -76,10 +76,10 @@
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
 1927
-1927
-1927
-1927
-1927
+1962
+1991
+1967
+1982
 ##
 ##
 ##
@@ -90,10 +90,10 @@
 ##			1 - normal prior density for log(q)                              ##
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
-1					# -number of surveys (nits) 
-0					# -prior type (see legend above)
-0					# -prior log(mean)
-0					# -prior sd
+2					# -number of surveys (nits) 
+0 0					# -prior type (see legend above)
+0 0					# -prior log(mean)
+0 0					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
