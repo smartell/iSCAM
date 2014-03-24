@@ -99,7 +99,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-1           # 1  -verbose ADMB output (0=off, 1=on)
+0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.

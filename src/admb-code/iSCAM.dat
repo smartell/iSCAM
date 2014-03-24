@@ -2,8 +2,10 @@
 #../../Examples/DEMO/DATA/ControlTemplate.ctl
 #../../Examples/DEMO/DATA/ProjectionTemplate.pfc
 
-../../examples/ArrowtoothFlounder/arf.dat
-../../examples/ArrowtoothFlounder/arf.ctl
-../../examples/ArrowtoothFlounder/arf.pfc
+../../examples/SOGLingcod2013/Assmt2005/assmt2005.dat
+../../examples/SOGLingcod2013/Assmt2005/assmt2005.ctl
+../../examples/SOGLingcod2013/Assmt2005/assmt2005.pfc
 
-
+#../../examples/ArrowtoothFlounder/arf.dat
+#../../examples/ArrowtoothFlounder/arf.ctl
+#../../examples/ArrowtoothFlounder/arf.pfc
