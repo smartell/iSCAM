@@ -1,3 +1,6 @@
+# Any file with the word 'template' in its name.
+*template*
+
 # Compiled source #
 ###################
 *.com
@@ -6,18 +9,36 @@
 *.exe
 *.o
 *.so
+*.cpp
+*.htp
+*.obj
+variance
+dist/
 
 # iSCAM output
 *.psv
 *.cor
+*.cov
+*.dep
+*.eql
+*.hes
+*.tmp
+*.rpt
+*.bar
 *.rep
 *.par
 *.std
+*.eva
 *.mcmc
 *.mcrt
 *.mcst
 *.sim
 *.proj
+*.ret*
+*.p[0-9]*
+*.r[0-9]*
+*.b[0-9]*
+*.res
 
 # Latex Stuff
 *.aux
@@ -34,6 +55,7 @@
 
 # R stuff
 *.Rhistory
+*.Rdata
 
 # Compiled Object files
 *.slo
@@ -85,3 +107,6 @@ html/
 Icon?
 ehthumbs.db
 Thumbs.db
+
+.RData
+.RHistory

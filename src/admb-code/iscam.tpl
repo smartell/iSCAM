@@ -38,9 +38,9 @@
 //             Variables    -> lowercase                                         //
 //                                                                               //
 // CHANGED add option for using empirical weight-at-age data                     //
-// TODO:    add gtg options for length based fisheries                          //
+// TODO:   ? add gtg options for length based fisheries                          //
 // CHANGED add time varying natural mortality rate with splines                  //
-// TODO:    add cubic spline interpolation for time varying M                   //
+// TODO:   ? add cubic spline interpolation for time varying M                   //
 // CHANGED  Fix the type 6 selectivity implementation. not working.              //
 // TODO:  fix cubic spline selectivity for only years when data avail            //
 // CHANGED: fixed a bug in the simulation model log_ft_pars goes out             //
@@ -108,7 +108,7 @@
 //-- TODO: add catch_type to equilibrium calculations for reference points     --//
 //--                                                                           --//
 //-- Feb 18, 2013 - Need to redesign the simulation selectivities.             --//
-//--              - Should probably use a separate simulation control file.    --//               
+//--              - Should probably use a separate simulation control file.    --//
 //--                                                                           --//
 //-- April 16, - Created new IPHC branch for developing sex/area/group         --//
 //--           - INDEXS:                                                       --//
@@ -492,7 +492,7 @@ DATA_SECTION
 	// | - If total catch is asexual (sex=0), pool predicted catch from nsex groups.
 	// | - ft_count    -> Number of estimated fishing mortality rate parameters.
 	// | - d3_Ct -> An array of observed catch in group(ig) year (row) by gear (col)
-	// | - [] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
+	// | - [?] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int nCtNobs;
 	!! COUT(nCtNobs)
 	init_matrix dCatchData(1,nCtNobs,1,7);
@@ -580,9 +580,6 @@ DATA_SECTION
 			it_wt(k) = it_wt(k)/tmp_mu;
 		}
 	END_CALCS
-	
-	
-
 
 	// |---------------------------------------------------------------------------------|
 	// | AGE COMPOSITION DATA (ragged object)
@@ -597,12 +594,14 @@ DATA_SECTION
 	// | d3_A_obs     -> array of catch-age data only.
 	// |
 	init_int nAgears
-	init_ivector n_A_nobs(1,nAgears);	
+	init_ivector n_A_nobs(1,nAgears);
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
 	init_vector  inp_nscaler(1,nAgears);
+  // The 5 in the next command is to remove the first 5 columns
+  // from the age comp 'data' because they are not the actual ages,
+  // but the header data.
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
-	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 )
@@ -634,9 +633,6 @@ DATA_SECTION
 		}
 	END_CALCS
 
-	
-
-
 	// |---------------------------------------------------------------------------------|
 	// | EMPIRICAL WEIGHT_AT_AGE DATA
 	// |---------------------------------------------------------------------------------|
@@ -655,7 +651,7 @@ DATA_SECTION
 
 	init_int nWtNobs;
 	init_matrix inp_wt_avg(1,nWtNobs,sage-5,nage);
-	
+
 	matrix  dWt_bar(1,n_ags,sage,nage);
 	3darray d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_wt_dev(1,n_ags,syr,nyr+1,sage,nage);
@@ -679,7 +675,7 @@ DATA_SECTION
 				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
 			}
 		}
-		
+
 		// the overwrite d3_wt_avg & d3_wt_mat with existing empirical data
 		// SM Sept 6, 2013. Added option of using NA values (-99.0) for
 		// missing weight-at-age data, or truncated age-data.
@@ -690,7 +686,7 @@ DATA_SECTION
 			f   = inp_wt_avg(i,sage-3);
 			g   = inp_wt_avg(i,sage-2);
 			h   = inp_wt_avg(i,sage-1);
-			
+
 			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
@@ -1483,7 +1479,7 @@ PROCEDURE_SECTION
 		
 	
 	TODO list:
-	  [] - Calculate spawning biomass depletion for each group.
+	  [?] - Calculate spawning biomass depletion for each group.
 	*/
 FUNCTION void calcSdreportVariables()
   {
@@ -2095,7 +2091,7 @@ FUNCTION calcNumbersAtAge
   	[x] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[] - add plus group if n_A_nage < nage;  Aug 7, 2013
+	[?] - add plus group if n_A_nage < nage;  Aug 7, 2013
 
   	*/
   	
@@ -2436,7 +2432,7 @@ FUNCTION calcTotalCatch
   		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	    [] - add capability to accomodate priors for survey q's.
+  	    [?] - add capability to accomodate priors for survey q's.
   	    [ ] - verify q_prior=2 option for random walk in q.
   	    [ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
  
@@ -2567,9 +2563,9 @@ FUNCTION calcSurveyObservations
   			
   	
   	TODO list:
-	  [] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
-	  [] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup.
-	  [] - Add autocorrelation in recruitment residuals with parameter \f$ \gamma_r \f$.
+	  [?] - Change step 3 to be a weighted average of spawning biomass per recruit by area.
+	  [?] - Increase dimensionality of ro, sbo, so, beta, and steepness to ngroup.
+	  [?] - Add autocorrelation in recruitment residuals with parameter \f$ \gamma_r \f$.
 
   	*/
 FUNCTION void calcStockRecruitment()
@@ -2932,7 +2928,7 @@ FUNCTION calcObjectiveFunction
 	// |---------------------------------------------------------------------------------|
 	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
 	// |---------------------------------------------------------------------------------|
-	// | [] - TODO for isel_type==2 ensure mean 0 as well.
+	// | [?] - TODO for isel_type==2 ensure mean 0 as well.
 	// |
 	for(k=1;k<=ngear;k++)
 	{
@@ -3607,7 +3603,7 @@ FUNCTION void testMSYxls()
  		10) write simulated data to file.
 
   	TODO list:
-	[] - March 9, 2013.  Fix simulation model to generate consistent data when 
+	[?] - March 9, 2013.  Fix simulation model to generate consistent data when 
 		  doing retrospective analyses on simulated datasets.
 	[ ] - TODO: Stock-Recruitment model.
 	[ ] - TODO: switch statement for catch-type to get Fishing mortality rate.
@@ -4934,9 +4930,12 @@ GLOBALS_SECTION
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-	#include "lib/LogisticNormal.h"
+  #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-
+	#include "lib/msy.cpp"
+	#include "lib/baranov.cpp"
+	#include "lib/LogisticNormal.cpp"
+  #include "lib/LogisticStudentT.cpp"
 	//#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
