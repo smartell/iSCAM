@@ -9,14 +9,14 @@
 ## ------------------------------------------------------------------------- ##
 ## npar
 7
-## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-   1.0          0.0     10      2       0       0.0     10.0    #log_ro      ##
-   0.75         0.2     1.0     2       3       3.0     2.0     #steepness   ##
-   -1.203973    -3.0    2.0     4       1       -1.203  0.15    #log_m g&b   ##
-   1.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
-   1.0          0.0     10      1       0       0.0     10      #log_recinit ##
-   0.5          0.01    0.99    3       3       3.0     5.0     #rho         ##
-   0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
+## ival      lb   ub   phz prior p1     p2   #parameter                      ##
+   1.0       0.0  10   2   0     0.0    10.0 #log_ro                         ##
+   0.75      0.2  1.0  2   3     3.0    2.0  #steepness                      ##
+   -1.203973 -3.0 2.0  4   1     -1.203 0.15 #log_m g&b                      ##
+   1.0       0.0  10   1   0     0.0    10   #log_avgrec                     ##
+   1.0       0.0  10   1   0     0.0    10   #log_recinit                    ##
+   0.5       0.01 0.99 3   3     3.0    5.0  #rho                            ##
+   0.8       0.01 5.0  3   4     1.01   1.01 #vartheta                       ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -31,7 +31,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1       2     ## Gear Index
-   2       2     ## Likelihood type
+   4       4     ## Likelihood type
    0.0   0.0     ## Minimum proportion for aggregation & tail compression
    0.0   0.0     ## Small constant to add to comps & renormalize
    1       1     ## phase for log_age_tau2 estimation.
@@ -62,7 +62,7 @@
   0.5   0.5      # 3  -STD at 50% selectivity (logistic)
   7     7        # 4  -No. of age nodes for each gear (0=ignore)
  12    12        # 5  -No. of year nodes for 2d spline(0=ignore)
-  3     3        # 6  -Phase of estimation (-1 for fixed)
+  3     3        # 6  -Phase of estimation (-1 for fixed) If neg number, it reflects a mirroring of another gear's selectivity.
   2.0   2.0      # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   2.0   2.0      # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
  12.5  12.5      # 9  -Penalty wt for time-varying selectivity
@@ -79,6 +79,7 @@
 ##       0 - uninformative prior                                             ##
 ##       1 - normal prior density for log(q)                                 ##
 ##       2 - random walk in q                                                ##
+## Need one column for each survey.                                          ##
 ## ------------------------------------------------------------------------- ##
 1        # -number of surveys (nits)
 0        # -prior type (see legend above)
