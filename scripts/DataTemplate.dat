@@ -46,7 +46,7 @@
 0                       #mat vec
 ##
 ## ------------------------------------------------------------------------- ##
-## TIME SERIES DATA                                                          ##
+## TIME SERIES CATCH DATA                                                    ##
 ## ------------------------------------------------------------------------- ##
 ## Observed catch from all gears, areas, and sex                             ##
 ## sex: 1=female, 2=male, 0=asexual
