@@ -144,7 +144,7 @@ DATA_SECTION
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
-
+	// Hi chris
 	
 	// |---------------------------------------------------------------------------------|
 	// | READ IN PROJECTION FILE CONTROLS                                         
@@ -707,8 +707,7 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-					cout<<h<<endl;
-
+					//cout<<h<<endl;
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -803,19 +802,13 @@ DATA_SECTION
 	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
 	vector  msy(1,nfleet);			//Maximum sustainable yield
 	number bmsy;					//Spawning biomass at MSY
-// 	number Umsy;					//Exploitation rate at MSY
+ // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
-// 	//catch-age for simulation model (could be declared locally 3d_array)
-// 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
+ // 	//catch-age for simulation model (could be declared locally 3d_array)
+ // 	3darray d3C(1,ngear,syr,nyr,sage,nage);		
 	
 	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONTROL FILE
@@ -1043,10 +1036,6 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
-
-
-
-
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -3417,6 +3406,13 @@ FUNCTION void calcReferencePoints()
 		  be working properly and I've commented out the lines of code where I numerically
 		  checked the derivatives of the catch equation.  This is a major acomplishment.
 
+		- Mar, 2013.
+		  A major new development here with the use of msy.hpp and a template class for 
+		  calculating MSY-based reference points.  The user can now calculate reference
+		  points for each gear based on fixed allocation, and optimum allocations based
+		  on relative differences in selectivities among the gears landing fish. Uses the
+		  name space "rfp".
+
    	PSEUDOCODE: 
    		(1) : Construct array of selectivities (potentially sex based log_sel)
    		(2) : Construct arrays of d3_wt_avg and d3_wt_mat for reference years.
@@ -3502,328 +3498,24 @@ FUNCTION void calcReferencePoints()
 		//dvar_vector dfmsy = pMSY->getFmsy(dftry);
 		//delete pMSY;
 		
-		cout<<"Initial Fe "<<dftry<<endl;
+
+		// cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
+
 		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
 		bo  = c_MSY.getBo();
 		dvariable dbmsy = c_MSY.getBmsy();
+		dvar_vector dmsy = c_MSY.getMsy();
 		bmsy = value(dbmsy);
-		//dvector d_Ye = c_MSY.getdYe();
-		//cout<<dfmsy<<endl;
+		msy  = value(dmsy);
+
 		c_MSY.print();
 
-		// Msy cMSY(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-		// //cout<<"The death star is approaching"<<endl;
-		// //cout<<fmsy<<endl;
-		// cMSY.get_fmsy(fmsy);
-		// //cout<<"I've got radar lock"<<endl;
-		// bo   = cMSY.getBo();
-		// bmsy = cMSY.getBmsy();
-		// msy  = cMSY.getMsy();
-		// cMSY.print();
 		
-
-		// if(nfleet > 1)
-		// {
-		// 	fall  = ftry;
-		// 	cMSY.get_fmsy(fall,dAllocation);
-		// 	bmsy = cMSY.getBmsy();
-		// 	msy = cMSY.getMsy();
-		// 	cMSY.print();
-		// }
-		
-
-		
-
-		//cout<<"This is red leader, I'm going in!"<<endl;
-		//i = 0;
-		//dvector fi(1,nfleet);
-		//fi = 0.;
-		//while( i < 1500 )
-		//{	
-		//	
-		//	cMSY.calcEquilibrium(fi);
-		//	// cout<<cMSY.getRe()<<endl;
-		//	 cout<<"fi ="<<fi<<"\tYe ="<<cMSY.getYe()<<"\tdYe ="
-		//	 <<cMSY.getdYe()<<"\tRe ="<<cMSY.getRe()<<endl;
-		//	fi += 0.01;
-		//	if(cMSY.getRe() < 0 ) break;
-		//	
-		//	i ++;
-		//}
-		//cout<<"Whaa Hoo, your all clear kid!"<<endl;
-
-		// Msy cMSY2(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-
-		// Msy cOldMsy(d_ro,d_h,value(m(1)),d_rho,dWt_bar(1),fa_bar(1),d_V(1));
-		// Msy cOldMsy2(d_ro,d_h,value(m(1)),d_rho,dWt_bar(1),fa_bar(1),d_V(1));
-		// bo = cMSY.getBo();
-		// cMSY.get_fmsy(fmsy);
-		// // cout<<setprecision(8)<<endl;
-		// cMSY.print();
-		// cout<<"Stay on Target"<<endl;
-		// fmsy = 0.09886608/nfleet;
-		// cMSY.calcEquilibrium(fmsy);
-		// dvector y1 = cMSY.getYe();
-		// // double y1 = cMSY.getRe();
-		// // dmatrix y1 = cMSY.getLz();
-		// // COUT(y1);
-		
-		// double dh = 1.e-8;
-		// fmsy +=dh;
-		// cMSY2.calcEquilibrium(fmsy);
-		// dvector dy2 = cMSY2.getYe();
-		// // double dy2 = cMSY2.getRe();
-		// // dmatrix dy2 = cMSY2.getLz();
-		
-		// // COUT(dy2);
-		// COUT(fmsy);
-		// COUT((dy2-y1)/dh);
-		// cMSY.print();
-		// // cout<<(dy2- y1)/dh<<endl;
-
-		
-		
-
-		// exit(1);
 	}
 
-// 	/* 
-// 	(3) Come up with a reasonable estimate of Fmsy 
-// 	In practice seems to  work best if start with 
-// 	extreme low values.
-// 	*/
-// 	dvector ftry(1,nfleet);
-// 	ftry = 0.6*value(m_bar);    // initial guess for Fmsy
-// 	fmsy = ftry;
-	
-	
-// 	/* (4) Instantiate an Msy class object and get_fmsy */
-// 	double  d_ro  = value(ro);
-// 	double  d_h   = value(theta(2));
-// 	double  d_m   = value(m_bar);
-// 	double  d_rho = d_iscamCntrl(13);
-// 	dvector d_wa  = (avg_wt);
-// 	dvector d_fa  = (avg_fec);
-// 	Msy cMSY(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
-	
-// 	bo   = cMSY.getBo();
-// 	cMSY.get_fmsy(fmsy);
-// 	if(cMSY.getFail())
-// 	cout<<"FAILED TO CONVERGE"<<endl;
-	
-	
-// 	msy  = cMSY.getYe();
-// 	bmsy = cMSY.getBe();
-// 	Umsy = sum(cMSY.getYe())/cMSY.getBi();
-	
-	
-	
-	
-	
-	
-// 	//fall = ftry;
-// 	//
-// 	////fmsy = fall;
-// 	//cMSY.get_fmsy(fmsy);
-// 	//bmsy = cMSY.getBmsy();
-// 	//msy  = cMSY.getMsy();
-// 	//bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
-// 	//
-// 	////if(nf==1) ftry = fmsy;
-// 	//
-// 	//cout<<"------------------------"<<endl;
-// 	//cout<<"Ftry      \t"<<ftry<<endl;
-// 	//cout<<"Fmsy      \t"<<fmsy<<endl;
-// 	//cout<<"MSY       \t"<<msy<<endl;
-// 	//cout<<"dYe       \t"<<cMSY.getdYe()<<endl;
-// 	//cout<<"Bo        \t"<<bo<<endl;
-// 	//cout<<"Bmsy      \t"<<bmsy<<endl;
-// 	//cout<<"Bi        \t"<<cMSY.getBi()<<endl;
-// 	//cout<<"SPR at MSY\t"<<cMSY.getSprMsy()<<endl;
-// 	//cout<<"phiB      \t"<<cMSY.getPhie()<<endl;
-// 	//cout<<"------------------------"<<endl;
-// 	//
-// 	///* (4) Now do it with dAllocation */
-// 	////cout<<"\nAllocation"<<dAllocation(nFleetIndex)<<endl;
-// 	//fall = ftry;
-// 	//cMSY.get_fmsy(fall,d_ak);
-// 	////bmsy = cMSY.getBmsy();
-// 	////msy  = cMSY.getMsy();
-// 	////bo   = cMSY.getBo();  //Spawning biomass just prior to spawning.
-// 	//
-// 	///* 
-// 	//I've defined Umsy as the sum of catches divided 
-// 	//by spawning biomass at the start of the year.
-// 	//*/
-// 	//Umsy = sum(cMSY.getYe())/cMSY.getBi();
-// 	//
-// 	//
-// 	//cout<<"------------------------"<<endl;
-// 	//cout<<"Fall      \t"<<fall<<endl;
-// 	//cout<<"Yield     \t"<<cMSY.getYe()<<endl;
-// 	//cout<<"Be        \t"<<cMSY.getBe()<<endl;
-// 	//cout<<"Spr       \t"<<cMSY.getSpr()<<endl;
-// 	//cout<<"Umsy      \t"<<Umsy<<endl;
-// 	//cout<<"------------------------"<<endl;
-	
-// 	//The following code should be deprecated, along with the two equilibrium functions
-// 	//as this reference point material is now hanlded by the Msy class.
-	
-// 	//dmatrix va(1,ngear,sage,nage);
-// 	//dvector va_bar(sage,nage);
-// 	//va_bar.initialize();
-// 	//
-// 	//
-// 	///*CHANGED Allow for user to specify dAllocation among gear types.*/
-// 	///*FIXME:  this dAllocation should be on the catch on the vulnerabilities*/
-// 	//for(j=1;j<=ngear;j++)
-// 	//{
-// 	//	va_bar+=dAllocation(j)*value(exp(log_sel(j)(nyr)));
-// 	//	va(j) = value(exp(log_sel(j)(nyr)));
-// 	//}
-// 	//dmatrix V(1,ngear-2,sage,nage);
-// 	//dvector fk(1,ngear-2);
-// 	//fk = 0.6*value(m_bar);
-// 	//for(j=1;j<=ngear-2;j++)
-// 	//{
-// 	//	V(j) = value(exp(log_sel(j)(nyr)));
-// 	//}
-// 	//
-// 	//double h = value(theta(2));
-// 	//cout<<"Declaring class"<<endl;
-// 	//Msy cMSY(value(ro),h,value(m_bar),avg_wt,avg_fec,V);
-// 	//cout<<"About to call get_fmsy"<<endl;
-// 	//fk = cMSY.get_fmsy(fk);
-	
-// 	/*CHANGED: SJDM June 8, 2012 fixed average weight-at-age for reference points
-// 	           and average fecundity-at-age.
-// 	*/
-	
-// 	//#if defined(USE_NEW_EQUILIBRIUM)
-// 	//	/* Newton-Raphson method to determine MSY-based reference points. */
-// 	//	for(i=1;i<=15;i++)
-// 	//	{
-// 	//		equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-// 	//				avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-// 	//	
-// 	//		fe = fe - dye_df/d2ye_df2;
-// 	//		if(square(dye_df)<1e-12)break;
-// 	//	}
-// 	//	fmsy=fe;
-// 	//	equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-// 	//			avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-// 	//#endif
-// 	//
-// 	//#if !defined(USE_NEW_EQUILIBRIUM)
-// 	//	for(i=1;i<=20;i++)
-// 	//	{
-// 	//		//equilibrium(fe,value(ro),value(kappa),value(m),age,wa,fa,value(exp(log_sel(1)(nyr))),re,ye,be,phiq,dphiq_df,dre_df);
-// 	//		//equilibrium(fe,value(ro),value(kappa),value(m_bar),age,d3_wt_avg(nyr),
-// 	//		//			fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-// 	//		equilibrium(fe,value(ro),value(kappa),value(m_bar),age,avg_wt,
-// 	//					avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-// 	//	
-// 	//		dye_df = re*phiq+fe*phiq*dre_df+fe*re*dphiq_df;
-// 	//		ddye_df = phiq*dre_df + re*dphiq_df;
-// 	//		fe = fe - dye_df/ddye_df;
-// 	//		if(verbose) cout<<"fe\t"<<fe<<"\t"<<dye_df<<"\t"<<ye<<endl;
-// 	//		if(sfabs(dye_df)<1.e-5)break;
-// 	//	}
-// 	//	fmsy=fe;
-// 	//	equilibrium(fmsy,value(ro),value(kappa),value(m_bar),age,avg_wt,
-// 	//				avg_fec,va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-// 	//#endif
-	
-// 	//msy=ye;
-// 	//bmsy=be;
-// 	//Umsy=msy/Vmsy;
-	
-// 	/*TODO print this to the REPORT file for plotting.*/
-// 	/*SM Loop over discrete value of fe and ensure above code is 
-// 	finding the correct value of msy.*/
-	
-// 	//if(!mceval_phase())
-// 	//{
-// 	//	ofstream report_file("iscam.eql");
-// 	//
-// 	//	if(report_file.is_open())
-// 	//	{
-// 	//		report_file<<"index\t fe \t ye \t be \t ve \t re \t spr\n";
-// 	//	
-// 	//		fe = 0; i=0;
-// 	//		while(i < 1500)
-// 	//		{
-// 	//			#if !defined(USE_NEW_EQUILIBRIUM)
-// 	//			equilibrium(fe,value(ro),value(kappa),value(m_bar),age,d3_wt_avg(nyr),
-// 	//						fec(nyr),va_bar,re,ye,be,phiq,dphiq_df,dre_df);
-// 	//			#endif
-// 	//		
-// 	//			#if defined(USE_NEW_EQUILIBRIUM)
-// 	//			equilibrium(fe,dAllocation,value(ro),value(kappa),value(m_bar),age,avg_wt,
-// 	//					avg_fec,va,re,ye,be,ve,dye_df,d2ye_df2);
-// 	//			#endif
-// 	//			if(re<=0)break;
-// 	//		
-// 	//			double spr = value(-ro/((kappa-1)*re-ro*kappa));
-// 	//			report_file<<i++<<"\t"<<fe<<"\t"<<ye<<"\t"<<be<<"\t"<<ve<<"\t";
-// 	//			report_file<<re<<"\t"<<spr<<endl;
-// 	//		
-// 	//			fe += 0.01;
-// 	//		}
-// 	//	}
-// 	//}//exit(1);
-	
-	
-// 	//cout<<"Ro     "<<d_ro<<endl;
-// 	//cout<<"h      "<<d_h<<endl;
-// 	//cout<<"m      "<<d_m<<endl;
-// 	//cout<<"wa     "<<d_wa<<endl;
-// 	//cout<<"fa     "<<d_fa<<endl;
-// 	//cout<<"V      "<<d_V<<endl;
-// 	/*
-// 		TODO Need to rethink this, should call equibrium with calc_equilirbium(fe,dAllocation)
-// 		Then loop over values of F and return fe=lambda*F to satisfy dAllocation scheme.
-// 	*/
-// 	if(!mceval_phase())
-// 	{
-// 		Msy cRFP(d_ro,d_h,d_m,d_rho,d_wa,d_fa,d_V);
-// 		double fmult;
-// 		dvector fe(1,nfleet);
-// 		dvector fadj(1,nfleet);
-		
-// 		ofstream report_file("iscam.eql");
-// 		if(report_file.is_open())
-// 		{
-// 			report_file<<"      index";
-// 			for(k=1;k<=nfleet;k++) report_file<<"        fe"<<k;
-// 			for(k=1;k<=nfleet;k++) report_file<<"        ye"<<k;
-// 			for(k=1;k<=nfleet;k++) report_file<<"       dye"<<k;
-// 			report_file<<"         be";
-// 			report_file<<"         re";
-// 			report_file<<"        spr";
-// 			report_file<<endl;
-			
-// 			fmult = 0; i=1;
-// 			while(i<300)
-// 			{
-// 				fe = fmult*fmsy;
-// 				cRFP.calc_equilibrium(fe);
-// 				report_file<<setw(11)<<i++;
-// 				report_file<<setw(10)<<fe;
-// 				report_file<<setw(10)<<cRFP.getYe();
-// 				report_file<<setw(10)<<cRFP.getdYe();
-// 				report_file<<setw(11)<<cRFP.getBe();
-// 				report_file<<setw(11)<<cRFP.getRe();
-// 				report_file<<setw(11)<<cRFP.getSpr();
-// 				report_file<<endl;
 
-// 				fmult += 0.01;
-// 			}
-// 		}
-// 	}
-// 	//exit(1);
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
   }
 
@@ -3844,8 +3536,9 @@ FUNCTION void testMSYxls()
 	dmatrix fa_bar(1,1,1,20);
 	fa_bar(1).fill("{0,0,0,0,0.252580458,0.341247502,0.427643719,0.508367311,0.581557922,0.646462315,0.703062177,0.751788795,0.793319224,0.828438536,0.857951642,0.882630331,0.903184345,0.920248191,0.934377843,0.946053327}");
 	d3_array dvar_V(1,1,1,2,1,20);
-	dvar_V(1)(1).fill("{0.000552779,0.006692851,0.07585818,0.5,0.92414182,0.993307149,0.999447221,0.999954602,0.999996273,0.999999694,0.999999975,0.999999998,1,1,1,1,1,1,1,1}");
-	dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
+	dvar_V(1)(1).fill("{0.001271016,0.034445196,0.5,0.965554804,0.998728984,0.999954602,0.99999838,0.999999942,0.999999998,1,1,1,1,1,1,1,1,1,1,1}");
+	dvar_V(1)(2).fill("{0.000552779,0.006692851,0.07585818,0.5,0.92414182,0.993307149,0.999447221,0.999954602,0.999996273,0.999999694,0.999999975,0.999999998,1,1,1,1,1,1,1,1}");
+	//dvar_V(1)(2).fill("{0.000189406,0.000789866,0.003287661,0.013576917,0.054313266,0.19332137,0.5,0.80667863,0.945686734,0.986423083,0.996712339,0.999210134,0.999810594,0.999954602,0.99998912,0.999997393,0.999999375,0.99999985,0.999999964,0.999999991}");
 
 	dvector dftry(1,2);
 	dftry = 0.1 ;
@@ -3857,23 +3550,19 @@ FUNCTION void testMSYxls()
 
 
 	dvector ak(1,2);
-	ak = 0.5;
+	ak = 0.3;
 	ak(2) = 1-ak(1);
 	rfp::msy<double,dvector,dmatrix,d3_array>
 	c_MSYk(ro,steepness,d_rho,m_bar,dWt_bar,fa_bar,dvar_V);
 	dvector dkmsy = c_MSYk.getFmsy(dftry,ak);
 	cout<<"Fmsy_k ="<<dkmsy<<endl;
 
+	c_MSYk.print();
+
+	dvector akmsy = c_MSYk.getFmsy(dftry);
+	c_MSYk.print();
+
 	exit(1);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -4478,47 +4167,50 @@ REPORT_SECTION
 	REPORT(it_hat);
 	REPORT(epsilon);
 
-	REPORT(n_A_sage);
-	REPORT(n_A_nage);
-	REPORT(d3_A);
-	REPORT(A_hat);
-	REPORT(A_nu);
-
-
-	/// The following is a total hack job to get the effective sample size
-	/// for the multinomial distributions.
-
-	// TODO Fix the retro spective bug here near line 4507 (if iyr<=nyr)
-	report<<"Neff"<<endl;
-	dvector nscaler(1,nAgears);
-	nscaler.initialize();
-	for(k = 1; k<=nAgears; k++)
+	if(n_A_nobs(nAgears) > 0)
 	{
-		if( int(nCompLikelihood(k)) )
+		REPORT(n_A_sage);
+		REPORT(n_A_nage);
+		REPORT(d3_A);
+		REPORT(A_hat);
+		REPORT(A_nu);
+
+
+		/// The following is a total hack job to get the effective sample size
+		/// for the multinomial distributions.
+
+		// TODO Fix the retrospective bug here near line 4507 (if iyr<=nyr)
+		report<<"Neff"<<endl;
+		dvector nscaler(1,nAgears);
+		nscaler.initialize();
+		for(k = 1; k<=nAgears; k++)
 		{
-			int naa=0;
-			int iyr;
-			//retrospective counter
-			for(i=1;i<=n_A_nobs(k);i++)
+			if( int(nCompLikelihood(k)) )
 			{
-				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
-				if(iyr<=nyr) naa++; else continue;
+				int naa=0;
+				int iyr;
+				//retrospective counter
+				for(i=1;i<=n_A_nobs(k);i++)
+				{
+					iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+					if(iyr<=nyr) naa++; else continue;
+				}
+				
+				dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+				dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+				
+				for(j = 1; j<= naa; j++)
+				{
+					double effectiveN = neff(O(j)/sum(O(j)),P(j));
+					report<<sum(O(j))<<"\t"<<effectiveN<<endl;
+					nscaler(k) += effectiveN;
+				}	
+				
+				nscaler(k) /= naa;
 			}
-			
-			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
-			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
-			
-			for(j = 1; j<= naa; j++)
-			{
-				double effectiveN = neff(O(j)/sum(O(j)),P(j));
-				report<<sum(O(j))<<"\t"<<effectiveN<<endl;
-				nscaler(k) += effectiveN;
-			}	
-			
-			nscaler(k) /= naa;
 		}
+		REPORT(nscaler);
 	}
-	REPORT(nscaler);
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";
@@ -4609,7 +4301,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
-		calcReferencePoints();
+		//calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);

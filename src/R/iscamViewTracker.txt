@@ -6,3 +6,7 @@ FALSE,Hake,      "Pacific Hake",../../examples/PacificHake/DATA/2011/PHake2011
 FALSE,Herring,   "4VWX Herring",../../examples/Herring4VWX/DATA/Herring4VWX
 FALSE,Halibut14, "Pacific Halibut14",../../examples/Halibut14/DATA/Halibut14
 TRUE,Hake14, "Pacific Hake14",../../examples/PacificHake14/DATA/PacificHake14
+FALSE,Hake14DMLV, "P Hake14DMLV",../../examples/PacificHake14/DATA/DMVL/PacificHake14
+FALSE,Hake14LNM1, "P Hake14LNM1",../../examples/PacificHake14/DATA/LNM1/PacificHake14
+FALSE,Hake14LNM2, "P Hake14LNM2",../../examples/PacificHake14/DATA/LNM2/PacificHake14
+FALSE,Hake14MULT, "P Hake14MULT",../../examples/PacificHake14/DATA/MULT/PacificHake14
