@@ -1,0 +1,4 @@
+# iSCAM View Tracker File 
+"Select","Label","Description","Control File"
+#The following line is for the Demo example
+FALSE,Demo,         "Flack Lake",../DATA/ControlTemplate

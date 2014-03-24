@@ -129,6 +129,8 @@
 1
 ## ivector(na_gears) of oldest age-class + group
 11
+## Effective sample size for multinomial
+1
 ## year gear age colums (numbers or proportions)
 ## year gear area group sex | data columns (numbers or proportions)
    1970 1    1    1     0     506  5580   822  2533  1211  1197   600   303    90    14     2

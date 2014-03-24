@@ -35,6 +35,9 @@
 	3.00			# -power parameter in length-weight allometry
 	3.45			# -age at 50% maturity (approx with log(3.0)/k)
 	0.35			# -std at 50% maturity (CV ~ 0.1)
+   0           # -(if n_MAT==1) use the following vector for maturity
+   0           #mat vec
+
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
@@ -120,6 +123,8 @@
 2 	2
 ## ivector(na_gears) of oldest age-class + group
 15 	15
+## Effective sample size
+1     1
 ## year gear area group sex | data columns (numbers or proportions)
    1977 1    1    1     0     0.091087 0.039290 0.208628 0.028500 0.053160 0.211179 0.078270 0.079949 0.063640 0.058483 0.043761 0.029639 0.007592 0.006823
    1978 1    1    1     0     0.022968 0.101932 0.068633 0.199094 0.033354 0.071961 0.208406 0.084622 0.072156 0.073040 0.024682 0.021006 0.013116 0.005030

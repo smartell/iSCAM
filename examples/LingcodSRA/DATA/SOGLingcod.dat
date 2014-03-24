@@ -37,6 +37,8 @@
 3.25				# -power parameter in length-weight allometry
 3.75			# -age at 50% maturity (approx with log(3.0)/k)
 0.375			# -std at 50% maturity (CV ~ 0.1)
+0                       # -(if n_MAT==1) use the following vector for maturity
+0                       #mat vec
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
@@ -213,6 +215,7 @@
 0			# Number of rows in the matrix   ivector(na_nobs)
 1			# Youngest age column			 ivector(a_sage)
 15			# Oldest age column +group       ivector(a_nage)
+1        # Effective sample size
 ## year gear age colums (numbers or proportions)
 ##
 ## ------------------------------------------------------------------------- ##
