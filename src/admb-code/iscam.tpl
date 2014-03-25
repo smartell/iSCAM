@@ -1827,7 +1827,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
 						//log_sel(kgear)(ig)(i) = log( plogis(len,p1,p2) );
-					}	cout<<"Death star is approaching"<<endl;
+					}	
 					break;
 					
 				case 12: // cubic spline length-based coefficients.

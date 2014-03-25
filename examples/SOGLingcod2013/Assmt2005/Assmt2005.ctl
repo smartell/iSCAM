@@ -15,13 +15,13 @@
 ## npar
 7
 ## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-1.0          0.0     10      2       0       0.0     10.0     #log_ro      ##
-0.75         0.2     1.0     2       3       3.00    2.00    #steepness   ##
--1.203973    -3.0    2.0     -4       1       -1.203  0.15    #log_m g&b   ##
-1.0          0.0     10      1       0       0.0     10      #log_avgrec  ##
-1.0          0.0     10      1       0       0.0     10      #log_recinit ##
-0.5          0.01    0.99    -3       3       3.00    5.00    #rho         ##
-0.8          0.01    5.0     3       4       1.01    1.01    #vartheta    ##
+7.0          0.0     12      3       0       0.0     10.0     #log_ro      ##
+0.75         0.2     1.0     3       3       3.00    2.00    #steepness   ##
+-1.203973    -3.0    2.0    -2       1       -1.203  0.15    #log_m g&b   ##
+7.0          0.0     12      1       0       0.0     10      #log_avgrec  ##
+7.0          0.0     12     -1       0       0.0     10      #log_recinit ##
+0.15          0.01    0.99    -3       3       3.00    5.00    #rho         ##
+1.2          0.01    5.0     -3       4       1.01    1.01    #vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -74,12 +74,12 @@
 12	12	12	12	12      # 9  -Penalty wt for time-varying selectivity
 1	1	1	1	1	# 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
-## Start year of each time block: 1 row for each gear
+## Start year of each time block: 1 row for each gear, first block must start at syr
 1927
-1962
-1991
-1967
-1982
+1927
+1927
+1927
+1927
 ##
 ##
 ##
@@ -99,7 +99,7 @@
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
-1           # 1  -verbose ADMB output (0=off, 1=on)
+0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.
