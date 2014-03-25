@@ -98,10 +98,10 @@
 0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.200       # 3  -std in observed catches in first phase.
-0.05      # 4  -std in observed catches in last phase.
+0.1      # 4  -std in observed catches in last phase.
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic DEPRECATED
-0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.40        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10        # 8  -std in mean fishing mortality in first phase
 2.00        # 9  -std in mean fishing mortality in last phase
 -1          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
