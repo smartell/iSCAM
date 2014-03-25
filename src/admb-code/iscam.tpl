@@ -144,7 +144,7 @@ DATA_SECTION
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
-	// Hi chris
+	
 	
 	// |---------------------------------------------------------------------------------|
 	// | READ IN PROJECTION FILE CONTROLS                                         
@@ -2116,11 +2116,10 @@ FUNCTION calcAgeComposition
 	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
 	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
 	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
-	  		
 	  		// | trap for retrospecitve analysis.
 	  		if(i > nyr) continue;
 
-	  		if( h )
+	  		if( h )  // age comps are sexed (h > 0)
 	  		{
 				ig = pntr_ags(f,g,h);
 				va = mfexp(log_sel(k)(ig)(i));
@@ -2129,7 +2128,7 @@ FUNCTION calcAgeComposition
 				na = N(ig)(i);
 				if( ft(ig)(k)(i)==0 )
 				{
-					ca = elem_prod(na,0.5*sa);
+					ca = elem_prod(elem_prod(na,va),0.5*sa);
 				}
 				else
 				{
@@ -2144,7 +2143,7 @@ FUNCTION calcAgeComposition
 					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
 				}
 	  		}
-	  		else if( !h )
+	  		else if( !h )  // age-comps are unsexed
 	  		{
 	  			for(h=1;h<=nsex;h++)
 	  			{
