@@ -90,6 +90,8 @@ dist/
 *.sql
 *.sqlite
 
+<<<<<<< Temporary merge branch 1
+=======
 #Doxygen directory#
 html/
 
@@ -97,6 +99,7 @@ html/
 
 
 
+>>>>>>> Temporary merge branch 2
 # OS generated files #
 ######################
 .DS_Store

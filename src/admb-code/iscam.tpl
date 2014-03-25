@@ -144,7 +144,7 @@ DATA_SECTION
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
-	
+	// Hi chris
 	
 	// |---------------------------------------------------------------------------------|
 	// | READ IN PROJECTION FILE CONTROLS                                         
@@ -709,6 +709,7 @@ DATA_SECTION
 			{
 					//cout<<h<<endl;
 				
+>>>>>>> Temporary merge branch 2
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
