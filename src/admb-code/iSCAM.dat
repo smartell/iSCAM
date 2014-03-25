@@ -2,10 +2,14 @@
 #../../Examples/DEMO/DATA/ControlTemplate.ctl
 #../../Examples/DEMO/DATA/ProjectionTemplate.pfc
 
-../../examples/SOGLingcod2013/Assmt2005/assmt2005.dat
-../../examples/SOGLingcod2013/Assmt2005/assmt2005.ctl
-../../examples/SOGLingcod2013/Assmt2005/assmt2005.pfc
+#../../examples/SOGLingcod2013/Assmt2005/assmt2005.dat
+#../../examples/SOGLingcod2013/Assmt2005/assmt2005.ctl
+#../../examples/SOGLingcod2013/Assmt2005/assmt2005.pfc
 
 #../../examples/ArrowtoothFlounder/arf.dat
 #../../examples/ArrowtoothFlounder/arf.ctl
 #../../examples/ArrowtoothFlounder/arf.pfc
+
+../../examples/PacificCod/5ABCD/PcodLength.dat
+../../examples/PacificCod/5ABCD/PcodLength.ctl
+../../examples/PacificCod/5ABCD/PcodLength.pfc
