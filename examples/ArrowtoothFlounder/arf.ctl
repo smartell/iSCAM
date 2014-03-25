@@ -81,10 +81,10 @@
 ##       2 - random walk in q                                                ##
 ## Need one column for each survey.                                          ##
 ## ------------------------------------------------------------------------- ##
-2          # -number of surveys (nits)
-0 0        # -prior type (see legend above)
-0 0        # -prior log(mean)
-0 0        # -prior sd
+1        # -number of surveys (nits)
+0        # -prior type (see legend above)
+0        # -prior log(mean)
+0        # -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
