@@ -286,8 +286,6 @@ DATA_SECTION
 	init_int ngear;				
 	vector age(sage,nage);			
 
-
-
 	// |---------------------------------------------------------------------------------|
 	// | LINKS TO MANAGE ARRAY INDEXING
 	// |---------------------------------------------------------------------------------|
@@ -4931,11 +4929,11 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-	//#include "lib/msy.cpp"
-	//#include "lib/baranov.cpp"
-	//#include "lib/LogisticNormal.cpp"
-	//#include "lib/LogisticStudentT.cpp"
-	//#include "OpMod.h"
+	// #include "lib/msy.cpp"
+	// #include "lib/baranov.cpp"
+	// #include "lib/LogisticNormal.cpp"
+	// #include "lib/LogisticStudentT.cpp"
+	#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
 	{

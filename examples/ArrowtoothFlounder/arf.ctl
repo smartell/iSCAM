@@ -82,9 +82,15 @@
 ## Need one column for each survey.                                          ##
 ## ------------------------------------------------------------------------- ##
 1        # -number of surveys (nits)
+<<<<<<< HEAD
 0        # -prior type (see legend above)
 0        # -prior log(mean)
 0        # -prior sd
+=======
+1        # -prior type (see legend above)
+0.0        # -prior log(mean)
+0.5        # -prior sd
+>>>>>>> rforrest/IPHC-developer
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
