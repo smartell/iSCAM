@@ -19,7 +19,7 @@
 1956     # -first year of data         (syr)
 2012     # -last year of data          (nyr)
 1        # -age of youngest age class  (sage)
-11        # -age of plus group          (nage)
+11       # -age of plus group          (nage)
 4        # -number of gears            (ngear)
 ##
 ## ------------------------------------------------------------------------- ##
