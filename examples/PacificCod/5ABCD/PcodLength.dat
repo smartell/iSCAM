@@ -17,7 +17,7 @@
 1        # -number of groups or stocks (ngroup)
 1        # -number of sexes            (nsex)
 1956     # -first year of data         (syr)
-2012     # -last year of data          (nyr)
+2013     # -last year of data          (nyr)
 1        # -age of youngest age class  (sage)
 12        # -age of plus group          (nage)
 7        # -number of gears            (ngear)
@@ -56,7 +56,7 @@
 ##               3 = catch in spawn (roe)                                    ##
 ## 
 ## n_ct_obs
-114
+116
 ## Year gear	area	group	sex	type	value
 1956	1	1	1	0	1	2018.0	
 1957	1	1	1	0	1	3258.0	
@@ -114,7 +114,8 @@
 2009	1	1	1	0	1	551.0	
 2010	1	1	1	0	1	1004.0	
 2011	1	1	1	0	1	869.0	
-2012	1	1	1	0	1	701.0	 
+2012	1	1	1	0	1	701.0
+2013	1	1	1	0	1	618.8
 1956	5	2	1	0	1	1711.0	
 1957	5	2	1	0	1	2625.0	
 1958	5	2	1	0	1	1122.0	
@@ -171,7 +172,8 @@
 2009	5	2	1	0	1	154.0	
 2010	5	2	1	0	1	492.0	
 2011	5	2	1	0	1	365.0	
-2012	5	2	1	0	1	178.0	
+2012	5	2	1	0	1	178.0
+2013	5	2	1	0	1	253.0
 ##
 ## ------------------------------------------------------------------------- ##
 ## ABUNDANCE INDICES -A RAGGED ARRAY: (1,nit,1,nit_nobs,1,5)                 ##

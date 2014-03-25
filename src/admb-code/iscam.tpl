@@ -144,7 +144,7 @@ DATA_SECTION
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
 	!! cout<<BaseFileName<<endl;
-	
+	// Hi chris
 	
 	// |---------------------------------------------------------------------------------|
 	// | READ IN PROJECTION FILE CONTROLS                                         
@@ -706,7 +706,6 @@ DATA_SECTION
 			else if( !h ) 
 			{
 					//cout<<h<<endl;
-
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -4929,7 +4928,7 @@ GLOBALS_SECTION
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-    #include "lib/LogisticNormal.h"
+  #include "lib/LogisticNormal.h"
 	#include "Selex.h"
 	#include "lib/msy.cpp"
 	#include "lib/baranov.cpp"

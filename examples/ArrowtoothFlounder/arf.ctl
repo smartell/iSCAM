@@ -12,7 +12,7 @@
 ## ival      lb   ub   phz prior p1     p2   #parameter                      ##
    1.0       0.0  10   2   0     0.0    10.0 #log_ro                         ##
    0.75      0.2  1.0  2   3     3.0    2.0  #steepness                      ##
-  -1.203973 -3.0 2.0  4   1     -1.203 0.15 #log_m g&b                      ##
+  -1.204    -3.0  2.0  4   1    -1.204  0.15 #log_m g&b                      ##
    1.0       0.0  10   1   0     0.0    10   #log_avgrec                     ##
    1.0       0.0  10   1   0     0.0    10   #log_recinit                    ##
    0.5       0.01 0.99 3   3     3.0    5.0  #rho                            ##
@@ -57,19 +57,19 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  1     1        # 1  -selectivity type ivector(isel_type) for gear
-  3.5   3.5      # 2  -Age/length at 50% selectivity (logistic)
-  0.5   0.5      # 3  -STD at 50% selectivity (logistic)
-  7     7        # 4  -No. of age nodes for each gear (0=ignore)
- 12    12        # 5  -No. of year nodes for 2d spline(0=ignore)
-  3     3        # 6  -Phase of estimation (-1 for fixed) If neg number, it reflects a mirroring of another gear's selectivity.
-  2.0   2.0      # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-  2.0   2.0      # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
- 12.5  12.5      # 9  -Penalty wt for time-varying selectivity
-  1     1        #10  -n_sel_blocks (number of selex blocks)
+  1     1     1      # 1  -selectivity type ivector(isel_type) for gear
+  3.5   3.5   3.5    # 2  -Age/length at 50% selectivity (logistic)
+  0.5   0.5   0.5    # 3  -STD at 50% selectivity (logistic)
+  7     7     7      # 4  -No. of age nodes for each gear (0=ignore)
+ 12    12    12      # 5  -No. of year nodes for 2d spline(0=ignore)
+  3     3     3      # 6  -Phase of estimation (-1 for fixed) If neg number, it reflects a mirroring of another gear's selectivity.
+  2.0   2.0   2.0    # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+  2.0   2.0   2.0    # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+ 12.5  12.5  12.5    # 9  -Penalty wt for time-varying selectivity
+  1     1     1      #10  -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 column for each gear
-1963 1963
+1963 1963 1963
 ##
 ##
 ##
@@ -82,9 +82,9 @@
 ## Need one column for each survey.                                          ##
 ## ------------------------------------------------------------------------- ##
 1        # -number of surveys (nits)
-1        # -prior type (see legend above)
-0.0        # -prior log(mean)
-0.5        # -prior sd
+0        # -prior type (see legend above)
+0        # -prior log(mean)
+0        # -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
