@@ -2177,7 +2177,6 @@ FUNCTION calcAgeComposition
 				{
 					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
 				}
-		  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
 	  		}
 	  		else
 	  		{
@@ -2188,13 +2187,15 @@ FUNCTION calcAgeComposition
 					-Ahat = ca * ALK
 	  			*/
 	  			dvar_vector mu = d3_len_age(ig)(i);
-	  			dvar_vector sig= 0.1 * mu;
-	  			dvector x(n_A_sage(kk),n_A_nage(kk));
-	  			x.fill_seqadd(n_A_sage(kk),1);
-	  			dvar_matrix alk = ALK(mu,sig,x);
-	  			cout<<alk<<endl;
-	  			exit(1);
+				dvar_vector sig= 0.1 * mu;
+				dvector x(n_A_sage(kk),n_A_nage(kk));
+				x.fill_seqadd(n_A_sage(kk),1);
+				
+				dvar_matrix alk = ALK(mu,sig,x);
+	  			
+	  			A_hat(kk)(ii) = ca * alk;
 	  		}
+	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
   	 	}
   	}
   	
