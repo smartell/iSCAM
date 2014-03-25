@@ -90,6 +90,16 @@ dist/
 *.sql
 *.sqlite
 
+<<<<<<< Temporary merge branch 1
+=======
+#Doxygen directory#
+html/
+
+#Jekyll directory
+
+
+
+>>>>>>> Temporary merge branch 2
 # OS generated files #
 ######################
 .DS_Store

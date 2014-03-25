@@ -63,12 +63,12 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-6	   6	 7	  6 	 6   	# 1  -selectivity type ivector(isel_type) for gear
-4.45 2	 3600	4.45 2       # 2  -Age at 50% selectivity (logistic)
-0.2	 0.2 360	0.2	 0.2     # 3  -STD at 50% selectivity (logistic)
-0	   0	  0	  0	   0       # 4  -No. of age nodes for each gear (0=ignore)
-0	   0	  0	  0	   0       # 5  -No. of year nodes for 2d spline(0=ignore)
--0	-0	 -0	 -1	  -2      # 6  -Phase of estimation (-1 for fixed)
+6	6	7	6	6   	# 1  -selectivity type ivector(isel_type) for gear
+4.45	2	3600	4.45	2       # 2  -Age at 50% selectivity (logistic)
+0.2	0.2	360	0.2	0.2     # 3  -STD at 50% selectivity (logistic)
+0	0	0	0	0       # 4  -No. of age nodes for each gear (0=ignore)
+0	0	0	0	0       # 5  -No. of year nodes for 2d spline(0=ignore)
+-0	-0	-0	-1	-2      # 6  -Phase of estimation (-1 for fixed)
 2	2	2	2	2	# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 2 	2	2	2	2	# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 12	12	12	12	12      # 9  -Penalty wt for time-varying selectivity
@@ -103,7 +103,7 @@
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
 0.100       # 3  -std in observed catches in first phase.
 0.0707      # 4  -std in observed catches in last phase.
-0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
+1           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10        # 8  -std in mean fishing mortality in first phase
