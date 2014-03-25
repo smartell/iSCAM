@@ -706,11 +706,7 @@ DATA_SECTION
 			else if( !h ) 
 			{
 					//cout<<h<<endl;
-<<<<<<< HEAD
 
-=======
-				
->>>>>>> smartell/IPHC-developer
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -1167,6 +1163,7 @@ PARAMETER_SECTION
 	// | - If the user has not specified -ainp or -binp, the initial values are set
 	// |   based on ahat and ghat in the control file for logistic selectivities.
 	// | - Special case: if SimFlag=TRUE, then add some random noise to ahat.
+	// | - NB  sel_par is in log space.
 	// |
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 
@@ -1829,7 +1826,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 
 						log_sel(kgear)(ig)(i) = log( plogis<dvar_vector>(len,p1,p2) );
 						//log_sel(kgear)(ig)(i) = log( plogis(len,p1,p2) );
-					}	cout<<"Death star is approaching"<<endl;
+					}	
 					break;
 					
 				case 12: // cubic spline length-based coefficients.
@@ -4934,11 +4931,11 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-	//#include "lib/msy.cpp"
-	//#include "lib/baranov.cpp"
-	//#include "lib/LogisticNormal.cpp"
-	//#include "lib/LogisticStudentT.cpp"
-	//#include "OpMod.h"
+	#include "lib/msy.cpp"
+	#include "lib/baranov.cpp"
+	#include "lib/LogisticNormal.cpp"
+	#include "lib/LogisticStudentT.cpp"
+	#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
 	{
