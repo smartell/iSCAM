@@ -13,9 +13,9 @@
 # | .PWD       <- Global Parent Working Directory for R-scripts
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
-.PWD        <- "C:\\GitHub\\iSCAM\\src\\R"
-setwd(.PWD)
 # .FIGUREDIR  <- "../FIGS/"
+
+.PWD        <- getwd()
 .FIGUREDIR  <- "../logo/"
 .RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
