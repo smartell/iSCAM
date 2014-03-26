@@ -6,10 +6,10 @@
 #../../examples/SOGLingcod2013/Assmt2005/assmt2005.ctl
 #../../examples/SOGLingcod2013/Assmt2005/assmt2005.pfc
 
-#../../examples/ArrowtoothFlounder/arf.dat
-#../../examples/ArrowtoothFlounder/arf.ctl
-#../../examples/ArrowtoothFlounder/arf.pfc
+../../examples/ArrowtoothFlounder/arf.dat
+../../examples/ArrowtoothFlounder/arf.ctl
+../../examples/ArrowtoothFlounder/arf.pfc
 
-../../examples/PacificCod/5CD/PcodLength.dat
-../../examples/PacificCod/5CD/PcodLength.ctl
-../../examples/PacificCod/5CD/PcodLength.pfc
+#../../examples/PacificCod/5CD/PcodLength.dat
+#../../examples/PacificCod/5CD/PcodLength.ctl
+#../../examples/PacificCod/5CD/PcodLength.pfc
