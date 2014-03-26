@@ -211,12 +211,12 @@ DATA_SECTION
 		
 		// Catarina implementing a new command for generating new data control and pfc file
 		// for a new project.
-		NewFiles = 0;
-		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
-		{
-			NewFiles = 1;
-			NewFileName = ad_comm::argv[on+1];
-		}
+		//NewFiles = 0;
+		//if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
+		//{
+		//	NewFiles = 1;
+		//	NewFileName = ad_comm::argv[on+1];
+		//}
 
 
 		// command line option for retrospective analysis. "-retro retro_yrs"
@@ -650,39 +650,48 @@ DATA_SECTION
 	// |
 
 	init_int nWtTab;
+	
 	init_vector nWtNobs(1,nWtTab);
 	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
-
+	
 	vector tmp_nWtNobs(1,nWtTab);
 	int sum_tmp_nWtNobs; 
 
+
 	LOC_CALCS
 		
+		
+
 		for(int ii=1; ii<=nWtTab; ii++)
 		{
-			if(d3_inp_wt_avg(ii)(1)(sage-5) < 0)
+			if(nWtNobs(ii) > 0 && d3_inp_wt_avg(ii)(1)(sage-5) < 0)
 			{
 				int exp_nyr = fabs(d3_inp_wt_avg(ii,1,sage-5))-syr; 
 				tmp_nWtNobs(ii) = nWtNobs(ii)+exp_nyr;
 			}
-			else
+			else if (nWtNobs(ii) > 0)
 			{
 				tmp_nWtNobs(ii) = nWtNobs(ii);
 			}
 		}
 		sum_tmp_nWtNobs = sum(tmp_nWtNobs);		
 
+		
+
 	END_CALCS
 
-	3darray xinp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
-	matrix  xxinp_wt_avg(1,sum_tmp_nWtNobs,sage-5,nage);
+		3darray xinp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
+		matrix  xxinp_wt_avg(1,sum_tmp_nWtNobs,sage-5,nage);
 
 	LOC_CALCS
 
 		xinp_wt_avg.initialize();
 		xxinp_wt_avg.initialize();
 		
+
   		for(int ii=1; ii<=nWtTab; ii++)
+		{
+		if(nWtNobs(ii) > 0)
 		{
   			if(d3_inp_wt_avg(ii,1,sage-5) < 0)
 			{
@@ -718,6 +727,7 @@ DATA_SECTION
 				xxinp_wt_avg(jj)(sage-5,nage) = xinp_wt_avg(ii)(jj-ttmp)(sage-5,nage);
 			}
 		}
+		}
 	END_CALCS
 
 	matrix  dWt_bar(1,n_ags,sage,nage);
@@ -749,6 +759,8 @@ DATA_SECTION
 		// missing weight-at-age data, or truncated age-data.
 		int iyr;
 		
+		//if(nWtNobs(ii) > 0)
+		//{
 		for(i=1;i<=sum_tmp_nWtNobs;i++)
 		{
 			iyr = xxinp_wt_avg(i,sage-5);
@@ -795,6 +807,7 @@ DATA_SECTION
 				}
 			}
 		}
+		//}
 		
 
 		// average weight-at-age in projection years
