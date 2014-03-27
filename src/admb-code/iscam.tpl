@@ -211,12 +211,12 @@ DATA_SECTION
 		
 		// Catarina implementing a new command for generating new data control and pfc file
 		// for a new project.
-		//NewFiles = 0;
-		//if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
-		//{
-		//	NewFiles = 1;
-		//	NewFileName = ad_comm::argv[on+1];
-		//}
+		NewFiles = 0;
+		if((on=option_match(ad_comm::argc,ad_comm::argv,"-new",opt))>-1)
+		{
+			NewFiles = 1;
+			NewFileName = ad_comm::argv[on+1];
+		}
 
 
 		// command line option for retrospective analysis. "-retro retro_yrs"
@@ -660,7 +660,9 @@ DATA_SECTION
 
 	LOC_CALCS
 		
-		
+		/*This will  determine the new dimension of d3_inp_wt_avg in case the backward projection is needed required
+		  and rename nWtNobs to tmp_nWtNobs 
+		*/
 
 		for(int ii=1; ii<=nWtTab; ii++)
 		{
@@ -688,6 +690,11 @@ DATA_SECTION
 		xinp_wt_avg.initialize();
 		xxinp_wt_avg.initialize();
 		
+
+		/*This will redimension the d3_inp_wt_avg  according to tmp_nWtNobs and rename the 3d array
+		  to xinp_wt_avg. Then the 3darray is converted to a matrix xxinp_wt_avg 
+		*/
+
 
   		for(int ii=1; ii<=nWtTab; ii++)
 		{
@@ -4547,7 +4554,8 @@ FUNCTION generate_new_files
 		rd<<NewFileName + ".dat"<<endl;
 		rd<<NewFileName + ".ctl"<<endl;
 		rd<<NewFileName + ".pfc"<<endl;
-
+	system("say Luke I am your father");
+	exit(1);
 
 
 	#if defined __APPLE__ || defined __linux
