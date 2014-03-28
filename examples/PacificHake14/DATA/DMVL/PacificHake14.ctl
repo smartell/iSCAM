@@ -16,7 +16,7 @@
 7
 ## ival         	lb    ub      phz		prior  p1      		p2   		#parameter   ##
 	1.6   			-1.0 	4       1 		0     -1.0    		4.0  		#log_ro    	 ##
-	0.85  			 0.2    1.0     1 		3     10 		    2 			#steepness   ##
+	0.85  			 0.2    1.0     1 		3     9 		    3 			#steepness   ##
 	-1.4 			-5.0   	0.0     2 		1     -1.4  	 	0.2 		#log_m g&b   ##
 	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_avgrec  ##
 	1.0   			-5.0    15      1 		0     -1.0    		4.0   		#log_recinit ##
