@@ -627,7 +627,7 @@ DATA_SECTION
 		else
 		{
 			cout<<"| ----------------------- |"<<endl;
-			cout<<"| NO AGE DATA"<<endl;
+			cout<<"| NO AGE OR LENGTH DATA   |"<<endl;
 			cout<<"| ----------------------- |"<<endl;
 		}
 	END_CALCS
@@ -644,9 +644,9 @@ DATA_SECTION
 	// | - construct and fill weight-at-age matrix for use in the model code  (d3_wt_avg)
 	// | - construct and fill weight-at-age dev matrix for length-based selex (d3_wt_dev)
 	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (d3_wt_mat)
-	// | [ ] - TODO fix h=0 option for weight-at-age data
-	// | [ ] - TODO need to accomodate ragged arrays, or NA values, or partial d3_wt_avg.
-	// |
+	// | [] - DONE fix h=0 option for weight-at-age data
+	// | [] - DONE need to accomodate ragged arrays, or NA values, or partial d3_wt_avg.
+	// | [ ] - TODO Construct AgeLength TM in data section for empirical weight-at-age.
 
 	init_int nWtNobs;
 	init_matrix inp_wt_avg(1,nWtNobs,sage-5,nage);
@@ -656,9 +656,17 @@ DATA_SECTION
 	3darray d3_wt_dev(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_wt_mat(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_len_age(1,n_ags,syr,nyr+1,sage,nage);
-// 	vector fa_bar(sage,nage);				//average fecundity-at-age for all years.
-// 	vector avg_fec(sage,nage);				//average fecundity-at-age
-// 	vector avg_wt(sage,nage);				//average weight-at-age
+
+	imatrix nrh(1,2,1,2);
+	imatrix nch(1,2,1,2);
+	!!nrh(1) = 1;
+	!!nrh(2) = 2;
+	!!nch(1) = 1;
+	!!nch(2) = 2;
+	!!COUT(nrh);
+	!!COUT(nch);
+	4darray d4_alk(1,nAgears,1,n_A_nobs,sage,nrh,nage,nch);
+
 	LOC_CALCS
 		d3_wt_avg.initialize();
 		d3_wt_dev.initialize();
@@ -672,6 +680,8 @@ DATA_SECTION
 				d3_wt_avg(ig)(i) = wa(ig);
 				d3_wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
 				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
+
+				// Insert calculations for ALK here.
 			}
 		}
 
@@ -2203,110 +2213,7 @@ FUNCTION calcAgeComposition
 
   }	
 
-FUNCTION calcLengthComposition
-  {
-  	/**
-	Purpose:  This function calculates the predicted length-composition samples (B) for 
-  	          both directed commercial fisheries and survey age-composition data. For 
-  	          all years of data specified in the B matrix, calculated the predicted 
-  	          proportions-at-length in the sampled catch-at-length.  If no catch-length 
-  	          data exist for a particular year i, for gear k (i.e. no directed fishery or 
-  	          from a survey sample process that does not have an appreciable F), then 
-  	          calculate the predicted proportion based on:
-  	          							N(i) * sel(group,gear,year) * ALK(i)
-  	          where ALK is the Age-Length Transition Key.
-  	Author: Steven Martell
 
-  	Arguments:  none
-
-  	NOTES: 	To calculate the length composition, the catch-at-age vector is multiplied by
-  			an Age_length transition key.  In theory, A_hat from the calcAgeComposition 
-  			routine can be multiplied by the ALK.
-
-  	TODO List:
-  	[ ] - write this function. and Let Robyn Forrest know about it.
-  	*/
-
-  	int ii,ig,kk;
-  	dvar_vector va(sage,nage);
-  	dvar_vector fa(sage,nage);
-  	dvar_vector sa(sage,nage);
-  	dvar_vector za(sage,nage);
-  	dvar_vector ca(sage,nage);
-  	dvar_vector na(sage,nage);
-  	A_hat.initialize();
-
-  	 for(kk=1;kk<=nAgears;kk++)
-  	 {
-  	 	for(ii=1;ii<=n_A_nobs(kk);ii++)
-  	 	{
-	  		i = d3_A(kk)(ii)(n_A_sage(kk)-5);
-	  		k = d3_A(kk)(ii)(n_A_sage(kk)-4);
-	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
-	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
-	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
-	  		
-	  		// | trap for retrospecitve analysis.
-	  		if(i > nyr) continue;
-
-	  		if( h )
-	  		{
-				ig = pntr_ags(f,g,h);
-				va = mfexp(log_sel(k)(ig)(i));
-				za = Z(ig)(i);
-				sa = S(ig)(i);
-				na = N(ig)(i);
-				if( ft(ig)(k)(i)==0 )
-				{
-					ca = elem_prod(elem_prod(na,va),0.5*sa);
-				}
-				else
-				{
-					fa = ft(ig)(k)(i) * va;
-					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
-				}
-				A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
-
-				// | +group if n_A_nage(kk) < nage
-				if( n_A_nage(kk) < nage )
-				{
-					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-				}
-	  		}
-	  		else if( !h )
-	  		{
-	  			for(h=1;h<=nsex;h++)
-	  			{
-					ig = pntr_ags(f,g,h);
-					va = mfexp(log_sel(k)(ig)(i));
-					za = Z(ig)(i);
-					sa = S(ig)(i);
-					na = N(ig)(i);
-					if( ft(ig)(k)(i)==0 )
-					{
-						ca = elem_prod(na,0.5*sa);
-					}
-					else
-					{
-						fa = ft(ig)(k)(i) * va;
-						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
-					}
-					A_hat(kk)(ii) += ca(n_A_sage(kk),n_A_nage(kk));
-
-					// | +group if n_A_nage(kk) < nage
-					if( n_A_nage(kk) < nage )
-					{
-						A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-					}
-		  		}
-	  		}
-	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
-  	 	}
-  	}
-  	
-	if(verbose)cout<<"**** Ok after calcLengthComposition ****"<<endl;
-
-  }
 
 FUNCTION calcTotalCatch
   {
