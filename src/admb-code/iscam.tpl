@@ -649,7 +649,9 @@ DATA_SECTION
 	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (d3_wt_mat)
 	// | [ ] - TODO fix h=0 option for weight-at-age data
 	// | [ ] - TODO need to accomodate ragged arrays, or NA values, or partial d3_wt_avg.
-	// |
+	// | nWtTab  = number of Empirical weight-at-age tables.
+	// | nWtNobs = number of rows in each weight-at-age table.
+	// | d3_inp_wt_avg = input weight-at-age.
 
 	init_int nWtTab;
 	
@@ -662,8 +664,9 @@ DATA_SECTION
 
 	LOC_CALCS
 		
-		/*This will  determine the new dimension of d3_inp_wt_avg in case the backward projection is needed required
-		  and rename nWtNobs to tmp_nWtNobs 
+		/*
+		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
+		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
 		*/
 
 		for(int ii=1; ii<=nWtTab; ii++)
@@ -691,10 +694,11 @@ DATA_SECTION
 
 		xinp_wt_avg.initialize();
 		xxinp_wt_avg.initialize();
-		
 
-		/*This will redimension the d3_inp_wt_avg  according to tmp_nWtNobs and rename the 3d array
-		  to xinp_wt_avg. Then the 3darray is converted to a matrix xxinp_wt_avg 
+		/*
+		  This will redimension the d3_inp_wt_avg  according to tmp_nWtNobs and rename 
+		  the 3d array to xinp_wt_avg. Then the 3darray is converted to a matrix 
+		  xxinp_wt_avg 
 		*/
 
 
