@@ -554,7 +554,7 @@ DATA_SECTION
 	// | n_survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | d3_survey_data: (iyr index(it) gear area group sex wt timing)
 	// | it_wt       = relative weights for each relative abundance normalized to have a
-	// |               mean = 1 so rho = sig2/(sig^2+tau2) holds true in variance pars.
+	// |               mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
 	// |
 
 	init_int nItNobs;

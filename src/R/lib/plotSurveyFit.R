@@ -3,6 +3,11 @@ require(reshape2)
 # fixed a plotting bug when NA present.
 .plotSurveyFit <- function(M)
 {
+	#SJDM.  For the 95% Confidence interval for the observations.
+	#  Assume ln(I_t) = ln(\hat(I_t)) + 0.5*\sigma^2
+	# The 95% CI is then ci = ln(I_t)± 1.96*\sigma/it_wt
+	# Plot (exp(ci))
+
 	n <- length(M)
 	cat(".plotSurveyfit\n")
 	mdf <- NULL
@@ -12,7 +17,8 @@ require(reshape2)
 		Ub <- M[[i]]$d3_survey_data[,2]+1.96*(1/M[[i]]$d3_survey_data[,7])*M[[i]]$d3_survey_data[,2]
 		Lb <- M[[i]]$d3_survey_data[,2]-1.96*(1/M[[i]]$d3_survey_data[,7])*M[[i]]$d3_survey_data[,2]
 		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it,Ub,Lb)
-		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing","Index_hat","low_bnd","high_bnd")
+		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing"
+		                  ,"Index_hat","low_bnd","high_bnd")
 		mdf <- rbind(mdf,df)
 	}
 	print(head(mdf,3))
