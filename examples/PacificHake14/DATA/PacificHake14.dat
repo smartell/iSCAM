@@ -15,7 +15,7 @@
 ## ------------------------------------------------------------------------- ##
 1       # -number of areas            (narea)
 1        # -number of groups or stocks (ngroup)
-1        # -number of sexes            (nsex)
+2        # -number of sexes            (nsex)
 1966     # -first year of data         (syr)
 2013     # -last year of data          (nyr)
 0        # -age of youngest age class  (sage)
@@ -35,13 +35,13 @@
 ## ------------------------------------------------------------------------- ##
 ## Need one value for each area and sex.
 ##
-53.2    # -asymptotic length (linf)  not updated
-0.3    # -brody growth coefficient (k) not updated
--0.5  # -theoretical age at zero length (to) ??
-5e-6     # -scaler in length-weight allometry
-3.0     # -power parameter in length-weight allometry
-3.45    # -age at 50% maturity (approx with log(3.0)/k)
-0.35    # -std at 50% maturity (CV ~ 0.1)
+53.2  53.2   # -asymptotic length (linf)  not updated
+0.3   0.3   # -brody growth coefficient (k) not updated
+-0.5  -0.5 # -theoretical age at zero length (to) ??
+5e-6  5e-6    # -scaler in length-weight allometry
+3.0   3.0    # -power parameter in length-weight allometry
+3.45  3045   # -age at 50% maturity (approx with log(3.0)/k)
+0.35  0.35   # -std at 50% maturity (CV ~ 0.1)
 0         # flag mat vec  (if nmat==1) then read this vector, else if nmat==0, ignore it.
 0        #mat vec
 ##

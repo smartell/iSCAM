@@ -15,13 +15,13 @@
 ## npar
 7
 ## ival         	lb    ub      phz		prior  p1      		p2   		#parameter   ##
-	1.6   			-1.0 	4       1 		0     -1.0    		4.0  		#log_ro    	 ##
-	0.85  			 0.2    1.0     1 		3     9 		    3 			#steepness   ##
-	-1.4 			-5.0   	0.0     2 		1     -1.4  	 	0.2 		#log_m g&b   ##
+	1.6   			-1.0 	4       4 		0     -1.0    		4.0  		#log_ro    	 ##
+	0.88  			 0.2    1.0     4 		3     9.909 		2.959 			#steepness   ##
+	-1.6 			-5.0   	0.0     3 		1     -1.609  	 	0.1 		#log_m g&b   ##
 	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_avgrec  ##
 	1.0   			-5.0    15      1 		0     -1.0    		4.0   		#log_recinit ##
-	0.15   			 0.01   0.999   4 		3     3.00   		12.0 		#rho         ##
-	0.8				 0.01 	10.0 	3 		4 	  30 			40 			#vartheta    ##
+	0.03764649		 0.01   0.999   4 		3     5.98   		155.98 		#rho         ##
+	0.4909967		 0.01 	10.0    3 		4 	  1.01 			1.01 			#vartheta    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -39,8 +39,8 @@
 1  		 1     1              ## Likelihood type?
 0.000 	 0.000 	0.000               ## Minimum proportion for aggregation & tail compression
 0.0000   0.0000  0.0000              ## Small constant to add to comps & renormalize
-1  -1  1                      ## phase for log_age_tau2 estimation.
-2  -2   2                     ## phase for phi1 estimation: bounded (-1,1) AR1
+-1  -1  -1                      ## phase for log_age_tau2 estimation.
+-2  -2  -2                     ## phase for phi1 estimation: bounded (-1,1) AR1
 -2  -2  -2                     ## phase for phi2 estimation: bounded (0,1)  AR2 
 -2  -2  -2                   ## phase for degrees of freedom for student T.
 -12345                   	 ## int check (-12345)
@@ -63,7 +63,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	5 	5 	1	        # 1  -selectivity type ivector(isel_type) for gear
+	1 	5 	1	        # 1  -selectivity type ivector(isel_type) for gear
 	3.5	3.5	2.5	        # 2  -Age/length at 50% selectivity (logistic)
 	0.45 0.45 0.45 	        # 3  -STD at 50% selectivity (logistic)
 	4 4	5				# 4  -No. of age nodes for each gear (0=ignore)
@@ -76,7 +76,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
 1966 	
-1991 
+1966 
 1966
 ## 
 ##
@@ -89,7 +89,7 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 1					# -number of surveys (nits) 
-2					# -prior type (see legend above)
+1					# -prior type (see legend above)
 0					# -prior log(mean)
 0.1					# -prior sd
 ## ------------------------------------------------------------------------- ##
