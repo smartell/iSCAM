@@ -9,7 +9,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	rowlabels=FALSE width="5 10 16 30" sticky=W function=.readFile
 	
 	#-- widget 1b
-	#image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+	#image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 #-----------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------#
@@ -94,7 +94,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 		check name=chkPNG checked=TRUE  text="PNG format" mode=logical 
 		
 	#-------------------------------------------------------------------------#
-		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+		image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 	#-------------------------------------------------------------------------#
 	
 	
@@ -115,7 +115,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	null
 	
 	#-------------------------------------------------------------------------#
-		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+		image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 	#-------------------------------------------------------------------------#
 	
 
