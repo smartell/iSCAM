@@ -13,18 +13,20 @@ require(reshape2)
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		it <- na.omit(as.vector(t(M[[i]]$it_hat)))
-		fit <- M[[i]]$fit
-		rho <- fit$est[fit$names=="theta[6]"]
-		vartheta <- fit$est[fit$names=="theta[7]"]
-		sig <- sqrt(rho/vartheta)
+		it_hat <- na.omit(as.vector(t(M[[i]]$it_hat)))
+		it     <- M[[i]]$d3_survey_data[,2]
+		sig<- M[[i]]$sig
+		#fit <- M[[i]]$fit
+		#rho <- fit$est[fit$names=="theta[6]"]
+		#vartheta <- fit$est[fit$names=="theta[7]"]
+		#sig <- sqrt(rho/vartheta)
 		Ub <- exp(log(it)+1.96*sig*M[[i]]$d3_survey_data[,7])
 		Ub <- Ub[1:length(Ub)]
 		Lb <- exp(log(it)-1.96*sig*M[[i]]$d3_survey_data[,7])
 		Lb <- Lb[1:length(Ub)]
-		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it,Ub,Lb)
+		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it,it_hat,Ub,Lb)
 		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing"
-		                  ,"Index_hat","low_bnd","high_bnd")
+		                  ,"It","It_hat","low_bnd","high_bnd")
 		mdf <- rbind(mdf,df)
 	}
 	print(head(mdf,3))
@@ -32,9 +34,9 @@ require(reshape2)
 	limits <- aes(ymax=high_bnd, ymin=low_bnd)
 
 	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=factor(Gear)),size=2)
-	p <- p + geom_line(aes(Year,Index_hat,color=factor(Gear)),size=1)
-	#p <- p + geom_pointrange(aes(Year,Index_hat,max=high_bnd, ymin=low_bnd,color=factor(Gear)))
-	p <- p + geom_ribbon(aes(Year,ymax=high_bnd, ymin=low_bnd,fill=factor(Gear)),alpha=.3)
+	p <- p + geom_line(aes(Year,It_hat,color=factor(Gear)),size=1)
+	p <- p + geom_pointrange(aes(Year,It,max=high_bnd, ymin=low_bnd,color=factor(Gear)))
+	# p <- p + geom_ribbon(aes(Year,ymax=high_bnd, ymin=low_bnd,fill=factor(Gear)),alpha=.3)
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
