@@ -1,6 +1,0 @@
-# iSCAM View Tracker File 
-# Do not use extension for the control file (using read.admb to input results)
-"Select","Stock","Description","Control File"
-#The following line is for the Demo example
-#TRUE,HG,"2010data_final",~/Documents/CURRENT PROJECTS/iSCAM/srcWorkingCopy/Examples/qciHerring/qciHerring2010
-TRUE, DEMO, "Flack Lake Trout",../DATA/ControlTemplate
