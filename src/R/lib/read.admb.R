@@ -31,7 +31,7 @@ function(ifile)
 	ret$nlogl<-parfile[2] 
 	ret$maxgrad<-parfile[3] 
 	file<-paste(ifile,'.cor', sep='')
-	if(file.exists(ifile))
+	if(file.exists(file))
 	{
 		lin<-readLines(file) 
 		ret$npar<-length(lin)-2 

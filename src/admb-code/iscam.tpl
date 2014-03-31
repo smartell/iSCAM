@@ -1489,7 +1489,10 @@ PARAMETER_SECTION
 	// | SDREPORT VARIABLES AND VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
+	// | sd_sbt       -> Spawning biomass for each group.
+	// |
 	sdreport_vector sd_depletion(1,ngroup);	
+	sdreport_matrix sd_sbt(1,ngroup,syr,nyr+1);
 	
 
 PRELIMINARY_CALCS_SECTION
@@ -1547,7 +1550,10 @@ PROCEDURE_SECTION
 	
 	calcObjectiveFunction();
 
-	calcSdreportVariables();
+	if(sd_phase())
+	{
+		calcSdreportVariables();
+	}
 	
 	
 	if(mc_phase())
@@ -1580,10 +1586,13 @@ PROCEDURE_SECTION
 FUNCTION void calcSdreportVariables()
   {
 	sd_depletion.initialize();
+	sd_sbt.initialize();
 
 	for(g=1;g<=ngroup;g++)
 	{
 		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
+
+		sd_sbt(g) = sbt(g);
 	}
 	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
