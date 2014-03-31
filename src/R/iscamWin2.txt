@@ -115,7 +115,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	null
 	
 	#-------------------------------------------------------------------------#
-		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+		image file="../logo/iscamLogo.gif" sticky="E" subsample=2
 	#-------------------------------------------------------------------------#
 	
 

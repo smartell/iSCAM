@@ -14,14 +14,15 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 .PWD        <- "~/Documents/iSCAM/src/R"
+.LIB        <- "../../../dist/R/lib/"
+.WIN        <- "../../../dist/R/iScamWin2.txt"
 setwd(.PWD)
-# .FIGUREDIR  <- "../FIGS/"
-.FIGUREDIR  <- "../logo/"
-.RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
+.FIGUREDIR  <- "../FIGS/"
+.RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
 require(ggplot2)
-.THEME      <- theme_bw(18)
+.THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"
 
 # |----------------------------------------------------------------------------------|
@@ -31,7 +32,7 @@ require(ggplot2)
 guiView  <- function()
  {
 	setwd(.PWD)
-	for(nm in .RFILES) source(file.path("./lib", nm), echo=FALSE)
+	for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 	.gui2("iSCAMView") 	
  }
 
@@ -61,7 +62,7 @@ guiView  <- function()
 	}
 	if(exists(".PBSmod")) closeWin(win)
 		
-	createWin("iscamWin2.txt")
+	createWin(.WIN)
 	
 	setWinVal(list(txtFigDir=.FIGUREDIR))
 }
