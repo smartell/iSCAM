@@ -32,17 +32,14 @@
 		df <- data.frame(Model=names(M)[i],logSel=M[[i]]$log_sel)
 		colnames(df)<-c("Model","Gear","Sex","Year",M[[i]]$age)
 
-		mdf <- rbind(mdf,melt(df,id=c("Model","Year","Gear","Sex")))
+		mdf <- rbind(mdf,melt(df,id=c("Model","Gear","Sex","Year")))
 	}
-	g <- unique(mdf$Gear)
-	for(k in 1)
-	{
-		gmdf <- subset(mdf,Gear==k)
-		p <- ggplot(gmdf,aes(x=variable,y=exp(value),color=factor(Sex))) + geom_point()
-		p <- p + labs(x="Age",y="Selectivity",color="Group")
-		p <- p + facet_wrap(~ Year)
-		print(p + .THEME)
-	}
+
+	p <- ggplot(mdf,aes(x=variable,y=exp(value),colour=factor(Sex))) + geom_point()
+	p <- p + geom_line(aes(group=Sex))
+	p <- p + labs(x="Age",y="Selectivity",color="Sex")
+	p <- p + facet_grid(Year ~ Gear)
+	print(p + .THEME)
 }
 
 # .plotOldSelectivity	<- function( repObj )
