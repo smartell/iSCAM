@@ -34,6 +34,7 @@ namespace mse {
 		dvector dAllocation;
 	};
 
+
 	struct GrowthAndMaturityParameters
 	{
 		dvector d_linf;
@@ -60,7 +61,22 @@ namespace mse {
 		ivector n_it_nobs;
 		ivector n_survey_type;
 		d3_array *d3_survey_data;
-	
+	};
+
+	struct CompositionData
+	{
+		int nAgears;
+		ivector  n_A_nobs;
+		ivector  n_A_sage;
+		ivector  n_A_nage;
+		d3_array *d3_A;
+
+	};
+	struct WeightAtAgeData
+	{
+		const d3_array *d3_wt_avg;
+		const d3_array *d3_wt_mat;
+		const d3_array *d3_len_age;
 	};
 
 	/**
@@ -88,6 +104,8 @@ namespace mse {
 		GrowthAndMaturityParameters s_gamp;
 		TimeSeriesData s_tsd;
 		AbundanceIndices s_ai;
+		WeightAtAgeData s_waad;
+		CompositionData s_cd;
 
 
 		d3_array m_d3_ct;
@@ -103,17 +121,22 @@ namespace mse {
 			cout<<m_d3_ct<<endl;
 		}
 
+
 		omData(const ModelDimensions &_md, 
 			   const GrowthAndMaturityParameters &_gamp,
 			   const TimeSeriesData &_tsd,
-			   const AbundanceIndices &_ai)
-		:s_md(_md), s_gamp(_gamp), s_tsd(_tsd), s_ai(_ai)
+			   const AbundanceIndices &_ai,
+		       const CompositionData &_cd,
+		       const WeightAtAgeData &_waad)
+		:s_md(_md), s_gamp(_gamp), s_tsd(_tsd), s_ai(_ai),s_waad(_waad),s_cd(_cd)
 		{
 			cout<<"THis is fucking cool"<<endl;
 			cout<<s_md.nNage<<endl;
 			cout<<s_gamp.d_linf<<endl;
 			cout<<s_tsd.nCtNobs<<endl;
 			cout<<s_ai.nItNobs<<endl;
+			cout<<"Average weight\n"<<endl;
+			cout<<*s_waad.d3_wt_avg<<endl;
 			
 		}
 
