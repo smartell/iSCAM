@@ -632,6 +632,7 @@ DATA_SECTION
 			cout<<"| NO AGE DATA"<<endl;
 			cout<<"| ----------------------- |"<<endl;
 		}
+
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -653,16 +654,16 @@ DATA_SECTION
 	// | d3_inp_wt_avg = input weight-at-age.
 
 	init_int nWtTab;
+	init_vector nWtNobs(1,nWtTab);	 
 	
-	init_vector nWtNobs(1,nWtTab);
 	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
-	
+				  	
 	vector tmp_nWtNobs(1,nWtTab);
 	int sum_tmp_nWtNobs; 
 
 
 	LOC_CALCS
-		
+			
 		/*
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
@@ -683,7 +684,7 @@ DATA_SECTION
 		sum_tmp_nWtNobs = sum(tmp_nWtNobs);		
 
 		
-
+	  	
 	END_CALCS
 
 		3darray xinp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
@@ -700,7 +701,7 @@ DATA_SECTION
 		  xxinp_wt_avg 
 		*/
 
-
+			 
   		for(int ii=1; ii<=nWtTab; ii++)
 		{
 		if(nWtNobs(ii) > 0)
@@ -739,7 +740,7 @@ DATA_SECTION
 				xxinp_wt_avg(jj)(sage-5,nage) = xinp_wt_avg(ii)(jj-ttmp)(sage-5,nage);
 			}
 		}
-		}
+		}	 	
 	END_CALCS
 
 	matrix  dWt_bar(1,n_ags,sage,nage);
@@ -821,7 +822,7 @@ DATA_SECTION
 		}
 		//}
 		
-
+			
 		// average weight-at-age in projection years
 		for(ig=1;ig<=n_ags;ig++)
 		{
@@ -868,7 +869,7 @@ DATA_SECTION
 				cout<<"|-----------------------------------------------|"<<endl;
 				ad_exit(1);
 			}
-		}
+		}  	 
 	END_CALCS
 	
 	
@@ -5062,15 +5063,14 @@ GLOBALS_SECTION
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-  #include "lib/LogisticNormal.h"
+ 	 #include "lib/LogisticNormal.h"
 	#include "Selex.h"
 	#include "lib/msy.cpp"
 	#include "lib/baranov.cpp"
 	#include "lib/LogisticNormal.cpp"
 	#include "lib/LogisticStudentT.cpp"
 	#include "OpMod.h"
-  #endif
-
+  
 	ivector getIndex(const dvector& a, const dvector& b)
 	{
 		int i,j,n;

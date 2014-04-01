@@ -1,12 +1,3 @@
-<<<<<<< Temporary merge branch 1
-../../Examples/SOGLingcod2013/Assmt2005/Assmt2005.dat
-../../Examples/SOGLingcod2013/Assmt2005/Assmt2005.ctl
-../../Examples/SOGLingcod2013/Assmt2005/Assmt2005.pfc
-#../../Examples/ArrowtoothFlounder/arf.dat
-#../../Examples/ArrowtoothFlounder/arf.ctl
-#../../Examples/ArrowtoothFlounder/arf.pfc
-=======
->>>>>>> Temporary merge branch 2
 #../../Examples/DEMO/DATA/DataTemplate.dat
 #../../Examples/DEMO/DATA/ControlTemplate.ctl
 #../../Examples/DEMO/DATA/ProjectionTemplate.pfc
@@ -15,10 +6,10 @@
 #../../examples/SOGLingcod2013/Assmt2005/assmt2005.ctl
 #../../examples/SOGLingcod2013/Assmt2005/assmt2005.pfc
 
-../../examples/ArrowtoothFlounder/arf.dat
-../../examples/ArrowtoothFlounder/arf.ctl
-../../examples/ArrowtoothFlounder/arf.pfc
+#../../examples/ArrowtoothFlounder/arf.dat
+#../../examples/ArrowtoothFlounder/arf.ctl
+#../../examples/ArrowtoothFlounder/arf.pfc
 
-#../../examples/PacificCod/5CD/PcodLength.dat
-#../../examples/PacificCod/5CD/PcodLength.ctl
-#../../examples/PacificCod/5CD/PcodLength.pfc
+../../examples/PacificCod/5CD/PcodLength.dat
+../../examples/PacificCod/5CD/PcodLength.ctl
+../../examples/PacificCod/5CD/PcodLength.pfc
