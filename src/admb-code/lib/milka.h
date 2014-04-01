@@ -91,13 +91,16 @@ namespace mse {
 		omData(const ModelDimensions &_md,
 		       const CompositionData &_cd,
 		       const WeightAtAgeData &_waad)
-		:s_md(_md),s_cd(_cd),s_waad(_waad)
+		:s_md(_md),s_waad(_waad),s_cd(_cd)
 		{
 			cout<<"THis is fucking cool"<<endl;
 			cout<<s_md.nNage<<endl;
 
+			
+
 			cout<<"Average weight\n"<<endl;
 			cout<<*s_waad.d3_wt_avg<<endl;
+
 		}
 
 		// |---------|
