@@ -580,7 +580,7 @@ DATA_SECTION
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
-	// | AGE COMPOSITION DATA (ragged object)
+	// | AGE OR LENGTH COMPOSITION DATA (ragged object)
 	// |---------------------------------------------------------------------------------|
 	// | - nAgears    -> number of age-composition matrixes, one for each gear.
 	// | - n_A_nobs   -> ivector for number of rows in age composition (A) matrix
@@ -596,6 +596,7 @@ DATA_SECTION
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
 	init_vector  inp_nscaler(1,nAgears);
+	init_ivector n_ageFlag(1,nAgears);
   // The 5 in the next command is to remove the first 5 columns
   // from the age comp 'data' because they are not the actual ages,
   // but the header data.
@@ -706,6 +707,12 @@ DATA_SECTION
 			else if( !h ) 
 			{
 					//cout<<h<<endl;
+<<<<<<< Temporary merge branch 1
+				
+>>>>>>> Temporary merge branch 2
+=======
+
+>>>>>>> Temporary merge branch 2
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -2133,13 +2140,13 @@ FUNCTION calcAgeComposition
 					fa = ft(ig)(k)(i) * va;
 					ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 				}
-				A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
+				//A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
 
 				// | +group if n_A_nage(kk) < nage
-				if( n_A_nage(kk) < nage )
-				{
-					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-				}
+				//if( n_A_nage(kk) < nage )
+				//{
+				//	A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
+				//}
 	  		}
 	  		else if( !h )  // age-comps are unsexed
 	  		{
@@ -2159,26 +2166,53 @@ FUNCTION calcAgeComposition
 						fa = ft(ig)(k)(i) * va;
 						ca = elem_prod(elem_prod(elem_div(fa,za),1.-sa),na);					
 					}
-					A_hat(kk)(ii) += ca(n_A_sage(kk),n_A_nage(kk));
+					//A_hat(kk)(ii) += ca(n_A_sage(kk),n_A_nage(kk));
 
 					// | +group if n_A_nage(kk) < nage
-					if( n_A_nage(kk) < nage )
-					{
-						A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-					}
+					//if( n_A_nage(kk) < nage )
+					//{
+					//	A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
+					//}
 		  		}
+	  		}
+
+	  		// This is the age-composition
+	  		if( n_ageFlag(kk) )
+	  		{
+	  			A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
+	  			if( n_A_nage(kk) < nage )
+				{
+					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
+				}
+	  		}
+	  		else
+	  		{
+	  			/*
+					This the catch-at-length composition.
+					Pseudocode:
+					-make an ALK
+					-Ahat = ca * ALK
+	  			*/
+	  			dvar_vector mu = d3_len_age(ig)(i);
+				dvar_vector sig= 0.1 * mu;
+				dvector x(n_A_sage(kk),n_A_nage(kk));
+				x.fill_seqadd(n_A_sage(kk),1);
+				
+				dvar_matrix alk = ALK(mu,sig,x);
+	  			
+	  			A_hat(kk)(ii) = ca * alk;
 	  		}
 	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
   	 	}
   	}
   	
-	if(verbose)cout<<"**** Ok after calcAgeComposition ****"<<endl;
+	if(verbose)cout<<"**** Ok after calcComposition ****"<<endl;
 
   }	
 
 FUNCTION calcLengthComposition
   {
-  	/*
+  	/**
 	Purpose:  This function calculates the predicted length-composition samples (B) for 
   	          both directed commercial fisheries and survey age-composition data. For 
   	          all years of data specified in the B matrix, calculated the predicted 
@@ -2231,7 +2265,7 @@ FUNCTION calcLengthComposition
 				na = N(ig)(i);
 				if( ft(ig)(k)(i)==0 )
 				{
-					ca = elem_prod(na,0.5*sa);
+					ca = elem_prod(elem_prod(na,va),0.5*sa);
 				}
 				else
 				{
@@ -4930,8 +4964,6 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
   #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-
-	#if defined _WIN32 || defined _WIN64
 	#include "lib/msy.cpp"
 	#include "lib/baranov.cpp"
 	#include "lib/LogisticNormal.cpp"
