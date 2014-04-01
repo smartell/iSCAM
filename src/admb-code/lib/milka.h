@@ -19,6 +19,20 @@
 
 namespace mse {
 
+	struct modelDimensions
+	{
+		int nStock;
+		int nArea;
+		int nSex;
+		int nSyr;
+		int nNyr;
+		int nSage;
+		int nNage;
+		int nGear;
+		int nFleet;
+
+		dvector dAllocation;
+	};
 
 	/**
 	 * @brief Class for storing data for operating model
@@ -39,11 +53,29 @@ namespace mse {
 		int m_nNage;
 		int m_nGear;
 		int m_nFleet;
+		dvector m_dAllocation;
+
+		modelDimensions s_md;
+
+		d3_array m_d3_ct;
 
 	    //friend class OperatingModel;
 	public:
 		omData();
 		~omData();
+		omData(const d3_array &ct)
+		:m_d3_ct(ct)
+		{
+			cout<<"Hi Catarina"<<endl;
+			cout<<m_d3_ct<<endl;
+		}
+
+		omData(const modelDimensions &_md)
+		:s_md(_md)
+		{
+			cout<<"THis is fucking cool"<<endl;
+			cout<<s_md.nNage<<endl;
+		}
 
 		// |---------|
 		// | Setters |
@@ -57,6 +89,9 @@ namespace mse {
 		void set_nNage (const int &n) { m_nNage  = n; }
 		void set_nGear (const int &n) { m_nGear  = n; }
 		void set_nFleet(const int &n) { m_nFleet = n; }
+
+		void set_dAllocation (const dvector &d) {m_dAllocation = d;}
+		
 
 	};
 

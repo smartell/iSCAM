@@ -4910,8 +4910,19 @@ FUNCTION mcmc_output
 
 FUNCTION void runMSE()
 
+	// Model Dimension Struct
+	mse::modelDimensions s_md;
+
+	s_md.nStock = ngroup;
+	s_md.nNage  = nage;
+
+	mse::omData smd(s_md);
+
 	// Operating model data
-	mse::omData md;
+	mse::omData md;  //instantiating omData clas
+	mse::omData mdd(d3_Ct);
+
+	// Setting private member variables.
 	md.set_nStock(ngroup);
 	md.set_nArea(narea);
 	md.set_nSex(nsex);
@@ -4921,6 +4932,9 @@ FUNCTION void runMSE()
 	md.set_nNage(nage);
 	md.set_nGear(ngear);
 	md.set_nFleet(nfleet);
+	cout<<"What the fuck"<<endl;
+	md.set_dAllocation(dAllocation);
+	//md.set_d3_ct(&d3_Ct);
 
 	// Operating model variables
 	mse::omVariables mv;
@@ -4928,9 +4942,9 @@ FUNCTION void runMSE()
 	mv.set_log_Ro( value(theta(1)) );
 
 	// Operating model class
-	mse::OperatingModel om(md,mv,rseed);
+	//mse::OperatingModel om(md,mv,rseed);
 
-	om.runScenario(rseed);
+	//om.runScenario(rseed);
 	//mse::OperatingModel;
 
 	COUT("DONE");
@@ -5063,6 +5077,7 @@ GLOBALS_SECTION
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
+    #include "lib/milka.h"
 	#include "Selex.h"
 	//#include "lib/msy.cpp"
 	//#include "lib/baranov.cpp"

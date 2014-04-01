@@ -17,6 +17,12 @@
 
 namespace rfp {
 
+	struct modelDimensions
+	{
+		
+	};
+
+
 	/**
 	 * @brief Base class for reference point calculations
 	 * @details The base class for MSY and SPR-based reference point 
