@@ -82,7 +82,46 @@
 	{
 		.plotMortality( M )
 	}
-
+	else if( plotType=="recruitment" )
+	{
+		.plotRecruitment( M )
+	}
+	else if( plotType=="depletion" )
+	{
+		.plotDepletion( M )
+	}
+	else if( plotType=="surveyfit" )
+	{
+		.plotSurveyFit( M )
+	}
+	else if( plotType=="stockrecruit" )
+	{
+		.plotStockRecruit( M )
+	}
+	else if( plotType=="productivity" )
+	{
+		.plotRecruitsPerSpawner( M )
+	}
+	else if( plotType=="kobeplot" )
+	{
+		.plotStockStatus( M )
+	}	
+	else if( plotType=="ssbretro" )
+	{
+		.plotSSBretrospective( M )
+	}
+	else if( plotType=="ssbsquid" )
+	{
+		.plotSSBsquid( M )
+	}
+	else if( plotType=="selectivity" )
+	{
+		.plotSelectivity( M )
+	}
+	else if( plotType=="selex" )
+	{
+		.plotSelex( M )
+	}
 }
 
 # |----------------------------------------------------------------------------------|
@@ -95,7 +134,7 @@
 {
 	cat("\n Reading",fn,"\n")
 	tmp      <- read.admb(fn)
-
+	cat("OK\n")
 	# | simulation file
 	simfile  <- paste(fn,".sim",sep="")
 	if(file.exists(simfile))
@@ -103,22 +142,26 @@
 		tmp$sim      <- read.rep(simfile)
 	}
 	# | retrospective results
-	retfile <- paste(fn,".ret",1:10,sep="")
+	retfile <- paste(fn,".ret",1:15,sep="")
 	retSbt <- list()
+	retYrs  <- list()
 	i <- 0
 	for(ifn in retfile)
 	{
 		if(file.exists(ifn))
 		{
 			i <- i + 1
-			sbt <- read.rep(ifn)$sbt
-			nn  <- 1:(length(sbt)-1)
-			retSbt[[i]] <- sbt[nn]
+			A  <- read.rep(ifn)
+			nn  <- 1:(length(A$sbt)-1)
+			retSbt[[i]] <- A$sbt[nn]
+			retYrs[[i]] <- A$yrs[nn]
 		}
 	}
 	tmp$retSbt <- retSbt
+	tmp$retYrs <- retYrs
 
 	save(tmp,file=paste(fn,".RData",sep=""))
+	cat("\n Finished reading ",fn,"\n")
 	return(tmp)
 }
 

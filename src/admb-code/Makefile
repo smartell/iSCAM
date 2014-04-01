@@ -9,20 +9,19 @@
 # 5. Optimized executables type: make OPT=TRUE                 #
 # ———————————————————————————————————————————————————————————— #
 EXEC = iscam
-SRCS = $(EXEC).cpp              \
-		lib/LogisticNormal.cpp  \
-		lib/msy.cpp             \
-		lib/baranov.cpp         \
-		lib/milka.cpp           \
-		lib/OperatingModel.cpp  \
-		selex.cpp           	
-		# OpMod.cpp         
+SRCS = $(EXEC).cpp               \
+		lib/LogisticNormal.cpp   \
+		lib/LogisticStudentT.cpp \
+  		lib/msy.cpp 			 \
+		lib/baranov.cpp          \
+			selex.cpp 
+		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)
 TPLS = $(EXEC).tpl
 DEPS = $(SRCS:.cpp=.depends)
 
 # Export the path to your ADMB dist directory
-export ADMB_HOME=/Users/catarinawor//admb-trunk/build/dist
+export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
 
 # establish the C++ compiler (on Mac OSX use clang++)
 CC=clang
@@ -76,9 +75,6 @@ $(EXEC): $(OBJS)
 # Build the cpp file from the tpl
 $(EXEC).cpp: $(TPLS)
 	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
-	 # gsed -i '/friend class model_parameters;/ a\
-	 # \ \ friend class OperatingModel;' $(EXEC).htp
-
 
 
 clean: 

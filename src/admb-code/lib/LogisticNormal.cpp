@@ -52,7 +52,8 @@ logistic_normal::logistic_normal(const dmatrix& _O,const dvar_matrix& _E,
 
 
 	// Total number of bins minus 1.
-	m_bm1 = size_count(m_Op) - (m_y2-m_y1+1.0);
+	double Y = m_y2-m_y1+1.0;
+	m_bm1 = (size_count(m_Op) - Y);
 	
 	// Relative weights to assign to each year.
 	m_Wy = compute_relative_weights(m_O);
@@ -137,7 +138,7 @@ dvariable logistic_normal::operator() (const dvariable &sigma2)
 dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &phi)
 {
 	m_nll = 0;
-
+	// cout<<phi<<endl;
 	// Get correlation vector rho
 	get_rho(phi);
 
@@ -167,13 +168,13 @@ dvariable logistic_normal::operator() (const dvariable &sigma2,const dvariable &
 
 	// Get correlation vector rho
 	get_rho(phi,psi);
-	// cout<<m_rho<<endl;
 
 	// Construct covariance (m_V)
 	compute_correlation_array();
 
 	// Compute weighted sum of squares
 	compute_weighted_sumofsquares();
+	
 
 	// estimated variance
 	m_sigma2  = sigma2;// / (1.0-phi);
@@ -191,6 +192,7 @@ dvariable logistic_normal::negative_log_likelihood()
 	// 7) Compute nll_logistic_normal
 	RETURN_ARRAYS_INCREMENT();
 	dvariable nll;
+	
 	nll  = 0.5 * log(2.0 * PI) * m_bm1;
 	nll += sum( log(m_Op) );
 	nll += log(m_sigma) * m_bm1;
@@ -209,6 +211,7 @@ void logistic_normal::compute_weighted_sumofsquares()
 {
 	int i;
 	m_wss=0;
+
 	for( i = m_y1; i <= m_y2; i++ )
 	{
 		dvar_matrix Vinv = inv(m_V(i));
@@ -251,16 +254,28 @@ void logistic_normal::get_rho(const dvariable &phi, const dvariable &psi)
 	m_rho.initialize();
 	dvar_vector tmp(lb-1,ub);
 	tmp = 1.0;
-	dvariable phi2 = -1. + (1. + sfabs(phi)) * psi;
-	tmp(lb) = phi /(1.0-phi2);
+	dvariable phi1 = 2.0 * phi;
+	dvariable phi2 = -1. + (2. - fabs(phi1)) * psi;
+	tmp(lb) = phi1 /(1.0-phi2);
+
+	if(phi2 <= -1.0 || phi2 >= (1.-fabs(phi1)))
+	{
+		cout<<"Phi1 = "<<phi<<endl;
+		cout<<"Phi2 = "<<psi<<endl;
+		cout<<"Invalid value for phi2"<<endl;
+		exit(1);
+	}
 	for( j = lb+1; j <= ub; j++ )
 	{
-		tmp(j) = phi*tmp(j-1) + phi2*tmp(j-2);
+		tmp(j) = phi1*tmp(j-1) + phi2*tmp(j-2);
 	}
 	for( j = lb; j <= ub; j++ )
 	{
 		m_rho(j) = tmp(j);
 	}
+	// cout<<"phi1 "<<phi1<<endl;
+	// cout<<"phi2 "<<phi2<<endl;
+	// cout<<m_rho<<endl;
 }
 
 

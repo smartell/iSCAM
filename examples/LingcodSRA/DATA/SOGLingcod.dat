@@ -37,6 +37,8 @@
 3.25				# -power parameter in length-weight allometry
 3.75			# -age at 50% maturity (approx with log(3.0)/k)
 0.375			# -std at 50% maturity (CV ~ 0.1)
+0                       # -(if n_MAT==1) use the following vector for maturity
+0                       #mat vec
 ##
 ## ------------------------------------------------------------------------- ##
 ## TIME SERIES DATA                                                          ##
@@ -213,12 +215,16 @@
 0			# Number of rows in the matrix   ivector(na_nobs)
 1			# Youngest age column			 ivector(a_sage)
 15			# Oldest age column +group       ivector(a_nage)
+1        # Effective sample size
 ## year gear age colums (numbers or proportions)
 ##
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##
 ## ------------------------------------------------------------------------- ##
-0			# Number of years of weight-at-age data int(n_wt_obs)
+## Number of weight-at-age tables (n_wt_tab)
+1 
+## Number of rows in each weight-at-age table vector(n_wt_obs), use -99 if NA 
+0			
 ## year age columns (sage, nage) of weight at age data
 ##
 ## ------------------------------------------------------------------------- ##
