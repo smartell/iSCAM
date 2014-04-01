@@ -19,7 +19,7 @@
 
 namespace mse {
 
-	struct modelDimensions
+	struct ModelDimensions
 	{
 		int nStock;
 		int nArea;
@@ -32,6 +32,22 @@ namespace mse {
 		int nFleet;
 
 		dvector dAllocation;
+	};
+
+	struct CompositionData
+	{
+		int nAgears;
+		ivector  n_A_nobs;
+		ivector  n_A_sage;
+		ivector  n_A_nage;
+		d3_array *d3_A;
+
+	};
+	struct WeightAtAgeData
+	{
+		const d3_array *d3_wt_avg;
+		const d3_array *d3_wt_mat;
+		const d3_array *d3_len_age;
 	};
 
 	/**
@@ -55,7 +71,9 @@ namespace mse {
 		int m_nFleet;
 		dvector m_dAllocation;
 
-		modelDimensions s_md;
+		ModelDimensions s_md;
+		WeightAtAgeData s_waad;
+		CompositionData s_cd;
 
 		d3_array m_d3_ct;
 
@@ -70,11 +88,16 @@ namespace mse {
 			cout<<m_d3_ct<<endl;
 		}
 
-		omData(const modelDimensions &_md)
-		:s_md(_md)
+		omData(const ModelDimensions &_md,
+		       const CompositionData &_cd,
+		       const WeightAtAgeData &_waad)
+		:s_md(_md),s_cd(_cd),s_waad(_waad)
 		{
 			cout<<"THis is fucking cool"<<endl;
 			cout<<s_md.nNage<<endl;
+
+			cout<<"Average weight\n"<<endl;
+			cout<<*s_waad.d3_wt_avg<<endl;
 		}
 
 		// |---------|

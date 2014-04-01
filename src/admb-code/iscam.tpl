@@ -4910,13 +4910,32 @@ FUNCTION mcmc_output
 
 FUNCTION void runMSE()
 
+	cout<<"Start of runMSE"<<endl;
+
 	// Model Dimension Struct
-	mse::modelDimensions s_md;
+	mse::ModelDimensions s_md;
 
 	s_md.nStock = ngroup;
 	s_md.nNage  = nage;
 
-	mse::omData smd(s_md);
+
+	// Composition data struct.
+	mse::CompositionData s_cd;
+	s_cd.n_A_nobs = n_A_nobs;
+	s_cd.n_A_sage = n_A_sage;
+	s_cd.n_A_nage = n_A_nage;
+	s_cd.d3_A     = &d3_A;
+	cout<<"Good to here "<<n_A_nage<<" "<<&n_A_nage<<endl;
+
+	// Weight-at-age Data Struct
+	mse::WeightAtAgeData s_waad;
+	s_waad.d3_wt_avg  = &d3_wt_avg;
+	s_waad.d3_wt_mat  = &d3_wt_mat;
+	s_waad.d3_len_age = &d3_len_age;
+
+
+
+	mse::omData smd(s_md,s_cd,s_waad);
 
 	// Operating model data
 	mse::omData md;  //instantiating omData clas
