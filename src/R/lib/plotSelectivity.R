@@ -22,6 +22,29 @@
 	print(p + .THEME)
 }
 
+.plotSelex <- function( M )
+{
+	cat(".plotSelex\n")
+	n   <- length(M)
+	mdf <- NULL
+	for(i in 1:n)
+	{
+		df <- data.frame(Model=names(M)[i],logSel=M[[i]]$log_sel)
+		colnames(df)<-c("Model","Gear","Sex","Year",M[[i]]$age)
+
+		mdf <- rbind(mdf,melt(df,id=c("Model","Year","Gear","Sex")))
+	}
+	g <- unique(mdf$Gear)
+	for(k in 1)
+	{
+		gmdf <- subset(mdf,Gear==k)
+		p <- ggplot(gmdf,aes(x=variable,y=exp(value),color=factor(Sex))) + geom_point()
+		p <- p + labs(x="Age",y="Selectivity",color="Group")
+		p <- p + facet_wrap(~ Year)
+		print(p + .THEME)
+	}
+}
+
 # .plotOldSelectivity	<- function( repObj )
 # {
 # 	#plot the selectivity curves (3d plots)
