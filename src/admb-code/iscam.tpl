@@ -4911,12 +4911,41 @@ FUNCTION mcmc_output
 FUNCTION void runMSE()
 
 	// Model Dimension Struct
-	mse::modelDimensions s_md;
+	mse::ModelDimensions s_md;
+	mse::GrowthAndMaturityParameters s_gamp;
+	mse::TimeSeriesData s_tsd;
+	mse::AbundanceIndices s_ai;
 
 	s_md.nStock = ngroup;
 	s_md.nNage  = nage;
+	s_md.nArea = narea;
+	s_md.nSex = nsex;
+	s_md.nSyr = syr;
+	s_md.nNyr = nyr;
+	s_md.nSage = sage;
+	s_md.nGear = ngear;
+	s_md.nFleet = nfleet;
 
-	mse::omData smd(s_md);
+	s_gamp.d_linf = d_linf;
+	s_gamp.d_vonbk = d_vonbk;
+	s_gamp.d_to = d_to;
+	s_gamp.d_a = d_a;
+	s_gamp.d_b = d_b;
+	s_gamp.d_ah = d_ah;
+	s_gamp.d_gh = d_gh;
+	s_gamp.d_maturityVector = d_maturityVector;
+	s_gamp.n_MAT = n_MAT;
+
+	s_tsd.nCtNobs = nCtNobs;
+	s_tsd.d3_Ct = &d3_Ct;
+
+	s_ai.nItNobs = nItNobs;
+	s_ai.n_it_nobs = n_it_nobs;
+	s_ai.n_survey_type = n_survey_type;
+	s_ai.d3_survey_data = &d3_survey_data;
+	
+
+	mse::omData smd(s_md,s_gamp,s_tsd,s_ai);
 
 	// Operating model data
 	mse::omData md;  //instantiating omData clas

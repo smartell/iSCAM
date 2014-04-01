@@ -19,7 +19,7 @@
 
 namespace mse {
 
-	struct modelDimensions
+	struct ModelDimensions
 	{
 		int nStock;
 		int nArea;
@@ -32,6 +32,35 @@ namespace mse {
 		int nFleet;
 
 		dvector dAllocation;
+	};
+
+	struct GrowthAndMaturityParameters
+	{
+		dvector d_linf;
+		dvector d_vonbk;
+		dvector d_to;
+		dvector d_a;
+		dvector d_b;
+		dvector d_ah;
+		dvector d_gh;
+		dvector d_maturityVector;
+		int n_MAT;
+	};
+
+	struct TimeSeriesData
+	{
+		int nCtNobs;
+		d3_array *d3_Ct;
+	};
+
+	struct AbundanceIndices
+	{
+
+		int nItNobs;
+		ivector n_it_nobs;
+		ivector n_survey_type;
+		d3_array *d3_survey_data;
+	
 	};
 
 	/**
@@ -55,7 +84,11 @@ namespace mse {
 		int m_nFleet;
 		dvector m_dAllocation;
 
-		modelDimensions s_md;
+		ModelDimensions s_md;
+		GrowthAndMaturityParameters s_gamp;
+		TimeSeriesData s_tsd;
+		AbundanceIndices s_ai;
+
 
 		d3_array m_d3_ct;
 
@@ -70,11 +103,18 @@ namespace mse {
 			cout<<m_d3_ct<<endl;
 		}
 
-		omData(const modelDimensions &_md)
-		:s_md(_md)
+		omData(const ModelDimensions &_md, 
+			   const GrowthAndMaturityParameters &_gamp,
+			   const TimeSeriesData &_tsd,
+			   const AbundanceIndices &_ai)
+		:s_md(_md), s_gamp(_gamp), s_tsd(_tsd), s_ai(_ai)
 		{
 			cout<<"THis is fucking cool"<<endl;
 			cout<<s_md.nNage<<endl;
+			cout<<s_gamp.d_linf<<endl;
+			cout<<s_tsd.nCtNobs<<endl;
+			cout<<s_ai.nItNobs<<endl;
+			
 		}
 
 		// |---------|
