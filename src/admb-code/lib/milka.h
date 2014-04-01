@@ -128,6 +128,7 @@ namespace mse {
 			   const AbundanceIndices &_ai,
 		       const CompositionData &_cd,
 		       const WeightAtAgeData &_waad)
+
 		:s_md(_md), s_gamp(_gamp), s_tsd(_tsd), s_ai(_ai),s_waad(_waad),s_cd(_cd)
 		{
 			cout<<"THis is fucking cool"<<endl;
@@ -136,8 +137,7 @@ namespace mse {
 			cout<<s_tsd.nCtNobs<<endl;
 			cout<<s_ai.nItNobs<<endl;
 			cout<<"Average weight\n"<<endl;
-			cout<<*s_waad.d3_wt_avg<<endl;
-			
+			cout<<*s_waad.d3_wt_avg<<endl;			
 		}
 
 		// |---------|
