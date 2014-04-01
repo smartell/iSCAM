@@ -595,7 +595,7 @@ DATA_SECTION
 	// | A            -> array of data (year,gear,area,group,sex|Data...)
 	// | d3_A_obs     -> array of catch-age data only.
 	// |
-	init_int nAgears
+	init_int nAgears;
 	init_ivector n_A_nobs(1,nAgears);
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
@@ -4142,13 +4142,15 @@ FUNCTION writeSimulatedDataFile
   	
 
   	dfs<<"#Age-schedule and population parameters"<<endl;
-  	dfs<< d_linf  		<<endl;
-  	dfs<< d_vonbk  		<<endl;
+  	dfs<< d_linf  			<<endl;
+  	dfs<< d_vonbk  			<<endl;
   	dfs<< d_to  			<<endl;
-  	dfs<< d_a  			<<endl;
-  	dfs<< d_b  			<<endl;
+  	dfs<< d_a  				<<endl;
+  	dfs<< d_b  				<<endl;
   	dfs<< d_ah  			<<endl;
   	dfs<< d_gh  			<<endl;
+  	dfs<< n_MAT				<<endl;
+	dfs<< d_maturityVector <<endl;
 
   	dfs<<"#Observed catch data"<<endl;
   	dfs<< nCtNobs 		<<endl;
@@ -4165,9 +4167,11 @@ FUNCTION writeSimulatedDataFile
   	dfs<< n_A_nobs				<<endl;
   	dfs<< n_A_sage				<<endl;
   	dfs<< n_A_nage				<<endl;
-  	dfs<< d3_A						<<endl;
+  	dfs<< inp_nscaler 			<<endl;
+  	dfs<< d3_A					<<endl;
 
   	dfs<<"#Empirical weight-at-age data"	<<endl;
+  	dfs<< nWtTab 				<<endl;
   	dfs<< nWtNobs				<<endl;
 	dfs<< d3_inp_wt_avg			<<endl; // not sure if this shoud be d3_inp_wt_avg, and how this would affect simDatfile 
 
@@ -4271,6 +4275,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(d3_survey_data);
 	REPORT(it_hat);
+	REPORT(it_wt);
 	REPORT(epsilon);
 
 	if(n_A_nobs(nAgears) > 0)
