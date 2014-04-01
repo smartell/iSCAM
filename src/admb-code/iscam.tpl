@@ -535,6 +535,8 @@ DATA_SECTION
 			} 
 			//if(verbose)  cout<<"Ok after reading catch data"<<ii<<" "<<ig <<" "<<n_ags<<endl;
 		}
+
+		
 	END_CALCS
 	
 
@@ -550,7 +552,7 @@ DATA_SECTION
 	// | n_survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | d3_survey_data: (iyr index(it) gear area group sex wt timing)
 	// | it_wt       = relative weights for each relative abundance normalized to have a
-	// |               mean = 1 so rho = sig2/(sig^2+tau2) holds true in variance pars.
+	// |               mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
 	// |
 
 	init_int nItNobs;
@@ -646,10 +648,99 @@ DATA_SECTION
 	// | - construct and fill fecundity-at-age matrix for ssb calculations.   (d3_wt_mat)
 	// | [ ] - TODO fix h=0 option for weight-at-age data
 	// | [ ] - TODO need to accomodate ragged arrays, or NA values, or partial d3_wt_avg.
-	// |
+	// | nWtTab  = number of Empirical weight-at-age tables.
+	// | nWtNobs = number of rows in each weight-at-age table.
+	// | d3_inp_wt_avg = input weight-at-age.
 
-	init_int nWtNobs;
-	init_matrix inp_wt_avg(1,nWtNobs,sage-5,nage);
+	init_int nWtTab;
+	
+	init_vector nWtNobs(1,nWtTab);
+	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
+	
+	vector tmp_nWtNobs(1,nWtTab);
+	int sum_tmp_nWtNobs; 
+
+
+	LOC_CALCS
+		
+		/*
+		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
+		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
+		*/
+
+		for(int ii=1; ii<=nWtTab; ii++)
+		{
+			if(nWtNobs(ii) > 0 && d3_inp_wt_avg(ii)(1)(sage-5) < 0)
+			{
+				int exp_nyr = fabs(d3_inp_wt_avg(ii,1,sage-5))-syr; 
+				tmp_nWtNobs(ii) = nWtNobs(ii)+exp_nyr;
+			}
+			else if (nWtNobs(ii) > 0)
+			{
+				tmp_nWtNobs(ii) = nWtNobs(ii);
+			}
+		}
+		sum_tmp_nWtNobs = sum(tmp_nWtNobs);		
+
+		
+
+	END_CALCS
+
+		3darray xinp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
+		matrix  xxinp_wt_avg(1,sum_tmp_nWtNobs,sage-5,nage);
+
+	LOC_CALCS
+
+		xinp_wt_avg.initialize();
+		xxinp_wt_avg.initialize();
+
+		/*
+		  This will redimension the d3_inp_wt_avg  according to tmp_nWtNobs and rename 
+		  the 3d array to xinp_wt_avg. Then the 3darray is converted to a matrix 
+		  xxinp_wt_avg 
+		*/
+
+
+  		for(int ii=1; ii<=nWtTab; ii++)
+		{
+		if(nWtNobs(ii) > 0)
+		{
+  			if(d3_inp_wt_avg(ii,1,sage-5) < 0)
+			{
+	 			d3_inp_wt_avg(ii,1,sage-5) = fabs(d3_inp_wt_avg(ii,1,sage-5));
+				int exp_nyr = d3_inp_wt_avg(ii,1,sage-5)-syr;
+			
+				for(int jj=exp_nyr;jj>=1;jj--)
+	 			{
+	 				xinp_wt_avg(ii)(jj)(sage-5) = syr+jj-1 ;
+	 				xinp_wt_avg(ii)(jj)(sage-4,nage) = d3_inp_wt_avg(ii)(1)(sage-4,nage);
+	 			}
+			
+				for(int jj = exp_nyr+1; jj <= tmp_nWtNobs(ii); jj++)
+	 			{
+	 				xinp_wt_avg(ii)(jj)(sage-5,nage) = d3_inp_wt_avg(ii)(jj-exp_nyr)(sage-5,nage);
+	 			}
+	 		}
+	 		else
+	 		{
+				for(int jj = 1; jj <= tmp_nWtNobs(ii); jj++)
+	 			{
+	 				xinp_wt_avg(ii)(jj)(sage-5,nage) = d3_inp_wt_avg(ii)(jj)(sage-5,nage);
+	 			}
+			}
+		
+			int ttmp =	sum(tmp_nWtNobs(1,ii-1));
+			int ttmp2 =	sum(tmp_nWtNobs(1,ii));
+
+			cout<<" ttmp is:"<< ttmp <<" ttmp2 is:"<<ttmp2<<endl;
+
+			for(int jj=ttmp+1; jj<=ttmp2; jj++) 
+			{
+				xxinp_wt_avg(jj)(sage-5,nage) = xinp_wt_avg(ii)(jj-ttmp)(sage-5,nage);
+			}
+		}
+		}
+	END_CALCS
 
 	matrix  dWt_bar(1,n_ags,sage,nage);
 	3darray d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
@@ -667,7 +758,7 @@ DATA_SECTION
 
 		for(ig=1;ig<=n_ags;ig++)
 		{
-			for(int i=syr;i<=nyr;i++)
+			for(int i = syr; i <= nyr; i++)
 			{
 				d3_wt_avg(ig)(i) = wa(ig);
 				d3_wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
@@ -679,57 +770,56 @@ DATA_SECTION
 		// SM Sept 6, 2013. Added option of using NA values (-99.0) for
 		// missing weight-at-age data, or truncated age-data.
 		int iyr;
-		for(i=1;i<=nWtNobs;i++)
+		
+		//if(nWtNobs(ii) > 0)
+		//{
+		for(i=1;i<=sum_tmp_nWtNobs;i++)
 		{
-			iyr = inp_wt_avg(i,sage-5);
-			f   = inp_wt_avg(i,sage-3);
-			g   = inp_wt_avg(i,sage-2);
-			h   = inp_wt_avg(i,sage-1);
+			iyr = xxinp_wt_avg(i,sage-5);
+			f   = xxinp_wt_avg(i,sage-3);
+			g   = xxinp_wt_avg(i,sage-2);
+			h   = xxinp_wt_avg(i,sage-1);
 
-			// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
+		// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
 			{
 				ig                   = pntr_ags(f,g,h);
-				dvector tmp          = inp_wt_avg(i)(sage,nage);
+				dvector tmp          = xxinp_wt_avg(i)(sage,nage);
 				ivector idx          = getIndex(age,tmp);
 				for( int ii = 1; ii <= size_count(idx); ii++ )
 				{
-					d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+					d3_wt_avg(ig)(iyr)(idx(ii)) = xxinp_wt_avg(i)(idx(ii));
 					d3_len_age(ig)(iyr)(idx(ii))= pow(d3_wt_avg(ig)(iyr)(idx(ii))
-					                                  /d_a(ig),1./d_b(ig));
-				}
-				//d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
-				d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
-				//cout<<"Yep \t"<<inp_wt_avg(i)(idx)<<endl;
-				//cout<<"Yep \t"<<tmp(idx)<<endl;
-				//cout<<"Yep \t"<<d3_wt_avg(ig)(iyr)(idx)<<endl;
+				                                  /d_a(ig),1./d_b(ig));
+				 }
+			//d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
+			d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
+			//cout<<"Yep \t"<<inp_wt_avg(i)(idx)<<endl;
+			//cout<<"Yep \t"<<tmp(idx)<<endl;
+			//cout<<"Yep \t"<<d3_wt_avg(ig)(iyr)(idx)<<endl;
 			}
 			else if( !h ) 
 			{
 					//cout<<h<<endl;
-<<<<<<< Temporary merge branch 1
 				
->>>>>>> Temporary merge branch 2
-=======
-
->>>>>>> Temporary merge branch 2
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
-					dvector tmp          = inp_wt_avg(i)(sage,nage);
+					dvector tmp          = xxinp_wt_avg(i)(sage,nage);
 					ivector idx          = getIndex(age,tmp);
 					// Problem, array indexed differ, must loop over idx;
 					// d3_wt_avg(ig)(iyr)(idx) = inp_wt_avg(i)(idx);
 					for( int ii = 1; ii <= size_count(idx); ii++)
 					{
-						d3_wt_avg(ig)(iyr)(idx(ii)) = inp_wt_avg(i)(idx(ii));
+						d3_wt_avg(ig)(iyr)(idx(ii)) = xxinp_wt_avg(i)(idx(ii));
 						d3_len_age(ig)(iyr)(idx(ii)) = pow(d3_wt_avg(ig)(iyr)(idx(ii))
-						                               /d_a(ig),1./d_b(ig));
+					                               /d_a(ig),1./d_b(ig));
 					}
 					d3_wt_mat(ig)(iyr)      = elem_prod(ma(ig),d3_wt_avg(ig)(iyr));
 				}
 			}
 		}
+		//}
 		
 
 		// average weight-at-age in projection years
@@ -1398,7 +1488,10 @@ PARAMETER_SECTION
 	// | SDREPORT VARIABLES AND VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
+	// | sd_sbt       -> Spawning biomass for each group.
+	// |
 	sdreport_vector sd_depletion(1,ngroup);	
+	sdreport_matrix sd_sbt(1,ngroup,syr,nyr+1);
 	
 
 PRELIMINARY_CALCS_SECTION
@@ -1456,7 +1549,10 @@ PROCEDURE_SECTION
 	
 	calcObjectiveFunction();
 
-	calcSdreportVariables();
+	if(sd_phase())
+	{
+		calcSdreportVariables();
+	}
 	
 	
 	if(mc_phase())
@@ -1489,10 +1585,13 @@ PROCEDURE_SECTION
 FUNCTION void calcSdreportVariables()
   {
 	sd_depletion.initialize();
+	sd_sbt.initialize();
 
 	for(g=1;g<=ngroup;g++)
 	{
 		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
+
+		sd_sbt(g) = sbt(g);
 	}
 	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
@@ -4096,7 +4195,7 @@ FUNCTION writeSimulatedDataFile
 
   	dfs<<"#Empirical weight-at-age data"	<<endl;
   	dfs<< nWtNobs				<<endl;
-	dfs<< inp_wt_avg			<<endl;
+	dfs<< d3_inp_wt_avg			<<endl; // not sure if this shoud be d3_inp_wt_avg, and how this would affect simDatfile 
 
 	dfs<<"#EOF"	<<endl;
 	dfs<< 999	<<endl;
@@ -4247,7 +4346,7 @@ REPORT_SECTION
 
 	// d3_wt_avg(1,n_ags,syr,nyr+1,sage,nage);
 	adstring tt = "\t";
-	REPORT(inp_wt_avg);
+	REPORT(xxinp_wt_avg);
 	REPORT(dWt_bar);
 	// REPORT(d3_wt_avg);
 	REPORT(d3_wt_mat);
@@ -4496,7 +4595,8 @@ FUNCTION generate_new_files
 		rd<<NewFileName + ".dat"<<endl;
 		rd<<NewFileName + ".ctl"<<endl;
 		rd<<NewFileName + ".pfc"<<endl;
-
+	system("say Luke I am your father");
+	exit(1);
 
 
 	#if defined __APPLE__ || defined __linux

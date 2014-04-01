@@ -18,7 +18,8 @@ dist:
 	make     --directory=src/admb-code clean
 	make     --directory=src/admb-code 
 	cp    ./src/admb-code/iscam ${DISK}/debug/
-	cp -r ./src/r-code/ ${DISK}/R/
+	cp -r ./src/R/ ${DISK}/R/
+	# cp -r ./src/r-code/ ${DISK}/R/
 
 clean:
 	#make --directory=src/admb-code --file=linux.mak clean
