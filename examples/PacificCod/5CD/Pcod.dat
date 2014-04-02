@@ -19,7 +19,7 @@
 1956     # -first year of data         (syr)
 2013     # -last year of data          (nyr)
 1        # -age of youngest age class  (sage)
-11       # -age of plus group          (nage)
+10       # -age of plus group          (nage)
 4        # -number of gears            (ngear)
 ##
 ## ------------------------------------------------------------------------- ##
@@ -41,7 +41,7 @@
 7.38e-6  # -scaler in length-weight allometry
 3.0963       # -power parameter in length-weight allometry
 1.5    		# -age at 50% maturity (approx with log(3.0)/k)
-0.001      	# -std at 50% maturity (CV ~ 0.1)
+0.0001      	# -std at 50% maturity (CV ~ 0.1)
 0                       # -(if n_MAT==1) use the following vector for maturity
 0           		#mat vec
 ##
@@ -190,16 +190,20 @@
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-1        # Number of gears with age or length comps int(na_gears) i.e. data sets
-0       # Number of rows in the matrix ivector(na_gears)
+2        	# Number of gears with age or length comps int(na_gears) i.e. data sets
+3	2       # Number of rows in the matrix ivector(na_gears)
 ## ivector(na_gears) of youngest age-class
-1
+1     1
 ## ivector(na_gears) of oldest age-class + group
-11
+10    10
 ## vector effective sample size for multinomial
-1
+50     50
 ## year gear area group sex | data columns (numbers or proportions)
-#
+2009	1	1	1	0	0.052	0.097	0.260	0.286	0.159	0.098	0.031	0.009	0.002	0.006
+2010	1	1	1	0	0.030	0.119	0.276	0.242	0.149	0.093	0.056	0.011	0.005	0.019
+2011	1	1	1	0	0.017	0.087	0.253	0.251	0.165	0.106	0.075	0.018	0.006	0.023
+2009	3	1	1	0	0.404	0.158	0.189	0.134	0.066	0.031	0.011	0.001	0.000	0.001
+2011	3	1	1	0	0.426	0.133	0.188	0.124	0.059	0.034	0.007	0.002	0.001	0.002
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##
 ## ------------------------------------------------------------------------- ##

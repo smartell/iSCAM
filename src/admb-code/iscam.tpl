@@ -597,21 +597,27 @@ DATA_SECTION
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
 	init_vector  inp_nscaler(1,nAgears);
+
+	
   // The 5 in the next command is to remove the first 5 columns
   // from the age comp 'data' because they are not the actual ages,
   // but the header data.
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
+	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
+	
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 )
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
 			cout<<"| ----------------------- |"<<endl;
-			cout<<setw(4)<<d3_A(nAgears).sub(n_A_nobs(nAgears)-2,n_A_nobs(nAgears))<<endl;
+			cout<<setw(4)<<d3_A(nAgears).sub(n_A_nobs(nAgears)-1,n_A_nobs(nAgears))<<endl;
 			cout<<"| ----------------------- |\n"<<endl;
+			
 			for(k=1;k<=nAgears;k++)
 			{
+				
 				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 				if(inp_nscaler(k) > 0)
 				{
@@ -620,6 +626,7 @@ DATA_SECTION
 						 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
 					}
 				}
+				
 				d3_A_obs(k) = tmp;
 				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 			}

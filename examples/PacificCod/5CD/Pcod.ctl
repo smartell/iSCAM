@@ -35,14 +35,14 @@
 ##     -5 : logistic_student_T, no autocorrelation
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-1   ## Gear Index
-1   ## Likelihood type
-0   ## Minimum proportion for aggregation & tail compression
-0   ## Small constant to add to comps & renormalize
--1  ## phase for log_age_tau2 estimation.
--2  ## phase for phi1 estimation: bounded (-1,1) AR1
--2  ## phase for phi2 estimation: bounded (0,1)  AR2 
--2  ## phase for degrees of freedom for student T.
+1	2	## Gear Index
+1	1   ## Likelihood type
+0	0   ## Minimum proportion for aggregation & tail compression
+0	0   ## Small constant to add to comps & renormalize
+-1	-1  ## phase for log_age_tau2 estimation.
+-2	-2  ## phase for phi1 estimation: bounded (-1,1) AR1
+-2	-2  ## phase for phi2 estimation: bounded (0,1)  AR2 
+-2	-2  ## phase for degrees of freedom for student T.
 -12345                      ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 ##
@@ -62,19 +62,19 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-11	6	6	6	 # 1  -selectivity type ivector(isel_type) for gear
-45	1.5	1.5	1.5	 # 2  -Age at 50% selectivity (logistic)
-5.1	0.001	0.001	0.001 # 3  -STD at 50% selectivity (logistic)
+6	6	6	6	 # 1  -selectivity type ivector(isel_type) for gear
+1.5	1.5	1.5	1.5	 # 2  -Age at 50% selectivity (logistic)
+0.005	0.005	0.005	0.005 # 3  -STD at 50% selectivity (logistic)
 0	0	0	0	 # 4  -No. of age nodes for each gear (0=ignore)
 0	0	0	0	  # 5  -No. of year nodes for 2d spline(0=ignore)
-1	-1	-1	-1	 # 6  -Phase of estimation (-1 for fixed)
-2	2	2	2		# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-2 	2	2	2		# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+-1	-1	-1	-1	 # 6  -Phase of estimation (-1 for fixed)
+150	200	200	200		# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+50 	200	200	200		# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 12	12	12	12	      # 9  -Penalty wt for time-varying selectivity
-2	1	1	1		# 10 -n_sel_blocks (number of selex blocks)
+1	1	1	1		# 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
-1956 1996
+1956
 1956
 1956
 1956
@@ -89,7 +89,7 @@
 3					# -number of surveys (nits) 
 1	1	0	# -prior type (see legend above)
 0	0	0	# -prior log(mean)
-0.5	0.5	0	# -prior sd
+0.5	0.5	1	# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -102,8 +102,8 @@
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic DEPRECATED
 0.40        # 7  -Mean fishing mortality for regularizing the estimates of Ft
-0.10        # 8  -std in mean fishing mortality in first phase
-2.00        # 9  -std in mean fishing mortality in last phase
+2.        # 8  -std in mean fishing mortality in first phase
+4.00        # 9  -std in mean fishing mortality in last phase
 -1          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
