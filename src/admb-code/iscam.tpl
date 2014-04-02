@@ -1324,7 +1324,7 @@ PARAMETER_SECTION
 	// |   if this is true, then do not estimate init_log_rec_devs
 	// | [ ] - TODO add dev contstraint for rec_devs in calc_objective_function.
 
-	!! int init_dev_phz = 2;
+	!! int init_dev_phz = 2;	  //2
 	!! if(d_iscamCntrl(5)) init_dev_phz = -1;
 	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
 	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-5.,5.,2);
@@ -1542,7 +1542,7 @@ PROCEDURE_SECTION
 	calcTotalMortality();
 	
 	calcNumbersAtAge();
-	
+			
 	calcTotalCatch();
 	
 	calcAgeComposition();
@@ -1961,15 +1961,17 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					
 			}  // switch
 
+			 /*		!!!!!!!      RF TURNED THIS OFF FOR TESTING - TO BE TURNED BACK ON		 !!!!!!!!
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
 				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
+			*/
 		}
 	}  //end of gear k
-	
+	     
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
@@ -2171,6 +2173,7 @@ FUNCTION calcNumbersAtAge
 		bt(g)(nyr+1) += N(ig)(nyr+1) * d3_wt_avg(ig)(nyr+1);
 
 	}
+	
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
 

@@ -1,6 +1,7 @@
 read.admb <-
 function(ifile)
 {	
+	
 	ret=read.fit(ifile)
 	
 	fn=paste(ifile,'.rep', sep='')

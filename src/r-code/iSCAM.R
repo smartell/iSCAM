@@ -1,4 +1,4 @@
-##                                       ##
+## ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ##
 #-------------------------------------------------------------------------------#
 #   iSCAM Viewer: A gui based viewer for iscam inputs and outputs               #
 #                                                                               #
@@ -56,7 +56,7 @@
 #                                                                               #
 #                                                                               #
 #-------------------------------------------------------------------------------#
-setwd("/Users/stevenmartell1/Documents/iSCAM-project/src/r-code/")
+setwd("C:/GitHub/iSCAM/src/r-code")
 require(Hmisc)
 .RFILES     <- list.files("./R/",pattern="\\.[Rr]$")
 for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
@@ -76,7 +76,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 .FIGUREDIR  <- "../FIGS/"
 
 
-
+ fileName="iscam"
 
 
 
@@ -150,7 +150,7 @@ for(nm in .RFILES) source(file.path("./R", nm), echo=FALSE)
 	}
 	
 	
-	browser()
+	#
 	
 	closeWin(win)
 	createWin("iscamWin2.txt")
@@ -422,6 +422,9 @@ getRepObj   <- function(fileName)
 	{
 		# Read the report file
 		#repObj	<- read.rep(hdr$Report.File[i])
+		#print(hdr)
+		#break
+		print(hdr$Control.File[i])
 		repObj	<- read.admb(hdr$Control.File[i])
 		repObj$stock = hdr$Stock[i]
 		repObj$Control.File = hdr$Control.File[i]
@@ -955,7 +958,7 @@ getRepObj   <- function(fileName)
 # 				pt = ctrl[i, 5]+1
 # 				fn=match.fun(nfn[pt])
 # 				p1=ctrl[i, 6]; p2=ctrl[i, 7]
-# 				#browser()
+# 				#
 # 				if(pt!=4)
 # 					curve(unlist(lapply(x,fn,p1,p2)),
 # 						xl[1],xl[2],add=T, col=colr(4, 0.7), lwd=2)
@@ -1145,7 +1148,7 @@ getRepObj   <- function(fileName)
 # 			yy = epsilon
 # 			ng = 1
 # 		}
-# 		#browser()
+# 		#
 # 		absmax = abs(max(yy, na.rm=TRUE))
 # 		if(absmax<=1e-3)absmax=1
 # 		yrange=c(-absmax, absmax)
@@ -1436,7 +1439,7 @@ getRepObj   <- function(fileName)
 # 		{
 # 			x2=c(xx, rev(xx))
 # 			y2=c(ry[,i+1], rev(ry[,i]))
-# 			#browser()
+# 			#
 # 			polygon(x2, y2, border=NA,col=colr(i,0.2), log="y")
 # 		}
 # 		
@@ -1577,7 +1580,7 @@ getRepObj   <- function(fileName)
 		}
 	}
 	par(op)
-	#browser()
+	#
 }
 
 #-------------------------------------------------------------------------------#
@@ -1674,11 +1677,11 @@ getRepObj   <- function(fileName)
     sz1 <- max(za * size/zM, 0.001)
     sz2 <- max(-zb * size/zM, 0.001)
     if (debug) 
-        browser()
+        
     symbols(xx, yy, circles = as.vector(abs(z0)), inches = size, 
         fg = 0, ...)
     if (debug) 
-        browser()
+        
     if (!hide0 && !all(is.na(z3))) {
         symbols(xx, yy, circles = as.vector(z3), inches = 0.001, 
             fg = fg.clrs[1], bg = bg.clrs[3], lwd = lwd, add = TRUE, ...)
@@ -1748,7 +1751,7 @@ getRepObj   <- function(fileName)
 		arg = paste("./iscam -nox -sim", 111)
 		system(arg)
 		admbObj <- read.admb("iscam")
-	
+		
 		itheta  <- grep("theta", admbObj$fit$names)
 		ix		<- as.numeric(substr(admbObj$fit$names[itheta],7,7))
 		theta <- admbObj$ctrl[ix, 1]
@@ -1773,7 +1776,7 @@ getRepObj   <- function(fileName)
 		pn	<- c("log(Ro)","h","log(m)","log(Rbar)","log(Rinit)","rho","vartheta")
 		theta_dev<-log2(t(t(theta_p)/theta))
 		#theta_dev<-cbind(theta_dev, rPoints)
-		#browser()
+		#
 
 		colnames(theta_dev)= (pn[ix])#(pn[itheta])
 		colnames(rPoints) = c("Fmsy","MSY","Bmsy")
