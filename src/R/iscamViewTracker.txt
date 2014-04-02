@@ -1,4 +1,4 @@
 # iSCAM View Tracker File 
 "Select","Label","Description","Control File"
 #The following line is for the Demo example
-TRUE,Pcod,         "5CD Pacific Cod",../../examples/PacificCod/5CD/Pcod
+TRUE, PCod, "Pacific Cod", C:/github/iSCAM/examples/PacificCod/5CD/PcodLength

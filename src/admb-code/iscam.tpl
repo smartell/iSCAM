@@ -806,8 +806,7 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-				//cout<<h<<endl;
-			
+
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
