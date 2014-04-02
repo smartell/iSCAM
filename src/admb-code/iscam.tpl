@@ -4919,28 +4919,39 @@ FUNCTION void runMSE()
 	//Model Dimensions struct.
 	s_md.nStock = ngroup;
 	s_md.nNage  = nage;
-	s_md.nArea = narea;
-	s_md.nSex = nsex;
-	s_md.nSyr = syr;
-	s_md.nNyr = nyr;
-	s_md.nSage = sage;
-	s_md.nGear = ngear;
+	s_md.nArea  = narea;
+	s_md.nSex   = nsex;
+	s_md.nSyr   = syr;
+	s_md.nNyr   = nyr;
+	s_md.nSage  = sage;
+	s_md.nGear  = ngear;
 	s_md.nFleet = nfleet;
 
+	// Pointers for model dimensions
+	s_md.n_ags    = n_ags;      
+	s_md.n_ag     = n_ag;        
+	s_md.n_gs     = n_gs;        
+	s_md.n_area   = n_area;    
+	s_md.n_group  = n_group;  
+	s_md.n_sex    = n_sex;      
+	s_md.pntr_ag  = pntr_ag;  
+	s_md.pntr_gs  = pntr_gs;  
+	s_md.pntr_ags = &pntr_ags;
+
 	//Growth and Maturity Parameters struct.
-	s_md.d_linf = d_linf;
-	s_md.d_vonbk = d_vonbk;
-	s_md.d_to = d_to;
-	s_md.d_a = d_a;
-	s_md.d_b = d_b;
-	s_md.d_ah = d_ah;
-	s_md.d_gh = d_gh;
+	s_md.d_linf           = d_linf;
+	s_md.d_vonbk          = d_vonbk;
+	s_md.d_to             = d_to;
+	s_md.d_a              = d_a;
+	s_md.d_b              = d_b;
+	s_md.d_ah             = d_ah;
+	s_md.d_gh             = d_gh;
 	s_md.d_maturityVector = d_maturityVector;
-	s_md.n_MAT = n_MAT;
+	s_md.n_MAT            = n_MAT;
 
 	//Time Series Data struct.
 	s_md.nCtNobs = nCtNobs;
-	s_md.d3_Ct = &d3_Ct;
+	s_md.d3_Ct   = &d3_Ct;
 
 	//Abundance Indices struct.
 	s_md.nItNobs = nItNobs;

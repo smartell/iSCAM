@@ -18,6 +18,7 @@ OperatingModel::~OperatingModel(){}
 OperatingModel::OperatingModel(const ModelData &_md, const ModelVariables &_mv)
 :md(_md), mv(_mv)
 {
+	cout<<"In the constructor"<<endl;
 	cout<<mv.log_ro<<endl;
 }
 
@@ -26,12 +27,16 @@ void OperatingModel::initParameters()
 	m_dRo        = exp(mv.log_ro);
 	m_dSteepness = mv.steepness;
 	m_dM         = exp(mv.m);
-	m_dRbar      = exp(mv.log_rbar);
-	m_dRinit     = exp(mv.log_rinit);
 	m_dRho       = mv.rho;
 	m_dVarphi    = sqrt(1.0/mv.varphi);
 	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
 	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
+
+	for(int ih = 1; ih <= md.n_ag; ih++ )
+	{
+		m_dRbar  = exp(mv.log_rbar(ih));
+		m_dRinit = exp(mv.log_rinit(ih));
+	}
 
 	switch(int(md.d_iscamCntrl(2)))
 	{

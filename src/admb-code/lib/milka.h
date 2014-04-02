@@ -45,6 +45,17 @@ namespace mse {
 		int nFleet;
 		dvector dAllocation;
 
+		// Pointers for area stock sex
+		int      n_ags;
+		int      n_ag;
+		int      n_gs;
+		ivector  n_area;
+		ivector  n_group;
+		ivector  n_sex;
+		imatrix  pntr_ag;
+		imatrix  pntr_gs;
+		d3_array *pntr_ags;
+
 		// Growth And Maturity Parameters
 		dvector d_linf;
 		dvector d_vonbk;
@@ -90,6 +101,7 @@ namespace mse {
 		dvector log_rinit;
 		dvector rho;
 		dvector varphi;
+
 	};
 
 	class OperatingModel
