@@ -9,7 +9,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	rowlabels=FALSE width="5 10 16 30" sticky=W function=.readFile
 	
 	#-- widget 1b
-	#image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+	#image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 #-----------------------------------------------------------------------------#
 
 #-----------------------------------------------------------------------------#
@@ -55,14 +55,14 @@ grid 1 1 relief="flat" pady=5 padx=5
 		radio name=plotType value=mortality     text="Mortality"            function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=recruitment   text="Recruitment"          function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=depletion     text="Depletion"            function=.viewPlot mode=character sticky=W  edit=TRUE
-		radio name=plotType value=selectivity   text="Selectivities(s)"     function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=selectivity   text="Selectivity(cont.)"   function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=stockrecruit  text="Stock-Recruitment"    function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=surveyfit     text="Survey(s)"            function=.viewPlot mode=character sticky=W  edit=TRUE
+		radio name=plotType value=selex         text="Selectivities"        function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=ssbretro      text="SSB retrospective"    function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=productivity  text="Recruits per Spawner" function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=ssbsquid      text="SSB squid plot"       function=.viewPlot mode=character sticky=W  edit=TRUE
 		radio name=plotType value=kobeplot      text="Stock status (KOBE)"  function=.viewPlot mode=character sticky=W  edit=TRUE
-		null
 
 		# RowCol (4 1)
 		grid 2 1 relief="flat" sticky=W
@@ -94,7 +94,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 		check name=chkPNG checked=TRUE  text="PNG format" mode=logical 
 		
 	#-------------------------------------------------------------------------#
-		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+		image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 	#-------------------------------------------------------------------------#
 	
 	
@@ -115,7 +115,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	null
 	
 	#-------------------------------------------------------------------------#
-		image file="./logo/iscamLogo.gif" sticky="E" subsample=2
+		image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
 	#-------------------------------------------------------------------------#
 	
 

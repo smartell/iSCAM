@@ -221,7 +221,10 @@
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##
 ## ------------------------------------------------------------------------- ##
-0			# Number of years of weight-at-age data int(n_wt_obs)
+## Number of weight-at-age tables (n_wt_tab)
+1 
+## Number of rows in each weight-at-age table vector(n_wt_obs), use -99 if NA 
+0			
 ## year age columns (sage, nage) of weight at age data
 ##
 ## ------------------------------------------------------------------------- ##

@@ -313,7 +313,9 @@
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##
 ## ------------------------------------------------------------------------- ##
-## Number of years of weight-at-age data int(n_wt_obs), use 0 if NA
+## Number of weight-at-age tables (n_wt_tab)
+1 
+## Number of rows in each weight-at-age table vector(n_wt_obs), use -99 if NA
 61  
 ## year gear area stock sex |age columns (sage, nage) of weight at age data |
    1951 1    1    1     0    0.0503 0.0873 0.1144 0.1339 0.1489 0.1600 0.2050 0.1960 0.1586

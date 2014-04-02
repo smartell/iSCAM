@@ -165,8 +165,9 @@
 0
 #yr 	gear       Age1 Age2 Age3 ...
 
-#n_wt_obs
-0
-
+## Number of weight-at-age tables (n_wt_tab)
+1 
+## Number of rows in each weight-at-age table vector(n_wt_obs), use -99 if NA
+0  
 #eof
 999

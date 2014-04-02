@@ -9,12 +9,16 @@
 	mdf <- NULL
 	for(i in 1:n)
 	{
-		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,SBt=M[[i]]$sbt)
+		fit = M[[i]]$fit
+		sbt <- fit$est[fit$names=="sd_sbt"]
+		std <- fit$std[fit$names=="sd_sbt"]
+		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,SBt=M[[i]]$sbt,Std=std)
 		bt <- data.frame(bt,Bo=M[[i]]$bo)
 		mdf <- rbind(mdf,bt)
 	}
 
 	p <- ggplot(mdf,aes(Year,SBt)) + geom_line(width=2)
+	p <- p + geom_ribbon(aes(ymax=SBt+1.96*Std,ymin=SBt-1.96*Std),alpha=0.2)
 	p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
 	p <- p + facet_wrap(~Model,scales="free")

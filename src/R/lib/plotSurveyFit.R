@@ -3,24 +3,48 @@ require(reshape2)
 # fixed a plotting bug when NA present.
 .plotSurveyFit <- function(M)
 {
+	#SJDM.  For the 95% Confidence interval for the observations.
+	#  Assume ln(I_t) = ln(\hat(I_t)) + 0.5*\sigma^2
+	# The 95% CI is then ci = ln(I_t)± 1.96*\sigma/it_wt
+	# Plot (exp(ci))
+
 	n <- length(M)
 	cat(".plotSurveyfit\n")
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		it <- na.omit(as.vector(t(M[[i]]$it_hat)))
-		df <- data.frame(Model=names(M)[i],M[[i]]$d3_survey_data,it)
-		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing","Index_hat")
+		it_hat <- na.omit(as.vector(t(M[[i]]$it_hat)))
+		it     <- M[[i]]$d3_survey_data[,2]
+		sig<- M[[i]]$sig
+		norm_it_wt <- M[[i]]$it_wt
+		#fit <- M[[i]]$fit
+		#rho <- fit$est[fit$names=="theta[6]"]
+		#vartheta <- fit$est[fit$names=="theta[7]"]
+		#sig <- sqrt(rho/vartheta)
+		Ub <- exp(log(it)+1.96*sig/norm_it_wt)
+		Ub <- Ub[1:length(Ub)]
+		Lb <- exp(log(it)-1.96*sig/norm_it_wt)
+		Lb <- Lb[1:length(Ub)]
+		df <- data.frame(Model=names(M)[i],factor(M[[i]]$d3_survey_data[,1]),M[[i]]$d3_survey_data[,2:8],
+						norm_it_wt,it,it_hat,Ub,Lb)
+		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing", "norm_wt"
+		                  ,"It","It_hat","low_bnd","high_bnd")
 		mdf <- rbind(mdf,df)
 	}
 	print(head(mdf,3))
 
+	limits <- aes(ymax=high_bnd, ymin=low_bnd)
+
 	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=factor(Gear)),size=2)
-	p <- p + geom_line(aes(Year,Index_hat,color=factor(Gear)),size=1)
+	p <- p + geom_line(aes(Year,It_hat,color=factor(Gear)),size=1)
+	p <- p + geom_pointrange(aes(Year,It,ymax=high_bnd, ymin=low_bnd,color=factor(Gear)))
+	# p <- p + geom_ribbon(aes(Year,ymax=high_bnd, ymin=low_bnd,fill=factor(Gear)),alpha=.3)
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }
+
+
 # Steven Martell
 # Sept 6,  2012
 
