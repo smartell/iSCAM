@@ -77,6 +77,8 @@ namespace mse {
 		const d3_array *d3_wt_avg;
 		const d3_array *d3_wt_mat;
 		const d3_array *d3_len_age;
+
+		dvector d_iscamCntrl;
 	};
 
 	struct ModelVariables
@@ -93,13 +95,26 @@ namespace mse {
 	class OperatingModel
 	{
 	private:
+		dvector m_dRo;
+		dvector m_dSteepness;
+		dvector m_dM;
+		dvector m_dRbar;
+		dvector m_dRinit;
+		dvector m_dRho;
+		dvector m_dVarphi;
+		dvector m_dSigma;
+		dvector m_dTau;
+		dvector m_dKappa;
+
 		ModelData      md;		// Structure for model data.
 		ModelVariables mv;		// Structure for model variables.
 
 	public:
 		OperatingModel(const ModelData &_md, const ModelVariables &_mv);
 		~OperatingModel();
-		
+	
+	protected:
+		void initParameters();
 	};
 
 

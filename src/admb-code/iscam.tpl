@@ -4959,7 +4959,14 @@ FUNCTION void runMSE()
 	s_md.d3_wt_mat  = &d3_wt_mat;
 	s_md.d3_len_age = &d3_len_age;
 
+
+	// iSCAM controls  (This should probably come from an MSE control file.)
+	s_md.d_iscamCntrl = d_iscamCntrl;
+
 	
+
+
+
 	// STRUCT FOR MODEL VARIABLES
 	mse::ModelVariables s_mv;
 	s_mv.log_ro    = value( theta(1) );
