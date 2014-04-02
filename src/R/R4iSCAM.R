@@ -15,18 +15,14 @@
 # | .RFILES    <- List of R functions to source from the lib directory.
 
 # .FIGUREDIR  <- "../FIGS/"
-.PWD        <- "~/Documents/iSCAM-project/examples/DEMO/R"
-.LIB        <- "../../../dist/R/lib/"
-.WIN        <- "../../../dist/R/iScamWin2.txt"
-setwd(.PWD)
-.FIGUREDIR  <- "../FIGS/"
-.RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
-
-.VIEWTRCK   <- "iscamViewTracker.txt"
-.BOOLREADFN <- TRUE
 require(ggplot2)
-.THEME      <- theme_bw(11)
-.UNITS      <- "(kt)"
+.PWD        <- getwd()
+.FIGUREDIR  <- "../FIGS/"
+.RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
+.VIEWTRCK   <- "iSCAMViewTracker.txt"
+.BOOLREADFN <- TRUE
+.THEME      <- theme_bw(12)
+.UNITS      <- "(mlb)"
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
@@ -35,7 +31,7 @@ require(ggplot2)
 guiView  <- function()
  {
 	setwd(.PWD)
-	for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+	for(nm in .RFILES) source(file.path("./lib", nm), echo=FALSE)
 	.gui2("iSCAMView") 	
  }
 
@@ -48,28 +44,22 @@ guiView  <- function()
 .gui2	<- function(win)
 {
 	require(PBSmodelling)
-	
+
 	trckExists <- file.exists( .VIEWTRCK )
-	ifiles     <- NULL
 	if (trckExists)
 	{
 		cat( "MSG (.hCamViewSetup): Viewer tracking file ",.VIEWTRCK, " found.\n" )
-		ifiles <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
-		# ifiles <- tmp
-		print(ifiles)
-		# browser()
 	}
-	else
-	{
-		cat( .VIEWTRCK," does not exist, please check file name. ")
-	}
-	if(exists(".PBSmod")) closeWin(win)
-		
-	createWin(.WIN)
-	
+		# if(exists(".PBSmod")) closeWin(win)
+	tmp    <- read.table( file = .VIEWTRCK,  as.is=TRUE,  header=TRUE,  sep="," )
+	ifiles <<- as.data.frame(tmp)
+
+	createWin("iscamWin2.txt")
+
+
 	setWinVal(list(txtFigDir=.FIGUREDIR))
 }
 
 
 
-cat("Type: \n guiView()\n to start the iSCAM gui")
+cat("Type: \n guiView()\n to start the iSCAM gui \n")
