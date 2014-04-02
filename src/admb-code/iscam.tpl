@@ -4924,8 +4924,10 @@ FUNCTION void runMSE()
 	s_md.nSyr   = syr;
 	s_md.nNyr   = nyr;
 	s_md.nSage  = sage;
+	s_md.nNage  = nage;
 	s_md.nGear  = ngear;
 	s_md.nFleet = nfleet;
+	s_md.age    = age;
 
 	// Pointers for model dimensions
 	s_md.n_ags    = n_ags;      
@@ -4951,6 +4953,7 @@ FUNCTION void runMSE()
 
 	//Time Series Data struct.
 	s_md.nCtNobs = nCtNobs;
+	s_md.dCatchData = dCatchData;
 	s_md.d3_Ct   = &d3_Ct;
 
 	//Abundance Indices struct.
@@ -4974,6 +4977,12 @@ FUNCTION void runMSE()
 	// iSCAM controls  (This should probably come from an MSE control file.)
 	s_md.d_iscamCntrl = d_iscamCntrl;
 
+	// Selectivity controls
+	s_md.i_sel_phz    = sel_phz;
+	s_md.n_yr_nodes   = yr_nodes;
+	s_md.n_age_nodes  = age_nodes;
+	s_md.nSelBlocks = n_sel_blocks;
+	s_md.n_sel_blocks = sel_blocks;
 	
 
 
@@ -4987,6 +4996,15 @@ FUNCTION void runMSE()
 	s_mv.log_rinit = value( theta(5) );
 	s_mv.rho       = value( theta(6) );
 	s_mv.varphi    = value( theta(7) );
+
+	// Selectivity parameters
+	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
+	for(int k = 1; k <= ngear; k++ )
+	{
+		log_sel_par(k) = value(sel_par(k));
+	}
+	
+	s_mv.d3_log_sel_par = &log_sel_par;
 
 
 	/*

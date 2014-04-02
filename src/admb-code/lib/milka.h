@@ -44,6 +44,7 @@ namespace mse {
 		int nGear;
 		int nFleet;
 		dvector dAllocation;
+		dvector age;
 
 		// Pointers for area stock sex
 		int      n_ags;
@@ -69,6 +70,7 @@ namespace mse {
 
 		// Catch array
 		int nCtNobs;
+		dmatrix dCatchData;
 		d3_array *d3_Ct;
 
 		// Abundance Indices
@@ -90,6 +92,14 @@ namespace mse {
 		const d3_array *d3_len_age;
 
 		dvector d_iscamCntrl;
+
+		// Selectivity controls
+		ivector i_sel_phz;
+		dvector n_yr_nodes;
+		dvector n_age_nodes;
+		ivector nSelBlocks;
+		imatrix n_sel_blocks;
+
 	};
 
 	struct ModelVariables
@@ -102,6 +112,9 @@ namespace mse {
 		dvector rho;
 		dvector varphi;
 
+
+		// Selectivity parameters
+		d3_array *d3_log_sel_par;
 	};
 
 	class OperatingModel
@@ -118,6 +131,12 @@ namespace mse {
 		dvector m_dTau;
 		dvector m_dKappa;
 
+		int m_nCtNobs;
+		dmatrix m_dCatchData;
+
+		d4_array d4_logSel;
+		d3_array m_log_sel_par;
+
 		ModelData      md;		// Structure for model data.
 		ModelVariables mv;		// Structure for model variables.
 
@@ -127,8 +146,11 @@ namespace mse {
 	
 	protected:
 		void initParameters();
+		void calcSelectivities(const ivector& isel_type);
 	};
 
+
+dvector cubic_spline(const dvector& spline_coffs, const dvector& la);
 
 } // mse namespace
 
