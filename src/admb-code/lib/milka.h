@@ -79,107 +79,30 @@ namespace mse {
 		const d3_array *d3_len_age;
 	};
 
-
-	/**
-	 * @brief Class for storing data for operating model
-	 * @details [long description]
-	 * @return NULL
-	 */
-	class omData{
-	private:
-		// |------------------|
-		// | Model dimensions |
-		// |------------------|
-		int m_nStock;
-		int m_nArea;
-		int m_nSex;
-		int m_nSyr;
-		int m_nNyr;
-		int m_nSage;
-		int m_nNage;
-		int m_nGear;
-		int m_nFleet;
-		dvector m_dAllocation;
-
-		ModelData s_md;
-		
-		d3_array m_d3_ct;
-
-	    //friend class OperatingModel;
-	public:
-		omData();
-		~omData();
-		omData(const d3_array &ct)
-		:m_d3_ct(ct)
-		{
-			cout<<"Hi Catarina"<<endl;
-			cout<<m_d3_ct<<endl;
-		}
-
-
-		omData(const ModelData &_md)
-		:s_md(_md)
-		{
-			cout<<"THis is fucking cool"<<endl;
-			cout<<s_md.nNage<<endl;
-			cout<<s_md.d_linf<<endl;
-			cout<<s_md.nCtNobs<<endl;
-			cout<<s_md.nItNobs<<endl;
-			cout<<"Average weight\n"<<endl;
-			cout<<*s_md.d3_wt_avg<<endl;			
-		}
-
-		// |---------|
-		// | Setters |
-		// |---------|
-		void set_nStock(const int &n) { m_nStock = n; cout<<n<<endl;}
-		void set_nArea (const int &n) { m_nArea  = n; }
-		void set_nSex  (const int &n) { m_nSex   = n; }
-		void set_nSyr  (const int &n) { m_nSyr   = n; }
-		void set_nNyr  (const int &n) { m_nNyr   = n; }
-		void set_nSage (const int &n) { m_nSage  = n; }
-		void set_nNage (const int &n) { m_nNage  = n; }
-		void set_nGear (const int &n) { m_nGear  = n; }
-		void set_nFleet(const int &n) { m_nFleet = n; }
-
-		void set_dAllocation (const dvector &d) {m_dAllocation = d;}
-		
-
-	};
-
-	/**
-	 * @brief Class for storing variables for operating model
-	 * @details [long description]
-	 * 
-	 */
-	class omVariables{
-	private:
-		dvector m_log_Ro;
-		friend class OperatingModel;
-	public:
-		omVariables();
-		~omVariables();
-
-		void set_log_Ro(const dvector &n) { m_log_Ro = n; }
+	struct ModelVariables
+	{
+		dvector log_ro;
+		dvector steepness;
+		dvector m;
+		dvector log_rbar;
+		dvector log_rinit;
+		dvector rho;
+		dvector varphi;
 	};
 
 	class OperatingModel
 	{
 	private:
-		int          m_nSeed;
-		omData       m_data;
-		omVariables  m_vars;
-		
-	protected:
-		
+		ModelData      md;		// Structure for model data.
+		ModelVariables mv;		// Structure for model variables.
+
 	public:
+		OperatingModel(const ModelData &_md, const ModelVariables &_mv);
 		~OperatingModel();
-
-		OperatingModel(const omData& md, const omVariables& mv, const int &seed);
-
-		void runScenario(const int &seed);
-
+		
 	};
+
+
 } // mse namespace
 
 

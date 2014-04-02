@@ -4912,11 +4912,9 @@ FUNCTION void runMSE()
 
 	cout<<"Start of runMSE"<<endl;
 
-	// Model Dimension Struct
+	// STRUCT FOR MODEL DATA
 	mse::ModelData s_md;
-	//mse::GrowthAndMaturityParameters s_gamp;
-	//mse::TimeSeriesData s_tsd;
-	//mse::AbundanceIndices s_ai;
+	
 
 	//Model Dimensions struct.
 	s_md.nStock = ngroup;
@@ -4961,132 +4959,27 @@ FUNCTION void runMSE()
 	s_md.d3_wt_mat  = &d3_wt_mat;
 	s_md.d3_len_age = &d3_len_age;
 
-	mse::omData smd(s_md);
+	
+	// STRUCT FOR MODEL VARIABLES
+	mse::ModelVariables s_mv;
+	s_mv.log_ro    = value( theta(1) );
+	s_mv.steepness = value( theta(2) );
+	s_mv.m         = value( theta(3) );
+	s_mv.log_rbar  = value( theta(4) );
+	s_mv.log_rinit = value( theta(5) );
+	s_mv.rho       = value( theta(6) );
+	s_mv.varphi    = value( theta(7) );
 
-	// Operating model data
-	mse::omData md;  //instantiating omData clas
-	mse::omData mdd(d3_Ct);
 
-	// Setting private member variables.
-	md.set_nStock(ngroup);
-	md.set_nArea(narea);
-	md.set_nSex(nsex);
-	md.set_nSyr(syr);
-	md.set_nNyr(nyr);
-	md.set_nSage(sage);
-	md.set_nNage(nage);
-	md.set_nGear(ngear);
-	md.set_nFleet(nfleet);
-	cout<<"What the fuck"<<endl;
-	md.set_dAllocation(dAllocation);
-	//md.set_d3_ct(&d3_Ct);
+	/*
+		Instantiate Operating Model Class
+	*/
+	mse::OperatingModel om(s_md,s_mv);
 
-	// Operating model variables
-	mse::omVariables mv;
-	COUT(narea);
-	mv.set_log_Ro( value(theta(1)) );
-
-	// Operating model class
-	//mse::OperatingModel om(md,mv,rseed);
-
-	//om.runScenario(rseed);
-	//mse::OperatingModel;
 
 	COUT("DONE");
 
-//    cout<<"Top of runMSE"<<endl;//
 
-//	s_iSCAMdata      s_mseData;
-//	s_iSCAMvariables s_mseVars;//
-
-//	/* SCENARIO DATA */
-//	s_mseData.nStock      = ngroup;
-//	s_mseData.nArea       = narea;
-//	s_mseData.nSex        = nsex;
-//	s_mseData.nSyr        = syr;
-//	s_mseData.nNyr        = nyr;
-//	s_mseData.nPyr        = nyr+10;
-//	s_mseData.nSage       = sage;
-//	s_mseData.nNage       = nage;
-//	s_mseData.nGear       = ngear;
-//	s_mseData.nFleet      = nfleet;
-//	s_mseData.nFleetIndex = nFleetIndex;
-//	s_mseData.dAllocation = dAllocation;
-//	s_mseData.d_linf      = d_linf;
-//	s_mseData.d_vonbk     = d_vonbk;
-//	s_mseData.d_to        = d_to;
-//	s_mseData.d_a         = d_a;
-//	s_mseData.d_b         = d_b;
-//	s_mseData.d_ah        = d_ah;
-//	s_mseData.d_gh        = d_gh;
-//	s_mseData.nCtNobs     = nCtNobs;
-//	s_mseData.dCatchData  = dCatchData;
-//	s_mseData.nIt         = nItNobs;
-//	s_mseData.nItNobs     = n_it_nobs;
-//	s_mseData.n_survey_type = n_survey_type;
-//	s_mseData.dSurveyData = &d3_survey_data;
-//	
-//	s_mseData.nAgears     = nAgears;
-//	s_mseData.nAnobs      = n_A_nobs;
-//	s_mseData.nAsage      = n_A_sage;
-//	s_mseData.nAnage      = n_A_nage;
-//	s_mseData.dA          = &d3_A;
-//	s_mseData.nWtNobs     = nWtNobs;
-//	s_mseData.d3_wt_avg     = &d3_wt_avg;
-//	s_mseData.d3_wt_mat     = &d3_wt_mat;//
-
-//	s_mseData.d_iscamCntrl        = d_iscamCntrl;//
-
-//    //
-
-//    /* SCENARIO PARAMETERS */
-//	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
-//	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
-//	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
-//	d3_array d3_ft(1,n_ags,1,ngear,syr,nyr);
-//	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
-//	for(k=1;k<=ngear;k++)
-//	{
-//		d3_selpar(k) = value(sel_par(k));
-//		d4_log_sel(k) = value(log_sel(k));
-//	}
-//	for( g = 1; g <= n_ags; g++ )
-//	{
-//		d3_M(g) = value(M(g));
-//		d3_S(g) = value(S(g));
-//		d3_ft(g) = value(ft(g));
-//	}//
-
-//	s_mseVars.d_log_ro        = value(theta(1));
-//	s_mseVars.d_steepness     = value(theta(2));
-//	s_mseVars.d_log_m         = value(theta(3));
-//	s_mseVars.d_log_rbar      = value(theta(4));
-//	s_mseVars.d_log_rinit     = value(theta(5));
-//	s_mseVars.d_rho           = value(theta(6));
-//	s_mseVars.d_varphi        = value(theta(7));
-//	s_mseVars.dLog_M_devs     = value(log_m_devs);
-//	s_mseVars.dLog_Rbar_devs  = value(log_rec_devs);
-//	s_mseVars.dLog_Rinit_devs = value(init_log_rec_devs);
-//	s_mseVars.nSel_type       = isel_type;
-//	s_mseVars.nSel_block      = sel_blocks;
-//	s_mseVars.dSelPars        = &d3_selpar;
-//	s_mseVars.d4_log_sel      = &d4_log_sel;
-//	s_mseVars.d3_Ft           = &d3_ft;
-//	s_mseVars.d3_Mt			  = &d3_M;
-//	s_mseVars.d3_St           = &d3_S;//
-//
-
-//	// Instantiate the Operating Model Class
-//    //OperatingModel om(s_mseData,s_mseVars);
-//    cout<<"This is red leader, Im going in"<<endl;
-//    OperatingModel om(s_mseData,s_mseVars,argc,argv);
-//    cout<<"Use the force Luke"<<endl;
-//    // Methods for the class om.
-//    om.runScenario(rseed);//
-//
-//
-//
-//
 
 
 TOP_OF_MAIN_SECTION
