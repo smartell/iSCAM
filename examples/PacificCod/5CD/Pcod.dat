@@ -190,11 +190,11 @@
 ## ------------------------------------------------------------------------- ##
 ## AGE COMPOSITION DATA (ROW YEAR, COL=AGE) Ragged object                    ##
 ## ------------------------------------------------------------------------- ##
-2        	# Number of gears with age or length comps int(na_gears) i.e. data sets
-3	2       # Number of rows in the matrix ivector(na_gears)
-## ivector(na_gears) of youngest age-class
+2        	# Number of gears with age or length comps int(nAgears) i.e. data sets
+3	2       # Number of rows in the matrix ivector(nAgears)	   n_A_nobs
+## ivector(nAgears) of youngest age-class
 1     1
-## ivector(na_gears) of oldest age-class + group
+## ivector(nAgears) of oldest age-class + group
 10    10
 ## vector effective sample size for multinomial
 50     50

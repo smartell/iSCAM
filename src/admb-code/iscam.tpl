@@ -1327,7 +1327,7 @@ PARAMETER_SECTION
 	!! int init_dev_phz = 2;
 	!! if(d_iscamCntrl(5)) init_dev_phz = -1;
 	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
-	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-15.,15.,2);
+	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-5.,5.,2);
 	
 
 
