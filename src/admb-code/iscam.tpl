@@ -4913,10 +4913,10 @@ FUNCTION void runMSE()
 	cout<<"Start of runMSE"<<endl;
 
 	// Model Dimension Struct
-	mse::ModelDimensions s_md;
-	mse::GrowthAndMaturityParameters s_gamp;
-	mse::TimeSeriesData s_tsd;
-	mse::AbundanceIndices s_ai;
+	mse::ModelData s_md;
+	//mse::GrowthAndMaturityParameters s_gamp;
+	//mse::TimeSeriesData s_tsd;
+	//mse::AbundanceIndices s_ai;
 
 	//Model Dimensions struct.
 	s_md.nStock = ngroup;
@@ -4930,40 +4930,38 @@ FUNCTION void runMSE()
 	s_md.nFleet = nfleet;
 
 	//Growth and Maturity Parameters struct.
-	s_gamp.d_linf = d_linf;
-	s_gamp.d_vonbk = d_vonbk;
-	s_gamp.d_to = d_to;
-	s_gamp.d_a = d_a;
-	s_gamp.d_b = d_b;
-	s_gamp.d_ah = d_ah;
-	s_gamp.d_gh = d_gh;
-	s_gamp.d_maturityVector = d_maturityVector;
-	s_gamp.n_MAT = n_MAT;
+	s_md.d_linf = d_linf;
+	s_md.d_vonbk = d_vonbk;
+	s_md.d_to = d_to;
+	s_md.d_a = d_a;
+	s_md.d_b = d_b;
+	s_md.d_ah = d_ah;
+	s_md.d_gh = d_gh;
+	s_md.d_maturityVector = d_maturityVector;
+	s_md.n_MAT = n_MAT;
 
 	//Time Series Data struct.
-	s_tsd.nCtNobs = nCtNobs;
-	s_tsd.d3_Ct = &d3_Ct;
+	s_md.nCtNobs = nCtNobs;
+	s_md.d3_Ct = &d3_Ct;
 
 	//Abundance Indices struct.
-	s_ai.nItNobs = nItNobs;
-	s_ai.n_it_nobs = n_it_nobs;
-	s_ai.n_survey_type = n_survey_type;
-	s_ai.d3_survey_data = &d3_survey_data;
+	s_md.nItNobs = nItNobs;
+	s_md.n_it_nobs = n_it_nobs;
+	s_md.n_survey_type = n_survey_type;
+	s_md.d3_survey_data = &d3_survey_data;
 	
 	// Composition data struct.
-	mse::CompositionData s_cd;
-	s_cd.n_A_nobs = n_A_nobs;
-	s_cd.n_A_sage = n_A_sage;
-	s_cd.n_A_nage = n_A_nage;
-	s_cd.d3_A     = &d3_A;
+	s_md.n_A_nobs = n_A_nobs;
+	s_md.n_A_sage = n_A_sage;
+	s_md.n_A_nage = n_A_nage;
+	s_md.d3_A     = &d3_A;
 	
 	// Weight-at-age Data Struct
-	mse::WeightAtAgeData s_waad;
-	s_waad.d3_wt_avg  = &d3_wt_avg;
-	s_waad.d3_wt_mat  = &d3_wt_mat;
-	s_waad.d3_len_age = &d3_len_age;
+	s_md.d3_wt_avg  = &d3_wt_avg;
+	s_md.d3_wt_mat  = &d3_wt_mat;
+	s_md.d3_len_age = &d3_len_age;
 
-	mse::omData smd(s_md,s_gamp,s_tsd,s_ai,s_cd,s_waad);
+	mse::omData smd(s_md);
 
 	// Operating model data
 	mse::omData md;  //instantiating omData clas

@@ -13,14 +13,27 @@
  * @deprecated  Feb 23, 2014
  * 
  * @details The namespace is mse, short for management strategy evaluation.
- * <br> The following class objects are: <br><br>
- * <br> Class
+ * 
+ * Steve  April 1, 2014.
+ * There should be two structs for passing datastructures into this class:
+ * ModelData:       -> struct that reflects the DATA_SECTION
+ * ModelVariables:  -> struct that reflects the PARAMETER_SECTION
+ * 
+ * CLASS Objects:
+ * Operating model:
+ * 
  */
 
 namespace mse {
 
-	struct ModelDimensions
+	/**
+	 * @brief Data structure for storing model data
+	 * @details Data variables treated as Constants in the operating model.
+	 * 
+	 */
+	struct ModelData
 	{
+		// Model dimensions
 		int nStock;
 		int nArea;
 		int nSex;
@@ -30,13 +43,9 @@ namespace mse {
 		int nNage;
 		int nGear;
 		int nFleet;
-
 		dvector dAllocation;
-	};
 
-
-	struct GrowthAndMaturityParameters
-	{
+		// Growth And Maturity Parameters
 		dvector d_linf;
 		dvector d_vonbk;
 		dvector d_to;
@@ -46,38 +55,30 @@ namespace mse {
 		dvector d_gh;
 		dvector d_maturityVector;
 		int n_MAT;
-	};
 
-	struct TimeSeriesData
-	{
+		// Catch array
 		int nCtNobs;
 		d3_array *d3_Ct;
-	};
 
-	struct AbundanceIndices
-	{
-
+		// Abundance Indices
 		int nItNobs;
 		ivector n_it_nobs;
 		ivector n_survey_type;
 		d3_array *d3_survey_data;
-	};
 
-	struct CompositionData
-	{
+		// Composition Data
 		int nAgears;
 		ivector  n_A_nobs;
 		ivector  n_A_sage;
 		ivector  n_A_nage;
 		d3_array *d3_A;
 
-	};
-	struct WeightAtAgeData
-	{
+		// Weight-At-Age Data
 		const d3_array *d3_wt_avg;
 		const d3_array *d3_wt_mat;
 		const d3_array *d3_len_age;
 	};
+
 
 	/**
 	 * @brief Class for storing data for operating model
@@ -100,14 +101,8 @@ namespace mse {
 		int m_nFleet;
 		dvector m_dAllocation;
 
-		ModelDimensions s_md;
-		GrowthAndMaturityParameters s_gamp;
-		TimeSeriesData s_tsd;
-		AbundanceIndices s_ai;
-		WeightAtAgeData s_waad;
-		CompositionData s_cd;
-
-
+		ModelData s_md;
+		
 		d3_array m_d3_ct;
 
 	    //friend class OperatingModel;
@@ -122,22 +117,16 @@ namespace mse {
 		}
 
 
-		omData(const ModelDimensions &_md, 
-			   const GrowthAndMaturityParameters &_gamp,
-			   const TimeSeriesData &_tsd,
-			   const AbundanceIndices &_ai,
-		       const CompositionData &_cd,
-		       const WeightAtAgeData &_waad)
-
-		:s_md(_md), s_gamp(_gamp), s_tsd(_tsd), s_ai(_ai),s_waad(_waad),s_cd(_cd)
+		omData(const ModelData &_md)
+		:s_md(_md)
 		{
 			cout<<"THis is fucking cool"<<endl;
 			cout<<s_md.nNage<<endl;
-			cout<<s_gamp.d_linf<<endl;
-			cout<<s_tsd.nCtNobs<<endl;
-			cout<<s_ai.nItNobs<<endl;
+			cout<<s_md.d_linf<<endl;
+			cout<<s_md.nCtNobs<<endl;
+			cout<<s_md.nItNobs<<endl;
 			cout<<"Average weight\n"<<endl;
-			cout<<*s_waad.d3_wt_avg<<endl;			
+			cout<<*s_md.d3_wt_avg<<endl;			
 		}
 
 		// |---------|

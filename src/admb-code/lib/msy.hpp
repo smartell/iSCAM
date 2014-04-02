@@ -17,10 +17,7 @@
 
 namespace rfp {
 
-	struct modelDimensions
-	{
-		
-	};
+
 
 
 	/**
