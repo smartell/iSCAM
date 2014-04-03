@@ -597,21 +597,27 @@ DATA_SECTION
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
 	init_vector  inp_nscaler(1,nAgears);
+
+	
   // The 5 in the next command is to remove the first 5 columns
   // from the age comp 'data' because they are not the actual ages,
   // but the header data.
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
+	
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
+	
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 )
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
 			cout<<"| ----------------------- |"<<endl;
-			cout<<setw(4)<<d3_A(nAgears).sub(n_A_nobs(nAgears)-2,n_A_nobs(nAgears))<<endl;
+			cout<<setw(4)<<d3_A(nAgears).sub(n_A_nobs(nAgears)-1,n_A_nobs(nAgears))<<endl;
 			cout<<"| ----------------------- |\n"<<endl;
+			
 			for(k=1;k<=nAgears;k++)
 			{
+				
 				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 				if(inp_nscaler(k) > 0)
 				{
@@ -620,6 +626,7 @@ DATA_SECTION
 						 tmp(i) = tmp(i)/sum(tmp(i)) * inp_nscaler(k);
 					}
 				}
+				
 				d3_A_obs(k) = tmp;
 				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 			}
@@ -799,8 +806,7 @@ DATA_SECTION
 			}
 			else if( !h ) 
 			{
-				//cout<<h<<endl;
-			
+
 				for(int h=1;h<=nsex;h++)
 				{
 					ig                   = pntr_ags(f,g,h);
@@ -1317,10 +1323,10 @@ PARAMETER_SECTION
 	// |   if this is true, then do not estimate init_log_rec_devs
 	// | [ ] - TODO add dev contstraint for rec_devs in calc_objective_function.
 
-	!! int init_dev_phz = 2;
+	!! int init_dev_phz = 2;	  //2
 	!! if(d_iscamCntrl(5)) init_dev_phz = -1;
 	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
-	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-15.,15.,2);
+	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-5.,5.,2);
 	
 
 
@@ -1535,7 +1541,7 @@ PROCEDURE_SECTION
 	calcTotalMortality();
 	
 	calcNumbersAtAge();
-	
+			
 	calcTotalCatch();
 	
 	calcAgeComposition();
@@ -1954,15 +1960,17 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					
 			}  // switch
 
+			 /*		!!!!!!!      RF TURNED THIS OFF FOR TESTING - TO BE TURNED BACK ON		 !!!!!!!!
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
 				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
+			*/
 		}
 	}  //end of gear k
-	
+	     
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
@@ -2164,6 +2172,7 @@ FUNCTION calcNumbersAtAge
 		bt(g)(nyr+1) += N(ig)(nyr+1) * d3_wt_avg(ig)(nyr+1);
 
 	}
+	
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
 
@@ -2604,6 +2613,7 @@ FUNCTION calcSurveyObservations
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(1,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
+		//dvariable zbar = mean(zt);
 				 q(kk) = mfexp(zbar);
 
 		// | survey residuals
@@ -3158,10 +3168,10 @@ FUNCTION calcObjectiveFunction
 			pvec(4) += dnorm(log_rec_devs(g),2.0);
 			pvec(5) += dnorm(init_log_rec_devs(g),2.0);
 			dvariable s = 0;
-			s = mean(log_rec_devs(g));
-			pvec(6) += 1.e5 * s*s;
-			s = mean(init_log_rec_devs(g));
-			pvec(7) += 1.e5 * s*s;
+			//s = mean(log_rec_devs(g));
+			//pvec(6) += 1.e5 * s*s;
+			//s = mean(init_log_rec_devs(g));
+			//pvec(7) += 1.e5 * s*s;
 		}
 	}
 	else
@@ -3175,10 +3185,10 @@ FUNCTION calcObjectiveFunction
 			pvec(4) += 100.*norm2(log_rec_devs(g));
 			pvec(5) += 100.*norm2(init_log_rec_devs(g));
 			dvariable s = 0;
-			s = mean(log_rec_devs(g));
-			pvec(6) += 1.e5 * s*s;
-			s = mean(init_log_rec_devs(g));
-			pvec(7) += 1.e5 * s*s;
+			//s = mean(log_rec_devs(g));
+			//pvec(6) += 1.e5 * s*s;
+			//s = mean(init_log_rec_devs(g));
+			//pvec(7) += 1.e5 * s*s;
 		}
 	}
 	
@@ -4394,7 +4404,7 @@ REPORT_SECTION
 		rep_rt(ig)(syr) = value( exp( log_rt(ig)(syr-nage+sage) ) );
 	}
 	REPORT(rep_rt);
-
+	REPORT(log_rec_devs);
 	// |---------------------------------------------------------------------------------|
 	// | ABUNDANCE IN NUMBERS 
 	// |---------------------------------------------------------------------------------|
@@ -5036,13 +5046,13 @@ GLOBALS_SECTION
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
-    #include "lib/LogisticNormal.h"
+        #include "lib/LogisticNormal.h"
 	#include "Selex.h"
-	//#include "lib/msy.cpp"
-	//#include "lib/baranov.cpp"
-	//#include "lib/LogisticNormal.cpp"
-	//#include "lib/LogisticStudentT.cpp"
-	//#include "OpMod.h"
+	#include "lib/msy.cpp"
+	#include "lib/baranov.cpp"
+	#include "lib/LogisticNormal.cpp"
+	#include "lib/LogisticStudentT.cpp"
+	#include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
 	{

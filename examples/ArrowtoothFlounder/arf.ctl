@@ -43,7 +43,6 @@
 ##
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
-## NB: To mirror another gear, use (-ve) phase with the mirrored gear number.##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
 ##      1) logistic selectivity parameters                                   ##
 ##      2) selectivity coefficients                                          ##
@@ -82,10 +81,10 @@
 ##       2 - random walk in q                                                ##
 ## Need one column for each survey.                                          ##
 ## ------------------------------------------------------------------------- ##
-2        # -number of surveys (nits)
-0 0      # -prior type (see legend above)
-0 0      # -prior log(mean)
-0 0      # -prior sd
+1        # -number of surveys (nits)
+1        # -prior type (see legend above)
+0.0        # -prior log(mean)
+0.5        # -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##

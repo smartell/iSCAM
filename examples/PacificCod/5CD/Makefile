@@ -7,7 +7,7 @@
 EXEC=iscam
 prefix=../../../dist
 DAT=RUN.dat
-CTL=ARF
+CTL=PcodLength
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4

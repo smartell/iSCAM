@@ -8,7 +8,6 @@ require(reshape2)
 .plotCatch <- function(M)
 {
 	n <- length(M)
-
 	mdf <- NULL
 	for( i in 1:n )
 	{
