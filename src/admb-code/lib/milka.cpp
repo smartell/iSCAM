@@ -23,7 +23,7 @@
  * 		|- setRandomVariables			       [-]
  * 		|- | getReferencePointsAndStockStatus  [-]		
  * 		   | calculateTAC                      [-]
- * 		   | allocateTAC                       [ ]			
+ * 		   | allocateTAC                       [-]			
  * 		   | implementFisheries			
  * 		   		|- calcSelectivity			
  * 		   		|- calcRetentionDiscards			
@@ -75,14 +75,14 @@ void OperatingModel::runScenario(const int &seed)
 		getReferencePointsAndStockStatus();
 
 		calculateTAC();
-		cout<<"I want to know "<<i <<endl;
+		
 		allocateTAC(i);
 
 		implementFisheries();
 
 		updateReferenceModel();
 
-		writeDataFile();
+		writeDataFile(i);
 
 		runStockAssessment();
 	}
@@ -346,6 +346,8 @@ void OperatingModel::allocateTAC(const int& iyr)
 		h = m_nCSex(k);
 		for( f = 1; f <= narea; f++ )
 		{
+			if(m_nAGopen(k,f))
+			{
 			for( g = 1; g <= ngroup; g++ )
 			{
 				if(!h)
@@ -373,6 +375,7 @@ void OperatingModel::allocateTAC(const int& iyr)
 						m_dCatchData(irow,7) = m_dTAC(k);  // TODO: call a manager!
 					}
 				}
+			}
 			}
 		}
 	}
