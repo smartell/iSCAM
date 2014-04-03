@@ -79,6 +79,10 @@
 		void calculateTAC();
 		void allocateTAC();
 		void implementFisheries();
+
+		void updateReferenceModel();
+		void writeDataFile();
+		void runStockAssessment();
 		
 
 		
