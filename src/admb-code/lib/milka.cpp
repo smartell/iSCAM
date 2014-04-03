@@ -48,14 +48,15 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 	cout<<"Catch Data\n"<<dCatchData<<endl;
 	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
 	cout<<"eof "<<eof<<endl;
+
 }
 
 
 void OperatingModel::runScenario()
 {
-	initParameters();
-
 	readMSEcontrols();
+
+	initParameters();
 
 	conditionReferenceModel();
 
@@ -72,13 +73,28 @@ void OperatingModel::runScenario()
 
 		implementFisheries();
 
+
+
+		updateReferenceModel();
+
+		writeDataFile();
+
+		runStockAssessment();
 	}
 
 }
 
+/**
+ * @brief Read control file for Management Strategy Evaluation.
+ * @details [long description]
+ */
 void OperatingModel::readMSEcontrols()
 {
+	if(verbose) cout<<"MSE Control file\n"<<ProjControlFile<<endl;
+	cifstream ifs(ProjControlFile);
+	ifs>>m_nPyr;
 
+	cout<<m_nPyr<<endl;
 }
 
 void OperatingModel::initParameters()
@@ -139,5 +155,20 @@ void OperatingModel::allocateTAC()
 
 void OperatingModel::implementFisheries()
 {
-	
+
+}
+
+void OperatingModel::updateReferenceModel()
+{
+
+}
+
+void OperatingModel::writeDataFile()
+{
+
+}
+
+void OperatingModel::runStockAssessment()
+{
+
 }

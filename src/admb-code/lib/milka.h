@@ -45,6 +45,8 @@
 	class OperatingModel: public model_data
 	{
 	private:
+		int m_nPyr;				/// Terminal year for Operating Model.
+
 		dvector m_dRo;
 		dvector m_dSteepness;
 		dvector m_dM;
@@ -79,6 +81,10 @@
 		void calculateTAC();
 		void allocateTAC();
 		void implementFisheries();
+
+		void updateReferenceModel();
+		void writeDataFile();
+		void runStockAssessment();
 		
 
 		

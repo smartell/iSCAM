@@ -139,6 +139,8 @@ DATA_SECTION
 	init_adstring ControlFile;	 ///< String for the control file.
 	/// | ProjectFileControl.pfc : used for stock projections under TAC
 	init_adstring ProjectFileControl;  ///< String for the projection file.
+
+	init_adstring ProjControlFile;
 	/// | BaseFileName           : file prefix used for all iSCAM model output
 	!! BaseFileName = stripExtension(ControlFile);  ///< BaseName given by the control file
 	/// | ReportFileName         : file name to copy report file to.
@@ -4939,6 +4941,7 @@ FUNCTION void runMSE()
 	// | Instantiate Operating Model Class |
 	// |-----------------------------------|
 	OperatingModel om(s_mv,argc,argv);
+	om.runScenario();
 
 	COUT("DONE");
 
