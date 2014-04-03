@@ -135,7 +135,7 @@ void OperatingModel::initParameters()
 	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
 	m_d3_A.initialize();
 	
-	for(int k=1;k<=nItNobs;k++)
+	for(int k=1;k<=nAgears;k++)
 	{
 		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
