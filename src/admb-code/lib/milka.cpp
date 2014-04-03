@@ -91,10 +91,12 @@ void OperatingModel::runScenario()
 void OperatingModel::readMSEcontrols()
 {
 	if(verbose) cout<<"MSE Control file\n"<<ProjControlFile<<endl;
+
 	cifstream ifs(ProjControlFile);
 	ifs>>m_nPyr;
 
 	cout<<m_nPyr<<endl;
+
 }
 
 void OperatingModel::initParameters()
