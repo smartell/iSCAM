@@ -25,7 +25,7 @@
  * 
  */
 
-namespace mse {
+// namespace mse {
 
 	/**
 	 * @brief Data structure for storing model data
@@ -143,7 +143,7 @@ namespace mse {
 
 	public:
 		OperatingModel(int argc,char * argv[]);
-		OperatingModel(const ModelData &_md, const ModelVariables &_mv);
+		//OperatingModel(const ModelData &_md, const ModelVariables &_mv);
 		~OperatingModel();
 	
 	protected:
@@ -156,7 +156,7 @@ namespace mse {
 
 dvector cubic_spline(const dvector& spline_coffs, const dvector& la);
 
-} // mse namespace
+// } // mse namespace
 
 
 #endif

@@ -4,7 +4,7 @@
 #include "milka.h"
 #include <contrib.h>
 
-using namespace mse;
+//using namespace mse;
 
 OperatingModel::~OperatingModel(){}
 
@@ -12,6 +12,10 @@ OperatingModel::OperatingModel(int argc,char * argv[])
 :model_data(argc,argv)
 {
 	cout<<"Inheritance version using model_data as base"<<endl;
+	cout<<"Ngroup "<<ngroup<<endl;
+	cout<<"Catch Data\n"<<dCatchData<<endl;
+	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
+	cout<<"eof "<<eof<<endl;
 }
 
 /**
@@ -22,30 +26,30 @@ OperatingModel::OperatingModel(int argc,char * argv[])
  * @param _mv Model Variables Struct
  * 
  */
-OperatingModel::OperatingModel(const ModelData &_md, const ModelVariables &_mv)
-:md(_md), mv(_mv)
-{
-	cout<<"In the constructor"<<endl;
-	cout<<mv.log_ro<<endl;
-	int pyr = 2030;
+// OperatingModel::OperatingModel(const ModelData &_md, const ModelVariables &_mv)
+// :md(_md), mv(_mv)
+// {
+// 	cout<<"In the constructor"<<endl;
+// 	cout<<mv.log_ro<<endl;
+// 	int pyr = 2030;
 
-	// Initialize Catch array
-	m_nCtNobs = md.nCtNobs + (pyr-md.nNyr+1)*md.n_ags*md.nFleet;
-	m_dCatchData.allocate(1,m_nCtNobs,1,7);
-	m_dCatchData.initialize();
-	m_dCatchData.sub(1,md.nCtNobs) = md.dCatchData;
+// 	// Initialize Catch array
+// 	m_nCtNobs = md.nCtNobs + (pyr-md.nNyr+1)*md.n_ags*md.nFleet;
+// 	m_dCatchData.allocate(1,m_nCtNobs,1,7);
+// 	m_dCatchData.initialize();
+// 	m_dCatchData.sub(1,md.nCtNobs) = md.dCatchData;
 
-	// Initialize Log_selectivity array (4d array)
-	d4_logSel.allocate(1,md.nGear,1,md.n_ags,md.nSyr,pyr,md.nSage,md.nNage);
-	d4_logSel.initialize();
+// 	// Initialize Log_selectivity array (4d array)
+// 	d4_logSel.allocate(1,md.nGear,1,md.n_ags,md.nSyr,pyr,md.nSage,md.nNage);
+// 	d4_logSel.initialize();
 
-	m_log_sel_par.allocate(*mv.d3_log_sel_par);
-	m_log_sel_par = *mv.d3_log_sel_par;
+// 	m_log_sel_par.allocate(*mv.d3_log_sel_par);
+// 	m_log_sel_par = *mv.d3_log_sel_par;
 
-	cout<<m_log_sel_par(1)<<endl;
+// 	cout<<m_log_sel_par(1)<<endl;
 
-	initParameters();
-}
+// 	initParameters();
+// }
 
 void OperatingModel::initParameters()
 {

@@ -4914,7 +4914,7 @@ FUNCTION void runMSE()
 	cout<<"Start of runMSE"<<endl;
 
 	// STRUCT FOR MODEL DATA
-	mse::ModelData s_md;
+	ModelData s_md;
 	
 
 	//Model Dimensions struct.
@@ -4989,7 +4989,7 @@ FUNCTION void runMSE()
 
 
 	// STRUCT FOR MODEL VARIABLES
-	mse::ModelVariables s_mv;
+	ModelVariables s_mv;
 	s_mv.log_ro    = value( theta(1) );
 	s_mv.steepness = value( theta(2) );
 	s_mv.m         = value( theta(3) );
@@ -5012,7 +5012,7 @@ FUNCTION void runMSE()
 		Instantiate Operating Model Class
 	*/
 	//mse::OperatingModel om(s_md,s_mv);
-	mse::OperatingModel om(argc,argv);
+	OperatingModel om(argc,argv);
 
 	COUT("DONE");
 
