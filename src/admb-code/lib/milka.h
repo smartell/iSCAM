@@ -45,6 +45,21 @@
 	class OperatingModel: public model_data
 	{
 	private:
+
+		int m_nNyr;   
+		
+		int m_nCtNobs;
+		dmatrix m_dCatchData;
+	
+		ivector m_n_it_nobs;
+		d3_array m_d3SurveyData;
+
+		ivector m_n_A_nobs;
+		d3_array m_d3_A;
+
+		ivector m_nWtNobs;
+		d3_array m_d3_inp_wt_avg;
+
 		int m_nPyr;				/// Terminal year for Operating Model.
 
 		dvector m_dRo;
@@ -57,9 +72,6 @@
 		dvector m_dSigma;
 		dvector m_dTau;
 		dvector m_dKappa;
-
-		int m_nCtNobs;
-		dmatrix m_dCatchData;
 
 		d4_array d4_logSel;
 		d3_array m_log_sel_par;

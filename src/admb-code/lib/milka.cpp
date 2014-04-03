@@ -31,7 +31,6 @@
  * 		
  */
 
-
 #include <admodel.h>
 #include "milka.h"
 #include <contrib.h>
@@ -62,7 +61,7 @@ void OperatingModel::runScenario()
 
 	setRandomVariables();
 
-	for(int i = nyr+1; i <= nyr+10; i++ )
+	for(int i = nyr+1; i <= m_nPyr; i++ )
 	{
 		 
 		getReferencePointsAndStockStatus();
@@ -72,8 +71,6 @@ void OperatingModel::runScenario()
 		allocateTAC();
 
 		implementFisheries();
-
-
 
 		updateReferenceModel();
 
@@ -101,6 +98,55 @@ void OperatingModel::readMSEcontrols()
 
 void OperatingModel::initParameters()
 {
+	
+	// Initializing data members
+	m_nNyr = nyr; // needs to be updated for each year inside the mse loop
+			
+	m_nCtNobs = nCtNobs;  // needs to be updated for each year in the mse loop
+	
+	m_dCatchData.allocate(1,m_nCtNobs,1,7);
+	m_dCatchData.initialize();
+	m_dCatchData.sub(1,nCtNobs) = dCatchData;
+
+	//m_nItNobs = nItNobs;
+	m_n_it_nobs.allocate(1,nItNobs);
+	m_n_it_nobs.initialize();
+	
+	m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
+	m_d3SurveyData.initialize();
+
+	for(int k=1;k<=nItNobs;k++)
+	{
+		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
+		m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);	
+	}
+	
+	
+	m_n_A_nobs.allocate(1,nAgears);
+	m_n_A_nobs.initialize();
+	
+	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
+	m_d3_A.initialize();
+	
+	for(int k=1;k<=nItNobs;k++)
+	{
+		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
+		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
+	}
+	 
+	m_nWtNobs.allocate(1,nWtTab);
+	m_nWtNobs.initialize();
+
+	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
+	m_d3_inp_wt_avg.initialize();
+
+	for(int k=1;k<=nWtTab;k++)
+	{
+		m_nWtNobs(k)= nWtNobs(k)+(m_nPyr-nyr);
+		m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);	
+	}
+	
+
 	m_dRo        = exp(mv.log_ro);
 	m_dSteepness = mv.steepness;
 	m_dM         = exp(mv.m);
