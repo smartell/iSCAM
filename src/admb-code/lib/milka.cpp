@@ -8,28 +8,28 @@
  * The OperatingModel class has a major function called 
  * runScenario:
  * 
- * runScenario:
- * 		|- readMSEcontrols
- * 		|- initParameters
- * 			|- surveyQ
- * 			|- stock-recruitment parameters
- * 		|- initMemberVariables
- * 		|- conditionReferenceModel
- * 		|- setRandomVariables
- * 		|- | getReferencePointsAndStockStatus
- * 		   | calculateTAC
- * 		   | allocateTAC
- * 		   | implementFisheries
- * 		   		|- calcSelectivity
- * 		   		|- calcRetentionDiscards
- * 		   		|- calcTotalMortality
- * 		   | updateReferenceModel
- * 		   | writeDataFile
- * 		   | runStockAssessment
- * 		|- |
- * 		|- writeSimulationVariables
- * 		|- calculatePerformanceMetrics
- * 		
+ * runScenario:                                STATUS
+ * 		|- readMSEcontrols                     [ ]			
+ * 		|- initParameters                      [ ]			
+ * 			|- surveyQ			               [ ]
+ * 			|- stock-recruitment parameters	   [ ]	
+ * 		|- initMemberVariables			       [ ]
+ * 		|- conditionReferenceModel			   [-]
+ * 		|- setRandomVariables			       [ ]
+ * 		|- | getReferencePointsAndStockStatus  [ ]		
+ * 		   | calculateTAC			
+ * 		   | allocateTAC			
+ * 		   | implementFisheries			
+ * 		   		|- calcSelectivity			
+ * 		   		|- calcRetentionDiscards			
+ * 		   		|- calcTotalMortality			
+ * 		   | updateReferenceModel			
+ * 		   | writeDataFile			
+ * 		   | runStockAssessment			
+ * 		|- |			
+ * 		|- writeSimulationVariables			
+ * 		|- calculatePerformanceMetrics			
+ * 					
  */
 
 
@@ -53,7 +53,7 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 }
 
 
-void OperatingModel::runScenario()
+void OperatingModel::runScenario(const int &seed)
 {
 	readMSEcontrols();
 
@@ -63,7 +63,7 @@ void OperatingModel::runScenario()
 
 	conditionReferenceModel();
 
-	setRandomVariables();
+	setRandomVariables(seed);
 
 	for(int i = nyr+1; i <= nyr+10; i++ )
 	{
@@ -89,7 +89,8 @@ void OperatingModel::runScenario()
 
 /**
  * @brief Read control file for Management Strategy Evaluation.
- * @details [long description]
+ * @details Use cifstream to read in controls for MSE related options.
+ * 
  */
 void OperatingModel::readMSEcontrols()
 {
@@ -97,11 +98,15 @@ void OperatingModel::readMSEcontrols()
 
 	cifstream ifs(ProjControlFile);
 	ifs>>m_nPyr;
-
+	ifs>>m_nHCR;
 	
 
 }
 
+/**
+ * @brief Initialize model parameters based on model variable struct.
+ * @details [long description]
+ */
 void OperatingModel::initParameters()
 {
 	m_dRo        = exp(mv.log_ro);
@@ -131,6 +136,7 @@ void OperatingModel::initParameters()
 	}
 }
 
+
 void OperatingModel::initMemberVariables()
 {
 	m_N.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_N.initialize();
@@ -142,8 +148,16 @@ void OperatingModel::initMemberVariables()
 
 	m_log_rt.allocate(1,n_ag,syr-nage+sage,nyr); m_log_rt.initialize();
 	
+	m_est_bo.allocate(1,ngroup);
+	m_est_bmsy.allocate(1,ngroup);
+	m_est_sbtt.allocate(1,ngroup);
+	m_est_btt.allocate(1,ngroup);
+	m_est_fmsy.allocate(1,nfleet);
+	m_est_msy.allocate(1,nfleet);
 
-	// Natural mortality
+	m_dTAC.allocate(1,nfleet);
+
+	// Initialize Mortality arrays from ModelVariables (mv)
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
 		m_M(ig).sub(syr,nyr) = (*mv.d3_M)(ig);
@@ -153,7 +167,6 @@ void OperatingModel::initMemberVariables()
 	}
 
 
-	// Total mortality
 
 }
 
@@ -207,25 +220,48 @@ void OperatingModel::conditionReferenceModel()
 		m_N(ig)(nyr+1,sage) = 1./nsex * mfexp( mv.log_rbar(ih));
 	}
 
-	cout<<"Numbers at age\n"<<m_N<<endl;
 }
 
-void OperatingModel::setRandomVariables()
+void OperatingModel::setRandomVariables(const int& seed)
 {
+	m_nSeed = seed;
+	random_number_generator rng(m_nSeed);
 
 }
 
 
 void OperatingModel::getReferencePointsAndStockStatus()
 {
-	// read iscam.mse file to get this information.
+	// read iscam.res file to get this information.
+	cifstream ifs("iSCAM.res");
+	ifs >> m_est_bo;
+	ifs >> m_est_fmsy;
+	ifs >> m_est_msy;
+	ifs >> m_est_bmsy;
+	ifs >> m_est_sbtt;
+	ifs >> m_est_btt;
+
+	cout<<m_est_btt<<endl;
 }
 
-
+/**
+ * @brief Calculate the Total Allowable Catch
+ * @details Total Allowable Catch is based on the estimates of current
+ * stock statuts, reference points and the harvest control rule.
+ * 
+ * Uses a switch statement for HCR.  The HCR is set in the pcf file.
+ */
 void OperatingModel::calculateTAC()
 {
 
+	switch( int(m_nHCR) )
+	{
+		case 1: // Constant harvest rate
+			m_dTAC  = elem_prod(m_est_fmsy,m_est_btt);
+		break; 
+	}
 }
+
 
 void OperatingModel::allocateTAC()
 {

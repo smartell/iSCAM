@@ -54,6 +54,7 @@
 	{
 	private:
 		int m_nPyr;				/// Terminal year for Operating Model.
+		int m_nSeed;			/// random number seed
 
 		dvector m_dRo;
 		dvector m_dSteepness;
@@ -68,6 +69,17 @@
 
 		int m_nCtNobs;
 		dmatrix m_dCatchData;
+
+		// Assessment model results
+		dvector m_est_bo;
+		dvector m_est_fmsy;
+		dvector m_est_msy;
+		dvector m_est_bmsy;
+		dvector m_est_sbtt;
+		dvector m_est_btt;
+
+		dvector m_dTAC;
+		int     m_nHCR;
 
 		dmatrix  m_log_rt;
 
@@ -87,14 +99,14 @@
 		OperatingModel(ModelVariables _mv,int argc,char * argv[]);		
 		~OperatingModel();
 	
-		void runScenario();
+		void runScenario(const int &seed);
 
 	protected:
 		void readMSEcontrols();
 		void initParameters();
 		void initMemberVariables();
 		void conditionReferenceModel();
-		void setRandomVariables();
+		void setRandomVariables(const int &seed);
 		void getReferencePointsAndStockStatus();
 		void calculateTAC();
 		void allocateTAC();

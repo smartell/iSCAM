@@ -4956,7 +4956,7 @@ FUNCTION void runMSE()
 	// | Instantiate Operating Model Class |
 	// |-----------------------------------|
 	OperatingModel om(s_mv,argc,argv);
-	om.runScenario();
+	om.runScenario(rseed);
 
 	COUT("DONE");
 
