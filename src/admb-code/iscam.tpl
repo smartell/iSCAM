@@ -443,11 +443,9 @@ DATA_SECTION
 			t2 = 0;
 		}
 	END_CALCS 
-	!! COUT(n_MAT);
-	!! COUT(t1);
-	!! COUT(t2);
+	
 	init_vector 	d_maturityVector(t1,t2);
-	!! COUT(d_maturityVector);
+
 
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -494,7 +492,6 @@ DATA_SECTION
 	// | - d3_Ct -> An array of observed catch in group(ig) year (row) by gear (col)
 	// | - [?] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int nCtNobs;
-	!! COUT(nCtNobs)
 	init_matrix dCatchData(1,nCtNobs,1,7);
 	3darray d3_Ct(1,n_ags,syr,nyr,1,ngear);
 
@@ -595,7 +592,7 @@ DATA_SECTION
 	// | A            -> array of data (year,gear,area,group,sex|Data...)
 	// | d3_A_obs     -> array of catch-age data only.
 	// |
-	init_int nAgears
+	init_int nAgears;
 	init_ivector n_A_nobs(1,nAgears);
 	init_ivector n_A_sage(1,nAgears);
 	init_ivector n_A_nage(1,nAgears);
@@ -654,12 +651,12 @@ DATA_SECTION
 	// | d3_inp_wt_avg = input weight-at-age.
 
 	init_int nWtTab;
-	
 	init_vector nWtNobs(1,nWtTab);
 	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
 	
 	vector tmp_nWtNobs(1,nWtTab);
 	int sum_tmp_nWtNobs; 
+	vector projwt(1,nWtTab);
 
 
 	LOC_CALCS
@@ -668,6 +665,8 @@ DATA_SECTION
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
 		*/
+		
+		projwt.initialize();
 
 		for(int ii=1; ii<=nWtTab; ii++)
 		{
@@ -675,14 +674,15 @@ DATA_SECTION
 			{
 				int exp_nyr = fabs(d3_inp_wt_avg(ii,1,sage-5))-syr; 
 				tmp_nWtNobs(ii) = nWtNobs(ii)+exp_nyr;
+				projwt(ii)=-1;
 			}
 			else if (nWtNobs(ii) > 0)
 			{
 				tmp_nWtNobs(ii) = nWtNobs(ii);
+				projwt(ii)=1;
 			}
 		}
 		sum_tmp_nWtNobs = sum(tmp_nWtNobs);		
-
 		
 
 	END_CALCS
@@ -732,8 +732,6 @@ DATA_SECTION
 		
 			int ttmp =	sum(tmp_nWtNobs(1,ii-1));
 			int ttmp2 =	sum(tmp_nWtNobs(1,ii));
-
-			cout<<" ttmp is:"<< ttmp <<" ttmp2 is:"<<ttmp2<<endl;
 
 			for(int jj=ttmp+1; jj<=ttmp2; jj++) 
 			{
@@ -3705,7 +3703,8 @@ FUNCTION void testMSYxls()
  		7)  compute catch-at-age samples.
  		8)  compute total catch.
  		9)  compute the relative abundance indices.
- 		10) write simulated data to file.
+ 		10) rewrite empitical weight at age matrix.
+ 		11) write simulated data to file.
 
   	TODO list:
 	[?] - March 9, 2013.  Fix simulation model to generate consistent data when 
@@ -4046,7 +4045,21 @@ FUNCTION void simulationModel(const long& seed)
 	}
 	
 	// |---------------------------------------------------------------------------------|
-	// | 10) WRITE SIMULATED DATA TO FILE
+	// | 10) Empirical weight at age
+	// |---------------------------------------------------------------------------------|
+	// | 
+
+		for(int ii=1; ii<=nWtTab; ii++)
+		{
+			if(nWtNobs(ii) > 0 )
+			{
+				d3_inp_wt_avg(ii,1,sage-5) = d3_inp_wt_avg(ii,1,sage-5)*projwt(ii);
+			}
+		}
+		cout<< d3_inp_wt_avg(1)(1)(sage-5,nage) <<endl;
+
+	// |---------------------------------------------------------------------------------|
+	// | 11) WRITE SIMULATED DATA TO FILE
 	// |---------------------------------------------------------------------------------|
 	// |
 	writeSimulatedDataFile();
@@ -4089,23 +4102,6 @@ FUNCTION void simulationModel(const long& seed)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   	/**
   	Purpose:  This function writes a simulated data file based on the simulation
   		  model output when the user specifies the -sim option.  This is only
@@ -4140,15 +4136,16 @@ FUNCTION writeSimulatedDataFile
   	dfs<<"#Allocation"	<<endl;
   	dfs<< dAllocation 	<<endl;
   	
-
   	dfs<<"#Age-schedule and population parameters"<<endl;
-  	dfs<< d_linf  		<<endl;
-  	dfs<< d_vonbk  		<<endl;
+  	dfs<< d_linf  			<<endl;
+  	dfs<< d_vonbk  			<<endl;
   	dfs<< d_to  			<<endl;
-  	dfs<< d_a  			<<endl;
-  	dfs<< d_b  			<<endl;
+  	dfs<< d_a  				<<endl;
+  	dfs<< d_b  				<<endl;
   	dfs<< d_ah  			<<endl;
   	dfs<< d_gh  			<<endl;
+  	dfs<< n_MAT				<<endl;
+	dfs<< d_maturityVector <<endl;
 
   	dfs<<"#Observed catch data"<<endl;
   	dfs<< nCtNobs 		<<endl;
@@ -4165,9 +4162,11 @@ FUNCTION writeSimulatedDataFile
   	dfs<< n_A_nobs				<<endl;
   	dfs<< n_A_sage				<<endl;
   	dfs<< n_A_nage				<<endl;
-  	dfs<< d3_A						<<endl;
+  	dfs<< inp_nscaler 			<<endl;
+  	dfs<< d3_A					<<endl;
 
   	dfs<<"#Empirical weight-at-age data"	<<endl;
+  	dfs<< nWtTab 				<<endl;
   	dfs<< nWtNobs				<<endl;
 	dfs<< d3_inp_wt_avg			<<endl; // not sure if this shoud be d3_inp_wt_avg, and how this would affect simDatfile 
 
@@ -4271,6 +4270,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(d3_survey_data);
 	REPORT(it_hat);
+	REPORT(it_wt);
 	REPORT(epsilon);
 
 	if(n_A_nobs(nAgears) > 0)
@@ -5306,11 +5306,11 @@ FINAL_SECTION
 		bscmd = "cp iscam.cor " + BaseFileName + ".cor";
 		system(bscmd);
 		
-		if( SimFlag )
-		{
-			bscmd = "cp iscam.sim " + BaseFileName + ".sim";
-			system(bscmd);
-		}
+		//if( SimFlag )
+		//{
+		//	bscmd = "cp iscam.sim " + BaseFileName + ".sim";
+		//	system(bscmd);
+		//}
 
 		if( mcmcPhase )
 		{
