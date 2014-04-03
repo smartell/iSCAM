@@ -8,17 +8,22 @@
  * The OperatingModel class has a major function called 
  * runScenario:
  * 
+ * STATUS LEGEND
+ *  - : partially implemented
+ *  + : implemented & testing
+ *   : Good to go! 
+ * 
  * runScenario:                                STATUS
- * 		|- readMSEcontrols                     [ ]			
- * 		|- initParameters                      [ ]			
+ * 		|- readMSEcontrols                     [-]			
+ * 		|- initParameters                      [-]			
  * 			|- surveyQ			               [ ]
  * 			|- stock-recruitment parameters	   [ ]	
- * 		|- initMemberVariables			       [ ]
+ * 		|- initMemberVariables			       [-]
  * 		|- conditionReferenceModel			   [-]
- * 		|- setRandomVariables			       [ ]
- * 		|- | getReferencePointsAndStockStatus  [ ]		
- * 		   | calculateTAC			
- * 		   | allocateTAC			
+ * 		|- setRandomVariables			       [-]
+ * 		|- | getReferencePointsAndStockStatus  [-]		
+ * 		   | calculateTAC                      [-]
+ * 		   | allocateTAC                       [ ]			
  * 		   | implementFisheries			
  * 		   		|- calcSelectivity			
  * 		   		|- calcRetentionDiscards			
@@ -70,8 +75,8 @@ void OperatingModel::runScenario(const int &seed)
 		getReferencePointsAndStockStatus();
 
 		calculateTAC();
-
-		allocateTAC();
+		cout<<"I want to know "<<i <<endl;
+		allocateTAC(i);
 
 		implementFisheries();
 
@@ -82,6 +87,7 @@ void OperatingModel::runScenario(const int &seed)
 		runStockAssessment();
 	}
 
+	cout<<m_dCatchData<<endl;
 }
 
 /**
@@ -96,6 +102,19 @@ void OperatingModel::readMSEcontrols()
 	cifstream ifs(ProjControlFile);
 	ifs>>m_nPyr;
 	ifs>>m_nHCR;
+
+	m_nGearIndex.allocate(1,ngear);
+	m_nCSex.allocate(1,ngear);
+	m_nASex.allocate(1,ngear);
+	m_nAGopen.allocate(1,ngear,1,narea);
+	
+	// Controls for sexing catch and comps and fishing in given areas.
+	imatrix tmp(1,ngear,-2,narea);
+	ifs >> tmp;
+	m_nGearIndex = column(tmp,-2);
+	m_nCSex = column(tmp,-1);
+	m_nASex = column(tmp,0);
+	m_nAGopen = trans(trans(tmp).sub(1,narea));
 	
 
 }
@@ -109,8 +128,16 @@ void OperatingModel::initParameters()
 	
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop
-			
-	m_nCtNobs = nCtNobs;  // needs to be updated for each year in the mse loop
+
+	// needs to be updated for each year in the mse loop
+	int nn = 0;
+	for( k = 1; k <= ngear; k++ )
+	{
+		nn += sum(m_nAGopen(k));
+		nn += m_nCSex(k)*nn;
+	}
+	cout<<n_ags<< " \t"<<nn<<endl;
+	m_nCtNobs = nCtNobs + (m_nPyr - nyr)*nn;
 	
 	m_dCatchData.allocate(1,m_nCtNobs,1,7);
 	m_dCatchData.initialize();
@@ -287,7 +314,7 @@ void OperatingModel::getReferencePointsAndStockStatus()
 	ifs >> m_est_sbtt;
 	ifs >> m_est_btt;
 
-	cout<<m_est_btt<<endl;
+	//cout<<m_est_btt<<endl;
 }
 
 /**
@@ -309,9 +336,50 @@ void OperatingModel::calculateTAC()
 }
 
 
-void OperatingModel::allocateTAC()
+void OperatingModel::allocateTAC(const int& iyr)
 {
+	static int irow = nCtNobs;
+	//m_dCatchdata(year,gear,area,group,sex,type,value)
+	int h;
+	for( k = 1; k <= nfleet; k++ )
+	{
+		h = m_nCSex(k);
+		for( f = 1; f <= narea; f++ )
+		{
+			for( g = 1; g <= ngroup; g++ )
+			{
+				if(!h)
+				{
+					irow ++;
+					m_dCatchData(irow,1) = iyr;
+					m_dCatchData(irow,2) = nFleetIndex(k);
+					m_dCatchData(irow,3) = f;
+					m_dCatchData(irow,4) = g;
+					m_dCatchData(irow,5) = h;
+					m_dCatchData(irow,6) = 1;  //TODO: Fix this
+					m_dCatchData(irow,7) = m_dTAC(k);  // TODO: call a manager!
+				}
+				if(h)
+				{	
+					for( h = 1; h <= nsex; h++ )
+					{
+						irow ++;
+						m_dCatchData(irow,1) = iyr;
+						m_dCatchData(irow,2) = nFleetIndex(k);
+						m_dCatchData(irow,3) = f;
+						m_dCatchData(irow,4) = g;
+						m_dCatchData(irow,5) = h;
+						m_dCatchData(irow,6) = 1;  //TODO: Fix this
+						m_dCatchData(irow,7) = m_dTAC(k);  // TODO: call a manager!
+					}
+				}
+			}
+		}
+	}
 
+	
+
+	
 }
 
 void OperatingModel::implementFisheries()
