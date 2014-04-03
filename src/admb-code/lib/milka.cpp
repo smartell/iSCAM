@@ -120,8 +120,7 @@ void OperatingModel::initParameters()
 		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
 		m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);	
 	}
-	
-	
+		
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
 	
@@ -147,6 +146,7 @@ void OperatingModel::initParameters()
 	}
 	
 
+	// initializing population parameters
 	m_dRo        = exp(mv.log_ro);
 	m_dSteepness = mv.steepness;
 	m_dM         = exp(mv.m);
