@@ -2,7 +2,7 @@
 
 #include <admodel.h>
 #include "milka.h"
-#include "contrib.h"
+#include <contrib.h>
 
 using namespace mse;
 
@@ -167,6 +167,12 @@ void OperatingModel::calcSelectivities(const ivector& isel_type)
 					}
 					break;
 
+				case 5:	// time-varying bicubic spline
+					ia.fill_seqadd( 0,1./(md.n_age_nodes(k)-1) );
+					iy.fill_seqadd( 0,1./( md.n_yr_nodes(k)-1) );	
+					bicubic_spline( iy,ia,m_log_sel_par(k),tmp2 );
+					d4_logSel(kgear)(ig) = tmp2; 
+					break;
 
 			} // end of switch
 		}
