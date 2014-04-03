@@ -2613,6 +2613,7 @@ FUNCTION calcSurveyObservations
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(1,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
+		//dvariable zbar = mean(zt);
 				 q(kk) = mfexp(zbar);
 
 		// | survey residuals
@@ -3167,10 +3168,10 @@ FUNCTION calcObjectiveFunction
 			pvec(4) += dnorm(log_rec_devs(g),2.0);
 			pvec(5) += dnorm(init_log_rec_devs(g),2.0);
 			dvariable s = 0;
-			s = mean(log_rec_devs(g));
-			pvec(6) += 1.e5 * s*s;
-			s = mean(init_log_rec_devs(g));
-			pvec(7) += 1.e5 * s*s;
+			//s = mean(log_rec_devs(g));
+			//pvec(6) += 1.e5 * s*s;
+			//s = mean(init_log_rec_devs(g));
+			//pvec(7) += 1.e5 * s*s;
 		}
 	}
 	else
@@ -3184,10 +3185,10 @@ FUNCTION calcObjectiveFunction
 			pvec(4) += 100.*norm2(log_rec_devs(g));
 			pvec(5) += 100.*norm2(init_log_rec_devs(g));
 			dvariable s = 0;
-			s = mean(log_rec_devs(g));
-			pvec(6) += 1.e5 * s*s;
-			s = mean(init_log_rec_devs(g));
-			pvec(7) += 1.e5 * s*s;
+			//s = mean(log_rec_devs(g));
+			//pvec(6) += 1.e5 * s*s;
+			//s = mean(init_log_rec_devs(g));
+			//pvec(7) += 1.e5 * s*s;
 		}
 	}
 	
@@ -4403,7 +4404,7 @@ REPORT_SECTION
 		rep_rt(ig)(syr) = value( exp( log_rt(ig)(syr-nage+sage) ) );
 	}
 	REPORT(rep_rt);
-
+	REPORT(log_rec_devs);
 	// |---------------------------------------------------------------------------------|
 	// | ABUNDANCE IN NUMBERS 
 	// |---------------------------------------------------------------------------------|
