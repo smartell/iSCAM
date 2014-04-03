@@ -4929,19 +4929,34 @@ FUNCTION void runMSE()
 
 	// Selectivity parameters
 	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
+	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 	for(int k = 1; k <= ngear; k++ )
 	{
 		log_sel_par(k) = value(sel_par(k));
+		d4_log_sel(k)  = value(log_sel(k));
 	}
 	
 	s_mv.d3_log_sel_par = &log_sel_par;
+	s_mv.d4_logSel      = &d4_log_sel;
 
+	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
+	d3_array d3_F(1,n_ags,syr,nyr,sage,nage);
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		d3_M(ig) = value(M(ig));
+		d3_F(ig) = value(F(ig));
+	}
+
+	s_mv.d3_M = &d3_M;
+	s_mv.d3_F = &d3_F;
+	s_mv.log_rec_devs = value(log_rec_devs);
+	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
 	// |-----------------------------------|
 	// | Instantiate Operating Model Class |
 	// |-----------------------------------|
 	OperatingModel om(s_mv,argc,argv);
-	om.runScenario();
+	om.runScenario(rseed);
 
 	COUT("DONE");
 
