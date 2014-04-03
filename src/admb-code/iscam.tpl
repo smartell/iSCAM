@@ -4913,83 +4913,7 @@ FUNCTION mcmc_output
 
 
 FUNCTION void runMSE()
-
 	cout<<"Start of runMSE"<<endl;
-
-	// STRUCT FOR MODEL DATA
-	ModelData s_md;
-	
-
-	//Model Dimensions struct.
-	s_md.nStock = ngroup;
-	s_md.nNage  = nage;
-	s_md.nArea  = narea;
-	s_md.nSex   = nsex;
-	s_md.nSyr   = syr;
-	s_md.nNyr   = nyr;
-	s_md.nSage  = sage;
-	s_md.nNage  = nage;
-	s_md.nGear  = ngear;
-	s_md.nFleet = nfleet;
-	s_md.age    = age;
-
-	// Pointers for model dimensions
-	s_md.n_ags    = n_ags;      
-	s_md.n_ag     = n_ag;        
-	s_md.n_gs     = n_gs;        
-	s_md.n_area   = n_area;    
-	s_md.n_group  = n_group;  
-	s_md.n_sex    = n_sex;      
-	s_md.pntr_ag  = pntr_ag;  
-	s_md.pntr_gs  = pntr_gs;  
-	s_md.pntr_ags = &pntr_ags;
-
-	//Growth and Maturity Parameters struct.
-	s_md.d_linf           = d_linf;
-	s_md.d_vonbk          = d_vonbk;
-	s_md.d_to             = d_to;
-	s_md.d_a              = d_a;
-	s_md.d_b              = d_b;
-	s_md.d_ah             = d_ah;
-	s_md.d_gh             = d_gh;
-	s_md.d_maturityVector = d_maturityVector;
-	s_md.n_MAT            = n_MAT;
-
-	//Time Series Data struct.
-	s_md.nCtNobs = nCtNobs;
-	s_md.dCatchData = dCatchData;
-	s_md.d3_Ct   = &d3_Ct;
-
-	//Abundance Indices struct.
-	s_md.nItNobs = nItNobs;
-	s_md.n_it_nobs = n_it_nobs;
-	s_md.n_survey_type = n_survey_type;
-	s_md.d3_survey_data = &d3_survey_data;
-	
-	// Composition data struct.
-	s_md.n_A_nobs = n_A_nobs;
-	s_md.n_A_sage = n_A_sage;
-	s_md.n_A_nage = n_A_nage;
-	s_md.d3_A     = &d3_A;
-	
-	// Weight-at-age Data Struct
-	s_md.d3_wt_avg  = &d3_wt_avg;
-	s_md.d3_wt_mat  = &d3_wt_mat;
-	s_md.d3_len_age = &d3_len_age;
-
-
-	// iSCAM controls  (This should probably come from an MSE control file.)
-	s_md.d_iscamCntrl = d_iscamCntrl;
-
-	// Selectivity controls
-	s_md.i_sel_phz    = sel_phz;
-	s_md.n_yr_nodes   = yr_nodes;
-	s_md.n_age_nodes  = age_nodes;
-	s_md.nSelBlocks = n_sel_blocks;
-	s_md.n_sel_blocks = sel_blocks;
-	
-
-
 
 	// STRUCT FOR MODEL VARIABLES
 	ModelVariables s_mv;
@@ -5011,11 +4935,10 @@ FUNCTION void runMSE()
 	s_mv.d3_log_sel_par = &log_sel_par;
 
 
-	/*
-		Instantiate Operating Model Class
-	*/
-	//mse::OperatingModel om(s_md,s_mv);
-	OperatingModel om(argc,argv);
+	// |-----------------------------------|
+	// | Instantiate Operating Model Class |
+	// |-----------------------------------|
+	OperatingModel om(s_mv,argc,argv);
 
 	COUT("DONE");
 
