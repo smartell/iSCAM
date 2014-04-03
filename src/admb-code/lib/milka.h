@@ -54,7 +54,11 @@
 	{
 	private:
 
-		int m_nNyr;   
+		int m_nNyr; 
+		ivector m_nGearIndex;
+		ivector m_nCSex;
+		ivector m_nASex;
+		imatrix m_nAGopen;
 		
 		int m_nCtNobs;
 		dmatrix m_dCatchData;
@@ -121,7 +125,7 @@
 		void setRandomVariables(const int &seed);
 		void getReferencePointsAndStockStatus();
 		void calculateTAC();
-		void allocateTAC();
+		void allocateTAC(const int& iyr);
 		void implementFisheries();
 
 		void updateReferenceModel();
