@@ -8,6 +8,12 @@ using namespace mse;
 
 OperatingModel::~OperatingModel(){}
 
+OperatingModel::OperatingModel(int argc,char * argv[])
+:model_data(argc,argv)
+{
+	cout<<"Inheritance version using model_data as base"<<endl;
+}
+
 /**
  * @brief Operating Model constructor
  * @details Default constructor for the operating model.
@@ -153,7 +159,7 @@ void OperatingModel::calcSelectivities(const ivector& isel_type)
 						if( i==md.n_sel_blocks(k,byr) )
 						{
 							bpar ++;	
-							d4_logSel(k)(ig)(i)=cubic_spline( m_log_sel_par(k)(bpar),md.age );
+							// d4_logSel(k)(ig)(i)=mse::cubic_spline( m_log_sel_par(k)(bpar),md.age );
 							if( byr < md.nSelBlocks(k) ) byr++;
 						}
 						d4_logSel(kgear)(ig)(i+1) = d4_logSel(k)(ig)(i);
@@ -163,14 +169,14 @@ void OperatingModel::calcSelectivities(const ivector& isel_type)
 				case 4:	// time-varying cubic spline every year				
 					for(i=md.nSyr; i<=md.nNyr; i++)
 					{
-						d4_logSel(kgear)(ig)(i) = cubic_spline(m_log_sel_par(k)(i-md.nSyr+1),md.age);
+						//d4_logSel(kgear)(ig)(i) = cubic_spline(m_log_sel_par(k)(i-md.nSyr+1),md.age);
 					}
 					break;
 
 				case 5:	// time-varying bicubic spline
 					ia.fill_seqadd( 0,1./(md.n_age_nodes(k)-1) );
 					iy.fill_seqadd( 0,1./( md.n_yr_nodes(k)-1) );	
-					bicubic_spline( iy,ia,m_log_sel_par(k),tmp2 );
+					//bicubic_spline( iy,ia,m_log_sel_par(k),tmp2 );
 					d4_logSel(kgear)(ig) = tmp2; 
 					break;
 

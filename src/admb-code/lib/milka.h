@@ -4,6 +4,7 @@
 #define MILKA_H
 
 #include <admodel.h>
+#include "../iscam.htp"
 
 /**
  * @defgroup Milka Operating model for iSCAM
@@ -117,7 +118,7 @@ namespace mse {
 		d3_array *d3_log_sel_par;
 	};
 
-	class OperatingModel
+	class OperatingModel: public model_data
 	{
 	private:
 		dvector m_dRo;
@@ -141,12 +142,15 @@ namespace mse {
 		ModelVariables mv;		// Structure for model variables.
 
 	public:
+		OperatingModel(int argc,char * argv[]);
 		OperatingModel(const ModelData &_md, const ModelVariables &_mv);
 		~OperatingModel();
 	
 	protected:
 		void initParameters();
 		void calcSelectivities(const ivector& isel_type);
+
+		void writeDataFile(const ModelData &md);
 	};
 
 

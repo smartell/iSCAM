@@ -1226,7 +1226,7 @@ DATA_SECTION
 
 	// END OF DATA_SECTION
 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
-
+	friend_class OperatingModel;
 	
 
 INITIALIZATION_SECTION
@@ -1234,6 +1234,7 @@ INITIALIZATION_SECTION
   phi1 0.01;
 	
 PARAMETER_SECTION
+	//friend_class OperatingModel;
 	// |---------------------------------------------------------------------------------|
 	// | LEADING PARAMTERS
 	// |---------------------------------------------------------------------------------|
@@ -5010,8 +5011,8 @@ FUNCTION void runMSE()
 	/*
 		Instantiate Operating Model Class
 	*/
-	mse::OperatingModel om(s_md,s_mv);
-
+	//mse::OperatingModel om(s_md,s_mv);
+	mse::OperatingModel om(argc,argv);
 
 	COUT("DONE");
 
