@@ -327,6 +327,8 @@ void OperatingModel::updateReferenceModel()
 void OperatingModel::writeDataFile()
 {
 
+
+
 }
 
 void OperatingModel::runStockAssessment()
