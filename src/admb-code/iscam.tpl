@@ -1226,6 +1226,10 @@ DATA_SECTION
 
 	// END OF DATA_SECTION
 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
+
+	// |--------------------------------------|
+	// | Friend Class Operating Model for MSE |
+	// |--------------------------------------|
 	friend_class OperatingModel;
 	
 
@@ -1234,7 +1238,6 @@ INITIALIZATION_SECTION
   phi1 0.01;
 	
 PARAMETER_SECTION
-	//friend_class OperatingModel;
 	// |---------------------------------------------------------------------------------|
 	// | LEADING PARAMTERS
 	// |---------------------------------------------------------------------------------|
