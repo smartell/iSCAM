@@ -37,9 +37,17 @@
 		dvector rho;
 		dvector varphi;
 
+		dmatrix log_rec_devs;
+		dmatrix init_log_rec_devs;
 
 		// Selectivity parameters
 		d3_array *d3_log_sel_par;
+		d4_array *d4_logSel;
+
+		// Mortality
+		d3_array *d3_M;
+		d3_array *d3_F;
+
 	};
 
 	class OperatingModel: public model_data
@@ -61,8 +69,17 @@
 		int m_nCtNobs;
 		dmatrix m_dCatchData;
 
-		d4_array d4_logSel;
+		dmatrix  m_log_rt;
+
+		d3_array m_N;
+		d3_array m_M;
+		d3_array m_F;
+		d3_array m_Z;
+		d3_array m_S;
+		d3_array m_ft;
 		d3_array m_log_sel_par;
+
+		d4_array d4_logSel;
 
 		ModelVariables mv;		// Structure for model variables.
 
@@ -75,6 +92,7 @@
 	protected:
 		void readMSEcontrols();
 		void initParameters();
+		void initMemberVariables();
 		void conditionReferenceModel();
 		void setRandomVariables();
 		void getReferencePointsAndStockStatus();
