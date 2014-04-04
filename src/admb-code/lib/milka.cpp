@@ -24,13 +24,13 @@
  * 		|- | getReferencePointsAndStockStatus  [-]		
  * 		   | calculateTAC                      [-]
  * 		   | allocateTAC                       [ ]			
- * 		   | implementFisheries			
- * 		   		|- calcSelectivity			
- * 		   		|- calcRetentionDiscards			
- * 		   		|- calcTotalMortality			
- * 		   | updateReferenceModel			
- * 		   | writeDataFile			
- * 		   | runStockAssessment			
+ * 		   | implementFisheries				   [ ]
+ * 		   		|- calcSelectivity			   [ ]
+ * 		   		|- calcRetentionDiscards	   [ ]		
+ * 		   		|- calcTotalMortality		   [ ]	
+ * 		   | updateReferenceModel			   [ ]
+ * 		   | writeDataFile					   [-]
+ * 		   | runStockAssessment				   [ ]
  * 		|- |			
  * 		|- writeSimulationVariables			
  * 		|- calculatePerformanceMetrics			
