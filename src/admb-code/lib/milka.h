@@ -36,6 +36,7 @@
 		dvector log_rinit;
 		dvector rho;
 		dvector varphi;
+		dvector q;
 
 		dmatrix log_rec_devs;
 		dmatrix init_log_rec_devs;
@@ -61,13 +62,16 @@
 		ivector m_nASex;
 		imatrix m_nAGopen;
 		
-		int m_nCtNobs;
+		// catch arrays
+		int     m_nCtNobs;
 		dmatrix m_dCatchData;
-	
-		ivector m_n_it_nobs;
+		
+		// survey arrays
+		ivector  m_n_it_nobs;
 		d3_array m_d3SurveyData;
 
-		ivector m_n_A_nobs;
+		// composition arrays
+		ivector  m_n_A_nobs;
 		d3_array m_d3_A;
 
 		ivector m_nWtNobs;
@@ -88,6 +92,7 @@
 		dvector m_dSigma;
 		dvector m_dTau;
 		dvector m_dKappa;
+		dvector m_q;
 
 		// Assessment model results
 		dvector m_est_bo;
@@ -108,6 +113,7 @@
 		d3_array m_Z;
 		d3_array m_S;
 		d3_array m_d3_wt_avg;
+		d3_array m_d3_wt_mat;
 		d3_array m_ft;
 		d3_array m_log_sel_par;
 
@@ -131,7 +137,7 @@
 		void calculateTAC();
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);
-
+		void calcRelativeAbundance(const int& iyr);
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();

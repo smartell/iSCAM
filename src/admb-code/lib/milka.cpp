@@ -28,6 +28,7 @@
  * 		   		|- calcSelectivity			   [ ]
  * 		   		|- calcRetentionDiscards	   [ ]		
  * 		   		|- calcTotalMortality		   [ ]	
+ * 		   | calcRelativeAbundance             [-]
  * 		   | updateReferenceModel			   [ ]
  * 		   | writeDataFile					   [-]
  * 		   | runStockAssessment				   [ ]
@@ -81,6 +82,9 @@ void OperatingModel::runScenario(const int &seed)
 
 		implementFisheries(i);
 
+		calcRelativeAbundance(i);
+
+		exit(1);
 		updateReferenceModel(i);
 
 		writeDataFile(i);
@@ -131,6 +135,7 @@ void OperatingModel::initParameters()
 	m_irow = nCtNobs; // counter for current number of rows in the catch table.
 
 	// needs to be updated for each year in the mse loop
+
 	m_nn = 0;
 	for( k = 1; k <= ngear; k++ )
 	{
@@ -144,18 +149,19 @@ void OperatingModel::initParameters()
 	m_dCatchData.initialize();
 	m_dCatchData.sub(1,nCtNobs) = dCatchData;
 
-	//m_nItNobs = nItNobs;
+	// allocate & initialize survey data arrays
 	m_n_it_nobs.allocate(1,nItNobs);
 	m_n_it_nobs.initialize();
+	m_n_it_nobs = n_it_nobs + (m_nPyr-nyr);
 	
 	m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
 	m_d3SurveyData.initialize();
-
 	for(int k=1;k<=nItNobs;k++)
 	{
-		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
 		m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);	
 	}
+	
+
 		
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
@@ -175,10 +181,11 @@ void OperatingModel::initParameters()
 	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
 	m_d3_inp_wt_avg.initialize();
 
+
 	for(int k=1;k<=nWtTab;k++)
 	{
 		m_nWtNobs(k)= nWtNobs(k)+(m_nPyr-nyr);
-		m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);	
+		m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);
 	}
 	
 
@@ -220,6 +227,7 @@ void OperatingModel::initMemberVariables()
 	m_S.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_S.initialize();
 	m_ft.allocate(1,n_ags,1,ngear,syr,m_nPyr);  m_ft.initialize();
 	m_d3_wt_avg.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_d3_wt_avg.initialize();
+	m_d3_wt_mat.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_d3_wt_mat.initialize();
 
 	m_log_rt.allocate(1,n_ag,syr-nage+sage,nyr); m_log_rt.initialize();
 	
@@ -232,6 +240,8 @@ void OperatingModel::initMemberVariables()
 
 	m_dTAC.allocate(1,ngroup,1,nfleet);
 
+	m_q = mv.q;
+
 	// Initialize Mortality arrays from ModelVariables (mv)
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
@@ -240,12 +250,14 @@ void OperatingModel::initMemberVariables()
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
 		m_d3_wt_avg(ig).sub(syr,nyr+1) = d3_wt_avg(ig).sub(syr,nyr+1);
+		m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig).sub(syr,nyr+1);
 
 		// Temporary extend natural mortality out to m_nPyr
 		for( i = nyr+1; i <= m_nPyr; i++ )
 		{
 			m_M(ig)(i) = m_M(ig)(nyr);
 			m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
+			m_d3_wt_mat(ig)(i+1) = d3_wt_mat(ig)(nyr+1);
 		}
 	}
 
@@ -496,9 +508,75 @@ void OperatingModel::implementFisheries(const int &iyr)
 	} // narea f
 	cout<<m_dCatchData<<endl;
 	cout<<"END"<<endl;
-	ad_exit(1);
+	
 
 }
+
+void OperatingModel::calcRelativeAbundance(const int& iyr)
+{
+	//m_d3SurveyData
+	// Survey data header:
+	// 1    2      3     4     5      6    7   8
+	// iyr  index  gear  area  group  sex  wt  timing
+	static int irow = 0;
+	irow ++;
+	int gear;
+	dvector na(sage,nage);
+	dvector va(sage,nage);
+	dvector sa(sage,nage);
+	dvector ma(sage,nage);
+	dvector wa(sage,nage);
+	double dV;
+	for(int k = 1; k <= nItNobs; k++ )
+	{
+		
+		gear = d3_survey_data(k)(1)(3);
+		for( f = 1; f <= narea; f++ )
+		{
+			for( g = 1; g <= ngroup; g++ )
+			{
+				dV = 0;
+				for( h = 1; h <= nsex; h++ )
+				{
+					int ig = pntr_ags(f,g,h);
+					va = exp(d4_logSel(gear)(ig)(iyr));
+					wa = m_d3_wt_avg(ig)(iyr);
+					ma = m_d3_wt_mat(ig)(iyr);
+					//sa  //TODO correct for survey timing.
+					na = m_N(ig)(iyr);
+					switch(n_survey_type(k))
+					{
+						case 1: // vulnerable numbers
+							dV += na*va;
+						break;
+
+						case 2: // vulnerable biomass
+							dV += elem_prod(na,va)*wa;
+						break;
+
+						case 3: // spawning biomass
+							dV += na*ma;
+						break;
+					}
+				}
+				cout<<va<<endl;
+				// V is the population that is proportional to the index.
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,6) = 0;    //TODO add to MSE controls
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 1.0;  //TODO add to MSE controls
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.5;  //TODO add to MSE controls
+				
+			}
+		}
+	}	// end loop over surveys
+
+
+}
+
 
 void OperatingModel::updateReferenceModel(const int& iyr)
 {

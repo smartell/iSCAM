@@ -4944,6 +4944,8 @@ FUNCTION void runMSE()
 	s_mv.log_rec_devs = value(log_rec_devs);
 	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
+	s_mv.q = value(q);
+
 	// |-----------------------------------|
 	// | Instantiate Operating Model Class |
 	// |-----------------------------------|
