@@ -623,7 +623,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 		fx   = ct - chat;
 		//The following couts were used to debug the transpose error in the Jacobian.
 		
-		cout<<"its = "<<its-1<<" fx = "<<fx<<endl;
+		cout<<"its = "<<its<<" fx = "<<fx<<endl;
 		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
 		ft  += fx*invJ;
