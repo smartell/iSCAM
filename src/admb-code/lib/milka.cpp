@@ -50,8 +50,8 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 {
 	cout<<"Inheritance version using model_data as base class"<<endl;
 	cout<<"Ngroup "<<ngroup<<endl;
-	cout<<"Catch Data\n"<<dCatchData<<endl;
-	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
+	//cout<<"Catch Data\n"<<dCatchData<<endl;
+	//cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
 	cout<<"eof "<<eof<<endl;
 
 }
@@ -80,9 +80,9 @@ void OperatingModel::runScenario(const int &seed)
 
 		implementFisheries();
 
-		updateReferenceModel();
+		updateReferenceModel(i);
 
-		writeDataFile();
+		writeDataFile(i);
 
 		runStockAssessment();
 	}
@@ -116,7 +116,6 @@ void OperatingModel::readMSEcontrols()
 	m_nASex = column(tmp,0);
 	m_nAGopen = trans(trans(tmp).sub(1,narea));
 	
-
 }
 
 /**
@@ -130,14 +129,14 @@ void OperatingModel::initParameters()
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
 
 	// needs to be updated for each year in the mse loop
-	int nn = 0;
+	m_nn = 0;
 	for( k = 1; k <= ngear; k++ )
 	{
-		nn += sum(m_nAGopen(k));
-		nn += m_nCSex(k)*nn;
+		m_nn += sum(m_nAGopen(k));
+		m_nn += m_nCSex(k)*m_nn;
 	}
-	cout<<n_ags<< " \t"<<nn<<endl;
-	m_nCtNobs = nCtNobs + (m_nPyr - nyr)*nn;
+	
+	m_nCtNobs = nCtNobs + (m_nPyr - nyr)*m_nn;
 	
 	m_dCatchData.allocate(1,m_nCtNobs,1,7);
 	m_dCatchData.initialize();
@@ -237,6 +236,10 @@ void OperatingModel::initMemberVariables()
 		m_F(ig).sub(syr,nyr) = (*mv.d3_F)(ig);
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
+		
+		
+
+
 	}
 
 	// Selectivity
@@ -444,13 +447,15 @@ void OperatingModel::implementFisheries()
 
 }
 
-void OperatingModel::updateReferenceModel()
+void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
- 
+	//cout<<iyr<<endl;
+
+
 }
 
-void OperatingModel::writeDataFile()
+void OperatingModel::writeDataFile(const int& iyr)
 {
 
 		adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
@@ -460,7 +465,7 @@ void OperatingModel::writeDataFile()
 	  	dfs<< ngroup		<<endl;
 	  	dfs<< nsex			<<endl;
 	  	dfs<< syr   		<<endl;
-	  	dfs<< i   			<<endl;
+	  	dfs<< iyr   			<<endl;
 	  	dfs<< sage  		<<endl;
 	  	dfs<< nage  		<<endl;
 	  	dfs<< ngear 		<<endl;
@@ -480,29 +485,31 @@ void OperatingModel::writeDataFile()
 		dfs<< d_maturityVector  <<endl;
 	
 	  	dfs<<"#Observed catch data"<<endl;
-	  	
-	  		int nn = 0; // calculating nn again make initParameters return it???? 
-			for( k = 1; k <= ngear; k++ )
-			{
-				nn += sum(m_nAGopen(k));
-				nn += m_nCSex(k)*nn;
-			}
 
-	  	dfs<< m_nCtNobs + (i-nyr)*nn  		<<endl; 
-	  	dfs<< m_dCatchData.sub(1,nCtNobs+(i-nyr)*nn)    <<endl;
+	  	int tmp_nCtNobs = nCtNobs+(iyr-nyr)*m_nn;
+
+	  	dfs<< m_nCtNobs + (iyr-nyr)*m_nn  		<<endl; 
+	  	dfs<< m_dCatchData.sub(1,tmp_nCtNobs)    <<endl;
 	
 	  	dfs<<"#Abundance indices"	<<endl;
+	  	
+	  	dfs<< nItNobs 					<<endl;
+
 		
 	  	ivector tmp_n_it_nobs(1,nItNobs);
+	  	tmp_n_it_nobs.initialize();
 	  	d3_array tmp_d3SurveyData(1,nItNobs,1,tmp_n_it_nobs,1,8);
+	  	tmp_d3SurveyData.initialize();
+
 
 	  		for(int k=1;k<=nItNobs;k++)
 			{
-				tmp_n_it_nobs(k) = n_it_nobs(k) + (i-nyr);
+	  			//cout<<"nItNobs is "<< nItNobs<<endl;
+				tmp_n_it_nobs(k) = n_it_nobs(k) + (iyr-nyr);
 				tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
+	  			//cout<<"tmp_d3SurveyData(k) is "<<m_d3SurveyData.sub(1,tmp_n_it_nobs(k))<<endl;
 			}
 	  	
-	  	dfs<< nItNobs 					<<endl;
 	  	dfs<< tmp_n_it_nobs 				<<endl;
 	  	dfs<< n_survey_type 			<<endl;
 	  	dfs<< tmp_d3SurveyData		<<endl;
@@ -514,7 +521,7 @@ void OperatingModel::writeDataFile()
 	  			
 	  		for(int k=1;k<=nAgears;k++)
 			{
-				tmp_n_A_nobs(k) = n_A_nobs(k) + (i-nyr);
+				tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr);
 				tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
 			}
 
@@ -532,11 +539,11 @@ void OperatingModel::writeDataFile()
 
 	  		for(int k=1;k<=nWtTab;k++)
 			{
-				tmp_nWtNobs(k)= nWtNobs(k)+(i-nyr);
+				tmp_nWtNobs(k)= nWtNobs(k)+(iyr-nyr);
 				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;	
 			}
 
-	  	dfs<< nWtTab 				<<endl;
+	  	dfs<< nWtTab 					<<endl;
 	  	dfs<< tmp_nWtNobs				<<endl;
 		dfs<< tmp_d3_inp_wt_avg			<<endl; 
 	

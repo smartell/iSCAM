@@ -75,6 +75,8 @@
 		int m_nPyr;				/// Terminal year for Operating Model.
 		int m_nSeed;			/// random number seed
 
+		int m_nn;
+
 		dvector m_dRo;
 		dvector m_dSteepness;
 		dvector m_dM;
@@ -128,8 +130,8 @@
 		void allocateTAC(const int& iyr);
 		void implementFisheries();
 
-		void updateReferenceModel();
-		void writeDataFile();
+		void updateReferenceModel(const int& iyr);
+		void writeDataFile(const int& iyr);
 		void runStockAssessment();
 		
 
