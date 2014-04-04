@@ -1,0 +1,13 @@
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##|   PROJECTION CONTROL FILE - USE FOR SHORT-TERM FORECASTS AND LONG-TERM MSE WORK   |##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## m_pyr  # Terminal year of projection.
+1999
+## m_nHCR # Harvest Control Rule Type.
+1
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##|   CONTROLS FOR EACH OF THE FISHING FLEETS                                         |##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## INDEX CSEX ASEX | AREAS (1 2 3 .... narea)  1 = open, 0 = closed
+	1    0    0      1
+
