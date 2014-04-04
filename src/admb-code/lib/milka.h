@@ -55,6 +55,7 @@
 	private:
 
 		int m_nNyr; 
+		int m_irow;
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
@@ -106,6 +107,7 @@
 		d3_array m_F;
 		d3_array m_Z;
 		d3_array m_S;
+		d3_array m_d3_wt_avg;
 		d3_array m_ft;
 		d3_array m_log_sel_par;
 
@@ -128,7 +130,7 @@
 		void getReferencePointsAndStockStatus();
 		void calculateTAC();
 		void allocateTAC(const int& iyr);
-		void implementFisheries();
+		void implementFisheries(const int& iyr);
 
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);

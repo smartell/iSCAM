@@ -24,7 +24,7 @@
  * 		|- | getReferencePointsAndStockStatus  [-]		
  * 		   | calculateTAC                      [-]
  * 		   | allocateTAC                       [-]			
- * 		   | implementFisheries				   [ ]
+ * 		   | implementFisheries				   [-]
  * 		   		|- calcSelectivity			   [ ]
  * 		   		|- calcRetentionDiscards	   [ ]		
  * 		   		|- calcTotalMortality		   [ ]	
@@ -39,6 +39,7 @@
 
 #include <admodel.h>
 #include "milka.h"
+#include "baranov.h"
 #include <contrib.h>
 
 // Destructor
@@ -50,8 +51,8 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 {
 	cout<<"Inheritance version using model_data as base class"<<endl;
 	cout<<"Ngroup "<<ngroup<<endl;
-	//cout<<"Catch Data\n"<<dCatchData<<endl;
-	//cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
+	cout<<"Catch Data\n"<<dCatchData<<endl;
+	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
 	cout<<"eof "<<eof<<endl;
 
 }
@@ -78,7 +79,7 @@ void OperatingModel::runScenario(const int &seed)
 		
 		allocateTAC(i);
 
-		implementFisheries();
+		implementFisheries(i);
 
 		updateReferenceModel(i);
 
@@ -127,6 +128,7 @@ void OperatingModel::initParameters()
 	
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
+	m_irow = nCtNobs; // counter for current number of rows in the catch table.
 
 	// needs to be updated for each year in the mse loop
 	m_nn = 0;
@@ -217,6 +219,7 @@ void OperatingModel::initMemberVariables()
 	m_Z.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_Z.initialize();
 	m_S.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_S.initialize();
 	m_ft.allocate(1,n_ags,1,ngear,syr,m_nPyr);  m_ft.initialize();
+	m_d3_wt_avg.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_d3_wt_avg.initialize();
 
 	m_log_rt.allocate(1,n_ag,syr-nage+sage,nyr); m_log_rt.initialize();
 	
@@ -236,10 +239,14 @@ void OperatingModel::initMemberVariables()
 		m_F(ig).sub(syr,nyr) = (*mv.d3_F)(ig);
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
-		
-		
+		m_d3_wt_avg(ig).sub(syr,nyr+1) = d3_wt_avg(ig).sub(syr,nyr+1);
 
-
+		// Temporary extend natural mortality out to m_nPyr
+		for( i = nyr+1; i <= m_nPyr; i++ )
+		{
+			m_M(ig)(i) = m_M(ig)(nyr);
+			m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
+		}
 	}
 
 	// Selectivity
@@ -348,7 +355,8 @@ void OperatingModel::calculateTAC()
 		switch( int(m_nHCR) )
 		{
 			case 1: // Constant harvest rate
-				m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+				 m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+				//m_dTAC(g) = 1.0;
 			break; 
 		}
 	}
@@ -425,7 +433,7 @@ void OperatingModel::allocateTAC(const int& iyr)
  * 	|- Calculate total discards from non-retention fisheries.
  * 	
  */
-void OperatingModel::implementFisheries()
+void OperatingModel::implementFisheries(const int &iyr)
 {
 	dvector tac(1,narea);
 	dvector  ct(1,nfleet);
@@ -433,17 +441,62 @@ void OperatingModel::implementFisheries()
 	dmatrix  na(1,nsex,sage,nage);
 	dmatrix  wa(1,nsex,sage,nage);
 	dmatrix  d_allocation(1,narea,1,nfleet);
+	dmatrix  _hCt(1,nsex,1,nfleet);
 	d3_array d3_Va(1,nsex,1,nfleet,sage,nage);
 	tac.initialize();
 	na.initialize();
+
+	BaranovCatchEquation cBCE;
 
 	for(int f = 1; f <= narea; f++ )
 	{
 		for(int g = 1; g <= ngroup; g++ )
 		{
-			
-		}  // ngroup
-	} // narea
+			ct = m_dTAC(g);  // Catch for each fleet.
+			for(int h = 1; h <= nsex; h++ )
+			{
+				int ig = pntr_ags(f,g,h);
+				ma(h) = m_M(ig)(iyr);			// natural mortality
+				na(h) = m_N(ig)(iyr);			// numbers-at-age
+				wa(h) = m_d3_wt_avg(ig)(iyr);	// weight-at-age
+				for(int k = 1; k <= nfleet; k++ )
+				{
+					int kk = nFleetIndex(k);
+					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
+				}
+			}  // nsex
+			cout<<"Start"<<endl;
+			cout<<d3_Va(1)<<endl;
+			// Calculate instantaneous fishing mortality rates.
+			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
+			cout<<"Ft =\t"<<ft<<endl;
+
+			// Fill m_dCatchData array with actual catches taken by each fleet.
+			for(int k = 1; k <= nfleet; k++ )
+			{
+				if( ft(k) > 0 )
+				{
+					int kk = nFleetIndex(k);
+					int hh = m_nCSex(k);   // flag for sex
+					for( h = 1; h <= hh+1; h++ )
+					{
+						m_irow ++;
+						m_dCatchData(m_irow,1) = iyr;
+						m_dCatchData(m_irow,2) = kk;
+						m_dCatchData(m_irow,3) = f;
+						m_dCatchData(m_irow,4) = g;
+						m_dCatchData(m_irow,5) = hh>0?h:0;
+						m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
+						m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+					}
+				}
+			}
+
+		}  // ngroup g
+	} // narea f
+	cout<<m_dCatchData<<endl;
+	cout<<"END"<<endl;
+	ad_exit(1);
 
 }
 
