@@ -24,7 +24,7 @@
  * 		|- | getReferencePointsAndStockStatus  [-]		
  * 		   | calculateTAC                      [-]
  * 		   | allocateTAC                       [-]			
- * 		   | implementFisheries				   [ ]
+ * 		   | implementFisheries				   [-]
  * 		   		|- calcSelectivity			   [ ]
  * 		   		|- calcRetentionDiscards	   [ ]		
  * 		   		|- calcTotalMortality		   [ ]	
@@ -129,6 +129,7 @@ void OperatingModel::initParameters()
 	
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
+	m_irow = nCtNobs; // counter for current number of rows in the catch table.
 
 	// needs to be updated for each year in the mse loop
 	int nn = 0;
@@ -355,8 +356,8 @@ void OperatingModel::calculateTAC()
 		switch( int(m_nHCR) )
 		{
 			case 1: // Constant harvest rate
-				// m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
-				m_dTAC(g) = 1.0;
+				 m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+				//m_dTAC(g) = 1.0;
 			break; 
 		}
 	}
@@ -471,9 +472,32 @@ void OperatingModel::implementFisheries(const int &iyr)
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 			cout<<"Ft =\t"<<ft<<endl;
 
-		}  // ngroup
-	} // narea
+			// Fill m_dCatchData array with actual catches taken by each fleet.
+			for(int k = 1; k <= nfleet; k++ )
+			{
+				if( ft(k) > 0 )
+				{
+					int kk = nFleetIndex(k);
+					int hh = m_nCSex(k);   // flag for sex
+					for( h = 1; h <= hh+1; h++ )
+					{
+						m_irow ++;
+						m_dCatchData(m_irow,1) = iyr;
+						m_dCatchData(m_irow,2) = kk;
+						m_dCatchData(m_irow,3) = f;
+						m_dCatchData(m_irow,4) = g;
+						m_dCatchData(m_irow,5) = hh>0?h:0;
+						m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
+						m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+					}
+				}
+			}
 
+		}  // ngroup g
+	} // narea f
+	cout<<m_dCatchData<<endl;
+	cout<<"END"<<endl;
+	ad_exit(1);
 
 }
 

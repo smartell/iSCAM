@@ -55,6 +55,7 @@
 	private:
 
 		int m_nNyr; 
+		int m_irow;
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
