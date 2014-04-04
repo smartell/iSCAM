@@ -127,7 +127,7 @@ void OperatingModel::initParameters()
 {
 	
 	// Initializing data members
-	m_nNyr = nyr; // needs to be updated for each year inside the mse loop
+	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
 
 	// needs to be updated for each year in the mse loop
 	int nn = 0;
@@ -164,7 +164,7 @@ void OperatingModel::initParameters()
 	
 	for(int k=1;k<=nAgears;k++)
 	{
-		m_n_it_nobs(k) = n_it_nobs(k) + (m_nPyr-nyr);
+		m_n_A_nobs(k) = n_A_nobs(k) + (m_nPyr-nyr);
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
 	}
 	 
@@ -238,8 +238,6 @@ void OperatingModel::initMemberVariables()
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
 	}
-
-
 
 }
 
@@ -390,12 +388,101 @@ void OperatingModel::implementFisheries()
 void OperatingModel::updateReferenceModel()
 {
 
+ 
 }
 
 void OperatingModel::writeDataFile()
 {
 
+		adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
+	  	ofstream dfs(sim_datafile_name);
+	  	dfs<<"#Model dimensions"<<endl;
+	  	dfs<< narea 		<<endl;
+	  	dfs<< ngroup		<<endl;
+	  	dfs<< nsex			<<endl;
+	  	dfs<< syr   		<<endl;
+	  	dfs<< i   			<<endl;
+	  	dfs<< sage  		<<endl;
+	  	dfs<< nage  		<<endl;
+	  	dfs<< ngear 		<<endl;
+	 
+	  	dfs<<"#Allocation"	<<endl;
+	  	dfs<< dAllocation 	<<endl;
+	  	
+	  	dfs<<"#Age-schedule and population parameters"<<endl;
+	  	dfs<< d_linf  			<<endl;
+	  	dfs<< d_vonbk  			<<endl;
+	  	dfs<< d_to  			<<endl;
+	  	dfs<< d_a  				<<endl;
+	  	dfs<< d_b  				<<endl;
+	  	dfs<< d_ah  			<<endl;
+	  	dfs<< d_gh  			<<endl;
+	  	dfs<< n_MAT				<<endl;
+		dfs<< d_maturityVector  <<endl;
+	
+	  	dfs<<"#Observed catch data"<<endl;
+	  	
+	  		int nn = 0; // calculating nn again make initParameters return it???? 
+			for( k = 1; k <= ngear; k++ )
+			{
+				nn += sum(m_nAGopen(k));
+				nn += m_nCSex(k)*nn;
+			}
 
+	  	dfs<< m_nCtNobs + (i-nyr)*nn  		<<endl; 
+	  	dfs<< m_dCatchData.sub(1,nCtNobs+(i-nyr)*nn)    <<endl;
+	
+	  	dfs<<"#Abundance indices"	<<endl;
+		
+	  	ivector tmp_n_it_nobs(1,nItNobs);
+	  	d3_array tmp_d3SurveyData(1,nItNobs,1,tmp_n_it_nobs,1,8);
+
+	  		for(int k=1;k<=nItNobs;k++)
+			{
+				tmp_n_it_nobs(k) = n_it_nobs(k) + (i-nyr);
+				tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
+			}
+	  	
+	  	dfs<< nItNobs 					<<endl;
+	  	dfs<< tmp_n_it_nobs 				<<endl;
+	  	dfs<< n_survey_type 			<<endl;
+	  	dfs<< tmp_d3SurveyData		<<endl;
+	
+	  	dfs<<"#Age composition"		<<endl;
+
+	  		ivector tmp_n_A_nobs(1,nAgears);
+	  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage);
+	  			
+	  		for(int k=1;k<=nAgears;k++)
+			{
+				tmp_n_A_nobs(k) = n_A_nobs(k) + (i-nyr);
+				tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
+			}
+
+	  	dfs<< nAgears				<<endl;
+	  	dfs<< tmp_n_A_nobs			<<endl;
+	  	dfs<< n_A_sage				<<endl;
+	  	dfs<< n_A_nage				<<endl;
+	  	dfs<< inp_nscaler 			<<endl;
+	  	dfs<< tmp_d3_A				<<endl;
+	
+	  	dfs<<"#Empirical weight-at-age data"	<<endl;
+
+	  	ivector tmp_nWtNobs(1,nAgears);
+	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
+
+	  		for(int k=1;k<=nWtTab;k++)
+			{
+				tmp_nWtNobs(k)= nWtNobs(k)+(i-nyr);
+				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;	
+			}
+
+	  	dfs<< nWtTab 				<<endl;
+	  	dfs<< tmp_nWtNobs				<<endl;
+		dfs<< tmp_d3_inp_wt_avg			<<endl; 
+	
+		dfs<<"#EOF"	<<endl;
+		dfs<< 999	<<endl;
 
 }
 
