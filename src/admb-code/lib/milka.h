@@ -88,13 +88,13 @@
 
 		// Assessment model results
 		dvector m_est_bo;
-		dvector m_est_fmsy;
-		dvector m_est_msy;
+		dmatrix m_est_fmsy;
+		dmatrix m_est_msy;
 		dvector m_est_bmsy;
 		dvector m_est_sbtt;
 		dvector m_est_btt;
 
-		dvector m_dTAC;
+		dmatrix  m_dTAC;
 		int     m_nHCR;
 
 		dmatrix  m_log_rt;

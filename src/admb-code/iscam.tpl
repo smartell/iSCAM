@@ -894,10 +894,10 @@ DATA_SECTION
 	// | VARIABLES FOR MSY-BASED REFERENCE POINTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
-	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
-	vector  msy(1,nfleet);			//Maximum sustainable yield
-	number bmsy;					//Spawning biomass at MSY
+	matrix fmsy(1,ngroup,1,nfleet);	//Fishing mortality rate at Fmsy
+	matrix fall(1,ngroup,1,nfleet);	//Fishing mortality based on dAllocation
+	matrix  msy(1,ngroup,1,nfleet);	//Maximum sustainable yield
+	vector bmsy(1,ngroup);			//Spawning biomass at MSY
  // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
  // 	//catch-age for simulation model (could be declared locally 3d_array)
@@ -3579,22 +3579,14 @@ FUNCTION void calcReferencePoints()
 	fmsy.initialize();
 	fall.initialize();
 	msy.initialize();
-	bmsy = 0;
+	bmsy.initialize();
 
 	dvar_vector dftry(1,nfleet);
-
-	dvector ftry(1,nfleet);
-	ftry  = 0.6/nfleet * mean(M_bar);
-	fmsy  = ftry;
-	dftry = ftry;
+	dftry  = 0.6/nfleet * mean(M_bar);
 	
-
-
 	// | (4) : Instantiate msy class for each stock
 	for(g=1;g<=ngroup;g++)
 	{
-		//double d_ro = value(ro(g));
-		//double  d_h = value(steepness(g));
 		double d_rho = d_iscamCntrl(13);
 
 		dvector d_mbar = M_bar(g);
@@ -3617,9 +3609,9 @@ FUNCTION void calcReferencePoints()
 		bo  = c_MSY.getBo();
 		dvariable dbmsy = c_MSY.getBmsy();
 		dvar_vector dmsy = c_MSY.getMsy();
-		bmsy = value(dbmsy);
-		msy  = value(dmsy);
-
+		bmsy(g) = value(dbmsy);
+		msy(g)  = value(dmsy);
+		fmsy(g) = value(dfmsy);
 		c_MSY.print();
 
 		

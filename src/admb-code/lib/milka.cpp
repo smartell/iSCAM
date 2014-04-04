@@ -24,7 +24,7 @@
  * 		|- | getReferencePointsAndStockStatus  [-]		
  * 		   | calculateTAC                      [-]
  * 		   | allocateTAC                       [-]			
- * 		   | implementFisheries			
+ * 		   | implementFisheries			       [ ]
  * 		   		|- calcSelectivity			
  * 		   		|- calcRetentionDiscards			
  * 		   		|- calcTotalMortality			
@@ -82,7 +82,7 @@ void OperatingModel::runScenario(const int &seed)
 
 		updateReferenceModel();
 
-		writeDataFile(i);
+		writeDataFile();
 
 		runStockAssessment();
 	}
@@ -225,10 +225,10 @@ void OperatingModel::initMemberVariables()
 	m_est_bmsy.allocate(1,ngroup);
 	m_est_sbtt.allocate(1,ngroup);
 	m_est_btt.allocate(1,ngroup);
-	m_est_fmsy.allocate(1,nfleet);
-	m_est_msy.allocate(1,nfleet);
+	m_est_fmsy.allocate(1,ngroup,1,nfleet);
+	m_est_msy.allocate(1,ngroup,1,nfleet);
 
-	m_dTAC.allocate(1,nfleet);
+	m_dTAC.allocate(1,ngroup,1,nfleet);
 
 	// Initialize Mortality arrays from ModelVariables (mv)
 	for(int ig = 1; ig <= n_ags; ig++ )
@@ -239,8 +239,22 @@ void OperatingModel::initMemberVariables()
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
 	}
 
+	// Selectivity
+	d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
+	d4_logSel.initialize();
+	for( k = 1; k <= ngear; k++ )
+	{
+		for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			d4_logSel(k)(ig).sub(syr,nyr) = (*mv.d4_logSel)(k)(ig);
 
-
+			// Temporarily extend selectivity out to m_nPyr
+			for( i = nyr+1; i <= m_nPyr; i++ )
+			{
+				d4_logSel(k)(ig)(i) = d4_logSel(k)(ig)(nyr);
+			}
+		}
+	}
 }
 
 void OperatingModel::conditionReferenceModel()
@@ -326,12 +340,14 @@ void OperatingModel::getReferencePointsAndStockStatus()
  */
 void OperatingModel::calculateTAC()
 {
-
-	switch( int(m_nHCR) )
+	for( g = 1; g <= ngroup; g++ )
 	{
-		case 1: // Constant harvest rate
-			m_dTAC  = elem_prod(m_est_fmsy,m_est_btt);
-		break; 
+		switch( int(m_nHCR) )
+		{
+			case 1: // Constant harvest rate
+				m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+			break; 
+		}
 	}
 }
 
@@ -347,7 +363,7 @@ void OperatingModel::allocateTAC(const int& iyr)
 		for( f = 1; f <= narea; f++ )
 		{
 			if(m_nAGopen(k,f))
-			{
+			{ 
 			for( g = 1; g <= ngroup; g++ )
 			{
 				if(!h)
@@ -358,8 +374,8 @@ void OperatingModel::allocateTAC(const int& iyr)
 					m_dCatchData(irow,3) = f;
 					m_dCatchData(irow,4) = g;
 					m_dCatchData(irow,5) = h;
-					m_dCatchData(irow,6) = 1;  //TODO: Fix this
-					m_dCatchData(irow,7) = m_dTAC(k);  // TODO: call a manager!
+					m_dCatchData(irow,6) = 1;  //TODO: Fix this catch type
+					m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
 				}
 				if(h)
 				{	
@@ -372,7 +388,7 @@ void OperatingModel::allocateTAC(const int& iyr)
 						m_dCatchData(irow,4) = g;
 						m_dCatchData(irow,5) = h;
 						m_dCatchData(irow,6) = 1;  //TODO: Fix this
-						m_dCatchData(irow,7) = m_dTAC(k);  // TODO: call a manager!
+						m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
 					}
 				}
 			}
@@ -385,8 +401,46 @@ void OperatingModel::allocateTAC(const int& iyr)
 	
 }
 
+/**
+ * @brief Implement spatially explicity fishery.
+ * @details Implement the spatially epxlicity fishery using the Baranov catch equation
+ * to determine the instantaneous fishing mortality rate in each area by each gear. This
+ * routine uses the BaranovCatchEquation class object to do this.
+ * 
+ * Notes:
+ * 	m_dTAC is a vector of allocated catches assiged to each fleet.
+ * 	
+ * 	Algorithm:
+ * 	|- Apportion m_dTAC by area (f) for each stock (g)
+ * 	|- Loop over each area and allocate catch in area (f) to gear (k),
+ * 	|- Add implementation error to each gear and catch.
+ * 	|- Assemble arguments for BaranovCatchEquation Class. 
+ * 	     -> .getFishingMortality(ct,ma,&Va,na,wa,_hCt)
+ * 	|- Calculate Fishing mortality rates on reference population.
+ * 	|- Calculate Total landed catch.
+ * 	|- Calculate total discards based on size-limits.
+ * 	|- Calculate total discards from non-retention fisheries.
+ * 	
+ */
 void OperatingModel::implementFisheries()
 {
+	dvector tac(1,narea);
+	dvector  ct(1,nfleet);
+	dmatrix  ma(1,nsex,sage,nage);
+	dmatrix  na(1,nsex,sage,nage);
+	dmatrix  wa(1,nsex,sage,nage);
+	dmatrix  d_allocation(1,narea,1,nfleet);
+	d3_array d3_Va(1,nsex,1,nfleet,sage,nage);
+	tac.initialize();
+	na.initialize();
+
+	for(int f = 1; f <= narea; f++ )
+	{
+		for(int g = 1; g <= ngroup; g++ )
+		{
+			
+		}  // ngroup
+	} // narea
 
 }
 
