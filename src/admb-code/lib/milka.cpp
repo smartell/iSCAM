@@ -29,6 +29,7 @@
  * 		   		|- calcRetentionDiscards	   [ ]		
  * 		   		|- calcTotalMortality		   [ ]	
  * 		   | calcRelativeAbundance             [-]
+ * 		   | calcCompositionData               [ ]
  * 		   | updateReferenceModel			   [ ]
  * 		   | writeDataFile					   [-]
  * 		   | runStockAssessment				   [ ]
@@ -83,6 +84,8 @@ void OperatingModel::runScenario(const int &seed)
 		implementFisheries(i);
 
 		calcRelativeAbundance(i);
+
+		calcCompositionData(i);
 
 		exit(1);
 		updateReferenceModel(i);
@@ -165,26 +168,23 @@ void OperatingModel::initParameters()
 		
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
+	m_n_A_nobs = n_A_nobs + (m_nPyr-nyr);
 	
 	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
 	m_d3_A.initialize();
 	
 	for(int k=1;k<=nAgears;k++)
 	{
-		m_n_A_nobs(k) = n_A_nobs(k) + (m_nPyr-nyr);
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
 	}
 	 
 	m_nWtNobs.allocate(1,nWtTab);
-	m_nWtNobs.initialize();
+	m_nWtNobs = nWtNobs + (m_nPyr-nyr);
 
 	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
 	m_d3_inp_wt_avg.initialize();
-
-
 	for(int k=1;k<=nWtTab;k++)
 	{
-		m_nWtNobs(k)= nWtNobs(k)+(m_nPyr-nyr);
 		m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);
 	}
 	
@@ -215,6 +215,8 @@ void OperatingModel::initParameters()
 			m_dKappa = pow((5.*m_dSteepness),1.25);
 		break;
 	}
+
+	
 }
 
 
@@ -277,6 +279,20 @@ void OperatingModel::initMemberVariables()
 			}
 		}
 	}
+
+	// annual fishing mortality rates
+	m_ft.allocate(1,n_ags,1,ngear,syr,m_nPyr);
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		for(int k = 1; k <= ngear; k++ )
+		{
+			m_ft(ig)(k)(syr,nyr) = (*mv.d3_ft)(ig)(k);
+			 /* code */
+		}
+	}
+
+
+
 }
 
 void OperatingModel::conditionReferenceModel()
@@ -577,6 +593,54 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 
 }
 
+/**
+ * @brief Composition data.
+ * @details Calculate composition data for current year.
+ * 
+ * Loop over nAgears
+ * 	Loop over areas
+ *    Loop over groups
+ *      Loop over sex.
+ *      	-Determine the catch-at-age proportions.
+ *      	 given Selectivity of the gear & abundance
+ *      	 in area f for group g and sex h.
+ *      	-Sample catch with a precision specified in
+ *      	 the MSE control file.  Can either use a 
+ *      	 multinomial sample, or multivariate logistic.
+ *      	-Other ideas include 2-stage sampling with the
+ *      	 probability of finding an aggregation, and 
+ *      	 the composition of the aggregation is highly
+ *      	 correlated.
+ * 
+ * @param iyr Current year.
+ * @param m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage); age-comp array.
+ */		
+void OperatingModel::calcCompositionData(const int& iyr)
+{
+	static int irow = 0; // counter for number of rows.
+	int gear;
+	dvector na(sage,nage);
+	dvector va(sage,nage);
+	dvector ca(sage,nage);
+	for(int k = 1; k <= nAgears; k++ )
+	{
+		gear = m_d3_A(k)(1)(-3);
+		for(int f = 1; f <= narea; f++ )
+		{
+			for(int g = 1; g <= ngroup; g++ )
+			{
+				for(int h = 1; h <= nsex; h++ )
+				{
+					int ig = pntr_ags(f,g,h);
+					va = exp(d4_logSel(gear)(ig)(iyr));
+					na = m_N(ig)(iyr);
+					ca = m_ft(ig)(gear)(iyr);
+				}
+			}
+		}
+	}
+
+}
 
 void OperatingModel::updateReferenceModel(const int& iyr)
 {

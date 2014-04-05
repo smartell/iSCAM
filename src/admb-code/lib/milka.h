@@ -48,6 +48,7 @@
 		// Mortality
 		d3_array *d3_M;
 		d3_array *d3_F;
+		d3_array *d3_ft;
 
 	};
 
@@ -138,6 +139,7 @@
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);
 		void calcRelativeAbundance(const int& iyr);
+		void calcCompositionData(const int& iyr);
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();
