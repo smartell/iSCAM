@@ -622,6 +622,10 @@ void OperatingModel::calcCompositionData(const int& iyr)
 	dvector na(sage,nage);
 	dvector va(sage,nage);
 	dvector ca(sage,nage);
+	dvector fa(sage,nage);
+	dvector ma(sage,nage);
+	dvector za(sage,nage);
+	double ft;
 	for(int k = 1; k <= nAgears; k++ )
 	{
 		gear = m_d3_A(k)(1)(-3);
@@ -634,7 +638,11 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					int ig = pntr_ags(f,g,h);
 					va = exp(d4_logSel(gear)(ig)(iyr));
 					na = m_N(ig)(iyr);
-					ca = m_ft(ig)(gear)(iyr);
+					ma = m_M(ig)(iyr);
+					ft = m_ft(ig)(gear)(iyr);
+					fa = (ft>0?ft:1.0) * va;  //TODO Fix for case where ft==0.
+					za = ma + fa;
+					ca = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 				}
 			}
 		}
