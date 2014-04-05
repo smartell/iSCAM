@@ -9,5 +9,5 @@
 ##|   CONTROLS FOR EACH OF THE FISHING FLEETS                                         |##
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## INDEX CSEX ASEX | AREAS (1 2 3 .... narea)  1 = open, 0 = closed
-	1    0    0      1
+	1    0    1      1
 

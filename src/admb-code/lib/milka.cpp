@@ -29,7 +29,7 @@
  * 		   		|- calcRetentionDiscards	   [ ]		
  * 		   		|- calcTotalMortality		   [ ]	
  * 		   | calcRelativeAbundance             [-]
- * 		   | calcCompositionData               [ ]
+ * 		   | calcCompositionData               [-]
  * 		   | updateReferenceModel			   [ ]
  * 		   | writeDataFile					   [-]
  * 		   | runStockAssessment				   [ ]
@@ -621,18 +621,20 @@ void OperatingModel::calcCompositionData(const int& iyr)
 	int gear;
 	dvector na(sage,nage);
 	dvector va(sage,nage);
-	dvector ca(sage,nage);
 	dvector fa(sage,nage);
 	dvector ma(sage,nage);
 	dvector za(sage,nage);
+	dmatrix ca(1,nsex,sage,nage);
+	dmatrix pa(1,nsex,sage,nage);
 	double ft;
 	for(int k = 1; k <= nAgears; k++ )
 	{
-		gear = m_d3_A(k)(1)(-3);
+		gear = m_d3_A(k)(1)(n_A_sage(k)-4);
 		for(int f = 1; f <= narea; f++ )
 		{
 			for(int g = 1; g <= ngroup; g++ )
 			{
+				ca.initialize();
 				for(int h = 1; h <= nsex; h++ )
 				{
 					int ig = pntr_ags(f,g,h);
@@ -640,14 +642,28 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					na = m_N(ig)(iyr);
 					ma = m_M(ig)(iyr);
 					ft = m_ft(ig)(gear)(iyr);
-					fa = (ft>0?ft:1.0) * va;  //TODO Fix for case where ft==0.
+					fa = (ft>0?ft:1.0) * va;  
 					za = ma + fa;
-					ca = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
+					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
+					pa(h) = ca(h) / sum(ca(h));
+				}
+			
+				int hh = m_nASex(k);   // flag for sex
+				for( h = 1; h <= hh+1; h++ )
+				{
+					irow ++;
+					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-5) = iyr;
+					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-4) = gear;
+					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-3) = f;
+					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-2) = g;
+					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-1) = hh>0?h:0;
+					m_d3_A(k)(n_A_nobs(k)+irow)(n_A_sage(k),n_A_nage(k))
+					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
 				}
 			}
 		}
 	}
-
+	
 }
 
 void OperatingModel::updateReferenceModel(const int& iyr)
