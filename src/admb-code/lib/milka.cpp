@@ -117,12 +117,18 @@ void OperatingModel::readMSEcontrols()
 	m_nAGopen.allocate(1,ngear,1,narea);
 	
 	// Controls for sexing catch and comps and fishing in given areas.
-	imatrix tmp(1,ngear,-2,narea);
+	dmatrix tmp(1,ngear,-5,narea);
 	ifs >> tmp;
-	m_nGearIndex = column(tmp,-2);
-	m_nCSex = column(tmp,-1);
-	m_nASex = column(tmp,0);
-	m_nAGopen = trans(trans(tmp).sub(1,narea));
+	m_nGearIndex = ivector(column(tmp,-5));
+	m_nCSex      = ivector(column(tmp,-4));
+	m_nASex      = ivector(column(tmp,-3));
+	m_dLslim     = column(tmp,-2);
+	m_dUslim     = column(tmp,-1);
+	for( k = 1; k <= ngear; k++ )
+	{
+		m_nAGopen(k) = ivector(tmp(k)(1,narea));
+	}
+	
 	
 }
 
@@ -502,8 +508,7 @@ void OperatingModel::implementFisheries(const int &iyr)
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
 				}
 			}  // nsex
-			// cout<<"Start"<<endl;
-			// cout<<d3_Va(1)<<endl;
+			
 			// Calculate instantaneous fishing mortality rates.
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
