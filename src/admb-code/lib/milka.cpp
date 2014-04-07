@@ -814,5 +814,14 @@ void OperatingModel::writeDataFile(const int& iyr)
 
 void OperatingModel::runStockAssessment()
 {
+	/*
+		Call iscam ensuring that the correct Data files and control files 
+		for the estimator are specfied in the mseRUN.dat file.
 
+		System call should reflect.
+
+		make ARG="-ind mseRUN.dat"  on unix flavors
+
+		system("iscam.exe -ind mseRUN.dat")  on windoze boxes.
+	*/
 }
