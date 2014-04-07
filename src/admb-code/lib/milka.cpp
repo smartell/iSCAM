@@ -219,6 +219,7 @@ void OperatingModel::initParameters()
 		break;
 	}
 
+
 	
 }
 
@@ -242,6 +243,11 @@ void OperatingModel::initMemberVariables()
 	m_est_btt.allocate(1,ngroup);
 	m_est_fmsy.allocate(1,ngroup,1,nfleet);
 	m_est_msy.allocate(1,ngroup,1,nfleet);
+
+	//Spawning stock biomass
+	m_sbt.allocate(syr,m_nPyr1,ngroup,);m_sbt.initialize();
+	m_sbt.sub(syr,nyr)=trans(sbt.sub(syr,nyr));
+
 
 	m_dTAC.allocate(1,ngroup,1,nfleet);
 
@@ -690,44 +696,69 @@ void OperatingModel::calcCompositionData(const int& iyr)
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
-
-	//calculate spawning biomass for all years up to nyr
-
+	dvector  stmp(sage,nage); stmp.initialize();
 	
+	// compute spawning biomass at time of spawning.
+
+	for(f=1;f<=narea;f++)
+		{
+			for(h=1;h<=nsex;h++)
+			{
+				for(int g = 1; g<=ngroups; g++)
+				{
+					ig = pntr_ags(f,g,h);
+					
+					for(int i=nyr+1; i<=m_nPyr; i++)
+					{
+					stmp      = mfexp(-m_Z(ig)(i)*d_iscamCntrl(13));
+					m_sbt(i,g) += elem_prod(m_N(ig)(i),d3_wt_mat(ig)(i)) * stmp;
+					}
+				}
+			}
+		}
 	
-
-	//calculate recruitment for each group in iyr
-	//three options : average recruitment, Beverton &Holt and Ricker
-	//disperse the recruits in each year
-
-	// propagate nos at age for each group in iyr
-
-	//calculate spawning biomass for iyr
-
-
-	//cout<<iyr<<endl;
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
-
-		// Recruitment
 		int f  = n_area(ig);
 		int g  = n_group(ig);
 		int ih = pntr_ag(f,g);
 		
-
-		// Current recruitment is based on historical average.
-		// Need to add recruitment variation here, environmental effects, 
-		// and stock-recruitment relationship.
-		m_N(ig)(iyr+1,sage) = m_dRbar(ih) / nsex;
+		// Recruitment
+		//three options : average recruitment, Beverton &Holt and Ricker
 		
+		double tmp_st = sbt(g)(iyr-sage);
+		
+		switch(int(d_iscamCntrl(2)))
+		{
+			case 1:  // | Beverton Holt model
+				beta(g) = (kappa(g)-1.)/sbo(g);
+				m_N(ig)(iyr,sage) = elem_div(so(g)*tmp_st,1.+beta(g)*tmp_st);
+			break;
+
+			case 2:  // | Ricker model
+				beta(g) = log(kappa(g))/sbo(g);
+				m_N(ig)(iyr,sage) = elem_prod(so(g)*tmp_st,exp(-beta(g)*tmp_st));
+			break;
+
+			case 3: // average recruitment
+				m_N(ig)(iyr,sage) = m_dRbar(ih) / nsex;
+		}
 
 		// Update numbers-at-age
 		dvector st = exp( -(m_M(ig)(iyr)+m_F(ig)(iyr)) );
 		m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
 		                                           ,st(sage,nage-1));
-		m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage);
+		m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage);	
+	
+	// propagate nos at age for each group in iyr
+	
 	}
 
+	//disperse the recruits in each year
+
+
+
+	
 	// cout<<iyr<<endl;
 }
 

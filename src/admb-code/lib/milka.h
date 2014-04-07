@@ -105,6 +105,8 @@
 		dvector m_est_sbtt;
 		dvector m_est_btt;
 
+		dmatrix m_sbt;
+
 		dmatrix  m_dTAC;
 		int     m_nHCR;
 
