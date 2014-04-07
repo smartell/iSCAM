@@ -469,14 +469,36 @@ void OperatingModel::allocateTAC(const int& iyr)
  * 	|- Calculate total discards based on size-limits.
  * 	|- Calculate total discards from non-retention fisheries.
  * 	
+ * 	
+ * 	NOTES on Joint probability of capture & retention.
+ * 	Defs:
+ * 		- Pc = probability of capture
+ * 		- Pr = probability of retention
+ * 		- Pd = probability of discarding (1-Pr).
+ * 		- dm = discard mortality rate.
+ * 		
+ * 	Joint probability model:
+ * 	 Defs: Probability of retaining a fish of a given age a is:
+ * 	 Va = Pc*(Pr + Pd*dm) = Pc(Pr+(1-Pr)*dm)
+ * 	
+ * 	The probability of retaining a fish is a function of its length
+ * 	and the variance in length-at-age.  To to this we assume that length
+ * 	at age is normaly distributed and the cumulative distibution is 
+ * 	defined by the cumd_norm(z) function, where z is the 
+ * 	(size_limit-mu)/sd;  This function is defined as the 
+ * 	retention_probabilty
+ * 	
  */
 void OperatingModel::implementFisheries(const int &iyr)
 {
 	dvector tac(1,narea);
 	dvector  ct(1,nfleet);
+	dvector  pr(sage,nage);  // probability of retention
 	dmatrix  ma(1,nsex,sage,nage);
 	dmatrix  na(1,nsex,sage,nage);
 	dmatrix  wa(1,nsex,sage,nage);
+	dmatrix  mu(1,nsex,sage,nage);
+	dmatrix  sd(1,nsex,sage,nage);
 	dmatrix  d_allocation(1,narea,1,nfleet);
 	dmatrix  _hCt(1,nsex,1,nfleet);
 	d3_array d3_Va(1,nsex,1,nfleet,sage,nage);
@@ -496,10 +518,19 @@ void OperatingModel::implementFisheries(const int &iyr)
 				ma(h) = m_M(ig)(iyr);			// natural mortality
 				na(h) = m_N(ig)(iyr);			// numbers-at-age
 				wa(h) = m_d3_wt_avg(ig)(iyr);	// weight-at-age
+				mu(h) = exp(log(wa(h)/d_a(ig))/d_b(ig));
+				sd(h) = 0.1 * mu(h);
 				for(int k = 1; k <= nfleet; k++ )
-				{
+				{ 
 					int kk = nFleetIndex(k);
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
+
+					// Implement size limits here.
+
+					pr = retention_probability(m_dLslim(k),m_dUslim(k),mu(h),sd(h));
+					cout<<mu(h)<<endl;
+					cout<<pr<<endl;
+					exit(1);
 				}
 			}  // nsex
 			
@@ -545,6 +576,20 @@ void OperatingModel::implementFisheries(const int &iyr)
 
 }
 
+
+
+
+/**
+ * @brief Calculate total mortality rates
+ * @details Total mortality rates based on the sum of  natural mortality
+ * fishing mortality and discard mortality, including wastage from 
+ * directed fisheries that have size-limit regulations in effect.
+ * 
+ * @param iyr Current year.
+ * 
+ * TODO. Add the Discard mortality rate component.
+ *     Z = M + F + D
+ */
 void OperatingModel::calcTotalMortality(const int& iyr)
 {
 	for(int ig = 1; ig <= n_ags; ig++ )
