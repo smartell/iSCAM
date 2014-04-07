@@ -58,6 +58,8 @@
 
 		int m_nNyr; 
 		int m_irow;
+		int m_nyrs;  // number of simulation years
+
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
@@ -138,6 +140,7 @@
 		void calculateTAC();
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);
+		void calcTotalMortality(const int& iyr);
 		void calcRelativeAbundance(const int& iyr);
 		void calcCompositionData(const int& iyr);
 		void updateReferenceModel(const int& iyr);

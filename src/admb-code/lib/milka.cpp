@@ -27,10 +27,10 @@
  * 		   | implementFisheries				   [-]
  * 		   		|- calcSelectivity			   [ ]
  * 		   		|- calcRetentionDiscards	   [ ]		
- * 		   		|- calcTotalMortality		   [ ]	
+ * 		   		|- calcTotalMortality		   [-]	
  * 		   | calcRelativeAbundance             [-]
  * 		   | calcCompositionData               [-]
- * 		   | updateReferenceModel			   [ ]
+ * 		   | updateReferenceModel			   [-]
  * 		   | writeDataFile					   [-]
  * 		   | runStockAssessment				   [ ]
  * 		|- |			
@@ -74,7 +74,6 @@ void OperatingModel::runScenario(const int &seed)
 
 	for(int i = nyr+1; i <= m_nPyr; i++ )
 	{
-		 
 		getReferencePointsAndStockStatus();
 
 		calculateTAC();
@@ -83,18 +82,19 @@ void OperatingModel::runScenario(const int &seed)
 
 		implementFisheries(i);
 
+		calcTotalMortality(i);
+
 		calcRelativeAbundance(i);
 
 		calcCompositionData(i);
 
-		exit(1);
 		updateReferenceModel(i);
 
 		writeDataFile(i);
 
-		runStockAssessment();
+		// runStockAssessment();
+		cout<<"Year = "<<	i<<endl;
 	}
-
 	cout<<m_dCatchData<<endl;
 }
 
@@ -136,6 +136,7 @@ void OperatingModel::initParameters()
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
 	m_irow = nCtNobs; // counter for current number of rows in the catch table.
+	m_nyrs = m_nPyr - m_nNyr;
 
 	// needs to be updated for each year in the mse loop
 
@@ -146,7 +147,7 @@ void OperatingModel::initParameters()
 		m_nn += m_nCSex(k)*m_nn;
 	}
 	
-	m_nCtNobs = nCtNobs + (m_nPyr - nyr)*m_nn;
+	m_nCtNobs = nCtNobs + m_nyrs*m_nn;
 	
 	m_dCatchData.allocate(1,m_nCtNobs,1,7);
 	m_dCatchData.initialize();
@@ -155,7 +156,7 @@ void OperatingModel::initParameters()
 	// allocate & initialize survey data arrays
 	m_n_it_nobs.allocate(1,nItNobs);
 	m_n_it_nobs.initialize();
-	m_n_it_nobs = n_it_nobs + (m_nPyr-nyr);
+	m_n_it_nobs = n_it_nobs + m_nyrs;
 	
 	m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
 	m_d3SurveyData.initialize();
@@ -165,10 +166,10 @@ void OperatingModel::initParameters()
 	}
 	
 
-		
+	// Age-composition arrays	
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
-	m_n_A_nobs = n_A_nobs + (m_nPyr-nyr);
+	m_n_A_nobs = n_A_nobs + m_nyrs + m_nyrs * sum(m_nASex);
 	
 	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
 	m_d3_A.initialize();
@@ -179,7 +180,7 @@ void OperatingModel::initParameters()
 	}
 	 
 	m_nWtNobs.allocate(1,nWtTab);
-	m_nWtNobs = nWtNobs + (m_nPyr-nyr);
+	m_nWtNobs = nWtNobs + m_nyrs;
 
 	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
 	m_d3_inp_wt_avg.initialize();
@@ -198,6 +199,8 @@ void OperatingModel::initParameters()
 	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
 	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
 
+	m_dRbar.allocate(1,n_ag);
+	m_dRinit.allocate(1,n_ag);
 	for(int ih = 1; ih <= n_ag; ih++ )
 	{
 		m_dRbar  = exp(mv.log_rbar(ih));
@@ -222,7 +225,7 @@ void OperatingModel::initParameters()
 
 void OperatingModel::initMemberVariables()
 {
-	m_N.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_N.initialize();
+	m_N.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_N.initialize();
 	m_M.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_M.initialize();
 	m_F.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_F.initialize();
 	m_Z.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_Z.initialize();
@@ -493,15 +496,24 @@ void OperatingModel::implementFisheries(const int &iyr)
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
 				}
 			}  // nsex
-			cout<<"Start"<<endl;
-			cout<<d3_Va(1)<<endl;
+			// cout<<"Start"<<endl;
+			// cout<<d3_Va(1)<<endl;
 			// Calculate instantaneous fishing mortality rates.
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
-			cout<<"Ft =\t"<<ft<<endl;
+
 
 			// Fill m_dCatchData array with actual catches taken by each fleet.
 			for(int k = 1; k <= nfleet; k++ )
 			{
+				
+				// Calculate total mortality array.
+				for(int h = 1; h <= nsex; h++ )
+				{
+					int ig = pntr_ags(f,g,h);
+					m_F(ig)(iyr) += ft(k) * d3_Va(h)(k);
+				}
+
+
 				if( ft(k) > 0 )
 				{
 					int kk = nFleetIndex(k);
@@ -522,10 +534,19 @@ void OperatingModel::implementFisheries(const int &iyr)
 
 		}  // ngroup g
 	} // narea f
-	cout<<m_dCatchData<<endl;
-	cout<<"END"<<endl;
+	// cout<<m_dCatchData<<endl;
+	// cout<<"END"<<endl;
 	
 
+}
+
+void OperatingModel::calcTotalMortality(const int& iyr)
+{
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		m_Z(ig)(iyr) = m_M(ig)(iyr) + m_F(ig)(iyr);
+		m_S(ig)(iyr) = 1.0 - exp( -m_Z(ig)(iyr) );
+	}
 }
 
 void OperatingModel::calcRelativeAbundance(const int& iyr)
@@ -575,7 +596,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 						break;
 					}
 				}
-				cout<<va<<endl;
+				// cout<<va<<endl;
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
@@ -669,9 +690,29 @@ void OperatingModel::calcCompositionData(const int& iyr)
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
-	//cout<<iyr<<endl;
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
 
+		// Recruitment
+		int f  = n_area(ig);
+		int g  = n_group(ig);
+		int ih = pntr_ag(f,g);
+		
 
+		// Current recruitment is based on historical average.
+		// Need to add recruitment variation here, environmental effects, 
+		// and stock-recruitment relationship.
+		m_N(ig)(iyr+1,sage) = m_dRbar(ih) / nsex;
+		
+
+		// Update numbers-at-age
+		dvector st = exp( -(m_M(ig)(iyr)+m_F(ig)(iyr)) );
+		m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
+		                                           ,st(sage,nage-1));
+		m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage);
+	}
+
+	// cout<<iyr<<endl;
 }
 
 void OperatingModel::writeDataFile(const int& iyr)
