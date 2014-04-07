@@ -669,6 +669,21 @@ void OperatingModel::calcCompositionData(const int& iyr)
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
+
+	//calculate spawning biomass for all years up to nyr
+
+	
+	
+
+	//calculate recruitment for each group in iyr
+	//three options : average recruitment, Beverton &Holt and Ricker
+	//disperse the recruits in each year
+
+	// propagate nos at age for each group in iyr
+
+	//calculate spawning biomass for iyr
+
+
 	//cout<<iyr<<endl;
 
 
