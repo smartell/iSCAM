@@ -128,6 +128,7 @@ void OperatingModel::readMSEcontrols()
 	m_nWSex 	 = ivector(column(tmp,-3));
 	m_dLslim     = column(tmp,-2);
 	m_dUslim     = column(tmp,-1);
+	m_dDiscMortRate = column(tmp,0);
 	for( k = 1; k <= ngear; k++ )
 	{
 		m_nAGopen(k) = ivector(tmp(k)(1,narea));
@@ -233,7 +234,6 @@ void OperatingModel::initParameters()
 		break;
 	}
 
-
 	
 	//cout<<"finished init parameters"<<endl;
 }
@@ -241,7 +241,7 @@ void OperatingModel::initParameters()
 
 void OperatingModel::initMemberVariables()
 {
-	m_N.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_N.initialize();
+	m_N.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_N.initialize();
 	m_M.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_M.initialize();
 	m_F.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_F.initialize();
 	m_Z.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_Z.initialize();
@@ -267,7 +267,6 @@ void OperatingModel::initMemberVariables()
 
 	m_dTAC.allocate(1,ngroup,1,nfleet);
 
-	//m_q.allocate(1,nItNobs); m_q.initialize();
 	m_q = mv.q;
 
 	// Initialize Mortality arrays from ModelVariables (mv)
@@ -277,19 +276,17 @@ void OperatingModel::initMemberVariables()
 		m_F(ig).sub(syr,nyr) = (*mv.d3_F)(ig);
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
-		m_d3_wt_avg(ig).sub(syr,nyr) = d3_wt_avg(ig).sub(syr,nyr);
-		m_d3_wt_mat(ig).sub(syr,nyr) = d3_wt_mat(ig).sub(syr,nyr);
+		m_d3_wt_avg(ig).sub(syr,nyr+1) = d3_wt_avg(ig).sub(syr,nyr+1);
+		m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig).sub(syr,nyr+1);
 
 		// Temporary extend natural mortality out to m_nPyr
 		for( i = nyr+1; i <= m_nPyr; i++ )
 		{
 			m_M(ig)(i) = m_M(ig)(nyr);
-			m_d3_wt_avg(ig)(i) = d3_wt_avg(ig)(nyr);
-			m_d3_wt_mat(ig)(i) = d3_wt_mat(ig)(nyr);
+			m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
+			m_d3_wt_mat(ig)(i+1) = d3_wt_mat(ig)(nyr+1);
 		}
 	}
-
-
 
 	// Selectivity
 	d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
@@ -356,7 +353,6 @@ void OperatingModel::conditionReferenceModel()
 		m_N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
 		m_log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 
-		
 		for(i=syr;i<=nyr;i++)
 		{
 			if( i>syr )
@@ -487,14 +483,37 @@ void OperatingModel::allocateTAC(const int& iyr)
  * 	|- Calculate total discards based on size-limits.
  * 	|- Calculate total discards from non-retention fisheries.
  * 	
+ * 	
+ * 	NOTES on Joint probability of capture & retention.
+ * 	Defs:
+ * 		- Pc = probability of capture
+ * 		- Pr = probability of retention
+ * 		- Pd = probability of discarding (1-Pr).
+ * 		- dm = discard mortality rate.
+ * 		
+ * 	Joint probability model:
+ * 	 Defs: Probability of retaining a fish of a given age a is:
+ * 	 Va = Pc*(Pr + Pd*dm) = Pc(Pr+(1-Pr)*dm)
+ * 	
+ * 	The probability of retaining a fish is a function of its length
+ * 	and the variance in length-at-age.  To to this we assume that length
+ * 	at age is normaly distributed and the cumulative distibution is 
+ * 	defined by the cumd_norm(z) function, where z is the 
+ * 	(size_limit-mu)/sd;  This function is defined as the 
+ * 	retention_probabilty
+ * 	
  */
 void OperatingModel::implementFisheries(const int &iyr)
 {
 	dvector tac(1,narea);
 	dvector  ct(1,nfleet);
+	dvector  pr(sage,nage);  // probability of retention
+	dvector  pd(sage,nage);  // probability of discarding
 	dmatrix  ma(1,nsex,sage,nage);
 	dmatrix  na(1,nsex,sage,nage);
 	dmatrix  wa(1,nsex,sage,nage);
+	dmatrix  mu(1,nsex,sage,nage);
+	dmatrix  sd(1,nsex,sage,nage);
 	dmatrix  d_allocation(1,narea,1,nfleet);
 	dmatrix  _hCt(1,nsex,1,nfleet);
 	d3_array d3_Va(1,nsex,1,nfleet,sage,nage);
@@ -502,7 +521,6 @@ void OperatingModel::implementFisheries(const int &iyr)
 	na.initialize();
 
 	BaranovCatchEquation cBCE;
-
 
 	for(int f = 1; f <= narea; f++ )
 	{
@@ -515,10 +533,21 @@ void OperatingModel::implementFisheries(const int &iyr)
 				ma(h) = m_M(ig)(iyr);			// natural mortality
 				na(h) = m_N(ig)(iyr);			// numbers-at-age
 				wa(h) = m_d3_wt_avg(ig)(iyr);	// weight-at-age
+				mu(h) = exp(log(wa(h)/d_a(ig))/d_b(ig));
+				sd(h) = 0.1 * mu(h);
 				for(int k = 1; k <= nfleet; k++ )
-				{
-					int kk = nFleetIndex(k);
+				{ 
+					int kk = m_nGearIndex(k);
+					// Implement size limits here.
+					pr = retention_probability(m_dLslim(k),m_dUslim(k),mu(h),sd(h));
+					pd = 1.0 - pr;
+
+					// int kk = nFleetIndex(k);
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
+
+					// Joint probability model
+					d3_Va(h)(k)=elem_prod(d3_Va(h)(k),pr + pd*m_dDiscMortRate(k));
+					
 				}
 			}  // nsex
 
@@ -558,13 +587,27 @@ void OperatingModel::implementFisheries(const int &iyr)
 
 		}  // ngroup g
 	} // narea f
-	 cout<<m_dCatchData<<endl;
-	 cout<<"END"<<endl;
+	// cout<<m_dCatchData<<endl;
+	// cout<<"END"<<endl;
 	
 	//cout<<"finished implementing fisheries"<<endl;
 
 }
 
+
+
+
+/**
+ * @brief Calculate total mortality rates
+ * @details Total mortality rates based on the sum of  natural mortality
+ * fishing mortality and discard mortality, including wastage from 
+ * directed fisheries that have size-limit regulations in effect.
+ * 
+ * @param iyr Current year.
+ * 
+ * TODO. Add the Discard mortality rate component.
+ *     Z = M + F + D
+ */
 void OperatingModel::calcTotalMortality(const int& iyr)
 {
 	for(int ig = 1; ig <= n_ags; ig++ )
@@ -710,7 +753,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
 			}
 		}
 	}
-	
 	
 }
 

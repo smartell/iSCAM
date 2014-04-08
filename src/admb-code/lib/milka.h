@@ -70,8 +70,9 @@
 		ivector m_nCSex;
 		ivector m_nASex;
 		ivector m_nWSex;
-		dvector  m_dLslim;
-		dvector  m_dUslim;
+		dvector m_dLslim;
+		dvector m_dUslim;
+		dvector m_dDiscMortRate;
 		imatrix m_nAGopen;
 		
 		// catch arrays
@@ -136,7 +137,7 @@
 		d3_array m_d3_wt_avg;
 		d3_array m_d3_wt_mat;
 		d3_array m_ft;
-		d3_array m_log_sel_par;
+		//d3_array m_log_sel_par;
 
 		d4_array d4_logSel;
 
@@ -172,6 +173,22 @@
 
 
 dvector cubic_spline(const dvector& spline_coffs, const dvector& la);
+
+template<typename T, typename T1>
+T1 retention_probability(const T &lsl, const T&usl, const T1 &mu, const T1 &sd)
+{
+	// Use the cumd_norm function to determine proportion of mu > lsl
+	int x1 = mu.indexmin();
+	int x2 = mu.indexmax();
+	T1 p(x1,x2);
+	for(int i = x1; i <= x2; i++ )
+	{
+		const T zl = (mu(i) - lsl)/sd(i);
+		const T zu = (mu(i) - usl)/sd(i);
+		p(i)=cumd_norm(zl) - cumd_norm(zu);
+	}
+	return (p);
+}
 
 // } // mse namespace
 
