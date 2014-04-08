@@ -136,6 +136,8 @@ void OperatingModel::readMSEcontrols()
 
 	//Controls for recruitment options
 	ifs>>m_nRecType;
+
+	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
 	ifs>>m_dispersal; 
 	
 	//cout<<"finished MSE controls"<<endl;
@@ -810,7 +812,10 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 			}
 		}
 	}
-	
+
+	dvector tmp_rec(1,narea);tmp_rec.initialize();
+	dvector tmp_rec_dis(1,narea);tmp_rec_dis.initialize();
+	dvector prop_rec_g(1,n_ags);prop_rec_g.initialize();
 
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
@@ -838,12 +843,29 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 			break;
 
 			case 3: // average recruitment
-				m_N(ig)(iyr+1,sage) = m_dRbar(ih) / nsex;
+				m_N(ig)(iyr+1,sage) = m_dRbar(ih);
 		}
-		//disperse the recruits in each year
-		//cout<<"N in "<<iyr << " is " << m_N(g)(iyr)(sage,nage)<<endl;
-		//m_N(ig)(iyr,sage)= m_N(ig)(iyr,sage)* m_dispersal;
+		m_N(ig)(iyr+1,sage) = m_N(ig)(iyr+1,sage)/nsex; //* mfexp( mv.log_rbar(ih));
+		
+		//disperse the recruits in each year 
+		// assumes all groups disperse the same and prop of gorups by area remain const
+		// TODO allow for separate dispersal matrices for each group
+		
+		//1 - calculate total recruits per area: tmp_rec
+		tmp_rec(f) += m_N(ig)(iyr+1,sage);
+		
+		}
+		
+		//disperse recruits 
+		tmp_rec_dis = tmp_rec*m_dispersal;
 
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		int f  = n_area(ig);
+		prop_rec_g(ig)=m_N(ig)(iyr+1,sage)/tmp_rec(f);
+			 
+		m_N(ig)(iyr+1,sage) = (tmp_rec(f)/nsex)*prop_rec_g(ig);	
+	
 		// Update numbers-at-age
 		dvector st = exp(-(m_M(ig)(iyr)+m_F(ig)(iyr)) );
 		m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
@@ -851,8 +873,6 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 		m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage);	
 		
 	}
-
-	
 
 	 //cout<<"finished updatinf ref pop"<<endl;
 }
