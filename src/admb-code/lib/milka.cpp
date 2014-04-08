@@ -33,7 +33,7 @@
  *		   | calcEmpiricalWeightAtAge          [-]
  * 		   | updateReferenceModel			   [-]
  * 		   | writeDataFile					   [-]
- * 		   | runStockAssessment				   [ ]
+ * 		   | runStockAssessment				   [-]
  * 		|- |			
  * 		|- writeSimulationVariables			
  * 		|- calculatePerformanceMetrics			
@@ -95,7 +95,7 @@ void OperatingModel::runScenario(const int &seed)
 
 		writeDataFile(i);
 
-		// runStockAssessment();
+		runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
 	}
 	cout<<m_dCatchData<<endl;
@@ -139,6 +139,10 @@ void OperatingModel::readMSEcontrols()
 
 	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
 	ifs>>m_dispersal; 
+
+	ifs>>MseCtlFile;
+	ifs>>MsePfcFile;
+
 	
 	//cout<<"finished MSE controls"<<endl;
 }
@@ -984,4 +988,30 @@ void OperatingModel::runStockAssessment()
 
 		system("iscam.exe -ind mseRUN.dat")  on windoze boxes.
 	*/
+
+		
+		ofstream rd("mseRUN.dat");
+		rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
+		rd<<MseCtlFile + ".ctl"<<endl;
+		rd<<MsePfcFile + ".pfc"<<endl;
+		//exit(1);
+
+		cout<<"running stock assessment"<<endl;
+
+		#if defined __APPLE__ || defined __linux
+
+		system("make ARG='-ind mseRUN.dat' run" );
+
+		#endif
+
+		#if defined _WIN32 || defined _WIN64
+
+		system("iscam.exe -ind mseRUN.dat")
+
+		#endif
+		
+
+ 		
+
+
 }

@@ -24,3 +24,10 @@
 1 
 ## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
 1
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROLS FOR STOCK ASSESSMENT IN MSE 
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+#name of control file
+DEMO
+#name pfc file
+DEMO
