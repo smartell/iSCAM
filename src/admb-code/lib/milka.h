@@ -63,8 +63,9 @@
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
-		dvector  m_dLslim;
-		dvector  m_dUslim;
+		dvector m_dLslim;
+		dvector m_dUslim;
+		dvector m_dDiscMortRate;
 		imatrix m_nAGopen;
 		
 		// catch arrays
@@ -165,8 +166,8 @@ T1 retention_probability(const T &lsl, const T&usl, const T1 &mu, const T1 &sd)
 	T1 p(x1,x2);
 	for(int i = x1; i <= x2; i++ )
 	{
-		T zl = (mu(i) - lsl)/sd(i);
-		T zu = (mu(i) - usl)/sd(i);
+		const T zl = (mu(i) - lsl)/sd(i);
+		const T zu = (mu(i) - usl)/sd(i);
 		p(i)=cumd_norm(zl) - cumd_norm(zu);
 	}
 	return (p);

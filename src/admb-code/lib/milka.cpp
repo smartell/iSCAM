@@ -119,11 +119,12 @@ void OperatingModel::readMSEcontrols()
 	// Controls for sexing catch and comps and fishing in given areas.
 	dmatrix tmp(1,ngear,-5,narea);
 	ifs >> tmp;
-	m_nGearIndex = ivector(column(tmp,-5));
-	m_nCSex      = ivector(column(tmp,-4));
-	m_nASex      = ivector(column(tmp,-3));
-	m_dLslim     = column(tmp,-2);
-	m_dUslim     = column(tmp,-1);
+	m_nGearIndex    = ivector(column(tmp,-5));
+	m_nCSex         = ivector(column(tmp,-4));
+	m_nASex         = ivector(column(tmp,-3));
+	m_dLslim        = column(tmp,-2);
+	m_dUslim        = column(tmp,-1);
+	m_dDiscMortRate = column(tmp,0);
 	for( k = 1; k <= ngear; k++ )
 	{
 		m_nAGopen(k) = ivector(tmp(k)(1,narea));
@@ -494,6 +495,7 @@ void OperatingModel::implementFisheries(const int &iyr)
 	dvector tac(1,narea);
 	dvector  ct(1,nfleet);
 	dvector  pr(sage,nage);  // probability of retention
+	dvector  pd(sage,nage);  // probability of discarding
 	dmatrix  ma(1,nsex,sage,nage);
 	dmatrix  na(1,nsex,sage,nage);
 	dmatrix  wa(1,nsex,sage,nage);
@@ -522,15 +524,14 @@ void OperatingModel::implementFisheries(const int &iyr)
 				sd(h) = 0.1 * mu(h);
 				for(int k = 1; k <= nfleet; k++ )
 				{ 
+					// Implement size limits here.
+					pr = retention_probability(m_dLslim(k),m_dUslim(k),mu(h),sd(h));
+					pd = 1.0 - pr;
+
 					int kk = nFleetIndex(k);
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
 
-					// Implement size limits here.
-
-					pr = retention_probability(m_dLslim(k),m_dUslim(k),mu(h),sd(h));
-					cout<<mu(h)<<endl;
-					cout<<pr<<endl;
-					exit(1);
+					
 				}
 			}  // nsex
 			
