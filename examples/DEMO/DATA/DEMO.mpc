@@ -18,3 +18,9 @@
 ## INDEX CSEX ASEX LSLIM  USLIM  DM   | 1                                              ##
 	1    0    1    82     1000   0.15   1
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROLS FOR RECRUITMENT FUNCTION
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## Recruitment type: 1=Beverton & Holt, 2=Ricker , #=Average Recruitment
+1 
+## Recruitment dispersal matrix (narea x narea) (SSB in the rows)
+1

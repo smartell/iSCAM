@@ -30,6 +30,7 @@
  * 		   		|- calcTotalMortality		   [-]	
  * 		   | calcRelativeAbundance             [-]
  * 		   | calcCompositionData               [-]
+ *		   | calcEmpiricalWeightAtAge          [-]
  * 		   | updateReferenceModel			   [-]
  * 		   | writeDataFile					   [-]
  * 		   | runStockAssessment				   [ ]
@@ -88,6 +89,8 @@ void OperatingModel::runScenario(const int &seed)
 
 		calcCompositionData(i);
 
+		calcEmpiricalWeightAtAge(i);
+
 		updateReferenceModel(i);
 
 		writeDataFile(i);
@@ -128,8 +131,12 @@ void OperatingModel::readMSEcontrols()
 	{
 		m_nAGopen(k) = ivector(tmp(k)(1,narea));
 	}
+
+	//Controls for recruitment options
+	ifs>>m_nRecType;
+	ifs>>m_dispersal; 
 	
-	
+	//cout<<"finished MSE controls"<<endl;
 }
 
 /**
@@ -186,7 +193,7 @@ void OperatingModel::initParameters()
 	}
 	 
 	m_nWtNobs.allocate(1,nWtTab);
-	m_nWtNobs = nWtNobs + m_nyrs;
+	m_nWtNobs = nWtNobs + (m_nyrs*nsex);
 
 	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
 	m_d3_inp_wt_avg.initialize();
@@ -227,12 +234,13 @@ void OperatingModel::initParameters()
 
 
 	
+	//cout<<"finished init parameters"<<endl;
 }
 
 
 void OperatingModel::initMemberVariables()
 {
-	m_N.allocate(1,n_ags,syr,m_nPyr+1,sage,nage); m_N.initialize();
+	m_N.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_N.initialize();
 	m_M.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_M.initialize();
 	m_F.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_F.initialize();
 	m_Z.allocate(1,n_ags,syr,m_nPyr,sage,nage); m_Z.initialize();
@@ -251,12 +259,14 @@ void OperatingModel::initMemberVariables()
 	m_est_msy.allocate(1,ngroup,1,nfleet);
 
 	//Spawning stock biomass
-	m_sbt.allocate(syr,m_nPyr1,ngroup,);m_sbt.initialize();
-	m_sbt.sub(syr,nyr)=trans(sbt.sub(syr,nyr));
 
+	m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
+	m_sbt.sub(syr,nyr+1)=(trans(mv.sbt)).sub(syr,nyr+1);
+	m_dbeta.allocate(1,ngroup);m_dbeta.initialize();
 
 	m_dTAC.allocate(1,ngroup,1,nfleet);
 
+	//m_q.allocate(1,nItNobs); m_q.initialize();
 	m_q = mv.q;
 
 	// Initialize Mortality arrays from ModelVariables (mv)
@@ -266,17 +276,19 @@ void OperatingModel::initMemberVariables()
 		m_F(ig).sub(syr,nyr) = (*mv.d3_F)(ig);
 		m_Z(ig).sub(syr,nyr) = m_M(ig).sub(syr,nyr) + m_F(ig).sub(syr,nyr);
 		m_S(ig).sub(syr,nyr) = exp(-m_Z(ig).sub(syr,nyr));
-		m_d3_wt_avg(ig).sub(syr,nyr+1) = d3_wt_avg(ig).sub(syr,nyr+1);
-		m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig).sub(syr,nyr+1);
+		m_d3_wt_avg(ig).sub(syr,nyr) = d3_wt_avg(ig).sub(syr,nyr);
+		m_d3_wt_mat(ig).sub(syr,nyr) = d3_wt_mat(ig).sub(syr,nyr);
 
 		// Temporary extend natural mortality out to m_nPyr
 		for( i = nyr+1; i <= m_nPyr; i++ )
 		{
 			m_M(ig)(i) = m_M(ig)(nyr);
-			m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
-			m_d3_wt_mat(ig)(i+1) = d3_wt_mat(ig)(nyr+1);
+			m_d3_wt_avg(ig)(i) = d3_wt_avg(ig)(nyr);
+			m_d3_wt_mat(ig)(i) = d3_wt_mat(ig)(nyr);
 		}
 	}
+
+
 
 	// Selectivity
 	d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
@@ -307,6 +319,7 @@ void OperatingModel::initMemberVariables()
 	}
 
 
+	//cout<<"finished init member variavbles"<<endl;
 
 }
 
@@ -342,6 +355,7 @@ void OperatingModel::conditionReferenceModel()
 		m_N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
 		m_log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 
+		
 		for(i=syr;i<=nyr;i++)
 		{
 			if( i>syr )
@@ -381,7 +395,6 @@ void OperatingModel::getReferencePointsAndStockStatus()
 	ifs >> m_est_sbtt;
 	ifs >> m_est_btt;
 
-	//cout<<m_est_btt<<endl;
 }
 
 /**
@@ -451,10 +464,8 @@ void OperatingModel::allocateTAC(const int& iyr)
 	}
 
 	
-
-	
 }
-
+	
 /**
  * @brief Implement spatially explicity fishery.
  * @details Implement the spatially epxlicity fishery using the Baranov catch equation
@@ -491,6 +502,7 @@ void OperatingModel::implementFisheries(const int &iyr)
 
 	BaranovCatchEquation cBCE;
 
+
 	for(int f = 1; f <= narea; f++ )
 	{
 		for(int g = 1; g <= ngroup; g++ )
@@ -509,6 +521,8 @@ void OperatingModel::implementFisheries(const int &iyr)
 				}
 			}  // nsex
 			
+			cout<<"na is " <<na<<endl;
+
 			// Calculate instantaneous fishing mortality rates.
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
@@ -545,9 +559,10 @@ void OperatingModel::implementFisheries(const int &iyr)
 
 		}  // ngroup g
 	} // narea f
-	// cout<<m_dCatchData<<endl;
-	// cout<<"END"<<endl;
+	 cout<<m_dCatchData<<endl;
+	 cout<<"END"<<endl;
 	
+	//cout<<"finished implementing fisheries"<<endl;
 
 }
 
@@ -622,6 +637,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 		}
 	}	// end loop over surveys
 
+	//cout<<"finished calculating relative abundance"<<endl;
 
 }
 
@@ -696,75 +712,113 @@ void OperatingModel::calcCompositionData(const int& iyr)
 		}
 	}
 	
+	
 }
+
+void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
+{
+	int gear,wtsex;
+	
+	for(int k = 1; k <= nWtTab; k++ )
+	{
+		gear = m_d3_inp_wt_avg(k)(1)(sage-4);
+
+		for(int f = 1; f <= narea; f++ )
+		{
+			for(int g = 1; g <= ngroup; g++ )
+			{
+				for(int h = 1; h <= nsex; h++ )
+				{
+			
+					int ig = pntr_ags(f,g,h);
+		
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-5) = iyr;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-4) = gear;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-3) = f;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-2) = g;
+
+					cout<< "Is this working?"<<endl;
+
+					
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-1) = h;
+					
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+
+					cout<<"watage= "<<m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))<<endl;
+				}
+			}
+		}
+	}
+	
+	
+}
+
 
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
-	dvector  stmp(sage,nage); stmp.initialize();
 	
 	// compute spawning biomass at time of spawning.
+	dvector  stmp(sage,nage); stmp.initialize();
 
-	for(f=1;f<=narea;f++)
+	for(int f=1;f<=narea;f++)
+	{
+		for(int h=1;h<=nsex;h++)
 		{
-			for(h=1;h<=nsex;h++)
+			for(int g = 1; g<=ngroup; g++)
 			{
-				for(int g = 1; g<=ngroups; g++)
-				{
-					ig = pntr_ags(f,g,h);
+				int ig = pntr_ags(f,g,h);
 					
-					for(int i=nyr+1; i<=m_nPyr; i++)
-					{
-					stmp      = mfexp(-m_Z(ig)(i)*d_iscamCntrl(13));
-					m_sbt(i,g) += elem_prod(m_N(ig)(i),d3_wt_mat(ig)(i)) * stmp;
-					}
-				}
+				stmp      = mfexp(-m_Z(ig)(iyr)*d_iscamCntrl(13));
+				m_sbt(iyr+1,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;					
 			}
 		}
+	}
 	
+
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
 		int f  = n_area(ig);
 		int g  = n_group(ig);
 		int ih = pntr_ag(f,g);
 		
+		
 		// Recruitment
 		//three options : average recruitment, Beverton &Holt and Ricker
 		
-		double tmp_st = sbt(g)(iyr-sage);
-		
-		switch(int(d_iscamCntrl(2)))
+		double tmp_st;
+		tmp_st = m_sbt(iyr-sage,g);
+
+		switch(m_nRecType)
 		{
 			case 1:  // | Beverton Holt model
-				beta(g) = (kappa(g)-1.)/sbo(g);
-				m_N(ig)(iyr,sage) = elem_div(so(g)*tmp_st,1.+beta(g)*tmp_st);
+				m_dbeta(g) = (m_dKappa(g)-1.0)/(mv.sbo(g));
+				m_N(ig)(iyr+1,sage) = mv.so(g)*tmp_st/1.+m_dbeta(g)*tmp_st;
 			break;
 
 			case 2:  // | Ricker model
-				beta(g) = log(kappa(g))/sbo(g);
-				m_N(ig)(iyr,sage) = elem_prod(so(g)*tmp_st,exp(-beta(g)*tmp_st));
+				m_dbeta(g) = log(m_dKappa(g))/mv.sbo(g);
+				m_N(ig)(iyr+1,sage) = mv.so(g)*tmp_st*exp(-m_dbeta(g)*tmp_st);
 			break;
 
 			case 3: // average recruitment
-				m_N(ig)(iyr,sage) = m_dRbar(ih) / nsex;
+				m_N(ig)(iyr+1,sage) = m_dRbar(ih) / nsex;
 		}
+		//disperse the recruits in each year
+		//cout<<"N in "<<iyr << " is " << m_N(g)(iyr)(sage,nage)<<endl;
+			//m_N(ig)(iyr,sage)= m_N(ig)(iyr,sage)* m_dispersal;
 
 		// Update numbers-at-age
-		dvector st = exp( -(m_M(ig)(iyr)+m_F(ig)(iyr)) );
+		dvector st = exp(-(m_M(ig)(iyr)+m_F(ig)(iyr)) );
 		m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
 		                                           ,st(sage,nage-1));
 		m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage);	
-	
-	// propagate nos at age for each group in iyr
-	
+		
 	}
 
-	//disperse the recruits in each year
-
-
-
 	
-	// cout<<iyr<<endl;
+
+	 //cout<<"finished updatinf ref pop"<<endl;
 }
 
 void OperatingModel::writeDataFile(const int& iyr)
@@ -852,7 +906,10 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  		for(int k=1;k<=nWtTab;k++)
 			{
 				tmp_nWtNobs(k)= nWtNobs(k)+(iyr-nyr);
-				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;	
+				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
+
+
+
 			}
 
 	  	dfs<< nWtTab 					<<endl;

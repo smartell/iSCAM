@@ -4945,8 +4945,13 @@ FUNCTION void runMSE()
 	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
 	s_mv.q = value(q);
+	s_mv.sbt = value(sbt);
 	d3_array tmp_ft=value(ft);
 	s_mv.d3_ft = &tmp_ft;
+
+	s_mv.sbo = value(sbo);
+	s_mv.so = value(so);
+
 
 	// |-----------------------------------|
 	// | Instantiate Operating Model Class |

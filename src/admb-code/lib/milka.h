@@ -37,6 +37,7 @@
 		dvector rho;
 		dvector varphi;
 		dvector q;
+		dmatrix sbt;
 
 		dmatrix log_rec_devs;
 		dmatrix init_log_rec_devs;
@@ -49,6 +50,11 @@
 		d3_array *d3_M;
 		d3_array *d3_F;
 		d3_array *d3_ft;
+
+		//recruitment
+		dvector sbo;
+		dvector so;
+
 
 	};
 
@@ -82,11 +88,15 @@
 		ivector m_nWtNobs;
 		d3_array m_d3_inp_wt_avg;
 
+		// MSE controls
 		int m_nPyr;				/// Terminal year for Operating Model.
 		int m_nSeed;			/// random number seed
+		int m_nRecType;
 
+		dmatrix m_dispersal; 
+		
 		int m_nn;
-
+		
 		dvector m_dRo;
 		dvector m_dSteepness;
 		dvector m_dM;
@@ -97,7 +107,10 @@
 		dvector m_dSigma;
 		dvector m_dTau;
 		dvector m_dKappa;
+		dvector m_dbeta;
 		dvector m_q;
+
+
 
 		// Assessment model results
 		dvector m_est_bo;
@@ -147,6 +160,7 @@
 		void calcTotalMortality(const int& iyr);
 		void calcRelativeAbundance(const int& iyr);
 		void calcCompositionData(const int& iyr);
+		void calcEmpiricalWeightAtAge(const int& iyr);
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();
