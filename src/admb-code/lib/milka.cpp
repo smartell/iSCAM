@@ -394,7 +394,7 @@ void OperatingModel::calculateTAC()
 		{
 			case 1: // Constant harvest rate
 				 m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
-				//m_dTAC(g) = 1.0;
+				//m_dTAC(g)  = 1.0;
 			break; 
 		}
 	}
@@ -524,13 +524,16 @@ void OperatingModel::implementFisheries(const int &iyr)
 				sd(h) = 0.1 * mu(h);
 				for(int k = 1; k <= nfleet; k++ )
 				{ 
+					int kk = m_nGearIndex(k);
 					// Implement size limits here.
 					pr = retention_probability(m_dLslim(k),m_dUslim(k),mu(h),sd(h));
 					pd = 1.0 - pr;
 
-					int kk = nFleetIndex(k);
+					// int kk = nFleetIndex(k);
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
 
+					// Joint probability model
+					d3_Va(h)(k)=elem_prod(d3_Va(h)(k),pr + pd*m_dDiscMortRate(k));
 					
 				}
 			}  // nsex

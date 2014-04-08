@@ -121,7 +121,7 @@
 		d3_array m_d3_wt_avg;
 		d3_array m_d3_wt_mat;
 		d3_array m_ft;
-		d3_array m_log_sel_par;
+		//d3_array m_log_sel_par;
 
 		d4_array d4_logSel;
 
