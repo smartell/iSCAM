@@ -261,7 +261,7 @@ void OperatingModel::initMemberVariables()
 
 	//Spawning stock biomass
 
-	m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
+	m_sbt.allocate(syr,m_nPyr+1,1,ngroup);m_sbt.initialize();
 	m_sbt.sub(syr,nyr+1)=(trans(mv.sbt)).sub(syr,nyr+1);
 	m_dbeta.allocate(1,ngroup);m_dbeta.initialize();
 
@@ -780,20 +780,12 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-4) = gear;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-3) = f;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-2) = g;
-
-					cout<< "hh is "<<hh<<endl;
-
-					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-1) = hh>0?h:0;
-					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
-
-					cout<<"watage= "<<m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)<<endl;
 				}
 			}
 		}
-	}
-	
+	}	
 	
 }
 
@@ -850,7 +842,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 		}
 		//disperse the recruits in each year
 		//cout<<"N in "<<iyr << " is " << m_N(g)(iyr)(sage,nage)<<endl;
-			//m_N(ig)(iyr,sage)= m_N(ig)(iyr,sage)* m_dispersal;
+		//m_N(ig)(iyr,sage)= m_N(ig)(iyr,sage)* m_dispersal;
 
 		// Update numbers-at-age
 		dvector st = exp(-(m_M(ig)(iyr)+m_F(ig)(iyr)) );
@@ -914,10 +906,8 @@ void OperatingModel::writeDataFile(const int& iyr)
 
 	  		for(int k=1;k<=nItNobs;k++)
 			{
-	  			//cout<<"nItNobs is "<< nItNobs<<endl;
 				tmp_n_it_nobs(k) = n_it_nobs(k) + (iyr-nyr);
 				tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
-	  			//cout<<"tmp_d3SurveyData(k) is "<<m_d3SurveyData.sub(1,tmp_n_it_nobs(k))<<endl;
 			}
 	  	
 	  	dfs<< tmp_n_it_nobs 				<<endl;
@@ -951,9 +941,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 			{
 				tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * sum(m_nWSex);
 				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
-
-
-
 			}
 
 	  	dfs<< nWtTab 					<<endl;

@@ -54,8 +54,6 @@
 		//recruitment
 		dvector sbo;
 		dvector so;
-
-
 	};
 
 	class OperatingModel: public model_data

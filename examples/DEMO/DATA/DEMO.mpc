@@ -14,9 +14,9 @@
 ##| - USLIM -> upper size limit (cm)
 ##| - DM    -> Discard mortality rate (annual instantaneous rate).
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
-##                                    | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
-## INDEX CSEX ASEX WSEX  LSLIM  USLIM  DM   | 1                                              ##
-	1    0    1      1		82     1000   0.15   1
+##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
+## INDEX CSEX ASEX WSEX  LSLIM  USLIM  DM    | 1                                              ##
+	1    0    1      1		0   1000   0.15    1
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## CONTROLS FOR RECRUITMENT FUNCTION
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
