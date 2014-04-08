@@ -69,6 +69,7 @@
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
+		ivector m_nWSex;
 		dvector  m_dLslim;
 		dvector  m_dUslim;
 		imatrix m_nAGopen;

@@ -120,11 +120,12 @@ void OperatingModel::readMSEcontrols()
 	m_nAGopen.allocate(1,ngear,1,narea);
 	
 	// Controls for sexing catch and comps and fishing in given areas.
-	dmatrix tmp(1,ngear,-5,narea);
+	dmatrix tmp(1,ngear,-6,narea);
 	ifs >> tmp;
-	m_nGearIndex = ivector(column(tmp,-5));
-	m_nCSex      = ivector(column(tmp,-4));
-	m_nASex      = ivector(column(tmp,-3));
+	m_nGearIndex = ivector(column(tmp,-6));
+	m_nCSex      = ivector(column(tmp,-5));
+	m_nASex      = ivector(column(tmp,-4));
+	m_nWSex 	 = ivector(column(tmp,-3));
 	m_dLslim     = column(tmp,-2);
 	m_dUslim     = column(tmp,-1);
 	for( k = 1; k <= ngear; k++ )
@@ -193,7 +194,7 @@ void OperatingModel::initParameters()
 	}
 	 
 	m_nWtNobs.allocate(1,nWtTab);
-	m_nWtNobs = nWtNobs + (m_nyrs*nsex);
+	m_nWtNobs = nWtNobs + m_nyrs + m_nyrs * sum(m_nWSex);
 
 	m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
 	m_d3_inp_wt_avg.initialize();
@@ -520,8 +521,6 @@ void OperatingModel::implementFisheries(const int &iyr)
 					d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
 				}
 			}  // nsex
-			
-			cout<<"na is " <<na<<endl;
 
 			// Calculate instantaneous fishing mortality rates.
 			dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
@@ -717,7 +716,8 @@ void OperatingModel::calcCompositionData(const int& iyr)
 
 void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 {
-	int gear,wtsex;
+	static int iroww = 0;
+	int gear;
 	
 	for(int k = 1; k <= nWtTab; k++ )
 	{
@@ -727,24 +727,26 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 		{
 			for(int g = 1; g <= ngroup; g++ )
 			{
-				for(int h = 1; h <= nsex; h++ )
+
+				int hh = m_nWSex(k);   // flag for sex
+				for( h = 1; h <= hh+1; h++ )
 				{
-			
+					iroww ++;
 					int ig = pntr_ags(f,g,h);
 		
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-5) = iyr;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-4) = gear;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-3) = f;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-2) = g;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-5) = iyr;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-4) = gear;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-3) = f;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-2) = g;
 
-					cout<< "Is this working?"<<endl;
+					cout<< "hh is "<<hh<<endl;
 
 					
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage-1) = h;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-1) = hh>0?h:0;
 					
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 
-					cout<<"watage= "<<m_d3_inp_wt_avg(k)(nWtNobs(k)+(iyr-nyr+h-1))<<endl;
+					cout<<"watage= "<<m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)<<endl;
 				}
 			}
 		}
@@ -887,7 +889,7 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  			
 	  		for(int k=1;k<=nAgears;k++)
 			{
-				tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr);
+				tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr)+ (iyr-nyr) * sum(m_nASex);;
 				tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
 			}
 
@@ -900,12 +902,12 @@ void OperatingModel::writeDataFile(const int& iyr)
 	
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
 
-	  	ivector tmp_nWtNobs(1,nAgears);
+	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
 
 	  		for(int k=1;k<=nWtTab;k++)
 			{
-				tmp_nWtNobs(k)= nWtNobs(k)+(iyr-nyr);
+				tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * sum(m_nWSex);
 				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
 
 
