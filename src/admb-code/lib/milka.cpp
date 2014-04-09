@@ -93,10 +93,11 @@ void OperatingModel::runScenario(const int &seed)
 
 		updateReferenceModel(i);
 
-		//writeDataFile(i);
+		writeDataFile(i);
 
 		runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
+		exit(1);
 	}
 	cout<<m_dCatchData<<endl;
 }
@@ -1000,8 +1001,8 @@ void OperatingModel::runStockAssessment()
 
 		#if defined __APPLE__ || defined __linux
 
-		system("make ARG='-ind mseRUN.dat' run" );
-
+		//system("make ARG='-ind mseRUN.dat' run" );
+		system("./iscam -ind mseRUN.dat -nox");
 		#endif
 
 		#if defined _WIN32 || defined _WIN64
