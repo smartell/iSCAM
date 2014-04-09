@@ -93,7 +93,7 @@ void OperatingModel::runScenario(const int &seed)
 
 		updateReferenceModel(i);
 
-		writeDataFile(i);
+		//writeDataFile(i);
 
 		// runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
@@ -800,7 +800,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
-
+	cout<<"Start updateupdateReferenceModel"<<endl;
 	
 	// compute spawning biomass at time of spawning.
 	dvector  stmp(sage,nage); stmp.initialize();
@@ -862,7 +862,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
 	
 
-	 //cout<<"finished updatinf ref pop"<<endl;
+	 cout<<"finished updatinf ref pop"<<endl;
 }
 
 void OperatingModel::writeDataFile(const int& iyr)
