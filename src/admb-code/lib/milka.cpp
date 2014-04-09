@@ -33,7 +33,7 @@
  *		   | calcEmpiricalWeightAtAge          [-]
  * 		   | updateReferenceModel			   [-]
  * 		   | writeDataFile					   [-]
- * 		   | runStockAssessment				   [ ]
+ * 		   | runStockAssessment				   [-]
  * 		|- |			
  * 		|- writeSimulationVariables			
  * 		|- calculatePerformanceMetrics			
@@ -95,7 +95,7 @@ void OperatingModel::runScenario(const int &seed)
 
 		//writeDataFile(i);
 
-		// runStockAssessment();
+		runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
 	}
 	cout<<m_dCatchData<<endl;
@@ -136,7 +136,13 @@ void OperatingModel::readMSEcontrols()
 
 	//Controls for recruitment options
 	ifs>>m_nRecType;
+
+	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
 	ifs>>m_dispersal; 
+
+	ifs>>MseCtlFile;
+	ifs>>MsePfcFile;
+
 	
 	//cout<<"finished MSE controls"<<endl;
 }
@@ -261,7 +267,7 @@ void OperatingModel::initMemberVariables()
 
 	//Spawning stock biomass
 
-	m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
+	m_sbt.allocate(syr,m_nPyr+1,1,ngroup);m_sbt.initialize();
 	m_sbt.sub(syr,nyr+1)=(trans(mv.sbt)).sub(syr,nyr+1);
 	m_dbeta.allocate(1,ngroup);m_dbeta.initialize();
 
@@ -780,20 +786,12 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-4) = gear;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-3) = f;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-2) = g;
-
-					cout<< "hh is "<<hh<<endl;
-
-					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-1) = hh>0?h:0;
-					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
-
-					cout<<"watage= "<<m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)<<endl;
 				}
 			}
 		}
-	}
-	
+	}	
 	
 }
 
@@ -818,7 +816,10 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 			}
 		}
 	}
-	
+
+	dvector tmp_rec(1,narea);tmp_rec.initialize();
+	dvector tmp_rec_dis(1,narea);tmp_rec_dis.initialize();
+	dvector prop_rec_g(1,n_ags);prop_rec_g.initialize();
 
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
@@ -846,12 +847,29 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 			break;
 
 			case 3: // average recruitment
-				m_N(ig)(iyr+1,sage) = m_dRbar(ih) / nsex;
+				m_N(ig)(iyr+1,sage) = m_dRbar(ih);
 		}
-		//disperse the recruits in each year
-		//cout<<"N in "<<iyr << " is " << m_N(g)(iyr)(sage,nage)<<endl;
-			//m_N(ig)(iyr,sage)= m_N(ig)(iyr,sage)* m_dispersal;
+		m_N(ig)(iyr+1,sage) = m_N(ig)(iyr+1,sage)/nsex; //* mfexp( mv.log_rbar(ih));
+		
+		//disperse the recruits in each year 
+		// assumes all groups disperse the same and prop of gorups by area remain const
+		// TODO allow for separate dispersal matrices for each group
+		
+		//1 - calculate total recruits per area: tmp_rec
+		tmp_rec(f) += m_N(ig)(iyr+1,sage);
+		
+		}
+		
+		//disperse recruits 
+		tmp_rec_dis = tmp_rec*m_dispersal;
 
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		int f  = n_area(ig);
+		prop_rec_g(ig)=m_N(ig)(iyr+1,sage)/tmp_rec(f);
+			 
+		m_N(ig)(iyr+1,sage) = (tmp_rec(f)/nsex)*prop_rec_g(ig);	
+	
 		// Update numbers-at-age
 		dvector st = exp(-(m_M(ig)(iyr)+m_F(ig)(iyr)) );
 		m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
@@ -860,9 +878,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 		
 	}
 
-	
-
-	 cout<<"finished updatinf ref pop"<<endl;
+	 //cout<<"finished updatinf ref pop"<<endl;
 }
 
 void OperatingModel::writeDataFile(const int& iyr)
@@ -914,10 +930,8 @@ void OperatingModel::writeDataFile(const int& iyr)
 
 	  		for(int k=1;k<=nItNobs;k++)
 			{
-	  			//cout<<"nItNobs is "<< nItNobs<<endl;
 				tmp_n_it_nobs(k) = n_it_nobs(k) + (iyr-nyr);
 				tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
-	  			//cout<<"tmp_d3SurveyData(k) is "<<m_d3SurveyData.sub(1,tmp_n_it_nobs(k))<<endl;
 			}
 	  	
 	  	dfs<< tmp_n_it_nobs 				<<endl;
@@ -951,9 +965,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 			{
 				tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * sum(m_nWSex);
 				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
-
-
-
 			}
 
 	  	dfs<< nWtTab 					<<endl;
@@ -977,4 +988,30 @@ void OperatingModel::runStockAssessment()
 
 		system("iscam.exe -ind mseRUN.dat")  on windoze boxes.
 	*/
+
+		
+		ofstream rd("mseRUN.dat");
+		rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
+		rd<<MseCtlFile + ".ctl"<<endl;
+		rd<<MsePfcFile + ".pfc"<<endl;
+		//exit(1);
+
+		cout<<"running stock assessment"<<endl;
+
+		#if defined __APPLE__ || defined __linux
+
+		system("make ARG='-ind mseRUN.dat' run" );
+
+		#endif
+
+		#if defined _WIN32 || defined _WIN64
+
+		system("iscam.exe -ind mseRUN.dat")
+
+		#endif
+		
+
+ 		
+
+
 }

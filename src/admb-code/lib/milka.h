@@ -54,8 +54,6 @@
 		//recruitment
 		dvector sbo;
 		dvector so;
-
-
 	};
 
 	class OperatingModel: public model_data
@@ -96,6 +94,9 @@
 		int m_nRecType;
 
 		dmatrix m_dispersal; 
+
+		adstring MseCtlFile;
+		adstring MsePfcFile;
 		
 		int m_nn;
 		
