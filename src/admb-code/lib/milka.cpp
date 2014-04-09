@@ -1002,7 +1002,7 @@ void OperatingModel::runStockAssessment()
 
 		#if defined __APPLE__ || defined __linux
 
-		system("make ARG='-ind mseRUN.dat' run" );
+		system("./iscam -ind mseRUN.dat -nox");
 
 		#endif
 
