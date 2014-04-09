@@ -154,6 +154,8 @@ void OperatingModel::readMSEcontrols()
 void OperatingModel::initParameters()
 {
 	
+	cout<<"nCtNobs is " <<nCtNobs<<endl;
+
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
 	m_irow = nCtNobs; // counter for current number of rows in the catch table.
@@ -914,7 +916,7 @@ void OperatingModel::writeDataFile(const int& iyr)
 
 	  	int tmp_nCtNobs = nCtNobs+(iyr-nyr)*m_nn;
 
-	  	dfs<< m_nCtNobs + (iyr-nyr)*m_nn  		<<endl; 
+	  	dfs<< nCtNobs + (iyr-nyr)*m_nn  		<<endl; 
 	  	dfs<< m_dCatchData.sub(1,tmp_nCtNobs)    <<endl;
 	
 	  	dfs<<"#Abundance indices"	<<endl;
