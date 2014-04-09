@@ -267,8 +267,8 @@ void OperatingModel::initMemberVariables()
 
 	//Spawning stock biomass
 
-	m_sbt.allocate(syr,m_nPyr+1,1,ngroup);m_sbt.initialize();
-	m_sbt.sub(syr,nyr+1)=(trans(mv.sbt)).sub(syr,nyr+1);
+	m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
+	m_sbt.sub(syr,nyr)=(trans(mv.sbt)).sub(syr,nyr);
 	m_dbeta.allocate(1,ngroup);m_dbeta.initialize();
 
 	m_dTAC.allocate(1,ngroup,1,nfleet);
@@ -812,7 +812,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 				int ig = pntr_ags(f,g,h);
 					
 				stmp      = mfexp(-m_Z(ig)(iyr)*d_iscamCntrl(13));
-				m_sbt(iyr+1,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;					
+				m_sbt(iyr,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;					
 			}
 		}
 	}
