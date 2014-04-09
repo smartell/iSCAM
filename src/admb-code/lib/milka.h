@@ -4,6 +4,7 @@
 #define MILKA_H
 
 #include <admodel.h>
+#include <contrib.h>
 #include "../iscam.htp"
 
 /**
@@ -67,6 +68,7 @@
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
+		dvector m_nATau;
 		ivector m_nWSex;
 		dvector m_dLslim;
 		dvector m_dUslim;
