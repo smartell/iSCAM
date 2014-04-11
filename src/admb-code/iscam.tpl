@@ -603,7 +603,7 @@ DATA_SECTION
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
-		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAGears) > 3)
+		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
