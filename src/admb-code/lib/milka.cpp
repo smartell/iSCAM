@@ -97,7 +97,7 @@ void OperatingModel::runScenario(const int &seed)
 
 		runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
-		exit(1);
+		
 	}
 	cout<<m_dCatchData<<endl;
 }
@@ -144,7 +144,9 @@ void OperatingModel::readMSEcontrols()
 	ifs>>MseCtlFile;
 	ifs>>MsePfcFile;
 
-	
+	cout<<MseCtlFile<<endl;
+	cout<<MsePfcFile<<endl;
+	exit(1);
 	//cout<<"finished MSE controls"<<endl;
 }
 
@@ -745,6 +747,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					za = ma + fa;
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
+					pa(h) = rmvlogistic(pa(h),0.2,m_nSeed+iyr);
 				}
 			
 				int hh = m_nASex(k);   // flag for sex
@@ -1003,7 +1006,7 @@ void OperatingModel::runStockAssessment()
 
 		#if defined __APPLE__ || defined __linux
 
-		//system("make ARG='-ind mseRUN.dat' run" );
+		//system("make ARG='-ind mseRUN.dat -nox' run" );
 		system("./iscam -ind mseRUN.dat -nox");
 		#endif
 
