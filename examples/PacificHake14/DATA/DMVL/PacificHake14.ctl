@@ -36,7 +36,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 1  		 2 	   3               ## Gear Index
-2  		 2     2              ## Likelihood type?
+1  		 1     1              ## Likelihood type?
 0.000 	 0.000 	0.000               ## Minimum proportion for aggregation & tail compression
 0.0000   0.0000  0.0000              ## Small constant to add to comps & renormalize
 -1  -1  -1                      ## phase for log_age_tau2 estimation.
@@ -63,7 +63,7 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	2 	5 	1	        # 1  -selectivity type ivector(isel_type) for gear
+	2 	5 	2	        # 1  -selectivity type ivector(isel_type) for gear
 	3.5	3.5	2.5	        # 2  -Age/length at 50% selectivity (logistic)
 	0.45 0.45 0.45 	        # 3  -STD at 50% selectivity (logistic)
 	4 4	5				# 4  -No. of age nodes for each gear (0=ignore)
