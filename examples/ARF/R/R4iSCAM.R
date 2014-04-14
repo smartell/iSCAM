@@ -13,7 +13,7 @@
 # | .PWD       <- Global Parent Working Directory for R-scripts
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
-.PWD        <- "~/Documents/iSCAM-project/examples/atf/R"
+.PWD        <- "~/Documents/iSCAM-project/examples/ARF/R"
 setwd(.PWD)
 # .FIGUREDIR  <- "../FIGS/"
 .FIGUREDIR  <- "../logo/"
