@@ -3603,7 +3603,7 @@ FUNCTION void calcReferencePoints()
 		//delete pMSY;
 		
 
-		// cout<<"Initial Fe "<<dftry<<endl;
+		cout<<"Initial Fe "<<dftry<<endl;
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 
