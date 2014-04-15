@@ -121,32 +121,31 @@ void OperatingModel::readMSEcontrols()
 	m_nAGopen.allocate(1,ngear,1,narea);
 	
 	// Controls for sexing catch and comps and fishing in given areas.
-	dmatrix tmp(1,ngear,-6,narea);
+	dmatrix tmp(1,ngear,-7,narea);
 	ifs >> tmp;
-	m_nGearIndex = ivector(column(tmp,-6));
-	m_nCSex      = ivector(column(tmp,-5));
-	m_nASex      = ivector(column(tmp,-4));
+	m_nGearIndex = ivector(column(tmp,-7));
+	m_nCSex      = ivector(column(tmp,-6));
+	m_nASex      = ivector(column(tmp,-5));
+	m_nATau 	 = column(tmp,-4);
 	m_nWSex 	 = ivector(column(tmp,-3));
 	m_dLslim     = column(tmp,-2);
 	m_dUslim     = column(tmp,-1);
 	m_dDiscMortRate = column(tmp,0);
+
 	for( k = 1; k <= ngear; k++ )
 	{
 		m_nAGopen(k) = ivector(tmp(k)(1,narea));
 	}
 
 	//Controls for recruitment options
-	ifs>>m_nRecType;
+	ifs >> m_nRecType;
 
 	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
-	ifs>>m_dispersal; 
+	ifs >> m_dispersal; 
 
-	ifs>>MseCtlFile;
-	ifs>>MsePfcFile;
+	ifs >> MseCtlFile;
+	ifs >> MsePfcFile;
 
-	cout<<MseCtlFile<<endl;
-	cout<<MsePfcFile<<endl;
-	exit(1);
 	//cout<<"finished MSE controls"<<endl;
 }
 
@@ -156,8 +155,6 @@ void OperatingModel::readMSEcontrols()
  */
 void OperatingModel::initParameters()
 {
-	
-	cout<<"nCtNobs is " <<nCtNobs<<endl;
 
 	// Initializing data members
 	m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
@@ -747,7 +744,9 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					za = ma + fa;
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
-					pa(h) = rmvlogistic(pa(h),0.2,m_nSeed+iyr);
+					pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
+
+					//rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
 				}
 			
 				int hh = m_nASex(k);   // flag for sex
@@ -804,7 +803,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
-	cout<<"Start updateupdateReferenceModel"<<endl;
+
 	
 	// compute spawning biomass at time of spawning.
 	dvector  stmp(sage,nage); stmp.initialize();
@@ -1006,8 +1005,8 @@ void OperatingModel::runStockAssessment()
 
 		#if defined __APPLE__ || defined __linux
 
-		//system("make ARG='-ind mseRUN.dat -nox' run" );
 		system("./iscam -ind mseRUN.dat -nox");
+
 		#endif
 
 		#if defined _WIN32 || defined _WIN64
