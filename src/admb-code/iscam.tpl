@@ -1114,7 +1114,7 @@ DATA_SECTION
 					jsel_npar(i) = n_sel_blocks(i);
 					break;
 
-				case 13;
+				case 13:
 					// age-specific coefficients for agemin to agemax
 					isel_npar(i) = (ghat_agemax(i)-ahat_agemin(i));
 					jsel_npar(i) = n_sel_blocks(i);
@@ -1305,7 +1305,7 @@ PARAMETER_SECTION
 						{
 							uu = 0.05*randn(j+rseed);
 						} 
-						sel_par(k,j,1) = log(ahat(k)*exp(uu));
+						sel_par(k,j,1) = log(ahat_agemin(k)*exp(uu));
 						sel_par(k,j,2) = log(ghat_agemax(k));
 					}
 				}
@@ -1980,27 +1980,18 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						}
 						for(j=ahat_agemin(kgear);j<=ghat_agemax(kgear)-1;j++)
 						{
-							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
+							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-ahat_agemin(kgear)+1);
 						}
-						log_sel(kgear)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
-					}
-
-
-
-
-
-					for(i=ahat_agemin(); i<=ghat_agemax(kgear); i++)
-					{
-						if( i == sel_blocks(k,byr) )
+						
+						for (j=ghat_agemax(kgear); j<=nage ;j++ )
 						{
-							bpar ++;
-							if( byr < n_sel_blocks(k) ) byr++;
+							log_sel(kgear)(ig)(i,j) = log_sel(k)(ig)(i,ghat_agemax(kgear)-1);
 						}
-						for(j=;j<=nage-1;j++)
+
+						for(j=sage;j<=ahat_agemin(kgear)-1;j++)
 						{
-							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
-						}
-						log_sel(kgear)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
+							log_sel(kgear)(ig)(i,j) = log_sel(k)(ig)(i,ahat_agemin(kgear));
+						}						
 					}
 					break;
 					
