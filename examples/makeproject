@@ -25,6 +25,7 @@ cp ../scripts/iScamLogo.pdf $1/PRESENTATION/iScamLogo.pdf
 
 ## Copy Makefile from Scripts to DATA directory
 cp ../scripts/ADMB_Makefile $1/DATA/Makefile
+gsed -i "s/CTL=/CTL=$1/" $1/DATA/Makefile
 ##cp ../scripts/RUN.dat	$1/DATA/RUN.dat
 ##cp ../scripts/DATATemplate.dat $1/DATA/DataTemplate.dat
 ##cp ../scripts/ControlTemplate.ctl $1/DATA/ControlTemplate.ctl
