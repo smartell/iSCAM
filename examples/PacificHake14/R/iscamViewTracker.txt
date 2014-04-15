@@ -5,3 +5,4 @@ TRUE,DMVL,         "Pacific hake",../DATA/DMVL/PacificHake14
 TRUE,LNM1,         "Pacific hake",../DATA/LNM1/PacificHake14
 TRUE,LNM2,         "Pacific hake",../DATA/LNM2/PacificHake14
 TRUE,MULT,         "Pacific hake",../DATA/MULT/PacificHake14
+TRUE,MULT2,         "Pacific hake",../DATA/LT/PacificHake14
