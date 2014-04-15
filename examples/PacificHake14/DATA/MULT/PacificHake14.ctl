@@ -16,7 +16,7 @@
 7
 ## ival         	lb    ub      phz		prior  p1      		p2   		#parameter   ##
 	1.6   			-1.0 	4       4 		0     -1.0    		4.0  		#log_ro    	 ##
-	0.88  			 0.2    1.0     4 		3     9.909 		2.959 			#steepness   ##
+	0.88  			 0.2    1.0     4 		3     9.909 		2.959 		#steepness   ##
 	-1.6 			-5.0   	0.0    -3 		1     -1.609  	 	0.1 		#log_m g&b   ##
 	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_avgrec  ##
 	1.0   			-5.0    15      1 		0     -1.0    		4.0   		#log_recinit ##
@@ -35,15 +35,15 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-1  		 2 	   3               ## Gear Index
+1  		 2 	   3              ## Gear Index
 2  		 2     2              ## Likelihood type?
-0.000 	 0.000 	0.000               ## Minimum proportion for aggregation & tail compression
-0.0000   0.0000  0.0000              ## Small constant to add to comps & renormalize
--1  -1  -1                      ## phase for log_age_tau2 estimation.
--2  -2  -2                     ## phase for phi1 estimation: bounded (-1,1) AR1
--2  -2  -2                     ## phase for phi2 estimation: bounded (0,1)  AR2 
--2  -2  -2                   ## phase for degrees of freedom for student T.
--12345                   	 ## int check (-12345)
+0.000 	 0.000 	0.000         ## Minimum proportion for aggregation & tail compression
+0.0000   0.0000  0.0000       ## Small constant to add to comps & renormalize
+-1  -1  -1                    ## phase for log_age_tau2 estimation.
+-2  -2  -2                    ## phase for phi1 estimation: bounded (-1,1) AR1
+-2  -2  -2                    ## phase for phi2 estimation: bounded (0,1)  AR2 
+-2  -2  -2                    ## phase for degrees of freedom for student T.
+-12345                   	  ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
 ##

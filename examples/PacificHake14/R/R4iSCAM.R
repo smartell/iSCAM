@@ -14,10 +14,12 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 .PWD        <- "~/Documents/iSCAM/examples/PacificHake14/R"
+.LIB        <- "../../../dist/R/lib/"
+.WIN        <- "../../../dist/R/iScamWin2.txt"
 setwd(.PWD)
 # .FIGUREDIR  <- "../FIGS/"
 .FIGUREDIR  <- "../logo/"
-.RFILES     <- list.files("./lib/",pattern="\\.[Rr]$")
+.RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
 require(ggplot2)
@@ -31,7 +33,7 @@ require(ggplot2)
 guiView  <- function()
  {
 	setwd(.PWD)
-	for(nm in .RFILES) source(file.path("./lib", nm), echo=FALSE)
+	for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 	.gui2("iSCAMView") 	
  }
 

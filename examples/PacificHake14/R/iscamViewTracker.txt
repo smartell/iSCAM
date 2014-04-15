@@ -2,4 +2,6 @@
 "Select","Label","Description","Control File"
 #The following line is for the Demo example
 TRUE,DMVL,         "Pacific hake",../DATA/DMVL/PacificHake14
+TRUE,LNM1,         "Pacific hake",../DATA/LNM1/PacificHake14
+TRUE,LNM2,         "Pacific hake",../DATA/LNM2/PacificHake14
 TRUE,MULT,         "Pacific hake",../DATA/MULT/PacificHake14

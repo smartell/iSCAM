@@ -15,11 +15,11 @@
 ## npar
 7
 ## ival         	lb    ub      phz		prior  p1      		p2   		#parameter   ##
-	1.9   			-1.0 	4       1 		0     -1.0    		4.0  		#log_ro    	 ##
-	0.7  			 0.2    1.0     1 		3     9 		    4 			#steepness   ##
-	-1.469676		-5.0   	0.0     2 		1     -1.469676  	0.1 		#log_m g&b   ##
+	1.6   			-1.0 	4       4 		0     -1.0    		4.0  		#log_ro    	 ##
+	0.88  			 0.2    1.0     4 		3     9.909 		2.959 		#steepness   ##
+	-1.6 			-5.0   	0.0    -3 		1     -1.609  	 	0.1 		#log_m g&b   ##
 	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_avgrec  ##
-	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_recinit ##
+	1.0   			-5.0    15      1 		0     -1.0    		4.0   		#log_recinit ##
 	0.03764649		 0.01   0.999   4 		3     5.98   		155.98 		#rho         ##
 	0.4909967		 0.01 	10.0    3 		4 	  1.01 			1.01 			#vartheta    ##
 ## ------------------------------------------------------------------------- ##
@@ -35,14 +35,14 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-1  		 2 	                 ## Gear Index
-1  		 1                   ## Likelihood type?
-0.000 	 0.000               ## Minimum proportion for aggregation & tail compression
-0.0000   0.0000              ## Small constant to add to comps & renormalize
-1   1                        ## phase for log_age_tau2 estimation.
-2   2                        ## phase for phi1 estimation: bounded (-1,1) AR1
--2  -2                       ## phase for phi2 estimation: bounded (0,1)  AR2 
--2  -2                       ## phase for degrees of freedom for student T.
+1  		2 		3            ## Gear Index
+3  		3       3            ## Likelihood type?
+0.000 	0.000 	0.000        ## Minimum proportion for aggregation & tail compression
+0.0000  0.0000  0.0000       ## Small constant to add to comps & renormalize
+1   	1       1            ## phase for log_age_tau2 estimation.
+2   	2 		2            ## phase for phi1 estimation: bounded (-1,1) AR1
+-2     -2 	   -2            ## phase for phi2 estimation: bounded (0,1)  AR2 
+-2     -2 	   -2            ## phase for degrees of freedom for student T.
 -12345                   	 ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
@@ -63,19 +63,20 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	1 	1		        # 1  -selectivity type ivector(isel_type) for gear
-	3.5		3.5	        # 2  -Age/length at 50% selectivity (logistic)
-	0.45	0.45 	        # 3  -STD at 50% selectivity (logistic)
-	5 	5				# 4  -No. of age nodes for each gear (0=ignore)
-	9 	5				# 5  -No. of year nodes for 2d spline(0=ignore)
-	1 	1				# 6  -Phase of estimation (-1 for fixed)
-	150 	200			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-	50.0 	200			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	50.0 	1.0			# 9  -Penalty wt for time-varying selectivity
-	1 	1              # 10 -n_sel_blocks (number of selex blocks)
+	2 	  4		1	        # 1  -selectivity type ivector(isel_type) for gear
+	3.5	  3.5  	2.5	        # 2  -Age/length at 50% selectivity (logistic)
+	0.45  0.45 	0.45	    # 3  -STD at 50% selectivity (logistic)
+	4 	  5		5			# 4  -No. of age nodes for each gear (0=ignore)
+	5 	  2		5			# 5  -No. of year nodes for 2d spline(0=ignore)
+	1 	  1		1			# 6  -Phase of estimation (-1 for fixed)
+	150   22.2	200			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	50.0  12.5 	200			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+	50.0  12.5	1.0			# 9  -Penalty wt for time-varying selectivity
+	1 	  1     1         	# 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
 1966 
+1966
 1966
 ## 
 ##
@@ -88,7 +89,7 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 1					# -number of surveys (nits) 
-2					# -prior type (see legend above)
+1					# -prior type (see legend above)
 0					# -prior log(mean)
 0.1					# -prior sd
 ## ------------------------------------------------------------------------- ##

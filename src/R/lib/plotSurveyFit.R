@@ -36,7 +36,7 @@ require(reshape2)
 	limits <- aes(ymax=high_bnd, ymin=low_bnd)
 
 	p <- ggplot(mdf) + geom_point(aes(Year,Index,color=factor(Gear)),size=2)
-	p <- p + geom_line(aes(Year,It_hat,color=factor(Gear)),size=1)
+	p <- p + geom_line(aes(Year,It_hat,color=factor(Gear),group = 1))
 	p <- p + geom_pointrange(aes(Year,It,ymax=high_bnd, ymin=low_bnd,color=factor(Gear)))
 	# p <- p + geom_ribbon(aes(Year,ymax=high_bnd, ymin=low_bnd,fill=factor(Gear)),alpha=.3)
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
