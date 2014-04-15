@@ -763,24 +763,6 @@ void Msy::calcEquilibrium(const dvector& fe)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /** \brief calculate unfished Eggs per recruit
 	
 	
