@@ -139,6 +139,8 @@ DATA_SECTION
 	init_adstring ControlFile;	 ///< String for the control file.
 	/// | ProjectFileControl.pfc : used for stock projections under TAC
 	init_adstring ProjectFileControl;  ///< String for the projection file.
+
+	init_adstring ProjControlFile;
 	/// | BaseFileName           : file prefix used for all iSCAM model output
 	!! BaseFileName = stripExtension(ControlFile);  ///< BaseName given by the control file
 	/// | ReportFileName         : file name to copy report file to.
@@ -653,7 +655,7 @@ DATA_SECTION
 	// | d3_inp_wt_avg = input weight-at-age.
 
 	init_int nWtTab;
-	init_vector nWtNobs(1,nWtTab);
+	init_ivector nWtNobs(1,nWtTab);
 	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
 	
 	vector tmp_nWtNobs(1,nWtTab);
@@ -902,10 +904,10 @@ DATA_SECTION
 	// | VARIABLES FOR MSY-BASED REFERENCE POINTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	vector fmsy(1,nfleet);			//Fishing mortality rate at Fmsy
-	vector fall(1,nfleet);			//Fishing mortality based on dAllocation
-	vector  msy(1,nfleet);			//Maximum sustainable yield
-	number bmsy;					//Spawning biomass at MSY
+	matrix fmsy(1,ngroup,1,nfleet);	//Fishing mortality rate at Fmsy
+	matrix fall(1,ngroup,1,nfleet);	//Fishing mortality based on dAllocation
+	matrix  msy(1,ngroup,1,nfleet);	//Maximum sustainable yield
+	vector bmsy(1,ngroup);			//Spawning biomass at MSY
  // number Umsy;					//Exploitation rate at MSY
 	vector age_tau2(1,nAgears);	//MLE estimate of the variance for age comps
  // 	//catch-age for simulation model (could be declared locally 3d_array)
@@ -1237,6 +1239,10 @@ DATA_SECTION
 	// END OF DATA_SECTION
 	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
+	// |--------------------------------------|
+	// | Friend Class Operating Model for MSE |
+	// |--------------------------------------|
+	friend_class OperatingModel;
 	
 
 INITIALIZATION_SECTION
@@ -3507,22 +3513,14 @@ FUNCTION void calcReferencePoints()
 	fmsy.initialize();
 	fall.initialize();
 	msy.initialize();
-	bmsy = 0;
+	bmsy.initialize();
 
 	dvar_vector dftry(1,nfleet);
-
-	dvector ftry(1,nfleet);
-	ftry  = 0.6/nfleet * mean(M_bar);
-	fmsy  = ftry;
-	dftry = ftry;
+	dftry  = 0.6/nfleet * mean(M_bar);
 	
-
-
 	// | (4) : Instantiate msy class for each stock
 	for(g=1;g<=ngroup;g++)
 	{
-		//double d_ro = value(ro(g));
-		//double  d_h = value(steepness(g));
 		double d_rho = d_iscamCntrl(13);
 
 		dvector d_mbar = M_bar(g);
@@ -3545,9 +3543,9 @@ FUNCTION void calcReferencePoints()
 		bo  = c_MSY.getBo();
 		dvariable dbmsy = c_MSY.getBmsy();
 		dvar_vector dmsy = c_MSY.getMsy();
-		bmsy = value(dbmsy);
-		msy  = value(dmsy);
-
+		bmsy(g) = value(dbmsy);
+		msy(g)  = value(dmsy);
+		fmsy(g) = value(dfmsy);
 		c_MSY.print();
 
 		
@@ -4843,99 +4841,61 @@ FUNCTION mcmc_output
 
 
 FUNCTION void runMSE()
-//    cout<<"Top of runMSE"<<endl;//
+	cout<<"Start of runMSE"<<endl;
 
-//	s_iSCAMdata      s_mseData;
-//	s_iSCAMvariables s_mseVars;//
+	// STRUCT FOR MODEL VARIABLES
+	ModelVariables s_mv;
+	s_mv.log_ro    = value( theta(1) );
+	s_mv.steepness = value( theta(2) );
+	s_mv.m         = value( theta(3) );
+	s_mv.log_rbar  = value( theta(4) );
+	s_mv.log_rinit = value( theta(5) );
+	s_mv.rho       = value( theta(6) );
+	s_mv.varphi    = value( theta(7) );
 
-//	/* SCENARIO DATA */
-//	s_mseData.nStock      = ngroup;
-//	s_mseData.nArea       = narea;
-//	s_mseData.nSex        = nsex;
-//	s_mseData.nSyr        = syr;
-//	s_mseData.nNyr        = nyr;
-//	s_mseData.nPyr        = nyr+10;
-//	s_mseData.nSage       = sage;
-//	s_mseData.nNage       = nage;
-//	s_mseData.nGear       = ngear;
-//	s_mseData.nFleet      = nfleet;
-//	s_mseData.nFleetIndex = nFleetIndex;
-//	s_mseData.dAllocation = dAllocation;
-//	s_mseData.d_linf      = d_linf;
-//	s_mseData.d_vonbk     = d_vonbk;
-//	s_mseData.d_to        = d_to;
-//	s_mseData.d_a         = d_a;
-//	s_mseData.d_b         = d_b;
-//	s_mseData.d_ah        = d_ah;
-//	s_mseData.d_gh        = d_gh;
-//	s_mseData.nCtNobs     = nCtNobs;
-//	s_mseData.dCatchData  = dCatchData;
-//	s_mseData.nIt         = nItNobs;
-//	s_mseData.nItNobs     = n_it_nobs;
-//	s_mseData.n_survey_type = n_survey_type;
-//	s_mseData.dSurveyData = &d3_survey_data;
-//	
-//	s_mseData.nAgears     = nAgears;
-//	s_mseData.nAnobs      = n_A_nobs;
-//	s_mseData.nAsage      = n_A_sage;
-//	s_mseData.nAnage      = n_A_nage;
-//	s_mseData.dA          = &d3_A;
-//	s_mseData.nWtNobs     = nWtNobs;
-//	s_mseData.d3_wt_avg     = &d3_wt_avg;
-//	s_mseData.d3_wt_mat     = &d3_wt_mat;//
+	// Selectivity parameters
+	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
+	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
+	for(int k = 1; k <= ngear; k++ )
+	{
+		log_sel_par(k) = value(sel_par(k));
+		d4_log_sel(k)  = value(log_sel(k));
+	}
+	
+	s_mv.d3_log_sel_par = &log_sel_par;
+	s_mv.d4_logSel      = &d4_log_sel;
 
-//	s_mseData.d_iscamCntrl        = d_iscamCntrl;//
+	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
+	d3_array d3_F(1,n_ags,syr,nyr,sage,nage);
+	for(int ig = 1; ig <= n_ags; ig++ )
+	{
+		d3_M(ig) = value(M(ig));
+		d3_F(ig) = value(F(ig));
+	}
 
-//    //
+	s_mv.d3_M = &d3_M;
+	s_mv.d3_F = &d3_F;
+	s_mv.log_rec_devs = value(log_rec_devs);
+	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
-//    /* SCENARIO PARAMETERS */
-//	d3_array d3_selpar(1,ngear,1,jsel_npar,1,isel_npar);
-//	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
-//	d3_array d3_S(1,n_ags,syr,nyr,sage,nage);
-//	d3_array d3_ft(1,n_ags,1,ngear,syr,nyr);
-//	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
-//	for(k=1;k<=ngear;k++)
-//	{
-//		d3_selpar(k) = value(sel_par(k));
-//		d4_log_sel(k) = value(log_sel(k));
-//	}
-//	for( g = 1; g <= n_ags; g++ )
-//	{
-//		d3_M(g) = value(M(g));
-//		d3_S(g) = value(S(g));
-//		d3_ft(g) = value(ft(g));
-//	}//
+	s_mv.q = value(q);
+	s_mv.sbt = value(sbt);
+	d3_array tmp_ft=value(ft);
+	s_mv.d3_ft = &tmp_ft;
 
-//	s_mseVars.d_log_ro        = value(theta(1));
-//	s_mseVars.d_steepness     = value(theta(2));
-//	s_mseVars.d_log_m         = value(theta(3));
-//	s_mseVars.d_log_rbar      = value(theta(4));
-//	s_mseVars.d_log_rinit     = value(theta(5));
-//	s_mseVars.d_rho           = value(theta(6));
-//	s_mseVars.d_varphi        = value(theta(7));
-//	s_mseVars.dLog_M_devs     = value(log_m_devs);
-//	s_mseVars.dLog_Rbar_devs  = value(log_rec_devs);
-//	s_mseVars.dLog_Rinit_devs = value(init_log_rec_devs);
-//	s_mseVars.nSel_type       = isel_type;
-//	s_mseVars.nSel_block      = sel_blocks;
-//	s_mseVars.dSelPars        = &d3_selpar;
-//	s_mseVars.d4_log_sel      = &d4_log_sel;
-//	s_mseVars.d3_Ft           = &d3_ft;
-//	s_mseVars.d3_Mt			  = &d3_M;
-//	s_mseVars.d3_St           = &d3_S;//
-//
+	s_mv.sbo = value(sbo);
+	s_mv.so = value(so);
 
-//	// Instantiate the Operating Model Class
-//    //OperatingModel om(s_mseData,s_mseVars);
-//    cout<<"This is red leader, Im going in"<<endl;
-//    OperatingModel om(s_mseData,s_mseVars,argc,argv);
-//    cout<<"Use the force Luke"<<endl;
-//    // Methods for the class om.
-//    om.runScenario(rseed);//
-//
-//
-//
-//
+
+	// |-----------------------------------|
+	// | Instantiate Operating Model Class |
+	// |-----------------------------------|
+	OperatingModel om(s_mv,argc,argv);
+	om.runScenario(rseed);
+
+	COUT("DONE");
+
+
 
 
 TOP_OF_MAIN_SECTION
@@ -4971,6 +4931,7 @@ GLOBALS_SECTION
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
+    #include "lib/milka.h"
 	#include "Selex.h"
 	// #include "lib/msy.cpp"
 	// #include "lib/baranov.cpp"

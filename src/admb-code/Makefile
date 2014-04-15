@@ -14,6 +14,7 @@ SRCS = $(EXEC).cpp               \
 		lib/LogisticStudentT.cpp \
   		lib/msy.cpp 			 \
 		lib/baranov.cpp          \
+		lib/milka.cpp            \
 			selex.cpp 
 		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)

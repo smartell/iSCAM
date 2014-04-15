@@ -606,7 +606,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 						double dCdF  = -(k1*oa) - ft(i)*(k2*sa) + ft(i)*(k3*oa);
 						J(i)(j)     += dCdF;
 						chat(i)     += (ft(i)*k1) * oa;
-						cout<<"CT = "<<(ft(i)*k1) * oa<<endl;
+						// cout<<"CT = "<<(ft(i)*k1) * oa<<endl;
 						m_hCt(h)(i)  = (ft(i)*k1) * oa;
 					}
 					else
@@ -623,7 +623,7 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 		fx   = ct - chat;
 		//The following couts were used to debug the transpose error in the Jacobian.
 		
-		cout<<"its = "<<its-1<<" fx = "<<fx<<endl;
+		// cout<<"its = "<<its<<" fx = "<<fx<<endl;
 		//cout<<"Jacobian\t"<<"its = "<<its<<"\n"<<J<<endl;
 		invJ = -inv(J);
 		ft  += fx*invJ;
