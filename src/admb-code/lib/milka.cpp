@@ -97,7 +97,6 @@ void OperatingModel::runScenario(const int &seed)
 
 		runStockAssessment();
 		cout<<"Year = "<<	i<<endl;
-
 		
 	}
 	cout<<m_dCatchData<<endl;
