@@ -16,6 +16,11 @@ Steve Martell and contains contributions or stolen code and ideas from:
 * Sean Cox
 * Nathan Taylor
 * Catarina Wor
+* Richard Methot
+* Matthew Supernaw
+* Chris Francis
+* Mark Maunder
+* Marie Etienne
 
 _____________________________________________________________
 _____________________________________________________________

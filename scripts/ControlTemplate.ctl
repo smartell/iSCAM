@@ -33,6 +33,7 @@
 ##     -3 : logistic_normal, no autocorrelation, AR1, AR2.
 ##     -4 : logistic_normal, AR1
 ##     -5 : logistic_normal, AR2
+##     -6 : multinomial with estimated effective samples size (log_age_tau2 phz >0)
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
    1            ## Gear Index

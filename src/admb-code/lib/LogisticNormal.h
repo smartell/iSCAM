@@ -4,9 +4,6 @@
  * \addtogroup Likelihoods [group-title]
  */
 
-
-/// Jimmy can ride a bike
-
 /**
 Logistic-normal likelihood for size-age composition data.
 Much of this code is based on a paper written by Chris Francis
