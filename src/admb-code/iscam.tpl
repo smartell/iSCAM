@@ -751,15 +751,16 @@ DATA_SECTION
 	3darray d3_wt_mat(1,n_ags,syr,nyr+1,sage,nage);
 	3darray d3_len_age(1,n_ags,syr,nyr+1,sage,nage);
 
-	imatrix nrh(1,2,1,2);
-	imatrix nch(1,2,1,2);
-	!!nrh(1) = 1;
-	!!nrh(2) = 2;
-	!!nch(1) = 1;
-	!!nch(2) = 2;
-	!!COUT(nrh);
-	!!COUT(nch);
-	4darray d4_alk(1,nAgears,1,n_A_nobs,sage,nrh,nage,nch);
+	// Trying to figure this out for Robyn forrest.
+	// imatrix nrh(1,2,1,2);
+	// imatrix nch(1,2,1,2);
+	// !!nrh(1) = 1;
+	// !!nrh(2) = 2;
+	// !!nch(1) = 1;
+	// !!nch(2) = 2;
+	// !!COUT(nrh);
+	// !!COUT(nch);
+	// 4darray d4_alk(1,nAgears,1,n_A_nobs,sage,nrh,nage,nch);
 
 	LOC_CALCS
 		d3_wt_avg.initialize();
@@ -4937,7 +4938,7 @@ GLOBALS_SECTION
 	// #include "lib/baranov.cpp"
 	// #include "lib/LogisticNormal.cpp"
 	// #include "lib/LogisticStudentT.cpp"
-	#include "OpMod.h"
+	// #include "OpMod.h"
 
 	ivector getIndex(const dvector& a, const dvector& b)
 	{
