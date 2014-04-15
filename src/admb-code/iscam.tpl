@@ -1365,7 +1365,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
-	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
+	init_number_vector log_degrees_of_freedom(1,nAgears,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -2831,6 +2831,9 @@ FUNCTION calcObjectiveFunction
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
+				case 6:  // multinomial with estimated effective sample size.
+					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
@@ -4247,6 +4250,7 @@ REPORT_SECTION
 				
 				nscaler(k) /= naa;
 			}
+
 		}
 		REPORT(nscaler);
 	}
@@ -4933,6 +4937,7 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
     #include "lib/milka.h"
+    #include "lib/multinomial.h"
 	#include "Selex.h"
 	// #include "lib/msy.cpp"
 	// #include "lib/baranov.cpp"
