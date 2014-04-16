@@ -490,8 +490,8 @@ DATA_SECTION
 	// | - Total catch in weight (type=1), numbers (type=2), or roe (type=3).
 	// | - dCatchData matrix cols: (year gear area group sex type value).
 	// | - If total catch is asexual (sex=0), pool predicted catch from nsex groups.
-	// | - ft_count    -> Number of estimated fishing mortality rate parameters.
-	// | - d3_Ct -> An array of observed catch in group(ig) year (row) by gear (col)
+	// | - ft_count  -> Number of estimated fishing mortality rate parameters.
+	// | - d3_Ct     -> An array of observed catch in group(ig) year (row) by gear (col)
 	// | - [?] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int nCtNobs;
 	init_matrix dCatchData(1,nCtNobs,1,7);
@@ -1204,7 +1204,7 @@ DATA_SECTION
 	// | - Modifying nyr to allow for retrospective analysis.
 	// | - If retro_yrs > 0, then ensure that pf_cntrl arrays are not greater than nyr,
 	// |   otherwise arrays for mbar will go out of bounds.
-	// | 
+	// | - Reduce ft_count so as not to bias estimates of ft.
 
 	!! nyr = nyr - retro_yrs;
 	LOC_CALCS
@@ -1214,6 +1214,10 @@ DATA_SECTION
 			if(pf_cntrl(4)>nyr) pf_cntrl(4) = nyr;
 			if(pf_cntrl(6)>nyr) pf_cntrl(6) = nyr;
 		}
+		for( i = 1; i <= nCtNobs; i++ )
+		{
+			if( dCatchData(i)(1) > nyr ) ft_count --;
+		}
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -1221,6 +1225,7 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | - start assessment at syr + # of prospective years.
 	// | - adjust sel_blocks to new syr
+	// | - Reduce ft_count so as not to bias estimates of ft.
 	!! syr = syr + (int)d_iscamCntrl(14);
 	LOC_CALCS
 		//sel_blocks(1,ngear,1,n_sel_blocks);
@@ -1232,6 +1237,10 @@ DATA_SECTION
 		if(pf_cntrl(3)<syr) pf_cntrl(3) = syr;
 		if(pf_cntrl(5)<syr) pf_cntrl(5) = syr;
 
+		for( i = 1; i <= nCtNobs; i++ )
+		{
+			if( dCatchData(i)(1) < syr ) ft_count --;
+		}
 	END_CALCS
 
 
@@ -1572,9 +1581,7 @@ PROCEDURE_SECTION
 	
 	calcTotalCatch();
 	
-	calcAgeComposition();
-
-	//calcLengthComposition();  // WIP: need to add variables for length comps
+	calcComposition();
 	
 	calcSurveyObservations();
 	
@@ -2026,12 +2033,13 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
   	[*] Dec 24, 2010.  Adding time-varying natural mortality.
   	[*] May 20, 2011.  Add cubic spline to the time-varying natural mortality.
 	[ ] Calculate average M for reference point calculations based on pfc file.
-	[ ] Adjust ft_count for retrospective and prospective analyses.
+	[ ] April 16, 2014. Adjust ft_count for retrospective and prospective analyses.
   	*/
 FUNCTION calcTotalMortality
   {
 
 	int ig,ii,i,k,l;
+	int ft_counter = 0;
 	dvariable ftmp;
 	F.initialize(); 
 	ft.initialize();
@@ -2052,10 +2060,11 @@ FUNCTION calcTotalMortality
 		l  = dCatchData(ig)(6);  //type
 		if( i < syr ) continue;
 		if( i > nyr ) continue;
+		ft_counter ++;
 		if( h )
 		{
 			ii = pntr_ags(f,g,h);    
-			ftmp = mfexp(log_ft_pars(ig));
+			ftmp = mfexp(log_ft_pars(ft_counter));
 			ft(ii)(k,i) = ftmp;
 			if( l != 3 )
 			{
@@ -2067,7 +2076,7 @@ FUNCTION calcTotalMortality
 			for(h=1;h<=nsex;h++)
 			{
 				ii = pntr_ags(f,g,h);    
-				ftmp = mfexp(log_ft_pars(ig));
+				ftmp = mfexp(log_ft_pars(ft_counter));
 				ft(ii)(k,i) = ftmp;
 				if( l != 3 )
 				{
@@ -2233,7 +2242,7 @@ FUNCTION calcNumbersAtAge
 
   	*/
   	
-FUNCTION calcAgeComposition
+FUNCTION calcComposition
   {
   	int ii,ig,kk;
   	dvar_vector va(sage,nage);
@@ -2506,6 +2515,7 @@ FUNCTION calcSurveyObservations
   {
 	
 	int ii,kk,ig,nz;
+	int iz=1;  // index for first year of data for prospective analysis.
 	double di;
 	dvariable ftmp;
 	dvar_vector Na(sage,nage);
@@ -2530,9 +2540,15 @@ FUNCTION calcSurveyObservations
 			di   = d3_survey_data(kk)(ii)(8);
 
 			// | trap for retrospective nyr change
+			if( i < syr )
+			{
+				iz ++;
+				continue;
+			} 
+
 			if( i > nyr ) continue;
 
-			nz ++;
+			nz ++;  // counter for number of observations.
 
 			// h ==0?h=1:NULL;
 			Na.initialize();
@@ -2557,31 +2573,31 @@ FUNCTION calcSurveyObservations
 			}
 		
 		} // end of ii loop
-		dvector     it = trans(d3_survey_data(kk))(2)(1,nz);
-		dvector     wt = trans(d3_survey_data(kk))(7)(1,nz);
+		dvector     it = trans(d3_survey_data(kk))(2)(iz,nz);
+		dvector     wt = trans(d3_survey_data(kk))(7)(iz,nz);
 		            wt = wt/sum(wt);
 		dvar_vector t1 = rowsum(V);
-		dvar_vector zt = log(it) - log(t1(1,nz));
+		dvar_vector zt = log(it) - log(t1(iz,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
 				 q(kk) = mfexp(zbar);
 
 		// | survey residuals
-		epsilon(kk).sub(1,nz) = zt - zbar;
-		 it_hat(kk).sub(1,nz) = q(kk) * t1(1,nz);
+		epsilon(kk).sub(iz,nz) = zt - zbar;
+		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
 
 		// | SPECIAL CASE: penalized random walk in q.
 		if( q_prior(kk)==2 )
 		{
 			epsilon(kk).initialize();
 			dvar_vector fd_zt     = first_difference(zt);
-			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(1,nz-1)));
-			epsilon(kk).sub(1,nz-1) = fd_zt - zw_bar;
-			qt(kk)(1) = exp(zt(1));
-			for(ii=2;ii<=nz;ii++)
+			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
+			epsilon(kk).sub(iz,nz-1) = fd_zt - zw_bar;
+			qt(kk)(iz) = exp(zt(iz));
+			for(ii=iz+1;ii<=nz;ii++)
 			{
 				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
 			}
-			it_hat(kk).sub(1,nz) = elem_prod(qt(kk)(1,nz),t1(1,nz));
+			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 		}
 	}
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
@@ -3937,7 +3953,7 @@ FUNCTION void simulationModel(const long& seed)
 	int kk,aa,AA;
 	double age_tau = value(sig);
 	
-	calcAgeComposition();
+	calcComposition();
 	for(kk=1;kk<=nAgears;kk++)
 	{
 		aa = n_A_sage(kk);
@@ -4239,7 +4255,7 @@ REPORT_SECTION
 		/// The following is a total hack job to get the effective sample size
 		/// for the multinomial distributions.
 
-		// TODO Fix the retrospective bug here near line 4507 (if iyr<=nyr)
+		// FIXED the retrospective bug here near line 4507 (if iyr<=nyr)
 		report<<"Neff"<<endl;
 		dvector nscaler(1,nAgears);
 		nscaler.initialize();
