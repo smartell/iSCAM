@@ -1320,7 +1320,7 @@ PARAMETER_SECTION
 					isel_type(k)==6 || 
 					(
 					isel_type(k)>=7 && 
-					isel_type(k) != 12 
+					isel_type(k) <= 12 
 					)
 					)
 				{
@@ -1335,8 +1335,21 @@ PARAMETER_SECTION
 						sel_par(k,j,2) = log(ghat_agemax(k));
 					}
 				}
+				else if( isel_type(k) ==13 )
+				{
+					for(int j = 1; j <= n_sel_blocks(k); j++ )
+					{
+						double dd = 1.e-8;
+						double stp = 1.0/(ghat_agemax(k)-ahat_agemin(k));
+						sel_par(k)(j).fill_seqadd(dd,stp);
+
+						COUT(sel_par(k)(j));
+						exit(1);
+					}
+				}
 			}
 		}
+
 	END_CALCS
 	
 
@@ -1995,6 +2008,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					break;
 					//parei aqui
 				case 13:	// truncated age-specific selectivity coefficients
+
 					for(i=syr; i<=nyr; i++)
 					{
 						if( i == sel_blocks(k,byr) )
@@ -2002,19 +2016,19 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							bpar ++;
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						for(j=ahat_agemin(kgear); j<=ghat_agemax(kgear); j++)
+						for(j=ahat_agemin(k); j<=ghat_agemax(k); j++)
 						{
-							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-ahat_agemin(kgear)+1);
+							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-ahat_agemin(k)+1);
 						}
 						
-						for (j=ghat_agemax(kgear)+1; j<=nage; j++)
+						for (j=ghat_agemax(k)+1; j<=nage; j++)
 						{
-							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ghat_agemax(kgear));
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ghat_agemax(k));
 						}
 
-						for(j=sage; j<ahat_agemin(kgear); j++)
+						for(j=sage; j<ahat_agemin(k); j++)
 						{
-							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ahat_agemin(kgear));
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ahat_agemin(k));
 						}						
 					}
 					break;
