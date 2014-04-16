@@ -2515,7 +2515,6 @@ FUNCTION calcSurveyObservations
   {
 	
 	int ii,kk,ig,nz;
-	int iz=1;  // index for first year of data for prospective analysis.
 	double di;
 	dvariable ftmp;
 	dvar_vector Na(sage,nage);
@@ -2530,6 +2529,7 @@ FUNCTION calcSurveyObservations
 		dvar_matrix V(1,n_it_nobs(kk),sage,nage);
 		V.initialize();
 		nz = 0;
+		int iz=1;  // index for first year of data for prospective analysis.
 		for(ii=1;ii<=n_it_nobs(kk);ii++)
 		{
 			i    = d3_survey_data(kk)(ii)(1);
@@ -2543,6 +2543,7 @@ FUNCTION calcSurveyObservations
 			if( i < syr )
 			{
 				iz ++;
+				nz ++;
 				continue;
 			} 
 

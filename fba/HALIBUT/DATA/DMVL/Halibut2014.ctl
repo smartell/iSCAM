@@ -93,7 +93,7 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 2	     				# -number of surveys (nits) 
-2  0					# -prior type (see legend above
+2  2					# -prior type (see legend above
 0  0					# -prior log(mean)
 0  0					# -prior sd
 ## ------------------------------------------------------------------------- ##

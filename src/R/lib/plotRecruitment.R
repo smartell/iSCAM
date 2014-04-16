@@ -17,6 +17,7 @@
 	p <- ggplot(mdf,aes(factor(Year),Rt))
 	p <- p + geom_bar(width=0.75,stat='identity')
 	p <- p + labs(x="Year",y=paste("Recruitment"))
+	p <- p + scale_x_discrete()
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }
