@@ -1160,7 +1160,7 @@ DATA_SECTION
 	// | 11-> std in natural mortality deviations.
 	// | 12-> number of estimated nodes for deviations in natural mortality
 	// | 13-> fraction of total mortality that takes place prior to spawning
-	// | 14-> switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// | 14-> DEPRECATED switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
 	// | 15-> switch for generating selex based on IFD and cohort biomass
 	init_vector d_iscamCntrl(1,15);
 	int verbose;
@@ -1207,7 +1207,6 @@ DATA_SECTION
 	// | 
 
 	!! nyr = nyr - retro_yrs;
-	
 	LOC_CALCS
 		if(retro_yrs)
 		{
@@ -1217,6 +1216,24 @@ DATA_SECTION
 		}
 	END_CALCS
 
+	// |---------------------------------------------------------------------------------|
+	// | PROSPECTIVE ADJUSTMENT TO syr                                                   |
+	// |---------------------------------------------------------------------------------|
+	// | - start assessment at syr + # of prospective years.
+	// | - adjust sel_blocks to new syr
+	!! syr = syr + (int)d_iscamCntrl(14);
+	LOC_CALCS
+		//sel_blocks(1,ngear,1,n_sel_blocks);
+		for(int k = 1; k <= ngear; k++ )
+		{
+			sel_blocks(k)(1) = syr;
+		}
+		if(pf_cntrl(1)<syr) pf_cntrl(1) = syr;
+		if(pf_cntrl(3)<syr) pf_cntrl(3) = syr;
+		if(pf_cntrl(5)<syr) pf_cntrl(5) = syr;
+
+	END_CALCS
+
 
 	// |---------------------------------------------------------------------------------|
 	// | MANAGEMENT STRATEGY EVALUATION INPUTS
@@ -1224,17 +1241,17 @@ DATA_SECTION
 	// |
 	
 
-	LOC_CALCS
-		ifstream ifile("Halibut2012.mse");
-		if(ifile)
-		{
-			cout<<"Vader is happy"<<endl;
-			readMseInputs();
-			
-			
-			exit(1);
-		}
-	END_CALCS
+	//LOC_CALCS
+	//	ifstream ifile("Halibut2012.mse");
+	//	if(ifile)
+	//	{
+	//		cout<<"Vader is happy"<<endl;
+	//		readMseInputs();
+	//		
+	//		
+	//		exit(1);
+	//	}
+	//END_CALCS
 
 
 	// END OF DATA_SECTION
@@ -2009,7 +2026,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
   	[*] Dec 24, 2010.  Adding time-varying natural mortality.
   	[*] May 20, 2011.  Add cubic spline to the time-varying natural mortality.
 	[ ] Calculate average M for reference point calculations based on pfc file.
-	[ ] 
+	[ ] Adjust ft_count for retrospective and prospective analyses.
   	*/
 FUNCTION calcTotalMortality
   {
@@ -2033,7 +2050,7 @@ FUNCTION calcTotalMortality
 		g  = dCatchData(ig)(4);  //group
 		h  = dCatchData(ig)(5);  //sex
 		l  = dCatchData(ig)(6);  //type
-
+		if( i < syr ) continue;
 		if( i > nyr ) continue;
 		if( h )
 		{
@@ -2369,6 +2386,7 @@ FUNCTION calcTotalCatch
 		d_ct = dCatchData(ii,7);
   		
   		// | trap for retro year
+  		if( i<syr ) continue;
   		if( i>nyr ) continue;
 
 
@@ -4344,6 +4362,7 @@ REPORT_SECTION
 	// |
 	if( last_phase() )
 	{
+		cout<<"Calculating MSY-based reference points"<<endl;
 		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
@@ -4969,10 +4988,10 @@ GLOBALS_SECTION
 		return(tmp);
 	}
 
-	void readMseInputs()
-	  {
-	  	cout<<"yep this worked"<<endl;
-	  }
+	//void readMseInputs()
+	//  {
+	//  	cout<<"yep this worked"<<endl;
+	//  }
 
 	time_t start,finish;
 	long hour,minute,second;
