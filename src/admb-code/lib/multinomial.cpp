@@ -12,12 +12,11 @@ dvariable mult_likelihood(const dmatrix &o, const dvar_matrix &p, dvar_matrix &n
 	for(int i = r1; i <= r2; i++ )
 	{
 		dvar_vector sobs = vn * o(i)/sum(o(i));  //scale observed numbers by effective sample size.
-		ff -= gammln(vn + 1);
-		// ff -= gammln(sum(sobs)+1);
+		ff -= gammln(vn);
 		for(int j = c1; j <= c2; j++ )
 		{
 			if( value(sobs(j)) > 0.0 )
-				ff += gammln(sobs(j)+1);
+				ff += gammln(sobs(j));
 		}
 		ff -= sobs * log(TINY + p(i));
 		

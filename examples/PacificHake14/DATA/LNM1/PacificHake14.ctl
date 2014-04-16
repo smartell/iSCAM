@@ -40,7 +40,7 @@
 0.000 	0.000 	0.000        ## Minimum proportion for aggregation & tail compression
 0.0000  0.0000  0.0000       ## Small constant to add to comps & renormalize
 1   	1       1            ## phase for log_age_tau2 estimation.
-2   	2 		2            ## phase for phi1 estimation: bounded (-1,1) AR1
+-2   	-2 		-2            ## phase for phi1 estimation: bounded (-1,1) AR1
 -2     -2 	   -2            ## phase for phi2 estimation: bounded (0,1)  AR2 
 -2     -2 	   -2            ## phase for degrees of freedom for student T.
 -12345                   	 ## int check (-12345)
@@ -90,9 +90,9 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 1					# -number of surveys (nits) 
-1					# -prior type (see legend above)
+0					# -prior type (see legend above)
 0					# -prior log(mean)
-0.1					# -prior sd
+0 					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -111,7 +111,7 @@
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
 0.0         # 13 -fraction of total mortality that takes place prior to spawning
-1           # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+0           # 14 -number of prospective years to add to syr.
 1           # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##

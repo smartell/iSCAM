@@ -69,7 +69,7 @@
   5.5    2.5   2.5   2.5   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
   0      0     0     0     0     5     # 4  -No. of age nodes for each gear (0=ignore)
   0      0     0     0     0     10    # 5  -No. of year nodes for 2d spline(0=ignore)
-  3     -3    -3    -3    -3     3     # 6  -Phase of estimation (-1 for fixed)
+  2     -1    -1    -1    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   200.0  200.0 200.0 200.0 200.0 200.0 # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
   50.5   12.5  12.5  12.5  50.5  12.5  # 9  -Penalty wt for time-varying selectivity
@@ -92,10 +92,10 @@
 ##			1 - normal prior density for log(q)                              ##
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
-1					# -number of surveys (nits) 
-0					# -prior type (see legend above
-0					# -prior log(mean)
-0					# -prior sd
+2	     				# -number of surveys (nits) 
+2  0					# -prior type (see legend above
+0  0					# -prior log(mean)
+0  0					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
 
@@ -115,7 +115,7 @@
 0.1       # 11 -std in deviations for natural mortality
 12        # 12 -number of estimated nodes for deviations in natural mortality
 0.50      # 13 -fraction of total mortality that takes place prior to spawning
-3         # 14 -switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+45        # 14 -number of perspective years to start assessment at.
 0         # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##
