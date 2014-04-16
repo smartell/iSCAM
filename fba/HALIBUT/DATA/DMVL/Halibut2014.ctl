@@ -93,7 +93,7 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 2	     				# -number of surveys (nits) 
-2  2					# -prior type (see legend above
+0  0					# -prior type (see legend above
 0  0					# -prior log(mean)
 0  0					# -prior sd
 ## ------------------------------------------------------------------------- ##
@@ -115,7 +115,7 @@
 0.1       # 11 -std in deviations for natural mortality
 12        # 12 -number of estimated nodes for deviations in natural mortality
 0.50      # 13 -fraction of total mortality that takes place prior to spawning
-75        # 14 -number of perspective years to start assessment at.
+100       # 14 -number of perspective years to start assessment at.
 0         # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##

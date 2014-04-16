@@ -10,16 +10,16 @@
 	for(i in 1:n)
 	{
 		fit = M[[i]]$fit
-		sbt <- fit$est[fit$names=="sd_log_sbt"]
-		std <- fit$std[fit$names=="sd_log_sbt"]
-		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,SBt=M[[i]]$sbt,Std=std)
+		log.sbt <- fit$est[fit$names=="sd_log_sbt"]
+		log.std <- fit$std[fit$names=="sd_log_sbt"]
+		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,log.sbt=log.sbt,log.se=log.std)
 		bt <- data.frame(bt,Bo=M[[i]]$bo)
 		mdf <- rbind(mdf,bt)
 	}
 
-	p <- ggplot(mdf,aes(Year,SBt)) + geom_line(width=2)
-	p <- p + geom_ribbon(aes(ymax=SBt+1.96*Std,ymin=SBt-1.96*Std),alpha=0.2)
-	p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
+	p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
+	p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
+	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)

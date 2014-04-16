@@ -1549,7 +1549,7 @@ PARAMETER_SECTION
 	// | SDREPORT VARIABLES AND VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | sd_depletion -> Predicted spawning biomass depletion level bt/Bo
-	// | sd_sbt       -> Spawning biomass for each group.
+	// | sd_log_sbt   -> Log Spawning biomass for each group.
 	// |
 	sdreport_vector sd_depletion(1,ngroup);	
 	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
@@ -2751,7 +2751,7 @@ FUNCTION void calcStockRecruitment()
 
 				// | Step 5. spawning biomass projection under natural mortality only.
 				stmp          = mfexp(-M(ig)(nyr)*d_iscamCntrl(13));
-				sbt(g,nyr+1) += elem_prod(N(ig)(nyr),d3_wt_mat(ig)(i)) * stmp;
+				sbt(g,nyr+1) += elem_prod(N(ig)(nyr+1),d3_wt_mat(ig)(i)) * stmp;
 			}
 
 			// | Estimated recruits
