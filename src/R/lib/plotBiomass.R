@@ -10,8 +10,8 @@
 	for(i in 1:n)
 	{
 		fit = M[[i]]$fit
-		sbt <- fit$est[fit$names=="sd_sbt"]
-		std <- fit$std[fit$names=="sd_sbt"]
+		sbt <- fit$est[fit$names=="sd_log_sbt"]
+		std <- fit$std[fit$names=="sd_log_sbt"]
 		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,SBt=M[[i]]$sbt,Std=std)
 		bt <- data.frame(bt,Bo=M[[i]]$bo)
 		mdf <- rbind(mdf,bt)
