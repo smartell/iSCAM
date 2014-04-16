@@ -14,7 +14,7 @@
 		mdf <- rbind(mdf,rt)
 	}
 
-	p <- ggplot(mdf,aes(factor(Year),Rt))
+	p <- ggplot(mdf,aes((Year),Rt))
 	p <- p + geom_bar(width=0.75,stat='identity')
 	p <- p + labs(x="Year",y=paste("Recruitment"))
 	p <- p + facet_wrap(~Model,scales="free")

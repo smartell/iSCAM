@@ -22,7 +22,7 @@ setwd(.PWD)
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
 require(ggplot2)
-.THEME      <- theme_bw(11)
+.THEME      <- theme_bw(10)
 .UNITS      <- "(mlb)"
 
 # |----------------------------------------------------------------------------------|
