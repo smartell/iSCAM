@@ -993,11 +993,12 @@ DATA_SECTION
 	// |    8      logistic 3 parameter function based on mean weight deviations.
 	// |    11     length-based logistic function with 2 parametrs based on mean length.
 	// |    12     length-based selectivity coefficients with cubic spline interpolation.
+	// |	13 	   age-based selectivity coefficients with age_min-age_max parameters.
 	// |
 	// | selex_controls (1-10)
 	// |  1  -> isel_type - switch for selectivity.
-	// |  2  -> ahat      - age-at-50% vulnerbality for logistic function.
-	// |  3  -> ghat      - std at 50% age of vulnerability for logistic function.
+	// |  2  -> ahat (sel_type=1) - age-at-50% vulnerbality for logistic function or (sel_type=13) -age_min
+	// |  3  -> ghat (sel_type=1) - std at 50% age of vulnerability for logistic function or (sel_type=13) -age_max
 	// |  4  -> age_nodes - No. of age-nodes for bicubic spline.
 	// |  5  -> yr_nodes  - No. of year-nodes for bicubic spline.
 	// |  6  -> sel_phz   - phase for estimating selectivity parameters.
@@ -1015,9 +1016,8 @@ DATA_SECTION
 	ivector    isel_type(1,ngear);	
 	ivector      sel_phz(1,ngear);	
 	ivector n_sel_blocks(1,ngear);	
-
-	vector      ahat(1,ngear);	
-	vector      ghat(1,ngear);	
+	vector      ahat_agemin(1,ngear);	
+	vector      ghat_agemax(1,ngear);
 	vector age_nodes(1,ngear);	
 	vector  yr_nodes(1,ngear);	
 	vector  lambda_1(1,ngear);	
@@ -1025,8 +1025,8 @@ DATA_SECTION
 	vector  lambda_3(1,ngear);	
 	
 	LOC_CALCS
-		ahat      = selex_controls(2);
-		ghat      = selex_controls(3);
+		ahat_agemin      = selex_controls(2);
+		ghat_agemax      = selex_controls(3);
 		age_nodes = selex_controls(4);
 		yr_nodes  = selex_controls(5);
 		lambda_1  = selex_controls(7);
@@ -1113,6 +1113,12 @@ DATA_SECTION
 					isel_npar(i) = age_nodes(i);
 					jsel_npar(i) = n_sel_blocks(i);
 					break;
+
+				case 13:
+					// age-specific coefficients for agemin to agemax
+					isel_npar(i) = (ghat_agemax(i)-ahat_agemin(i)+1);
+					jsel_npar(i) = n_sel_blocks(i);
+
 					
 				default: break;
 			}
@@ -1314,7 +1320,7 @@ PARAMETER_SECTION
 					isel_type(k)==6 || 
 					(
 					isel_type(k)>=7 && 
-					isel_type(k) != 12 
+					isel_type(k) <= 12 
 					)
 					)
 				{
@@ -1325,12 +1331,25 @@ PARAMETER_SECTION
 						{
 							uu = 0.05*randn(j+rseed);
 						} 
-						sel_par(k,j,1) = log(ahat(k)*exp(uu));
-						sel_par(k,j,2) = log(ghat(k));
+						sel_par(k,j,1) = log(ahat_agemin(k)*exp(uu));
+						sel_par(k,j,2) = log(ghat_agemax(k));
+					}
+				}
+				else if( isel_type(k) ==13 )
+				{
+					for(int j = 1; j <= n_sel_blocks(k); j++ )
+					{
+						double dd = 1.e-8;
+						double stp = 1.0/(ghat_agemax(k)-ahat_agemin(k));
+						sel_par(k)(j).fill_seqadd(dd,stp);
+
+						COUT(sel_par(k)(j));
+						exit(1);
 					}
 				}
 			}
 		}
+
 	END_CALCS
 	
 
@@ -1391,7 +1410,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
-	init_number_vector log_degrees_of_freedom(1,nAgears,nPhz_df);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -1985,6 +2004,32 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					
 						dvector len = pow(d3_wt_avg(ig)(i)/d_a(ig),1./d_b(ig));
 						log_sel(kgear)(ig)(i)=cubic_spline( sel_par(k)(bpar), len );
+					}
+					break;
+					//parei aqui
+				case 13:	// truncated age-specific selectivity coefficients
+
+					for(i=syr; i<=nyr; i++)
+					{
+						if( i == sel_blocks(k,byr) )
+						{
+							bpar ++;
+							if( byr < n_sel_blocks(k) ) byr++;
+						}
+						for(j=ahat_agemin(k); j<=ghat_agemax(k); j++)
+						{
+							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-ahat_agemin(k)+1);
+						}
+						
+						for (j=ghat_agemax(k)+1; j<=nage; j++)
+						{
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ghat_agemax(k));
+						}
+
+						for(j=sage; j<ahat_agemin(k); j++)
+						{
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ahat_agemin(k));
+						}						
 					}
 					break;
 					
@@ -2865,9 +2910,6 @@ FUNCTION calcObjectiveFunction
 				break;
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
-				break;
-				case 6:  // multinomial with estimated effective sample size.
-					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
@@ -4285,7 +4327,6 @@ REPORT_SECTION
 				
 				nscaler(k) /= naa;
 			}
-
 		}
 		REPORT(nscaler);
 	}
@@ -4973,7 +5014,6 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
     #include "lib/milka.h"
-    #include "lib/multinomial.h"
 	#include "Selex.h"
 	// #include "lib/msy.cpp"
 	// #include "lib/baranov.cpp"
