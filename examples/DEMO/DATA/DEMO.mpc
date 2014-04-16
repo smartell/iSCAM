@@ -2,7 +2,7 @@
 ##|   PROJECTION CONTROL FILE - USE FOR SHORT-TERM FORECASTS AND LONG-TERM MSE WORK   |##
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## m_pyr  # Terminal year of projection.
-1999
+1985
 ## m_nHCR # Harvest Control Rule Type.
 1
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
