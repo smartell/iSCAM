@@ -38,7 +38,7 @@
 	p <- ggplot(mdf,aes(x=variable,y=exp(value),colour=factor(Sex))) + geom_point()
 	p <- p + geom_line(aes(group=Sex))
 	p <- p + labs(x="Age",y="Selectivity",color="Sex")
-	p <- p + facet_grid(Year ~ Gear)
+	p <- p + facet_grid(Year ~ Gear) + facet_wrap(~Model+Gear+Year+Sex)
 	print(p + .THEME)
 }
 

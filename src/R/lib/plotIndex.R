@@ -33,14 +33,15 @@ require(reshape2)
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		it <- data.frame( cbind(M[[i]]$d3_survey_data,M[[i]]$epsilon) )
+		epsilon <- na.omit(as.vector(t(M[[1]]$epsilon)))
+		it <- data.frame( cbind(M[[i]]$d3_survey_data,epsilon) )
 		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","wt","timing","Residual")
 		it <- data.frame(Model=names(M)[i],it)
 		mdf <- rbind(mdf,it)
 	}
 	print(head(mdf,3))
 	print(mdf)
-	p <- ggplot(mdf,aes(x=factor(Year),Residual,fill=Gear))
+	p <- ggplot(mdf,aes(x=(Year),Residual,fill=factor(Gear)))
 	p <- p + geom_bar(width=0.75,position="dodge",stat='identity')
 	p <- p + labs(x="Year",y="log residual",fill="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
