@@ -1343,8 +1343,8 @@ PARAMETER_SECTION
 						double stp = 1.0/(ghat_agemax(k)-ahat_agemin(k));
 						sel_par(k)(j).fill_seqadd(dd,stp);
 
-						COUT(sel_par(k)(j));
-						exit(1);
+						//COUT(sel_par(k)(j));
+						//exit(1);
 					}
 				}
 			}
