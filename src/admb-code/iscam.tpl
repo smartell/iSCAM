@@ -1116,7 +1116,7 @@ DATA_SECTION
 
 				case 13:
 					// age-specific coefficients for agemin to agemax
-					isel_npar(i) = (ghat_agemax(i)-ahat_agemin(i));
+					isel_npar(i) = (ghat_agemax(i)-ahat_agemin(i)+1);
 					jsel_npar(i) = n_sel_blocks(i);
 
 					
@@ -1371,7 +1371,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
-	init_number_vector log_degrees_of_freedom(1,nAgears,nPhz_df);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -1978,19 +1978,19 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 							bpar ++;
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						for(j=ahat_agemin(kgear);j<=ghat_agemax(kgear)-1;j++)
+						for(j=ahat_agemin(kgear); j<=ghat_agemax(kgear); j++)
 						{
 							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-ahat_agemin(kgear)+1);
 						}
 						
-						for (j=ghat_agemax(kgear); j<=nage ;j++ )
+						for (j=ghat_agemax(kgear)+1; j<=nage; j++)
 						{
-							log_sel(kgear)(ig)(i,j) = log_sel(k)(ig)(i,ghat_agemax(kgear)-1);
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ghat_agemax(kgear));
 						}
 
-						for(j=sage;j<=ahat_agemin(kgear)-1;j++)
+						for(j=sage; j<ahat_agemin(kgear); j++)
 						{
-							log_sel(kgear)(ig)(i,j) = log_sel(k)(ig)(i,ahat_agemin(kgear));
+							log_sel(kgear)(ig)(i,j) = log_sel(kgear)(ig)(i,ahat_agemin(kgear));
 						}						
 					}
 					break;
@@ -2861,9 +2861,6 @@ FUNCTION calcObjectiveFunction
 				break;
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
-				break;
-				case 6:  // multinomial with estimated effective sample size.
-					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
@@ -4281,7 +4278,6 @@ REPORT_SECTION
 				
 				nscaler(k) /= naa;
 			}
-
 		}
 		REPORT(nscaler);
 	}
@@ -4968,7 +4964,6 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
     #include "lib/milka.h"
-    #include "lib/multinomial.h"
 	#include "Selex.h"
 	// #include "lib/msy.cpp"
 	// #include "lib/baranov.cpp"
