@@ -1243,6 +1243,8 @@ DATA_SECTION
 		if(pf_cntrl(3)<syr) pf_cntrl(3) = syr;
 		if(pf_cntrl(5)<syr) pf_cntrl(5) = syr;
 
+		cout<< "its bigger on the inside"<<endl;
+
 		for( i = 1; i <= nCtNobs; i++ )
 		{
 			if( dCatchData(i)(1) < syr ) ft_count --;
