@@ -1553,7 +1553,7 @@ PARAMETER_SECTION
 	// | sd_sbt       -> Spawning biomass for each group.
 	// |
 	sdreport_vector sd_depletion(1,ngroup);	
-	sdreport_matrix sd_sbt(1,ngroup,syr,nyr+1);
+	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
 	
 
 PRELIMINARY_CALCS_SECTION
@@ -1645,13 +1645,13 @@ PROCEDURE_SECTION
 FUNCTION void calcSdreportVariables()
   {
 	sd_depletion.initialize();
-	sd_sbt.initialize();
+	sd_log_sbt.initialize();
 
 	for(g=1;g<=ngroup;g++)
 	{
 		sd_depletion(g) = sbt(g)(nyr)/sbo(g);
 
-		sd_sbt(g) = sbt(g);
+		sd_log_sbt(g) = log(sbt(g));
 	}
 	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
@@ -2308,7 +2308,9 @@ FUNCTION calcComposition
 	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
 	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
 	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
+
 	  		// | trap for retrospecitve analysis.
+	  		if(i < syr) continue;
 	  		if(i > nyr) continue;
 
 	  		if( h )  // age comps are sexed (h > 0)
@@ -2886,17 +2888,19 @@ FUNCTION calcObjectiveFunction
 	{	
 		if( n_A_nobs(k)>0 )
 		{
-			int naa=0;
+			int naa = 0;
+			int iaa = 1;
 			int iyr;
 			//retrospective counter
 			for(i=1;i<=n_A_nobs(k);i++)
 			{
 				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
-				if(iyr<=nyr) naa++;
+				if( iyr <= nyr ) naa++;
+				if( iyr <  syr ) iaa++;
 			}
 			
-			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
-			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(1,naa);
+			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
+			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); 
 			nu.initialize();
 			
@@ -2970,7 +2974,7 @@ FUNCTION calcObjectiveFunction
 			}
 			
 			// | Extract residuals.
-			for(i=1;i<=naa;i++)
+			for(i=iaa;i<=naa;i++)
 			{
 				A_nu(k)(i)(n_A_sage(k),n_A_nage(k))=nu(i);
 			}
