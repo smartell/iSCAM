@@ -972,6 +972,7 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	dfs<< n_A_sage				<<endl;
 	  	dfs<< n_A_nage				<<endl;
 	  	dfs<< inp_nscaler 			<<endl;
+	  	dfs<< n_ageFlag				<<endl;
 	  	dfs<< tmp_d3_A				<<endl;
 	
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
