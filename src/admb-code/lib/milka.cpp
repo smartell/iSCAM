@@ -203,6 +203,9 @@ void OperatingModel::initParameters()
 	
 
 	// Age-composition arrays	
+	m_A_irow.allocate(1,nAgears);
+	m_A_irow.initialize(); 
+
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
 	for( k = 1; k <= nAgears; k++ )
@@ -218,10 +221,10 @@ void OperatingModel::initParameters()
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
 	}
 		
-	m_A_irow.allocate(1,nAgears);
-	m_A_irow.initialize(); 
-
 	//weight at age array
+	m_W_irow.allocate(1,nWtTab);
+	m_W_irow.initialize(); 
+
 	m_nWtNobs.allocate(1,nWtTab);
 	m_nWtNobs = nWtNobs + m_nyrs + m_nyrs * sum(m_nWSex);
 
@@ -788,7 +791,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
 
 void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 {
-	static int iroww = 0;
 	int gear;
 	
 	for(int k = 1; k <= nWtTab; k++ )
@@ -803,15 +805,15 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 				int hh = m_nWSex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
-					iroww ++;
+					m_W_irow(k) ++;
 					int ig = pntr_ags(f,g,h);
 		
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-5) = iyr;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-4) = gear;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-3) = f;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-2) = g;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-1) = hh>0?h:0;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-5) = iyr;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-4) = gear;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 				}
 			}
 		}
