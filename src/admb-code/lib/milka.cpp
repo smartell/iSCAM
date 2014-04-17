@@ -640,6 +640,19 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	dvector ma(sage,nage);
 	dvector wa(sage,nage);
 	double dV;
+
+	//create an array epsilon(1,nits,nyr+1,pyr), and fill with random normal deviates.
+	//This can be done with the random_number_geneator rng(seed);
+
+	//epsilon(k).fill_randn(rng);
+
+	//then multiply these numbers by the standard deviations for the observation errors.
+
+	//it = qt*bt*exp(epsilon*sig);
+
+
+
+
 	for(int k = 1; k <= nItNobs; k++ )
 	{
 		
