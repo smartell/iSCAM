@@ -1,5 +1,6 @@
   #define HOME_VERSION
   #include "fvar.hpp"
+  #include "multinomial.h"
   
   void dfcholeski_solve(void);
   

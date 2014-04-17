@@ -43,7 +43,7 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 		      + 0.5*(v+pp) * log(1.0+e*e/v) - ln_det_choleski_inv;
 	}
 
-
+	return ll;
 }
 
 // FUNCTION  dvariable compositional_likelihood(void)

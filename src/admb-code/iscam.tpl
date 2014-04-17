@@ -2976,8 +2976,8 @@ FUNCTION calcObjectiveFunction
 					}
 				break;
 
-				case 6: // Multivariate-t 
-					
+				case 7: // Multivariate-t 
+					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),phi1(k));
 				break;
 			}
 			
@@ -5027,6 +5027,7 @@ GLOBALS_SECTION
 	#include "lib/baranov.h"
     #include "lib/LogisticNormal.h"
     #include "lib/milka.h"
+    #include "lib/multinomial.h"
 	#include "Selex.h"
 	// #include "lib/msy.cpp"
 	// #include "lib/baranov.cpp"

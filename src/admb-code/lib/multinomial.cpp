@@ -1,6 +1,7 @@
 #include <admodel.h>
 #include "multinomial.h"
-dvariable mult_likelihood(const dmatrix &o, const dvar_matrix &p, dvar_matrix &nu, const dvariable &log_vn)
+dvariable mult_likelihood(const dmatrix &o, const dvar_matrix &p, dvar_matrix &nu, 
+                          const dvariable &log_vn)
 {
 
 	// kludge to ensure observed and predicted matrixes are the same size
