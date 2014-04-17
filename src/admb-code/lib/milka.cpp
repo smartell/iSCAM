@@ -52,11 +52,11 @@ OperatingModel::~OperatingModel(){}
 OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 :model_data(argc,argv), mv(_mv)
 {
-	cout<<"Inheritance version using model_data as base class"<<endl;
-	cout<<"Ngroup "<<ngroup<<endl;
-	cout<<"Catch Data\n"<<dCatchData<<endl;
-	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
-	cout<<"eof "<<eof<<endl;
+	// cout<<"Inheritance version using model_data as base class"<<endl;
+	// cout<<"Ngroup "<<ngroup<<endl;
+	// cout<<"Catch Data\n"<<dCatchData<<endl;
+	// cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
+	// cout<<"eof "<<eof<<endl;
 
 }
 
@@ -72,7 +72,6 @@ void OperatingModel::runScenario(const int &seed)
 	conditionReferenceModel();
 
 	setRandomVariables(seed);
-
 	for(int i = nyr+1; i <= m_nPyr; i++ )
 	{
 		getReferencePointsAndStockStatus();
@@ -88,6 +87,7 @@ void OperatingModel::runScenario(const int &seed)
 		calcRelativeAbundance(i);
 
 		calcCompositionData(i);
+	cout<<"MILKA: Ok to here"<<endl;
 
 		calcEmpiricalWeightAtAge(i);
 
@@ -205,7 +205,10 @@ void OperatingModel::initParameters()
 	// Age-composition arrays	
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
-	m_n_A_nobs = n_A_nobs + m_nyrs + m_nyrs * sum(m_nASex);
+	for( k = 1; k <= nAgears; k++ )
+	{
+		m_n_A_nobs(k) = n_A_nobs(k) + m_nyrs + m_nyrs * m_nASex(k);
+	}
 	
 	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
 	m_d3_A.initialize();
@@ -658,19 +661,6 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	dvector ma(sage,nage);
 	dvector wa(sage,nage);
 	double dV;
-
-	//create an array epsilon(1,nits,nyr+1,pyr), and fill with random normal deviates.
-	//This can be done with the random_number_geneator rng(seed);
-
-	//epsilon(k).fill_randn(rng);
-
-	//then multiply these numbers by the standard deviations for the observation errors.
-
-	//it = qt*bt*exp(epsilon*sig);
-
-
-
-
 	for(int k = 1; k <= nItNobs; k++ )
 	{
 		
@@ -793,7 +783,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
 			}
 		}
 	}
-
 	
 }
 
@@ -972,7 +961,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 			
 		// Write Composition information
 	  	dfs<<"#Age composition"		<<endl;
-  		
   		ivector tmp_n_A_nobs(1,nAgears);
   		tmp_n_A_nobs.initialize();
 
