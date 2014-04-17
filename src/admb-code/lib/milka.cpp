@@ -589,6 +589,8 @@ void OperatingModel::implementFisheries(const int &iyr)
 						m_dCatchData(m_irow,5) = hh>0?h:0;
 						m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
 						m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+
+
 					}
 				}
 			}
@@ -597,7 +599,7 @@ void OperatingModel::implementFisheries(const int &iyr)
 	} // narea f
 	// cout<<m_dCatchData<<endl;
 	// cout<<"END"<<endl;
-	
+	cout<<"catch in "<<iyr<<" is "<< m_dCatchData(m_irow)<<endl;
 	//cout<<"finished implementing fisheries"<<endl;
 
 }
@@ -758,7 +760,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
 					pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
-
+					cout<<"This is pa "<<pa<<endl;
 					//rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
 				}
 			

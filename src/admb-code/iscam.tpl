@@ -663,8 +663,8 @@ DATA_SECTION
 	vector projwt(1,nWtTab);
 
 
-	LOC_CALCS
-		
+
+	LOC_CALCS		
 		/*
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
