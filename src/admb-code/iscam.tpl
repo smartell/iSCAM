@@ -2975,6 +2975,10 @@ FUNCTION calcObjectiveFunction
 						age_tau2(k) = cLST_Age.get_sigma2();
 					}
 				break;
+
+				case 6: // Multivariate-t 
+					
+				break;
 			}
 			
 			// | Extract residuals.

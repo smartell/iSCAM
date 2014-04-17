@@ -2,6 +2,15 @@
 #include "multinomial.h"
 dvariable mult_likelihood(const dmatrix &o, const dvar_matrix &p, dvar_matrix &nu, const dvariable &log_vn)
 {
+
+	// kludge to ensure observed and predicted matrixes are the same size
+	if(o.colsize()!=p.colsize() || o.rowsize()!=p.rowsize())
+	{
+		cerr<<"Error in multivariate_t_likelihood, observed and predicted matrixes"
+		" are not the same size"<<endl;
+		ad_exit(1);
+	}
+	
 	dvariable vn = mfexp(log_vn);
 	dvariable ff = 0.0;
 	int r1 = o.rowmin();

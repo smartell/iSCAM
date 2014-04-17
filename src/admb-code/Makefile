@@ -16,6 +16,7 @@ SRCS = $(EXEC).cpp               \
 		lib/baranov.cpp          \
 		lib/milka.cpp            \
 		lib/multinomial.cpp      \
+		lib/fvar_m58.cpp         \
 			selex.cpp 
 		# OpMod.cpp    		
 OBJS = $(SRCS:.cpp=.o)
