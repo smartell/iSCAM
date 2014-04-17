@@ -87,7 +87,6 @@ void OperatingModel::runScenario(const int &seed)
 		calcRelativeAbundance(i);
 
 		calcCompositionData(i);
-	cout<<"MILKA: Ok to here"<<endl;
 
 		calcEmpiricalWeightAtAge(i);
 
@@ -822,6 +821,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 }
 
 
+
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
@@ -990,9 +990,10 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
 
   		for(int k=1;k<=nWtTab;k++)
-		{
+		{			
 			tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
 			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
+			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*projwt(k);
 		}
 
 	  	dfs<< nWtTab 					<<endl;
