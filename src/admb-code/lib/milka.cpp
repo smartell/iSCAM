@@ -52,11 +52,11 @@ OperatingModel::~OperatingModel(){}
 OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 :model_data(argc,argv), mv(_mv)
 {
-	cout<<"Inheritance version using model_data as base class"<<endl;
-	cout<<"Ngroup "<<ngroup<<endl;
-	cout<<"Catch Data\n"<<dCatchData<<endl;
-	cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
-	cout<<"eof "<<eof<<endl;
+	// cout<<"Inheritance version using model_data as base class"<<endl;
+	// cout<<"Ngroup "<<ngroup<<endl;
+	// cout<<"Catch Data\n"<<dCatchData<<endl;
+	// cout<<"d3 Survey Data\n"<<d3_survey_data<<endl;
+	// cout<<"eof "<<eof<<endl;
 
 }
 
@@ -72,7 +72,6 @@ void OperatingModel::runScenario(const int &seed)
 	conditionReferenceModel();
 
 	setRandomVariables(seed);
-
 	for(int i = nyr+1; i <= m_nPyr; i++ )
 	{
 		getReferencePointsAndStockStatus();
@@ -88,6 +87,7 @@ void OperatingModel::runScenario(const int &seed)
 		calcRelativeAbundance(i);
 
 		calcCompositionData(i);
+	cout<<"MILKA: Ok to here"<<endl;
 
 		calcEmpiricalWeightAtAge(i);
 
@@ -205,7 +205,10 @@ void OperatingModel::initParameters()
 	// Age-composition arrays	
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
-	m_n_A_nobs = n_A_nobs + m_nyrs + m_nyrs * sum(m_nASex);
+	for( k = 1; k <= nAgears; k++ )
+	{
+		m_n_A_nobs(k) = n_A_nobs(k) + m_nyrs + m_nyrs * m_nASex(k);
+	}
 	
 	m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
 	m_d3_A.initialize();
@@ -735,11 +738,14 @@ void OperatingModel::calcCompositionData(const int& iyr)
 	dvector fa(sage,nage);
 	dvector ma(sage,nage);
 	dvector za(sage,nage);
+	static ivector iirow(1,nAgears);
+	iirow.initialize();
 	dmatrix ca(1,nsex,sage,nage);
 	dmatrix pa(1,nsex,sage,nage);
 	double ft;
 	for(int k = 1; k <= nAgears; k++ )
 	{
+		cout<<"k "<<k<<" "<<nAgears<<endl;
 		gear = m_d3_A(k)(1)(n_A_sage(k)-4);
 		for(int f = 1; f <= narea; f++ )
 		{
@@ -758,21 +764,25 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
 					pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
-
+					cout<<"iyr +"<<iyr<<endl;
 					//rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
 				}
 			
 				int hh = m_nASex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
+					iirow(k) ++;
 					irow ++;
+					irow = iirow(k);
+					cout<<"static ivector "<<iirow(k)<<" "<<k<<endl;
 					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-5) = iyr;
 					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-4) = gear;
 					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-3) = f;
 					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-2) = g;
 					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-1) = hh>0?h:0;
 					m_d3_A(k)(n_A_nobs(k)+irow)(n_A_sage(k),n_A_nage(k))
-					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
+					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):
+					colsum(pa)(n_A_sage(k),n_A_nage(k));
 				}
 			}
 		}
@@ -960,8 +970,10 @@ void OperatingModel::writeDataFile(const int& iyr)
   			
   		for(int k=1;k<=nAgears;k++)
 		{
+			cout<<"nAgear = "<<k<<endl;
 			tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
-			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
+			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));
+			cout<<tmp_n_A_nobs(k)<<endl;
 		}
 
 	  	dfs<< nAgears				<<endl;

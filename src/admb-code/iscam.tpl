@@ -5234,27 +5234,6 @@ GLOBALS_SECTION
 	
 	
 FINAL_SECTION
-	cout<<"Here I am "<<endl;
-	time(&finish);
-	elapsed_time=difftime(finish,start);
-	hour=long(elapsed_time)/3600;
-	minute=long(elapsed_time)%3600/60;
-	second=(long(elapsed_time)%3600)%60;
-	cout<<endl<<endl<<"*******************************************"<<endl;
-	cout<<"--Start time: "<<ctime(&start)<<endl;
-	cout<<"--Finish time: "<<ctime(&finish)<<endl;
-	cout<<"--Runtime: ";
-	cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
-	cout<<"--Number of function evaluations: "<<nf<<endl;
-	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
-	cout<<"*******************************************"<<endl;
-
-		
-
-	if(mseFlag) runMSE();
-	cout<<"End of class testing"<<endl;
-
-
 	//Make copies of the report file using the ReportFileName
 	//to ensure the results are saved to the same directory 
 	//that the data file is in. This should probably go in the 
@@ -5364,4 +5343,22 @@ FINAL_SECTION
 	}
 	#endif
 
+
+	if(mseFlag) runMSE();
+	cout<<"End of class testing"<<endl;
+
+	//  Print run time statistics to the screen.
+	time(&finish);
+	elapsed_time=difftime(finish,start);
+	hour=long(elapsed_time)/3600;
+	minute=long(elapsed_time)%3600/60;
+	second=(long(elapsed_time)%3600)%60;
+	cout<<endl<<endl<<"*******************************************"<<endl;
+	cout<<"--Start time: "<<ctime(&start)<<endl;
+	cout<<"--Finish time: "<<ctime(&finish)<<endl;
+	cout<<"--Runtime: ";
+	cout<<hour<<" hours, "<<minute<<" minutes, "<<second<<" seconds"<<endl;
+	cout<<"--Number of function evaluations: "<<nf<<endl;
+	cout<<"--Results are saved with the base name:\n"<<"\t"<<BaseFileName<<endl;
+	cout<<"*******************************************"<<endl;
 
