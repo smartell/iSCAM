@@ -84,6 +84,7 @@
 		d3_array m_d3SurveyData;
 
 		// composition arrays
+		ivector m_A_irow;
 		ivector  m_n_A_nobs;
 		d3_array m_d3_A;
 

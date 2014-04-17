@@ -214,7 +214,11 @@ void OperatingModel::initParameters()
 	{
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
 	}
-	 
+		
+	m_A_irow.allocate(1,nAgears);
+	m_A_irow.initialize(); 
+
+	//weight at age array
 	m_nWtNobs.allocate(1,nWtTab);
 	m_nWtNobs = nWtNobs + m_nyrs + m_nyrs * sum(m_nWSex);
 
@@ -612,7 +616,6 @@ void OperatingModel::implementFisheries(const int &iyr)
 	} // narea f
 	// cout<<m_dCatchData<<endl;
 	// cout<<"END"<<endl;
-	cout<<"catch in "<<iyr<<" is "<< m_dCatchData(m_irow)<<endl;
 	//cout<<"finished implementing fisheries"<<endl;
 
 }
@@ -743,7 +746,6 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
  */		
 void OperatingModel::calcCompositionData(const int& iyr)
 {
-	static int irow = 0; // counter for number of rows.
 	int gear;
 	dvector na(sage,nage);
 	dvector va(sage,nage);
@@ -773,25 +775,25 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
 					pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
-					cout<<"This is pa "<<pa<<endl;
 					//rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
 				}
 			
 				int hh = m_nASex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
-					irow ++;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-5) = iyr;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-4) = gear;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-3) = f;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-2) = g;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-1) = hh>0?h:0;
-					m_d3_A(k)(n_A_nobs(k)+irow)(n_A_sage(k),n_A_nage(k))
+					m_A_irow(k) ++;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
 					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
 				}
 			}
 		}
 	}
+
 	
 }
 
@@ -970,15 +972,19 @@ void OperatingModel::writeDataFile(const int& iyr)
 			
 		// Write Composition information
 	  	dfs<<"#Age composition"		<<endl;
+  		
   		ivector tmp_n_A_nobs(1,nAgears);
-  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage);
-  			
+  		tmp_n_A_nobs.initialize();
+
+  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage); //n_A_sage is a vector!!
+  		tmp_d3_A.initialize();
+  		
   		for(int k=1;k<=nAgears;k++)
 		{
 			tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
 			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
 		}
-
+  		
 	  	dfs<< nAgears				<<endl;
 	  	dfs<< tmp_n_A_nobs			<<endl;
 	  	dfs<< n_A_sage				<<endl;
