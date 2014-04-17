@@ -366,14 +366,19 @@ DATA_SECTION
 		
 		
 		/* Check for dimension errors in projection control file. */
-		if(pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
+		if( pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
 		{
-			cout<<"ERROR: start year in projection file control is less than initial model year."<<endl;
-			exit(1);
+			cout<<"WARNING: start year in projection file control is" 
+			" less than initial model year. Setting to syr."<<endl;
+			// exit(1);
+			pf_cntrl(1) = syr;
+			pf_cntrl(3) = syr;
+			pf_cntrl(5) = syr;
 		}
-		if(pf_cntrl(2)>nyr || pf_cntrl(4)>nyr || pf_cntrl(6)>nyr )
+		if( pf_cntrl(2)>nyr || pf_cntrl(4)>nyr || pf_cntrl(6)>nyr )
 		{
-			cout<<"ERROR: last year in projection file control is greater than last model year."<<endl;
+			cout<<"ERROR: last year in projection file control is" 
+			" greater than last model year."<<endl;
 			exit(1);
 		}
 	END_CALCS
@@ -382,7 +387,7 @@ DATA_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Allocation for each gear in (ngear), use 0 for survey gears.
 	// |---------------------------------------------------------------------------------|
-	// | fsh_flag is used to determine which fleets should be in MSY-based referecen points
+	// | fsh_flag is used to determine which fleets should be in MSY-based ref points
 	// | If dAllocation >0 then set fish flag =1 else 0
 	// | nfleet is the number of non-survey gear fleet with dAllocations > 0
 	// |

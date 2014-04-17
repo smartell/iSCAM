@@ -146,6 +146,16 @@ void OperatingModel::readMSEcontrols()
 	ifs >> MseCtlFile;
 	ifs >> MsePfcFile;
 
+	int eof=0;
+	ifs >> eof;
+	cout<<"End of MPC file "<<eof<<endl;
+	if(eof != 999)
+	{
+		cout<<"Error reading Management Procedure Control File"<<endl;
+		cout<<eof<<endl;
+		ad_exit(1);
+	}
+
 	//cout<<"finished MSE controls"<<endl;
 }
 
@@ -163,8 +173,11 @@ void OperatingModel::initParameters()
 
 	// needs to be updated for each year in the mse loop
 
+	// m_nn is a counter for the number of rows of catch data that will be
+	// added to the data file each year.
 	m_nn = 0;
-	for( k = 1; k <= ngear; k++ )
+	// for( k = 1; k <= ngear; k++ )
+	for( k = 1; k <= nfleet; k++ )
 	{
 		m_nn += sum(m_nAGopen(k));
 		m_nn += m_nCSex(k)*m_nn;
@@ -907,18 +920,19 @@ void OperatingModel::writeDataFile(const int& iyr)
 		adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
 	  	ofstream dfs(sim_datafile_name);
 	  	dfs<<"#Model dimensions"<<endl;
-	  	dfs<< narea 		<<endl;
-	  	dfs<< ngroup		<<endl;
-	  	dfs<< nsex			<<endl;
-	  	dfs<< syr   		<<endl;
-	  	dfs<< iyr   			<<endl;
-	  	dfs<< sage  		<<endl;
-	  	dfs<< nage  		<<endl;
-	  	dfs<< ngear 		<<endl;
-	 
-	  	dfs<<"#Allocation"	<<endl;
-	  	dfs<< dAllocation 	<<endl;
+	  	dfs<< narea 		    <<endl;
+	  	dfs<< ngroup		    <<endl;
+	  	dfs<< nsex			    <<endl;
+	  	dfs<< syr   		    <<endl;
+	  	dfs<< iyr   	        <<endl;
+	  	dfs<< sage  		    <<endl;
+	  	dfs<< nage  		    <<endl;
+	  	dfs<< ngear 		    <<endl;
+	     
+	  	dfs<<"#Allocation"	    <<endl;
+	  	dfs<< dAllocation 	    <<endl;
 	  	
+	  	// Write age-schedule information
 	  	dfs<<"#Age-schedule and population parameters"<<endl;
 	  	dfs<< d_linf  			<<endl;
 	  	dfs<< d_vonbk  			<<endl;
@@ -930,44 +944,40 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	dfs<< n_MAT				<<endl;
 		dfs<< d_maturityVector  <<endl;
 	
-	  	dfs<<"#Observed catch data"<<endl;
-
+	  	// Write catch array
+	  	dfs<<"#Observed catch data"             <<endl;
 	  	int tmp_nCtNobs = nCtNobs+(iyr-nyr)*m_nn;
 
 	  	dfs<< nCtNobs + (iyr-nyr)*m_nn  		<<endl; 
-	  	dfs<< m_dCatchData.sub(1,tmp_nCtNobs)    <<endl;
+	  	dfs<< m_dCatchData.sub(1,tmp_nCtNobs)   <<endl;
 	
-	  	dfs<<"#Abundance indices"	<<endl;
-	  	
-	  	dfs<< nItNobs 					<<endl;
-
-		
+		// Write relative abundance indices
+	  	dfs<<"#Abundance indices"	    <<endl;
 	  	ivector tmp_n_it_nobs(1,nItNobs);
 	  	tmp_n_it_nobs.initialize();
 	  	d3_array tmp_d3SurveyData(1,nItNobs,1,tmp_n_it_nobs,1,8);
 	  	tmp_d3SurveyData.initialize();
-
-
-	  		for(int k=1;k<=nItNobs;k++)
-			{
-				tmp_n_it_nobs(k) = n_it_nobs(k) + (iyr-nyr);
-				tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
-			}
+  		for(int k=1;k<=nItNobs;k++)
+		{
+			tmp_n_it_nobs(k)    = n_it_nobs(k) + (iyr-nyr);
+			tmp_d3SurveyData(k) = m_d3SurveyData(k).sub(1,tmp_n_it_nobs(k));
+		}
 	  	
-	  	dfs<< tmp_n_it_nobs 				<<endl;
-	  	dfs<< n_survey_type 			<<endl;
-	  	dfs<< tmp_d3SurveyData		<<endl;
-	
+	  	dfs<< nItNobs 					<<endl;
+		dfs<< tmp_n_it_nobs 			<<endl;
+		dfs<< n_survey_type 			<<endl;
+		dfs<< tmp_d3SurveyData			<<endl;
+			
+		// Write Composition information
 	  	dfs<<"#Age composition"		<<endl;
-
-	  		ivector tmp_n_A_nobs(1,nAgears);
-	  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage);
-	  			
-	  		for(int k=1;k<=nAgears;k++)
-			{
-				tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr)+ (iyr-nyr) * sum(m_nASex);;
-				tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
-			}
+  		ivector tmp_n_A_nobs(1,nAgears);
+  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage);
+  			
+  		for(int k=1;k<=nAgears;k++)
+		{
+			tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
+			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
+		}
 
 	  	dfs<< nAgears				<<endl;
 	  	dfs<< tmp_n_A_nobs			<<endl;
@@ -977,16 +987,17 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	dfs<< n_ageFlag				<<endl;
 	  	dfs<< tmp_d3_A				<<endl;
 	
+		// Write Empirical weight-at-age data.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
 
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
 
-	  		for(int k=1;k<=nWtTab;k++)
-			{
-				tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * sum(m_nWSex);
-				tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
-			}
+  		for(int k=1;k<=nWtTab;k++)
+		{
+			tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
+		}
 
 	  	dfs<< nWtTab 					<<endl;
 	  	dfs<< tmp_nWtNobs				<<endl;
