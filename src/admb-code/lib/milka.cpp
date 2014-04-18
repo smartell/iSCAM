@@ -241,11 +241,12 @@ void OperatingModel::initParameters()
 	m_dM         = exp(mv.m);
 	m_dRho       = mv.rho;
 	m_dVarphi    = sqrt(1.0/mv.varphi);
-	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
-	cout<<"m_dSigma is "<<m_dSigma<<endl;
+	m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
+	m_dTau       = elem_prod( sqrt(1.0-m_dRho),m_dVarphi);
 
-	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
-
+	//cout<<"m_dSigma is "<<m_dSigma<<endl;
+	//cout<<"m_dTau  is "<<m_dTau <<endl;
+	
 	m_dRbar.allocate(1,n_ag);
 	m_dRinit.allocate(1,n_ag);
 	for(int ih = 1; ih <= n_ag; ih++ )
@@ -349,7 +350,7 @@ void OperatingModel::initMemberVariables()
 	}
 
 
-	//cout<<"finished init member variavbles"<<endl;
+	//cout<<"finished init member variables"<<endl;
 
 }
 
@@ -409,6 +410,13 @@ void OperatingModel::setRandomVariables(const int& seed)
 {
 	m_nSeed = seed;
 	random_number_generator rng(m_nSeed);
+
+
+	epsilon.allocate(1,nItNobs,nyr+1,m_nPyr);
+	epsilon.fill_randn(rng);
+	
+
+	cout<<"epsilon is "<<epsilon<<endl;
 
 }
 
@@ -666,25 +674,10 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	dvector wa(sage,nage);
 	double dV;
 
-	random_number_generator rng(m_nSeed+iyr);
-	dvector epsilon(1,nItNobs);
-	epsilon.fill_randn(rng);
-
-	//create an array epsilon(1,nits,nyr+1,pyr), and fill with random normal deviates.
-				//This can be done with the random_number_geneator rng(seed);
-
-				//epsilon(k).fill_randn(rng);
-
-				//then multiply these numbers by the standard deviations for the observation errors.
-
-				//it = qt*bt*exp(epsilon*sig);*exp(epsilon(k)*m_dSigma(g)
-
 
 
 	for(int k = 1; k <= nItNobs; k++ )
 	{
-
-		
 		gear = d3_survey_data(k)(1)(3);
 		for( f = 1; f <= narea; f++ )
 		{
@@ -717,23 +710,13 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 				// cout<<va<<endl;
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
-				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV*exp(epsilon(k,iyr)*m_dSigma(g)); // add observation err
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,6) = 0;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 1.0;  //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.5;  //TODO add to MSE controls
-
-
-
-
-				
-
-				
-
-
-
 				
 			}
 		}
