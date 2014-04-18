@@ -2975,9 +2975,11 @@ FUNCTION calcObjectiveFunction
 						age_tau2(k) = cLST_Age.get_sigma2();
 					}
 				break;
-
+				case 6: // Multinomial with estimated effective sample size.
+					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+				break; 
 				case 7: // Multivariate-t 
-					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),phi1(k));
+					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),log_degrees_of_freedom(k));
 				break;
 			}
 			

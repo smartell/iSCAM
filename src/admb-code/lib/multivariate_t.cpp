@@ -3,7 +3,7 @@
 
 
 dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p, 
-                                    const dvariable &log_v, const dvariable &log_var)
+                                    const dvariable &log_var, const dvariable &log_v)
 {
 	// kludge to ensure observed and predicted matrixes are the same size
 	if(o.colsize()!=p.colsize() || o.rowsize()!=p.rowsize())
@@ -12,6 +12,12 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 		" are not the same size"<<endl;
 		ad_exit(1);
 	}
+	
+	dmatrix O = o;
+	dvar_matrix P = p;
+	O.colshift(1);
+	P.colshift(1);
+
 
 	int r1 = o.rowmin();
 	int r2 = o.rowmax();
@@ -29,10 +35,11 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 	{
 		for(int j = c1; j <= c2; j++ )
 		{
-			COVAR(i,i) = 0.001 + p(i,j)*(1.0-p(i,j));
+			COVAR(j,j) = 0.001 + P(i,j)*(1.0-P(i,j));
 		}
 		COVAR *=var;
-		dvar_vector diff = o(i)/sum(o(i)) - p(i);
+
+		dvar_vector diff = O(i)/sum(O(i)) - P(i);
 		dvariable ln_det = 0.0;
 		int sgn = 1;
 		dvar_vector e = choleski_solve(COVAR,diff,ln_det,sgn);

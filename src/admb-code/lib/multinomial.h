@@ -7,7 +7,7 @@ dvariable mult_likelihood(const dmatrix &o, const dvar_matrix &p, dvar_matrix &n
                           const dvariable &log_vn);
 
 dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p, 
-                                    const dvariable &log_v, const dvariable &log_var); 	
+                                    const dvariable &log_var, const dvariable &log_v); 	
 
 void dfcholeski_solve(void);
   
