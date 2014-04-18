@@ -242,11 +242,8 @@ void OperatingModel::initParameters()
 	m_dRho       = mv.rho;
 	m_dVarphi    = sqrt(1.0/mv.varphi);
 	m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
-	m_dTau       = elem_prod( sqrt(1.0-m_dRho),m_dVarphi);
+	m_dTau       = elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
 
-	//cout<<"m_dSigma is "<<m_dSigma<<endl;
-	//cout<<"m_dTau  is "<<m_dTau <<endl;
-	
 	m_dRbar.allocate(1,n_ag);
 	m_dRinit.allocate(1,n_ag);
 	for(int ih = 1; ih <= n_ag; ih++ )
@@ -673,9 +670,6 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	dvector ma(sage,nage);
 	dvector wa(sage,nage);
 	double dV;
-
-
-
 	for(int k = 1; k <= nItNobs; k++ )
 	{
 		gear = d3_survey_data(k)(1)(3);
@@ -997,13 +991,19 @@ void OperatingModel::writeDataFile(const int& iyr)
 	
 		// Write Empirical weight-at-age data.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
+	  	cout<<"Frozen starts here"<<endl;
+	  	cout<<nWtTab<<endl;
+	  	ivector tmp_nWtNobs(1,nWtTab);
+	  	for( k = 1; k <= nWtTab; k++ )
+	  	{
+	  		tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+	  	}
 
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
-
   		for(int k=1;k<=nWtTab;k++)
 		{			
-			tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+			
 			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
 			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*projwt(k);
 		}
