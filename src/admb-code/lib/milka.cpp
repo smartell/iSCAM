@@ -999,7 +999,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  		tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
 	  	}
 
-	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
   		for(int k=1;k<=nWtTab;k++)
 		{			
