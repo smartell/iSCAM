@@ -241,8 +241,8 @@ void OperatingModel::initParameters()
 	m_dM         = exp(mv.m);
 	m_dRho       = mv.rho;
 	m_dVarphi    = sqrt(1.0/mv.varphi);
-	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
-	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
+	m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
+	m_dTau       = elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
 
 	m_dRbar.allocate(1,n_ag);
 	m_dRinit.allocate(1,n_ag);
@@ -985,13 +985,19 @@ void OperatingModel::writeDataFile(const int& iyr)
 	
 		// Write Empirical weight-at-age data.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
-
+	  	cout<<"Frozen starts here"<<endl;
+	  	cout<<nWtTab<<endl;
 	  	ivector tmp_nWtNobs(1,nWtTab);
-	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
+	  	for( k = 1; k <= nWtTab; k++ )
+	  	{
+	  		tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+	  	}
 
+	  	cout<<tmp_nWtNobs<<endl;
+	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
   		for(int k=1;k<=nWtTab;k++)
 		{			
-			tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+			
 			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
 			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*projwt(k);
 		}
