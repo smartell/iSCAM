@@ -29,6 +29,10 @@
 	fn    <- hdr$Control.File
 	nRuns <- nrow(hdr)
 
+	# | Model overlay
+	.OVERLAY <<- chkOVR
+	print(.OVERLAY)
+
 	# | Read objects & make global
 	if(.BOOLREADFN)
 	{

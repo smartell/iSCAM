@@ -21,6 +21,7 @@ setwd(.PWD)
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
+.OVERLAY    <- FALSE
 require(ggplot2)
 .THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"

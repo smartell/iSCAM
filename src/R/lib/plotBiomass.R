@@ -17,11 +17,21 @@
 		mdf <- rbind(mdf,bt)
 	}
 
-	p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
-	p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
+	if(.OVERLAY)
+	{
+		p <- ggplot(mdf,aes(Year,exp(log.sbt),col=Model)) + geom_line(width=2)
+		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+		                     ymin=exp(log.sbt-1.96*log.se),fill=Model),alpha=0.2)
+	}
+	else
+	{
+		p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
+		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+		                     ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
+		p <- p + facet_wrap(~Model,scales="free")
+	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
-	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }
 

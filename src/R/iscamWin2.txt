@@ -23,7 +23,7 @@ grid 1 1 relief="flat" pady=5 padx=5
 	#-------------------------------------------------------------------------#
 	grid 2 1
 	#-------------------------------------------------------------------------#
-	grid 6 1 toptitle="Select radio button to display plot" relief="solid" topfont="Times" padx=2 pady=2 sticky=W
+	grid 7 1 toptitle="Select radio button to display plot" relief="solid" topfont="Times" padx=2 pady=2 sticky=W
 	
 		# RowCol (1 1) Input data
 		grid 2 1 relief="flat" sticky=W
@@ -87,11 +87,15 @@ grid 1 1 relief="flat" pady=5 padx=5
 		null
 		
 		# RowCol (6 1)
-		grid 2 2 relief="flat" sticky=W
+		grid 1 2 relief="flat" sticky=W
 		button text="Save Images" sticky=E function=.saveImages padx=2 pady=2 sticky=W
 		entry name=txtFigDir value=Directory width=43 mode=character sticky=W
-		check name=chkPDF checked=FALSE text="PDF format" mode=logical 
-		check name=chkPNG checked=TRUE  text="PNG format" mode=logical 
+
+		# RowCol (7 1)
+		grid 1 3 relief="flat" sticky=W
+		check name=chkPDF checked=FALSE text="PDF format"     mode=logical 
+		check name=chkPNG checked=TRUE  text="PNG format"     mode=logical 
+		check name=chkOVR checked=FALSE text="Overlay Models" mode=logical 
 		
 	#-------------------------------------------------------------------------#
 		image file="../FIGS/iscamLogo.gif" sticky="E" subsample=2
