@@ -243,7 +243,6 @@ void OperatingModel::initParameters()
 	m_dVarphi    = sqrt(1.0/mv.varphi);
 	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
 	cout<<"m_dSigma is "<<m_dSigma<<endl;
-	cout<<"ok?"<<m_dSigma<<endl;
 
 	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
 
@@ -678,7 +677,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 
 				//then multiply these numbers by the standard deviations for the observation errors.
 
-				//it = qt*bt*exp(epsilon*sig);
+				//it = qt*bt*exp(epsilon*sig);*exp(epsilon(k)*m_dSigma(g)
 
 
 
@@ -718,7 +717,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 				// cout<<va<<endl;
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
-				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV*exp(epsilon(k)*m_dSigma(g)); // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
