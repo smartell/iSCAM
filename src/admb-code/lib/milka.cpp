@@ -242,6 +242,9 @@ void OperatingModel::initParameters()
 	m_dRho       = mv.rho;
 	m_dVarphi    = sqrt(1.0/mv.varphi);
 	m_dSigma     = sqrt(m_dRho) * m_dVarphi;
+	cout<<"m_dSigma is "<<m_dSigma<<endl;
+	cout<<"ok?"<<m_dSigma<<endl;
+
 	m_dTau       = sqrt(1.0-m_dRho)*m_dVarphi;
 
 	m_dRbar.allocate(1,n_ag);
@@ -663,8 +666,25 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	dvector ma(sage,nage);
 	dvector wa(sage,nage);
 	double dV;
+
+	random_number_generator rng(m_nSeed+iyr);
+	dvector epsilon(1,nItNobs);
+	epsilon.fill_randn(rng);
+
+	//create an array epsilon(1,nits,nyr+1,pyr), and fill with random normal deviates.
+				//This can be done with the random_number_geneator rng(seed);
+
+				//epsilon(k).fill_randn(rng);
+
+				//then multiply these numbers by the standard deviations for the observation errors.
+
+				//it = qt*bt*exp(epsilon*sig);
+
+
+
 	for(int k = 1; k <= nItNobs; k++ )
 	{
+
 		
 		gear = d3_survey_data(k)(1)(3);
 		for( f = 1; f <= narea; f++ )
@@ -698,13 +718,23 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 				// cout<<va<<endl;
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
-				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV*exp(epsilon(k)*m_dSigma(g)); // add observation err
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,6) = 0;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 1.0;  //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.5;  //TODO add to MSE controls
+
+
+
+
+				
+
+				
+
+
+
 				
 			}
 		}
