@@ -3,7 +3,8 @@
 
 
 dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p, 
-                                    const dvariable &log_var, const dvariable &log_v)
+                                    const dvariable &log_var, const dvariable &log_v,
+                                    const dvariable &expon, dvar_matrix &nu)
 {
 	// kludge to ensure observed and predicted matrixes are the same size
 	if(o.colsize()!=p.colsize() || o.rowsize()!=p.rowsize())
@@ -27,6 +28,7 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 	dvariable v   = exp(log_v);
 	dvariable var = exp(log_var);
 	dvar_matrix COVAR(c1,c2,c1,c2);
+	dvar_matrix tmp_nu(r1,r2,c1,c2);
 	COVAR.initialize();
 	const double pp    = (c2-c1)+1;
 	const double lppi2 = 0.5*pp*log(3.1415926535);
@@ -35,7 +37,7 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 	{
 		for(int j = c1; j <= c2; j++ )
 		{
-			COVAR(j,j) = 0.001 + P(i,j)*(1.0-P(i,j));
+			COVAR(j,j) = 0.001 + pow( P(i,j)*(1.0-P(i,j)),exp(expon) );
 		}
 		COVAR *=var;
 
@@ -44,12 +46,16 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 		int sgn = 1;
 		dvar_vector e = choleski_solve(COVAR,diff,ln_det,sgn);
 		dvariable ln_det_choleski_inv = -ln_det;
+		tmp_nu(i) = e/sqrt(v);
 		
 		ll += -gammln(0.5*(v+pp)) + gammln(0.5*v)
 		      + lppi2 + (0.5*pp)*log(v) 
 		      + 0.5*(v+pp) * log(1.0+e*e/v) - ln_det_choleski_inv;
 	}
-
+	
+	tmp_nu.rowshift(nu.rowmin());
+	tmp_nu.colshift(nu.colmin());
+	nu = tmp_nu;
 	return ll;
 }
 

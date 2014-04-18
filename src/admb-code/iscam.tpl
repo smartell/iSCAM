@@ -567,6 +567,7 @@ DATA_SECTION
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
 	matrix                it_wt(1,nItNobs,1,n_it_nobs);
+	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
 	LOC_CALCS
@@ -578,6 +579,7 @@ DATA_SECTION
 		for(k=1;k<=nItNobs;k++)
 		{
 			it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
 		double tmp_mu = mean(it_wt);
@@ -1286,7 +1288,7 @@ DATA_SECTION
 
 INITIALIZATION_SECTION
   theta theta_ival;
-  phi1 0.01;
+  phi1 0.0;
 	
 PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
@@ -1437,16 +1439,8 @@ PARAMETER_SECTION
     // | POPULATION VARIABLES
     // |---------------------------------------------------------------------------------|
     // | - m_bar       -> Average natural mortality rate from syr to nyr.
-    // | - rho         -> Proportion of total variance associated with obs error.
-    // | - varphi      -> Total precision of CPUE and Recruitment deviations.
-    // | - sig         -> STD of the observation errors in relative abundance data.
-    // | - tau         -> STD of the process errors (recruitment deviations).
     // |
 	number m_bar;	///< Average natural mortality rate.			
-	number rho;					
-	number varphi				
-	number sig;					
-	number tau; 				
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1465,6 +1459,10 @@ PARAMETER_SECTION
 	// | - q           -> conditional MLE estimates of q in It=q*Bt*exp(epsilon)
 	// | - ct          -> predicted catch for each catch observation
 	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
+    // | - rho         -> Proportion of total variance associated with obs error.
+    // | - varphi      -> Total precision of CPUE and Recruitment deviations.
+    // | - sig         -> STD of the observation errors in relative abundance data.
+    // | - tau         -> STD of the process errors (recruitment deviations).
 	// |
 	 
 	vector        ro(1,ngroup);
@@ -1481,6 +1479,10 @@ PARAMETER_SECTION
 	vector         ct(1,nCtNobs);
 	vector        eta(1,nCtNobs);	
 	vector log_m_devs(syr+1,nyr);
+	vector    rho(1,ngroup);	
+	vector varphi(1,ngroup);
+	vector    sig(1,ngroup);	
+	vector    tau(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1696,10 +1698,10 @@ FUNCTION void initParameters()
 	ro        = mfexp(theta(1));
 	steepness = theta(2);
 	m         = mfexp(theta(3));
-	rho       = theta(6,1);
-	varphi    = sqrt(1.0/theta(7,1));
-	sig       = sqrt(rho) * varphi;
-	tau       = sqrt(1.0-rho) * varphi;
+	rho       = theta(6);
+	varphi    = sqrt(1.0/theta(7));
+	sig       = elem_prod(sqrt(rho) , varphi);
+	tau       = elem_prod(sqrt(1.0-rho) , varphi);
 
 	for(ih=1;ih<=n_ag;ih++)
 	{
@@ -2785,7 +2787,7 @@ FUNCTION void calcStockRecruitment()
 		}
 		
 		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
-		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau*tau;
+		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau(g)*tau(g);
 
 		// Autocorrelation in recruitment residuals.
 		// if gamma_r > 0 then 
@@ -2795,7 +2797,7 @@ FUNCTION void calcStockRecruitment()
 			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
 									- (1.0-gamma_r)*log(tmp_rt(byr,nyr)) 
 									- gamma_r*log(++rt(g)(byr-1,nyr-1))
-									+ 0.5*tau*tau;			
+									+ 0.5*tau(g)*tau(g);			
 		}
 
 
@@ -2868,7 +2870,12 @@ FUNCTION calcObjectiveFunction
 	// |
 	for(k=1;k<=nItNobs;k++)
 	{
-		dvar_vector sig_it = sig/it_wt(k);
+		ivector ig = it_grp(k);
+		dvar_vector sig_it(1,n_it_nobs(k)); 
+		for( i = 1; i <= n_it_nobs(k); i++ )
+		{
+			sig_it(i) = sig(ig(i))/it_wt(k,i);
+		}
 		nlvec(2,k)=dnorm(epsilon(k),sig_it);
 	}
 	
@@ -2980,7 +2987,10 @@ FUNCTION calcObjectiveFunction
 					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 				break; 
 				case 7: // Multivariate-t 
-					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),log_degrees_of_freedom(k));
+					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
+					                                       log_degrees_of_freedom(k),
+					                                       phi1(k),nu);
+					age_tau2(k) = exp(value(log_age_tau2(k)));
 				break;
 			}
 			
@@ -3000,7 +3010,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),tau);
+			nlvec(4,g) = dnorm(delta(g),tau(g));
 		}
 	}
 
@@ -3811,7 +3821,7 @@ FUNCTION void simulationModel(const long& seed)
     		std = 1.0e3;
     		if( it_wt(k,i)>0 )
     		{
-    			std = value(sig/it_wt(k,i));
+    			std = value(sig(it_grp(k,i))/it_wt(k,i));
     		}
     		epsilon(k,i) = epsilon(k,i)*std - 0.5*std*std;
     	}
@@ -3820,7 +3830,7 @@ FUNCTION void simulationModel(const long& seed)
     // | Scale process errors
     for(ih=1;ih<=n_ag;ih++)
     {
-		std              = value(tau);
+		std              = value(tau(1));
 		rec_dev(ih)      = rec_dev(ih) * std - 0.5*std*std;
 		init_rec_dev(ih) = init_rec_dev(ih)*std - 0.5*std*std;
     }
@@ -4010,7 +4020,7 @@ FUNCTION void simulationModel(const long& seed)
 	// | - A_hat is the predicted matrix from which to draw samples.
 	// |
 	int kk,aa,AA;
-	double age_tau = value(sig);
+	double age_tau = value(sig(1));
 	
 	calcComposition();
 	for(kk=1;kk<=nAgears;kk++)
