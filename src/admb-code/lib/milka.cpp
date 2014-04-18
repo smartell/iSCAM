@@ -87,7 +87,6 @@ void OperatingModel::runScenario(const int &seed)
 		calcRelativeAbundance(i);
 
 		calcCompositionData(i);
-	cout<<"MILKA: Ok to here"<<endl;
 
 		calcEmpiricalWeightAtAge(i);
 
@@ -203,6 +202,9 @@ void OperatingModel::initParameters()
 	
 
 	// Age-composition arrays	
+	m_A_irow.allocate(1,nAgears);
+	m_A_irow.initialize(); 
+
 	m_n_A_nobs.allocate(1,nAgears);
 	m_n_A_nobs.initialize();
 	for( k = 1; k <= nAgears; k++ )
@@ -217,7 +219,11 @@ void OperatingModel::initParameters()
 	{
 		m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k);	
 	}
-	 
+		
+	//weight at age array
+	m_W_irow.allocate(1,nWtTab);
+	m_W_irow.initialize(); 
+
 	m_nWtNobs.allocate(1,nWtTab);
 	m_nWtNobs = nWtNobs + m_nyrs + m_nyrs * sum(m_nWSex);
 
@@ -605,6 +611,8 @@ void OperatingModel::implementFisheries(const int &iyr)
 						m_dCatchData(m_irow,5) = hh>0?h:0;
 						m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
 						m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+
+
 					}
 				}
 			}
@@ -613,7 +621,6 @@ void OperatingModel::implementFisheries(const int &iyr)
 	} // narea f
 	// cout<<m_dCatchData<<endl;
 	// cout<<"END"<<endl;
-	
 	//cout<<"finished implementing fisheries"<<endl;
 
 }
@@ -731,21 +738,17 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
  */		
 void OperatingModel::calcCompositionData(const int& iyr)
 {
-	static int irow = 0; // counter for number of rows.
 	int gear;
 	dvector na(sage,nage);
 	dvector va(sage,nage);
 	dvector fa(sage,nage);
 	dvector ma(sage,nage);
 	dvector za(sage,nage);
-	static ivector iirow(1,nAgears);
-	iirow.initialize();
 	dmatrix ca(1,nsex,sage,nage);
 	dmatrix pa(1,nsex,sage,nage);
 	double ft;
 	for(int k = 1; k <= nAgears; k++ )
 	{
-		cout<<"k "<<k<<" "<<nAgears<<endl;
 		gear = m_d3_A(k)(1)(n_A_sage(k)-4);
 		for(int f = 1; f <= narea; f++ )
 		{
@@ -764,25 +767,20 @@ void OperatingModel::calcCompositionData(const int& iyr)
 					ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
 					pa(h) = ca(h) / sum(ca(h));
 					pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
-					cout<<"iyr +"<<iyr<<endl;
 					//rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
 				}
 			
 				int hh = m_nASex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
-					iirow(k) ++;
-					irow ++;
-					irow = iirow(k);
-					cout<<"static ivector "<<iirow(k)<<" "<<k<<endl;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-5) = iyr;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-4) = gear;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-3) = f;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-2) = g;
-					m_d3_A(k)(n_A_nobs(k)+irow,n_A_sage(k)-1) = hh>0?h:0;
-					m_d3_A(k)(n_A_nobs(k)+irow)(n_A_sage(k),n_A_nage(k))
-					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):
-					colsum(pa)(n_A_sage(k),n_A_nage(k));
+					m_A_irow(k) ++;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
+					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
+					= hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
 				}
 			}
 		}
@@ -792,7 +790,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
 
 void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 {
-	static int iroww = 0;
 	int gear;
 	
 	for(int k = 1; k <= nWtTab; k++ )
@@ -807,21 +804,22 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 				int hh = m_nWSex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
-					iroww ++;
+					m_W_irow(k) ++;
 					int ig = pntr_ags(f,g,h);
 		
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-5) = iyr;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-4) = gear;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-3) = f;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-2) = g;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage-1) = hh>0?h:0;
-					m_d3_inp_wt_avg(k)(nWtNobs(k)+iroww)(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-5) = iyr;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-4) = gear;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
+					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 				}
 			}
 		}
 	}	
 	
 }
+
 
 
 void OperatingModel::updateReferenceModel(const int& iyr)
@@ -966,16 +964,17 @@ void OperatingModel::writeDataFile(const int& iyr)
 		// Write Composition information
 	  	dfs<<"#Age composition"		<<endl;
   		ivector tmp_n_A_nobs(1,nAgears);
-  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage);
-  			
+  		tmp_n_A_nobs.initialize();
+
+  		d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage); //n_A_sage is a vector!!
+  		tmp_d3_A.initialize();
+  		
   		for(int k=1;k<=nAgears;k++)
 		{
-			cout<<"nAgear = "<<k<<endl;
 			tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
-			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));
-			cout<<tmp_n_A_nobs(k)<<endl;
+			tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));	
 		}
-
+  		
 	  	dfs<< nAgears				<<endl;
 	  	dfs<< tmp_n_A_nobs			<<endl;
 	  	dfs<< n_A_sage				<<endl;
@@ -991,9 +990,10 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
 
   		for(int k=1;k<=nWtTab;k++)
-		{
+		{			
 			tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
 			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
+			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*projwt(k);
 		}
 
 	  	dfs<< nWtTab 					<<endl;

@@ -668,8 +668,8 @@ DATA_SECTION
 	vector projwt(1,nWtTab);
 
 
-	LOC_CALCS
-		
+
+	LOC_CALCS		
 		/*
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
@@ -1248,6 +1248,7 @@ DATA_SECTION
 		if(pf_cntrl(3)<syr) pf_cntrl(3) = syr;
 		if(pf_cntrl(5)<syr) pf_cntrl(5) = syr;
 
+
 		for( i = 1; i <= nCtNobs; i++ )
 		{
 			if( dCatchData(i)(1) < syr ) ft_count --;
@@ -1348,8 +1349,8 @@ PARAMETER_SECTION
 						double stp = 1.0/(ghat_agemax(k)-ahat_agemin(k));
 						sel_par(k)(j).fill_seqadd(dd,stp);
 
-						COUT(sel_par(k)(j));
-						exit(1);
+						//COUT(sel_par(k)(j));
+						//exit(1);
 					}
 				}
 			}
