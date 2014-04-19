@@ -907,23 +907,34 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 	 //cout<<"finished updatinf ref pop"<<endl;
 }
 
+
+/**
+ * @brief Write a new data file for iscam
+ * @details This routine writes the data file for iSCAM
+ *  Note that if a prospective years is > 0, the syr will be greater
+ *  than many of the data sets, and iSCAM will not work. Therfore, the data
+ *  structures, have to be written from syr-iyr only.
+ *  
+ *  Or, for syr write ,syr - (int)d_iscamCntrl(14)
+ * @param iyr the terminal year of the data in the data file.
+ */
 void OperatingModel::writeDataFile(const int& iyr)
 {
 
 		adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
 	  	ofstream dfs(sim_datafile_name);
-	  	dfs<<"#Model dimensions"<<endl;
-	  	dfs<< narea 		    <<endl;
-	  	dfs<< ngroup		    <<endl;
-	  	dfs<< nsex			    <<endl;
-	  	dfs<< syr   		    <<endl;
-	  	dfs<< iyr   	        <<endl;
-	  	dfs<< sage  		    <<endl;
-	  	dfs<< nage  		    <<endl;
-	  	dfs<< ngear 		    <<endl;
+	  	dfs<<"#Model dimensions"        <<endl;
+	  	dfs<< narea 		            <<endl;
+	  	dfs<< ngroup		            <<endl;
+	  	dfs<< nsex			            <<endl;
+	  	dfs<< syr-(int)d_iscamCntrl(14) <<endl;
+	  	dfs<< iyr   	                <<endl;
+	  	dfs<< sage  		            <<endl;
+	  	dfs<< nage  		            <<endl;
+	  	dfs<< ngear 		            <<endl;
 	     
-	  	dfs<<"#Allocation"	    <<endl;
-	  	dfs<< dAllocation 	    <<endl;
+	  	dfs<<"#Allocation"	            <<endl;
+	  	dfs<< dAllocation 	            <<endl;
 	  	
 	  	// Write age-schedule information
 	  	dfs<<"#Age-schedule and population parameters"<<endl;
@@ -985,15 +996,13 @@ void OperatingModel::writeDataFile(const int& iyr)
 	
 		// Write Empirical weight-at-age data.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
-	  	cout<<"Frozen starts here"<<endl;
-	  	cout<<nWtTab<<endl;
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	for( k = 1; k <= nWtTab; k++ )
 	  	{
 	  		tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
 	  	}
 
-	  	cout<<tmp_nWtNobs<<endl;
+	  	
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
   		for(int k=1;k<=nWtTab;k++)
 		{			
