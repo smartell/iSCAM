@@ -346,7 +346,7 @@ void OperatingModel::initMemberVariables()
 	}
 
 
-	//cout<<"finished init member variavbles"<<endl;
+	//cout<<"finished init member variables"<<endl;
 
 }
 
@@ -406,6 +406,13 @@ void OperatingModel::setRandomVariables(const int& seed)
 {
 	m_nSeed = seed;
 	random_number_generator rng(m_nSeed);
+
+
+	epsilon.allocate(1,nItNobs,nyr+1,m_nPyr);
+	epsilon.fill_randn(rng);
+	
+
+	cout<<"epsilon is "<<epsilon<<endl;
 
 }
 
@@ -664,7 +671,6 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 	double dV;
 	for(int k = 1; k <= nItNobs; k++ )
 	{
-		
 		gear = d3_survey_data(k)(1)(3);
 		for( f = 1; f <= narea; f++ )
 		{
@@ -697,7 +703,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 				// cout<<va<<endl;
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
-				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV; // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV*exp(epsilon(k,iyr)*m_dSigma(g)); // add observation err
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
@@ -1001,7 +1007,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  		tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
 	  	}
 
-	  	
 	  	d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
   		for(int k=1;k<=nWtTab;k++)
 		{			

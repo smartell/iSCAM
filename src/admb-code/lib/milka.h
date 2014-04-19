@@ -74,6 +74,9 @@
 		dvector m_dUslim;
 		dvector m_dDiscMortRate;
 		imatrix m_nAGopen;
+
+		//random variables
+		dmatrix epsilon;
 		
 		// catch arrays
 		int     m_nCtNobs;
