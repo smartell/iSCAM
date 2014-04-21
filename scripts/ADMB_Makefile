@@ -51,3 +51,35 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
 
 clean: 
 	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
+
+# |——————————————————————————————————————————————————————————————————————————————————————|
+# | Targets for Running MSE
+# |——————————————————————————————————————————————————————————————————————————————————————|
+# | use gsed -i 's/STRING_TO_REPLACE/STRING_TO_REPLACE_IT/g' Makefile
+NOSIM = 8
+REPDIR = reps
+simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --vanilla --slave)
+.datadone:= $(foreach dir,$(simdirs),$(dir)/datadone)
+runsims := $(foreach dir,$(simdirs),$(dir)/runsims)
+
+$(.datadone): $(DAT) 
+	mkdir -p $(REPDIR)/$(@D);
+	cp Makefile $(REPDIR)/$(@D)  
+	cd $(REPDIR)/$(@D); gsed -i 's/..\/..\/..\/..\/dist/..\/..\/..\/..\/..\/..\/dist/g' Makefile
+	cd $(REPDIR)/$(@D); gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
+	cd $(REPDIR)/$(@D); echo ../../$(CTL).dat > RUN.dat;
+	cd $(REPDIR)/$(@D); echo ../../$(CTL).ctl >>RUN.dat;
+	cd $(REPDIR)/$(@D); echo ../../$(CTL).pfc >>RUN.dat;
+	cd $(REPDIR)/$(@D); echo ../../$(CTL).mpc >>RUN.dat;
+	cd $(REPDIR)/$(@D); touch .datadone;
+
+data: $(EXEC) $(.datadone)
+
+$(runsims): 
+	cd $(REPDIR)/$(@D); make ARG='-est -ainp ../../$(CTL).par -maxfn 0 -mse $(@D)'
+
+mse: data $(runsims)
+	touch simdone
+
+cleanmse:
+	rm -r 0* *.Rdata $(REPDIR)

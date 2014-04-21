@@ -94,11 +94,10 @@ void OperatingModel::runScenario(const int &seed)
 
 		writeDataFile(i);
 
-		//runStockAssessment();
-		cout<<"Year = "<<	i<<endl;
+		runStockAssessment();
 		
 	}
-	cout<<m_dCatchData<<endl;
+
 }
 
 /**
@@ -804,7 +803,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 			for(int g = 1; g <= ngroup; g++ )
 			{
 
-				int hh = m_nWSex(k);   // flag for sex
+				int hh = m_nWSex(gear);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
 					m_W_irow(k) ++;
@@ -817,7 +816,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
 					cout<<"h is "<<h<<endl;
 					cout<<"hh is "<<hh<<endl;
-					cout<<"m_nWSex is "<<m_nWSex(k)<<endl;
+					cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
 					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 				}
@@ -914,23 +913,34 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 	 //cout<<"finished updatinf ref pop"<<endl;
 }
 
+
+/**
+ * @brief Write a new data file for iscam
+ * @details This routine writes the data file for iSCAM
+ *  Note that if a prospective years is > 0, the syr will be greater
+ *  than many of the data sets, and iSCAM will not work. Therfore, the data
+ *  structures, have to be written from syr-iyr only.
+ *  
+ *  Or, for syr write ,syr - (int)d_iscamCntrl(14)
+ * @param iyr the terminal year of the data in the data file.
+ */
 void OperatingModel::writeDataFile(const int& iyr)
 {
 
 		adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
 	  	ofstream dfs(sim_datafile_name);
-	  	dfs<<"#Model dimensions"<<endl;
-	  	dfs<< narea 		    <<endl;
-	  	dfs<< ngroup		    <<endl;
-	  	dfs<< nsex			    <<endl;
-	  	dfs<< syr   		    <<endl;
-	  	dfs<< iyr   	        <<endl;
-	  	dfs<< sage  		    <<endl;
-	  	dfs<< nage  		    <<endl;
-	  	dfs<< ngear 		    <<endl;
+	  	dfs<<"#Model dimensions"        <<endl;
+	  	dfs<< narea 		            <<endl;
+	  	dfs<< ngroup		            <<endl;
+	  	dfs<< nsex			            <<endl;
+	  	dfs<< syr-(int)d_iscamCntrl(14) <<endl;
+	  	dfs<< iyr   	                <<endl;
+	  	dfs<< sage  		            <<endl;
+	  	dfs<< nage  		            <<endl;
+	  	dfs<< ngear 		            <<endl;
 	     
-	  	dfs<<"#Allocation"	    <<endl;
-	  	dfs<< dAllocation 	    <<endl;
+	  	dfs<<"#Allocation"	            <<endl;
+	  	dfs<< dAllocation 	            <<endl;
 	  	
 	  	// Write age-schedule information
 	  	dfs<<"#Age-schedule and population parameters"<<endl;
@@ -992,8 +1002,6 @@ void OperatingModel::writeDataFile(const int& iyr)
 	
 		// Write Empirical weight-at-age data.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
-	  	cout<<"Frozen starts here"<<endl;
-	  	cout<<nWtTab<<endl;
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	for( k = 1; k <= nWtTab; k++ )
 	  	{

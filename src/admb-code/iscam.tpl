@@ -345,6 +345,8 @@ DATA_SECTION
 				}
 			}
 		}
+		if(!mseFlag)
+		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| MODEL DIMENSION         |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
@@ -363,7 +365,7 @@ DATA_SECTION
 		cout<<"| pntr_gs\n"<<pntr_gs<<endl;
 		cout<<"| pntr_ags\n"<<pntr_ags(1)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
-		
+		}
 		
 		/* Check for dimension errors in projection control file. */
 		if( pf_cntrl(1)<syr || pf_cntrl(3)<syr || pf_cntrl(5)<syr )
@@ -458,6 +460,8 @@ DATA_SECTION
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
 	LOC_CALCS
+		if(!mseFlag)
+		{
 		cout<<setw(8)<<setprecision(4)<<endl;
 	  	cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
@@ -470,7 +474,7 @@ DATA_SECTION
 	  	cout<<"| d_ah    \t"<<d_ah<<endl;
 	  	cout<<"| d_gh    \t"<<d_gh<<endl;
 	  	cout<<"| ----------------------- |\n"<<endl;
-
+	  	}
 	  	// length & weight-at-age based on input growth pars
 	  	ma.initialize();
 	  	for(ig=1;ig<=n_ags;ig++)
@@ -507,6 +511,8 @@ DATA_SECTION
 
 	LOC_CALCS
 		ft_count = nCtNobs;
+		if(!mseFlag)
+		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| HEAD(dCatchData)        |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
@@ -517,6 +523,7 @@ DATA_SECTION
 		cout<<"| ----------------------- |"<<endl;
 		cout<<dCatchData.sub(nCtNobs-3,nCtNobs)<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
+		}
 		d3_Ct.initialize();
 		
 		for(int ii=1;ii<=nCtNobs;ii++)
@@ -571,11 +578,14 @@ DATA_SECTION
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
 	LOC_CALCS
+		if(!mseFlag)
+		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(d3_survey_data)       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<d3_survey_data(nItNobs).sub(n_it_nobs(nItNobs)-3,n_it_nobs(nItNobs))<<endl;
 		cout<<"| ----------------------- |\n"<<endl;
+		}
 		for(k=1;k<=nItNobs;k++)
 		{
 			it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
@@ -614,12 +624,15 @@ DATA_SECTION
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
+		{
+			if(!mseFlag)
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
 			cout<<"| ----------------------- |"<<endl;
 			cout<<setw(4)<<d3_A(nAgears).sub(n_A_nobs(nAgears)-2,n_A_nobs(nAgears))<<endl;
 			cout<<"| ----------------------- |\n"<<endl;
+			}
 			for(k=1;k<=nAgears;k++)
 			{
 				dmatrix tmp = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
@@ -634,7 +647,7 @@ DATA_SECTION
 				//d3_A_obs(k) = trans(trans(d3_A(k)).sub(n_A_sage(k),n_A_nage(k)));
 			}
 		}
-		else
+		else if(!mseFlag)
 		{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| NO AGE OR LENGTH DATA   |"<<endl;
@@ -2878,7 +2891,6 @@ FUNCTION calcObjectiveFunction
 		}
 		nlvec(2,k)=dnorm(epsilon(k),sig_it);
 	}
-	
 	
 	// |---------------------------------------------------------------------------------|
 	// | LIKELIHOOD FOR AGE-COMPOSITION DATA
