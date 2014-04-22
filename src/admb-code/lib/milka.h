@@ -76,7 +76,8 @@
 		imatrix m_nAGopen;
 
 		//random variables
-		dmatrix epsilon;
+		dmatrix m_epsilon;  /// observation errors
+		dmatrix m_delta;    /// recruitment deviations (process errors)
 		
 		// catch arrays
 		int     m_nCtNobs;

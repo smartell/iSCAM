@@ -68,6 +68,14 @@ guiView  <- function()
 	setWinVal(list(txtFigDir=.FIGUREDIR))
 }
 
-
+# |----------------------------------------------------------------------------------|
+# | .saveMSEdataframe: Loads the rda files and creates a data.frame object for shiny.
+# |----------------------------------------------------------------------------------|
+# | 
+.saveMSEdataframe <- function(M)
+{
+	n <- length(M)
+	
+}
 
 cat("Type: \n guiView()\n to start the iSCAM gui")

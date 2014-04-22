@@ -72,6 +72,7 @@ void OperatingModel::runScenario(const int &seed)
 	conditionReferenceModel();
 
 	setRandomVariables(seed);
+
 	for(int i = nyr+1; i <= m_nPyr; i++ )
 	{
 		getReferencePointsAndStockStatus();
@@ -407,8 +408,11 @@ void OperatingModel::setRandomVariables(const int& seed)
 	m_nSeed = seed;
 	random_number_generator rng(m_nSeed);
 
-	epsilon.allocate(1,nItNobs,nyr+1,m_nPyr);
-	epsilon.fill_randn(rng);
+	m_epsilon.allocate(1,nItNobs,nyr+1,m_nPyr);
+	m_epsilon.fill_randn(rng);
+
+	m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
+	m_delta.fill_randn(rng);
 }
 
 
@@ -695,10 +699,12 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 						break;
 					}
 				}
-				// cout<<va<<endl;
+				// Relative abundance index.
+				double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)); 
+
 				// V is the population that is proportional to the index.
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
-				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = m_q(k)*dV*exp(epsilon(k,iyr)*m_dSigma(g)); // add observation err
+				m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = it;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,3) = gear;
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
 				m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
@@ -863,6 +869,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 		
 		// Recruitment
 		//three options : average recruitment, Beverton &Holt and Ricker
+		// m_delta is the process error.
 		
 		double tmp_st;
 		tmp_st = m_sbt(iyr-sage,g);
@@ -883,6 +890,9 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 				m_N(ig)(iyr+1,sage) = m_dRbar(ih);
 		}
 		m_N(ig)(iyr+1,sage) = m_N(ig)(iyr+1,sage)/nsex; //* mfexp( mv.log_rbar(ih));
+
+		// add process errors assuming each area/sex has the same deviation.
+		m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
 		
 		//disperse the recruits in each year 
 		// assumes all groups disperse the same and prop of gorups by area remain const

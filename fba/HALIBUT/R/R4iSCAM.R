@@ -67,6 +67,28 @@ guiView  <- function()
 	setWinVal(list(txtFigDir=.FIGUREDIR))
 }
 
+# |----------------------------------------------------------------------------------|
+# | .saveMSEdataframe: Loads the rda files and creates a data.frame object for shiny.
+# |----------------------------------------------------------------------------------|
+# | 
+.saveMSEdataframe <- function()
+{
+	.MSELIB   <- "../DATA/"
+	.rdaFILES <- paste(.MSELIB,list.files(.MSELIB,pattern=".rda"),sep="")
+	.fn       <- list.files(.MSELIB,pattern=".rda")
 
+	loadObj   <- function(fn){load(fn);return(sims)}
+	S         <- lapply(.rdaFILES,loadObj)
+	names(S)  <- substr(.fn,1,nchar(.fn)-4)
+	
+	n         <- length(S)
+	for( i in 1:n)
+	{
+		# Spawning biomass
+		fn <- function(X) return(X$sbt)
+		df  <- sapply(S[[i]],fn)
+		qf  <- t(apply(df,1,quantile,probs=c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)))
+	}
+}
 
 cat("Type: \n guiView()\n to start the iSCAM gui")
