@@ -3,6 +3,9 @@
 #ifndef MILKA_H
 #define MILKA_H
 
+#undef REPORT
+#define REPORT(object) report << #object "\n" << object << endl;
+
 #include <admodel.h>
 #include <contrib.h>
 #include "../iscam.htp"

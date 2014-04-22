@@ -1,11 +1,11 @@
-source(file.path("../..","R","read.admb.r"));
-
+source(file.path("../../../../dist/R/lib","read.admb.r"));
 readOutput <- function(d){
-	cat(d)
-  return(read.admb(file.path(d,"om")));
+  return(read.admb(file.path(d,"iscam")));
 }
-
+wd <- getwd()
+nf <- paste(basename(getwd()),".rda",sep="");
+setwd("./reps")
 dn <- dir(pattern="^[[:digit:]]");
-nf <- paste(basename(getwd()),".Rdata",sep="");
 sims <- lapply(dn,readOutput);
+setwd(wd)
 save(sims,file=nf)
