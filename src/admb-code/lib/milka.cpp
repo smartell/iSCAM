@@ -778,6 +778,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
 				int hh = m_nASex(k);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
+					cout<<hh<<endl;
 					m_A_irow(k) ++;
 					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
 					m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;

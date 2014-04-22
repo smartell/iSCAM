@@ -3658,7 +3658,7 @@ FUNCTION void calcReferencePoints()
 		rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
 		c_MSY(ro(g),steepness(g),d_rho,M_bar,dWt_bar,fa_bar,dvar_V);
 
-		dvar_vector dfmsy = c_MSY.getFmsy(dftry);
+		dvar_vector dfmsy = c_MSY.getFmsy(dftry,d_ak);
 		bo  = c_MSY.getBo();
 		dvariable dbmsy = c_MSY.getBmsy();
 		dvar_vector dmsy = c_MSY.getMsy();
@@ -3670,6 +3670,30 @@ FUNCTION void calcReferencePoints()
 		
 	}
 
+
+	// Data-type version of MSY-based reference points.
+	for( ig = 1; ig <= n_ags; ig++ )
+	{
+		fa_bar(ig) = elem_prod(dWt_bar(ig),ma(ig));
+		M_bar(ig)  = colsum(value(M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
+		M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1;	
+	}
+	
+	for( g = 1; g <= ngroup; g++ )
+	{
+		double d_ro  = value(ro(g));
+		double d_h   = value(steepness(g));
+		double d_rho = d_iscamCntrl(13);
+		
+		rfp::msy<double,dvector,dmatrix,d3_array>
+		c_dMSY(d_ro,d_h,d_rho,M_bar,dWt_bar,fa_bar,d_V);
+
+		fmsy(g) = c_dMSY.getFmsy(value(dftry));
+		bo = c_dMSY.getBo();
+		bmsy(g) = c_dMSY.getBmsy();
+		msy(g)  = c_dMSY.getMsy();
+		c_dMSY.print();
+	}
 
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
   }

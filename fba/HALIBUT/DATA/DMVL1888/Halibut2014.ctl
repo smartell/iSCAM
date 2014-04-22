@@ -65,11 +65,11 @@
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
   11     1     1     1     1     11    # 1  -selectivity type ivector(isel_type) for gear
-  82     4.0   6.0   8.0   8.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
-  5.5    2.5   2.5   2.5   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
+  82     3.0   4.0   4.0   3.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
+  5.5    1.5   2.5   2.0   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
   0      0     0     0     0     5     # 4  -No. of age nodes for each gear (0=ignore)
   0      0     0     0     0     10    # 5  -No. of year nodes for 2d spline(0=ignore)
-  2     -1    -1    -1    -1     2     # 6  -Phase of estimation (-1 for fixed)
+  2     -2    -3    -4    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   200.0  200.0 200.0 200.0 200.0 200.0 # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
   50.5   12.5  12.5  12.5  50.5  12.5  # 9  -Penalty wt for time-varying selectivity
@@ -114,8 +114,8 @@
 -3        # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1       # 11 -std in deviations for natural mortality
 12        # 12 -number of estimated nodes for deviations in natural mortality
-0.50      # 13 -fraction of total mortality that takes place prior to spawning
-100       # 14 -number of perspective years to start assessment at.
+0.00      # 13 -fraction of total mortality that takes place prior to spawning
+0         # 14 -number of perspective years to start assessment at.
 0         # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##

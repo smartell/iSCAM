@@ -10,9 +10,11 @@
 	for(i in 1:n)
 	{
 		fit = M[[i]]$fit
-		log.sbt <- fit$est[fit$names=="sd_log_sbt"]
-		log.std <- fit$std[fit$names=="sd_log_sbt"]
-		bt <- data.frame(Model=names(M)[i],Year=M[[i]]$yrs,log.sbt=log.sbt,log.se=log.std)
+		yr  = M[[i]]$yr
+		nyr = length(yr)
+		log.sbt <- fit$est[fit$names=="sd_log_sbt"][1:nyr]
+		log.std <- fit$std[fit$names=="sd_log_sbt"][1:nyr]
+		bt <- data.frame(Model=names(M)[i],Year=yr,log.sbt=log.sbt,log.se=log.std)
 		bt <- data.frame(bt,Bo=M[[i]]$bo)
 		mdf <- rbind(mdf,bt)
 	}

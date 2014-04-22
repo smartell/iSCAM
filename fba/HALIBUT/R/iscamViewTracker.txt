@@ -1,4 +1,5 @@
 # iSCAM View Tracker File 
 "Select","Label","Description","Control File"
 #The following line is for the Demo example
-TRUE,DMVL,         "Pacific Halibut",../DATA/DMVL/Halibut2014
+TRUE,DMVL1888,         "Pacific Halibut",../DATA/DMVL1888/Halibut2014
+TRUE,DMVL1988,         "Pacific Halibut",../DATA/DMVL1988/Halibut2014
