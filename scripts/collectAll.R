@@ -1,4 +1,4 @@
-source(file.path("../..","R","read.admb.r"));
+source(file.path("../../../..dist/R/lib","read.admb.r"));
 
 readOutput <- function(d){
 	cat(d)

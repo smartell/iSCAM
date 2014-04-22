@@ -99,6 +99,8 @@ void OperatingModel::runScenario(const int &seed)
 		
 	}
 
+	ofstream report("milka.rep");
+	REPORT(m_N);
 }
 
 /**
