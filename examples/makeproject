@@ -25,12 +25,15 @@ cp ../scripts/iScamLogo.pdf $1/PRESENTATION/iScamLogo.pdf
 
 ## Copy Makefile from Scripts to DATA directory
 cp ../scripts/ADMB_Makefile            $1/DATA/Makefile
-gsed -i "s/CTL=/CTL=$1/"               $1/DATA/Makefile
+#gsed -i "s/CTL=/CTL=$1/"               $1/DATA/Makefile
+#gsed -i  "0,/CTL=/{s/CTL=/CTL=$1}"      $1/DATA/Makefile
+gsed -i "0,/^CTL=/s/^CTL=/CTL=$1/"     $1/DATA/Makefile
 
 cp ../scripts/DATATemplate.dat         $1/DATA/$1.dat
 cp ../scripts/ControlTemplate.ctl      $1/DATA/$1.ctl
 cp ../scripts/ProjectionTemplate.pfc   $1/DATA/$1.pfc
 cp ../scripts/MSETemplate.mpc 		   $1/DATA/$1.mpc
+cp ../scripts/collectAll.R             $1/R/collectAll.R
 
 echo $1.dat >  $1/DATA/RUN.dat
 echo $1.ctl >> $1/DATA/RUN.dat
