@@ -407,13 +407,8 @@ void OperatingModel::setRandomVariables(const int& seed)
 	m_nSeed = seed;
 	random_number_generator rng(m_nSeed);
 
-
 	epsilon.allocate(1,nItNobs,nyr+1,m_nPyr);
 	epsilon.fill_randn(rng);
-	
-
-	cout<<"epsilon is "<<epsilon<<endl;
-
 }
 
 
@@ -797,6 +792,8 @@ void OperatingModel::calcCompositionData(const int& iyr)
 void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 {
 	int gear;
+
+	cout<<"nWtTab is "<<nWtTab<<endl;
 	
 	for(int k = 1; k <= nWtTab; k++ )
 	{
@@ -807,7 +804,7 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 			for(int g = 1; g <= ngroup; g++ )
 			{
 
-				int hh = m_nWSex(k);   // flag for sex
+				int hh = m_nWSex(gear);   // flag for sex
 				for( h = 1; h <= hh+1; h++ )
 				{
 					m_W_irow(k) ++;
@@ -818,6 +815,10 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
+					cout<<"h is "<<h<<endl;
+					cout<<"hh is "<<hh<<endl;
+					cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
+					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 				}
 			}
