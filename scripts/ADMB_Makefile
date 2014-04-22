@@ -76,10 +76,25 @@ $(.datadone): $(DAT)
 data: $(EXEC) $(.datadone)
 
 $(runsims): 
-	cd $(REPDIR)/$(@D); make ARG='-est -ainp ../../$(CTL).par -maxfn 0 -mse $(@D)'
+	make --directory=$(REPDIR)/$(@D) ARG='-est -ainp ../../$(CTL).par -maxfn 0 -mse $(@D)'
+	# cd $(REPDIR)/$(@D); make run ARG='-est -ainp ../$(CTL).par -maxfn 0 -mse $(@D)' 
 
 mse: data $(runsims)
 	touch simdone
 
 cleanmse:
 	rm -r 0* *.Rdata $(REPDIR)
+
+# |------------------------------------------------------------------------------------|
+# | R SCRIPTS FOR READING REPORT & PARAMETER FILES AND CREATING AN .Rdata FILE.
+# |------------------------------------------------------------------------------------|
+# |
+
+COLLECTALL='source(file.path("../..","R","collectAll.r"))'
+
+allSims.Rdata: simdone
+	@echo $(COLLECTALL) | R --vanilla --slave
+
+collect: allSims.Rdata
+
+
