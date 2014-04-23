@@ -83,7 +83,7 @@ mse: data $(runsims)
 	touch simdone
 
 cleanmse:
-	rm -r 0* *.Rdata $(REPDIR)
+	rm -r 0* *.rda $(REPDIR)
 
 # |------------------------------------------------------------------------------------|
 # | R SCRIPTS FOR READING REPORT & PARAMETER FILES AND CREATING AN .Rdata FILE.
