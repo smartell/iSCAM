@@ -97,4 +97,13 @@ allSims.Rdata: simdone
 
 collect: allSims.Rdata
 
+# Some help for the naive
+help:
+	@echo Usage  : make
+	@echo Targets: all    - copies executable and runs model.
+	@echo        : run    - run estimation model
+	@echo        : mcmc   - runs MCMC & MCEVAL <use MCFLAG to control -mcmc options>
+	@echo        : mceval - run MCEVAL only
+	@echo        : retro  - conduction retrospective analysis with NR years.
+	@echo        : mse    - run Management Strategy Evaluation simulations.
 
