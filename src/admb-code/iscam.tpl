@@ -689,7 +689,7 @@ DATA_SECTION
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
 		*/
-		
+
 		projwt.initialize();
 
 		for(int ii=1; ii<=nWtTab; ii++)
@@ -792,6 +792,7 @@ DATA_SECTION
 		{
 			for(int i = syr; i <= nyr; i++)
 			{
+		
 				d3_wt_avg(ig)(i) = wa(ig);
 				d3_wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
 				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
@@ -813,6 +814,8 @@ DATA_SECTION
 			f   = xxinp_wt_avg(i,sage-3);
 			g   = xxinp_wt_avg(i,sage-2);
 			h   = xxinp_wt_avg(i,sage-1);
+			cout<<xxinp_wt_avg(i)(sage-5,nage)<<endl;
+				cout<<"cheguei aqui"<< endl;
 
 		// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
