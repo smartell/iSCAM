@@ -220,8 +220,8 @@ namespace rfp {
 
 			// fbar = fbar - m_dYe/m_d2Ye;
 			fbar -= m_fbar_stp;
-			cout<<iter<<" fbar "<<fbar<<" dYe "<<m_dYe<<" fk "<<fk;
-			cout<<" lambda = "<<lambda<<" ak = "<<m_ye/sum(m_ye)<<endl;
+			// cout<<iter<<" fbar "<<fbar<<" dYe "<<m_dYe<<" fk "<<fk;
+			// cout<<" lambda = "<<lambda<<" ak = "<<m_ye/sum(m_ye)<<endl;
 
 			// Backtrack if necessary;
 			if( (lb-fbar)*(fbar-ub) < 0.0 )
@@ -517,7 +517,7 @@ namespace rfp {
 			  + re*elem_prod(fe,diagonal(dphiq));
 			  
 
-		cout<<"dye "<<dye<<endl;
+		// cout<<"dye "<<dye<<endl;
 
 		// Jacobian matrix (2nd derivative of the catch equations)
 		for(j=1; j<=m_nGear; j++)
