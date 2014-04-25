@@ -59,8 +59,10 @@ clean:
 NOSIM = 8
 REPDIR = reps
 # Use wild cards and basename to strip extensions from .scn .mpc
-SCEN = S1.scn S2.scn
-PROC = P1.mpc P2.mpc P3.mpc
+SCN_FILES := $(wildcard *.scn)
+MPC_FILES := $(wildcard *.mpc)
+SCEN = $(SCN_FILES)
+PROC = $(MPC_FILES)
 S    = $(basename $(SCEN))
 P    = $(basename $(PROC))
 
