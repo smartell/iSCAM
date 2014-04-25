@@ -682,8 +682,9 @@ DATA_SECTION
 	vector tmp_nWtNobs(1,nWtTab);
 	int sum_tmp_nWtNobs; 
 	vector projwt(1,nWtTab);
-	vector n_bf_wt_line(1,nWtTab);
+	vector n_bf_wt_row(1,nWtTab);
 
+	
 
 
 	LOC_CALCS		
@@ -693,7 +694,7 @@ DATA_SECTION
 		*/
 		
 		projwt.initialize();
-		n_bf_wt_line.initialize();
+		n_bf_wt_row.initialize();
 		tmp_nWtNobs.initialize();
 
 		for(int k=1; k<=nWtTab; k++)
@@ -705,34 +706,30 @@ DATA_SECTION
 			{
 				if(nWtNobs(k) > 0 && d3_inp_wt_avg(k)(i)(sage-5) < 0)
 				{
-					n_bf_wt_line(k)++ ;
+					n_bf_wt_row(k)++ ;
+
 				}
 
-				projwt(k)=-n_bf_wt_line(k);
+				projwt(k)=-n_bf_wt_row(k);
 			}	
 			
-			if(n_bf_wt_line(k)>0)
+			if(n_bf_wt_row(k)>0)
 			{
-				for(int i=1; i<=n_bf_wt_line(k); i++)
+				for(int i=1; i<=n_bf_wt_row(k); i++)
 				{
 					int exp_nyr = fabs(d3_inp_wt_avg(k,i,sage-5))-syr;
 					tmp_nWtNobs(k) += exp_nyr; 
 				}
 			}	
 				
-			else if (n_bf_wt_line(k) == 0)
+			else if (n_bf_wt_row(k) == 0)
 			{
 				tmp_nWtNobs(k) = nWtNobs(k);
-				projwt(k)=n_bf_wt_line(k);
+				projwt(k)=n_bf_wt_row(k);
 			}
 		}
 		sum_tmp_nWtNobs = sum(tmp_nWtNobs);	
 		
-		cout<<"n_bf_wt_line is "<<n_bf_wt_line<<endl;	
-		cout<<"sum_tmp_nWtNobs is "<<sum_tmp_nWtNobs<<endl;
-		cout<<"tmp_nWtNobs is "<<tmp_nWtNobs<<endl;
-
-
 	END_CALCS
 
 		3darray xinp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
@@ -752,14 +749,14 @@ DATA_SECTION
 
   		for(int k=1; k<=nWtTab; k++)
 		{
-			ivector iroww(0,n_bf_wt_line(k));
+			ivector iroww(0,n_bf_wt_row(k));
 			iroww.initialize();
 
 			if(nWtNobs(k) > 0)
 			{
-				if(n_bf_wt_line(k) > 0)
+				if(n_bf_wt_row(k) > 0)
 				{
-					for(i=1; i<=n_bf_wt_line(k); i++)
+					for(i=1; i<=n_bf_wt_row(k); i++)
 					{
 						d3_inp_wt_avg(k,i,sage-5) = fabs(d3_inp_wt_avg(k,i,sage-5));
 						iroww(i) = d3_inp_wt_avg(k,i,sage-5)-syr+iroww(i-1);
@@ -772,9 +769,9 @@ DATA_SECTION
 	 					}
 					}
 					
-					for(int jj = iroww(n_bf_wt_line(k))+1; jj <= tmp_nWtNobs(k); jj++)
+					for(int jj = iroww(n_bf_wt_row(k))+1; jj <= tmp_nWtNobs(k); jj++)
 	 				{
-	 					xinp_wt_avg(k)(jj)(sage-5,nage) = d3_inp_wt_avg(k)(jj-iroww(n_bf_wt_line(k)))(sage-5,nage);
+	 					xinp_wt_avg(k)(jj)(sage-5,nage) = d3_inp_wt_avg(k)(jj-iroww(n_bf_wt_row(k)))(sage-5,nage);
 	 				}	
 				}
 				else
@@ -2952,6 +2949,9 @@ FUNCTION calcObjectiveFunction
 				if( iyr <  syr ) iaa++;
 			}
 				cout<<k<<" iaa is "<< iaa<<endl;
+
+			//d3array tmp_d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage)
+
 
 
 			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
