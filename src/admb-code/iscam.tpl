@@ -2951,11 +2951,16 @@ FUNCTION calcObjectiveFunction
 				if( iyr <= nyr ) naa++;
 				if( iyr <  syr ) iaa++;
 			}
-			
+				cout<<k<<" iaa is "<< iaa<<endl;
+
+
 			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); 
 			nu.initialize();
+
+			//cout<<"d3_A_obs "<<k <<" is " <<d3_A_obs(k)<<endl;
+			//cout<<"A_hat "<<k <<" is " <<d3_A_obs(k)<<endl;
 			
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
@@ -2965,7 +2970,7 @@ FUNCTION calcObjectiveFunction
 			{
 				case 1:
 					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
-					//cout<<"nu is "<<nu<<endl;
+					//cout<<k<<" nu is "<<nu<<endl;
 					//cout<<"P "<<k<<" is "<<P<<endl;
 				break;
 				case 2:

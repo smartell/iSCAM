@@ -36,7 +36,7 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-   5  5                            ## Gear Index
+   1  6                            ## Gear Index
    1  1                            ## Likelihood type
    0.000  0.000               ## Minimum proportion for aggregation & tail compression
    0.0000 0.0000           ## Small constant to add to comps & renormalize
