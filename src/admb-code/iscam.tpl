@@ -623,6 +623,7 @@ DATA_SECTION
 	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
+
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
 		{
 			if(!mseFlag)
@@ -676,11 +677,12 @@ DATA_SECTION
 
 	init_int nWtTab;
 	init_ivector nWtNobs(1,nWtTab);
+
 	init_3darray d3_inp_wt_avg(1,nWtTab,1,nWtNobs,sage-5,nage);
-	
 	vector tmp_nWtNobs(1,nWtTab);
 	int sum_tmp_nWtNobs; 
 	vector projwt(1,nWtTab);
+	vector n_bf_wt_line(1,nWtTab);
 
 
 
@@ -689,25 +691,47 @@ DATA_SECTION
 		  This will determine the new dimension of d3_inp_wt_avg in case the backward 
 		  projection is needed required and rename nWtNobs to tmp_nWtNobs 
 		*/
-
+		
 		projwt.initialize();
+		n_bf_wt_line.initialize();
+		tmp_nWtNobs.initialize();
 
-		for(int ii=1; ii<=nWtTab; ii++)
+		for(int k=1; k<=nWtTab; k++)
 		{
-			if(nWtNobs(ii) > 0 && d3_inp_wt_avg(ii)(1)(sage-5) < 0)
+			tmp_nWtNobs(k) = nWtNobs(k);
+			projwt(k)=1;
+
+			for(i=1; i<=nWtNobs(k); i++)
 			{
-				int exp_nyr = fabs(d3_inp_wt_avg(ii,1,sage-5))-syr; 
-				tmp_nWtNobs(ii) = nWtNobs(ii)+exp_nyr;
-				projwt(ii)=-1;
-			}
-			else if (nWtNobs(ii) > 0)
+				if(nWtNobs(k) > 0 && d3_inp_wt_avg(k)(i)(sage-5) < 0)
+				{
+					n_bf_wt_line(k)++ ;
+				}
+
+				projwt(k)=-n_bf_wt_line(k);
+			}	
+			
+			if(n_bf_wt_line(k)>0)
 			{
-				tmp_nWtNobs(ii) = nWtNobs(ii);
-				projwt(ii)=1;
+				for(int i=1; i<=n_bf_wt_line(k); i++)
+				{
+					int exp_nyr = fabs(d3_inp_wt_avg(k,i,sage-5))-syr;
+					tmp_nWtNobs(k) += exp_nyr; 
+				}
+			}	
+				
+			else if (n_bf_wt_line(k) == 0)
+			{
+				tmp_nWtNobs(k) = nWtNobs(k);
+				projwt(k)=n_bf_wt_line(k);
 			}
 		}
-		sum_tmp_nWtNobs = sum(tmp_nWtNobs);		
+		sum_tmp_nWtNobs = sum(tmp_nWtNobs);	
 		
+		cout<<"n_bf_wt_line is "<<n_bf_wt_line<<endl;	
+		cout<<"sum_tmp_nWtNobs is "<<sum_tmp_nWtNobs<<endl;
+		cout<<"tmp_nWtNobs is "<<tmp_nWtNobs<<endl;
+
 
 	END_CALCS
 
@@ -716,52 +740,59 @@ DATA_SECTION
 
 	LOC_CALCS
 
-		xinp_wt_avg.initialize();
-		xxinp_wt_avg.initialize();
 
 		/*
 		  This will redimension the d3_inp_wt_avg  according to tmp_nWtNobs and rename 
 		  the 3d array to xinp_wt_avg. Then the 3darray is converted to a matrix 
-		  xxinp_wt_avg 
+		  xxinp_wt_avg
 		*/
 
+		xinp_wt_avg.initialize();
+		xxinp_wt_avg.initialize();
 
-  		for(int ii=1; ii<=nWtTab; ii++)
+  		for(int k=1; k<=nWtTab; k++)
 		{
-		if(nWtNobs(ii) > 0)
-		{
-  			if(d3_inp_wt_avg(ii,1,sage-5) < 0)
+			ivector iroww(0,n_bf_wt_line(k));
+			iroww.initialize();
+
+			if(nWtNobs(k) > 0)
 			{
-	 			d3_inp_wt_avg(ii,1,sage-5) = fabs(d3_inp_wt_avg(ii,1,sage-5));
-				int exp_nyr = d3_inp_wt_avg(ii,1,sage-5)-syr;
-			
-				for(int jj=exp_nyr;jj>=1;jj--)
+				if(n_bf_wt_line(k) > 0)
+				{
+					for(i=1; i<=n_bf_wt_line(k); i++)
+					{
+						d3_inp_wt_avg(k,i,sage-5) = fabs(d3_inp_wt_avg(k,i,sage-5));
+						iroww(i) = d3_inp_wt_avg(k,i,sage-5)-syr+iroww(i-1);
+
+						for(int jj=iroww(i);jj>=iroww(i-1)+1;jj--)
+	 					{
+	 						xinp_wt_avg(k)(jj)(sage-5) = syr+jj-iroww(i-1)-1 ;
+	 						xinp_wt_avg(k)(jj)(sage-4,nage) = d3_inp_wt_avg(k)(i)(sage-4,nage);
+
+	 					}
+					}
+					
+					for(int jj = iroww(n_bf_wt_line(k))+1; jj <= tmp_nWtNobs(k); jj++)
+	 				{
+	 					xinp_wt_avg(k)(jj)(sage-5,nage) = d3_inp_wt_avg(k)(jj-iroww(n_bf_wt_line(k)))(sage-5,nage);
+	 				}	
+				}
+				else
 	 			{
-	 				xinp_wt_avg(ii)(jj)(sage-5) = syr+jj-1 ;
-	 				xinp_wt_avg(ii)(jj)(sage-4,nage) = d3_inp_wt_avg(ii)(1)(sage-4,nage);
+	 				for(int jj = 1; jj <= tmp_nWtNobs(k); jj++)
+	 				{
+	 					xinp_wt_avg(k)(jj)(sage-5,nage) = d3_inp_wt_avg(k)(jj)(sage-5,nage);
+	 				}
 	 			}
-			
-				for(int jj = exp_nyr+1; jj <= tmp_nWtNobs(ii); jj++)
-	 			{
-	 				xinp_wt_avg(ii)(jj)(sage-5,nage) = d3_inp_wt_avg(ii)(jj-exp_nyr)(sage-5,nage);
-	 			}
-	 		}
-	 		else
-	 		{
-				for(int jj = 1; jj <= tmp_nWtNobs(ii); jj++)
-	 			{
-	 				xinp_wt_avg(ii)(jj)(sage-5,nage) = d3_inp_wt_avg(ii)(jj)(sage-5,nage);
-	 			}
-			}
 		
-			int ttmp =	sum(tmp_nWtNobs(1,ii-1));
-			int ttmp2 =	sum(tmp_nWtNobs(1,ii));
+				int ttmp =	sum(tmp_nWtNobs(1,k-1));
+				int ttmp2 =	sum(tmp_nWtNobs(1,k));
 
-			for(int jj=ttmp+1; jj<=ttmp2; jj++) 
-			{
-				xxinp_wt_avg(jj)(sage-5,nage) = xinp_wt_avg(ii)(jj-ttmp)(sage-5,nage);
+				for(int jj=ttmp+1; jj<=ttmp2; jj++) 
+				{
+					xxinp_wt_avg(jj)(sage-5,nage) = xinp_wt_avg(k)(jj-ttmp)(sage-5,nage);
+				}
 			}
-		}
 		}
 	END_CALCS
 
@@ -814,8 +845,7 @@ DATA_SECTION
 			f   = xxinp_wt_avg(i,sage-3);
 			g   = xxinp_wt_avg(i,sage-2);
 			h   = xxinp_wt_avg(i,sage-1);
-			cout<<xxinp_wt_avg(i)(sage-5,nage)<<endl;
-				cout<<"cheguei aqui"<< endl;
+			//cout<<xxinp_wt_avg(i)(sage-5,nage)<<endl;
 
 		// | SM Changed Sept 9, to accomodate NA's (-99) in empirical data.
 			if( h )
@@ -888,7 +918,6 @@ DATA_SECTION
 				}
 			}
 			d3_wt_dev(ig) = trans(mtmp);
-		
 			
 			if( min(d3_wt_avg(ig))<=0.000 && min(d3_wt_avg(ig))!=NA )
 			{
@@ -1706,9 +1735,7 @@ FUNCTION void calcSdreportVariables()
   	*/
 FUNCTION void initParameters()
   {
-
-	
-  	
+ 	
   	int ih;
   	
 	ro        = mfexp(theta(1));
@@ -2072,7 +2099,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 			}
 		}
 	}  //end of gear k
-	
+
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
 	
   }	
@@ -2274,7 +2301,6 @@ FUNCTION calcNumbersAtAge
 		}
 		N(ig)(nyr+1,sage) = 1./nsex * mfexp( log_avgrec(ih));
 		bt(g)(nyr+1) += N(ig)(nyr+1) * d3_wt_avg(ig)(nyr+1);
-
 	}
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
@@ -2417,7 +2443,7 @@ FUNCTION calcComposition
 	  		A_hat(kk)(ii) /= sum( A_hat(kk)(ii) );
   	 	}
   	}
-  	
+
 	if(verbose)cout<<"**** Ok after calcComposition ****"<<endl;
 
   }	
@@ -2939,6 +2965,8 @@ FUNCTION calcObjectiveFunction
 			{
 				case 1:
 					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					//cout<<"nu is "<<nu<<endl;
+					//cout<<"P "<<k<<" is "<<P<<endl;
 				break;
 				case 2:
 					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
@@ -3270,6 +3298,11 @@ FUNCTION calcObjectiveFunction
 	nf++;
 	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
 	
+	
+	//cout<<"nlvec3 is "<<nlvec(3)<<endl;
+
+	
+	//	ad_exit(1); //para!
   }
 
 
