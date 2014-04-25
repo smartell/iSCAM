@@ -991,8 +991,12 @@ DATA_SECTION
 	init_ivector nPhz_phi2(1,nAgears);
 	init_ivector nPhz_df(1,nAgears);
 	init_int check;
-	!! if(check != -12345) {COUT(check);cout<<"Error reading composition controls\n"<<endl; exit(1);}
-
+	LOC_CALCS
+		if(check != -12345) 
+		{
+			COUT(check);cout<<"Error reading composition controls\n"<<endl; exit(1);
+		}
+	END_CALCS
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1162,9 +1166,6 @@ DATA_SECTION
 	// | 0 -> uninformative prior.
 	// | 1 -> normal prior on q in log-space.
 	// | 2 -> penalized random walk in q.
-
-
-
 	init_int nits;					
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
@@ -1186,7 +1187,7 @@ DATA_SECTION
 	// | 11-> std in natural mortality deviations.
 	// | 12-> number of estimated nodes for deviations in natural mortality
 	// | 13-> fraction of total mortality that takes place prior to spawning
-	// | 14-> DEPRECATED switch for age-composition likelihood (1=dmvlogistic,2=dmultinom)
+	// | 14-> number of prospective years to start estimation from syr.
 	// | 15-> switch for generating selex based on IFD and cohort biomass
 	init_vector d_iscamCntrl(1,15);
 	int verbose;
@@ -1209,7 +1210,7 @@ DATA_SECTION
 	int nf;
 	
 	// |---------------------------------------------------------------------------------|
-	// | VECTOR DIMENTIONS FOR NEGATIVE LOG LIKELIHOODS
+	// | VECTOR DIMENSIONS FOR NEGATIVE LOG LIKELIHOODS
 	// |---------------------------------------------------------------------------------|
 	// | ilvec[1,5,6,7] -> number of fishing gears (ngear)
 	// | ilvec[2]       -> number of surveys       (nItNobs)
@@ -1231,6 +1232,9 @@ DATA_SECTION
 	// | - If retro_yrs > 0, then ensure that pf_cntrl arrays are not greater than nyr,
 	// |   otherwise arrays for mbar will go out of bounds.
 	// | - Reduce ft_count so as not to bias estimates of ft.
+	// | - Establish retrospective counter for Composition data n_naa;
+
+	ivector n_naa(1,nAgears);
 
 	!! nyr = nyr - retro_yrs;
 	LOC_CALCS
@@ -1244,6 +1248,17 @@ DATA_SECTION
 		{
 			if( dCatchData(i)(1) > nyr ) ft_count --;
 		}
+
+		// Retrospective counter for n_A_nobs
+		n_naa.initialize();
+		for( k = 1; k <= nAgears; k++ )
+		{
+			for( i = 1; i <= n_A_nobs(k); i++ )
+			{
+				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				if( iyr <= nyr ) n_naa(k)++;
+			}
+		}
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -1252,6 +1267,10 @@ DATA_SECTION
 	// | - start assessment at syr + # of prospective years.
 	// | - adjust sel_blocks to new syr
 	// | - Reduce ft_count so as not to bias estimates of ft.
+	// | - Establish prospective counter for Composition data   n_saa;
+
+	ivector n_saa(1,nAgears);
+
 	!! syr = syr + (int)d_iscamCntrl(14);
 	LOC_CALCS
 		//sel_blocks(1,ngear,1,n_sel_blocks);
@@ -1268,7 +1287,21 @@ DATA_SECTION
 		{
 			if( dCatchData(i)(1) < syr ) ft_count --;
 		}
+
+		// Prospective counter for n_A_nobs
+		n_saa.initialize();
+		n_saa = 1;
+		for( k = 1; k <= nAgears; k++ )
+		{
+			for( i = 1; i <= n_A_nobs(k); i++ )
+			{
+				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				if( iyr < syr ) n_saa(k)++;
+			}
+		}
 	END_CALCS
+	!! COUT((n_saa));
+	!! COUT((n_naa));
 
 
 	// |---------------------------------------------------------------------------------|
@@ -2906,27 +2939,39 @@ FUNCTION calcObjectiveFunction
 	// | 
 	// | TODO:
 	// | [ ] - change A_nu to data-type variable, does not need to be differentiable.
-	// |
+	// | [ ] - issue 29. Fix submatrix O, P for prospective analysis & sex/area/group.
 	A_nu.initialize();
 	for(k=1;k<=nAgears;k++)
 	{	
 		if( n_A_nobs(k)>0 )
 		{
-			int naa = 0;
-			int iaa = 1;
+			//int n_naa = 0;		//retrospective counter
+			//int n_saa = 1;		//prospective counter
 			int iyr;
-			//retrospective counter
+			dmatrix      O(n_saa(k),n_naa(k),n_A_sage(k),n_A_nage(k));
+			dvar_matrix  P(n_saa(k),n_naa(k),n_A_sage(k),n_A_nage(k));
+			dvar_matrix nu(n_saa(k),n_naa(k),n_A_sage(k),n_A_nage(k));
+			O.initialize();
+			P.initialize();
+			nu.initialize();
+			
+			int ii=n_saa(k);
 			for(i=1;i<=n_A_nobs(k);i++)
 			{
 				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
-				if( iyr <= nyr ) naa++;
-				if( iyr <  syr ) iaa++;
+				if(iyr >= syr && iyr <= nyr)
+				{
+					O(ii) = d3_A_obs(k)(i).sub(n_A_sage(k),n_A_nage(k));
+					P(ii) = A_hat(k)(i).sub(n_A_sage(k),n_A_nage(k));
+					ii ++;
+				}
+				//if( iyr <= nyr ) naa++;
+				//if( iyr <  syr ) iaa++;
 			}
 			
-			dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
-			dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
-			dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); 
-			nu.initialize();
+			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
+			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
+			//dvar_matrix nu(O.rowmin(),O.rowmax(),O.colmin(),O.colmax()); 
 			
 			// | Choose form of the likelihood based on d_iscamCntrl(14) switch
 			//switch(int(d_iscamCntrl(14)))
@@ -3007,9 +3052,18 @@ FUNCTION calcObjectiveFunction
 			}
 			
 			// | Extract residuals.
-			for(i=iaa;i<=naa;i++)
+			for(i=n_saa(k);i<=n_naa(k);i++)
 			{
 				A_nu(k)(i)(n_A_sage(k),n_A_nage(k))=nu(i);
+			}
+			ii = n_saa(k);
+			for( i = 1; i <= n_A_nobs(k); i++ )
+			{
+				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				if(iyr >= syr && iyr <= nyr)
+				{
+					A_nu(k)(i)(n_A_sage(k),n_A_nage(k))=nu(ii++);		
+				}
 			}
 		}
 	}
