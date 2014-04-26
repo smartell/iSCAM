@@ -837,16 +837,17 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
-					cout<<"h is "<<h<<endl;
-					cout<<"hh is "<<hh<<endl;
-					cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
+					//cout<<"h is "<<h<<endl;
+					//cout<<"hh is "<<hh<<endl;
+					//cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
 					
 					m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
 				}
 			}
 		}
 	}	
-	
+	//cout<<m_d3_inp_wt_avg(1)<<endl;
+	//cout<<endl;	
 }
 
 
@@ -1028,7 +1029,8 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	dfs<< tmp_d3_A				<<endl;
 	
 		// Write Empirical weight-at-age data.
-		
+		// Issue 30.  Bug in writing empirical weight-at-age.
+		// data where year in the first row is 0.
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	for( k = 1; k <= nWtTab; k++ )
@@ -1041,15 +1043,17 @@ void OperatingModel::writeDataFile(const int& iyr)
 		{			
 			
 			tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
-			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*projwt(k);
+			tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5));//*projwt(k);
 		}
-
+		//cout<<"projwt\n"<<projwt<<endl;
+		//cout<<tmp_d3_inp_wt_avg(1)<<endl;
 	  	dfs<< nWtTab 					<<endl;
 	  	dfs<< tmp_nWtNobs				<<endl;
 		dfs<< tmp_d3_inp_wt_avg			<<endl; 
 	
 		dfs<<"#EOF"	<<endl;
 		dfs<< 999	<<endl;
+		//exit(1);
 
 }
 

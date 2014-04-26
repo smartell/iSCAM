@@ -727,6 +727,7 @@ DATA_SECTION
 				projwt(k)=n_bf_wt_row(k);
 			}
 		}
+		
 		sum_tmp_nWtNobs = sum(tmp_nWtNobs);	
 		
 	END_CALCS
