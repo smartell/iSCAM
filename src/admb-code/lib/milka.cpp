@@ -110,11 +110,12 @@ void OperatingModel::runScenario(const int &seed)
  */
 void OperatingModel::readMSEcontrols()
 {
-	if(verbose) cout<<"MSE Control file\n"<<ProjControlFile<<endl;
+	if(verbose) cout<<"MSE Control file\n"<<ProcedureControlFile<<endl;
+	if(verbose) cout<<"MSE Scenario file\n"<<ScenarioControlFile<<endl;
 
-	cifstream ifs(ProjControlFile);
-	ifs>>m_nPyr;
-	ifs>>m_nHCR;
+	cifstream ifs_mpc(ProcedureControlFile);
+	ifs_mpc>>m_nPyr;
+	ifs_mpc>>m_nHCR;
 
 	m_nGearIndex.allocate(1,ngear);
 	m_nCSex.allocate(1,ngear);
@@ -123,7 +124,7 @@ void OperatingModel::readMSEcontrols()
 	
 	// Controls for sexing catch and comps and fishing in given areas.
 	dmatrix tmp(1,ngear,-7,narea);
-	ifs >> tmp;
+	ifs_mpc >> tmp;
 	m_nGearIndex = ivector(column(tmp,-7));
 	m_nCSex      = ivector(column(tmp,-6));
 	m_nASex      = ivector(column(tmp,-5));
@@ -138,17 +139,13 @@ void OperatingModel::readMSEcontrols()
 		m_nAGopen(k) = ivector(tmp(k)(1,narea));
 	}
 
-	//Controls for recruitment options
-	ifs >> m_nRecType;
+	
 
-	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
-	ifs >> m_dispersal; 
-
-	ifs >> MseCtlFile;
-	ifs >> MsePfcFile;
+	//ifs_mpc >> MseCtlFile;
+	//ifs_mpc >> MsePfcFile;
 
 	int eof=0;
-	ifs >> eof;
+	ifs_mpc >> eof;
 	cout<<"End of MPC file "<<eof<<endl;
 	if(eof != 999)
 	{
@@ -156,8 +153,25 @@ void OperatingModel::readMSEcontrols()
 		cout<<eof<<endl;
 		ad_exit(1);
 	}
-
 	//cout<<"finished MSE controls"<<endl;
+
+	cifstream ifs_scn(ScenarioControlFile);
+	//Controls for recruitment options
+	ifs_scn >> m_nRecType;
+
+	m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
+	ifs_scn >> m_dispersal; 
+
+	// End of file
+	int eof_scn=0;
+	ifs_scn >> eof_scn;
+	if(eof_scn != 999)
+	{
+		cout<<"Error reading Scenario file"<<endl;
+		cout<<eof_scn<<endl;
+		ad_exit(1);
+	}
+
 }
 
 /**
@@ -1014,6 +1028,7 @@ void OperatingModel::writeDataFile(const int& iyr)
 	  	dfs<< tmp_d3_A				<<endl;
 	
 		// Write Empirical weight-at-age data.
+		
 	  	dfs<<"#Empirical weight-at-age data"	<<endl;
 	  	ivector tmp_nWtNobs(1,nWtTab);
 	  	for( k = 1; k <= nWtTab; k++ )
@@ -1054,8 +1069,10 @@ void OperatingModel::runStockAssessment()
 		
 		ofstream rd("mseRUN.dat");
 		rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
-		rd<<MseCtlFile + ".ctl"<<endl;
-		rd<<MsePfcFile + ".pfc"<<endl;
+		rd << ControlFile          <<endl;
+		rd << ProjectFileControl   <<endl;
+		rd << ProcedureControlFile <<endl;
+		rd << ScenarioControlFile  <<endl;
 		//exit(1);
 
 		cout<<"running stock assessment"<<endl;

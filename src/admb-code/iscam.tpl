@@ -140,7 +140,9 @@ DATA_SECTION
 	/// | ProjectFileControl.pfc : used for stock projections under TAC
 	init_adstring ProjectFileControl;  ///< String for the projection file.
 
-	init_adstring ProjControlFile;
+	init_adstring ProcedureControlFile;
+
+	init_adstring ScenarioControlFile;
 	/// | BaseFileName           : file prefix used for all iSCAM model output
 	!! BaseFileName = stripExtension(ControlFile);  ///< BaseName given by the control file
 	/// | ReportFileName         : file name to copy report file to.
@@ -165,7 +167,7 @@ DATA_SECTION
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	/// | Number of catch options to explore in the decision table.
 	init_int n_tac; ///< Number of catch options to explore in the decision table.
-					///<
+	!! COUT(ProjectFileControl);
 	!! COUT(n_tac);
 	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
@@ -181,7 +183,7 @@ DATA_SECTION
 			cout<<"Error reading projection file."<<endl;
 			cout<<"Last integer read is "<<eof_pf<<endl;
 			cout<<"The file should end with -999.\n Aborting!"<<endl;
-			exit(1);
+			ad_exit(1);
 		}
 	END_CALCS
 	
