@@ -179,7 +179,7 @@
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();
-		
+		void writeSimulationVariables();
 
 		
 	};

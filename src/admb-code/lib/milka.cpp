@@ -101,8 +101,7 @@ void OperatingModel::runScenario(const int &seed)
         
     }
 
-    ofstream report("milka.rep");
-    REPORT(m_N);
+    writeSimulationVariables();
 }
 
 /**
@@ -1094,9 +1093,18 @@ void OperatingModel::runStockAssessment()
         system("iscam.exe -ind mseRUN.dat")
 
         #endif
-        
-
-        
+}
 
 
+/**
+ * @brief Append true state variables to iscam.rep.
+ * @details This routine is called at the end of the simulation model and appends the
+ * true state variables to the iscam.rep file.
+ */
+void OperatingModel::writeSimulationVariables()
+{
+     ofstream report("iscam.rep",ios::app);
+    REPORT(m_N);
+    REPORT(m_sbt);
+    REPORT(m_dCatchData);
 }
