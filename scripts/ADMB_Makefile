@@ -57,7 +57,7 @@ clean:
 # |——————————————————————————————————————————————————————————————————————————————————————|
 # | use gsed -i 's/STRING_TO_REPLACE/STRING_TO_REPLACE_IT/g' Makefile
 NOSIM = 8
-# REPDIR = reps
+
 # Use wild cards and basename to strip extensions from .scn .mpc
 SCN_FILES := $(wildcard *.scn)
 MPC_FILES := $(wildcard *.mpc)

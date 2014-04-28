@@ -76,27 +76,48 @@ guiView  <- function()
 .saveMSEdataframe <- function()
 {
 	.MSELIB   <- "../DATA/"
-	.rdaFILES <- paste0(.MSELIB,list.files(.MSELIB,pattern=".rda",recursive=TRUE))
+	.rdaFILES <- paste0(.MSELIB,list.files(.MSELIB,pattern=".Rdata",recursive=TRUE))
 	.bn       <- basename(.rdaFILES)
 
 	loadObj   <- function(fn){load(fn);return(sims)}
 	S         <- lapply(.rdaFILES,loadObj)
-	names(S)  <- substr(.bn,1,nchar(.bn)-4)
-	
+	names(S)  <- substr(.bn,1,nchar(.bn)-6)
+	lbl       <- strsplit(names(S),"_")
+	quant     <- c(0.025,0.05,0.25,0.5,0.75,0.90,0.95,0.975)
 	n         <- length(S)
+	mse.DF    <- NULL
 	for( i in 1:n)
 	{
 		#Scenario & Procedure from hdr Label
+		cat("Scenario = ",lbl[[i]][2],"\t")
+		cat("Procedure = ",lbl[[i]][3],"\n")
 
+		Year  <- S[[i]][[1]]$yr
+		nyr   <- length(Year)
 
-		# Spawning biomass
-		fn    <- function(X) return(X$sbt)
+		# Predicted Spawning biomass from iSCAM
+		fn    <- function(X) return(X$sbt[1:nyr])
 		sbt   <- sapply(S[[i]],fn)
-		q_sbt <- t(apply(sbt,1,quantile,probs=c(0.025,0.05,0.25,0.5,0.75,0.95,0.975)))
+		q_sbt <- as.data.frame(t(apply(sbt,1,quantile,probs=quant)))
+		colnames(q_sbt) <- paste0("Bt",quant)
 
-		df <- data.frame(q_sbt)
+		# Predicted catch from iSCAM
+		fn    <- function(X) return(X$ct)
+		ct    <- sapply(S[[i]],fn)
+		q_ct  <- as.data.frame(t(apply(ct,1,quantile,probs=quant)))
+		colnames(q_ct) <- paste0("Ct",quant)
+
+		
+		# DATA FRAME to concatenate
+		df <- data.frame(Scenario  = lbl[[i]][2],
+		                 Procedure = lbl[[i]][3],
+		                 Year      = Year,
+		                 q_sbt, q_ct)
+
+		mse.DF <- rbind(mse.DF,df)
 
 	}
+	save(mse.DF,file=paste(.MSELIB,"MSE.Rdata"))
 }
 
 cat("Type: \n guiView()\n to start the iSCAM gui")
