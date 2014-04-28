@@ -79,7 +79,7 @@ data: $(msedirs)
 
 a = $(word 1,$(subst _, ,$*))
 b = $(word 2,$(subst _, ,$(subst /, ,$*)))
-
+c = $(lastword $(subst /, ,$*))
 # Construct the simulation directories based on Scenario files and Procedure Files
 $(msedirs): mse_%:
 	@mkdir -p $@
@@ -95,7 +95,8 @@ $(msedirs): mse_%:
 	
 
 $(msesims): $(msedirs)
-	cd $(@D); make .runmse ARG="-est"
+	@echo $(lastword $(subst /, ,$(@D)))
+	@cd $(@D); make .runmse ARG="-est -maxfn 0 -ainp ../../$(CTL).par -mse $(lastword $(subst /, ,$(@D)))"
 	
 .runmse: $(EXEC)
 	./$(EXEC) -ind $(DAT) $(ARG)
@@ -126,17 +127,17 @@ mse: data $(msesims)
 
 .PHONY = cleanmse
 cleanmse:
-	-rm -r *.rda mse_*
+	-rm -r *.Rdata mse_*
 
 # |------------------------------------------------------------------------------------|
 # | R SCRIPTS FOR READING REPORT & PARAMETER FILES AND CREATING AN .Rdata FILE.
 # |------------------------------------------------------------------------------------|
 # |
 
-COLLECTALL='source(file.path("../..","R","collectAll.r"))'
+COLLECTALL='source(file.path("../","R","collectAll.r"))'
 
 allSims.Rdata: simdone
-	@echo $(COLLECTALL) | R --vanilla --slave
+	-@echo $(COLLECTALL) | R --vanilla --slave
 
 collect: allSims.Rdata
 
