@@ -117,7 +117,7 @@ guiView  <- function()
 		mse.DF <- rbind(mse.DF,df)
 
 	}
-	save(mse.DF,file=paste(.MSELIB,"MSE.Rdata"))
+	save(mse.DF,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 
 cat("Type: \n guiView()\n to start the iSCAM gui")

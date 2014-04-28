@@ -40,17 +40,29 @@ shinyUI(navbarPage(
 	(
 		"Plots",
 		sidebarPanel(
-		  sliderInput("bins",
-		              "Number of bins:",
-		              min = 1,
-		              max = 50,
-		              value = 30)
+		  
+		  sliderInput("years", "Years:",
+                  min = min(mse.DF$Year), 
+                  max = max(mse.DF$Year), 
+                  value = range(mse.DF$Year),
+                  format= "####"),
+
+		  selectInput('scenario',"Secnario",
+		              levels(mse.DF$Scenario),
+		              selected = levels(mse.DF$Scenario)[1],
+		              multiple = TRUE),
+
+		  selectInput('procedure',"Procedure",
+		              levels(mse.DF$Procedure),
+		              selected =  levels(mse.DF$Procedure)[1],
+		              multiple = TRUE)
 
 		),
 
 		mainPanel(
-		  "Main Panel",
-		  plotOutput("distPlot")
+		  selectInput('plotType',"Select Plot",
+		              c("Spawning biomass","Catch")),
+		  plotOutput("funnelPlot")
 		)
 	),
 
