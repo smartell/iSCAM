@@ -57,33 +57,76 @@ clean:
 # |——————————————————————————————————————————————————————————————————————————————————————|
 # | use gsed -i 's/STRING_TO_REPLACE/STRING_TO_REPLACE_IT/g' Makefile
 NOSIM = 8
-REPDIR = reps
+
+# Use wild cards and basename to strip extensions from .scn .mpc
+SCN_FILES := $(wildcard *.scn)
+MPC_FILES := $(wildcard *.mpc)
+SCEN = $(SCN_FILES)
+PROC = $(MPC_FILES)
+S    = $(basename $(SCEN))
+P    = $(basename $(PROC))
+
+
 simdirs := $(shell echo 'cat(formatC(1:$(NOSIM), digits=3, flag="0"))' | R --vanilla --slave)
-.datadone:= $(foreach dir,$(simdirs),$(dir)/datadone)
-runsims := $(foreach dir,$(simdirs),$(dir)/runsims)
+msedirs := $(foreach a, $(S), $(foreach b, $(P), $(addprefix mse_$(a)_$(b)/, $(simdirs))))
+msesims := $(foreach c, $(msedirs),$(c)/msesims)
+#datadone:= $(foreach dir,$(simdirs),$(dir)/datadone)
+#runsims := $(foreach dir,$(simdirs),$(dir)/runsims)
 
-$(.datadone): $(DAT) 
-	mkdir -p $(REPDIR)/$(@D);
-	cp Makefile $(REPDIR)/$(@D)  
-	cd $(REPDIR)/$(@D); gsed -i 's/..\/..\/..\/..\/dist/..\/..\/..\/..\/..\/..\/dist/g' Makefile
-	cd $(REPDIR)/$(@D); gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
-	cd $(REPDIR)/$(@D); echo ../../$(CTL).dat > RUN.dat;
-	cd $(REPDIR)/$(@D); echo ../../$(CTL).ctl >>RUN.dat;
-	cd $(REPDIR)/$(@D); echo ../../$(CTL).pfc >>RUN.dat;
-	cd $(REPDIR)/$(@D); echo ../../$(CTL).mpc >>RUN.dat;
-	cd $(REPDIR)/$(@D); touch .datadone;
 
-data: $(EXEC) $(.datadone)
+data: $(msedirs)
+	@echo MSE directories created.
 
-$(runsims): 
-	make --directory=$(REPDIR)/$(@D) ARG='-est -ainp ../../$(CTL).par -maxfn 0 -mse $(@D)'
-	# cd $(REPDIR)/$(@D); make run ARG='-est -ainp ../$(CTL).par -maxfn 0 -mse $(@D)' 
+a = $(word 1,$(subst _, ,$*))
+b = $(word 2,$(subst _, ,$(subst /, ,$*)))
 
-mse: data $(runsims)
+# Construct the simulation directories based on Scenario files and Procedure Files
+$(msedirs): mse_%:
+	@mkdir -p $@
+	@cp Makefile $@
+	@cd $@; gsed -i 's/..\/..\/..\/dist/..\/..\/..\/..\/..\/dist/g' Makefile
+	@cd $@; gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
+	@cd $@; echo ../../$(CTL).dat > RUN.dat
+	@cd $@; echo ../../$(CTL).ctl >>RUN.dat
+	@cd $@; echo ../../$(CTL).pfc >>RUN.dat
+	@cd $@; echo ../../$b.mpc >>RUN.dat
+	@cd $@; echo ../../$a.scn >>RUN.dat
+	@cd $@; touch data
+	
+
+$(msesims): $(msedirs)
+	cd $(@D); make .runmse ARG="-est"
+	
+.runmse: $(EXEC)
+	./$(EXEC) -ind $(DAT) $(ARG)
+	touch .runmse
+
+mse: data $(msesims)
 	touch simdone
 
+# $(datadone): $(DAT)
+# 	mkdir -p $(REPDIR)/$(@D);
+# 	cp Makefile $(REPDIR)/$(@D)  
+# 	cd $(REPDIR)/$(@D); gsed -i 's/..\/..\/..\/dist/..\/..\/..\/..\/..\/dist/g' Makefile
+# 	cd $(REPDIR)/$(@D); gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
+# 	cd $(REPDIR)/$(@D); echo ../../$(CTL).dat > RUN.dat;
+# 	cd $(REPDIR)/$(@D); echo ../../$(CTL).ctl >>RUN.dat;
+# 	cd $(REPDIR)/$(@D); echo ../../$(CTL).pfc >>RUN.dat;
+# 	cd $(REPDIR)/$(@D); echo ../../$(CTL).mpc >>RUN.dat;
+# 	cd $(REPDIR)/$(@D); touch datadone;
+
+# data: $(EXEC) $(B) $(datadone)
+
+# $(runsims): 
+# 	make --directory=$(REPDIR)/$(@D) ARG='-est -ainp ../../$(CTL).par -maxfn 0 -mse $(@D)'
+# 	# cd $(REPDIR)/$(@D); make run ARG='-est -ainp ../$(CTL).par -maxfn 0 -mse $(@D)' 
+
+# mse: data $(runsims)
+# 	touch simdone
+
+.PHONY = cleanmse
 cleanmse:
-	rm -r 0* *.Rdata $(REPDIR)
+	-rm -r *.rda mse_*
 
 # |------------------------------------------------------------------------------------|
 # | R SCRIPTS FOR READING REPORT & PARAMETER FILES AND CREATING AN .Rdata FILE.
@@ -97,4 +140,6 @@ allSims.Rdata: simdone
 
 collect: allSims.Rdata
 
-
+# target: help - Display callable targets.
+help:
+	egrep "^# target:" [Mm]akefile

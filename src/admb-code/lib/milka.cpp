@@ -205,6 +205,14 @@ void OperatingModel::initParameters()
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
 
+    // Below could be deprecated
+    m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
+    m_d3_Ct.initialize();
+    for(int ig = 1; ig <= n_ags; ig++ )
+    {
+        m_d3_Ct(ig).sub(syr,nyr) = d3_Ct(ig);
+    }
+
     // allocate & initialize survey data arrays
     m_n_it_nobs.allocate(1,nItNobs);
     m_n_it_nobs.initialize();

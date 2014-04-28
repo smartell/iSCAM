@@ -83,8 +83,9 @@
 		dmatrix m_delta;    /// recruitment deviations (process errors)
 		
 		// catch arrays
-		int     m_nCtNobs;
-		dmatrix m_dCatchData;
+		int      m_nCtNobs;
+		dmatrix  m_dCatchData;
+		d3_array m_d3_Ct;
 		
 		// survey arrays
 		ivector  m_n_it_nobs;

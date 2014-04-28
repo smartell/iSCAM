@@ -25,18 +25,11 @@
 	1    0    0     0.2		0   00     1000   0.16 	  1  # Personal Use
 	1    0    1     0.2		0   00     1000   0.16 	  1  # Setline Survey
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
-## CONTROLS FOR RECRUITMENT FUNCTION
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## Recruitment type: 1=Beverton & Holt, 2=Ricker , #=Average Recruitment
-1 
-## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
-1
-## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## CONTROLS FOR STOCK ASSESSMENT IN MSE 
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##name of control file
-../../Halibut2014
+#../../Halibut2014
 ##name pfc file
-../../Halibut2014
+#../../Halibut2014
 #EOF
 999
