@@ -8,7 +8,7 @@ shinyServer(function(input, output) {
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
       
-    if(input$plotType=="Spawning biomass")
+    if(input$plotType=="Spawning biomass" || input$plotType=="Depletion")
     {
       DF <- mse.data$biomass.df
     }

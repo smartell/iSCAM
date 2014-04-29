@@ -19,7 +19,18 @@ funnel.plot <- function(df,input)
 		p  <- p + labs(x="Year",y="Spawning biomass")
 		
 	}
-	
+
+	if( input$plotType=='Depletion' )
+	{
+		ci95 <- aes(ymin=t.Dt0.025,ymax=t.Dt0.975)
+		ci25 <- aes(ymin=t.Dt0.25,ymax=t.Dt0.75)
+		p  <- ggplot(df,aes(Year,t.Dt0.5))+geom_line()
+		p  <- p + geom_ribbon(ci95,alpha=0.15)
+		p  <- p + geom_ribbon(ci25,alpha=0.10)
+		p  <- p + labs(x="Year",y="Spawning biomass depletion")
+		
+	}
+
 	if( input$plotType=='Catch' )
 	{
 		ci <- aes(ymin=ct025,ymax=ct975)

@@ -58,7 +58,7 @@ shinyUI(navbarPage(
 		              multiple = TRUE),
 
 		  selectInput('plotType',"Select variable to plot",
-			        	c("Spawning biomass","Catch"))
+			        	c("Spawning biomass","Depletion","Catch"))
 
 		),
 
