@@ -49,14 +49,36 @@ shinyServer(function(input, output) {
   })
 
 
-  # TABLES
+  # MEDIAN DEPLETION TABLE
   output$viewDepletionTable <- renderTable({
-    dt <- data()
-    # mdf <- melt(dt,id=c("Scenario","Procedure","Year"))
-    # # tmp <- cast(subset(mdf,variable=="Catch"),MP~Scenario,mean,margins=TRUE)
-    # if(  input$integrate ) mar = "Scenario"
-    # if( !input$integrate ) mar = FALSE
-    # tmp <- dcast(mdf,MP~Scenario,mean,na.rm=TRUE,margins=mar,subset=.(variable=="Depletion"))
-    # return(tmp)
+
+    cat("Depletion table \n")
+    df  <- subset(mse.data$biomass.df,
+             Year      %in% input$tyears[1]:input$years[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="t.Dt0.5"))
+    return(tmp)
+ 
   })
+
+  # MEDIAN CATCH TABLE
+  output$viewCatchTable <- renderTable({
+
+    cat("Catch table \n")
+    df  <- subset(mse.data$catch.df,
+             Year      %in% input$tyears[1]:input$years[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="Ct50"))
+    return(tmp)
+ 
+  })
+
 })

@@ -35,6 +35,7 @@ cp ../scripts/ProjectionTemplate.pfc   $1/DATA/$1.pfc
 cp ../scripts/MSETemplate.mpc 		   $1/DATA/$1.mpc
 cp ../scripts/ScenarioTemplate.scn 	   $1/DATA/$1.scn
 cp ../scripts/collectAll.R             $1/R/collectAll.R
+cp ../scripts/saveMSEdataframe.R       $1/R/saveMSEdataframe.R
 
 echo $1.dat >  $1/DATA/RUN.dat
 echo $1.ctl >> $1/DATA/RUN.dat

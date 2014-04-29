@@ -87,18 +87,18 @@ shinyUI(navbarPage(
 	(
 	 	"Tables",
 	 	sidebarPanel(
-		  sliderInput("years", "Years:",
+		  sliderInput("tyears", "Years:",
                   min = min(mse.DF$Year), 
                   max = max(mse.DF$Year), 
                   value = range(mse.DF$Year),
                   format= "####"),
 
-		  selectInput('scenario',"Secnario",
+		  selectInput('tscenario',"Secnario",
 		              levels(mse.DF$Scenario),
 		              selected = levels(mse.DF$Scenario)[1],
 		              multiple = TRUE),
 
-		  selectInput('procedure',"Procedure",
+		  selectInput('tprocedure',"Procedure",
 		              levels(mse.DF$Procedure),
 		              selected =  levels(mse.DF$Procedure)[1],
 		              multiple = TRUE)
@@ -107,7 +107,9 @@ shinyUI(navbarPage(
 
 		mainPanel(
 			h4("Median depletion"),
-			tableOutput("viewDepletionTable")
+			tableOutput("viewDepletionTable"),
+			h4("Median catch"),
+			tableOutput("viewCatchTable")
 		)
 
 
