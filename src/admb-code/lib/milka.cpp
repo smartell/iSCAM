@@ -140,10 +140,6 @@ void OperatingModel::readMSEcontrols()
         m_nAGopen(k) = ivector(tmp(k)(1,narea));
     }
 
-    
-
-    //ifs_mpc >> MseCtlFile;
-    //ifs_mpc >> MsePfcFile;
 
     int eof=0;
     ifs_mpc >> eof;
@@ -157,6 +153,7 @@ void OperatingModel::readMSEcontrols()
     //cout<<"finished MSE controls"<<endl;
 
     cifstream ifs_scn(ScenarioControlFile);
+    
     //Controls for recruitment options
     ifs_scn >> m_nRecType;
 
@@ -1004,6 +1001,7 @@ void OperatingModel::writeDataFile(const int& iyr)
         tmp_n_it_nobs.initialize();
         d3_array tmp_d3SurveyData(1,nItNobs,1,tmp_n_it_nobs,1,8);
         tmp_d3SurveyData.initialize();
+        
         for(int k=1;k<=nItNobs;k++)
         {
             tmp_n_it_nobs(k)    = n_it_nobs(k) + (iyr-nyr);
@@ -1052,9 +1050,18 @@ void OperatingModel::writeDataFile(const int& iyr)
         {           
             
             tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
-            tmp_d3_inp_wt_avg(k)(1)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5));//*projwt(k);
+            if(projwt(k)<0)
+            {
+                for(int ii=1; ii<=abs(projwt(k)); ii++)
+                {
+                    tmp_d3_inp_wt_avg(k)(ii)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*(-1);
+                }
+                
+            }
+            
         }
-        //cout<<"projwt\n"<<projwt<<endl;
+        
+        cout<<"projwt\n"<<projwt<<endl;
         //cout<<tmp_d3_inp_wt_avg(1)<<endl;
         dfs<< nWtTab                    <<endl;
         dfs<< tmp_nWtNobs               <<endl;

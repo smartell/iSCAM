@@ -709,7 +709,6 @@ DATA_SECTION
 
 				}
 
-				projwt(k)=-n_bf_wt_row(k);
 			}	
 			
 			if(n_bf_wt_row(k)>0)
@@ -719,12 +718,13 @@ DATA_SECTION
 					int exp_nyr = fabs(d3_inp_wt_avg(k,i,sage-5))-syr;
 					tmp_nWtNobs(k) += exp_nyr; 
 				}
+				projwt(k)=-n_bf_wt_row(k);
 			}	
 				
 			else if (n_bf_wt_row(k) == 0)
 			{
 				tmp_nWtNobs(k) = nWtNobs(k);
-				projwt(k)=n_bf_wt_row(k);
+				projwt(k)=1;
 			}
 		}
 		

@@ -23,18 +23,7 @@
 	1    0    0     0.2		0   00     1000   0.16 	  1  # Bycatch
 	1    0    0     0.2		0   00     1000   0.16 	  1  # Sport
 	1    0    0     0.2		0   00     1000   0.16 	  1  # Personal Use
-<<<<<<< HEAD:fba/HALIBUT/DATA/DMVL1888/Halibut2014.mpc
 	1    0    1     0.2		0   00     1000   0.16 	  1  # Setline Survey
-=======
-	1    0    0     0.2		1   00     1000   0.16 	  1  # Setline Survey
->>>>>>> c67dff029c9ddd3ebb25008ad5e6e03a19b3792e:fba/HALIBUT/DATA/DMVL/Halibut2014.mpc
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## CONTROLS FOR RECRUITMENT FUNCTION
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## Recruitment type: 1=Beverton & Holt, 2=Ricker , #=Average Recruitment
-1 
-## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
-1
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## CONTROLS FOR STOCK ASSESSMENT IN MSE 
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
