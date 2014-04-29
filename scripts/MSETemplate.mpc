@@ -19,19 +19,5 @@
 ##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
 ## INDEX CSEX ASEX ATAU   WSEX  LSLIM  USLIM  DM    | 1                                ##
 	1    0    1     0.2		0   1000   0.15    1 	  1
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## CONTROLS FOR RECRUITMENT FUNCTION
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## Recruitment type: 1=Beverton & Holt, 2=Ricker , #=Average Recruitment
-1 
-## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
-1
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-## CONTROLS FOR STOCK ASSESSMENT IN MSE 
-## ——————————————————————————————————————————————————————————————————————————————————— ##
-##name of control file
-DEMO
-##name pfc file
-DEMO
 ##eof
 999

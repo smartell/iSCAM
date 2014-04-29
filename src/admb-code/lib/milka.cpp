@@ -140,13 +140,6 @@ void OperatingModel::readMSEcontrols()
         m_nAGopen(k) = ivector(tmp(k)(1,narea));
     }
 
-    
-
-    ifs_mpc >> MseCtlFile;
-    ifs_mpc >> MsePfcFile;
- 
-    cout<<"MseCtlFile is "<<MseCtlFile<<endl;
-    cout<<"MsePfcFile is "<<MsePfcFile<<endl;
 
     int eof=0;
     ifs_mpc >> eof;
@@ -160,14 +153,12 @@ void OperatingModel::readMSEcontrols()
     //cout<<"finished MSE controls"<<endl;
 
     cifstream ifs_scn(ScenarioControlFile);
+    
     //Controls for recruitment options
     ifs_scn >> m_nRecType;
 
     m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
     ifs_scn >> m_dispersal; 
-
-    cout<<"m_nRecType"<<m_nRecType<<endl;
-    cout<<"m_dispersal"<<m_dispersal<<endl;
 
     // End of file
     int eof_scn=0;
@@ -1061,7 +1052,7 @@ void OperatingModel::writeDataFile(const int& iyr)
             tmp_d3_inp_wt_avg(k)= m_d3_inp_wt_avg(k).sub(1,tmp_nWtNobs(k)) ;
             if(projwt(k)<0)
             {
-                for(ii=1; ii<=abs(projwt(k)); ii++)
+                for(int ii=1; ii<=abs(projwt(k)); ii++)
                 {
                     tmp_d3_inp_wt_avg(k)(ii)(sage-5) = fabs(tmp_d3_inp_wt_avg(k)(1)(sage-5))*(-1);
                 }
