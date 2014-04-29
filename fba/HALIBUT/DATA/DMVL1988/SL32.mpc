@@ -1,0 +1,35 @@
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##|   PROJECTION CONTROL FILE - USE FOR SHORT-TERM FORECASTS AND LONG-TERM MSE WORK   |##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## m_pyr  # Terminal year of projection.
+2015
+## m_nHCR # Harvest Control Rule Type.
+1
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##|   CONTROLS FOR EACH OF THE GEARS                                                  |##
+##| - INDEX -> index for gear.
+##| - CSEX  -> flag for sexing catch (0=FALSE, 1=TRUE)
+##| - ASEX  -> flag for sexing comps (0=FALSE, 1=TRUE)
+##| - ATAU  -> sampling variance for age comps
+##| - WSEX  -> flag for sexing weight at age (0=FALSE, 1=TRUE)
+##| - LSLIM -> lower size limit (cm)
+##| - USLIM -> upper size limit (cm)
+##| - DM    -> Discard mortality rate (annual instantaneous rate).
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
+## INDEX CSEX ASEX ATAU   WSEX  LSLIM  USLIM  DM    | 1                                ##
+	1    0    0     0.2		0   82     1000   0.16 	  1  # Commercial
+	1    0    0     0.2		0   00     1000   0.16 	  1  # Discards
+	1    0    0     0.2		0   00     1000   0.16 	  1  # Bycatch
+	1    0    0     0.2		0   00     1000   0.16 	  1  # Sport
+	1    0    0     0.2		0   00     1000   0.16 	  1  # Personal Use
+	1    0    1     0.2		0   00     1000   0.16 	  1  # Setline Survey
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROLS FOR STOCK ASSESSMENT IN MSE 
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##name of control file
+#../../Halibut2014
+##name pfc file
+#../../Halibut2014
+#EOF
+999

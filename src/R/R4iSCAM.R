@@ -98,26 +98,34 @@ guiView  <- function()
 		# Predicted Spawning biomass from iSCAM
 		fn    <- function(X) return(X$sbt[1:nyr])
 		sbt   <- sapply(S[[i]],fn)
-		q_sbt <- as.data.frame(t(apply(sbt,1,quantile,probs=quant)))
-		colnames(q_sbt) <- paste0("Bt",quant)
+		p_sbt <- as.data.frame(t(apply(sbt,1,quantile,probs=quant)))
+		colnames(p_sbt) <- paste0("p.Bt",quant)
+
+		# Reference Model spawning biomass from Milka
+		fn    <- function(X) return(X$m_sbt[1:nyr])
+		sbt   <- sapply(S[[i]],fn)
+		m_sbt <- as.data.frame(t(apply(sbt,1,quantile,probs=quant)))
+		colnames(m_sbt) <- paste0("t.Bt",quant)
 
 		# Predicted catch from iSCAM
 		fn    <- function(X) return(X$ct)
 		ct    <- sapply(S[[i]],fn)
-		q_ct  <- as.data.frame(t(apply(ct,1,quantile,probs=quant)))
-		colnames(q_ct) <- paste0("Ct",quant)
+		p_ct  <- as.data.frame(t(apply(ct,1,quantile,probs=quant)))
+		colnames(p_ct) <- paste0("Ct",quant)
 
-		
+
+
 		# DATA FRAME to concatenate
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
 		                 Year      = Year,
-		                 q_sbt, q_ct)
+		                 p_sbt, p_ct,
+		                 m_sbt)
 
 		mse.DF <- rbind(mse.DF,df)
 
 	}
-	save(mse.DF,file=paste(.MSELIB,"MSE.Rdata"))
+	save(mse.DF,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 
 cat("Type: \n guiView()\n to start the iSCAM gui")
