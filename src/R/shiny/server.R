@@ -7,11 +7,21 @@ shinyServer(function(input, output) {
 
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
-    a  <- subset(mse.DF,
-                 Year      %in% input$years[1]:input$years[2] &
-                 Scenario  %in% input$scenario                &
-                 Procedure %in% input$procedure
-                 )
+      
+    if(input$plotType=="Spawning biomass")
+    {
+      DF <- mse.data$biomass.df
+    }
+    if(input$plotType=="Catch")
+    {
+      DF <- mse.data$catch.df
+    }
+    a  <- subset(DF,
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
+             )
+
   })
 
 
@@ -32,5 +42,21 @@ shinyServer(function(input, output) {
 
   output$funnelPlot <- renderPlot({
     funnel.plot(data(),input)
+  })
+
+  output$googleVisPlot <- renderGvis({
+    motionChart(data(),input)
+  })
+
+
+  # TABLES
+  output$viewDepletionTable <- renderTable({
+    dt <- data()
+    # mdf <- melt(dt,id=c("Scenario","Procedure","Year"))
+    # # tmp <- cast(subset(mdf,variable=="Catch"),MP~Scenario,mean,margins=TRUE)
+    # if(  input$integrate ) mar = "Scenario"
+    # if( !input$integrate ) mar = FALSE
+    # tmp <- dcast(mdf,MP~Scenario,mean,na.rm=TRUE,margins=mar,subset=.(variable=="Depletion"))
+    # return(tmp)
   })
 })
