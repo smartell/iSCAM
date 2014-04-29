@@ -70,13 +70,15 @@ shinyServer(function(input, output) {
 
     cat("Catch table \n")
     df  <- subset(mse.data$catch.df,
-             Year      %in% input$tyears[1]:input$years[2] &
+             Year      %in% input$tyears[1]:input$tyears[2] &
              Scenario  %in% input$tscenario                &
              Procedure %in% input$tprocedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    print(mdf)
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
-                 subset=.(variable=="Ct50"))
+                 subset=.(variable=="ct50"))
+    print(tmp)
     return(tmp)
  
   })

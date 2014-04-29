@@ -2,6 +2,7 @@
 require(ggplot2)
 require(reshape2)
 require(googleVis)
+require(plyr)
 load("data/MSE.Rdata")  #Creates a mse.data object
 mse.DF <- mse.data$biomass.df
 
