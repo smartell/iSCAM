@@ -44,11 +44,25 @@ require(plyr)
 		m_sdt <- as.data.frame(t(apply(sdt,1,quantile,probs=quant)))
 		colnames(m_sdt) <- paste0("t.Dt",quant)
 
+		# P(Bt < 0.20)
+		fn <- function(X)(return(X$m_sbt[1:nyr]/X$m_dBo <= 0.2))
+		tmp <- sapply(S[[i]],fn)
+		pb20 <- apply(tmp,1,FUN=function(tmp){sum(tmp==TRUE)})
+		pb20 <- pb20/dim(tmp)[2]
+
+		# P(Bt < 0.30)
+		fn <- function(X)(return(X$m_sbt[1:nyr]/X$m_dBo <= 0.3))
+		tmp <- sapply(S[[i]],fn)
+		pb30 <- apply(tmp,1,FUN=function(tmp){sum(tmp==TRUE)})
+		pb30 <- pb30/dim(tmp)[2]
+
 		# DATA FRAME to concatenate
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
 		                 Year      = Year,
-		                 p_sbt, m_sbt, m_sdt)
+		                 p_sbt, m_sbt, m_sdt,
+		                 "P(SSB<0.20)" = pb20,
+		                 "P(SSB<0.30)" = pb30)
 
 		biomass.df <- rbind(biomass.df,df)
 
@@ -69,6 +83,7 @@ require(plyr)
 		               ct75=quantile(value,0.75),
 		               ct95=quantile(value,0.95),
 		               ct975=quantile(value,0.975))
+
 
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
