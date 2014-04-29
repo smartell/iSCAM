@@ -580,9 +580,14 @@ void OperatingModel::implementFisheries(const int &iyr)
     dmatrix  sd(1,nsex,sage,nage);
     dmatrix  d_allocation(1,narea,1,nfleet);
     dmatrix  _hCt(1,nsex,1,nfleet);
-    d3_array d3_Va(1,nsex,1,nfleet,sage,nage);
+    dmatrix  _hDt(1,n_ags,1,nfleet);            // Discarded catch
+    dmatrix  _hWt(1,n_ags,1,nfleet);            // Watage = (discard mort)*(discard catch)
+    d3_array d3_Va(1,nsex,1,nfleet,sage,nage);  // Retained fraction
+    d3_array d3_Da(1,nsex,1,nfleet,sage,nage);  // Discard fraction
     tac.initialize();
     na.initialize();
+    _hDt.initialize();
+    _hWt.initialize();
 
     BaranovCatchEquation cBCE;
 
@@ -597,8 +602,8 @@ void OperatingModel::implementFisheries(const int &iyr)
                 ma(h) = m_M(ig)(iyr);           // natural mortality
                 na(h) = m_N(ig)(iyr);           // numbers-at-age
                 wa(h) = m_d3_wt_avg(ig)(iyr);   // weight-at-age
-                mu(h) = exp(log(wa(h)/d_a(ig))/d_b(ig));
-                sd(h) = 0.1 * mu(h);
+                mu(h) = exp(log(wa(h)/d_a(ig))/d_b(ig));  // mean size-at-age
+                sd(h) = 0.1 * mu(h);                      // sd in mean size-at-age
                 for(int k = 1; k <= nfleet; k++ )
                 { 
                     int kk = m_nGearIndex(k);
@@ -608,9 +613,11 @@ void OperatingModel::implementFisheries(const int &iyr)
 
                     // int kk = nFleetIndex(k);
                     d3_Va(h)(k) = exp(d4_logSel(kk)(ig)(iyr));
+                    d3_Da(h)(k) = d3_Va(h)(k);
 
                     // Joint probability model
                     d3_Va(h)(k)=elem_prod(d3_Va(h)(k),pr + pd*m_dDiscMortRate(k));
+                    d3_Da(h)(k)=elem_prod(d3_Da(h)(k),pd);
                     
                 }
             }  // nsex
@@ -618,6 +625,7 @@ void OperatingModel::implementFisheries(const int &iyr)
             // Calculate instantaneous fishing mortality rates.
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
+           
 
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
@@ -628,8 +636,15 @@ void OperatingModel::implementFisheries(const int &iyr)
                 {
                     int ig = pntr_ags(f,g,h);
                     m_F(ig)(iyr) += ft(k) * d3_Va(h)(k);
+                    
+                    // Calculate wastage based on size-limits.
+                    dvector fa = ft(k)*d3_Da(h)(k);
+                    dvector za = ma(h) + fa;
+                    dvector ba = elem_prod(na(h),wa(h));
+                    _hDt(ig)  += elem_prod(elem_div(fa,za),1.0-exp(-za)) * ba;
                 }
-
+                cout<<"Sublegal Discards \n"<<_hDt<<endl;
+                
 
                 if( ft(k) > 0 )
                 {

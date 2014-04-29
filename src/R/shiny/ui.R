@@ -109,7 +109,11 @@ shinyUI(navbarPage(
 			h4("Median depletion"),
 			tableOutput("viewDepletionTable"),
 			h4("Median catch"),
-			tableOutput("viewCatchTable")
+			tableOutput("viewCatchTable"),
+			h4("Probability of falling below limit reference point P(SB<0.20)"),
+			tableOutput("viewSSBlimit"),
+			h4("Probability of falling below threshold reference point P(SB<0.30)"),
+			tableOutput("viewSSBthreshold")
 		)
 
 

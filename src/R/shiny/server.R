@@ -70,15 +70,47 @@ shinyServer(function(input, output) {
 
     cat("Catch table \n")
     df  <- subset(mse.data$catch.df,
-             Year      %in% input$tyears[1]:input$years[2] &
+             Year      %in% input$tyears[1]:input$tyears[2] &
              Scenario  %in% input$tscenario                &
              Procedure %in% input$tprocedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
-                 subset=.(variable=="Ct50"))
+                 subset=.(variable=="ct50"))
     return(tmp)
  
+  })
+
+  # PROBABILITY OF GOING BELOW THE LIMIT REFERENCE POINT: P(SB<0.20)
+  output$viewSSBlimit <- renderTable({
+
+    cat("SSB Limit table \n")
+    df  <- subset(mse.data$biomass.df,
+             Year      %in% input$tyears[1]:input$tyears[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="P.SSB.0.20."))
+    return(tmp)
+
+  })
+
+  # PROBABILITY OF GOING BELOW THE THRESHOLD REFERENCE POINT: P(SB<0.30)
+  output$viewSSBthreshold <- renderTable({
+
+    cat("SSB Threshold table \n")
+    df  <- subset(mse.data$biomass.df,
+             Year      %in% input$tyears[1]:input$tyears[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="P.SSB.0.30."))
+    return(tmp)
+
   })
 
 })
