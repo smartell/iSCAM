@@ -98,8 +98,10 @@ void OperatingModel::runScenario(const int &seed)
         writeDataFile(i);
 
         runStockAssessment();
-        
+    
     }
+
+    //calculatePerformanceMetrics();
 
     writeSimulationVariables();
 }
@@ -287,7 +289,7 @@ void OperatingModel::initParameters()
         break;
     }
 
-    
+
     cout<<"finished init parameters"<<endl;
 }
 
@@ -369,6 +371,10 @@ void OperatingModel::initMemberVariables()
         }
     }
 
+   // m_AAV.allocate(syr,m_nPyr,1,5);
+   // m_AAV.initialize();
+
+    
 
     cout<<"finished init member variables"<<endl;
 
@@ -1123,4 +1129,5 @@ void OperatingModel::writeSimulationVariables()
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);
+    //REPORT(M_AAV);
 }

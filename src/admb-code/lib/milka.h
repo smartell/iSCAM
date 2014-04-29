@@ -156,6 +156,9 @@
 
 		d4_array d4_logSel;
 
+		//PerformanceVariables
+		dmatrix m_AAV;
+
 		ModelVariables mv;		// Structure for model variables.
 
 	public:
@@ -181,7 +184,8 @@
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();
-		void writeSimulationVariables();
+		void calculatePerformanceMetrics();
+		//void writeSimulationVariables();
 
 		
 	};
