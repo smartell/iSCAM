@@ -259,6 +259,7 @@ void OperatingModel::initParameters()
 
     // initializing population parameters
     m_dRo        = exp(mv.log_ro);
+    m_dBo        = mv.sbo;
     m_dSteepness = mv.steepness;
     m_dM         = exp(mv.m);
     m_dRho       = mv.rho;
@@ -1119,7 +1120,7 @@ void OperatingModel::runStockAssessment()
 void OperatingModel::writeSimulationVariables()
 {
      ofstream report("iscam.rep",ios::app);
-    REPORT(m_N);
+    REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);
 }

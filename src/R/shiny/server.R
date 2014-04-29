@@ -7,11 +7,21 @@ shinyServer(function(input, output) {
 
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
-    a  <- subset(mse.DF,
-                 Year      %in% input$years[1]:input$years[2] &
-                 Scenario  %in% input$scenario                &
-                 Procedure %in% input$procedure
-                 )
+      
+    if(input$plotType=="Spawning biomass" || input$plotType=="Depletion")
+    {
+      DF <- mse.data$biomass.df
+    }
+    if(input$plotType=="Catch")
+    {
+      DF <- mse.data$catch.df
+    }
+    a  <- subset(DF,
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
+             )
+
   })
 
 
@@ -33,4 +43,42 @@ shinyServer(function(input, output) {
   output$funnelPlot <- renderPlot({
     funnel.plot(data(),input)
   })
+
+  output$googleVisPlot <- renderGvis({
+    motionChart(data(),input)
+  })
+
+
+  # MEDIAN DEPLETION TABLE
+  output$viewDepletionTable <- renderTable({
+
+    cat("Depletion table \n")
+    df  <- subset(mse.data$biomass.df,
+             Year      %in% input$tyears[1]:input$years[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="t.Dt0.5"))
+    return(tmp)
+ 
+  })
+
+  # MEDIAN CATCH TABLE
+  output$viewCatchTable <- renderTable({
+
+    cat("Catch table \n")
+    df  <- subset(mse.data$catch.df,
+             Year      %in% input$tyears[1]:input$years[2] &
+             Scenario  %in% input$tscenario                &
+             Procedure %in% input$tprocedure
+             )
+    mdf <- melt(df,id=c("Scenario","Procedure","Year"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
+                 subset=.(variable=="Ct50"))
+    return(tmp)
+ 
+  })
+
 })

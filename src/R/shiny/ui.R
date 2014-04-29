@@ -55,21 +55,64 @@ shinyUI(navbarPage(
 		  selectInput('procedure',"Procedure",
 		              levels(mse.DF$Procedure),
 		              selected =  levels(mse.DF$Procedure)[1],
-		              multiple = TRUE)
+		              multiple = TRUE),
+
+		  selectInput('plotType',"Select variable to plot",
+			        	c("Spawning biomass","Depletion","Catch"))
 
 		),
 
 		mainPanel(
-		  selectInput('plotType',"Select Plot",
-		              c("Spawning biomass","Catch")),
-		  plotOutput("funnelPlot")
+		  tabsetPanel(type="tabs",
+		    # Funnel plots
+		    tabPanel("Funnel plots", 
+			  plotOutput("funnelPlot")
+			),
+			# Google Vis plots
+			tabPanel("Google Vis",
+			  htmlOutput("googleVisPlot")
+			)
+			# Summary tables
+			# tabPanel("Performance Metrics",
+			#   h4("Median depletion")
+			# )
+		  )
+
+
 		)
 	),
 
 	# tabPanel Tables
 	tabPanel
 	(
-	 	"Tables"
+	 	"Tables",
+	 	sidebarPanel(
+		  sliderInput("tyears", "Years:",
+                  min = min(mse.DF$Year), 
+                  max = max(mse.DF$Year), 
+                  value = range(mse.DF$Year),
+                  format= "####"),
+
+		  selectInput('tscenario',"Secnario",
+		              levels(mse.DF$Scenario),
+		              selected = levels(mse.DF$Scenario)[1],
+		              multiple = TRUE),
+
+		  selectInput('tprocedure',"Procedure",
+		              levels(mse.DF$Procedure),
+		              selected =  levels(mse.DF$Procedure)[1],
+		              multiple = TRUE)
+
+		),
+
+		mainPanel(
+			h4("Median depletion"),
+			tableOutput("viewDepletionTable"),
+			h4("Median catch"),
+			tableOutput("viewCatchTable")
+		)
+
+
 	),
 
 	# Logo image

@@ -114,6 +114,7 @@
 		int m_nn;
 		
 		dvector m_dRo;
+		dvector m_dBo;
 		dvector m_dSteepness;
 		dvector m_dM;
 		dvector m_dRbar;
