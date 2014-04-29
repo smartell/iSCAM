@@ -169,7 +169,7 @@ void OperatingModel::readMSEcontrols()
         cout<<eof_scn<<endl;
         ad_exit(1);
     }
-
+  //cout<<"end of readMSEinputs"<<endl;
 }
 
 /**
@@ -203,12 +203,13 @@ void OperatingModel::initParameters()
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
 
     // Below could be deprecated
-    m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
-    m_d3_Ct.initialize();
-    for(int ig = 1; ig <= n_ags; ig++ )
-    {
-        m_d3_Ct(ig).sub(syr,nyr) = d3_Ct(ig);
-    }
+   // m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
+   // m_d3_Ct.initialize();
+    //for(int ig = 1; ig <= n_ags; ig++ )
+    //{
+    //    m_d3_Ct(ig).sub(syr,nyr) = d3_Ct(ig);
+    //}
+    
 
     // allocate & initialize survey data arrays
     m_n_it_nobs.allocate(1,nItNobs);
@@ -221,7 +222,6 @@ void OperatingModel::initParameters()
     {
         m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);  
     }
-    
 
     // Age-composition arrays   
     m_A_irow.allocate(1,nAgears);
@@ -287,7 +287,7 @@ void OperatingModel::initParameters()
     }
 
     
-    //cout<<"finished init parameters"<<endl;
+    cout<<"finished init parameters"<<endl;
 }
 
 
@@ -369,7 +369,7 @@ void OperatingModel::initMemberVariables()
     }
 
 
-    //cout<<"finished init member variables"<<endl;
+    cout<<"finished init member variables"<<endl;
 
 }
 
