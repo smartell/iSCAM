@@ -22,15 +22,10 @@ BIO.DF <- mse.data$biomass.df
 CAT.DF <- mse.data$catch.df
 SUB.DF <- mse.data$sublegal.df
 
+MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
 # Restricted data frame for gvisMotionChart for increased speed & less clutter.
-hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5")
-MOT.DF <- BIO.DF[,which(names(BIO.DF) %in% hdr)]
-
- # [1] "Scenario"    "Procedure"   "Year"        "p.Bt0.025"   "p.Bt0.05"    "p.Bt0.25"    "p.Bt0.5"    
- # [8] "p.Bt0.75"    "p.Bt0.9"     "p.Bt0.95"    "p.Bt0.975"   "t.Bt0.025"   "t.Bt0.05"    "t.Bt0.25"   
-# [15] "t.Bt0.5"     "t.Bt0.75"    "t.Bt0.9"     "t.Bt0.95"    "t.Bt0.975"   "t.Dt0.025"   "t.Dt0.05"   
-# [22] "t.Dt0.25"    "t.Dt0.5"     "t.Dt0.75"    "t.Dt0.9"     "t.Dt0.95"    "t.Dt0.975"   "P.SSB.0.20."
-# [29] "P.SSB.0.30."
+hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50")
+MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
 
 
 funnel.plot <- function(df,input)
@@ -105,6 +100,6 @@ funnel.plot <- function(df,input)
 motionChart <- function(df,input)
 {
 	M1 <- gvisMotionChart(df,idvar="Procedure",timevar="Year",
-	      options=list(width=600, height=400, showChartButtons = TRUE))
+	      options=list(width=800, height=600, showChartButtons = TRUE))
 	return(M1)
 }

@@ -30,6 +30,7 @@ shinyServer(function(input, output) {
   })
 
 
+
   # Expression that generates a histogram. The expression is
   # wrapped in a call to renderPlot to indicate that:
   #
