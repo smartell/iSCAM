@@ -109,10 +109,19 @@ require(plyr)
 		               dt75 =quantile(sublegal,0.75),
 		               dt95 =quantile(sublegal,0.95),
 		               dt975=quantile(sublegal,0.975))
+		m_wt  <- ddply(dtdf,.(Year,gear,area,sex,group),summarize,
+		               wt025=quantile(waste,0.025),
+		               wt05 =quantile(waste,0.05),
+		               wt25 =quantile(waste,0.25),
+		               wt50 =quantile(waste,0.50),
+		               wt75 =quantile(waste,0.75),
+		               wt95 =quantile(waste,0.95),
+		               wt975=quantile(waste,0.975))
 
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
-		                 m_dt)
+		                 m_dt,m_wt)
+		
 
 		sublegal.df <- rbind(sublegal.df,df)
 

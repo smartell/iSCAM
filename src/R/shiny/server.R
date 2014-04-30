@@ -1,5 +1,5 @@
 library(shiny)
-source("helpers.R")
+source("helpers.R",local=TRUE)
 
 
 # Define server logic required to draw a histogram
@@ -10,13 +10,13 @@ shinyServer(function(input, output) {
       
     if(input$plotType=="Spawning biomass" || input$plotType=="Depletion")
     {
-      DF <- mse.data$biomass.df
+      DF <- BIO.DF
     }
     if(input$plotType=="Catch")
     {
-      DF <- mse.data$catch.df
+      DF <- CAT.DF
     }
-    if(input$plotType=="Sub-legal Catch")
+    if(input$plotType=="Sub-legal Catch" || input$plotType=="Wasteage")
     {
       DF <- mse.data$sublegal.df
     }
@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
   })
 
   output$googleVisPlot <- renderGvis({
-    motionChart(data(),input)
+    motionChart(MOT.DF,input)
   })
 
 

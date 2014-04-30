@@ -42,24 +42,24 @@ shinyUI(navbarPage(
 		sidebarPanel(
 		  
 		  sliderInput("years", "Years:",
-                  min = min(mse.DF$Year), 
-                  max = max(mse.DF$Year), 
-                  value = range(mse.DF$Year),
+                  min = min(BIO.DF$Year), 
+                  max = max(BIO.DF$Year), 
+                  value = range(BIO.DF$Year),
                   format= "####"),
 
 		  selectInput('scenario',"Secnario",
-		              levels(mse.DF$Scenario),
-		              selected = levels(mse.DF$Scenario)[1],
+		              levels(BIO.DF$Scenario),
+		              selected = levels(BIO.DF$Scenario)[1],
 		              multiple = TRUE),
 
 		  selectInput('procedure',"Procedure",
-		              levels(mse.DF$Procedure),
-		              selected =  levels(mse.DF$Procedure)[1],
+		              levels(BIO.DF$Procedure),
+		              selected =  levels(BIO.DF$Procedure)[1],
 		              multiple = TRUE),
 
 		  selectInput('plotType',"Select variable to plot",
 			        	c("Spawning biomass","Depletion",
-			        	  "Catch","Sub-legal Catch"))
+			        	  "Catch","Sub-legal Catch","Wasteage"))
 
 		),
 
@@ -89,19 +89,19 @@ shinyUI(navbarPage(
 	 	"Tables",
 	 	sidebarPanel(
 		  sliderInput("tyears", "Years:",
-                  min = min(mse.DF$Year), 
-                  max = max(mse.DF$Year), 
-                  value = range(mse.DF$Year),
+                  min = min(BIO.DF$Year), 
+                  max = max(BIO.DF$Year), 
+                  value = range(BIO.DF$Year),
                   format= "####"),
 
 		  selectInput('tscenario',"Secnario",
-		              levels(mse.DF$Scenario),
-		              selected = levels(mse.DF$Scenario)[1],
+		              levels(BIO.DF$Scenario),
+		              selected = levels(BIO.DF$Scenario)[1],
 		              multiple = TRUE),
 
 		  selectInput('tprocedure',"Procedure",
-		              levels(mse.DF$Procedure),
-		              selected =  levels(mse.DF$Procedure)[1],
+		              levels(BIO.DF$Procedure),
+		              selected =  levels(BIO.DF$Procedure)[1],
 		              multiple = TRUE)
 
 		),
