@@ -101,8 +101,6 @@ void OperatingModel::runScenario(const int &seed)
     
     }
 
-    //calculatePerformanceMetrics();
-
     writeSimulationVariables();
 }
 
@@ -171,7 +169,7 @@ void OperatingModel::readMSEcontrols()
         cout<<eof_scn<<endl;
         ad_exit(1);
     }
-  //cout<<"end of readMSEinputs"<<endl;
+
 }
 
 /**
@@ -203,6 +201,10 @@ void OperatingModel::initParameters()
     m_dCatchData.allocate(1,m_nCtNobs,1,7);
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
+
+    m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,7);
+    m_dSubLegalData.initialize();
+
 
     // Below could be deprecated
    // m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
@@ -289,8 +291,8 @@ void OperatingModel::initParameters()
         break;
     }
 
-
-    cout<<"finished init parameters"<<endl;
+    
+    //cout<<"finished init parameters"<<endl;
 }
 
 
@@ -371,12 +373,8 @@ void OperatingModel::initMemberVariables()
         }
     }
 
-   // m_AAV.allocate(syr,m_nPyr,1,5);
-   // m_AAV.initialize();
 
-    
-
-    cout<<"finished init member variables"<<endl;
+    //cout<<"finished init member variables"<<endl;
 
 }
 
@@ -580,8 +578,8 @@ void OperatingModel::implementFisheries(const int &iyr)
     dmatrix  sd(1,nsex,sage,nage);
     dmatrix  d_allocation(1,narea,1,nfleet);
     dmatrix  _hCt(1,nsex,1,nfleet);
-    dmatrix  _hDt(1,n_ags,1,nfleet);            // Discarded catch
-    dmatrix  _hWt(1,n_ags,1,nfleet);            // Watage = (discard mort)*(discard catch)
+    dmatrix  _hDt(1,nsex,1,nfleet);            // Discarded catch
+    dmatrix  _hWt(1,nsex,1,nfleet);            // Watage = (discard mort)*(discard catch)
     d3_array d3_Va(1,nsex,1,nfleet,sage,nage);  // Retained fraction
     d3_array d3_Da(1,nsex,1,nfleet,sage,nage);  // Discard fraction
     tac.initialize();
@@ -641,7 +639,9 @@ void OperatingModel::implementFisheries(const int &iyr)
                     dvector fa = ft(k)*d3_Da(h)(k);
                     dvector za = ma(h) + fa;
                     dvector ba = elem_prod(na(h),wa(h));
-                    _hDt(ig)  += elem_prod(elem_div(fa,za),1.0-exp(-za)) * ba;
+                    _hDt(h)   += elem_prod(elem_div(fa,za),1.0-exp(-za)) * ba;
+                    _hWt(h)   += elem_prod(elem_div(fa,za),1.0-exp(-za)) 
+                                 * ba*m_dDiscMortRate(k);
                 }
                 cout<<"Sublegal Discards \n"<<_hDt<<endl;
                 
@@ -661,6 +661,13 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
                         m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
 
+                        m_dSubLegalData(m_irow,1) = iyr;
+                        m_dSubLegalData(m_irow,2) = kk;
+                        m_dSubLegalData(m_irow,3) = f;
+                        m_dSubLegalData(m_irow,4) = g;
+                        m_dSubLegalData(m_irow,5) = hh>0?h:0;
+                        m_dSubLegalData(m_irow,6) = hh>0?_hDt(h,k):colsum(_hDt)(k);
+                        m_dSubLegalData(m_irow,7) = hh>0?_hWt(h,k):colsum(_hWt)(k);
 
                     }
                 }
@@ -1144,5 +1151,5 @@ void OperatingModel::writeSimulationVariables()
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);
-    //REPORT(M_AAV);
+    REPORT(m_dSubLegalData);
 }

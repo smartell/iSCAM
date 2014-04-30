@@ -16,6 +16,11 @@ shinyServer(function(input, output) {
     {
       DF <- mse.data$catch.df
     }
+    if(input$plotType=="Sub-legal Catch")
+    {
+      DF <- mse.data$sublegal.df
+    }
+
     a  <- subset(DF,
              Year      %in% input$years[1]:input$years[2] &
              Scenario  %in% input$scenario                &
