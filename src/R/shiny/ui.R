@@ -40,7 +40,6 @@ shinyUI(navbarPage(
 	(
 		"Plots",
 		sidebarPanel(
-		  
 		  sliderInput("years", "Years:",
                   min = min(BIO.DF$Year), 
                   max = max(BIO.DF$Year), 
