@@ -85,6 +85,7 @@
 		// catch arrays
 		int      m_nCtNobs;
 		dmatrix  m_dCatchData;
+		dmatrix  m_dSubLegalData;
 		d3_array m_d3_Ct;
 		
 		// survey arrays

@@ -17,7 +17,7 @@ funnel.plot <- function(df,input)
 		ci95 <- aes(ymin=t.Bt0.025,ymax=t.Bt0.975)
 		ci25 <- aes(ymin=t.Bt0.25,ymax=t.Bt0.75)
 		p  <- ggplot(df,aes(Year,t.Bt0.5))+geom_line()
-		p  <- p + geom_ribbon(ci95,alpha=0.05)
+		p  <- p + geom_ribbon(ci95,alpha=0.15)
 		p  <- p + geom_ribbon(ci25,alpha=0.25)
 		p  <- p + labs(x="Year",y="Spawning biomass")
 		
@@ -28,7 +28,7 @@ funnel.plot <- function(df,input)
 		ci95 <- aes(ymin=t.Dt0.025,ymax=t.Dt0.975)
 		ci25 <- aes(ymin=t.Dt0.25,ymax=t.Dt0.75)
 		p  <- ggplot(df,aes(Year,t.Dt0.5))+geom_line()
-		p  <- p + geom_ribbon(ci95,alpha=0.05)
+		p  <- p + geom_ribbon(ci95,alpha=0.15)
 		p  <- p + geom_ribbon(ci25,alpha=0.25)
 		p  <- p + labs(x="Year",y="Spawning biomass depletion")
 		
@@ -43,6 +43,13 @@ funnel.plot <- function(df,input)
 		
 	}
 
+	if( input$plotType=='Sub-legal Catch' )
+	{
+		ci <- aes(ymin=dt025,ymax=dt975)
+		p  <- ggplot(df,aes(Year,dt50))+geom_line()
+		p  <- p + geom_ribbon(ci,alpha=0.15)
+		p  <- p + labs(x="Year",y="Sub-legal Catch")
+	}
 
 	
 	facets <- paste("Procedure",'~',"Scenario")

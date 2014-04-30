@@ -17,6 +17,7 @@ require(plyr)
 	n          <- length(S)
 	biomass.df <- NULL
 	catch.df   <- NULL
+	sublegal.df<- NULL
 	for( i in 1:n)
 	{
 		#Scenario & Procedure from hdr Label
@@ -77,11 +78,11 @@ require(plyr)
 		ctdf  <- ldply(ct,data.frame)
 		m_ct  <- ddply(ctdf,.(Year,gear,area,sex,group),summarize,
 		               ct025=quantile(value,0.025),
-		               ct05=quantile(value,0.05),
-		               ct25=quantile(value,0.25),
-		               ct50=quantile(value,0.50),
-		               ct75=quantile(value,0.75),
-		               ct95=quantile(value,0.95),
+		               ct05 =quantile(value,0.05),
+		               ct25 =quantile(value,0.25),
+		               ct50 =quantile(value,0.50),
+		               ct75 =quantile(value,0.75),
+		               ct95 =quantile(value,0.95),
 		               ct975=quantile(value,0.975))
 
 
@@ -90,8 +91,34 @@ require(plyr)
 		                 m_ct)
 
 		catch.df <- rbind(catch.df,df)
+
+		# Sublegal by gear
+		fn  <- function(X)
+		{
+			df <- as.data.frame(X$m_dSubLegalData)
+			colnames(df) <- c("Year","gear","area","group","sex","sublegal","waste")
+			return(df)
+		}
+		dt    <- lapply(S[[i]],fn)
+		dtdf  <- ldply(dt,data.frame)
+		m_dt  <- ddply(dtdf,.(Year,gear,area,sex,group),summarize,
+		               dt025=quantile(sublegal,0.025),
+		               dt05 =quantile(sublegal,0.05),
+		               dt25 =quantile(sublegal,0.25),
+		               dt50 =quantile(sublegal,0.50),
+		               dt75 =quantile(sublegal,0.75),
+		               dt95 =quantile(sublegal,0.95),
+		               dt975=quantile(sublegal,0.975))
+
+		df <- data.frame(Scenario  = lbl[[i]][2],
+		                 Procedure = lbl[[i]][3],
+		                 m_dt)
+
+		sublegal.df <- rbind(sublegal.df,df)
+
+
 	}
-	mse.data <- list(biomass.df = biomass.df, catch.df=catch.df)
+	mse.data <- list(biomass.df = biomass.df, catch.df=catch.df, sublegal.df=sublegal.df)
 	save(mse.data,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 .saveMSEdataframe()
