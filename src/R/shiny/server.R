@@ -60,9 +60,9 @@ shinyServer(function(input, output) {
 
     cat("Depletion table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$years[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -76,9 +76,9 @@ shinyServer(function(input, output) {
 
     cat("Catch table \n")
     df  <- subset(mse.data$catch.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -92,9 +92,9 @@ shinyServer(function(input, output) {
 
     cat("SSB Limit table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -108,9 +108,9 @@ shinyServer(function(input, output) {
 
     cat("SSB Threshold table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",

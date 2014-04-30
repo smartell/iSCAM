@@ -81,18 +81,26 @@ funnel.plot <- function(df,input)
 	}
 
 	
-	facets <- paste("Procedure",'~',"Scenario")
-	if( length(P) > 1 )
+	# facets <- paste("Procedure",'~',"Scenario")
+	facets <- paste(input$facet_row,"~",input$facet_col)
+	p <- p + facet_grid(facets)
+
+	if( input$icolor != "." )
 	{
-		p <- p + aes_string(color="Procedure",fill="Procedure")
+		p <- p + aes_string(color=input$icolor,fill=input$icolor)
 	}
+	# if( length(P) > 1 )
+	# {
+	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
+	# }
 	
-	if( length(P)==1 )
-	{
-		p <- p + aes_string(color="Scenario",fill="Scenario")
-	}
+	# if( length(P)==1 )
+	# {
+	# 	p <- p + aes_string(color="Scenario",fill="Scenario")
+	# }
 
 	.LEGPOS <- 'top'
+
 	print( p + theme( legend.position = .LEGPOS ) )
 }
 
@@ -100,6 +108,6 @@ funnel.plot <- function(df,input)
 motionChart <- function(df,input)
 {
 	M1 <- gvisMotionChart(df,idvar="Procedure",timevar="Year",
-	      options=list(width=800, height=600, showChartButtons = TRUE))
+	      options=list(showChartButtons = TRUE))
 	return(M1)
 }
