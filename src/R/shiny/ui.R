@@ -47,7 +47,7 @@ shinyUI(navbarPage(
                   value = range(mse.DF$Year),
                   format= "####"),
 
-		  selectInput('scenario',"Secnario",
+		  selectInput('scenario',"Scenario",
 		              levels(mse.DF$Scenario),
 		              selected = levels(mse.DF$Scenario)[1],
 		              multiple = TRUE),
@@ -59,7 +59,7 @@ shinyUI(navbarPage(
 
 		  selectInput('plotType',"Select variable to plot",
 			        	c("Spawning biomass","Depletion",
-			        	  "Catch","Sub-legal Catch"))
+			        	  "Catch","Sub-legal Catch","AAV in Catch"))
 
 		),
 

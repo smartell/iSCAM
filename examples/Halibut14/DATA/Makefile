@@ -135,11 +135,15 @@ cleanmse:
 # |
 
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
+SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
 
 allSims.Rdata: simdone
 	-@echo $(COLLECTALL) | R --vanilla --slave
 
-collect: allSims.Rdata
+MSE.Rdata: 
+	-@echo $(SAVEMSEDF)  | R --vanilla --slave
+
+collect: allSims.Rdata MSE.Rdata
 
 # target: help - Display callable targets.
 help:

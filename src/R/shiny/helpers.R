@@ -51,17 +51,26 @@ funnel.plot <- function(df,input)
 		p  <- p + labs(x="Year",y="Sub-legal Catch")
 	}
 
+	if( input$plotType=="AAV in Catch")
+	{
+		print(colnames(df))
+		ci <- aes(ymin=AAV025,ymax=AAV975)
+		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
+		p  <- p + geom_ribbon(ci,alpha=0.15)
+		p  <- p + labs(x="Year",y="AAV in Catch")
+		p  <- p + theme_bw(11) 
+	}
 	
 	facets <- paste("Procedure",'~',"Scenario")
-	if( length(P) > 1 )
-	{
-		p <- p + aes_string(color="Procedure",fill="Procedure")
-	}
+	# if( length(P) > 1 )
+	# {
+	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
+	# }
 	
-	if( length(P)==1 )
-	{
-		p <- p + aes_string(color="Scenario",fill="Scenario")
-	}
+	# if( length(P)==1 )
+	# {
+	# 	p <- p + aes_string(color="Scenario",fill="Scenario")
+	# }
 
 	.LEGPOS <- 'top'
 	print( p + theme( legend.position = .LEGPOS ) )

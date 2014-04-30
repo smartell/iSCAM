@@ -20,6 +20,10 @@ shinyServer(function(input, output) {
     {
       DF <- mse.data$sublegal.df
     }
+    if(input$plotType=="AAV in Catch")
+    {
+      DF <- mse.data$AAV.df
+    }
 
     a  <- subset(DF,
              Year      %in% input$years[1]:input$years[2] &
