@@ -1942,6 +1942,7 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 		if(sel_phz(k) < 0)
 		{
 			k = abs(sel_phz(kgear));
+			sel_par(kgear) = sel_par(k);
 		}
 
 		for( ig = 1; ig <= n_ags; ig++ )
@@ -1991,9 +1992,9 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						}
 						for(j=sage;j<=nage-1;j++)
 						{
-							log_sel(k)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
+							log_sel(kgear)(ig)(i)(j)   = sel_par(k)(bpar)(j-sage+1);
 						}
-						log_sel(kgear)(ig)(i,nage) = log_sel(k)(ig)(i,nage-1);
+						log_sel(kgear)(ig)(i,nage) = log_sel(kgear)(ig)(i,nage-1);
 					}
 					break;
 					
