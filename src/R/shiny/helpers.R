@@ -58,7 +58,7 @@ funnel.plot <- function(df,input)
 	if( input$plotType=='Catch' )
 	{
 		ci <- aes(ymin=ct025,ymax=ct975)
-		p  <- ggplot(df,aes(Year,ct50))+geom_line()
+		p  <- ggplot(df,aes(Year,ct50,color=factor(gear),fill=factor(gear)))+geom_line()
 		p  <- p + geom_ribbon(ci,alpha=0.15)
 		p  <- p + labs(x="Year",y="Catch")
 		
@@ -78,7 +78,6 @@ funnel.plot <- function(df,input)
 		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
 		p  <- p + geom_ribbon(ci,alpha=0.15)
 		p  <- p + labs(x="Year",y="AAV in Catch")
-		p  <- p + theme_bw(11) 
 	}
 
 	if( input$plotType=='Wasteage' )
@@ -95,8 +94,14 @@ funnel.plot <- function(df,input)
 
 	if( input$icolor != "." )
 	{
-		p <- p + aes_string(color=factor(input$icolor),fill=factor(input$icolor))
+		p <- p + aes_string(fill=factor(input$icolor))
 	}
+	
+	# 95% CI
+	# p <- p + geom_ribbon(ci,alpha=0.15)
+
+	
+
 	# if( length(P) > 1 )
 	# {
 	# 	p <- p + aes_string(color="Procedure",fill="Procedure")

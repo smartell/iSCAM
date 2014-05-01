@@ -1,5 +1,5 @@
 library(shiny)
-source("helpers.R",local=TRUE)
+source("helpers.R")
 
 
 # Define server logic required to draw a histogram

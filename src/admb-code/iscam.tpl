@@ -4584,10 +4584,12 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		ofstream ofs("iSCAM.res");
-		ofs<<bo<<endl;
-		ofs<<fmsy<<endl;
-		ofs<<msy<<endl;
-		ofs<<bmsy<<endl;
+
+		ofs<<"# Bo\n"<<bo<<endl;
+		ofs<<"# Fmsy\n"<<fmsy<<endl;
+		ofs<<"# MSY\n"<<msy<<endl;
+		ofs<<"# Bmsy\n"<<bmsy<<endl;
+		ofs<<"# Sbt\n";
 		for( g = 1; g <= ngroup; g++ )
 		{
 			ofs<<sbt(g)(nyr+1)<<"\t";
@@ -4596,6 +4598,7 @@ REPORT_SECTION
 
 		// projected biomass
 		// The total biomass for each stock
+		ofs<<"# Total biomass\n";
 		for( g = 1; g <= ngroup; g++ )
 		{
 			ofs<<bt(g)(nyr+1)<<"\t";
