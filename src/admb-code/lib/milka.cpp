@@ -471,6 +471,7 @@ void OperatingModel::calculateTAC()
         {
             case 1: // Constant harvest rate
                  m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+                 // m_dTAC(g)  = (1.0-exp(-0.2)) * m_est_btt(g);
                 //m_dTAC(g) = 1.0;
             break; 
         }

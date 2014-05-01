@@ -51,7 +51,7 @@ shinyServer(function(input, output) {
   })
 
   output$funnelPlot <- renderPlot({
-    funnel.plot(data(),input)
+    tulip.plot(data(),input)
   })
 
   output$googleVisPlot <- renderGvis({
@@ -124,3 +124,4 @@ shinyServer(function(input, output) {
   })
 
 })
+

@@ -6,7 +6,7 @@ require(googleVis)
 require(plyr)
 
 # LOAD A mse.data DATA OBJECT
-load("data/MSE.Rdata")  
+#load("data/MSE.Rdata")  
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the
@@ -27,6 +27,49 @@ MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
 hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50")
 MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
 
+
+tulip.plot <- function(df,input)
+{
+	.LEGPOS <- 'top'
+
+	print(input$plotType)
+	icol <- c("Scenario","Procedure","Year","gear","area","sex","group")
+	if(input$plotType=='Spawning biomass')
+	{
+		icol <- c(icol,"t.Bt0.5","t.Bt0.025","t.Bt0.975")
+	}
+	if(input$plotType=='Depletion')
+	{
+		icol <- c(icol,"t.Dt0.5","t.Dt0.025","t.Dt0.975")	
+	}
+	if(input$plotType=='Catch')
+	{
+		icol <- c(icol,"ct50","ct025","ct975")	
+	}
+
+
+	sdf  <- df[,which(names(df) %in% icol)]
+	colnames(sdf) <- c(icol[1:3],"lci","Median","uci")
+
+	print(tail(sdf))
+
+	# GGPLOT.
+	ci <- aes(ymin=lci,ymax=uci)
+	p <- ggplot(sdf,aes(x=Year,y=Median)) + geom_line()
+	p <- p + geom_ribbon(ci,alpha=0.25)
+	p <- p + labs(x="Year",y=input$plotType)
+
+	if( input$icolor != "." )
+	{
+		p <- p + aes_string(fill=input$icolor)
+	}
+
+	facets <- paste(input$facet_row,"~",input$facet_col)
+	p      <- p + facet_grid(facets)
+
+	print(p)
+	
+}
 
 funnel.plot <- function(df,input)
 {
@@ -124,3 +167,4 @@ motionChart <- function(df,input)
 	      options=list(showChartButtons = TRUE))
 	return(M1)
 }
+

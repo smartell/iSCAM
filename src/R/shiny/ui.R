@@ -69,7 +69,7 @@ shinyUI(fluidPage(
 		column(9,
 		    tabsetPanel(type="tabs",
 			    # Funnel plots
-			    tabPanel("Funnel plots", 
+			    tabPanel("Tulip plots", 
 				  plotOutput("funnelPlot")
 				),
 				# Google Vis plots
@@ -124,3 +124,5 @@ shinyUI(fluidPage(
 
 	
 ))
+
+
