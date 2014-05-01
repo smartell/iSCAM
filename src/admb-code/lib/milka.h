@@ -157,6 +157,9 @@
 
 		d4_array d4_logSel;
 
+		//PerformanceVariables
+		dmatrix m_AAV;
+
 		ModelVariables mv;		// Structure for model variables.
 
 	public:

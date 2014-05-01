@@ -72,6 +72,15 @@ funnel.plot <- function(df,input)
 		p  <- p + labs(x="Year",y="Sub-legal Catch")
 	}
 
+	if( input$plotType=="AAV in Catch")	
+	{
+		ci <- aes(ymin=AAV025,ymax=AAV975)
+		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
+		p  <- p + geom_ribbon(ci,alpha=0.15)
+		p  <- p + labs(x="Year",y="AAV in Catch")
+		p  <- p + theme_bw(11) 
+	}
+
 	if( input$plotType=='Wasteage' )
 	{
 		ci <- aes(ymin=wt025,ymax=wt975)
@@ -79,7 +88,6 @@ funnel.plot <- function(df,input)
 		p  <- p + geom_ribbon(ci,alpha=0.15)
 		p  <- p + labs(x="Year",y="Wasteage")
 	}
-
 	
 	# facets <- paste("Procedure",'~',"Scenario")
 	facets <- paste(input$facet_row,"~",input$facet_col)
@@ -87,7 +95,7 @@ funnel.plot <- function(df,input)
 
 	if( input$icolor != "." )
 	{
-		p <- p + aes_string(color=input$icolor,fill=input$icolor)
+		p <- p + aes_string(color=factor(input$icolor),fill=factor(input$icolor))
 	}
 	# if( length(P) > 1 )
 	# {

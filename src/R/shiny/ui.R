@@ -30,6 +30,7 @@ shinyUI(fluidPage(
 			        		  "Depletion",
 			        	  	   "Catch",
 			        	  	   "Sub-legal Catch",
+			        	  	   "AAV in Catch",
 			        	  	   "Wasteage"),
 			        		selected="Spawning biomass")
 			),

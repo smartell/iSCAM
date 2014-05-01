@@ -98,7 +98,7 @@ void OperatingModel::runScenario(const int &seed)
         writeDataFile(i);
 
         runStockAssessment();
-        
+    
     }
 
     writeSimulationVariables();
@@ -207,12 +207,13 @@ void OperatingModel::initParameters()
 
 
     // Below could be deprecated
-    m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
-    m_d3_Ct.initialize();
-    for(int ig = 1; ig <= n_ags; ig++ )
-    {
-        m_d3_Ct(ig).sub(syr,nyr) = d3_Ct(ig);
-    }
+   // m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
+   // m_d3_Ct.initialize();
+    //for(int ig = 1; ig <= n_ags; ig++ )
+    //{
+    //    m_d3_Ct(ig).sub(syr,nyr) = d3_Ct(ig);
+    //}
+    
 
     // allocate & initialize survey data arrays
     m_n_it_nobs.allocate(1,nItNobs);
@@ -225,7 +226,6 @@ void OperatingModel::initParameters()
     {
         m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);  
     }
-    
 
     // Age-composition arrays   
     m_A_irow.allocate(1,nAgears);

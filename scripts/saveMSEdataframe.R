@@ -18,6 +18,7 @@ require(plyr)
 	biomass.df <- NULL
 	catch.df   <- NULL
 	sublegal.df<- NULL
+	AAV.df   <- NULL
 	for( i in 1:n)
 	{
 		#Scenario & Procedure from hdr Label
@@ -67,6 +68,9 @@ require(plyr)
 
 		biomass.df <- rbind(biomass.df,df)
 
+
+		
+
 		# Catch by gear.
 		fn    <- function(X)
 		{
@@ -75,6 +79,8 @@ require(plyr)
 			return(df)
 		}
 		ct    <- lapply(S[[i]],fn)
+		
+		
 		ctdf  <- ldply(ct,data.frame)
 		m_ct  <- ddply(ctdf,.(Year,gear,area,sex,group),summarize,
 		               ct025=quantile(value,0.025),
@@ -126,8 +132,45 @@ require(plyr)
 		sublegal.df <- rbind(sublegal.df,df)
 
 
+		#AAV
+		#calculate moving sum
+		runsum<-function(x, int=5)
+		{
+			rsum=numeric(length=length(x))
+			rsum[1:(int-1)]=0
+	
+			for(i in (int+1):length(x))
+			{			
+				rsum[i]<-sum(x[(i-int+1):i])
+			} 
+			return(rsum)
+		}
+
+		for(rr in 1:length(ct))
+		{
+			AAV=runsum(c(0,abs(diff(ct[[rr]]$value))))/runsum(ct[[rr]]$value)
+			ct[[rr]]= cbind(ct[[rr]],AAV)
+		}
+		
+		AAVdf  <- ldply(ct,data.frame)
+		m_AAV  <- ddply(AAVdf,.(Year,gear,area,group),summarize,
+		               AAV025=quantile(AAV,0.025,na.rm=T),
+		               AAV05=quantile(AAV,0.05,na.rm=T),
+		               AAV25=quantile(AAV,0.25,na.rm=T),
+		               AAV50=quantile(AAV,0.50,na.rm=T),
+		               AAV75=quantile(AAV,0.75,na.rm=T),
+		               AAV95=quantile(AAV,0.95,na.rm=T),
+		               AAV975=quantile(AAV,0.975,na.rm=T))
+
+		df2 <- data.frame(Scenario  = lbl[[i]][2],
+		                 Procedure = lbl[[i]][3],
+		                 m_AAV)
+
+		AAV.df <- rbind(AAV.df,df2)
+
+
 	}
-	mse.data <- list(biomass.df = biomass.df, catch.df=catch.df, sublegal.df=sublegal.df)
+	mse.data <- list(biomass.df = biomass.df, catch.df=catch.df, sublegal.df=sublegal.df,AAV.df=AAV.df)
 	save(mse.data,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 .saveMSEdataframe()
