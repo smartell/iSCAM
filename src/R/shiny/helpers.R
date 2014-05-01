@@ -1,10 +1,31 @@
 #helpers.R
+# LIBRARIES
 require(ggplot2)
 require(reshape2)
 require(googleVis)
 require(plyr)
-load("data/MSE.Rdata")  #Creates a mse.data object
-mse.DF <- mse.data$biomass.df
+
+# LOAD A mse.data DATA OBJECT
+load("data/MSE.Rdata")  
+
+# ——————————————————————————————————————————————————————————————————————————— #
+# NOTES: The mse.data object is a list of data.frames that comes from the
+#        saveMSEdataframe.R routine.  The following code disassbles this list
+#        into several dataframes to be used in the Shiny application.
+# DATA FRAMES:
+#   - BIO.DF -> spawning biomass 
+#   - CAT.DF -> catch related variables
+#   - SUB.DF -> sublegal and wastage related variables
+#   - MOT.DF -> data frame to be used with gvisMotionChart
+# ——————————————————————————————————————————————————————————————————————————— #
+BIO.DF <- mse.data$biomass.df
+CAT.DF <- mse.data$catch.df
+SUB.DF <- mse.data$sublegal.df
+
+MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
+# Restricted data frame for gvisMotionChart for increased speed & less clutter.
+hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50")
+MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
 
 
 funnel.plot <- function(df,input)
@@ -51,17 +72,31 @@ funnel.plot <- function(df,input)
 		p  <- p + labs(x="Year",y="Sub-legal Catch")
 	}
 
-	if( input$plotType=="AAV in Catch")
+	if( input$plotType=="AAV in Catch")	
 	{
-		print(colnames(df))
 		ci <- aes(ymin=AAV025,ymax=AAV975)
 		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
 		p  <- p + geom_ribbon(ci,alpha=0.15)
 		p  <- p + labs(x="Year",y="AAV in Catch")
 		p  <- p + theme_bw(11) 
 	}
+
+	if( input$plotType=='Wasteage' )
+	{
+		ci <- aes(ymin=wt025,ymax=wt975)
+		p  <- ggplot(df,aes(Year,wt50))+geom_line()
+		p  <- p + geom_ribbon(ci,alpha=0.15)
+		p  <- p + labs(x="Year",y="Wasteage")
+	}
 	
-	facets <- paste("Procedure",'~',"Scenario")
+	# facets <- paste("Procedure",'~',"Scenario")
+	facets <- paste(input$facet_row,"~",input$facet_col)
+	p <- p + facet_grid(facets)
+
+	if( input$icolor != "." )
+	{
+		p <- p + aes_string(color=factor(input$icolor),fill=factor(input$icolor))
+	}
 	# if( length(P) > 1 )
 	# {
 	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
@@ -73,13 +108,14 @@ funnel.plot <- function(df,input)
 	# }
 
 	.LEGPOS <- 'top'
+
 	print( p + theme( legend.position = .LEGPOS ) )
 }
 
 
 motionChart <- function(df,input)
 {
-	print(df)
-	M1 <- gvisMotionChart(df,idvar="Procedure",timevar="Year")
+	M1 <- gvisMotionChart(df,idvar="Procedure",timevar="Year",
+	      options=list(showChartButtons = TRUE))
 	return(M1)
 }

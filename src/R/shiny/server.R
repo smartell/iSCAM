@@ -1,5 +1,5 @@
 library(shiny)
-source("helpers.R")
+source("helpers.R",local=TRUE)
 
 
 # Define server logic required to draw a histogram
@@ -10,13 +10,13 @@ shinyServer(function(input, output) {
       
     if(input$plotType=="Spawning biomass" || input$plotType=="Depletion")
     {
-      DF <- mse.data$biomass.df
+      DF <- BIO.DF
     }
     if(input$plotType=="Catch")
     {
-      DF <- mse.data$catch.df
+      DF <- CAT.DF
     }
-    if(input$plotType=="Sub-legal Catch")
+    if(input$plotType=="Sub-legal Catch" || input$plotType=="Wasteage")
     {
       DF <- mse.data$sublegal.df
     }
@@ -32,6 +32,7 @@ shinyServer(function(input, output) {
              )
 
   })
+
 
 
   # Expression that generates a histogram. The expression is
@@ -54,7 +55,7 @@ shinyServer(function(input, output) {
   })
 
   output$googleVisPlot <- renderGvis({
-    motionChart(data(),input)
+    motionChart(MOT.DF,input)
   })
 
 
@@ -63,9 +64,9 @@ shinyServer(function(input, output) {
 
     cat("Depletion table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$years[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -79,9 +80,9 @@ shinyServer(function(input, output) {
 
     cat("Catch table \n")
     df  <- subset(mse.data$catch.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -95,9 +96,9 @@ shinyServer(function(input, output) {
 
     cat("SSB Limit table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
@@ -111,9 +112,9 @@ shinyServer(function(input, output) {
 
     cat("SSB Threshold table \n")
     df  <- subset(mse.data$biomass.df,
-             Year      %in% input$tyears[1]:input$tyears[2] &
-             Scenario  %in% input$tscenario                &
-             Procedure %in% input$tprocedure
+             Year      %in% input$years[1]:input$years[2] &
+             Scenario  %in% input$scenario                &
+             Procedure %in% input$procedure
              )
     mdf <- melt(df,id=c("Scenario","Procedure","Year"))
     tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario",
