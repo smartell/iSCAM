@@ -6,7 +6,7 @@ require(googleVis)
 require(plyr)
 
 # LOAD A mse.data DATA OBJECT
-#load("data/MSE.Rdata")  
+load("data/MSE.Rdata")  
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the
@@ -21,8 +21,10 @@ require(plyr)
 BIO.DF <- mse.data$biomass.df
 CAT.DF <- mse.data$catch.df
 SUB.DF <- mse.data$sublegal.df
+AAV.DF <- mse.data$AAV.df
 
 MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
+MSE.DF <- merge(MRG.DF,SUB.DF,by=c("Scenario","Procedure","Year","gear","area","sex","group"))
 # Restricted data frame for gvisMotionChart for increased speed & less clutter.
 hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50")
 MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
@@ -30,7 +32,7 @@ MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
 
 tulip.plot <- function(df,input)
 {
-	.LEGPOS <- 'top'
+	.LEGPOS <- 'bottom'
 
 	print(input$plotType)
 	icol <- c("Scenario","Procedure","Year","gear","area","sex","group")
@@ -44,12 +46,31 @@ tulip.plot <- function(df,input)
 	}
 	if(input$plotType=='Catch')
 	{
-		icol <- c(icol,"ct50","ct025","ct975")	
+		icol <- c(icol,"ct50","ct025","ct975")
 	}
-
-
+	if(input$plotType=='Sub-legal Catch')
+	{
+		icol <- c(icol,"dt50","dt025","dt975")	
+	}
+	if(input$plotType=='Sub-legal Catch')
+	{
+		icol <- c(icol,"dt50","dt025","dt975")	
+	}
+	if(input$plotType=='AAV in Catch')
+	{
+		icol <- c(icol,"AAV50","AAV025","AAV975")
+	}
+	if(input$plotType=='Wastage')
+	{
+		icol <- c(icol,"wt50","wt025","wt975")	
+	}
+	if(input$plotType=='Efficiency')
+	{
+		icol <- c(icol,"ef50","ef025","ef975")	
+	}
 	sdf  <- df[,which(names(df) %in% icol)]
-	colnames(sdf) <- c(icol[1:3],"lci","Median","uci")
+	n    <- dim(sdf)[2] - 2
+	colnames(sdf)[n:(n+2)] <- c("lci","Median","uci")
 
 	print(tail(sdf))
 
@@ -61,13 +82,14 @@ tulip.plot <- function(df,input)
 
 	if( input$icolor != "." )
 	{
-		p <- p + aes_string(fill=input$icolor)
+		p <- p + aes_string(fill=input$icolor,color=input$icolor)
 	}
 
 	facets <- paste(input$facet_row,"~",input$facet_col)
 	p      <- p + facet_grid(facets)
 
-	print(p)
+
+	print(p + theme( legend.position = .LEGPOS ) )
 	
 }
 
@@ -123,12 +145,12 @@ funnel.plot <- function(df,input)
 		p  <- p + labs(x="Year",y="AAV in Catch")
 	}
 
-	if( input$plotType=='Wasteage' )
+	if( input$plotType=='Wastage' )
 	{
 		ci <- aes(ymin=wt025,ymax=wt975)
 		p  <- ggplot(df,aes(Year,wt50))+geom_line()
 		p  <- p + geom_ribbon(ci,alpha=0.15)
-		p  <- p + labs(x="Year",y="Wasteage")
+		p  <- p + labs(x="Year",y="Wastage")
 	}
 	
 	# facets <- paste("Procedure",'~',"Scenario")

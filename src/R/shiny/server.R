@@ -16,13 +16,17 @@ shinyServer(function(input, output) {
     {
       DF <- CAT.DF
     }
-    if(input$plotType=="Sub-legal Catch" || input$plotType=="Wasteage")
+    if(   input$plotType=="Sub-legal Catch" || input$plotType=="Wastage")
     {
-      DF <- mse.data$sublegal.df
+      DF <- SUB.DF
     }
-    if(input$plotType=="AAV in Catch")
+    if(input$plotType=="AAV in Catch" )
     {
-      DF <- mse.data$AAV.df
+      DF <- AAV.DF
+    }
+    if(input$plotType=="Efficiency")
+    {
+      DF <- MSE.DF
     }
 
     a  <- subset(DF,

@@ -102,7 +102,7 @@ require(plyr)
 		fn  <- function(X)
 		{
 			df <- as.data.frame(X$m_dSubLegalData)
-			colnames(df) <- c("Year","gear","area","group","sex","sublegal","waste")
+			colnames(df) <- c("Year","gear","area","group","sex","sublegal","waste","efficiency")
 			return(df)
 		}
 		dt    <- lapply(S[[i]],fn)
@@ -124,10 +124,20 @@ require(plyr)
 		               wt75 =quantile(waste,0.75),
 		               wt95 =quantile(waste,0.95),
 		               wt975=quantile(waste,0.975))
+		
+		m_ef  <- ddply(dtdf,.(Year,gear,area,sex,group),summarize,
+		               ef025=quantile(efficiency,0.025),
+		               ef05 =quantile(efficiency,0.05),
+		               ef25 =quantile(efficiency,0.25),
+		               ef50 =quantile(efficiency,0.50),
+		               ef75 =quantile(efficiency,0.75),
+		               ef95 =quantile(efficiency,0.95),
+		               ef975=quantile(efficiency,0.975))
+
 
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
-		                 m_dt,m_wt)
+		                 m_dt,m_wt,m_ef)
 
 		sublegal.df <- rbind(sublegal.df,df)
 

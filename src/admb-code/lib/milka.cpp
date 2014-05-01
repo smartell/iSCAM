@@ -202,7 +202,7 @@ void OperatingModel::initParameters()
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
 
-    m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,7);
+    m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
 
 
@@ -669,7 +669,9 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dSubLegalData(m_irow,5) = hh>0?h:0;
                         m_dSubLegalData(m_irow,6) = hh>0?_hDt(h,k):colsum(_hDt)(k);
                         m_dSubLegalData(m_irow,7) = hh>0?_hWt(h,k):colsum(_hWt)(k);
-
+                        double effsex = _hCt(h,k)/(_hCt(h,k)+_hDt(h,k));
+                        double effnsx = colsum(_hCt)(k)/(colsum(_hCt)(k)+colsum(_hDt)(k));
+                        m_dSubLegalData(m_irow,8) = hh>0?effsex:effnsx;
                     }
                 }
             }
