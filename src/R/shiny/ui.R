@@ -6,7 +6,7 @@ shinyUI(fluidPage(
 	  titlePanel("IPHC MSE-tool"),
 
 	fluidRow(
-		column(4,
+		column(3,
 			wellPanel(
 				h4("Filter"),
 				sliderInput("years", "Years:",
@@ -65,7 +65,7 @@ shinyUI(fluidPage(
 				            selected="Scenario")
 			)
 		),
-		column(8,
+		column(9,
 		    tabsetPanel(type="tabs",
 			    # Funnel plots
 			    tabPanel("Funnel plots", 
@@ -119,81 +119,6 @@ shinyUI(fluidPage(
 	#  	p("Select the table menu to view summary performance metrics of the chosen 
 	#  	  combinations of management procedures and scenarios. Again the sidebar will 
 	#  	  allows you to customize the summary statistics.")
-	# ),
-	# navbarMenu("Toolbox",
-	#            tabPanel("Procedures"),
-	#            tabPanel("Scenarios")),
-	
-
-	# tabPanel Plots
-	# tabPanel
-	# (
-	# 	"Plots",
-	# 	sidebarPanel(
-		  
-
-
-		  
-
-		  
-
-	# 	),
-
-	# 	mainPanel(
-	# 	  tabsetPanel(type="tabs",
-	# 	    # Funnel plots
-	# 	    tabPanel("Funnel plots", 
-	# 		  plotOutput("funnelPlot")
-	# 		),
-	# 		# Google Vis plots
-	# 		tabPanel("Google Vis",
-	# 		  htmlOutput("googleVisPlot")
-	# 		)
-	# 		# Summary tables
-	# 		# tabPanel("Performance Metrics",
-	# 		#   h4("Median depletion")
-	# 		# )
-	# 	  )
-
-
-	# 	)
-	# ),
-
-	# tabPanel Tables
-	# tabPanel
-	# (
-	#  	"Tables",
-	#  	sidebarPanel(
-	# 	  sliderInput("tyears", "Years:",
- #                  min = min(BIO.DF$Year), 
- #                  max = max(BIO.DF$Year), 
- #                  value = range(BIO.DF$Year),
- #                  format= "####"),
-
-	# 	  selectInput('tscenario',"Secnario",
-	# 	              levels(BIO.DF$Scenario),
-	# 	              selected = levels(BIO.DF$Scenario)[1],
-	# 	              multiple = TRUE),
-
-	# 	  selectInput('tprocedure',"Procedure",
-	# 	              levels(BIO.DF$Procedure),
-	# 	              selected =  levels(BIO.DF$Procedure)[1],
-	# 	              multiple = TRUE)
-
-	# 	),
-
-	# 	mainPanel(
-	# 		h4("Median depletion"),
-	# 		tableOutput("viewDepletionTable"),
-	# 		h4("Median catch"),
-	# 		tableOutput("viewCatchTable"),
-	# 		h4("Probability of falling below limit reference point P(SB<0.20)"),
-	# 		tableOutput("viewSSBlimit"),
-	# 		h4("Probability of falling below threshold reference point P(SB<0.30)"),
-	# 		tableOutput("viewSSBthreshold")
-	# 	)
-
-
 	# ),
 
 	
