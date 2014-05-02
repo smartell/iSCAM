@@ -160,6 +160,9 @@ void OperatingModel::readMSEcontrols()
     m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
     ifs_scn >> m_dispersal; 
 
+    // Autocorrelation coefficient in recruitment.
+    ifs_scn >> m_gamma_r;
+
     // End of file
     int eof_scn=0;
     ifs_scn >> eof_scn;
@@ -440,6 +443,16 @@ void OperatingModel::setRandomVariables(const int& seed)
 
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
+
+    // Add autocorrelation to recruitment deviations
+    double rho = m_gamma_r;
+    for( g = 1; g <= ngroup; g++ )
+    {
+        for( i = nyr-sage+1; i <= m_nPyr; i++ )
+        {
+            m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
+        }
+    }
 }
 
 
@@ -471,8 +484,6 @@ void OperatingModel::calculateTAC()
         {
             case 1: // Constant harvest rate
                  m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
-                 // m_dTAC(g)  = (1.0-exp(-0.2)) * m_est_btt(g);
-                //m_dTAC(g) = 1.0;
             break; 
         }
     }
@@ -933,7 +944,8 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         {
             case 1:  // | Beverton Holt model
                 m_dbeta(g) = (m_dKappa(g)-1.0)/(mv.sbo(g));
-                m_N(ig)(iyr+1,sage) = mv.so(g)*tmp_st/1.+m_dbeta(g)*tmp_st;
+                m_N(ig)(iyr+1,sage) = mv.so(g)*tmp_st/ (1.+m_dbeta(g)*tmp_st);
+                cout<<"-----------so "<<mv.so(g)<<endl;
             break;
 
             case 2:  // | Ricker model
@@ -956,10 +968,10 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         //1 - calculate total recruits per area: tmp_rec
         tmp_rec(f) += m_N(ig)(iyr+1,sage);
         
-        }
+    }
         
-        //disperse recruits 
-        tmp_rec_dis = tmp_rec*m_dispersal;
+    //disperse recruits 
+    tmp_rec_dis = tmp_rec*m_dispersal;
 
     for(int ig = 1; ig <= n_ags; ig++ )
     {

@@ -81,6 +81,7 @@
 		//random variables
 		dmatrix m_epsilon;  /// observation errors
 		dmatrix m_delta;    /// recruitment deviations (process errors)
+		double  m_gamma_r;  /// recruitment autocorrelation.
 		
 		// catch arrays
 		int      m_nCtNobs;
