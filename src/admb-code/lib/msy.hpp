@@ -90,7 +90,10 @@ namespace rfp {
 		T1 m_fmsy;      /// Fishing mortality rate at MSY
 		T1 m_fstp;		/// Newton step size
 		T1 m_ye;		/// Equilibrium yield for each gear.
+		T1 m_phiq;		/// Per recruit Yield.
 		T1 m_dye;		/// Derivative of catch equation for each gear.
+		T1 m_dre;		/// Partial derivative of recruitment with respect to fe
+		T1 m_dphiq;     /// Partial derivative for per recruit yield.
 		T1 m_msy;		/// Maximum Sustainable yield for each gear.
 		T1 m_allocation;/// Allocation of ye to each gear.
 		T1 m_ak;        /// Input allocation.
@@ -152,6 +155,7 @@ namespace rfp {
 		//virtual const T1 getdYe()  {return m_dYe; }
 		
 		void print();
+		void checkDerivatives(const T1 & fe);
 		
 	};
 
@@ -182,6 +186,65 @@ namespace rfp {
 		cout<<"|------------------------------------------|" <<endl;
 	}
 
+	/**
+	 * @brief Check the derivative calculations.
+	 * @details Numerically check the analytical partial derivative calculations.
+	 * 
+	 * @param fe vector of fishing mortality rates.
+	 * @tparam T double
+	 * @tparam T2 matrix
+	 * @return Prints Table of analytical & numerical derivatives.
+	 */
+	template<class T, class T1, class T2,class T3>
+	void msy<T,T1,T2,T3>::checkDerivatives(const T1& fe)
+	{
+		double hh = 1.0e-3;
+		T  r1,r2;
+		T1 y1,y2,fh;
+		T1 q1,q2;
+		calcEquilibrium(fe);
+		y1 = m_ye;
+		r1 = m_re;
+		q1 = m_phiq;
+
+		
+		for(int k = 1; k <= m_nGear; k++ )
+		{
+			
+			fh = fe;
+			cout<<fh<<endl;
+			fh(k) += hh;
+			cout<<fh<<endl; 
+			calcEquilibrium(fh);
+			y2 = (m_ye - y1)/hh;
+			r2 = (m_re - r1)/hh;
+			q2 = (m_phiq - q1)/hh;
+
+
+			cout<<"|———————————————————————————————————————————————————————|" <<endl;
+			cout<<"| Gear "<<k<<endl;
+			cout<<"| Variable"<<setw(15)<<std::setfill(' ')
+				<<"Numerical" <<setw(15)<<std::setfill(' ')
+				<<"Analytical"<<setw(15)<<std::setfill(' ')
+				<<"Difference"<<endl;
+			cout<<"|———————————————————————————————————————————————————————|" <<endl;
+			cout<<"| dye/dfe "         <<setw(15)
+					<<y2(k)            <<setw(15)
+					<<m_dye(k)         <<setw(15)
+					<<y2(k)-m_dye(k)   <<endl;
+			cout<<"| dre/dfe "         <<setw(15)
+					<<r2               <<setw(15)
+					<<m_dre(k)         <<setw(15)
+					<<r2-m_dre         <<endl;
+			cout<<"| dphiq/dfe"        <<setw(15)
+					<<q2(k)            <<setw(15)
+					<<m_dphiq(k)       <<setw(15)
+					<<q2(k)-m_dphiq(k) <<endl;
+			cout<<setprecision(10)<<fe<<endl<<fh<<endl<<hh<<endl;
+		}
+		cout<<"|———————————————————————————————————————————————————————|" <<endl;
+
+	}
 
 	/**
 	 * @brief Calculate Fmsy given fixed allocation.
@@ -481,7 +544,10 @@ namespace rfp {
 				} // m_nGear kk loop
 			} // m_nGear k loop
 		} // m_nGrp
-		
+		m_phiq  = phiq;
+		m_dphiq = diagonal(dphiq);
+		cout<<"dphiq\n"<<dphiq<<endl;
+
 		// 1st & 2nd partial derivatives for recruitment
 		T phif2 = square(m_phif);
 		T kappa = 4.0*m_h/(1.-m_h);
@@ -492,6 +558,7 @@ namespace rfp {
 			d2re(k)     = -2.*m_ro*m_phie*dphif(k)*dphif(k)/(phif2*phif*km1) 
 						+ m_ro*m_phie*d2phif(k)/(phif2*km1);		
 		}	
+		m_dre = dre;
 
 		// Equilibrium calculations
 		T    re;
