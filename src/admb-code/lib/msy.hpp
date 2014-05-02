@@ -198,10 +198,14 @@ namespace rfp {
 	template<class T, class T1, class T2,class T3>
 	void msy<T,T1,T2,T3>::checkDerivatives(const T1& fe)
 	{
-		double hh = 1.0e-3;
-		T  r1,r2;
-		T1 y1,y2,fh;
-		T1 q1,q2;
+		double hh = 1.0e-9;
+		double r1,r2;
+		dvector y1(1,m_nGear);
+		dvector y2(1,m_nGear);
+		dvector fh(1,m_nGear);
+		dvector q1(1,m_nGear);
+		dvector q2(1,m_nGear);
+
 		calcEquilibrium(fe);
 		y1 = m_ye;
 		r1 = m_re;
@@ -212,9 +216,7 @@ namespace rfp {
 		{
 			
 			fh = fe;
-			cout<<fh<<endl;
 			fh(k) += hh;
-			cout<<fh<<endl; 
 			calcEquilibrium(fh);
 			y2 = (m_ye - y1)/hh;
 			r2 = (m_re - r1)/hh;
@@ -222,7 +224,7 @@ namespace rfp {
 
 
 			cout<<"|———————————————————————————————————————————————————————|" <<endl;
-			cout<<"| Gear "<<k<<endl;
+			cout<<"| Gear "<<k<<" fe\t"<<fe(k)<<endl;
 			cout<<"| Variable"<<setw(15)<<std::setfill(' ')
 				<<"Numerical" <<setw(15)<<std::setfill(' ')
 				<<"Analytical"<<setw(15)<<std::setfill(' ')
@@ -240,7 +242,8 @@ namespace rfp {
 					<<q2(k)            <<setw(15)
 					<<m_dphiq(k)       <<setw(15)
 					<<q2(k)-m_dphiq(k) <<endl;
-			cout<<setprecision(10)<<fe<<endl<<fh<<endl<<hh<<endl;
+
+			// cout<<setprecision(10)<<fe<<endl<<fh<<endl<<hh<<endl;
 		}
 		cout<<"|———————————————————————————————————————————————————————|" <<endl;
 

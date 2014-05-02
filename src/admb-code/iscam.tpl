@@ -3776,7 +3776,9 @@ FUNCTION void calcReferencePoints()
 		bmsy(g) = c_dMSY.getBmsy();
 		msy(g)  = c_dMSY.getMsy();
 		c_dMSY.print();
-		c_dMSY.checkDerivatives(fmsy(g));
+		dvector finit(1,nfleet);
+		finit=0.7;
+		c_dMSY.checkDerivatives(finit);
 		cout<<"group \t"<<g<<endl;
 		exit(1);
 
