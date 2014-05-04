@@ -118,6 +118,10 @@ void OperatingModel::readMSEcontrols()
     ifs_mpc>>m_nPyr;
     ifs_mpc>>m_nHCR;
 
+    ifs_mpc>>m_dBthreshold;
+    ifs_mpc>>m_dBlimit;
+    ifs_mpc>>m_maxf;
+
     m_nGearIndex.allocate(1,ngear);
     m_nCSex.allocate(1,ngear);
     m_nASex.allocate(1,ngear);
@@ -478,15 +482,50 @@ void OperatingModel::getReferencePointsAndStockStatus()
  */
 void OperatingModel::calculateTAC()
 {
+    double btmp;
+    double sbt;
+    double sbo;
+    dvector harvest_rate;
     for( g = 1; g <= ngroup; g++ )
     {
+        btmp = m_est_btt(g);
+        sbt  = m_est_sbtt(g);
+        sbo  = m_est_bo(g);
+        for(int k = 1; k <= nfleet; k++ )
+        {
+            if(m_est_fmsy(g,k) > m_maxf)
+            {
+                m_est_fmsy(g,k) = m_maxf;
+            }
+        }
+        harvest_rate = 1.0-exp(-m_est_fmsy(g));
+        
+
         switch( int(m_nHCR) )
         {
             case 1: // Constant harvest rate
-                 m_dTAC(g)  = (1.0-exp(-m_est_fmsy(g))) * m_est_btt(g);
+                 m_dTAC(g)  = harvest_rate * btmp;
             break; 
+
+            case 2: // Bthreshold:Blimit HCR.
+                double status = sbt/sbo;
+                if( status < m_dBthreshold && status >= m_dBlimit )
+                {
+                    harvest_rate *= (status-m_dBlimit)/(m_dBthreshold-m_dBlimit);
+                }
+                else if(status < m_dBlimit)
+                {
+                    harvest_rate = 0;
+                }
+                m_dTAC(g)  = harvest_rate * btmp;
+                // cout<<"Status "<<status<<endl;
+                // cout<<harvest_rate<<endl;
+                // exit(1);
+            break;
         }
     }
+    // cout<<m_nHCR<<endl;
+    // exit(1);
 }
 
 
@@ -945,7 +984,6 @@ void OperatingModel::updateReferenceModel(const int& iyr)
             case 1:  // | Beverton Holt model
                 m_dbeta(g) = (m_dKappa(g)-1.0)/(mv.sbo(g));
                 m_N(ig)(iyr+1,sage) = mv.so(g)*tmp_st/ (1.+m_dbeta(g)*tmp_st);
-                cout<<"-----------so "<<mv.so(g)<<endl;
             break;
 
             case 2:  // | Ricker model

@@ -24,10 +24,14 @@ SUB.DF <- mse.data$sublegal.df
 AAV.DF <- mse.data$AAV.df
 
 MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
+MRG.DF <- merge(MRG.DF,AAV.DF,by=c("Scenario","Procedure","Year","gear","area","group"))
 MSE.DF <- merge(MRG.DF,SUB.DF,by=c("Scenario","Procedure","Year","gear","area","sex","group"))
 # Restricted data frame for gvisMotionChart for increased speed & less clutter.
-hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50")
+hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50","AAV50")
 MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
+MOT.DF$idvar <- paste0(MOT.DF$Scenario,MOT.DF$Procedure)
+names(MOT.DF) <- c("Scenario","Procedure","Year","Median biomass","Depletion",
+                   "Median catch","Median AAV","idvar")
 
 
 tulip.plot <- function(df,input)
@@ -93,99 +97,101 @@ tulip.plot <- function(df,input)
 	
 }
 
-funnel.plot <- function(df,input)
-{
-	S <- input$scenario
-	P <- input$procedure
+# funnel.plot <- function(df,input)
+# {
+# 	S <- input$scenario
+# 	P <- input$procedure
 	
-	if( input$plotType=='Spawning biomass' )
-	{
-		ci95 <- aes(ymin=t.Bt0.025,ymax=t.Bt0.975)
-		ci25 <- aes(ymin=t.Bt0.25,ymax=t.Bt0.75)
-		p  <- ggplot(df,aes(Year,t.Bt0.5))+geom_line()
-		p  <- p + geom_ribbon(ci95,alpha=0.15)
-		p  <- p + geom_ribbon(ci25,alpha=0.25)
-		p  <- p + labs(x="Year",y="Spawning biomass")
+# 	if( input$plotType=='Spawning biomass' )
+# 	{
+# 		ci95 <- aes(ymin=t.Bt0.025,ymax=t.Bt0.975)
+# 		ci25 <- aes(ymin=t.Bt0.25,ymax=t.Bt0.75)
+# 		p  <- ggplot(df,aes(Year,t.Bt0.5))+geom_line()
+# 		p  <- p + geom_ribbon(ci95,alpha=0.15)
+# 		p  <- p + geom_ribbon(ci25,alpha=0.25)
+# 		p  <- p + labs(x="Year",y="Spawning biomass")
 		
-	}
+# 	}
 
-	if( input$plotType=='Depletion' )
-	{
-		ci95 <- aes(ymin=t.Dt0.025,ymax=t.Dt0.975)
-		ci25 <- aes(ymin=t.Dt0.25,ymax=t.Dt0.75)
-		p  <- ggplot(df,aes(Year,t.Dt0.5))+geom_line()
-		p  <- p + geom_ribbon(ci95,alpha=0.15)
-		p  <- p + geom_ribbon(ci25,alpha=0.25)
-		p  <- p + labs(x="Year",y="Spawning biomass depletion")
+# 	if( input$plotType=='Depletion' )
+# 	{
+# 		ci95 <- aes(ymin=t.Dt0.025,ymax=t.Dt0.975)
+# 		ci25 <- aes(ymin=t.Dt0.25,ymax=t.Dt0.75)
+# 		p  <- ggplot(df,aes(Year,t.Dt0.5))+geom_line()
+# 		p  <- p + geom_ribbon(ci95,alpha=0.15)
+# 		p  <- p + geom_ribbon(ci25,alpha=0.25)
+# 		p  <- p + labs(x="Year",y="Spawning biomass depletion")
 		
-	}
+# 	}
 
-	if( input$plotType=='Catch' )
-	{
-		ci <- aes(ymin=ct025,ymax=ct975)
-		p  <- ggplot(df,aes(Year,ct50,color=factor(gear),fill=factor(gear)))+geom_line()
-		p  <- p + geom_ribbon(ci,alpha=0.15)
-		p  <- p + labs(x="Year",y="Catch")
+# 	if( input$plotType=='Catch' )
+# 	{
+# 		ci <- aes(ymin=ct025,ymax=ct975)
+# 		p  <- ggplot(df,aes(Year,ct50,color=factor(gear),fill=factor(gear)))+geom_line()
+# 		p  <- p + geom_ribbon(ci,alpha=0.15)
+# 		p  <- p + labs(x="Year",y="Catch")
 		
-	}
+# 	}
 
-	if( input$plotType=='Sub-legal Catch' )
-	{
-		ci <- aes(ymin=dt025,ymax=dt975)
-		p  <- ggplot(df,aes(Year,dt50))+geom_line()
-		p  <- p + geom_ribbon(ci,alpha=0.15)
-		p  <- p + labs(x="Year",y="Sub-legal Catch")
-	}
+# 	if( input$plotType=='Sub-legal Catch' )
+# 	{
+# 		ci <- aes(ymin=dt025,ymax=dt975)
+# 		p  <- ggplot(df,aes(Year,dt50))+geom_line()
+# 		p  <- p + geom_ribbon(ci,alpha=0.15)
+# 		p  <- p + labs(x="Year",y="Sub-legal Catch")
+# 	}
 
-	if( input$plotType=="AAV in Catch")	
-	{
-		ci <- aes(ymin=AAV025,ymax=AAV975)
-		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
-		p  <- p + geom_ribbon(ci,alpha=0.15)
-		p  <- p + labs(x="Year",y="AAV in Catch")
-	}
+# 	if( input$plotType=="AAV in Catch")	
+# 	{
+# 		ci <- aes(ymin=AAV025,ymax=AAV975)
+# 		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
+# 		p  <- p + geom_ribbon(ci,alpha=0.15)
+# 		p  <- p + labs(x="Year",y="AAV in Catch")
+# 	}
 
-	if( input$plotType=='Wastage' )
-	{
-		ci <- aes(ymin=wt025,ymax=wt975)
-		p  <- ggplot(df,aes(Year,wt50))+geom_line()
-		p  <- p + geom_ribbon(ci,alpha=0.15)
-		p  <- p + labs(x="Year",y="Wastage")
-	}
+# 	if( input$plotType=='Wastage' )
+# 	{
+# 		ci <- aes(ymin=wt025,ymax=wt975)
+# 		p  <- ggplot(df,aes(Year,wt50))+geom_line()
+# 		p  <- p + geom_ribbon(ci,alpha=0.15)
+# 		p  <- p + labs(x="Year",y="Wastage")
+# 	}
 	
-	# facets <- paste("Procedure",'~',"Scenario")
-	facets <- paste(input$facet_row,"~",input$facet_col)
-	p <- p + facet_grid(facets)
+# 	# facets <- paste("Procedure",'~',"Scenario")
+# 	facets <- paste(input$facet_row,"~",input$facet_col)
+# 	p <- p + facet_grid(facets)
 
-	if( input$icolor != "." )
-	{
-		p <- p + aes_string(fill=factor(input$icolor))
-	}
+# 	if( input$icolor != "." )
+# 	{
+# 		p <- p + aes_string(fill=factor(input$icolor))
+# 	}
 	
-	# 95% CI
-	# p <- p + geom_ribbon(ci,alpha=0.15)
+# 	# 95% CI
+# 	# p <- p + geom_ribbon(ci,alpha=0.15)
 
 	
 
-	# if( length(P) > 1 )
-	# {
-	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
-	# }
+# 	# if( length(P) > 1 )
+# 	# {
+# 	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
+# 	# }
 	
-	# if( length(P)==1 )
-	# {
-	# 	p <- p + aes_string(color="Scenario",fill="Scenario")
-	# }
+# 	# if( length(P)==1 )
+# 	# {
+# 	# 	p <- p + aes_string(color="Scenario",fill="Scenario")
+# 	# }
 
-	.LEGPOS <- 'top'
+# 	.LEGPOS <- 'top'
 
-	print( p + theme( legend.position = .LEGPOS ) )
-}
+# 	print( p + theme( legend.position = .LEGPOS ) )
+# }
 
 
 motionChart <- function(df,input)
 {
-	M1 <- gvisMotionChart(df,idvar="Procedure",timevar="Year",
+	M1 <- gvisMotionChart(df,idvar="idvar",timevar="Year",
+	                      xvar="Depletion",yvar="Median catch",
+	                      sizevar="Median AAV",colorvar="Procedure",
 	      options=list(showChartButtons = TRUE))
 	return(M1)
 }

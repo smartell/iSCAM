@@ -418,8 +418,8 @@ namespace rfp {
 			}
 
 			// Survivorship
-			lz(h)(m_sage) = 1.0;//m_nGrp;
-			lw(h)(m_sage) = 1.0;//m_nGrp * psa(m_sage);
+			lz(h)(m_sage) = 1.0/m_nGrp;
+			lw(h)(m_sage) = 1.0/m_nGrp * psa(m_sage);
 			for( j = m_sage+1; j <= m_nage; j++ )
 			{
 				lz(h,j) = lz(h,j-1) * sa(h,j-1);
@@ -549,7 +549,7 @@ namespace rfp {
 		} // m_nGrp
 		m_phiq  = phiq;
 		m_dphiq = diagonal(dphiq);
-		cout<<"dphiq\n"<<dphiq<<endl;
+		
 
 		// 1st & 2nd partial derivatives for recruitment
 		T phif2 = square(m_phif);

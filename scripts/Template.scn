@@ -5,6 +5,8 @@
 1 
 ## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
 1
+## Autocorrelation in recruitment. gamma_r
+0
 ## |—————————————————————— | ##
 ## | END OF FILE 999       | ##
 ## |—————————————————————— | ##

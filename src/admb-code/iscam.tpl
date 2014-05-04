@@ -3769,16 +3769,16 @@ FUNCTION void calcReferencePoints()
 		double d_h   = value(steepness(g));
 		double d_rho = d_iscamCntrl(13);
 		
-		//rfp::msy<double,dvector,dmatrix,d3_array>
-		//c_dMSY(d_ro,d_h,d_rho,M_bar,dWt_bar,fa_bar,d_V);
-		//fmsy(g) = c_dMSY.getFmsy(value(dftry));
-		//bo = c_dMSY.getBo();
-		//bmsy(g) = c_dMSY.getBmsy();
-		//msy(g)  = c_dMSY.getMsy();
-		//c_dMSY.print();
-		//dvector finit(1,nfleet);
-		//finit=0.7;
-		//c_dMSY.checkDerivatives(finit);
+		rfp::msy<double,dvector,dmatrix,d3_array>
+		c_dMSY(d_ro,d_h,d_rho,M_bar,dWt_bar,fa_bar,d_V);
+		fmsy(g) = c_dMSY.getFmsy(value(dftry));
+		bo = c_dMSY.getBo();
+		bmsy(g) = c_dMSY.getBmsy();
+		msy(g)  = c_dMSY.getMsy();
+		c_dMSY.print();
+		dvector finit(1,nfleet);
+		finit=fmsy(g);
+		c_dMSY.checkDerivatives(finit);
 		//cout<<"group \t"<<g<<endl;
 		//exit(1);
 
