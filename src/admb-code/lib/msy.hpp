@@ -81,6 +81,7 @@ namespace rfp {
 		T m_rho;	    /// Fraction of mortality that occurs before spawning.
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.
+		T m_spr;        /// Spawning potential ratio.
 		T m_bmsy;		/// Spawning biomass at MSY
 		T m_dYe;		/// Derivative of total yield.
 		T m_d2Ye;		/// Second derivative of total yield.
@@ -173,12 +174,12 @@ namespace rfp {
 		cout<<"| MSY        = "<<setw(10)<<m_msy             <<endl;
 		cout<<"| ∑MSY       = "<<setw(10)<<sum(m_msy)        <<endl;
 		cout<<"| Allocation = "<<setw(10)<<m_allocation      <<endl;
+		cout<<"| SPR        = "<<setw(10)<<m_spr             <<endl;
 		cout<<"|------------------------------------------|" <<endl;
 		cout<<"| DIAGNOSTICS                              |" <<endl;
 		cout<<"|------------------------------------------|" <<endl;
 		cout<<"| dye/dfe    = "<<setw(10)<<m_dye             <<endl;
 		cout<<"| ∑dye/dfe   = "<<setw(10)<<m_dYe             <<endl;
-		// cout<<"| SPR  = "<<setw(10)<<m_spr                   <<endl;
 		// cout<<"| BPR  = "<<setw(10)<<m_phie                  <<endl;
 		// cout<<"| bpr  = "<<setw(10)<<m_phif                  <<endl;
 		// cout<<"| dYes = "<<setw(10)<<sum(m_f)                <<endl;
@@ -475,6 +476,7 @@ namespace rfp {
 
 			// Spawning biomass per recruit in fished conditions.
 			phif += lz(h) * m_Fa(h);
+			// phif += lw(h) * m_Fa(h);
 
 		} // m_nGrp
 		m_phif  = phif;
@@ -500,8 +502,8 @@ namespace rfp {
 			{
 				dphif(k)  += dlz_m(h)(k)  * m_Fa(h);
 				d2phif(k) += d2lz_m(h)(k) * m_Fa(h);
-				//dphif(k)   += dlw_m(h)(k)  * m_Fa(h);
-				//d2phif(k)  += d2lw_m(h)(k) * m_Fa(h);
+				// dphif(k)   += dlw_m(h)(k)  * m_Fa(h);
+				// d2phif(k)  += d2lw_m(h)(k) * m_Fa(h);
 
 				// per recruit yield
 				phiq(k)   +=  lz(h) * qa_m(h)(k);
@@ -574,11 +576,6 @@ namespace rfp {
 
 		// Equilibrium recruits, yield and first derivative of ye
 		re   = m_ro*(kappa-m_phie/phif) / km1;
-		// cout<<"\nre    "<<re<<endl;
-		// cout<<"ro    "<<m_ro<<endl;
-		// cout<<"kappa "<<kappa<<endl;
-		// cout<<"phie  "<<m_phie<<endl;
-		// cout<<"phif  "<<phif<<endl;
 		re<0?re=0.01:re=re;
 		ye   = re*elem_prod(fe,phiq);
 		be   = re * phif;
@@ -616,6 +613,7 @@ namespace rfp {
 		m_dye  = dye;
 		m_dYe  = sum(dye);
 		m_d2Ye = sum(diagonal(d2ye));
+		m_spr  = m_phif/m_phie;
 
 		// Derivative based on fixed allocations
 		// dye_ak = ak*dre*∑(fk*phik) + ak*re*(∑phik + Fi*dphi[i]/dFi + Fj*dphi[j]/dFi)
@@ -694,7 +692,7 @@ namespace rfp {
 		{
 			 for( j = m_sage; j <= m_nage; j++ )
 			 {
-			 	lx(i,j) = exp(-m_Ma(i,j)*(j-m_sage) - m_rho*m_Ma(i,j));
+			 	lx(i,j) = exp(-m_Ma(i,j)*(j-m_sage));// - m_rho*m_Ma(i,j));
 			 	if(j==m_nage) lx(i,j) /= 1.0 -exp(-m_Ma(i,j));
 			 }
 			 m_phie += 1./(m_nGrp) * lx(i) * m_Fa(i);
