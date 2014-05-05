@@ -128,8 +128,9 @@
 0
 ## Effective sample size
 0
+## Age composition flag (1==age comps, 0==length comps)
+1
 ## year gear area group sex | data columns (numbers or proportions)
-
 ##
 ## ------------------------------------------------------------------------- ##
 ## EMPIRICAL WEIGHT-AT-AGE DATA                                              ##

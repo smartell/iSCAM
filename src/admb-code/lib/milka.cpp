@@ -74,7 +74,6 @@ void OperatingModel::runScenario(const int &seed)
     conditionReferenceModel();
 
     setRandomVariables(seed);
-
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
         getReferencePointsAndStockStatus();
@@ -84,18 +83,25 @@ void OperatingModel::runScenario(const int &seed)
         allocateTAC(i);
 
         implementFisheries(i);
+        if(verbose) cout<<"implementFisheries OK"<<endl;
 
         calcTotalMortality(i);
+        if(verbose) cout<<"calcTotalMortality OK"<<endl;
 
         calcRelativeAbundance(i);
+        if(verbose) cout<<"calcRelativeAbundance OK"<<endl;
 
         calcCompositionData(i);
+        if(verbose) cout<<"calcCompositionData OK"<<endl;
 
         calcEmpiricalWeightAtAge(i);
+        if(verbose) cout<<"calcEmpiricalWeightAtAge OK"<<endl;
 
         updateReferenceModel(i);
+        if(verbose) cout<<"updateReferenceModel OK"<<endl;
 
         writeDataFile(i);
+        if(verbose) cout<<"writeDataFile OK"<<endl;
 
         runStockAssessment();
     
@@ -242,7 +248,10 @@ void OperatingModel::initParameters()
     m_n_A_nobs.initialize();
     for( k = 1; k <= nAgears; k++ )
     {
-        m_n_A_nobs(k) = n_A_nobs(k) + m_nyrs + m_nyrs * m_nASex(k);
+        if(n_A_nobs(k) > 0)
+        {
+            m_n_A_nobs(k) = n_A_nobs(k) + m_nyrs + m_nyrs * m_nASex(k);
+        }
     }
     
     m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
@@ -253,12 +262,19 @@ void OperatingModel::initParameters()
         m_d3_A(k).sub(1,n_A_nobs(k)) = d3_A(k); 
     }
         
-    //weight at age array
+    // Weight-at-age array
     m_W_irow.allocate(1,nWtTab);
     m_W_irow.initialize(); 
 
     m_nWtNobs.allocate(1,nWtTab);
-    m_nWtNobs = nWtNobs + m_nyrs + m_nyrs * sum(m_nWSex);
+    m_nWtNobs.initialize();
+    for( k = 1; k <= nWtTab; k++ )
+    {
+        if( nWtNobs(k) > 0 )
+        {
+            m_nWtNobs(k) = nWtNobs(k) + m_nyrs + m_nyrs * sum(m_nWSex);
+        }
+    }
 
     m_d3_inp_wt_avg.allocate(1,nWtTab,1,m_nWtNobs,sage-5,nage);
     m_d3_inp_wt_avg.initialize();
@@ -685,7 +701,8 @@ void OperatingModel::implementFisheries(const int &iyr)
                 {
                     int ig = pntr_ags(f,g,h);
                     m_F(ig)(iyr) += ft(k) * d3_Va(h)(k);
-                    
+                    m_ft(ig)(k)(iyr) = ft(k);
+
                     // Calculate wastage based on size-limits.
                     dvector fa = ft(k)*d3_Da(h)(k);
                     dvector za = ma(h) + fa;
@@ -859,39 +876,44 @@ void OperatingModel::calcCompositionData(const int& iyr)
     double ft;
     for(int k = 1; k <= nAgears; k++ )
     {
-        gear = m_d3_A(k)(1)(n_A_sage(k)-4);
-        for(int f = 1; f <= narea; f++ )
+        if( m_n_A_nobs(k) ) 
         {
-            for(int g = 1; g <= ngroup; g++ )
+            gear = m_d3_A(k)(1)(n_A_sage(k)-4);
+            for(int f = 1; f <= narea; f++ )
             {
-                ca.initialize();
-                for(int h = 1; h <= nsex; h++ )
+                for(int g = 1; g <= ngroup; g++ )
                 {
-                    int ig = pntr_ags(f,g,h);
-                    va = exp(d4_logSel(gear)(ig)(iyr));
-                    na = m_N(ig)(iyr);
-                    ma = m_M(ig)(iyr);
-                    ft = m_ft(ig)(gear)(iyr);
-                    fa = (ft>0?ft:1.0) * va;  
-                    za = ma + fa;
-                    ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
-                    pa(h) = ca(h) / sum(ca(h));
-                    pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
-                    //rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
-                }
-            
-                int hh = m_nASex(k);   // flag for sex
-                for( h = 1; h <= hh+1; h++ )
-                {
-                    cout<<hh<<endl;
-                    m_A_irow(k) ++;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
-                    m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
-                    = hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
+                    ca.initialize();
+
+                    for(int h = 1; h <= nsex; h++ )
+                    {
+                        int ig = pntr_ags(f,g,h);
+                        va = exp(d4_logSel(gear)(ig)(iyr));
+                        na = m_N(ig)(iyr);
+                        ma = m_M(ig)(iyr);
+                        ft = m_ft(ig)(gear)(iyr);
+                        fa = (ft>0?ft:1.0) * va;  
+                        za = ma + fa;
+                        ca(h) = elem_prod(elem_prod(elem_div(fa,za),1.-exp(-za)),na);
+                        pa(h) = ca(h) / sum(ca(h));
+                        pa(h) = rmvlogistic(pa(h),m_nATau(k),m_nSeed+iyr);
+                        //rmvlogistic(pa(h),m_nATau,m_nSeed+iyr);
+                    }
+                    
+                    int hh = m_nASex(k);   // flag for sex
+                    for( h = 1; h <= hh+1; h++ )
+                    {
+                        cout<<hh<<endl;
+                        m_A_irow(k) ++;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
+                        = hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
+                    }
+                    
                 }
             }
         }
@@ -907,29 +929,33 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
     
     for(int k = 1; k <= nWtTab; k++ )
     {
-        gear = m_d3_inp_wt_avg(k)(1)(sage-4);
-
-        for(int f = 1; f <= narea; f++ )
+        if( m_nWtNobs(k) )
         {
-            for(int g = 1; g <= ngroup; g++ )
-            {
 
-                int hh = m_nWSex(gear);   // flag for sex
-                for( h = 1; h <= hh+1; h++ )
+            gear = m_d3_inp_wt_avg(k)(1)(sage-4);
+
+            for(int f = 1; f <= narea; f++ )
+            {
+                for(int g = 1; g <= ngroup; g++ )
                 {
-                    m_W_irow(k) ++;
-                    int ig = pntr_ags(f,g,h);
-        
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-5) = iyr;
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-4) = gear;
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
-                    //cout<<"h is "<<h<<endl;
-                    //cout<<"hh is "<<hh<<endl;
-                    //cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
-                    
-                    m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+
+                    int hh = m_nWSex(gear);   // flag for sex
+                    for( h = 1; h <= hh+1; h++ )
+                    {
+                        m_W_irow(k) ++;
+                        int ig = pntr_ags(f,g,h);
+            
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-5) = iyr;
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-4) = gear;
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
+                        //cout<<"h is "<<h<<endl;
+                        //cout<<"hh is "<<hh<<endl;
+                        //cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
+                        
+                        m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
+                    }
                 }
             }
         }
@@ -1105,8 +1131,11 @@ void OperatingModel::writeDataFile(const int& iyr)
         
         for(int k=1;k<=nAgears;k++)
         {
-            tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
-            tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k)); 
+            if(n_A_nobs(k) > 0)
+            {
+                tmp_n_A_nobs(k) = n_A_nobs(k) + (iyr-nyr) + (iyr-nyr) * m_nASex(k);
+                tmp_d3_A(k) = m_d3_A(k).sub(1,tmp_n_A_nobs(k));    
+            }
         }
         
         dfs<< nAgears               <<endl;
@@ -1121,10 +1150,12 @@ void OperatingModel::writeDataFile(const int& iyr)
         // Issue 30.  Bug in writing empirical weight-at-age.
         // data where year in the first row is 0.
         dfs<<"#Empirical weight-at-age data"    <<endl;
+        dfs<< nWtTab                    <<endl;
         ivector tmp_nWtNobs(1,nWtTab);
         for( k = 1; k <= nWtTab; k++ )
         {
-            tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
+            if(nWtNobs(k) > 0)
+                tmp_nWtNobs(k)= nWtNobs(k) + (iyr-nyr) + (iyr-nyr) * m_nWSex(k);
         }
 
         d3_array tmp_d3_inp_wt_avg(1,nWtTab,1,tmp_nWtNobs,sage-5,nage);
@@ -1145,7 +1176,6 @@ void OperatingModel::writeDataFile(const int& iyr)
         
         cout<<"projwt\n"<<projwt<<endl;
         //cout<<tmp_d3_inp_wt_avg(1)<<endl;
-        dfs<< nWtTab                    <<endl;
         dfs<< tmp_nWtNobs               <<endl;
         dfs<< tmp_d3_inp_wt_avg         <<endl; 
     
@@ -1180,8 +1210,8 @@ void OperatingModel::runStockAssessment()
         cout<<"running stock assessment"<<endl;
 
         #if defined __APPLE__ || defined __linux
-
-        system("./iscam -ind mseRUN.dat -nox");
+        cout<<m_est_fmsy<<endl;
+        system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
 
         #endif
 
@@ -1205,4 +1235,5 @@ void OperatingModel::writeSimulationVariables()
     REPORT(m_sbt);
     REPORT(m_dCatchData);
     REPORT(m_dSubLegalData);
+    REPORT(m_ft);
 }
