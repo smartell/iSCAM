@@ -141,6 +141,9 @@
 		dvector m_est_bmsy;
 		dvector m_est_sbtt;
 		dvector m_est_btt;
+		dmatrix m_est_N;
+		dmatrix m_est_wa;
+		dmatrix m_est_log_sel;
 
 		dmatrix m_sbt;
 

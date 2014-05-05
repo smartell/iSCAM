@@ -79,8 +79,10 @@ void OperatingModel::runScenario(const int &seed)
         getReferencePointsAndStockStatus();
 
         calculateTAC();
-        
+        if(verbose) cout<<"calculateTAC OK"<<endl;
+
         allocateTAC(i);
+        if(verbose) cout<<"allocateTAC OK"<<endl;
 
         implementFisheries(i);
         if(verbose) cout<<"implementFisheries OK"<<endl;
@@ -338,6 +340,9 @@ void OperatingModel::initMemberVariables()
     m_est_btt.allocate(1,ngroup);
     m_est_fmsy.allocate(1,ngroup,1,nfleet);
     m_est_msy.allocate(1,ngroup,1,nfleet);
+    m_est_N.allocate(1,n_ags,sage,nage);
+    m_est_wa.allocate(1,n_ags,sage,nage);
+    m_est_log_sel.allocate(1,n_ags,sage,nage);
 
     //Spawning stock biomass
 
@@ -486,6 +491,9 @@ void OperatingModel::getReferencePointsAndStockStatus()
     ifs >> m_est_bmsy;
     ifs >> m_est_sbtt;
     ifs >> m_est_btt;
+    ifs >> m_est_N;
+    ifs >> m_est_wa;
+    ifs >> m_est_log_sel;
 
 }
 
@@ -501,8 +509,11 @@ void OperatingModel::calculateTAC()
     double btmp;
     double sbt;
     double sbo;
-    dvector harvest_rate;
-    for( g = 1; g <= ngroup; g++ )
+    dvector f_rate(1,ngroup);
+    m_dTAC.initialize();
+
+
+    for(int g = 1; g <= ngroup; g++ )
     {
         btmp = m_est_btt(g);
         sbt  = m_est_sbtt(g);
@@ -514,31 +525,49 @@ void OperatingModel::calculateTAC()
                 m_est_fmsy(g,k) = m_maxf;
             }
         }
-        harvest_rate = 1.0-exp(-m_est_fmsy(g));
+        
         
 
         switch( int(m_nHCR) )
         {
             case 1: // Constant harvest rate
-                 m_dTAC(g)  = harvest_rate * btmp;
+                 // m_dTAC(g)  = harvest_rate * btmp;
+                f_rate = m_est_fmsy(g);
             break; 
 
             case 2: // Bthreshold:Blimit HCR.
                 double status = sbt/sbo;
+                f_rate = m_est_fmsy(g);
                 if( status < m_dBthreshold && status >= m_dBlimit )
                 {
-                    harvest_rate *= (status-m_dBlimit)/(m_dBthreshold-m_dBlimit);
+                    f_rate *= (status-m_dBlimit)/(m_dBthreshold-m_dBlimit);
                 }
                 else if(status < m_dBlimit)
                 {
-                    harvest_rate = 0;
+                    frate = 0;
                 }
-                m_dTAC(g)  = harvest_rate * btmp;
+                // m_dTAC(g)  = harvest_rate * btmp;
                 // cout<<"Status "<<status<<endl;
                 // cout<<harvest_rate<<endl;
                 // exit(1);
             break;
         }
+    }
+    
+    dvector ba(sage,nage);
+    dvector va(sage,nage);
+
+    // Working here, need to implement the Baranov
+    // Catch equation to calculate the m_dTAC for group g.
+    ba.initialize();
+    for(int ig = 1; ig <= n_ags; ig++ )
+    {
+        int f = n_area(ig);
+        int g = n_group(ig);
+        int h = n_sex(ig);
+
+        va  = exp(m_est_log_sel(ig));
+        ba += elem_prod(m_est_N(ig),m_est_wa(ig));
     }
     // cout<<m_nHCR<<endl;
     // exit(1);
@@ -690,7 +719,7 @@ void OperatingModel::implementFisheries(const int &iyr)
             // Calculate instantaneous fishing mortality rates.
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
-           
+            cout<<"fishing rate "<<ft<<endl;
 
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
