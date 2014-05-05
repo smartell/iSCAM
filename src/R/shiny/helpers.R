@@ -72,6 +72,10 @@ tulip.plot <- function(df,input)
 	{
 		icol <- c(icol,"ef50","ef025","ef975")	
 	}
+	if(input$plotType=='Fishing mortality')
+	{
+		icol <- c(icol,"Ft0.5","Ft0.025","Ft0.975")
+	}
 	sdf  <- df[,which(names(df) %in% icol)]
 	n    <- dim(sdf)[2] - 2
 	colnames(sdf)[n:(n+2)] <- c("lci","Median","uci")

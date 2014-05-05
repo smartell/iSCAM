@@ -4632,6 +4632,13 @@ REPORT_SECTION
 			ofs<<d3_wt_avg(ig)(nyr+1)<<endl;
 		}		
 
+		ofs<<"# Natural mortality-at-age\n";
+		for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			ofs<<M(ig)(nyr)<<endl;
+		}		
+
+
 		// 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 		ofs<<"# log_selectivity\n";
 		for(int k = 1; k <= ngear; k++ )	

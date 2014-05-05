@@ -32,7 +32,8 @@ shinyUI(fluidPage(
 			        	  	   "Sub-legal Catch",
 			        	  	   "AAV in Catch",
 			        	  	   "Wastage",
-			        	  	   "Efficiency"),
+			        	  	   "Efficiency",
+			        	  	   "Fishing mortality"),
 			        		selected="Spawning biomass")
 			),
 			wellPanel(

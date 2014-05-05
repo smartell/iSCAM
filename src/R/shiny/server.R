@@ -12,7 +12,7 @@ shinyServer(function(input, output) {
     {
       DF <- BIO.DF
     }
-    if(input$plotType=="Catch")
+    if(input$plotType=="Catch" || input$plotType=="Fishing mortality")
     {
       DF <- CAT.DF
     }

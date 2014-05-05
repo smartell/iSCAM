@@ -341,6 +341,7 @@ void OperatingModel::initMemberVariables()
     m_est_fmsy.allocate(1,ngroup,1,nfleet);
     m_est_msy.allocate(1,ngroup,1,nfleet);
     m_est_N.allocate(1,n_ags,sage,nage);
+    m_est_M.allocate(1,n_ags,sage,nage);
     m_est_wa.allocate(1,n_ags,sage,nage);
     m_est_log_sel.allocate(1,n_ags,sage,nage);
 
@@ -493,6 +494,7 @@ void OperatingModel::getReferencePointsAndStockStatus()
     ifs >> m_est_btt;
     ifs >> m_est_N;
     ifs >> m_est_wa;
+    ifs >> m_est_M;
     ifs >> m_est_log_sel;
 
 }
@@ -509,7 +511,7 @@ void OperatingModel::calculateTAC()
     double btmp;
     double sbt;
     double sbo;
-    dvector f_rate(1,ngroup);
+    dvector f_rate(1,nfleet);
     m_dTAC.initialize();
 
 
@@ -544,7 +546,7 @@ void OperatingModel::calculateTAC()
                 }
                 else if(status < m_dBlimit)
                 {
-                    frate = 0;
+                    f_rate = 0;
                 }
                 // m_dTAC(g)  = harvest_rate * btmp;
                 // cout<<"Status "<<status<<endl;
@@ -556,18 +558,31 @@ void OperatingModel::calculateTAC()
     
     dvector ba(sage,nage);
     dvector va(sage,nage);
+    dvector ca(sage,nage);
+    dvector za(sage,nage);
 
+    // Todo: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
     // Working here, need to implement the Baranov
     // Catch equation to calculate the m_dTAC for group g.
+    cout<<"I'm Here "<<endl;
     ba.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
     {
-        int f = n_area(ig);
+        //int f = n_area(ig);
         int g = n_group(ig);
-        int h = n_sex(ig);
+        //int h = n_sex(ig);
 
         va  = exp(m_est_log_sel(ig));
-        ba += elem_prod(m_est_N(ig),m_est_wa(ig));
+        cout<<"And made it to here"<<endl;
+        ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
+
+        for( k = 1; k <= nfleet; k++ )
+        {
+            za  = m_est_M(ig) + f_rate(k)*va;
+            ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
+        }
+
+        m_dTAC(g) += sum(ca);
     }
     // cout<<m_nHCR<<endl;
     // exit(1);
