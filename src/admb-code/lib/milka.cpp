@@ -105,6 +105,9 @@ void OperatingModel::runScenario(const int &seed)
         writeDataFile(i);
         if(verbose) cout<<"writeDataFile OK"<<endl;
 
+
+        // implement perfect info option
+        // if flag is 0 - write .res with true params
         runStockAssessment();
     
     }
@@ -484,18 +487,27 @@ void OperatingModel::setRandomVariables(const int& seed)
 
 void OperatingModel::getReferencePointsAndStockStatus()
 {
-    // read iscam.res file to get this information.
-    cifstream ifs("iSCAM.res");
-    ifs >> m_est_bo;
-    ifs >> m_est_fmsy;
-    ifs >> m_est_msy;
-    ifs >> m_est_bmsy;
-    ifs >> m_est_sbtt;
-    ifs >> m_est_btt;
-    ifs >> m_est_N;
-    ifs >> m_est_wa;
-    ifs >> m_est_M;
-    ifs >> m_est_log_sel;
+    //switch( int(m_nAssessOpt) ) // option read in from .mpc file
+    //{
+        //case 0:
+            //  set refernce points to true milka values
+            //bo
+
+    
+        //case 1:
+            // read iscam.res file to get this information.
+            cifstream ifs("iSCAM.res");
+            ifs >> m_est_bo;
+            ifs >> m_est_fmsy;
+            ifs >> m_est_msy;
+            ifs >> m_est_bmsy;
+            ifs >> m_est_sbtt;
+            ifs >> m_est_btt;
+            ifs >> m_est_N;
+            ifs >> m_est_wa;
+            ifs >> m_est_M;
+            ifs >> m_est_log_sel;
+    //}
 
 }
 
