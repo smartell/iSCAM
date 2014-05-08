@@ -100,7 +100,7 @@
 0.05  # 3  -std in observed catches in first phase.                          ##
 0.025 # 4  -std in observed catches in last phase.                           ##
 1     # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)                  ##
-0.01  # 6  -Minimum proportion to consider in age-comps for dmvlogistic      ##
+1.00  # 6  -Maternal effects power parameter (1=fecundity proto weight-at-age)      ##
 0.20  # 7  -Mean fishing mortality for regularizing the estimates of Ft      ##
 0.01  # 8  -std in mean fishing mortality in first phase                     ##
 5.00  # 9  -std in mean fishing mortality in last phase                      ##

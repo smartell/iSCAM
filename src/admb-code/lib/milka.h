@@ -110,6 +110,7 @@
 		double m_dBthreshold;
 		double m_dBlimit;
 		double m_maxf;
+		adstring m_controlFile;
 
 		dmatrix m_dispersal; 
 
