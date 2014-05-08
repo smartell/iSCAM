@@ -175,6 +175,14 @@ void OperatingModel::readMSEcontrols()
     // Autocorrelation coefficient in recruitment.
     ifs_scn >> m_gamma_r;
 
+    // Control file.
+    ifs_scn >> m_controlFile;
+    adstring flg = "none";
+    if(m_controlFile == flg)
+    {
+        m_controlFile = ControlFile;
+    }
+
     // End of file
     int eof_scn=0;
     ifs_scn >> eof_scn;
@@ -1245,7 +1253,7 @@ void OperatingModel::runStockAssessment()
         
         ofstream rd("mseRUN.dat");
         rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
-        rd << ControlFile          <<endl;
+        rd << m_controlFile          <<endl;
         rd << ProjectFileControl   <<endl;
         rd << ProcedureControlFile <<endl;
         rd << ScenarioControlFile  <<endl;
@@ -1261,7 +1269,7 @@ void OperatingModel::runStockAssessment()
 
         #if defined _WIN32 || defined _WIN64
 
-        system("iscam.exe -ind mseRUN.dat")
+        system("iscam.exe -ind mseRUN.dat");
 
         #endif
 }

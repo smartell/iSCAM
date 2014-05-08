@@ -821,6 +821,7 @@ DATA_SECTION
 			for(int i = syr; i <= nyr; i++)
 			{
 				d3_wt_avg(ig)(i) = wa(ig);
+				//d3_wt_mat(ig)(i) = pow(elem_prod(ma(ig),wa(ig)),d_iscamCntrl(6));
 				d3_wt_mat(ig)(i) = elem_prod(ma(ig),wa(ig));
 				d3_len_age(ig)(i) = pow(wa(ig)/d_a(ig),1./d_b(ig));
 
@@ -1206,7 +1207,7 @@ DATA_SECTION
 	// | 3 -> std in catch first phase
 	// | 4 -> std in catch in last phase
 	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
-	// | 6 -> minimum proportion at age to consider in the dmvlogistic likelihood
+	// | 6 -> Maternal effects power parameter.
 	// | 7 -> mean fishing mortality rate to regularize the solution
 	// | 8 -> standard deviation of mean F penalty in first phases
 	// | 9 -> standard deviation of mean F penalty in last phase.
@@ -1225,6 +1226,16 @@ DATA_SECTION
 		verbose = d_iscamCntrl(1);
 		if(verbose) COUT(d_iscamCntrl);
 		
+		for(int ig=1;ig<=n_ags;ig++)
+		{
+			for(int i = syr; i <= nyr; i++)
+			{
+				d3_wt_mat(ig)(i) = pow(d3_wt_mat(ig)(i),d_iscamCntrl(6));
+			}
+		}
+
+
+
 		if(eofc==999){
 			cout<<"\n| -- END OF CONTROL SECTION -- |\n";
 		  	cout<<"|          eofc = "<<eofc<<"          |"<<endl;
