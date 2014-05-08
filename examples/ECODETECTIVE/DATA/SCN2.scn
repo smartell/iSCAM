@@ -1,0 +1,15 @@
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROLS FOR RECRUITMENT FUNCTION
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## Recruitment type: 1=Beverton & Holt, 2=Ricker , #=Average Recruitment
+1 
+## Recruitment dispersal matrix dimension=(narea x narea) (SSB in the rows)
+1
+## Autocorrelation in recruitment. gamma_r
+0.8
+## Control file (FileName, or use 'none')
+none
+## |—————————————————————— | ##
+## | END OF FILE 999       | ##
+## |—————————————————————— | ##
+999
