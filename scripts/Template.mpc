@@ -1,10 +1,33 @@
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
-##|   PROJECTION CONTROL FILE - USE FOR SHORT-TERM FORECASTS AND LONG-TERM MSE WORK   |##
+##|   MANAGEMENT PROCEDURE CONTROLS - USE FOR MSE WORK                                |##
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## m_pyr  # Terminal year of projection.
 1982
+## Stock assessment type (0=perfect information, 1= iSCAM)
+0
+## Control file (FileName, or use 'none')
+none
+##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##| HARVEST CONTROL RULE                                                              |##
+##|  1 == fixed exploitatoin rate based on estimated Fmsy                             |##
+##   2 == Bthreshold:Blimit rule with F = Fmsy
+## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## m_nHCR # Harvest Control Rule Type.
 1
+## B_threshold (Depleletion level)
+0
+## B_limit     (Depletion level)
+0
+## Max_F (Don't allow target F to exceed this value)
+0.2
+##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+##| SAMPLING PROCEDURES AND SURVEY PRECISION                                          |##
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## For composition data, for each nAgears specify if ageing
+## should continue.
+## 
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##|   CONTROLS FOR EACH OF THE FISHING FLEETS                                         |##
 ##| - INDEX -> index for gear.
@@ -19,5 +42,7 @@
 ##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
 ## INDEX CSEX ASEX ATAU   WSEX  LSLIM  USLIM  DM    | 1                                ##
 	1    0    1     0.2		0   1000   0.15    1 	  1
-##eof
+## ——————————————————————————————————————————————————————————————————————————————————— ##
+## END OF FILE MARKER 999
+## ——————————————————————————————————————————————————————————————————————————————————— ##
 999

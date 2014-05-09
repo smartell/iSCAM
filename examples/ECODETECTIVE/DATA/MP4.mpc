@@ -5,6 +5,8 @@
 2007
 ## Stock assessment type (0=perfect information, 1= iSCAM)
 0
+## Control file (FileName, or use 'none')
+none
 ##
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##| HARVEST CONTROL RULE                                                              |##
