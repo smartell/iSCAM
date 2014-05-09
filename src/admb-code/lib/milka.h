@@ -42,6 +42,8 @@
 		dvector varphi;
 		dvector q;
 		dmatrix sbt;
+		dmatrix bt;
+
 
 		dmatrix log_rec_devs;
 		dmatrix init_log_rec_devs;
@@ -65,6 +67,7 @@
 	private:
 
 		int m_nNyr; 
+		int m_nAssessOpt;
 		int m_irow;
 		int m_nyrs;  // number of simulation years
 
@@ -148,6 +151,7 @@
 		dmatrix m_est_log_sel;
 
 		dmatrix m_sbt;
+		dmatrix m_bt;
 
 		dmatrix  m_dTAC;
 		int     m_nHCR;
@@ -183,7 +187,7 @@
 		void initMemberVariables();
 		void conditionReferenceModel();
 		void setRandomVariables(const int &seed);
-		void getReferencePointsAndStockStatus();
+		void getReferencePointsAndStockStatus(const int& iyr);
 		void calculateTAC();
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);

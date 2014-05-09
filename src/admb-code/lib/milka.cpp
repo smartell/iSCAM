@@ -76,7 +76,7 @@ void OperatingModel::runScenario(const int &seed)
     setRandomVariables(seed);
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
-        getReferencePointsAndStockStatus();
+        getReferencePointsAndStockStatus(i);
 
         calculateTAC();
         if(verbose) cout<<"calculateTAC OK"<<endl;
@@ -127,6 +127,7 @@ void OperatingModel::readMSEcontrols()
 
     cifstream ifs_mpc(ProcedureControlFile);
     ifs_mpc>>m_nPyr;
+    ifs_mpc>>m_nAssessOpt;
     ifs_mpc>>m_nHCR;
 
     ifs_mpc>>m_dBthreshold;
@@ -357,9 +358,12 @@ void OperatingModel::initMemberVariables()
     m_est_log_sel.allocate(1,n_ags,sage,nage);
 
     //Spawning stock biomass
-
     m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
     m_sbt.sub(syr,nyr)=(trans(mv.sbt)).sub(syr,nyr);
+    //total biomass
+    m_bt.allocate(syr,m_nPyr,1,ngroup);m_bt.initialize();
+    m_bt.sub(syr,nyr)=(trans(mv.bt)).sub(syr,nyr);
+
     m_dbeta.allocate(1,ngroup);m_dbeta.initialize();
 
     m_dTAC.allocate(1,ngroup,1,nfleet);
@@ -493,16 +497,47 @@ void OperatingModel::setRandomVariables(const int& seed)
 }
 
 
-void OperatingModel::getReferencePointsAndStockStatus()
+void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
 {
-    //switch( int(m_nAssessOpt) ) // option read in from .mpc file
-    //{
-        //case 0:
-            //  set refernce points to true milka values
-            //bo
+    switch( int(m_nAssessOpt) ) // option read in from .mpc file
+    {
+        case 0:
+            //  set reference points to true milka values
+            
+            m_est_bo = m_dBo;
+            m_est_fmsy = fmsy;
+            m_est_msy = msy;
+            m_est_bmsy = bmsy;
+            m_est_sbtt = m_sbt(iyr)(1,ngroup);
+            m_est_btt = m_bt(iyr)(1,ngroup);;
+            
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_N(ig)(sage,nage) = m_N(ig)(iyr)(sage,nage);
+            }
+            
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr)(sage,nage);
+            }       
+
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
+            }       
+
+
+            // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
+            for(int k = 1; k <= ngear; k++ )    
+            {
+                for(int ig = 1; ig <= n_ags; ig++ )
+                {
+                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
+                }
+            }
 
     
-        //case 1:
+        case 1:
             // read iscam.res file to get this information.
             cifstream ifs("iSCAM.res");
             ifs >> m_est_bo;
@@ -515,7 +550,7 @@ void OperatingModel::getReferencePointsAndStockStatus()
             ifs >> m_est_wa;
             ifs >> m_est_M;
             ifs >> m_est_log_sel;
-    //}
+    }
 
 }
 
@@ -988,8 +1023,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
 void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 {
     int gear;
-
-    cout<<"nWtTab is "<<nWtTab<<endl;
     
     for(int k = 1; k <= nWtTab; k++ )
     {
@@ -1014,18 +1047,13 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
                         m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-3) = f;
                         m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-2) = g;
                         m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage-1) = hh>0?h:0;
-                        //cout<<"h is "<<h<<endl;
-                        //cout<<"hh is "<<hh<<endl;
-                        //cout<<"m_nWSex is "<<m_nWSex(gear)<<endl;
                         
                         m_d3_inp_wt_avg(k)(nWtNobs(k)+m_W_irow(k))(sage,nage) =m_d3_wt_avg(ig)(iyr)(sage,nage);
                     }
                 }
             }
         }
-    }   
-    //cout<<m_d3_inp_wt_avg(1)<<endl;
-    //cout<<endl;   
+    }    
 }
 
 
@@ -1033,7 +1061,6 @@ void OperatingModel::calcEmpiricalWeightAtAge(const int& iyr)
 void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
-    
     // compute spawning biomass at time of spawning.
     dvector  stmp(sage,nage); stmp.initialize();
 
@@ -1046,7 +1073,8 @@ void OperatingModel::updateReferenceModel(const int& iyr)
                 int ig = pntr_ags(f,g,h);
                     
                 stmp      = mfexp(-m_Z(ig)(iyr)*d_iscamCntrl(13));
-                m_sbt(iyr,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;                    
+                m_sbt(iyr,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;
+                m_bt(iyr,g) = elem_prod(m_N(ig)(iyr),m_d3_wt_avg(ig)(iyr)) * stmp;                 
             }
         }
     }
@@ -1054,6 +1082,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
     dvector tmp_rec(1,narea);tmp_rec.initialize();
     dvector tmp_rec_dis(1,narea);tmp_rec_dis.initialize();
     dvector prop_rec_g(1,n_ags);prop_rec_g.initialize();
+
 
     for(int ig = 1; ig <= n_ags; ig++ )
     {
@@ -1063,7 +1092,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         
         
         // Recruitment
-        //three options : average recruitment, Beverton &Holt and Ricker
+        // three options : average recruitment, Beverton &Holt and Ricker
         // m_delta is the process error.
         
         double tmp_st;
@@ -1090,7 +1119,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
         
         //disperse the recruits in each year 
-        // assumes all groups disperse the same and prop of gorups by area remain const
+        // assumes all groups disperse the same and prop of groups by area remain const
         // TODO allow for separate dispersal matrices for each group
         
         //1 - calculate total recruits per area: tmp_rec
@@ -1238,7 +1267,6 @@ void OperatingModel::writeDataFile(const int& iyr)
             
         }
         
-        cout<<"projwt\n"<<projwt<<endl;
         //cout<<tmp_d3_inp_wt_avg(1)<<endl;
         dfs<< tmp_nWtNobs               <<endl;
         dfs<< tmp_d3_inp_wt_avg         <<endl; 
@@ -1271,19 +1299,29 @@ void OperatingModel::runStockAssessment()
         rd << ScenarioControlFile  <<endl;
         //exit(1);
 
-        cout<<"running stock assessment"<<endl;
+ 
+    switch( int(m_nAssessOpt) ) // option read in from .mpc file
+    {
+        case 0:
+            cout<<"Perfect information scenario"<<endl;
+        break;
+        
+        case 1:        
+            cout<<"running stock assessment"<<endl;
 
-        #if defined __APPLE__ || defined __linux
-        cout<<m_est_fmsy<<endl;
-        system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
+            #if defined __APPLE__ || defined __linux
+            cout<<m_est_fmsy<<endl;
+            system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
 
-        #endif
+            #endif
 
-        #if defined _WIN32 || defined _WIN64
+            #if defined _WIN32 || defined _WIN64
 
-        system("iscam.exe -ind mseRUN.dat");
+            system("iscam.exe -ind mseRUN.dat");
 
-        #endif
+            #endif
+        break;
+    }
 }
 
 
