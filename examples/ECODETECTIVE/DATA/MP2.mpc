@@ -4,7 +4,7 @@
 ## m_pyr  # Terminal year of projection.
 2007
 ## Stock assessment type (0=perfect information, 1= iSCAM)
-0
+1
 ## Control file (FileName, or use 'none')
 none
 ##
@@ -41,7 +41,7 @@ none
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
 ## INDEX CSEX ASEX ATAU   WSEX  LSLIM  USLIM  DM    | 1                                ##
-	1    0    0     0.2		0   82     1000   0.15 	  1
+	1    0    0     0.2		0   0     1000   0.15 	  1
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## END OF FILE MARKER 999
 ## ——————————————————————————————————————————————————————————————————————————————————— ##

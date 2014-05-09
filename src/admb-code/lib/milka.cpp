@@ -127,7 +127,18 @@ void OperatingModel::readMSEcontrols()
 
     cifstream ifs_mpc(ProcedureControlFile);
     ifs_mpc>>m_nPyr;
+
+    //assessment option
     ifs_mpc>>m_nAssessOpt;
+
+    // Control file.
+    ifs_mpc >> m_controlFile;
+    adstring flg = "none";
+    if(m_controlFile == flg)
+    {
+        m_controlFile = ControlFile;
+    }
+    //harvest control rule
     ifs_mpc>>m_nHCR;
 
     ifs_mpc>>m_dBthreshold;
@@ -178,14 +189,6 @@ void OperatingModel::readMSEcontrols()
 
     // Autocorrelation coefficient in recruitment.
     ifs_scn >> m_gamma_r;
-
-    // Control file.
-    ifs_scn >> m_controlFile;
-    adstring flg = "none";
-    if(m_controlFile == flg)
-    {
-        m_controlFile = ControlFile;
-    }
 
     // End of file
     int eof_scn=0;
@@ -535,7 +538,6 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
                 }
             }
-
     
         case 1:
             // read iscam.res file to get this information.
