@@ -138,7 +138,13 @@
 1  1    ## ivector(na_gears) of youngest age-class
 15  15  ## ivector(na_gears) of oldest age-class + group
 ## Effective sample size from iterative re-weighting (nscaler)
-1  1
+#1  1
+#6.69579 3.76665
+#22.2061 14.9550
+#33.6105 25.4200
+#36.1730 27.8738
+#36.5667 28.2634
+36.6232 28.3216
 ## Age composition flag (1==age comps, 0==length comps)
 1 1 
 ## year gear area group sex | data columns (numbers or proportions) -fisheries
