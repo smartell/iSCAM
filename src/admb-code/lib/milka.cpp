@@ -1334,7 +1334,7 @@ void OperatingModel::runStockAssessment()
  */
 void OperatingModel::writeSimulationVariables()
 {
-     ofstream report("iscam.rep",ios::app);
+    ofstream report("milka.rep");
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);
