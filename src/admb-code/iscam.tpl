@@ -1720,6 +1720,10 @@ PROCEDURE_SECTION
 	if( verbose ) {cout<<"End of main function calls"<<endl;}
 
 
+FUNCTION saveXMLFile
+	//ADMB_XMLDoc xml;
+
+
 	/**
 	Purpose:  This function calculates the sdreport variables.
 	Author: Steven Martell
@@ -5211,7 +5215,9 @@ GLOBALS_SECTION
 
 	#include <admodel.h>
 	#include <time.h>
+
 	#include <string.h>
+	//#include "lib/ADMB_XMLDoc.h"
 	#include "lib/msy.h"
 	#include "lib/msy.hpp"
 	#include "lib/baranov.h"
@@ -5219,11 +5225,7 @@ GLOBALS_SECTION
     #include "lib/milka.h"
     #include "lib/multinomial.h"
 	#include "Selex.h"
-	// #include "lib/msy.cpp"
-	// #include "lib/baranov.cpp"
-	// #include "lib/LogisticNormal.cpp"
-	// #include "lib/LogisticStudentT.cpp"
-	// #include "OpMod.h"
+
 
 	ivector getIndex(const dvector& a, const dvector& b)
 	{

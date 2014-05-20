@@ -4,7 +4,7 @@
   
   void dfcholeski_solve(void);
   
-  dvar_vector choleski_solve(_CONST dvar_matrix& MM,const dvar_vector& vv,
+  dvar_vector choleski_solve(const dvar_matrix& MM,const dvar_vector& vv,
     const prevariable& det,const int& sgn)
   {
     // kludge to deal with constantness
