@@ -70,6 +70,7 @@
 		int m_nAssessOpt;
 		int m_irow;
 		int m_nyrs;  // number of simulation years
+		ivector m_yr;
 
 		ivector m_nGearIndex;
 		ivector m_nCSex;

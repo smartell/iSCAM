@@ -213,6 +213,9 @@ void OperatingModel::initParameters()
     m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
     m_irow = nCtNobs; // counter for current number of rows in the catch table.
     m_nyrs = m_nPyr - m_nNyr;
+    
+    m_yr.allocate(1,m_nPyr-syr+1);
+    m_yr.fill_seqadd(syr,1);
 
     // needs to be updated for each year in the mse loop
 
@@ -1340,4 +1343,6 @@ void OperatingModel::writeSimulationVariables()
     REPORT(m_dCatchData);
     REPORT(m_dSubLegalData);
     REPORT(m_ft);
+    REPORT(m_yr);
+
 }
