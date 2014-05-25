@@ -92,7 +92,7 @@ shinyUI(fluidPage(
 			),
 			wellPanel(
 				# Logo image
-			    img(src="iphclogo.png", height = 100, width = 100),
+			    #img(src="iphclogo.png", height = 100, width = 100),
 				img(src="iscamLogo.png", height = 100, width = 100)
 			)
 		)

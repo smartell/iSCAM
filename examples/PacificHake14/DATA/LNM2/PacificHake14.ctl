@@ -35,15 +35,15 @@
 ##     -5 : logistic_normal, AR2
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-2  		 4 			1	        ## Gear Index
-4  		 4      	4           ## Likelihood type?
-0.000 	 0.000  	0.000       ## Minimum proportion for aggregation & tail compression
-0.0000   0.0000 	0.0000      ## Small constant to add to comps & renormalize
-1   	 1 			1           ## phase for log_age_tau2 estimation.
-2   	 2 			2           ## phase for phi1 estimation: bounded (-1,1) AR1
--2  	-2         -2           ## phase for phi2 estimation: bounded (0,1)  AR2 
--2  	-2         -2           ## phase for degrees of freedom for student T.
--12345                   	 	## int check (-12345)
+1  		2 		       ## Gear Index
+4  		4              ## Likelihood type?
+0.000 	0.000 	       ## Minimum proportion for aggregation & tail compression
+0.0000  0.0000         ## Small constant to add to comps & renormalize
+1   	1              ## phase for log_age_tau2 estimation.
+2   	2 		        ## phase for phi1 estimation: bounded (-1,1) AR1
+-2      -2 	              ## phase for phi2 estimation: bounded (0,1)  AR2 
+-2      -2 	              ## phase for degrees of freedom for student T.
+-12345                   	 ## int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
 ##
@@ -60,25 +60,25 @@
 ##      8) logistic with weight deviations (3 parameters)                    ##
 ##      11) logistic selectivity with 2 parameters based on mean length      ##
 ##      12) length-based selectivity coefficients with spline interpolation  ##
+##		13) selectivity coefficients between agemin and agemax 				 ##
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	2 		4		1	        # 1  -selectivity type ivector(isel_type) for gear
-	3.5		3.5	    2.5    # 2  -Age/length at 50% selectivity (logistic)
-	0.45	0.45 	0.45        # 3  -STD at 50% selectivity (logistic)
-	4 		5 		5				# 4  -No. of age nodes for each gear (0=ignore)
-	5 		1 		5				# 5  -No. of year nodes for 2d spline(0=ignore)
-	1 		1 		1				# 6  -Phase of estimation (-1 for fixed)
-	150 	22.2 	200			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-	50.0 	12.5	200	# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	50.0 	12.5 	1.0			# 9  -Penalty wt for time-varying selectivity
-	1 		1 		1              # 10 -n_sel_blocks (number of selex blocks)
+	4 	  	2	        # 1  -selectivity type ivector(isel_type) for gear
+	3.5	  	2.5	        # 2  -Age/length at 50% selectivity (logistic) or agemin
+	0.45   	0.45	    # 3  -STD at 50% selectivity (logistic) or agemax
+	4 	 	5			# 4  -No. of age nodes for each gear (0=ignore)
+	5 	 	5			# 5  -No. of year nodes for 2d spline(0=ignore)
+	1 	 	1			# 6  -Phase of estimation (-1 for fixed)
+	150  	200			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+	50.0  	200			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+	50.0 	1.0			# 9  -Penalty wt for time-varying selectivity
+	2 	    1         	# 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
-1966 
+1966  1991
 1966
-1966
-##
+## 
 ##
 ## 
 ## ------------------------------------------------------------------------- ##
@@ -89,28 +89,27 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 1					# -number of surveys (nits) 
-1					# -prior type (see legend above)
+0					# -prior type (see legend above)
 0					# -prior log(mean)
-0					# -prior sd
+0 					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
-
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##
 0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
-0.05       # 3  -std in observed catches in first phase.
-0.01      # 4  -std in observed catches in last phase.
+0.05       	# 3  -std in observed catches in first phase.
+0.01    	# 4  -std in observed catches in last phase.
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 0.20        # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.05        # 8  -std in mean fishing mortality in first phase
 2.00        # 9  -std in mean fishing mortality in last phase
--3          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
+-2          # 10 -phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1         # 11 -std in deviations for natural mortality
 12          # 12 -number of estimated nodes for deviations in natural mortality
-0.0        # 13 -fraction of total mortality that takes place prior to spawning
+0.0         # 13 -fraction of total mortality that takes place prior to spawning
 0           # 14 -number of prospective years to add to syr.
 1           # 15 -switch for IFD distribution in selectivity simulations
 ##

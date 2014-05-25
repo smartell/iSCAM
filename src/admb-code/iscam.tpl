@@ -5169,6 +5169,7 @@ FUNCTION void runMSE()
 
 	s_mv.q = value(q);
 	s_mv.sbt = value(sbt);
+	s_mv.bt = value(bt);
 	d3_array tmp_ft=value(ft);
 	s_mv.d3_ft = &tmp_ft;
 
