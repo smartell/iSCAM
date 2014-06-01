@@ -5,7 +5,7 @@
 ##		mcmc:  -copy executable and run in mcmc mode and mceval
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
-prefix=../../../dist
+prefix=../../../src/admb-code/build
 DAT=RUN.dat
 CTL=NamibianHake
 ARG=

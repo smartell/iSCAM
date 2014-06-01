@@ -18,6 +18,9 @@ else
 endif
 
 all:
+	make debug release --directory=./src/admb-code -j
+
+oldall:
 	mkdir -p $(dir)
 	make  --directory=src/admb-code OPT=$(opt) -j
 	cp    ./src/admb-code/iscam $(dir)
