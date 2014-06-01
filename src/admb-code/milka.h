@@ -8,7 +8,7 @@
 
 #include <admodel.h>
 #include <contrib.h>
-#include "../iscam.htp"
+#include "iscam.htp"
 
 /**
  * @defgroup Milka Operating model for iSCAM

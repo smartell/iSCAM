@@ -1,123 +1,96 @@
-# A Generic Makefile for ADMB programs that also includes 
-# additional libraries.
-# Developed for Mac OSx using the clang++ compiler
-# Author: Steve Martell & John Sibert
-# —————————————————————— INSTRUCTIONS ———————————————————————— #
-# 1. Set the EXEC variable to the name of the program.         #
-# 2. List additional .cpp files required by EXEC in SRCS macro #
-# 3. Set the ADMB_HOME path to your distribution of ADMB.      #
-# 4. To make executables with ADMB "safe" library type: make   #
-# 5. Optimized executables type: make OPT=TRUE                 #
-# ———————————————————————————————————————————————————————————— #
-SUBDIRS = debug release
-.PHONY: subdirs $(SUBDIRS)
+# Name of executable.
+OUTPUT:=iscam
 
-subdirs: $(SUBDIRS)
+# Global source files from current dir.
+VPATH = ./ ./lib
+SRCS:=$(wildcard *.cpp *.c *.cc *.cxx )
 
-$(SUBDIRS): 
-	cd $@ && make  
-
-
-# Export the path to your ADMB dist directory
+# Path to ADMB distribution directory
 export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
 
-EXEC = iscam
-TPLS = $(EXEC).tpl
-SRCS = $(EXEC).cpp               \
-		lib/LogisticNormal.cpp   \
-		lib/LogisticStudentT.cpp \
-  		lib/msy.cpp 			 \
-		lib/baranov.cpp          \
-		lib/milka.cpp            \
-		lib/multinomial.cpp      \
-		lib/multivariate_t.cpp   \
-		lib/fvar_m58.cpp         \
-			selex.cpp 
-		# OpMod.cpp    		
-OBJS = $(SRCS:.cpp=.o)
-DEPS = $(SRCS:.cpp=.depends)
+# Compiler
+CXX:=clang++
+
+# Compiler and linker flags.
+CXXFLAGS:=-g -Wall -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include -I/usr/include/libxml2
+LDFLAGS:=
+
+# Release specific flags.
+RELEASE_CXXFLAGS:=-O3 -DOPT_LIB
+RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a -lxml2
+
+# Debug specific flags.
+DEBUG_CXXFLAGS:=-O0 -DSAFE_ALL
+DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a -lxml2
 
 
-# establish the C++ compiler (on Mac OSX use clang++)
-CC=clang
-CXX=clang++
-# and linker
-LL = $(CC)
-LD = $(CXX)
-# Remove macro
-RM=rm -f
+# ======================= END OF CONFIGURABLE THINGS ===========================
+# Create debug & release list of object files as well as dep files.
+BASEFILES:=$(basename $(SRCS))
+DEBUG_OBJS:=$(addprefix build/debug/,$(addsuffix .o,$(BASEFILES)))
+RELEASE_OBJS:=$(addprefix build/release/,$(addsuffix .o,$(BASEFILES)))
+DEPFILES:=$(addprefix build/deps/,$(addsuffix .d,$(BASEFILES)))
 
-# identify some extra file name suffixes
-.SUFFIXES: .tpl .cpp .o .obj
+# Default to release build.
+all: $(OUTPUT).cpp release
 
-# tell make not to delete these intermediate targets
-.PRECIOUS: %.cpp %.o %.obj
+$(OUTPUT).cpp: $(OUTPUT).tpl
+	$(ADMB_HOME)/bin/tpl2cpp $(OUTPUT)
 
-# make some special PHONY targets
-.PHONY: all help rules clean
+# Directory targets
+build/debug:
+	@echo creating debug directory
+	@mkdir -p build/debug build/deps
 
-# set up ADMB flags and appropriate libraries
-# make the "safe" version by default
-# to make "the optimized" version, type  `make OPT=TRUE
-ifeq ($(OPT),TRUE)
-  CC_OPT = -O3 -Wall -DOPT_LIB
-  LDFLAGS = -O3 
-  LDLIBS  = $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a -lxml2
-else
-  CC_OPT = -O3 -Wall -DSAFE_ALL
-  LDFLAGS = -O3 -g
-  LDLIBS  = $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a -lxml2
-endif
+build/release:
+	@echo creating release directory
+	@mkdir -p build/release build/deps
 
-# set general compiler flags
-CXXFLAGS = $(CC_OPT) -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include -I/usr/include/libxml2
+# Debug route.
+.PHONY: debug
+debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
+debug: LDFLAGS+= $(DEBUG_LDFLAGS)
+debug: build/debug/$(OUTPUT)
 
-# this is the default target
-all: $(EXEC)
+build/debug/$(OUTPUT): build/debug $(DEBUG_OBJS)
+	@echo 'linking ' build/debug/$(OUTPUT)
+	@$(CXX) -o build/debug/$(OUTPUT) $(DEBUG_OBJS) $(LDFLAGS)
 
-# link the object file into the executable 
-# $(EXEC): $(OBJS)
-	# $(LD) $(LDFLAGS) -o  $@ $(OBJS) $(LDLIBS)
+-include $(DEPFILES)
 
+build/debug/%.o : %.cpp
+	@echo 'compiling ' $<
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	@$(CXX) -MM $(CXXFLAGS) $< -o build/deps/$*.d
+	@mv -f build/deps/$*.d build/deps/$*.d.tmp
+	@sed -e 's|.*:|build/debug/$*.o:|' < build/deps/$*.d.tmp \
+	  > build/deps/$*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < build/deps/$*.d.tmp | fmt -1 \
+	  | sed -e 's/^ *//' -e 's/$$/:/' >> build/deps/$*.d
+	@rm -f build/deps/$*.d.tmp	
 
-# Advanced Auto Dependency Generation
-# Check compiler options for generating phony targets (-MP -MD for clang compiler on OSX)
-%.o : %.cpp
-	$(CXX) -MP -MD -c -o $@ $< $(CXXFLAGS)
+# Release route.
+.PHONY: release
+release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
+release: LDFLAGS+= $(RELEASE_LDFLAGS)
+release: build/release/$(OUTPUT)
 
--include $(OBJS:%.o=%.d)
+build/release/$(OUTPUT): build/release $(RELEASE_OBJS)
+	@echo 'linking ' build/release/$(OUTPUT)
+	@$(CXX) -o build/release/$(OUTPUT) $(RELEASE_OBJS) $(LDFLAGS)
 
-# Build the cpp file from the tpl
-$(EXEC).cpp: $(TPLS)
-	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
+build/release/%.o : %.cpp
+	@echo 'compiling ' $<
+	@$(CXX) -c $(CXXFLAGS) $< -o $@
+	@$(CXX) -MM $(CXXFLAGS) $< -o build/deps/$*.d
+	@mv -f build/deps/$*.d build/deps/$*.d.tmp
+	@sed -e 's|.*:|build/release/$*.o:|' < build/deps/$*.d.tmp \
+	  > build/deps/$*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < build/deps/$*.d.tmp | fmt -1 | \
+	  sed -e 's/^ *//' -e 's/$$/:/' >> build/deps/$*.d
+	@rm -f build/deps/$*.d.tmp
 
-
-clean: 
-	$(RM) $(OBJS) $(EXEC).cpp $(EXEC).htp
-
-
-# generate some information about what your are doing
-rules:
-	@echo EXEC = $(EXEC)
-	@echo OBJS = $(OBJS)
-	@echo SRCS = $(SRCS)
-	@echo TPLS = $(TPLS)
-	@echo OPT = $(OPT)
-	@echo CC_OPT = $(CC_OPT)
-	@echo PWD = $(PWD)
-	@echo ADMB_HOME = $(ADMB_HOME)
-	@echo CC = $(CC)
-	$(CC) --version
-	@echo LD = $(LD)
-	@echo CXXFLAGS = $(CXXFLAGS)
-	@echo LDFLAGS = $(LDFLAGS)
-
-
-# Some help for the naive
-help:
-	@echo Set:   EXEC target to the BaseName of your tpl script.
-	@echo Usage: make <OPT=TRUE>
-	@echo        specify OPT=TRUE to build optimized version
-
-
-
+.PHONY: clean
+clean:
+	@echo 'removing build directory'
+	@rm -rf build

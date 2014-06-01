@@ -5220,12 +5220,12 @@ GLOBALS_SECTION
 
 	#include <string.h>
 	//#include "lib/ADMB_XMLDoc.h"
-	#include "lib/msy.h"
-	#include "lib/msy.hpp"
-	#include "lib/baranov.h"
-    #include "lib/LogisticNormal.h"
-    #include "lib/milka.h"
-    #include "lib/multinomial.h"
+	#include "msy.h"
+	#include "msy.hpp"
+	#include "baranov.h"
+    #include "LogisticNormal.h"
+    #include "milka.h"
+    #include "multinomial.h"
 	#include "Selex.h"
 
 
