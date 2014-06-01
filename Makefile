@@ -1,11 +1,26 @@
-## Makefile for building distribtion folder for iscam
-## TODO add verify target to run example models.
-.PHONY: dist clean
+## Makefile for building iscam
+## RULES:
+## 		all
 
+.PHONY: dist clean
 
 ifndef DISK
   DISK=dist
 endif
+
+ifeq ($(mode),release)
+	opt = TRUE
+	dir = ${DISK}/release/
+else
+	mode = debug
+	opt  = FALSE
+	dir = ${DISK}/debug/
+endif
+
+all:
+	mkdir -p $(dir)
+	make  --directory=src/admb-code OPT=$(opt) -j
+	cp    ./src/admb-code/iscam $(dir)
 
 
 dist:

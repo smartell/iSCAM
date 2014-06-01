@@ -9,34 +9,27 @@
 # 4. To make executables with ADMB "safe" library type: make   #
 # 5. Optimized executables type: make OPT=TRUE                 #
 # ———————————————————————————————————————————————————————————— #
-SUBDIRS = debug release
-.PHONY: subdirs $(SUBDIRS)
-
-subdirs: $(SUBDIRS)
-
-$(SUBDIRS): 
-	cd $@ && make  
+VPATH = ../ ../lib/
+OPT = FALSE
+EXEC =  iscam
+SRCS =  $(EXEC).cpp          \
+		LogisticNormal.cpp   \
+		LogisticStudentT.cpp \
+  		msy.cpp              \
+		baranov.cpp          \
+		milka.cpp            \
+		multinomial.cpp      \
+		multivariate_t.cpp   \
+		fvar_m58.cpp         \
+		selex.cpp 
+		# OpMod.cpp    		
+OBJS = $(SRCS:.cpp=.o)
+TPLS = ../$(EXEC).tpl
+DEPS = $(SRCS:.cpp=.depends)
 
 
 # Export the path to your ADMB dist directory
 export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
-
-EXEC = iscam
-TPLS = $(EXEC).tpl
-SRCS = $(EXEC).cpp               \
-		lib/LogisticNormal.cpp   \
-		lib/LogisticStudentT.cpp \
-  		lib/msy.cpp 			 \
-		lib/baranov.cpp          \
-		lib/milka.cpp            \
-		lib/multinomial.cpp      \
-		lib/multivariate_t.cpp   \
-		lib/fvar_m58.cpp         \
-			selex.cpp 
-		# OpMod.cpp    		
-OBJS = $(SRCS:.cpp=.o)
-DEPS = $(SRCS:.cpp=.depends)
-
 
 # establish the C++ compiler (on Mac OSX use clang++)
 CC=clang
@@ -76,8 +69,8 @@ CXXFLAGS = $(CC_OPT) -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  -I. -I$(ADMB_HOME)/incl
 all: $(EXEC)
 
 # link the object file into the executable 
-# $(EXEC): $(OBJS)
-	# $(LD) $(LDFLAGS) -o  $@ $(OBJS) $(LDLIBS)
+$(EXEC): $(OBJS)
+	$(LD) $(LDFLAGS) -o  $@ $(OBJS) $(LDLIBS)
 
 
 # Advanced Auto Dependency Generation
@@ -91,9 +84,10 @@ all: $(EXEC)
 $(EXEC).cpp: $(TPLS)
 	$(ADMB_HOME)/bin/tpl2cpp $(TPLS:.tpl=)
 
+$(EXEC).cpp: LogisticNormal.cpp
 
 clean: 
-	$(RM) $(OBJS) $(EXEC).cpp $(EXEC).htp
+	$(RM) $(OBJS) $(EXEC).cpp
 
 
 # generate some information about what your are doing
