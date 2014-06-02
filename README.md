@@ -1,68 +1,51 @@
+
+#  iSCAM 2.0 ![iscam](https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png)
 ____
-# iSCAM (integrated Statistical Catch Age Model) using AD Model Builder - Split Sex Beta
-![iscam](https://github.com/smartell/iSCAM/tree/master/src/r-code/logo/iscamLogoSmall.png)
-iSCAM is and Integrated Statistical Catch Age Model for use in 
-fisheries stock assessment. The software was originally written by 
-Steve Martell and contains contributions or stolen code and ideas from:
 
-* Vivian Haist
-* Jaclyn Cleary
-* Chris Grandin
-* Robyn Forrest
-* Jim Ianelli
-* Dave Fournier
-* Carl Walters
-* Rob Kronlund
-* Sean Cox
-* Nathan Taylor
-* Catarina Wor
-* Richard Methot
-* Matthew Supernaw
-* Chris Francis
-* Mark Maunder
-* Marie Etienne
-
-_____________________________________________________________
-_____________________________________________________________
-         Integrated Statistical Catch Age Model (iSCAM)
-
-                        VERSION 1.5
-                Tue Jul 19 22:24:46 PDT 2011
-
-            Created by Steven Martell on 2010-04-09 
-            Copyright (c) 2010. All rights reserved.
-
-            Last changed on:
-            Source code: https://github.com/smartell/iSCAM
-_____________________________________________________________
+[TOC]
+____
 
 
-## History
-This software was originally
-developed for the BC herring stock assessments in 2011.
-The project started in the fall of 2010 and is hosted on 
-an svn server: http://code.google.com/p/iscam-project/ . This
-site is no longer an svn repository, it was converted to
-at Git repository in December (6) of 2011.  In August of 2012,
-contributions to the code.google repository were discontinued and
-the source code was hosted at github.com.
+## What is iSCAM
+iSCAM is short for integrated statistical catch age model. The software was orginally developed by Steven Martell at the University of British Columbia, and the project was intiated in the fall of 2010.  The code was originally written for use as a stock assessment model for BC herring stocks.  Since this time the code has evolved substantially, and can now be used to conduct assessments for multiple sexs, one or more stocks, or sub-stocks, and can be spatially explicit.
 
-Additional information about the software can also be obtained
-from a [website](https://sites.google.com/site/iscamproject/).  This
-website is largely out of date.
+## List of developers
+The following people have contributed source code or ideas to the iSCAM-project:
 
-
+| **Individual**   |  |**Organization**| _email_                     |
+|:-------          |  |:-----------    |:-------                     |
+| Steven Martell   |  | IPHC           | stevem@iphc.int             |
+| Vivian Haist     |  | Consultant     | haistv@shaw.ca              | 
+| Jaclyn Cleary    |  | DFO            | Jaclyn.Cleary@dfo-mpo.gc.ca |
+| Chris Grandin    |  | DFO            | Chris.Grandin@dfo-mpo.gc.ca |
+| Robyn Forrest    |  | DFO            | Robyn.Forrest@dfo-mpo.gc.ca |
+| James Ianelli    |  | NOAA/NMFS      | Jim.Ianelli@noaa.gov        |
+| Dave Fournier    |  | Otter Research | davef@otter-rsch.com        |
+| Carl Walters     |  | UBC            | c.walters@fisheries.ubc.ca  |
+| Rob Kronlund     |  | DFO            | Allen.Kronlund@dfo-mpo.gc.ca|
+| Sean Cox         |  | SFU            | spcox@sfu.ca                |
+| Nathan Taylor    |  | DFO            | Nathan.Taylor@dfo-mpo.gc.ca |
+| Catarina Wor     |  | UBC/IPHC       | catarinawor@gmail.com       |
+| Richard Methot   |  | NOAA/NMFS      | Richard.Methot@noaa.gov     |
+| Matthew Supernaw |  | NOAA/NMFS      | matthew.supernaw@noaa.gov   |
+| Chris Francis    |  | NIWA           | chris.francis@clear.net.nz  |
+| Mark Maunder     |  | IATTC          | mmaunder@iattc.org          |
+| Marie Etienne    |  | France         | mp.etienne@gmail.com        |
 
 ---
-#Obtaining iSCAM:
+
+
+# Obtaining iSCAM:
 Obtaining the latest version of iSCAM should be done using the [gitHub](https://github.com/smartell/iSCAM) repository
 
+
 ## Prerequisites
-* A C++ compiler (preferably gcc as this is the compiler that iSCAM is developed on).
-* AD Model Builder (version 11.0 or later)
+* A C++ compiler (preferably `clang++`)
+* AD Model Builder (version 11.1 or later)
 * R (version 2.15 or later)
 	* PBSmodelling package (and dependencies)
 	* Hmisc package (and dependencies)
+  * Shiny package (and dependencies)
 	
 ## Cloning the repository
 
@@ -70,20 +53,53 @@ Obtaining the latest version of iSCAM should be done using the [gitHub](https://
 Open terminal and run the following
 
 	cd ~
-	git clone https://github.com/smartell/iSCAM
-	cd iSCAM
+	git clone https://github.com/smartell/iSCAM.git
+	cd iSCAM-project
 	make
 
-### Windows Woozers
-Obtain a copy of git for windows [here](http://msysgit.github.com), then
+### Windows
+Obtain a copy of git for windows [here](http://git-scm.com/download/win), then in a command window
 
-	git clone https://github.com/smartell/iSCAM
+	git clone https://github.com/smartell/iSCAM.git
 
-Then download Make for Windows [here](http://gnuwin32.sourceforge.net/packages/make.htm) and you should then be able to use the makefiles to compile the code and run iSCAM from the command line in windows.  You may have to modify the makefiles to point to the appropriate compiler on your machine. You might also find it extremely useful to install [Cygwin](http://www.cygwin.com) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Remember when your frustrated with Windows, some higher being in Ottawa or Washington forced you into the world of Windows. 
+You might useful to install [Cygwin](http://www.cygwin.com) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Compiling iSCAM and runnig examples is carried out using GNU Makefiles.
 
-The rest of us simpletons stuck with UNIX-based systems, it just works!
 
----
+----
+# Creating new projects
+## Scripts
+There are a number of shell scripts for creating new projects within the examples directory and the fba directory.  The makeproject script sets up the following directory tree:
+
+
+- DATA
+     - Example.ctl
+     - Example.dat
+     - Example.mpc
+     - Example.pfc
+     - Example.scn
+     - Makefile
+     - RUN.dat
+- FIGS
+- MISC
+- PRESENTATION
+     - Example.tex
+     - iScamLogo.pdf
+- R
+     - collectAll.R
+     - saveMSEdataframe.R
+- TABLES
+- WRITEUP
+
+On \*nix operating systems, at the terminal simply type:
+
+      ./makeproject <ProjectName>
+
+By default the makeproject script copies a set of templates that are required for iSCAM to run.  The \*.ctl, \*.dat, \*.pfc, \*.scn, \*.mpc are input files required by iscam.  The RUN.dat file is the primary file that is opened by iSCAM to determine which files are used as the contord, data, projection, scenario and manamement procedure, respectively.
+
+
+
+# Version control
+
 * To check out a copy of the project code, open terminal and
   go to the directory (folder) where you want to keep a clone
   (copy) of the repository on your macbook pro.  If you are 
@@ -237,3 +253,16 @@ You can use `-i` with `rebase` for an “interactive” rebase. This allows you 
 
 	git rebase -i upstream/master
 
+_____________________________________________________________
+_____________________________________________________________
+         Integrated Statistical Catch Age Model (iSCAM)
+
+                        VERSION 1.5
+                Tue Jul 19 22:24:46 PDT 2011
+
+            Created by Steven Martell on 2010-04-09 
+            Copyright (c) 2010. All rights reserved.
+
+            Last changed on:
+            Source code: https://github.com/smartell/iSCAM
+_____________________________________________________________

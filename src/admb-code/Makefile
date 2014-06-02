@@ -23,6 +23,8 @@ RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontri
 DEBUG_CXXFLAGS:=-O0 -DSAFE_ALL
 DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a -lxml2
 
+# Name of text file containing build number.
+BUILD_NUMBER_FILE=build-number.txt
 
 # ======================= END OF CONFIGURABLE THINGS ===========================
 # Create debug & release list of object files as well as dep files.
