@@ -22,8 +22,9 @@ cp ../scripts/BeamerTemplate.tex $1/PRESENTATION/$1.tex
 cp ../scripts/iScamLogo.pdf $1/PRESENTATION/iScamLogo.pdf
 
 ## Copy Makefile from Scripts to DATA directory
-cp ../scripts/ADMB_Makefile            $1/DATA/Makefile
-gsed -i '0,/^CTL=/s/^CTL=/CTL=$1/'      $1/DATA/Makefile
+cp ../scripts/ADMB_Makefile             $1/DATA/Makefile
+gsed -i "0,/^CTL=/s/^CTL=/CTL=$1/"      $1/DATA/Makefile
+
 
 cp ../scripts/Template.dat      		$1/DATA/$1.dat
 cp ../scripts/Template.ctl      		$1/DATA/$1.ctl
@@ -37,3 +38,4 @@ echo $1.dat >  $1/DATA/RUN.dat
 echo $1.ctl >> $1/DATA/RUN.dat
 echo $1.pfc >> $1/DATA/RUN.dat
 echo $1.mpc >> $1/DATA/RUN.dat
+echo $1.scn >> $1/DATA/RUN.dat
