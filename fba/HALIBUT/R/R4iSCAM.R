@@ -14,8 +14,8 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 .PWD        <- "~/Documents/iSCAM-project/fba/HALIBUT/R"
-.LIB        <- "../../../dist/R/lib/"
-.WIN        <- "../../../dist/R/iScamWin2.txt"
+.LIB        <- "../../../src/R/lib/"
+.WIN        <- "../../../src/R/iScamWin2.txt"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
