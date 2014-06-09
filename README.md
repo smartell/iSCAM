@@ -1,7 +1,5 @@
 
 #  iSCAM 2.0 
-<img src="https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png" alt="iSCAM" style="width: 100px;"/>
-
 
 
 ## What is iSCAM ##
@@ -10,7 +8,9 @@ iSCAM is short for integrated statistical catch age model. The software was orgi
 ## Table of Contents ##
 - [What is iSCAM](#what-is-iscam)
 - [Obtaining iSCAM](#obtaining-iscam)
-    - [Prerequisites](#prerequisites)
+		- [Prerequisites](#prerequisites)
+		- [Linux and Mac OS X](#linux-and-mac-os-x)
+		- [Windows](#windows)
 - [List of developers](#list-of-developers)
 
 ## Obtaining iSCAM##
@@ -20,13 +20,27 @@ Obtaining the latest version of iSCAM should be done using the [gitHub](https://
 * C++ compiler (preferably `clang++` that supports C++11 compliance standards)
 * AD Model Builder (version 11.1 or later)
 * R (version 2.15 or later)
-  * PBSmodelling package (and dependencies)
-  * Hmisc package (and dependencies)
-  * Shiny package (and dependencies)
+	* PBSmodelling package (and dependencies)
+	* Hmisc package (and dependencies)
+	* Shiny package (and dependencies)
+
+### Linux and Mac OS X ###
+Open terminal and run the following
 
 
+	cd ~
+	git clone https://github.com/smartell/iSCAM.git
+	cd iSCAM-project
+	make
 
-## List of developers##
+### Windows ###
+Obtain a copy of git for windows [here](http://git-scm.com/download/win), then in a command window
+
+	git clone https://github.com/smartell/iSCAM.git
+
+You might useful to install [Cygwin](http://www.cygwin.com) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Compiling iSCAM and running examples is carried out using GNU Makefiles.
+
+## List of developers ##
 The following people have contributed source code or ideas to the iSCAM-project:
 
 | **Individual**   | **Organization** | _email_                     |
@@ -49,29 +63,14 @@ The following people have contributed source code or ideas to the iSCAM-project:
 | Mark Maunder     | IATTC            | mmaunder@iattc.org          |
 | Marie Etienne    | France           | mp.etienne@gmail.com        |
 
----
+<img src="https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png" alt="iSCAM" style="width: 200px;"/>
 
 
 
 
 
 	
-## Cloning the repository
 
-### On Mac OS and Linux 
-Open terminal and run the following
-
-	cd ~
-	git clone https://github.com/smartell/iSCAM.git
-	cd iSCAM-project
-	make
-
-### Windows
-Obtain a copy of git for windows [here](http://git-scm.com/download/win), then in a command window
-
-	git clone https://github.com/smartell/iSCAM.git
-
-You might useful to install [Cygwin](http://www.cygwin.com) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Compiling iSCAM and runnig examples is carried out using GNU Makefiles.
 
 
 ----
@@ -81,27 +80,27 @@ There are a number of shell scripts for creating new projects within the example
 
 
 - DATA
-     - Example.ctl
-     - Example.dat
-     - Example.mpc
-     - Example.pfc
-     - Example.scn
-     - Makefile
-     - RUN.dat
+		 - Example.ctl
+		 - Example.dat
+		 - Example.mpc
+		 - Example.pfc
+		 - Example.scn
+		 - Makefile
+		 - RUN.dat
 - FIGS
 - MISC
 - PRESENTATION
-     - Example.tex
-     - iScamLogo.pdf
+		 - Example.tex
+		 - iScamLogo.pdf
 - R
-     - collectAll.R
-     - saveMSEdataframe.R
+		 - collectAll.R
+		 - saveMSEdataframe.R
 - TABLES
 - WRITEUP
 
 On \*nix operating systems, at the terminal simply type:
 
-      ./makeproject <ProjectName>
+			./makeproject <ProjectName>
 
 By default the makeproject script copies a set of templates that are required for iSCAM to run.  The \*.ctl, \*.dat, \*.pfc, \*.scn, \*.mpc are input files required by iscam.  The RUN.dat file is the primary file that is opened by iSCAM to determine which files are used as the contord, data, projection, scenario and manamement procedure, respectively.
 
@@ -110,34 +109,34 @@ By default the makeproject script copies a set of templates that are required fo
 # Version control
 
 * To check out a copy of the project code, open terminal and
-  go to the directory (folder) where you want to keep a clone
-  (copy) of the repository on your macbook pro.  If you are 
-  using Mac OSX 10.6 or later you will already have "git" 
-  installed on your computer. At the command prompt type:
+	go to the directory (folder) where you want to keep a clone
+	(copy) of the repository on your macbook pro.  If you are 
+	using Mac OSX 10.6 or later you will already have "git" 
+	installed on your computer. At the command prompt type:
 
 * git clone https://code.google.com/p/iscam-project/
 
 * The above command will now download a copy (referred to as a 
-  clone in git terminology) onto your computer in the current
-  directory. You only need to run the above command once.  To 
-  obtain updates of the repository, you can run the following:
+	clone in git terminology) onto your computer in the current
+	directory. You only need to run the above command once.  To 
+	obtain updates of the repository, you can run the following:
 
 * git fetch https://code.google.com/p/iscam-project/
 
 * To gain write access to the repository contact martell.steve@gmail.com
 
-  THE FOLLOWING IS A LIST OF USEFUL GIT COMMANDS TO USE AT THE COMMAND LINE$:
-      git help                      <list git commands>
-      git clone url ILSMR/          <clone repository>
-      git add filename              <add new file>
-      git commit -m"message"        <commit with message>
-      git log                       <view commit log>
-      git status                    <view changes & staging>
-      git branch                    <list, create or delete branches>
-  
-  Making an alias for a git command, eg:
-      git config --global alias.ci commit
-      git config --global alias.lol "log --oneline --graph"
+	THE FOLLOWING IS A LIST OF USEFUL GIT COMMANDS TO USE AT THE COMMAND LINE$:
+			git help                      <list git commands>
+			git clone url ILSMR/          <clone repository>
+			git add filename              <add new file>
+			git commit -m"message"        <commit with message>
+			git log                       <view commit log>
+			git status                    <view changes & staging>
+			git branch                    <list, create or delete branches>
+	
+	Making an alias for a git command, eg:
+			git config --global alias.ci commit
+			git config --global alias.lol "log --oneline --graph"
 
 ### Version control system resources:
 
@@ -156,53 +155,53 @@ There are several [GNU Makefiles](http://www.gnu.org/software/make/manual/make.h
 The first makefile is in the iSCAM-project root directory (shown below).  At the command line in the iSCAM-project directory, if you type make, the makefile will create a _dist_ directory and subdirectories, compile optimized and safe versions of the iSCAM.tpl file, then copy these files into the _dist/release_ and _dist/debug_ directories.
 
 
-      ## Makefile for building distribtion folder for iscam
-      ## TODO add verify target to run example models.
-      .PHONY: dist clean
+			## Makefile for building distribtion folder for iscam
+			## TODO add verify target to run example models.
+			.PHONY: dist clean
 
 
-      ifndef DISK
-        DISK=dist
-      endif
+			ifndef DISK
+				DISK=dist
+			endif
 
 
-      dist:
-        mkdir -p ${DISK}/debug
-        mkdir -p ${DISK}/R
-        mkdir -p ${DISK}/release
-        make --directory=src/admb-code --file=linux.mak 
-        make --directory=src/admb-code --file=linux.mak opt
-        cp -r ./src/r-code/ ${DISK}/R/
+			dist:
+				mkdir -p ${DISK}/debug
+				mkdir -p ${DISK}/R
+				mkdir -p ${DISK}/release
+				make --directory=src/admb-code --file=linux.mak 
+				make --directory=src/admb-code --file=linux.mak opt
+				cp -r ./src/r-code/ ${DISK}/R/
 
-      clean:
-        make --directory=src/admb-code --file=linux.mak clean
-        rm -r dist
+			clean:
+				make --directory=src/admb-code --file=linux.mak clean
+				rm -r dist
 
 ---
 ## Setting up a new project in fba:
 
 - fba is a directory (short for "full blown assessments" ) that 
-  contains project folders with a specific directory structure.
-  It is important to maintain this directory structure within
-  the project folders because the R and shell scripts use the
-  relative paths for maintaining inputs and outputs to automate
-  much of the running of iSCAM and its outputs.
+	contains project folders with a specific directory structure.
+	It is important to maintain this directory structure within
+	the project folders because the R and shell scripts use the
+	relative paths for maintaining inputs and outputs to automate
+	much of the running of iSCAM and its outputs.
 
 - To set up a new project, use the makeproject shell script (linux or MacOSX)
-  when you are inside the fba directory only.
-  For example:
+	when you are inside the fba directory only.
+	For example:
 
-        cd fba
-    	./makeproject MyAssessment  
+				cd fba
+			./makeproject MyAssessment  
 
-  It may be necessary to change the permissions if you are 
-  running MacOSX, eg: type "chmod 755 makeproject" in terminal
-  at the fba directory to allow execution permissions for 
-  makeproject.
+	It may be necessary to change the permissions if you are 
+	running MacOSX, eg: type "chmod 755 makeproject" in terminal
+	at the fba directory to allow execution permissions for 
+	makeproject.
 
 - The shell script will create a number of directories including _DATA_ and copy various makefiles and default control and data files that will allow you to run the default model.  If you then navigate to the _MyAssessment/DATA_ directory, you can now simply type:
 
-        make
+				make
 
 and this will copy the executable, and run the model inside the _DATA_ directory.
 
@@ -264,14 +263,14 @@ You can use `-i` with `rebase` for an “interactive” rebase. This allows you 
 
 _____________________________________________________________
 _____________________________________________________________
-         Integrated Statistical Catch Age Model (iSCAM)
+				 Integrated Statistical Catch Age Model (iSCAM)
 
-                        VERSION 1.5
-                Tue Jul 19 22:24:46 PDT 2011
+												VERSION 1.5
+								Tue Jul 19 22:24:46 PDT 2011
 
-            Created by Steven Martell on 2010-04-09 
-            Copyright (c) 2010. All rights reserved.
+						Created by Steven Martell on 2010-04-09 
+						Copyright (c) 2010. All rights reserved.
 
-            Last changed on:
-            Source code: https://github.com/smartell/iSCAM
+						Last changed on:
+						Source code: https://github.com/smartell/iSCAM
 _____________________________________________________________
