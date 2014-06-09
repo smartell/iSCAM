@@ -12,25 +12,25 @@ iSCAM is short for integrated statistical catch age model. The software was orgi
 ## List of developers
 The following people have contributed source code or ideas to the iSCAM-project:
 
-| **Individual**   |  | **Organization** | _email_                   |
-|:-----------------|  |:----------------:| -------------------------:|
-| Steven Martell   |  | IPHC             | stevem@iphc.int             |
-| Vivian Haist     |  | Consultant       | haistv@shaw.ca              | 
-| Jaclyn Cleary    |  | DFO              | Jaclyn.Cleary@dfo-mpo.gc.ca |
-| Chris Grandin    |  | DFO              | Chris.Grandin@dfo-mpo.gc.ca |
-| Robyn Forrest    |  | DFO              | Robyn.Forrest@dfo-mpo.gc.ca |
-| James Ianelli    |  | NOAA/NMFS        | Jim.Ianelli@noaa.gov        |
-| Dave Fournier    |  | Otter Research   | davef@otter-rsch.com        |
-| Carl Walters     |  | UBC              | c.walters@fisheries.ubc.ca  |
-| Rob Kronlund     |  | DFO              | Allen.Kronlund@dfo-mpo.gc.ca|
-| Sean Cox         |  | SFU              | spcox@sfu.ca                |
-| Nathan Taylor    |  | DFO              | Nathan.Taylor@dfo-mpo.gc.ca |
-| Catarina Wor     |  | UBC/IPHC         | catarinawor@gmail.com       |
-| Richard Methot   |  | NOAA/NMFS        | Richard.Methot@noaa.gov     |
-| Matthew Supernaw |  | NOAA/NMFS        | matthew.supernaw@noaa.gov   |
-| Chris Francis    |  | NIWA             | chris.francis@clear.net.nz  |
-| Mark Maunder     |  | IATTC            | mmaunder@iattc.org          |
-| Marie Etienne    |  | France           | mp.etienne@gmail.com        |
+| **Individual**   | **Organization** | _email_                     |
+|:-----------------|:----------------:| ---------------------------:|
+| Steven Martell   | IPHC             | stevem@iphc.int             |
+| Vivian Haist     | Consultant       | haistv@shaw.ca              | 
+| Jaclyn Cleary    | DFO              | Jaclyn.Cleary@dfo-mpo.gc.ca |
+| Chris Grandin    | DFO              | Chris.Grandin@dfo-mpo.gc.ca |
+| Robyn Forrest    | DFO              | Robyn.Forrest@dfo-mpo.gc.ca |
+| James Ianelli    | NOAA/NMFS        | Jim.Ianelli@noaa.gov        |
+| Dave Fournier    | Otter Research   | davef@otter-rsch.com        |
+| Carl Walters     | UBC              | c.walters@fisheries.ubc.ca  |
+| Rob Kronlund     | DFO              | Allen.Kronlund@dfo-mpo.gc.ca|
+| Sean Cox         | SFU              | spcox@sfu.ca                |
+| Nathan Taylor    | DFO              | Nathan.Taylor@dfo-mpo.gc.ca |
+| Catarina Wor     | UBC/IPHC         | catarinawor@gmail.com       |
+| Richard Methot   | NOAA/NMFS        | Richard.Methot@noaa.gov     |
+| Matthew Supernaw | NOAA/NMFS        | matthew.supernaw@noaa.gov   |
+| Chris Francis    | NIWA             | chris.francis@clear.net.nz  |
+| Mark Maunder     | IATTC            | mmaunder@iattc.org          |
+| Marie Etienne    | France           | mp.etienne@gmail.com        |
 
 ---
 
