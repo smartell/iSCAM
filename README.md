@@ -38,7 +38,7 @@ Obtain a copy of git for windows [here](http://git-scm.com/download/win), then i
 
 	git clone https://github.com/smartell/iSCAM.git
 
-You might useful to install [Cygwin](http://www.cygwin.com) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Compiling iSCAM and running examples is carried out using GNU Makefiles.
+You might find it useful to install [Cygwin](http://www.cygwin.com) or [MinGW](http://www.mingw.org) to give you Windows machine that Linux like feel and allow you machine to use much of the functionality builtin iSCAM. Compiling iSCAM and running examples is carried out using GNU Makefiles.
 
 ## List of developers ##
 The following people have contributed source code or ideas to the iSCAM-project:
