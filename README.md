@@ -1,16 +1,31 @@
 
-#  iSCAM 2.0 ![iscam](https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png)
+#  iSCAM 2.0 ![iscam](https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png =100x100)
 
 
 
-## What is iSCAM
+## What is iSCAM ##
 iSCAM is short for integrated statistical catch age model. The software was orginally developed by Steven Martell at the University of British Columbia, and the project was intiated in the fall of 2010.  The code was originally written for use as a stock assessment model for BC herring stocks.  Since this time the code has evolved substantially, and can now be used to conduct assessments for multiple sexs, one or more stocks, or sub-stocks, and can be spatially explicit.
 
-## Table of Contents##
+## Table of Contents ##
 - [What is iSCAM](#what-is-iscam)
+- [Obtaining iSCAM](#obtaining-iscam)
+    - [Prerequisites](#prerequisites)
 - [List of developers](#list-of-developers)
 
-## List of developers
+## Obtaining iSCAM##
+Obtaining the latest version of iSCAM should be done using the [gitHub](https://github.com/smartell/iSCAM) repository
+
+### Prerequisites ###
+* C++ compiler (preferably `clang++` that supports C++11 compliance standards)
+* AD Model Builder (version 11.1 or later)
+* R (version 2.15 or later)
+  * PBSmodelling package (and dependencies)
+  * Hmisc package (and dependencies)
+  * Shiny package (and dependencies)
+
+
+
+## List of developers##
 The following people have contributed source code or ideas to the iSCAM-project:
 
 | **Individual**   | **Organization** | _email_                     |
@@ -36,17 +51,9 @@ The following people have contributed source code or ideas to the iSCAM-project:
 ---
 
 
-# Obtaining iSCAM:
-Obtaining the latest version of iSCAM should be done using the [gitHub](https://github.com/smartell/iSCAM) repository
 
 
-## Prerequisites
-* A C++ compiler (preferably `clang++`)
-* AD Model Builder (version 11.1 or later)
-* R (version 2.15 or later)
-	* PBSmodelling package (and dependencies)
-	* Hmisc package (and dependencies)
-  * Shiny package (and dependencies)
+
 	
 ## Cloning the repository
 
