@@ -1,7 +1,6 @@
 
 #  iSCAM 2.0 
-
-<img src="https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png" alt="Drawing" style="width: 180px;"/>
+<img src="https://raw.githubusercontent.com/smartell/iSCAM/IPHC/src/R/logo/iscamLogoSmall.png" alt="iSCAM" style="width: 100px;"/>
 
 
 
