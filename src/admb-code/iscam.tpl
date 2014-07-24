@@ -16,6 +16,33 @@
 /// \brief A small number (1.e-08)`
 ///
 
+// SUGGESTED MODEL NAMES
+// HUBBLE -> Larid Sadorus
+// PHAT (Pacific Halibut Assessment Tool) -> Steve Barbeaux
+// MARTELL 9000 -> Gregg Williams.
+// BARN DOOR    -> Chris b/c halibut were as  big as  a barn door.
+// PHASE Pacific Halibut Assessment Simulation Evaluation.  <-Ianelli.
+// From Bruce Leaman:
+//      HISTOP (HIppoglossus STenolepis OPerating model)
+//      HALPOP (HALibut POPulation)
+//      FGROW (FlatfishGrow)
+//      TRUEPOP (We never lie…)
+// PMS         -> Robert Tobin
+// Martell:
+// PHOM Pacific Halibut Operating Model
+// SEAM Spatiallly Explicit Assessment Model
+// HANSOM  Halibut AssessmeNt StOck Management
+// Tracee Greenhart:
+//		Thresher  - like wheat thresher = harvesting..
+//		Sir Mix (reference to Sir Mix-A-lot’s I like Big Butts)
+//		Becket
+//		Gangion
+//		Abby – for Dear Abby.. advice ~ SRB for halibut
+//		Dr Phil – “
+//		Dorothy or Scandia – first halibut boats on charter
+//		Gordon or Jensen for the halibut fishermen in Petersburg who always preached conservation and lower quotas
+// TOM KONG
+// HERMAN -> Halibut Ensemble Resource Modelling ANalytics - HERMAN
 // ----------------------------------------------------------------------------- //
 //         integrated Statistical Catch Age Model (iSCAM)                        //
 //                                                                               //
@@ -228,9 +255,9 @@ DATA_SECTION
 		if((on=option_match(ad_comm::argc,ad_comm::argv,"-retro",opt))>-1)
 		{
 			retro_yrs = atoi(ad_comm::argv[on+1]);
-			cout<<"|____________________________________________________|\n";
-			cout<<"| Implementing Retrospective analysis                |\n";
-			cout<<"|____________________________________________________|\n";
+			cout<<"|—————————————————————————————————————————————————|\n";
+			cout<<"| Implementing Retrospective analysis             |\n";
+			cout<<"|—————————————————————————————————————————————————|\n";
 			cout<<"| Number of retrospective years = "<<retro_yrs<<endl;
 		}
 
@@ -240,9 +267,9 @@ DATA_SECTION
 		{
 			mseFlag = 1;
 			rseed   = atoi(ad_comm::argv[on+1]);
-			cout<<"|_________________________________________________|\n";
+			cout<<"|—————————————————————————————————————————————————|\n";
 			cout<<"|Implementing Management Strategy Evaluation      |\n";
-			cout<<"|_________________________________________________|\n";
+			cout<<"|—————————————————————————————————————————————————|\n";
 		}
 
 		// Test MSY
@@ -609,6 +636,7 @@ DATA_SECTION
 	// | n_A_sage     -> imatrix for starting age in each row
 	// | n_A_nage	  -> imatrix for plus group age in each row
 	// | inp_nscaler  -> effective sample size for iterative re-weighting in multinomial.
+	// | n_ageFlag 	  -> flag for age-comps or size-comps
 	// | icol_A       -> number of columns for each row in A.
 	// | A            -> array of data (year,gear,area,group,sex|Data...)
 	// | d3_A_obs     -> array of catch-age data only.
@@ -1375,6 +1403,7 @@ INITIALIZATION_SECTION
   phi1 0.0;
 	
 PARAMETER_SECTION
+	
 	// |---------------------------------------------------------------------------------|
 	// | LEADING PARAMTERS
 	// |---------------------------------------------------------------------------------|
@@ -1647,6 +1676,7 @@ PARAMETER_SECTION
 	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
 	
 
+
 PRELIMINARY_CALCS_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | Run the model with input parameters to simulate real data.
@@ -1654,6 +1684,7 @@ PRELIMINARY_CALCS_SECTION
 	// | - nf is a function evaluation counter.
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
+
     nf=0;
   	if( testMSY )
   	{
@@ -1681,7 +1712,7 @@ RUNTIME_SECTION
 
 
 PROCEDURE_SECTION
-
+	COUT("Ok to here dude");
 	initParameters();
 	
 	calcSelectivities(isel_type);
