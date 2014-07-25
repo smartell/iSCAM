@@ -1,0 +1,64 @@
+\ProvidesPackage{iscamx}
+
+
+\voffset=-0.5in
+%fancy header
+\usepackage{fancyhdr}
+\renewcommand{\headheight}{0.75in}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.1pt}
+
+\setlength{\headwidth}{\textwidth}
+\fancyhead[L]{}% empty left
+\fancyhead[R]{ % right
+   \includegraphics[height=0.65in]{iphclogo.pdf}
+}
+\pagestyle{fancy}
+
+%iscam logo
+\usepackage{color}%
+
+\newcommand{\iscam}{$i$SC$\forall$M}%
+%\newcommand{\iscam}{$i$SC$\rotate{A}$M}%
+	% \raisebox{0.75ex}{$i$}%
+	% \textcolor{red}{\raisebox{0.25ex}{S}}%
+	% \textcolor{green}{\raisebox{0.00ex}{C}}%
+	% \textcolor{blue}{\raisebox{-.25ex}{A}}%
+	% \raisebox{-.50ex}{M}%
+	% }%
+
+\newcommand{\admb}{AD Model Builder}
+
+%% -math-
+\newcounter{saveEq}
+  \def\putEq{\setcounter{saveEq}{\value{equation}}}
+  \def\getEq{\setcounter{equation}{\value{saveEq}}}
+  \def\tableEq{ % equations in tables
+    \putEq \setcounter{equation}{0}
+    \renewcommand{\theequation}{T\arabic{table}.\arabic{equation}}
+    \vspace{-5mm}
+    }
+  \def\normalEq{ % renew normal equations
+    \getEq
+    \renewcommand{\theequation}{\arabic{section}.\arabic{equation}}}
+
+  \def\puthrule{ %thick rule lines for equation tables
+    \hrule \hrule \hrule \hrule \hrule}
+
+
+%% multicol
+\usepackage{multicol}
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+\newcommand{\fmsy}{F$_{\textnormal{MSY}}$}
+\newcommand{\bmsy}{B$_{\textnormal{MSY}}$}
+
+
