@@ -17,11 +17,11 @@ LDFLAGS:=
 
 # Release specific flags.
 RELEASE_CXXFLAGS:=-O3 -DOPT_LIB
-RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmbo.a $(ADMB_HOME)/contrib/lib/libcontribo.a -lxml2
-
+RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contribo.a -lxml2
+	
 # Debug specific flags.
 DEBUG_CXXFLAGS:=-O0 -DSAFE_ALL
-DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb.a $(ADMB_HOME)/contrib/lib/libcontrib.a -lxml2
+DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contrib.a -lxml2
 
 # Name of text file containing build number.
 BUILD_NUMBER_FILE=build-number.txt
