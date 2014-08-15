@@ -1,0 +1,59 @@
+%!TEX root = /Users/stevenmartell1/Documents/iSCAM-project/docs/TechnicalDocs/MilkaTechDoc.tex
+\section{Model Description} % (fold)
+\label{sec:model_description}
+To summarize the detailed model description that follows, the operating model uses an age-structured, spatially explicit population model to represent simultaneous process such as growth, recruitment, movement, and survival of the Pacific halibut stock among all regulatory areas.
+
+The following graphic summarizes the routines and development status of the routines used in the operating model.  It also represent the order of operations used in the operating model.  The general model description will detail each of the routines shown in runScenario, describe the alogrithm and mathematical notation of the model elements.
+\begin{verbatim}
+ * ________________________________________________ *
+ * STATUS LEGEND
+ *    : not implemented yet.
+ *  - : partially implemented
+ *  + : implemented & testing
+ *  • : Good to go! 
+ * ________________________________________________ *
+ * runScenario:                                STATUS
+ *      |- readMSEcontrols                     [-]
+ *      |- initParameters                      [-]
+ *          |- surveyQ                         [ ]
+ *          |- stock-recruitment parameters    [ ]
+ *      |- initMemberVariables                 [-]
+ *      |- conditionReferenceModel             [-]
+ *      |- setRandomVariables                  [-]
+ *      |- | getReferencePointsAndStockStatus  [-]
+ *         | calculateTAC                      [-]
+ *         | allocateTAC                       [-]
+ *         | implementFisheries                [-]
+ *              |- calcSelectivity             [ ]
+ *              |- calcRetentionDiscards       [ ]
+ *              |- calcTotalMortality          [-]
+ *         | calcRelativeAbundance             [-]
+ *         | calcCompositionData               [-]
+ *         | calcEmpiricalWeightAtAge          [-]
+ *         | updateReferenceModel              [-]
+ *         | writeDataFile                     [-]
+ *         | runStockAssessment                [-]
+ *      |- |            
+ *      |- writeSimulationVariables            [-]
+ *      |- calculatePerformanceMetrics         [ ]
+ * ________________________________________________ *
+\end{verbatim}
+
+\subsection{Management Procedure Controls} % (fold)
+\label{sub:management_procedure_controls}
+The management procedure controls is an input file with the extension \texttt{.mpc} that is used to define a management procedure.  The details of a managment procedure include the number of simulation years, what type of harvest control rule to use, and controls that define fishing fleet operations.  All variables with in the simulation framework that can be managed (e.g., size-limits, area's fished, sampling intensity) are defined in the mangament procedure control file.  A unique management procedure is defined by a single \texttt{.mpc} file, and multiple files will generate multiple procedures.
+
+% subsection management_procedure_controls (end)
+
+\subsection{Simulation scenarios} % (fold)
+\label{sub:simulation_scenarios}
+Alternative scenarios representing variables that cannot be affected by manangment (e.g., recruitment variation, changes in growth) are located in a scenario file with the extension \texttt{.scn}.  If you are using the GNU makefiles to run the program, the combinations of scenarios and procedures will be set up for you automatically.  The advantage of using the supplied makefile to automate this process is two fold: 1) simulations are run in parallel over multiple cores, this dramatically improves runtime efficiency, and 2) if you add a new scenario, or procedure, the previous simulations are not re-run, unless you've changed the source code or control files for the scenario combinations. 
+% subsection simulation_scenarios (end)
+
+\subsection{Initializing the operating model} % (fold)
+\label{sub:initializing_the_operating_model}
+The operating model is conditioned on data from the historical reference period and model parameters that may, or may not, have come from the most recent assessment.  Generally, historical assessments are used to parameterize the operating model to best reflect the current state of knowledge. 
+
+% subsection initializing_the_operating_model (end)
+
+% section model_description (end)
