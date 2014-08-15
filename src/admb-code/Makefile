@@ -6,7 +6,7 @@ VPATH = ./ ./lib
 SRCS:=$(wildcard *.cpp *.c *.cc *.cxx )
 
 # Path to ADMB distribution directory
-export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
+export ADMB_HOME=/Users/catarinawor/admb-trunk/build/dist
 
 # Compiler
 CXX:=clang++
