@@ -34,7 +34,7 @@ RELEASE_OBJS:=$(addprefix build/release/,$(addsuffix .o,$(BASEFILES)))
 DEPFILES:=$(addprefix build/deps/,$(addsuffix .d,$(BASEFILES)))
 
 # Default to release build.
-all: $(OUTPUT).cpp release
+all: $(OUTPUT).cpp release debug
 
 $(OUTPUT).cpp: $(OUTPUT).tpl
 	$(ADMB_HOME)/bin/tpl2cpp $(OUTPUT)
