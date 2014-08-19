@@ -1712,7 +1712,7 @@ RUNTIME_SECTION
 
 
 PROCEDURE_SECTION
-	COUT("Ok to here dude");
+	
 	initParameters();
 	
 	calcSelectivities(isel_type);
