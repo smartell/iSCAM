@@ -1,0 +1,57 @@
+Proposed model names for SPC to vote on.
+
+——————————————————————————————————————————————————————————————————————————————————————
+ACRONYM       FULL NAME                                               AUTHOR
+——————————————————————————————————————————————————————————————————————————————————————
+HUBBLE        HUB for halibut, BLE for ensemble approach.             Lauri Sadoris
+PHAT          Pacific Halibut Assessment Tool.                        Steve Barbeaux
+MARTELL 9000  From the tool time show (BINFORD 9000)                  Gregg Williams
+BARN DOOR     B/C halibut were once as big as a barn door.            Chris Johnson
+PHASE         Pacific Halibut Assessment Simulation Evaluation.       James Ianelli
+HISTOP        HIppolgossus STenolepis OPerating model.                Bruce Leaman
+HALPOP        HALibut POPulation.                                     Bruce Leaman
+FGROW         FlatfishGROW                                            Bruce Leaman
+TRUEPOP       B/C we never lie                                        Bruce Leaman
+PMS           wtf!                                                    Robert Tobin
+PHOM          Pacific Halibut Operating model                         Steve Martell
+SEAM          Spatially Explicit Assessment model                     Steve Martell
+HANSOM        Halibut AssessmeNt StOck Management                     Steve Martell
+Threser       like wheat thrsher = harvesting                         Tracee Greenhart
+Sir Mix       (in ref to Sir Mix-A-lots' I like big butts)            Tracee Greenhart
+Becket        ???                                                     Tracee Greenhart
+Gangion       ???                                                     Tracee Greenhart
+Abby          for "dear abby advice" for the SRB & MSAB               Tracee Greenhart
+Dr Phil       wtf!                                                    Tracee Greenhart
+Dorothy       -first halibut charter vessel name                      Tracee Greenhart
+Scandia       -first halibut charter vessel name                      Tracee Greenhart
+Gordon/Jensen First halibut fisherman in Petersburg pro conservation. Tracee Greenhart 
+HERMAN        Halibut Ensemble Resource Modelling ANalytics           Tom Kong
+GMAB          Give Me A Break                                         Lara Erickson
+WONKA         When Overthinking Never Knows All                       Lara Erickson
+HOMSPA    Halibut Operating Model Strategic Planning Alternatives     Heather Gilroy
+HOM-AMS   Halibut Operating Model - Alternative Management Strategies Heather Gilroy
+HOM-4-MO  Halibut Operating Model for Managemnt Objectives            Heather Gilroy
+SAM           Stock Assessment Model                                  Melissa Knapp
+MOMSE         Modus Operandus Management Strategy Evaluator           Claude Dykstra
+HOMSE         Halibut Operating Model/Management Strategy Evalution   Claude Dykstra
+HOME          Halibut Operating Model Evaluator                       Claude Dykstra
+PHOMSE        Pacific Halibtu Operating Model Strategies Evaluator    Claude Dykstra
+CAMIS         Catch at Age Model Integrated Stats                     Claude Dykstra
+CAMSI         Catch at Age Model Statistically Integrated             Claude Dykstra
+HISCAM        Halibut Integrated Statistical Catch Age Model          Claude Dykstra
+PHISCAM       Pacific Halibut Integrated Statistical Catch Age Model  Claude Dykstra
+iSMAC         Integrated Statistical Model Age at Catch               Claude Dykstra
+BUTTY         Big Ugly Tremendous Treatment Yuck                      Steve Kaimmer
+HOTBUTS       Halibut Overpowering Task By Underpaid Toiling Scientist Kaimer
+BUTCRACK      wtf!                                                     Kaimer
+SAUCE (noun)  Statistical Assessment Using Catch age Estimators        Claude & Aaron
+SAUCY (adj)   Statistical Assessment Using Catch and Year class        Claude & Aaron
+——————————————————————————————————————————————————————————————————————————————————————
+
+Current names:
+iSCAM         Integrated Statistical Catch Age Model (Assessment model) Steve Martell
+MILKA         No Acronym, just a random name.                           Catarina Wor
+
+
+
+

@@ -5,23 +5,32 @@
 ##		mcmc:  -copy executable and run in mcmc mode and mceval
 ##		retro: -copy executable and run  retrospective analysis
 EXEC=iscam
-prefix=../../../../src/admb-code/build/
+prefix=../../../../src/admb-code
 DAT=RUN.dat
 CTL=Halibut2014
 ARG=
 MCFLAG=-mcmc 10000 -mcsave 100 -nosdmcmc
 NR=4
 
-ifdef DEBUG
-  DIST=$(prefix)/debug/iscam
+# ifdef DEBUG
+#   DIST=$(prefix)/debug/iscam
+# else
+#   DIST=$(prefix)/release/iscam
+# endif
+
+ifeq ($(OPT),TRUE)
+	DIST=$(prefix)/build/release/iscam
 else
-  DIST=$(prefix)/release/iscam
+	DIST=$(prefix)/build/debug/iscam
 endif
 
 all: $(EXEC) $(EXEC).rep
 
-$(EXEC): $(DIST)
-	cp $(DIST) $@
+$(EXEC): $(prefix)$EXEC.tpl $(DIST)
+	ln -sf $(DIST) $@
+
+$(prefix)$EXEC.tpl:
+	$(MAKE) --directory=$(prefix)
 
 $(EXEC).rep: $(DIST) $(CTL).ctl
 	./$(EXEC) -ind $(DAT) $(ARG)
@@ -84,7 +93,7 @@ c = $(lastword $(subst /, ,$*))
 $(msedirs): mse_%:
 	@mkdir -p $@
 	@cp Makefile $@
-	@cd $@; gsed -i 's/..\/..\/..\/dist/..\/..\/..\/..\/..\/dist/g' Makefile
+	@cd $@; gsed -i 's/..\/..\/..\/src\/admb-code\/build/..\/..\/..\/..\/..\/src\/admb-code\/build/g' Makefile
 	@cd $@; gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
 	@cd $@; echo ../../$(CTL).dat > RUN.dat
 	@cd $@; echo ../../$(CTL).ctl >>RUN.dat
@@ -135,11 +144,15 @@ cleanmse:
 # |
 
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
+SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
 
 allSims.Rdata: simdone
 	-@echo $(COLLECTALL) | R --vanilla --slave
 
-collect: allSims.Rdata
+MSE.Rdata: 
+	-@echo $(SAVEMSEDF)  | R --vanilla --slave
+
+collect: allSims.Rdata MSE.Rdata
 
 # target: help - Display callable targets.
 help:
