@@ -1205,6 +1205,30 @@ DATA_SECTION
 		}
 	END_CALCS
 	
+	// |--------------------------------------------------|
+	// | OPTIONS FOR TIME-VARYING NATURAL MORTALITY RATES |
+	// |--------------------------------------------------|
+	int nMdev;
+	init_int m_type;
+	init_int Mdev_phz;
+	init_number m_stdev;
+	init_int m_nNodes;
+	init_ivector m_nodeyear(1,m_nNodes);
+	LOC_CALCS
+		switch( m_type )
+		{
+			case 0:
+				nMdev = 0; 
+				Mdev_phz = -1;
+			break;
+			case 1: 
+				nMdev = nyr-syr; 
+			break;
+			case 2:
+				nMdev = m_nNodes;
+			break;
+		}
+	END_CALCS
 
 
 
@@ -1519,8 +1543,8 @@ PARAMETER_SECTION
 	!! int m_dev_phz = -1;
 	!!     m_dev_phz = d_iscamCntrl(10);
 	!! int  n_m_devs = d_iscamCntrl(12);
-	init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
-	
+	//init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
+	init_bounded_vector log_m_nodes(1,m_nNodes,-5.0,5.0,Mdev_phz);
 
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
@@ -1685,11 +1709,11 @@ PRELIMINARY_CALCS_SECTION
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
 
-    nf=0;
-  	if( testMSY )
-  	{
-  		testMSYxls();
-  	}
+  nf=0;
+	if( testMSY )
+	{
+		testMSYxls();
+	}
 	if( SimFlag ) 
 	{
 		initParameters();
@@ -1702,6 +1726,18 @@ PRELIMINARY_CALCS_SECTION
 		generate_new_files();	
 	}
 	
+	// CATCH POTENTIAL ERRORS
+	if( min(m_nodeyear) < syr || max(m_nodeyear) > nyr )
+	{
+		cerr<<"Nodes for natural mortality are outside the model dimensions."<<endl;
+		COUT(min(m_nodeyear));
+		COUT(syr);
+		COUT(max(m_nodeyear));
+		COUT(nyr);
+		exit(1);
+	}
+
+
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
 	
 
@@ -2271,13 +2307,35 @@ FUNCTION calcTotalMortality
 		M(ig) = m( pntr_gs(g,h) );
 		if( active( log_m_nodes) )
 		{
-			int nodes = size_count(log_m_nodes);
-			dvector im(1,nodes);
-			dvector fm(syr+1,nyr);
-			im.fill_seqadd(0,1./(nodes-1));
-			fm.fill_seqadd(0,1./(nyr-syr));
-			vcubic_spline_function m_spline(im,log_m_nodes);
-			log_m_devs = m_spline( fm );
+			//int nodes = size_count(log_m_nodes);
+			//dvector im(1,nodes);
+			//dvector fm(syr+1,nyr);
+			//im.fill_seqadd(0,1./(nodes-1));
+			//fm.fill_seqadd(0,1./(nyr-syr));
+			//vcubic_spline_function m_spline(im,log_m_nodes);
+			//log_m_devs = m_spline( fm );
+
+			switch( m_type )
+			{
+				case 0: 			// constant natural mortality
+					log_m_devs = 0;
+				break;
+
+				case 1:
+					log_m_devs = log_m_nodes.shift(syr+1);
+				break;
+
+				case 2:
+					dvector iyr = (m_nodeyear - syr) / (nyr-syr);
+					dvector jyr(syr+1,nyr);
+					jyr.fill_seqadd(0,1./(nyr-syr-1));
+					vcubic_spline_function vcsf(iyr,log_m_nodes);
+					log_m_devs = vcsf(jyr);
+				break;
+
+			}
+
+
 		}
 
 		for(i=syr+1; i<=nyr; i++)
@@ -2287,6 +2345,43 @@ FUNCTION calcTotalMortality
 		// TODO fix for reference point calculations
 		// m_bar = mean( M_tot.sub(pf_cntrl(1),pf_cntrl(2)) );
 	}
+	// Add random walk to natural mortality rate.
+//	if (active( m_dev ))
+//	{
+//		dvar_vector delta(syr+1,nyr);
+//		delta.initialize();
+//
+//		switch( m_type )
+//		{
+//			case 0:  // constant natural mortality
+//				delta = 0;
+//			break;
+//
+//			case 1:  // random walk in natural mortality
+//				delta = m_dev.shift(syr+1);
+//			break;
+//
+//			case 2:  // cubic splines
+//				dvector iyr = (m_nodeyear -syr) / (nyr-syr);
+//				dvector jyr(syr+1,nyr);
+//				jyr.fill_seqadd(0,1./(nyr-syr-1));
+//				vcubic_spline_function csf(iyr,m_dev);
+//				delta = csf(jyr);
+//			break;
+//		}
+//
+//		// Update M by year.
+//		for(int h = 1; h <= nsex; h++ )
+//		{
+//			for(int i = syr+1; i <= nyr; i++ )
+//			{
+//				M(h)(i)  = M(h)(i-1) * mfexp(delta(i));
+//			}
+//		}
+//	}
+
+
+
 
 	// |---------------------------------------------------------------------------------|
 	// | TOTAL MORTALITY
@@ -3371,7 +3466,7 @@ FUNCTION calcObjectiveFunction
 	{
 		double std_mdev = d_iscamCntrl(11);
 		dvar_vector fd_mdevs=first_difference(log_m_devs);
-		pvec(2)  = dnorm(fd_mdevs,std_mdev);
+		pvec(2)  = dnorm(fd_mdevs,m_stdev);
 		pvec(2) += 0.5*norm2(log_m_nodes);
 	}
 	
