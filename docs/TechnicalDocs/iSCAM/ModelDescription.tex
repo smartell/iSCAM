@@ -3,7 +3,7 @@
 \label{sec:model_description}
 
 
-The section contains the documentation in mathematical form of the underlying age-structured model, and its steady state version that is used to calculate reference points, the observation models used in predicting observations, and the components of the objective function that formulate the statistical criterion (i.e., the objective function) that is used to estimate model parameters.  All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model.  The assessment model (ISCAM) was implemented in AD Model Builder version 11.1 \citep{otterResearch,ADMB2009}.  
+The section contains the documentation in mathematical form of the underlying age-structured model, and its steady state version that is used to calculate reference points, the observation models used in predicting observations, and the components of the objective function that formulate the statistical criterion (i.e., the objective function) that is used to estimate model parameters.  All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model.  The assessment model (ISCAM) was implemented in AD Model Builder version 11.1 \citep{fournier2011ad}.  
 
 \subsection{List of symbols} % (fold)
 \label{sub:list_of_symbols}
@@ -16,7 +16,7 @@ A documented list of symbols for the program is found in Table~\ref{tab:list_of_
 % List of symbols
 \begin{center}
 \begin{longtable}{lll}
-\caption[list of symbols]{A list of symbols, constants and description for variables used in \iscam.} 
+\caption[list of symbols]{A list of symbols, constants, and description for  model variables.} 
 \label{tab:list_of_symbols} \tabularnewline
 
 \hline 
@@ -44,15 +44,21 @@ A documented list of symbols for the program is found in Table~\ref{tab:list_of_
 \endlastfoot
 
 \multicolumn{3}{l}{\underline{Indexes}}\\
-a & & index for age\\
-t & & index for year\\
-k & & index for gear\\
+f & & index for area  \\      
+g & & index for group \\      
+h & & index for sex   \\      
+i & & index for year  \\      
+j & & index for age   \\      
+k & & index for gear  \\      
 \multicolumn{3}{l}{\underline{Model dimensions}}\\
-$\acute{a}, A$  & 2, 10         & youngest and oldest age class ($A$ is a plus group)\\
-$\acute{t}, T$  & 1951, 2010    & first and last year of catch data\\
-$K$             & 5             & Number of gears including survey gears\\
+$F$ & 1 & number of model areas\\
+$G$ & 1 & number of biological stocks \\
+$H$ & 2 & number of sexes \\
+$\acute{i}, I$  & 1888, 2014    & first and last year of catch data\\
+$\acute{j}, J$  & 0, 30         & youngest and oldest age class ($A$ is a plus group)\\
+$K$             & 6             & number of gears including survey gears\\
 \multicolumn{3}{l}{\underline{Observations (data)}}\\
-$C_{k,t}$       & & catch in weight by gear $k$ in year $t$\\
+$C_{f,g,h,i,k}$       & & catch by area, stock, sex, year, and gear.\\
 $I_{k,t}$       & & relative abundance index for gear $k$ in year $t$\\
 $p_{k,t,a}$     & & observed proportion-at-age $a$ in year $t$ for gear $k$\\
 \multicolumn{3}{l}{\underline{Estimated parameters}}\\
@@ -108,7 +114,7 @@ and the density-dependent term is given by:
 \[
 \beta =\begin{cases}
     \dfrac{(\kappa-1)}{R_o\phi_E}, & \mbox{Beverton-Holt}\\[5ex]
-    {\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}} & \mbox{Ricker}
+    {\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}}, & \mbox{Ricker}
 \end{cases} 
 \]
 which simplifies to \eqref{T2.13}.
@@ -118,7 +124,7 @@ which simplifies to \eqref{T2.13}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{tablehere}
+\begin{table}
   %\centering
 \caption{Steady-state age-structured model assuming unequal
 vulnerability-at-age, age-specific natural mortality, age-specific
@@ -169,7 +175,7 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
         \hline \hline \nonumber
     \end{gather}
     \normalEq
-\end{tablehere}
+\end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
