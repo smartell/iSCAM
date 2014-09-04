@@ -1214,21 +1214,7 @@ DATA_SECTION
 	init_number m_stdev;
 	init_int m_nNodes;
 	init_ivector m_nodeyear(1,m_nNodes);
-	LOC_CALCS
-		switch( m_type )
-		{
-			case 0:
-				nMdev = 0; 
-				Mdev_phz = -1;
-			break;
-			case 1: 
-				nMdev = nyr-syr; 
-			break;
-			case 2:
-				nMdev = m_nNodes;
-			break;
-		}
-	END_CALCS
+	
 
 
 
@@ -1390,6 +1376,23 @@ DATA_SECTION
 			}
 		}
 	END_CALCS
+
+	LOC_CALCS
+		switch( m_type )
+		{
+			case 0:
+				nMdev = 0; 
+				Mdev_phz = -1;
+			break;
+			case 1: 
+				nMdev = nyr-syr; 
+			break;
+			case 2:
+				nMdev = m_nNodes;
+			break;
+		}
+	END_CALCS
+	
 	!! COUT((n_saa));
 	!! COUT((n_naa));
 
@@ -1544,7 +1547,7 @@ PARAMETER_SECTION
 	!!     m_dev_phz = d_iscamCntrl(10);
 	!! int  n_m_devs = d_iscamCntrl(12);
 	//init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
-	init_bounded_vector log_m_nodes(1,m_nNodes,-5.0,5.0,Mdev_phz);
+	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
 
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
@@ -2314,7 +2317,6 @@ FUNCTION calcTotalMortality
 			//fm.fill_seqadd(0,1./(nyr-syr));
 			//vcubic_spline_function m_spline(im,log_m_nodes);
 			//log_m_devs = m_spline( fm );
-
 			switch( m_type )
 			{
 				case 0: 			// constant natural mortality
@@ -2322,6 +2324,9 @@ FUNCTION calcTotalMortality
 				break;
 
 				case 1:
+			COUT("OK DUDE")
+					COUT(log_m_devs.indexmax());
+					COUT(log_m_nodes.shift(syr+1).indexmax());
 					log_m_devs = log_m_nodes.shift(syr+1);
 				break;
 
@@ -2329,6 +2334,7 @@ FUNCTION calcTotalMortality
 					dvector iyr = (m_nodeyear - syr) / (nyr-syr);
 					dvector jyr(syr+1,nyr);
 					jyr.fill_seqadd(0,1./(nyr-syr-1));
+					COUT(jyr);
 					vcubic_spline_function vcsf(iyr,log_m_nodes);
 					log_m_devs = vcsf(jyr);
 				break;
