@@ -2,28 +2,42 @@
 \section{Model Description} % (fold)
 \label{sec:model_description}
 
+\subsection{General overview} % (fold)
+\label{sub:general_overview}
 
-The section contains the documentation in mathematical form of the underlying age-structured model, and its steady state version that is used to calculate reference points, the observation models used in predicting observations, and the components of the objective function that formulate the statistical criterion (i.e., the objective function) that is used to estimate model parameters.  All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model.  The assessment model (ISCAM) was implemented in AD Model Builder version 11.1 \citep{fournier2011ad}.  
+
+As an overview of the model description, there are four major components to this integrated assessment model:
+\begin{itemize}
+    \item Input data,
+    \item analytical methods for fishery and stock dynamics,
+    \item statistical criterion for estimating model parameters,
+    \item and model outputs including reference points and decision tables.
+\end{itemize}
+
+First, this section provides a list of symbols use to annotate various model compoents.  It then goes onto to describe the anaytical methods, followed by the statistical components (negative loglikelihoods, penalties or prior densities). Lastly, outputs based on maximum likleihood estimates or posterior samples are then presented.  These outputs include reference points, and quantities that are necessary in constructing a decision table.
+
+ All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model.  The assessment model is implemented in the C++ programming language and uses AD Model Builder version 11.1 \citep{fournier2011ad} as the primary tool for non-linear parameter estimation and numerically integrating the joint posterior distribution.  
 
 \subsection{List of symbols} % (fold)
 \label{sub:list_of_symbols}
 A documented list of symbols for the program is found in Table~\ref{tab:list_of_symbols} on page~\pageref{tab:list_of_symbols}.
 
-% subsection list_of_symbols (end)
 
+% subsection general_overview (end)
 
 
 % List of symbols
 \begin{center}
 \begin{longtable}{lll}
+
 \caption[list of symbols]{A list of symbols, constants, and description for  model variables.} 
 \label{tab:list_of_symbols} \tabularnewline
 
 \hline 
 \multicolumn{1}{l}{\textbf{Symbol}} & 
 \multicolumn{1}{l}{\textbf{Value}} & 
-\multicolumn{1}{l}{\textbf{Description}} \tabularnewline
-\hline 
+\multicolumn{1}{l}{\textbf{Description}} \\
+\hline\\[-2ex]
 \endfirsthead
 
 \multicolumn{3}{l}%
@@ -31,9 +45,9 @@ A documented list of symbols for the program is found in Table~\ref{tab:list_of_
 \tabularnewline
 \hline 
 \multicolumn{1}{l}{\textbf{Symbol}} & 
-\multicolumn{1}{l}{\textbf{Value}} & 
+\multicolumn{1}{l}{\textbf{Constraints}} & 
 \multicolumn{1}{l}{\textbf{Description}} \tabularnewline
-\hline 
+\hline \\[-2ex]
 \endhead
 
 \hline \multicolumn{3}{l}{{Continued on next page}} \tabularnewline
@@ -44,33 +58,34 @@ A documented list of symbols for the program is found in Table~\ref{tab:list_of_
 \endlastfoot
 
 \multicolumn{3}{l}{\underline{Indexes}}\\
-f & & index for area  \\      
-g & & index for group \\      
-h & & index for sex   \\      
-i & & index for year  \\      
-j & & index for age   \\      
-k & & index for gear  \\      
+$f$ & & index for area  \\      
+$g$ & & index for group \\      
+$h$ & & index for sex   \\      
+$i$ & & index for year  \\      
+$j$ & & index for age   \\      
+$k$ & & index for gear  \\      
 \multicolumn{3}{l}{\underline{Model dimensions}}\\
-$F$ & 1 & number of model areas\\
-$G$ & 1 & number of biological stocks \\
-$H$ & 2 & number of sexes \\
-$\acute{i}, I$  & 1888, 2014    & first and last year of catch data\\
-$\acute{j}, J$  & 0, 30         & youngest and oldest age class ($A$ is a plus group)\\
-$K$             & 6             & number of gears including survey gears\\
+$F$ &  & number of model areas\\
+$G$ &  & number of biological stocks \\
+$H$ &  & number of sexes \\
+$I$ &  & number of years\\
+$J$ &  & number of age-classes ($J$ is a plus group age)\\
+$K$ &  & number of gears (fisheries dependent \& independent)\\
 \multicolumn{3}{l}{\underline{Observations (data)}}\\
 $C_{f,g,h,i,k}$       & & catch by area, stock, sex, year, and gear.\\
-$I_{k,t}$       & & relative abundance index for gear $k$ in year $t$\\
-$p_{k,t,a}$     & & observed proportion-at-age $a$ in year $t$ for gear $k$\\
+$I_{k,t}$       & & relative abundance index for gear $k$ in year $t$.\\
+$p_{k,t,a}$     & & observed proportion-at-age $a$ in year $t$ for gear $k$.\\
+$w_{f,g,h,i}$   & & empirical weight-at-age data.\\
 \multicolumn{3}{l}{\underline{Estimated parameters}}\\
-$R_o$               & & Age-$\acute{a}$ recruits in unfished conditions\\
-$\kappa$            & & recruitment compensation\\
-$M$                 & & instantaneous natural mortality rate \\
-$\bar{R}$           & & average age-$\acute{a}$ recruitment from year $\acute{t}$ to $T$\\
-$\ddot{R}$          & & average age-$\acute{a}$ recruitment in year $\acute{t}-1$\\
-$\rho$              & & fraction of the total variance associated with observation error\\
-$\vartheta$         & & total precision (inverse of variance) of the total error\\
+$R_o$               & $> 0$ & Age-$\acute{a}$ recruits in unfished conditions\\
+$\kappa$            & $> 1$ & recruitment compensation\\
+$M$                 & $> 0$ & instantaneous natural mortality rate \\
+$\bar{R}$           & $> 0$& average age-$\acute{a}$ recruitment from year $\acute{t}$ to $T$\\
+$\ddot{R}$          & $> 0$& average age-$\acute{a}$ recruitment in year $\acute{t}-1$\\
+$\rho$              & $0<\rho<1$& fraction of the total variance associated with observation error\\
+$\vartheta$         & $> 0$& total precision (inverse of variance) of the total error\\
 $\vec{\gamma}_k$    & & vector of selectivity parameters for gear $k$\\
-$\digamma_{k,t}$    & & logarithm of the instantaneous fishing mortality for gear $k$ in year $t$\\
+$\digamma_{k,t}$    & & logarithm of the fishing mortality for gear $k$ in year $t$\\
 $\ddot{\omega}_a$   & & age-$\acute{a}$ deviates from $\ddot{R}$ for year $\acute{t}$\\
 $\omega_t$          & & age-$\acute{a}$ deviates from $\bar{R}$ for years $\acute{t}$ to $T$\\
 $\varphi_t$         & & logarithm of annual change in natural mortality rate\\
@@ -86,39 +101,53 @@ $\eta_t$        &   & residual error in predicted catch\\
 
 \end{longtable}
 \end{center}
+% subsection list_of_symbols (end)
 
 
-\subsection{Analytic methods: equilibrium considerations} % (fold)
-\label{sub:analytic_methods_equilibrium_considerations}
+\subsection{Input data} % (fold)
+\label{sub:input_data}
+    The input data for the assessment consists of 6 major components: 1) model dimensions, 2) age-schedule information, 3) historical removals, bycatch, and discards, 4) relative abundance data, 5) age or size composition information, and 6) empirical observations on mean weight-at-age.  The resolution of the data is as fine as the model dimensions.  For example, if there are multiple areas defined in the model dimentions (i.e., $F>1$), then removal data will indicate what area the catch was removed.  It is also possible to have a data set that spans more than one dimension.  For example it is possible to create two-sex model without knowning the sex ratio of the catch.
+
+    \subsubsection{Model dimensions} % (fold)
+    \label{ssub:model_dimensions}
+        The model has six dimensions that define the number of areas ($F$), the number of biological stocks ($G$), the number of sexes ($H$), the number of years ($I$), the number of age categories ($J$), and the number of fishing and sampling gears ($K$).  Setting these dimensions ultimately determines the resolution of the input data, and the minimum number of parameters that are allocated to the problem.
+    % subsubsection model_dimensions (end) 
+    \subsubsection{Age-schedule information} % (fold)
+    \label{ssub:age_schedule_information}
+        Absent empirical size-age age information, growth parameters for the von Bertalanffy growth model are required to predict the mean length-at-age in the model, as well as, allometric relationships to translate mean length to mean weight-at-age.  The other critical piece of information is the maturity-at-age schedules.  Maturity-at-age is either a parametric function based on the parameters $\dot{a}$ and $\dot{\gamma}$ and a logistic curve (see equation \ref{T2.7}), or a vector of proportion mature-at-age is supplied.  It is assumed that fecundity-at-age is proportional to the mean weight-at-age (this assumption is reasonable for Osteichthyes, but tenuous for Chondrichthyes).
+    % subsubsection age_schedule_information (end)
+    \subsubsection{Historical removals} % (fold)
+    \label{ssub:historical_removals}
+        The model is fit to the historical removal data (e.g., catch and discards from all fisheries combined).  Catch data may be in units of number, or weight, or even refer to the removal of  roe in spawn on kelp type fisheries.  For each catch observation, the gear, area, and stock it was harvested from must be specified.  Also sex information (no sex, male or female) must also be specified.  The catch is assumed to be measured with error and the CV in the errors must be specified.
+
+        % If the CV=0, could use get_F to solve for the catch.
+
+        % ## Year gear area group sex type value
+           % 1888    1      1     1    0   1  1.466   
+    % subsubsection historical_removals (end)
+    \subsubsection{Relative abundance} % (fold)
+    \label{ssub:relative_abundance}
+        Trend information from commercial CPUE indices and survey information are a key piece of information for fitting the models.  For each entry the area, stock, and gear type must defined. In addition, information on sex must also be specified.  The timing of the survey relative to the fraction of total removals removed by the fishery is also required.  Lastly the relative weights of each observation must be specified, where 0 would indicate no weight or ignore the observation.
+    % subsubsection relative_abundance (end)
+    \subsubsection{Composition information} % (fold)
+    \label{ssub:composition_information}
+        The model can be fit to both size composition information or age composition information.  In the case of age composition data, the proportions-at-age sampled by each gear, in a given year, area, and stock must be specified.  The data can be entered in as proportions or numbers, the latter is necessary if fitting the data assuming multinomial sampling, where the sum of the numbers is the assumed effective sample size.
+    % subsubsection composition_information (end)
+    \subsubsection{Empirical weight-at-age data} % (fold)
+    \label{ssub:empirical_weight_at_age_data}
+        It is not uncommon for the mean size-at-age, or weight-at-age, to change over time.  The mean weight-at-age data is used to convert numbers-at-age to biomass in the model and also to determine the spawning stock biomass when multiplied by the proportion mature-at-age.  Rather than predict the changes in weight-at-age and fit to empirical observations, the empirical data (if available) can be used directly to determine biomass related measures.  In cases where there are missing years of data, the data can be backfilled using a -ve year input; otherwise, missing data will be filled in using the mean weight-at-age based on the growth curve from the age-schedule information.
+    % subsubsection empirical_weight_at_age_data (end)
+
+% subsection input_data (end)
+
+\subsection{Analytic methods} % (fold)
+\label{sub:analytical_methods}
 
 
 \subsubsection{A steady-state age-structured model} % (fold)
 \label{ssub:a_steady_state_age_structured_model}
 
-% subsubsection a_steady_state_age_structured_model (end)
-
-For the steady-state conditions represented in Table~\ref{tab:equilibrium_model}, we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown and would eventually be estimated by fitting \iscam\ to data.  For a given set of growth parameters and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow von Bertalanffy \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
-
-Survivorship for unfished and fished populations is defined by \eqref{T2.8} and \eqref{T2.9}, respectively.  It is assumed that all individuals ages $A$ and older (i.e., the plus group) have the same total mortality rate.  The incidence functions refer to the life-time or per-recruit quantities such as spawning biomass per recruit ($\phi_E$) or vulnerable biomass per recruit ($\phi_b$).  Note that upper and lower case subscripts denote unfished and fished conditions, respectively.  Spawning biomass per recruit is given by \eqref{T2.10}, the vulnerable biomass per recruit is given by \eqref{T2.11} and the per recruit yield to the fishery is given by \eqref{T2.11b}.  Unfished recruitment is given by \eqref{T2.12} and the steady-state equilibrium recruitment  for a given fishing mortality rate $F_e$ is given by \eqref{T2.13}.  Note that in \eqref{T2.13} we assume that recruitment follows either a  Beverton-Holt or a Ricker model in the forms:
-\[
-R_e=\begin{cases}
-    \dfrac{s_o R_e \phi_e}{1+\beta R_e \phi_e},& \mbox{Beverton-Holt}\\[5ex]
-    s_o R_e \phi_e \exp(-\beta R_e \phi_e)& \mbox{Ricker}
-\end{cases}
-\]
-where the maximum juvenile survival rate is the same for both forms of the recruitment model and is given by:
-\[
-s_o = \kappa/\phi_E,
-\]
-and the density-dependent term is given by:
-\[
-\beta =\begin{cases}
-    \dfrac{(\kappa-1)}{R_o\phi_E}, & \mbox{Beverton-Holt}\\[5ex]
-    {\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}}, & \mbox{Ricker}
-\end{cases} 
-\]
-which simplifies to \eqref{T2.13}.
- The equilibrium yield for a given fishing mortality rate is \eqref{T2.14}.  These steady-state conditions are critical for determining various reference points such as \fmsy\ and \bmsy.  
+The following description of the steady-state, or equilibrium, age-structured model ignores subscripts associated with sex, area and group for the purposes of clarity. For the age-structured model represented in Table~\ref{tab:equilibrium_model}, we assume the parameter vector $\Theta$ in \eqref{T2.1} is unknown and would eventually be estimated by fitting \iscam\ to data.  For a given set of growth parameters and maturity-at-age parameters defined by \eqref{T2.3}, growth is assumed to follow von Bertalanffy \eqref{T2.4}, mean weight-at-age is given by the allometric relationship in \eqref{T2.5}, and the age-specific vulnerability is given by a logistic function \eqref{T2.6}.  Note, however, there are alternative selectivity functions implemented in \iscam, the logistic function used here is simply for demonstration purposes.  Mean fecundity-at-age is assumed to be proportional to the mean weight-at-age of mature fish, where maturity at age is specified by the parameters $\dot{a}$ and $\dot{\gamma}$ for the logistic function.
 
 
 
@@ -179,8 +208,31 @@ fecundity and Beverton-Holt type recruitment.}\label{tab:equilibrium_model}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
+Survivorship for unfished and fished populations is defined by \eqref{T2.8} and \eqref{T2.9}, respectively.  It is assumed that all individuals ages $A$ and older (i.e., the plus group) have the same total mortality rate.  The incidence functions refer to the life-time or per-recruit quantities such as spawning biomass per recruit ($\phi_E$) or vulnerable biomass per recruit ($\phi_b$).  Note that upper and lower case subscripts denote unfished and fished conditions, respectively.  Spawning biomass per recruit is given by \eqref{T2.10}, the vulnerable biomass per recruit is given by \eqref{T2.11} and the per recruit yield to the fishery is given by \eqref{T2.11b}.  Unfished recruitment is given by \eqref{T2.12} and the steady-state equilibrium recruitment  for a given fishing mortality rate $F_e$ is given by \eqref{T2.13}.  Note that in \eqref{T2.13} we assume that recruitment follows either a  Beverton-Holt or a Ricker model in the forms:
+\[
+R_e=\begin{cases}
+    \dfrac{s_o R_e \phi_e}{1+\beta R_e \phi_e},& \mbox{Beverton-Holt}\\[5ex]
+    s_o R_e \phi_e \exp(-\beta R_e \phi_e)& \mbox{Ricker}
+\end{cases}
+\]
+where the maximum juvenile survival rate is the same for both forms of the recruitment model and is given by:
+\[
+s_o = \kappa/\phi_E,
+\]
+and the density-dependent term is given by:
+\[
+\beta =\begin{cases}
+    \dfrac{(\kappa-1)}{R_o\phi_E}, & \mbox{Beverton-Holt}\\[5ex]
+    {\dfrac {\ln  \left( \kappa \right) }{R_{{o}}\phi_{{E}}}}, & \mbox{Ricker}
+\end{cases} 
+\]
+which simplifies to \eqref{T2.13}.
+ The equilibrium yield for a given fishing mortality rate is \eqref{T2.14}.  These steady-state conditions are critical for determining various reference points such as \fmsy\ and \bmsy.  
 
-% subsection sub:analytic_methods_equilibrium_considerations (end)
+% subsubsection a_steady_state_age_structured_model (end)
+
+
+
 %\input{ModelAPI/msyBasedReferencePoints.tex}
 
 
@@ -227,8 +279,8 @@ and for the Ricker model this is given by:
         \begin{split}
         \Theta&= 
                 (R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},%\bar{F}_k,
-                \digamma_{k,t},\\
-        &\quad \{\omega_t\}_{t=1-A}^{t=T},
+                \digamma_{k,t},
+                \{\omega_t\}_{t=1-A}^{t=T},
                 \{\varphi_t \}_{t=2}^T)
     \end{split} \label{T4.1}\\
         \sigma^2&=\rho /\vartheta^2, \quad
@@ -459,8 +511,7 @@ where $s_o$ is the maximum juvenile survival rate, and $\beta$ is the density ef
 
 
 % subsection analytic_methods_state_dynamics (end)
-% section model_documentation (end)
-% \clearpage
+% subsection sub:analytical_methods (end)
 
 
 % section model_description (end)

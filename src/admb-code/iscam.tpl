@@ -532,7 +532,7 @@ DATA_SECTION
 	// | - d3_Ct     -> An array of observed catch in group(ig) year (row) by gear (col)
 	// | - [?] - TODO: fix special case where nsex==2 and catch sex = 0 in catch array.
 	init_int nCtNobs;
-	init_matrix dCatchData(1,nCtNobs,1,7);
+	init_matrix dCatchData(1,nCtNobs,1,8);
 	3darray d3_Ct(1,n_ags,syr,nyr,1,ngear);
 
 	int ft_count;
@@ -1392,7 +1392,7 @@ DATA_SECTION
 			break;
 		}
 	END_CALCS
-	
+
 	!! COUT((n_saa));
 	!! COUT((n_naa));
 
