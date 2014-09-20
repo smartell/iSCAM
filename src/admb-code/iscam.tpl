@@ -5347,6 +5347,7 @@ GLOBALS_SECTION
 	#undef NA
 	#define NA -99.0
 
+	#include <OpenGL/gl.h>
 	#include <admodel.h>
 	#include <time.h>
 
