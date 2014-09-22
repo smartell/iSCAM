@@ -99,7 +99,7 @@
 ## Number of nodes for cubic spline
   6
 ## Year position of the knots (vector must be equal to the number of nodes)
-  1988 1992 1995 2001 2002 2013
+  1996 1998 1999 2001 2002 2013
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ##
 ##
@@ -133,7 +133,7 @@
 0.1       # 11 -DEPRECATED std in deviations for natural mortality 
 12        # 12 -DEPRECATED number of estimated nodes for deviations in natural mortality
 0.00      # 13 -fraction of total mortality that takes place prior to spawning
-100       # 14 -number of perspective years to start assessment at.
+108       # 14 -number of perspective years to start assessment at.
 0         # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##

@@ -15,7 +15,7 @@ require(reshape2)
 	{
 		it_hat <- na.omit(as.vector(t(M[[i]]$it_hat)))
 		it     <- M[[i]]$d3_survey_data[,2]
-		sig<- M[[i]]$sig
+		sig  	 <- M[[i]]$sig
 		norm_it_wt <- na.omit(as.vector(t(M[[i]]$it_wt)))
 		#fit <- M[[i]]$fit
 		#rho <- fit$est[fit$names=="theta[6]"]

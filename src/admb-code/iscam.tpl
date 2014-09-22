@@ -1545,7 +1545,7 @@ PARAMETER_SECTION
 	
 	!! int m_dev_phz = -1;
 	!!     m_dev_phz = d_iscamCntrl(10);
-	!! int  n_m_devs = d_iscamCntrl(12);
+	//!! int  n_m_devs = d_iscamCntrl(12);
 	//init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
 
@@ -3470,7 +3470,7 @@ FUNCTION calcObjectiveFunction
 	
 	if(active(log_m_nodes))
 	{
-		double std_mdev = d_iscamCntrl(11);
+		// double std_mdev = d_iscamCntrl(11);
 		dvar_vector fd_mdevs=first_difference(log_m_devs);
 		pvec(2)  = dnorm(fd_mdevs,m_stdev);
 		pvec(2) += 0.5*norm2(log_m_nodes);
