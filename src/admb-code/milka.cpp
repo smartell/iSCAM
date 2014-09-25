@@ -337,7 +337,7 @@ void OperatingModel::initParameters()
     }
 
     
-    //cout<<"finished init parameters"<<endl;
+    cout<<"finished init parameters"<<endl;
 }
 
 
@@ -426,7 +426,7 @@ void OperatingModel::initMemberVariables()
     }
 
 
-    //cout<<"finished init member variables"<<endl;
+    cout<<"finished init member variables"<<endl;
 
 }
 
@@ -626,7 +626,7 @@ void OperatingModel::calculateTAC()
     // Todo: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
     // Working here, need to implement the Baranov
     // Catch equation to calculate the m_dTAC for group g.
-    cout<<"I'm Here "<<endl;
+    //cout<<"I'm Here "<<endl;
     ba.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
     {
@@ -635,7 +635,7 @@ void OperatingModel::calculateTAC()
         //int h = n_sex(ig);
 
         va  = exp(m_est_log_sel(ig));
-        cout<<"And made it to here"<<endl;
+        //cout<<"And made it to here"<<endl;
         ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
 
         for( k = 1; k <= nfleet; k++ )
@@ -675,6 +675,7 @@ void OperatingModel::allocateTAC(const int& iyr)
                     m_dCatchData(irow,5) = h;
                     m_dCatchData(irow,6) = 1;  //TODO: Fix this catch type
                     m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
+
                 }
                 if(h)
                 {   
@@ -762,6 +763,7 @@ void OperatingModel::implementFisheries(const int &iyr)
 
     BaranovCatchEquation cBCE;
 
+
     for(int f = 1; f <= narea; f++ )
     {
         for(int g = 1; g <= ngroup; g++ )
@@ -794,6 +796,8 @@ void OperatingModel::implementFisheries(const int &iyr)
             }  // nsex
 
             // Calculate instantaneous fishing mortality rates.
+            cout<<"chegou aqui?"<<endl;
+            cout<<"_hCt is "<<_hCt<<endl;
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
             cout<<"fishing rate "<<ft<<endl;
@@ -834,6 +838,7 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dCatchData(m_irow,5) = hh>0?h:0;
                         m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
                         m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+                        //m_dCatchData(m_irow,8) = 0.02; //TODO: figure out how to project cvs in the future.
 
                         m_dSubLegalData(m_irow,1) = iyr;
                         m_dSubLegalData(m_irow,2) = kk;
@@ -853,7 +858,7 @@ void OperatingModel::implementFisheries(const int &iyr)
     } // narea f
     // cout<<m_dCatchData<<endl;
     // cout<<"END"<<endl;
-    //cout<<"finished implementing fisheries"<<endl;
+    cout<<"finished implementing fisheries"<<endl;
 
 }
 
@@ -873,6 +878,7 @@ void OperatingModel::implementFisheries(const int &iyr)
  */
 void OperatingModel::calcTotalMortality(const int& iyr)
 {
+
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         m_Z(ig)(iyr) = m_M(ig)(iyr) + m_F(ig)(iyr);
@@ -927,7 +933,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                     }
                 }
                 // Relative abundance index.
-                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)); 
+                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)-(m_dSigma(g)*m_dSigma(g)/2)); 
 
                 // V is the population that is proportional to the index.
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
