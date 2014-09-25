@@ -2631,6 +2631,7 @@ FUNCTION calcTotalCatch
   	*/
   	int ii,l,ig;
   	double d_ct;
+  	double d_sd;
 
   	ct.initialize();
   	eta.initialize();
@@ -2651,6 +2652,7 @@ FUNCTION calcTotalCatch
 		h    = dCatchData(ii,5);
 		l    = dCatchData(ii,6);
 		d_ct = dCatchData(ii,7);
+		d_sd = dCatchData(ii,8) * d_ct;
   		
   		// | trap for retro year
   		if( i<syr ) continue;
@@ -2726,8 +2728,8 @@ FUNCTION calcTotalCatch
 			break;
 		}	// end of switch
 
-		// | catch residual
-		eta(ii) = log(d_ct+TINY) - log(ct(ii)+TINY);
+		// | standardized catch residual
+		eta(ii) = (log(d_ct+TINY) - log(ct(ii)+TINY) + 0.5*square(d_sd)) / (d_sd);
 	}
 	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
   }
@@ -3062,7 +3064,7 @@ FUNCTION calcObjectiveFunction
 	}
 	if( active(log_ft_pars) )
 	{
-		nlvec(1) = dnorm(eta,0.0,sig_c);
+		nlvec(1) = dnorm(eta,0.0,1.0*sig_c);
 	}
 
 
