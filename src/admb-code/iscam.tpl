@@ -1208,11 +1208,17 @@ DATA_SECTION
 	// |--------------------------------------------------|
 	// | OPTIONS FOR TIME-VARYING NATURAL MORTALITY RATES |
 	// |--------------------------------------------------|
-	int nMdev;
-	init_int m_type;
-	init_int Mdev_phz;
-	init_number m_stdev;
-	init_int m_nNodes;
+	// | nMdev    	-> number of deviation parameters in M
+	// | m_type   	-> type of model (0=constant M, 1=random walk, 2=cubic spline)
+	// | Mdev_phz 	-> Phase of estimation
+	// | m_stdev		-> Standard deviation for constraint.
+	// | m_nNodes		-> number of nodes for cubic spline.
+	// | m_nodeyear -> position of the nodes.
+	int 					nMdev;
+	init_int 			m_type;
+	init_int 			Mdev_phz;
+	init_number 	m_stdev;
+	init_int 			m_nNodes;
 	init_ivector m_nodeyear(1,m_nNodes);
 	
 
@@ -1377,7 +1383,9 @@ DATA_SECTION
 		}
 	END_CALCS
 
+
 	LOC_CALCS
+		// Determine number of parameters for natural mortality rate.
 		switch( m_type )
 		{
 			case 0:
@@ -1389,6 +1397,12 @@ DATA_SECTION
 			break;
 			case 2:
 				nMdev = m_nNodes;
+				// ensure m_nodeyear > syr and < nyr
+				for( i = 1; i <= m_nNodes; i++ )
+				{
+					if(m_nodeyear(i) < syr) m_nodeyear(i) = syr;
+					if(m_nodeyear(i) > nyr) m_nodeyear(i) = nyr;
+				}
 			break;
 		}
 	END_CALCS
@@ -1729,7 +1743,9 @@ PRELIMINARY_CALCS_SECTION
 		generate_new_files();	
 	}
 	
-	// CATCH POTENTIAL ERRORS
+	// CATCH POTENTIAL ERRORS FOR ARRAY BOUNDS ON M DEVS
+
+
 	if( m_type ==2 && (min(m_nodeyear) < syr || max(m_nodeyear) > nyr) )
 	{
 		cerr<<"Nodes for natural mortality are outside the model dimensions."<<endl;
@@ -1739,6 +1755,8 @@ PRELIMINARY_CALCS_SECTION
 		COUT(nyr);
 		exit(1);
 	}
+
+
 
 
 	if(verbose) cout<<"||-- END OF PRELIMINARY_CALCS_SECTION --||"<<endl;
