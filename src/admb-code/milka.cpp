@@ -68,6 +68,7 @@ void OperatingModel::runScenario(const int &seed)
     readMSEcontrols();
 
     initParameters();
+    cout<<"Here I am to save the day"<<endl;
 
     initMemberVariables();
 
@@ -228,12 +229,13 @@ void OperatingModel::initParameters()
         m_nn += sum(m_nAGopen(k));
         m_nn += m_nCSex(k)*m_nn;
     }
-    
     m_nCtNobs = nCtNobs + m_nyrs*m_nn;
     
-    m_dCatchData.allocate(1,m_nCtNobs,1,7);
+    int ncol = dCatchData.colmax();
+    m_dCatchData.allocate(1,m_nCtNobs,1,ncol);
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
+    cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Whats up doc"<<endl;
 
     m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
@@ -1166,7 +1168,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
  */
 void OperatingModel::writeDataFile(const int& iyr)
 {
-
+        cout<<"WRITING SIMULATED DATA"<<endl;
         adstring sim_datafile_name = "Simulated_Data_"+str(rseed)+".dat";
         ofstream dfs(sim_datafile_name);
         dfs<<"#Model dimensions"        <<endl;

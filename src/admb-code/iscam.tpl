@@ -5297,6 +5297,7 @@ FUNCTION void runMSE()
 	// |-----------------------------------|
 	// | Instantiate Operating Model Class |
 	// |-----------------------------------|
+	cout<<"Starting Operating Model"<<endl;
 	OperatingModel om(s_mv,argc,argv);
 	om.runScenario(rseed);
 
