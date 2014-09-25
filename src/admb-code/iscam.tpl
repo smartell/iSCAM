@@ -174,7 +174,7 @@ DATA_SECTION
 	!! BaseFileName = stripExtension(ControlFile);  ///< BaseName given by the control file
 	/// | ReportFileName         : file name to copy report file to.
 	!! ReportFileName = BaseFileName + adstring(".rep");
-	!! cout<<BaseFileName<<endl;
+	
 	
 	
 	// |---------------------------------------------------------------------------------|
