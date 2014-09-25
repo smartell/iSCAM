@@ -1063,17 +1063,17 @@ DATA_SECTION
 	// | - jsel_npar  -> ivector for the number of rows for time-varying selectivity.
 	// | 
 	// | SEL_TYPE  DESCRIPTION
-	// |    1      age-based logistic function with 2 parameters.
-	// |    2      age-based selectivity coefficients with nage-sage parameters.
-	// |    3      cubic spline with age knots.
-	// |    4      time-varying cubic spline with age knots.
-	// |    5      time-varying bicubic spline with age and year knots.
-	// |    6      logistic with fixed parameters.
-	// |    7      logistic function of body weight with 2 parameters.
-	// |    8      logistic 3 parameter function based on mean weight deviations.
-	// |    11     length-based logistic function with 2 parametrs based on mean length.
-	// |    12     length-based selectivity coefficients with cubic spline interpolation.
-	// |	13 	   age-based selectivity coefficients with age_min-age_max parameters.
+	// |  1  -> age-based logistic function with 2 parameters.
+	// |  2  -> age-based selectivity coefficients with nage-sage parameters.
+	// |  3  -> cubic spline with age knots.
+	// |  4  -> time-varying cubic spline with age knots.
+	// |  5  -> time-varying bicubic spline with age and year knots.
+	// |  6  -> logistic with fixed parameters.
+	// |  7  -> logistic function of body weight with 2 parameters.
+	// |  8  -> logistic 3 parameter function based on mean weight deviations.
+	// |  11 -> length-based logistic function with 2 parametrs based on mean length.
+	// |  12 -> length-based selectivity coefficients with cubic spline interpolation.
+	// |	13 -> age-based selectivity coefficients with age_min-age_max parameters.
 	// |
 	// | selex_controls (1-10)
 	// |  1  -> isel_type - switch for selectivity.
@@ -1730,7 +1730,7 @@ PRELIMINARY_CALCS_SECTION
 	}
 	
 	// CATCH POTENTIAL ERRORS
-	if( min(m_nodeyear) < syr || max(m_nodeyear) > nyr )
+	if( m_type ==2 && (min(m_nodeyear) < syr || max(m_nodeyear) > nyr) )
 	{
 		cerr<<"Nodes for natural mortality are outside the model dimensions."<<endl;
 		COUT(min(m_nodeyear));
@@ -2324,9 +2324,9 @@ FUNCTION calcTotalMortality
 				break;
 
 				case 1:
-			COUT("OK DUDE")
-					COUT(log_m_devs.indexmax());
-					COUT(log_m_nodes.shift(syr+1).indexmax());
+					// COUT("OK DUDE")
+					// COUT(log_m_devs.indexmax());
+					// COUT(log_m_nodes.shift(syr+1).indexmax());
 					log_m_devs = log_m_nodes.shift(syr+1);
 				break;
 
@@ -2334,7 +2334,7 @@ FUNCTION calcTotalMortality
 					dvector iyr = (m_nodeyear - syr) / (nyr-syr);
 					dvector jyr(syr+1,nyr);
 					jyr.fill_seqadd(0,1./(nyr-syr-1));
-					COUT(jyr);
+					// COUT(jyr);
 					vcubic_spline_function vcsf(iyr,log_m_nodes);
 					log_m_devs = vcsf(jyr);
 				break;
@@ -2351,41 +2351,7 @@ FUNCTION calcTotalMortality
 		// TODO fix for reference point calculations
 		// m_bar = mean( M_tot.sub(pf_cntrl(1),pf_cntrl(2)) );
 	}
-	// Add random walk to natural mortality rate.
-//	if (active( m_dev ))
-//	{
-//		dvar_vector delta(syr+1,nyr);
-//		delta.initialize();
-//
-//		switch( m_type )
-//		{
-//			case 0:  // constant natural mortality
-//				delta = 0;
-//			break;
-//
-//			case 1:  // random walk in natural mortality
-//				delta = m_dev.shift(syr+1);
-//			break;
-//
-//			case 2:  // cubic splines
-//				dvector iyr = (m_nodeyear -syr) / (nyr-syr);
-//				dvector jyr(syr+1,nyr);
-//				jyr.fill_seqadd(0,1./(nyr-syr-1));
-//				vcubic_spline_function csf(iyr,m_dev);
-//				delta = csf(jyr);
-//			break;
-//		}
-//
-//		// Update M by year.
-//		for(int h = 1; h <= nsex; h++ )
-//		{
-//			for(int i = syr+1; i <= nyr; i++ )
-//			{
-//				M(h)(i)  = M(h)(i-1) * mfexp(delta(i));
-//			}
-//		}
-//	}
-
+	
 
 
 
