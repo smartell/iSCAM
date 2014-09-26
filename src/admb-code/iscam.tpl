@@ -1,6 +1,6 @@
 /// @file iscam.tpl
 /// @author Steve Martell, IPHC
-
+/// ssh desktop info: ssh stevemartell@192.168.100.114
 ///
 /// \def REPORT(object)
 /// \brief Prints name and value of \a object on ADMB report %ofstream file.
@@ -3037,7 +3037,7 @@ FUNCTION calcObjectiveFunction
 		  q_prior is an ivector with current options of 0 & 1 & 2.
 		  0 is a uniform density (ignored) and 1 is a normal
 		  prior density applied to log(q), and 2 is a random walk in q.
-  	[ ] - Allow for annual sig_c values in catch data likelihood.
+  	[] - Allow for annual sig_scaler values in catch data likelihood.
   	[ ] - Increase dimensionality of sig and tau to ngroup.
   	[ ] - Correct likelihood for cases when rho > 0 (Schnute & Richards, 1995)
   	*/
@@ -3057,14 +3057,14 @@ FUNCTION calcObjectiveFunction
 	// | - Phase (n)  : standard deviation in the catch based on user input d_iscamCntrl(4)
 	// | 
 
-	double sig_c =d_iscamCntrl(3);
+	double sig_scaler =d_iscamCntrl(3);
 	if(last_phase())
 	{
-		sig_c=d_iscamCntrl(4);
+		sig_scaler=d_iscamCntrl(4);
 	}
 	if( active(log_ft_pars) )
 	{
-		nlvec(1) = dnorm(eta,0.0,1.0*sig_c);
+		nlvec(1) = dnorm(eta,0.0,1.0*sig_scaler);
 	}
 
 
@@ -5343,9 +5343,9 @@ GLOBALS_SECTION
 	#include "msy.h"
 	#include "msy.hpp"
 	#include "baranov.h"
-    #include "LogisticNormal.h"
-    #include "milka.h"
-    #include "multinomial.h"
+  #include "LogisticNormal.h"
+  #include "milka.h"
+  #include "multinomial.h"
 	#include "Selex.h"
 
 

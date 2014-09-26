@@ -93,7 +93,7 @@ c = $(lastword $(subst /, ,$*))
 $(msedirs): mse_%:
 	@mkdir -p $@
 	@cp Makefile $@
-	@cd $@; gsed -i 's/..\/..\/..\/src\/admb-code\/build/..\/..\/..\/..\/..\/src\/admb-code\/build/g' Makefile
+	@cd $@; gsed -i 's/..\/..\/..\/src\/admb-code/..\/..\/..\/..\/..\/src\/admb-code/g' Makefile
 	@cd $@; gsed -i 's/CTL=$(CTL)/CTL=..\/..\/$(CTL)/g' Makefile
 	@cd $@; echo ../../$(CTL).dat > RUN.dat
 	@cd $@; echo ../../$(CTL).ctl >>RUN.dat
