@@ -44,18 +44,7 @@ renderFilterInputs <- function()
 		selectInput('procedure',"Procedure",
               		levels(BIO.DF$Procedure),
               		selected =  levels(BIO.DF$Procedure)[1],
-              		multiple = TRUE),
-
-		selectInput('plotType',"Select variable to plot",
-	        		c( "Spawning biomass",
-	        		   "Depletion",
-	      	  	   "Catch",
-	      	  	   "Sub-legal Catch",
-	      	  	   "AAV in Catch",
-	      	  	   "Wastage",
-	      	  	   "Efficiency",
-	      	  	   "Fishing mortality"),
-	        		selected="Spawning biomass")	
+              		multiple = TRUE)
 	)
 }
 
@@ -63,17 +52,21 @@ renderFilterInputs <- function()
 renderLayoutInputs <- function()
 {
 	wellPanel(
-		selectInput("icolor","Color Variable",
-		            c(None = ".",
-		              "Scenario",
-		              "Procedure",
-		              "gear",
-		              "area",
-		              "sex",
-		              "group"),
-		            selected="."),
+	  fluidRow(
+		  column(3,
+			selectInput("icolor","Facet color",
+								c(None = ".",
+								  "Scenario",
+								  "Procedure",
+								  "gear",
+								  "area",
+								  "sex",
+								  "group"),
+								selected=".")
+			),
 
-		selectInput("facet_row","Facet row",
+			column(3,
+			selectInput("facet_row","Facet row",
 		            c(None = ".",
 		              "Scenario",
 		              "Procedure",
@@ -81,18 +74,35 @@ renderLayoutInputs <- function()
 		              "area",
 		              "sex",
 		              "group"),
-		            selected="Procedure"),
+		            selected="Procedure")
+			),
 
-		selectInput("facet_col","Facet column",
-		            c(None = ".",
-		              "Scenario",
-		              "Procedure",
-		              "gear",
-		              "area",
-		              "sex",
-		              "group"),
-		            selected="Scenario")
+			column(3,
+			selectInput("facet_col","Facet column",
+								c(None = ".",
+								  "Scenario",
+								  "Procedure",
+								  "gear",
+								  "area",
+								  "sex",
+								  "group"),
+								selected="Scenario")
+			),
+			
+			column(3,
+			selectInput('plotType',"Select variable to plot",
+								c( "Spawning biomass",
+								   "Depletion",
+								   "Catch",
+								   "Sub-legal Catch",
+								   "AAV in Catch",
+								   "Wastage",
+								   "Efficiency",
+								   "Fishing mortality"),
+								selected="Spawning biomass")	       
+			)
 		)
+	)
 }
 
 renderMSEtabs <- function()
@@ -101,6 +111,7 @@ renderMSEtabs <- function()
 
     # Tulip plots
 	  tabPanel("Tulip plots", 
+	    renderLayoutInputs(),
 		  plotOutput("funnelPlot")
 		),
 
@@ -153,12 +164,11 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 
 
   tabPanel("MSE",
-	  titlePanel("IPHC Management Strategy Evaluation App"),
+	  # titlePanel("IPHC Management Strategy Evaluation App"),
 
 		fluidRow(
 			column(3,
-				renderFilterInputs(),
-				renderLayoutInputs()
+				renderFilterInputs()
 			),
 
 			column(9,

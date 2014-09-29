@@ -54,10 +54,12 @@ shinyServer(function(input, output) {
     hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
 
+  # TULIP PLOTS FOR MSE PROCEDURES AND SCENARIOS
   output$funnelPlot <- renderPlot({
     tulip.plot(data(),input)
   })
 
+  # GVIS GRAPHICS FOR COMPARING SCENARIOS DYNAMICALLY
   output$googleVisPlot <- renderGvis({
     motionChart(MOT.DF,input)
   })
