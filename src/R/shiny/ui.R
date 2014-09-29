@@ -88,9 +88,9 @@ renderLayoutInputs <- function()
 								  "group"),
 								selected="Scenario")
 			),
-			
+
 			column(3,
-			selectInput('plotType',"Select variable to plot",
+			selectInput('plotType',"Facet variable",
 								c( "Spawning biomass",
 								   "Depletion",
 								   "Catch",
