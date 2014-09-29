@@ -7,7 +7,7 @@ require(plyr)
 
 # LOAD A mse.data DATA OBJECT
 load("data/MSE.Rdata")  
-load("data/DMVL1988.Rdata")
+load("data/OMI.Rdata")
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the
@@ -102,96 +102,8 @@ tulip.plot <- function(df,input)
 	
 }
 
-# funnel.plot <- function(df,input)
-# {
-# 	S <- input$scenario
-# 	P <- input$procedure
-	
-# 	if( input$plotType=='Spawning biomass' )
-# 	{
-# 		ci95 <- aes(ymin=t.Bt0.025,ymax=t.Bt0.975)
-# 		ci25 <- aes(ymin=t.Bt0.25,ymax=t.Bt0.75)
-# 		p  <- ggplot(df,aes(Year,t.Bt0.5))+geom_line()
-# 		p  <- p + geom_ribbon(ci95,alpha=0.15)
-# 		p  <- p + geom_ribbon(ci25,alpha=0.25)
-# 		p  <- p + labs(x="Year",y="Spawning biomass")
-		
-# 	}
 
-# 	if( input$plotType=='Depletion' )
-# 	{
-# 		ci95 <- aes(ymin=t.Dt0.025,ymax=t.Dt0.975)
-# 		ci25 <- aes(ymin=t.Dt0.25,ymax=t.Dt0.75)
-# 		p  <- ggplot(df,aes(Year,t.Dt0.5))+geom_line()
-# 		p  <- p + geom_ribbon(ci95,alpha=0.15)
-# 		p  <- p + geom_ribbon(ci25,alpha=0.25)
-# 		p  <- p + labs(x="Year",y="Spawning biomass depletion")
-		
-# 	}
-
-# 	if( input$plotType=='Catch' )
-# 	{
-# 		ci <- aes(ymin=ct025,ymax=ct975)
-# 		p  <- ggplot(df,aes(Year,ct50,color=factor(gear),fill=factor(gear)))+geom_line()
-# 		p  <- p + geom_ribbon(ci,alpha=0.15)
-# 		p  <- p + labs(x="Year",y="Catch")
-		
-# 	}
-
-# 	if( input$plotType=='Sub-legal Catch' )
-# 	{
-# 		ci <- aes(ymin=dt025,ymax=dt975)
-# 		p  <- ggplot(df,aes(Year,dt50))+geom_line()
-# 		p  <- p + geom_ribbon(ci,alpha=0.15)
-# 		p  <- p + labs(x="Year",y="Sub-legal Catch")
-# 	}
-
-# 	if( input$plotType=="AAV in Catch")	
-# 	{
-# 		ci <- aes(ymin=AAV025,ymax=AAV975)
-# 		p  <- ggplot(df,aes(Year,AAV50,color=factor(gear),fill=factor(gear)))+geom_line()
-# 		p  <- p + geom_ribbon(ci,alpha=0.15)
-# 		p  <- p + labs(x="Year",y="AAV in Catch")
-# 	}
-
-# 	if( input$plotType=='Wastage' )
-# 	{
-# 		ci <- aes(ymin=wt025,ymax=wt975)
-# 		p  <- ggplot(df,aes(Year,wt50))+geom_line()
-# 		p  <- p + geom_ribbon(ci,alpha=0.15)
-# 		p  <- p + labs(x="Year",y="Wastage")
-# 	}
-	
-# 	# facets <- paste("Procedure",'~',"Scenario")
-# 	facets <- paste(input$facet_row,"~",input$facet_col)
-# 	p <- p + facet_grid(facets)
-
-# 	if( input$icolor != "." )
-# 	{
-# 		p <- p + aes_string(fill=factor(input$icolor))
-# 	}
-	
-# 	# 95% CI
-# 	# p <- p + geom_ribbon(ci,alpha=0.15)
-
-	
-
-# 	# if( length(P) > 1 )
-# 	# {
-# 	# 	p <- p + aes_string(color="Procedure",fill="Procedure")
-# 	# }
-	
-# 	# if( length(P)==1 )
-# 	# {
-# 	# 	p <- p + aes_string(color="Scenario",fill="Scenario")
-# 	# }
-
-# 	.LEGPOS <- 'top'
-
-# 	print( p + theme( legend.position = .LEGPOS ) )
-# }
-
-
+# GOOGLE VIS MOTION PLOT
 motionChart <- function(df,input)
 {
 	M1 <- gvisMotionChart(df,idvar="idvar",timevar="Year",
@@ -199,5 +111,42 @@ motionChart <- function(df,input)
 	                      sizevar="Median AAV",colorvar="Procedure",
 	      options=list(showChartButtons = TRUE))
 	return(M1)
+}
+
+.THEME      <- theme_bw(11)
+.plotSpawnBiomass <- function( M )
+{
+	n <- length(M)
+	cat(".plotSpawnBiomass\n")
+
+	mdf <- NULL
+	for(i in 1:n)
+	{
+		fit = M[[i]]$fit
+		yr  = M[[i]]$yr
+		nyr = length(yr)
+		log.sbt <- fit$est[fit$names=="sd_log_sbt"][1:nyr]
+		log.std <- fit$std[fit$names=="sd_log_sbt"][1:nyr]
+		bt <- data.frame(Model=names(M)[i],Year=yr,log.sbt=log.sbt,log.se=log.std)
+		bt <- data.frame(bt,Bo=M[[i]]$bo)
+		mdf <- rbind(mdf,bt)
+	}
+
+	if(.OVERLAY)
+	{
+		p <- ggplot(mdf,aes(Year,exp(log.sbt),col=Model)) + geom_line(width=2)
+		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+		                     ymin=exp(log.sbt-1.96*log.se),fill=Model),alpha=0.2)
+	}
+	else
+	{
+		p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
+		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+		                     ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
+		p <- p + facet_wrap(~Model,scales="free")
+	}
+	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
+	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
+	print(p + .THEME)
 }
 

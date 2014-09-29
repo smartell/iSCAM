@@ -133,7 +133,8 @@ shinyServer(function(input, output) {
   output$omiPlot <- renderPlot({
     cat("omiplotType\n")
     A<-DMVL1988
-     plot(A$yrs,A$bt)
+     # plot(A$yrs,A$bt)
+    .plotSpawnBiomass(M)
   })
 
 })
