@@ -7,6 +7,7 @@ require(plyr)
 
 # LOAD A mse.data DATA OBJECT
 load("data/MSE.Rdata")  
+load("data/DMVL1988.Rdata")
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the

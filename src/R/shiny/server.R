@@ -129,5 +129,12 @@ shinyServer(function(input, output) {
 
   })
 
+  # OPERATING MODEL INTERFACE FUNCTIONS
+  output$omiPlot <- renderPlot({
+    cat("omiplotType\n")
+    A<-DMVL1988
+     plot(A$yrs,A$bt)
+  })
+
 })
 

@@ -135,12 +135,31 @@ renderMSEtabs <- function()
 	)
 }
 
+
+renderOMI <- function()
+{
+	fluidRow(
+	  column(3,
+			wellPanel("Operating Model Interface",
+				selectInput('omiplotType',"Choose Graphic",
+			  	          c("Spawning biomass",
+			    	          "Depletion"),
+			      	      selected="Spawning biomass")
+			)
+		),
+		column(9,
+		  plotOutput("omiPlot")
+		)
+	)
+
+}
+
 renderBanner <- function()
 {
 	wellPanel(
 		# Logo image
-	  column(10),
-	  column(2,
+	  column(9),
+	  column(3,
 	  	img(src="iphclogo.png",  height = 80, width = 80),
 			img(src="iscamLogo.png", height = 80, width = 80)
 	  )
@@ -152,6 +171,7 @@ renderBanner <- function()
 # ----------------------------------------#
 shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	
+	# INFORMATION INTERFACE (NEEDS TOC)
 	tabPanel("About",
 	  fluidRow(
 			includeMarkdown("About.md")
@@ -162,11 +182,22 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 		)
 	),
 
+	# EQUILIBRIUM INTERFACE
+	tabPanel("Equilibrium",
 
-  tabPanel("MSE",
-	  # titlePanel("IPHC Management Strategy Evaluation App"),
+	  fluidRow(
+	  	renderEquilInputs()
+	  ),
 
 		fluidRow(
+			renderBanner()
+		)
+	),
+
+	# MANAGEMENT STRATEGY EVALUATION INTERFACE
+  tabPanel("MSE",
+
+	  fluidRow(
 			column(3,
 				renderFilterInputs()
 			),
@@ -181,16 +212,13 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 		)
 	),
 
-	tabPanel("Equilibrium",
-
-	  fluidRow(
-	  	renderEquilInputs()
-	  ),
-
-		fluidRow(
-			renderBanner()
-		)
-	)
+  # OPERATING MODEL INTERFACE
+  tabPanel("OMI",
+   	renderOMI(),
+    fluidRow(
+  		renderBanner()
+  	)
+  )
 
 
 
