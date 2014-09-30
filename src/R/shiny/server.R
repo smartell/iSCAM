@@ -131,8 +131,11 @@ shinyServer(function(input, output) {
 
   # OPERATING MODEL INTERFACE FUNCTIONS
   output$omiPlot <- renderPlot({
-    cat("omiplotType\n")
-    .plotSpawnBiomass(M)
+    cat(input$omiplotType)
+    switch(input$omiplotType,
+           "Spawning biomass" = .plotSpawnBiomass(M),
+           "Depletion"        = .plotDepletion(M)
+           )
   })
 
 })

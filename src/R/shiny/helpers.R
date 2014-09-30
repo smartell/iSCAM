@@ -4,10 +4,23 @@ require(ggplot2)
 require(reshape2)
 require(googleVis)
 require(plyr)
-
+# 
 # LOAD A mse.data DATA OBJECT
+# 
 load("data/MSE.Rdata")  
+
+# 
+# LOAD data from assessment model
+# 
 load("data/OMI.Rdata")
+
+
+.THEME      <- theme_bw(11)
+.OVERLAY    <- FALSE
+.UNITS			<- "(Mlb)"
+source("data/lib/plotIndex.R")
+source("data/lib/plotBiomass.R")
+source("data/lib/plotDepletion.R")
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the
@@ -113,40 +126,40 @@ motionChart <- function(df,input)
 	return(M1)
 }
 
-.THEME      <- theme_bw(11)
-.plotSpawnBiomass <- function( M )
-{
-	n <- length(M)
-	cat(".plotSpawnBiomass\n")
 
-	mdf <- NULL
-	for(i in 1:n)
-	{
-		fit = M[[i]]$fit
-		yr  = M[[i]]$yr
-		nyr = length(yr)
-		log.sbt <- fit$est[fit$names=="sd_log_sbt"][1:nyr]
-		log.std <- fit$std[fit$names=="sd_log_sbt"][1:nyr]
-		bt <- data.frame(Model=names(M)[i],Year=yr,log.sbt=log.sbt,log.se=log.std)
-		bt <- data.frame(bt,Bo=M[[i]]$bo)
-		mdf <- rbind(mdf,bt)
-	}
+# .plotSpawnBiomass <- function( M )
+# {
+# 	n <- length(M)
+# 	cat(".plotSpawnBiomass\n")
 
-	if(.OVERLAY)
-	{
-		p <- ggplot(mdf,aes(Year,exp(log.sbt),col=Model)) + geom_line(width=2)
-		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
-		                     ymin=exp(log.sbt-1.96*log.se),fill=Model),alpha=0.2)
-	}
-	else
-	{
-		p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
-		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
-		                     ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
-		p <- p + facet_wrap(~Model,scales="free")
-	}
-	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
-	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
-	print(p + .THEME)
-}
+# 	mdf <- NULL
+# 	for(i in 1:n)
+# 	{
+# 		fit = M[[i]]$fit
+# 		yr  = M[[i]]$yr
+# 		nyr = length(yr)
+# 		log.sbt <- fit$est[fit$names=="sd_log_sbt"][1:nyr]
+# 		log.std <- fit$std[fit$names=="sd_log_sbt"][1:nyr]
+# 		bt <- data.frame(Model=names(M)[i],Year=yr,log.sbt=log.sbt,log.se=log.std)
+# 		bt <- data.frame(bt,Bo=M[[i]]$bo)
+# 		mdf <- rbind(mdf,bt)
+# 	}
+
+# 	if(.OVERLAY)
+# 	{
+# 		p <- ggplot(mdf,aes(Year,exp(log.sbt),col=Model)) + geom_line(width=2)
+# 		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+# 		                     ymin=exp(log.sbt-1.96*log.se),fill=Model),alpha=0.2)
+# 	}
+# 	else
+# 	{
+# 		p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
+# 		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
+# 		                     ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
+# 		p <- p + facet_wrap(~Model,scales="free")
+# 	}
+# 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
+# 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
+# 	print(p + .THEME)
+# }
 

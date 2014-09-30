@@ -139,7 +139,7 @@ renderMSEtabs <- function()
 renderOMI <- function()
 {
 	fluidRow(
-	  column(3,
+	  column(4,
 			wellPanel("Operating Model Interface",
 				selectInput('omiplotType',"Choose Graphic",
 			  	          c("Spawning biomass",
@@ -147,7 +147,7 @@ renderOMI <- function()
 			      	      selected="Spawning biomass")
 			)
 		),
-		column(9,
+		column(8,
 		  plotOutput("omiPlot")
 		)
 	)
