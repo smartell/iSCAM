@@ -1,9 +1,12 @@
 library(shiny)
 source("helpers.R")
 
-
+paramNames <- c("min_size_limit",
+                "max_size_limit",
+                "discard_mortality_rate",
+                "selex_fe")
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
@@ -133,10 +136,58 @@ shinyServer(function(input, output) {
   output$omiPlot <- renderPlot({
     cat(input$omiplotType)
     switch(input$omiplotType,
-           "Spawning biomass" = .plotSpawnBiomass(M),
-           "Depletion"        = .plotDepletion(M)
+           "Spawning biomass"   = .plotSpawnBiomass(M),
+           "Depletion"          = .plotDepletion(M),
+           "Recruitment"        = .plotRecruitment(M),
+           "Stock Recruitment"  = .plotStockRecruit(M),
+           "Relative abundance" = .plotSurveyFit(M),
+           "Mortality"          = .plotMortality(M)
            )
   })
 
+
+  # EQUILIBRIUM MODEL INTERFACE 
+  getParams <- function(prefix) {
+    print("Hello")
+    input[[paste0(prefix, "_recalc")]]
+
+    params <- lapply(paramNames, function(p) {
+      input[[paste0(prefix, "_", p)]]
+    })
+    names(params) <- paramNames
+    print(params)
+    params
+  }
+  
+
+  scnA <- reactive(do.call(equilibrium_model, getParams("a")))
+  scnB <- reactive(do.call(equilibrium_model, getParams("b")))
+   # navA <- reactive(do.call(simulate_nav, getParams("a")))
+  
+
+  output$a_equilPlot <- renderPlot({
+    plotEquil(scnA())
+  })
+  output$b_equilPlot <- renderPlot({
+    plotEquil(scnB())
+  })
+
+
 })
+
+
+
+plotEquil <- function(Scenario)
+{
+  qplot(fe,Ye,data=Scenario,geom_line)
+}
+
+
+
+
+
+
+
+
+
 

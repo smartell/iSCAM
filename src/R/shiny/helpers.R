@@ -18,9 +18,12 @@ load("data/OMI.Rdata")
 .THEME      <- theme_bw(11)
 .OVERLAY    <- FALSE
 .UNITS			<- "(Mlb)"
-source("data/lib/plotIndex.R")
-source("data/lib/plotBiomass.R")
-source("data/lib/plotDepletion.R")
+.LIB        <- "data/lib/"
+.RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
+for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+# source("data/lib/plotIndex.R")
+# source("data/lib/plotBiomass.R")
+# source("data/lib/plotDepletion.R")
 
 # ——————————————————————————————————————————————————————————————————————————— #
 # NOTES: The mse.data object is a list of data.frames that comes from the
