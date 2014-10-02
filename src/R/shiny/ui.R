@@ -8,12 +8,13 @@ renderEquilInputs <- function(prefix)
 	wellPanel(
 		fluidRow(
 			column(6,
-				sliderInput(paste0(prefix,"_","min_size_limit"),"Minimum size limit (inches)",min=0,max=100,value=32,step=1),
-				sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
+				sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
+				sliderInput(paste0(prefix,"_","size_limit"),"Minimum size limit (inches)",min=0,max=100,value=c(32,100),step=1),
+				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01)
+				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
 			),
 			column(6,
-				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01),
-				sliderInput(paste0(prefix,"_","selex_fe"),"Size at 50% selectivity",min=20,max=120,value=65,step=1)
+				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1)
 			),
 			p(actionButton(paste0(prefix, "_", "recalc"),
       "Re-run scenario", icon("random")

@@ -1,10 +1,10 @@
 library(shiny)
 source("helpers.R")
 
-paramNames <- c("min_size_limit",
-                "max_size_limit",
+paramNames <- c("size_limit",
                 "discard_mortality_rate",
-                "selex_fe")
+                "selex_fishery",
+                "selex_bycatch")
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
 

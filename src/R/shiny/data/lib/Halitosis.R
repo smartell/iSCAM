@@ -251,7 +251,7 @@ mytheme <- function (base_size = 12, base_family = "")
 	with(Stock, {
 		# Length-interval midpoints for integration
 		xl  <- seq(5,200,by=2.5)
-		
+		cat("S50 \t",selex_50)
 		# Length-based selectivity (length-based -> age-based)
 		sc	<- array(0, dim)  #size capture
 		sr	<- array(0, dim)  #size retention
@@ -261,7 +261,8 @@ mytheme <- function (base_size = 12, base_family = "")
 		std	<- cvlm*slim+1.e-30	
 		for(i in 1:S)
 		{
-			pl       <- approx(bin, CSelL[,i], xl, yright=1, yleft=0)$y
+			# pl       <- approx(bin, CSelL[,i], xl, yright=1, yleft=0)$y
+			pl       <- 1.0/(1.0+exp(-log(19)*(xl-selex_50)/(selex_90-selex_50)))
 			sc[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pl,xl)
 			#sc[,,i]  <- approx(bin, CSelL[,i], la[,,i], yleft=0, yright=1)$y
 			
@@ -485,7 +486,8 @@ mytheme <- function (base_size = 12, base_family = "")
 {
 	
 	with(as.list(df), {
-		# print(dm)
+		Stock$selex_50 = selex_50
+		Stock$selex_90 = selex_90
 		M1 <- .calcLifeTable(Stock)
 		M1 <- .calcSelectivities(M1,slim=slim,ulim=ulim,cvlm=0.1,dm=dm)
 		M1 <- .calcSRR(M1)
@@ -504,39 +506,48 @@ mytheme <- function (base_size = 12, base_family = "")
 
 
 
-equilibrium_model <- function(min_size_limit=82,
-                              max_size_limit=200,
+equilibrium_model <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
-                              selex_fe=65)
+                              selex_fishery=c(34,40),
+                              selex_bycatch=c(24,40))
 {
 	# -----------------------------------------
 	# Inputs
 	# -----------------------------------------
 
 	# mimumum size limit
-	minimum.size.limit = min_size_limit * 2.54 
+	size.limits = size_limit * 2.54 
 	
-	# maximum size limit
-	maximum.size.limit = max_size_limit * 2.54
-
 	# discard mortality rate
 	discard.mortality.rate = discard_mortality_rate
 
 	# 50% selectivity at length
-	selex.fe  = selex_fe
+	selex.50  = selex_fishery * 2.54
+
+	# 95% selectivity at length
+	selex.90  = selex_bycatch * 2.54
 
 
 	print("Running equilibrium model")
 
 	df <- expand.grid(fe=fe,
-	                  slim=minimum.size.limit,
-	                  ulim=maximum.size.limit,
+	                  slim=size.limits[1],
+	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,
-	                  bycatch=bycatch)
+	                  bycatch=bycatch,
+	                  selex_50=selex.50[1],
+	                  selex_90=selex.50[2])
 	SA <- cbind(prefix="a",as.data.frame(t(apply(df,1,.runModel))))
 	return(SA)
 }
 
-
+# Was going to add logistic 5095 curve to calcSelectivities.
+# template<class T, class T2>
+# 	const T plogis95(const T &x, const T2 &s50, const T2 &s95)
+# 	{
+# 		dvar_vector selex	= T2(1.0)/(T2(1.0)+(exp(-log(19)*((x-s50)/(s95-s50)))));
+#     selex /= selex(selex.indexmax());	
+# 		return selex;
+# 	}
 
 
