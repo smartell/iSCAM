@@ -14,8 +14,25 @@ renderEquilInputs <- function(prefix)
 				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
 			),
 			column(6,
-				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1)
+				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
+				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
+				
+				selectInput('chartType',"Model Output",
+				            c("Equilibrium Yield",
+				              "Performance Metrics",
+				              "Reference Points",
+				              "Selectivity curves"))
+
+				# absolutePanel(id=paste0(prefix,"_","selex_panel"),class="modal",
+				#               draggable=TRUE,fixed=FALSE,cursor="auto",
+				#               top="auto",left="auto",right="auto",bottom="auto",
+				#               width=300,
+				#   h4("Selectivity curves"),
+				#   plotOutput(paste0(prefix,"_","selex"), height = "200px"),
+				#   style = "opacity: 0.60"
+				# )
 			),
+
 			p(actionButton(paste0(prefix, "_", "recalc"),
       "Re-run scenario", icon("random")
     	))
@@ -23,6 +40,11 @@ renderEquilInputs <- function(prefix)
 	)
 
 }
+
+  # absolutePanel(id = "controls", class = "modal", fixed = TRUE, draggable = TRUE,
+  #       top = 60, left = "auto", right = 20, bottom = "auto",
+  #       width = 330, height = "auto",
+        
 
 renderInputs <- function(prefix) {
   wellPanel(
@@ -221,12 +243,13 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	  	column(6,renderEquilInputs("a")),
 	  	column(6,renderEquilInputs("b"))
 	  ),
+
 	  fluidRow(
 	    column(6,
-	      plotOutput("a_equilPlot", height = "600px")
+	      plotOutput("a_equilPlot", height = "500px")
 	    ),
 	    column(6,
-	      plotOutput("b_equilPlot", height = "600px")
+	      plotOutput("b_equilPlot", height = "500px")
 	    )
 	  ),
 		fluidRow(

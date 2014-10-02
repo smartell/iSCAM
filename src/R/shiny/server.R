@@ -4,7 +4,8 @@ source("helpers.R")
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
                 "selex_fishery",
-                "selex_bycatch")
+                "selex_bycatch",
+                "num_bycatch")
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
 
@@ -155,21 +156,41 @@ shinyServer(function(input, output, session) {
       input[[paste0(prefix, "_", p)]]
     })
     names(params) <- paramNames
+    params <- c(params,prefix=prefix)
     print(params)
     params
   }
-  
+
+  # output$a_selex <- renderPlot({
+  #   x = 0:80
+  #   par(mar=c(4,3,0,0))
+  #   plot(x,.plogis95(x,input$a_selex_fishery[1],input$a_selex_fishery[2]),
+  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
+  # })
+  # output$b_selex <- renderPlot({
+  #   x = 0:80
+  #   par(mar=c(4,3,0,0))
+  #   plot(x,.plogis95(x,input$b_selex_fishery[1],input$b_selex_fishery[2]),
+  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
+  # })
 
   scnA <- reactive(do.call(equilibrium_model, getParams("a")))
   scnB <- reactive(do.call(equilibrium_model, getParams("b")))
-   # navA <- reactive(do.call(simulate_nav, getParams("a")))
   
 
   output$a_equilPlot <- renderPlot({
-    plotEquil(scnA())
+    # A <- scnA()
+    switch(input$chartType,
+           "Equilibrium Yield" = .plotEquilYield(scnA())
+           )
+    
   })
   output$b_equilPlot <- renderPlot({
-    plotEquil(scnB())
+    B <- rbind(scnA(),scnB())
+    print(head(B))
+    switch(input$chartType,
+           "Equilibrium Yield" = .plotEquilYield(B)
+           )
   })
 
 
@@ -177,9 +198,13 @@ shinyServer(function(input, output, session) {
 
 
 
-plotEquil <- function(Scenario)
+.plotEquilYield <- function(Scenario)
 {
-  qplot(fe,Ye,data=Scenario,geom_line)
+  # qplot(fe,Ye,data=Scenario,geom_line)
+  p <- ggplot(Scenario,aes(x=fe,y=Ye,color=prefix)) + geom_line()
+  p <- p + labs(x="Fishing intensity",y="Directed yield (Mlb)",col="Scenario")
+  print(p + mytheme())
+
 }
 
 

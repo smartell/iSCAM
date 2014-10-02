@@ -166,7 +166,11 @@ mytheme <- function (base_size = 12, base_family = "")
 	return(ALK)
 }
 
-
+.eplogis <- function (x, a, b, g) 
+{
+    sx = (1/(1 - g)) * ((1 - g)/g)^g * (exp(a * g * (b - x))/(1 + 
+        exp(a * (b - x))))
+}
 
 
 
@@ -251,7 +255,7 @@ mytheme <- function (base_size = 12, base_family = "")
 	with(Stock, {
 		# Length-interval midpoints for integration
 		xl  <- seq(5,200,by=2.5)
-		cat("S50 \t",selex_50)
+		# cat("S50 \t",selex_50)
 		# Length-based selectivity (length-based -> age-based)
 		sc	<- array(0, dim)  #size capture
 		sr	<- array(0, dim)  #size retention
@@ -262,7 +266,8 @@ mytheme <- function (base_size = 12, base_family = "")
 		for(i in 1:S)
 		{
 			# pl       <- approx(bin, CSelL[,i], xl, yright=1, yleft=0)$y
-			pl       <- 1.0/(1.0+exp(-log(19)*(xl-selex_50)/(selex_90-selex_50)))
+			# pl       <- 1.0/(1.0+exp(-log(19)*(xl-selex_50)/(selex_90-selex_50)))
+			pl       <- .plogis95(xl,selex_50,selex_90)
 			sc[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pl,xl)
 			#sc[,,i]  <- approx(bin, CSelL[,i], la[,,i], yleft=0, yright=1)$y
 			
@@ -291,6 +296,11 @@ mytheme <- function (base_size = 12, base_family = "")
 		
 		return(Stock)
 	})
+}
+
+.plogis95 <- function(x,s50,s90)
+{
+	1.0/(1.0+exp(-log(19)*(x-s50)/(s90-s50)))
 }
 
 # |---------------------------------------------------------------------------|
@@ -484,10 +494,12 @@ mytheme <- function (base_size = 12, base_family = "")
 
 .runModel <- function(df)
 {
-	
+	# print(df)
 	with(as.list(df), {
 		Stock$selex_50 = selex_50
 		Stock$selex_90 = selex_90
+		Stock$selex_bycatch50 = selex_bycatch50
+		Stock$selex_bycatch90 = selex_bycatch90
 		M1 <- .calcLifeTable(Stock)
 		M1 <- .calcSelectivities(M1,slim=slim,ulim=ulim,cvlm=0.1,dm=dm)
 		M1 <- .calcSRR(M1)
@@ -509,7 +521,9 @@ mytheme <- function (base_size = 12, base_family = "")
 equilibrium_model <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
                               selex_fishery=c(34,40),
-                              selex_bycatch=c(24,40))
+                              selex_bycatch=c(24,40),
+                              num_bycatch=8,
+                              prefix="a")
 {
 	# -----------------------------------------
 	# Inputs
@@ -522,22 +536,27 @@ equilibrium_model <- function(size_limit=c(32,100),
 	discard.mortality.rate = discard_mortality_rate
 
 	# 50% selectivity at length
-	selex.50  = selex_fishery * 2.54
+	selex.fishery  = selex_fishery * 2.54
 
 	# 95% selectivity at length
-	selex.90  = selex_bycatch * 2.54
+	selex.bycatch  = selex_bycatch * 2.54
 
+	# Bycatch mortality in Mlbs
+	num.bycatch   = num_bycatch
 
 	print("Running equilibrium model")
-
+	
 	df <- expand.grid(fe=fe,
 	                  slim=size.limits[1],
 	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,
-	                  bycatch=bycatch,
-	                  selex_50=selex.50[1],
-	                  selex_90=selex.50[2])
-	SA <- cbind(prefix="a",as.data.frame(t(apply(df,1,.runModel))))
+	                  bycatch=num.bycatch,
+	                  selex_50=selex.fishery[1],
+	                  selex_90=selex.fishery[2],
+	                  selex_bycatch50 = selex.bycatch[1],
+	                  selex_bycatch90 = selex.bycatch[2])
+	
+	SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel))))
 	return(SA)
 }
 
