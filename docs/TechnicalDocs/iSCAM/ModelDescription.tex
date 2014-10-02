@@ -18,6 +18,11 @@ First, this section provides a list of symbols use to annotate various model com
 
  All of the model equations are laid out in tables and are intended to represent the order of operations, or pseudocode, in which to implement the model.  The assessment model is implemented in the C++ programming language and uses AD Model Builder version 11.1 \citep{fournier2011ad} as the primary tool for non-linear parameter estimation and numerically integrating the joint posterior distribution.  
 
+
+ The general dimensions and structure of the population dynamics and fishery dynamics sub routines are also adopted for the operating model.  The operating model is written as a separate library, and has it's own independent set of input files.  By design, this organization of the models allows the operating model to have completely different structural assumptions than the assessment model.
+
+Lastly, we note that the acronym for the Integrated Statistical Catch At Age Model (or ISCAM) does not instill a lot of confidence among industry participants.  Throughout this document, we occasionally refer to the model as ISCAM and we are still searching for a more appropriate name.
+
 \subsection{List of symbols} % (fold)
 \label{sub:list_of_symbols}
 A documented list of symbols for the program is found in Table~\ref{tab:list_of_symbols} on page~\pageref{tab:list_of_symbols}.
@@ -122,7 +127,7 @@ $\eta_t$        &   & residual error in predicted catch\\
     % subsubsection model_dimensions (end) 
     \subsubsection{Age-schedule information} % (fold)
     \label{ssub:age_schedule_information}
-        Absent empirical size-age age information, growth parameters for the von Bertalanffy growth model are required to predict the mean length-at-age in the model, as well as, allometric relationships to translate mean length to mean weight-at-age.  The other critical piece of information is the maturity-at-age schedules.  Maturity-at-age is either a parametric function based on the parameters $\dot{a}$ and $\dot{\gamma}$ and a logistic curve (see equation \ref{T2.7}), or a vector of proportion mature-at-age is supplied.  It is assumed that fecundity-at-age is proportional to the mean weight-at-age (this assumption is reasonable for Osteichthyes, but tenuous for Chondrichthyes).
+        Absent empirical size-age age information, growth parameters for the von Bertalanffy growth model are required to predict the mean length-at-age in the model, as well as, allometric relationships to translate mean length to mean weight-at-age.  The other critical piece of information is the maturity-at-age schedules.  Maturity-at-age is either a parametric function based on the parameters $\dot{a}$ and $\dot{\gamma}$ and a logistic curve (see equation \ref{T2.7}), or a vector of proportion mature-at-age is supplied.  It is assumed that fecundity-at-age is proportional to the mean weight-at-age. %(this assumption is reasonable for Osteichthyes, but tenuous for Chondrichthyes).
     % subsubsection age_schedule_information (end)
     \subsubsection{Historical removals} % (fold)
     \label{ssub:historical_removals}
@@ -264,6 +269,8 @@ which simplifies to \eqref{T2.13}.
 
     The joint estimation of natural mortality rates in statistical catch-at-age models can be problematic due to potential confounding with other structural assumptions (i.e., changes in fisheries selectivity, especially selectivity on older animals).  In addition to estimating natural mortality, there is an additional stochastic element that allows for the estimation of changes in natural mortality over time.  This is represented in the vector $\bm{\varphi}$, where time-varying changes in natural mortality rates can be modeled as a random walk process (see Section \ref{ssub:natural_mortality}.
 
+    Annual instantaneous fishing mortality rates for each gear $k$ are based on a vector of deviations about the mean fishing mortality rate.  A ragged matrix $\bm{\Psi}$  with $K$ rows (one for each gear) and a column for each year where the catch for that gear is greater than 0.  To ensure the mean fishing mortality rates are esimable each row in $\bm{\Psi}$  is constrained to sum to 0.
+
 
 
     \begin{table}
@@ -300,114 +307,138 @@ which simplifies to \eqref{T2.13}.
         %%
         %%
         &\mbox{State dynamics} \nonumber \\
-        % B_i &= \sum_h \sum_j N_{h,i,j} f_{h,j}                          \label{T3.6} \\
-        %%
         R_i &= \bar{R} \exp(\omega_i)                                   \label{T3.7} \\
         % R_i &= \begin{cases}
             % \dfrac{s_o B_{i-1}} {1+ \beta B_{i-1}} e^\omega_i, &\mbox{Beverton-Holt} \\[1ex]
             % s_o B_{i-1} \exp(-\beta B_{i-1} + \omega_i), &\mbox{Ricker}
         % \end{cases}                                                     \label{T3.5} \\
         %%
-        C_i &= \sum_h \sum_j \dfrac{N_{h,i,j}F_{h,i,j}(1-\exp(-Z_{h,i,j}))}
-        {Z_{h,i,j}}                                                     \label{T3.8} \\
         %%
         N_{h,i,j} &= \begin{cases}
             R_i / H & j ==1 \\
             N_{h,i-1,j-1} \exp(-Z_{h,i-1,j-1})   & i>1, 1< j < J\\[1ex]
             N_{h,i-1,j} \exp(-Z_{h,i-1,j}) & i>1, j=J
-        \end{cases}                                                     \label{T3.9} \\[1ex]
+        \end{cases}                                                     \label{T3.8} \\[1ex]
+        %%
+        %%
+        C_i &= \sum_h \sum_j \dfrac{N_{h,i,j}F_{h,i,j}(1-\exp(-Z_{h,i,j}))}
+        {Z_{h,i,j}}                                                     \label{T3.9} \\
+        %%
+        %%
+        B_i &= \sum_h \sum_j N_{h,i,j} f_{h,j}                          \label{T3.6} \\
+        %%
         \hline \hline \nonumber
     \end{align}
     \normalEq
     \end{table}
 
+% % WOrking here. OCT 2, 2014
+Given initial estimates of the parameters in \eqref{T3.1}, the state variables in \eqref{T3.2} are then derived  based on equations \ref{T3.3}-\ref{T3.9}.  Age- and year-specific fishing mortality rates are defined by \eqref{T3.3}, and the total mortality \eqref{T3.4} is the sum of natural mortality and fishing mortality from all sources.
 
+The age-structured population model is initialized based on the initial recruitment $\ddot{R}$ and age-specific total mortality rates ($Z_{h,i,j}$) and initial recruitment deviates $\ddot{\omega_j}$.  Note that \eqref{T3.5} assumes the value of recruitment deviates are the same for both sexes, and that age $J$ is a plus group containing individuals age-$J$ and older.
 
-The estimated parameter vector in \iscam\ is defined in \eqref{T3.1}, where $R_0, \kappa$ and $M$ are the leading unknown population parameters that define the overall population scale in the form of unfished recruitment and productivity in the form of recruitment compensation and natural mortality.  The total variance $\vartheta^2$ and the proportion of the total variance that is associated with observation errors $\rho$ are also estimated, then the variance is partitioned into observation errors ($\sigma^2$) and process errors ($\tau^2$) using \eqref{T4.2}.
-
-The unobserved state variables \eqref{T4.3} include the numbers-at-age year year $t$ ($N_{t,a}$), the spawning stock biomass ($B_t$) and the total age-specific total mortality rate ($Z_{t,a}$).
-
-The initial numbers-at-age in the first year \eqref{T4.4} and the annual recruits \eqref{T4.5} are treated as estimated parameters and used to initialize the numbers-at-age matrix.  Age-specific selectivity for gear type $k$ is a function of the selectivity parameters $\gamma_k$ \eqref{T4.6}, and the annual fishing mortality for each gear $k$ in year $t$ ($\digamma_{k,t}$).  The vector of log fishing mortality rate parameters $\digamma_{k,t}$ is a bounded vector with a minimum value of -30 and an upper bound of 3.0.  In arithmetic space this corresponds to a minimum value of 9.36e-14 and a maximum value of 20.01 for annual fishing mortality rates.  In years where there are 0 reported catches for a given fleet, no corresponding fishing mortality rate parameter is estimated and the implicit assumption is there was no fishery in that year.
-
-There is an option to treat natural mortality as a random walk process \eqref{T4.6b}, where the natural mortality rate in the first year is the estimated leading parameter \eqref{T4.1} and in subsequent years the mortality rate deviates from the previous year based on the estimated deviation parameter $\varphi_t$.  If the mortality deviation parameters are not estimated, then $M$ is assumed to be time invariant.
-
-State variables in each year are updated using equations \ref{T4.8}--\ref{T4.11}, where the spawning biomass is the product of the numbers-at-age and the mature biomass-at-age \eqref{T4.8}.  The total mortality rate is given by \eqref{T4.9}, and the total catch (in weight) for each gear is given by \eqref{T4.10} assuming that both natural and fishing mortality occur simultaneously throughout the year.  The numbers-at-age are propagated over time using \eqref{T4.11}, where members of the plus group (age $A$) are all assumed to have the same total mortality rate.  
-
-Recruitment to age $k$ can follow either a Beverton-Holt model \eqref{T4.12} or a Ricker model \eqref{T4.13} where the maximum juvenile survival rate ($s_o$) in either case is defined by $s_o=\kappa/\phi_E$.  For the Beverton-Holt model, $\beta$ is derived by solving \eqref{T4.12} for $\beta$ conditional on estimates of $\kappa$ and $R_o$:
-\[
-\beta = \frac{\kappa-1}{R_o \phi_E},
-\]
-and for the Ricker model this is given by:
-\[
-\beta = \frac{\ln(\kappa)}{R_o \phi_E}
-\]
+The dynamics of the population numbers-at-age are recursively updated based on \eqref{T3.8}, where age-1 recruits each year is based on the estimated vector defined by \eqref{T3.7}. The total catch, in numbers, is based on instantaneous rates and assumes both natural and fishing mortality occur simultaneously \eqref{T3.9}. Spawning biomass in year $i$ ($B_i$) is defined by \eqref{T3.6}.
 
 
 
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{tablehere}
-  \centering
-\caption{Statistical catch-age model using the Baranov catch.}
-\label{tab:statistical_catch_age_model}
-\tableEq
-    \begin{align}
-        \hline \nonumber \\
-        &\mbox{Estimated parameters} \nonumber\\
-        \begin{split}
-        \Theta&= 
-                (R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},%\bar{F}_k,
-                \digamma_{k,t},
-                \{\omega_t\}_{t=1-A}^{t=T},
-                \{\varphi_t \}_{t=2}^T)
-    \end{split} \label{T4.1}\\
-        \sigma^2&=\rho /\vartheta^2, \quad
-        \tau^2=(1-\rho)/\vartheta^2\label{T4.2}\\[1ex]
-        %\vartheta^2=\sigma^2+\tau^2, \quad
-        %\rho=\frac{\sigma^2}{\sigma^2+\tau^2}\label{T4.3}\\[1ex]
-        %%
-        %%
-        &\mbox{Unobserved states} \nonumber\\
-        &N_{t,a},B_t,Z_{t,a}    \label{T4.3}\\
-    %%
-    %%          
-        &\mbox{Initial states} \nonumber\\
-        %v_a=\left[1+e^{-(\hat{a}-a)/\hat{\gamma}}\right]^{-1}\label{T4.7}\\
-        N_{t,a}&=\bar{R}e^{\omega_{t-a}} \exp(-M_t)^{(a-1)};\quad t=1;  2\leq a\leq A \label{T4.4}\\
-        N_{t,a}&=\bar{R}e^{\omega_{t}} ;\quad 1\leq t\leq T;  a=1 \label{T4.5}\\
-        v_{k,a}&=f(\gamma_k) \label{T4.6}\\
-        M_t &= M_{t-1} \exp(\varphi_t), \quad t>1 \label{T4.6b}\\
-        F_{k,t}&=\exp(\digamma_{k,t}) \label{T4.7}\\[1ex]
-        %%
-        %%
-        &\mbox{State dynamics (t$>$1)} \nonumber\\
-        B_t&=\sum_a N_{t,a}f_a \label{T4.8}\\
-        Z_{t,a}&=M_t+\sum_k F_{k,t} v_{k,t,a}\label{T4.9}\\
-        \hat{C}_{k,t}&=\sum _ a\frac {N_{{t,a}}w_{{a}}F_{k,t} v_{{k,t,a}}
-        \left( 1-{e^{-Z_{t,a}}} \right) }{Z_{t,a}}^{\eta_t} \label{T4.10}\\
-        %F_{t_{i+1}}= \ F_{t_{i}} -\frac{\hat{C}_t-C_t}{\hat{C}_t'} \label{T4.12}\\
-        N_{t,a}&=\begin{cases}
-            %\dfrac{s_oE_{t-1}}{1+\beta E_{t-1}} \exp(\omega_t-0.5\tau^2) &a=1\\ \\
-            N_{t-1,a-1} \exp(-Z_{t-1,a-1}) &a>1\\
-            N_{t-1,a} \exp(-Z_{t-1,a}) & a=A
-        \end{cases}\label{T4.11}\\[1ex]
-        %%
-        %%
-        &\mbox{Recruitment models} \nonumber\\
-        R_t &= \frac{s_oB_{t-k}}{1+\beta B_{t-k}}e^{\delta_{t}-0.5\tau^2} \quad \mbox{Beverton-Holt} \label{T4.12}\\
-        R_t &= s_oB_{t-k}e^{-\beta B_{t-k}+\delta_t-0.5\tau^2} \quad \mbox{Ricker} \label{T4.13}\\
-    %%        \mbox{Residuals \& predicted observations} \nonumber\\
-    %%        \epsilon_t=\ln\left(\frac{I_t}{B_t}\right)-\frac{1}{n}\sum_{t \in I_t}\ln\left(\frac{I_t}{B_t}\right)\label{T4.15}\\
-    %%        \hat{A}_{t,a}=\dfrac{N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}
-    %%        {\sum_a N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}\label{T4.16}\\
-        \hline \hline \nonumber
-    \end{align}
+% The estimated parameter vector in \iscam\ is defined in \eqref{T3.1}, where $R_0, \kappa$ and $M$ are the leading unknown population parameters that define the overall population scale in the form of unfished recruitment and productivity in the form of recruitment compensation and natural mortality.  
 
-    \normalEq
-\end{tablehere}
+
+
+
+
+% The total variance $\vartheta^2$ and the proportion of the total variance that is associated with observation errors $\rho$ are also estimated, then the variance is partitioned into observation errors ($\sigma^2$) and process errors ($\tau^2$) using \eqref{T4.2}.
+
+
+
+
+
+% The unobserved state variables \eqref{T4.3} include the numbers-at-age year year $t$ ($N_{t,a}$), the spawning stock biomass ($B_t$) and the total age-specific total mortality rate ($Z_{t,a}$).
+
+% The initial numbers-at-age in the first year \eqref{T4.4} and the annual recruits \eqref{T4.5} are treated as estimated parameters and used to initialize the numbers-at-age matrix.  Age-specific selectivity for gear type $k$ is a function of the selectivity parameters $\gamma_k$ \eqref{T4.6}, and the annual fishing mortality for each gear $k$ in year $t$ ($\digamma_{k,t}$).  The vector of log fishing mortality rate parameters $\digamma_{k,t}$ is a bounded vector with a minimum value of -30 and an upper bound of 3.0.  In arithmetic space this corresponds to a minimum value of 9.36e-14 and a maximum value of 20.01 for annual fishing mortality rates.  In years where there are 0 reported catches for a given fleet, no corresponding fishing mortality rate parameter is estimated and the implicit assumption is there was no fishery in that year.
+
+% There is an option to treat natural mortality as a random walk process \eqref{T4.6b}, where the natural mortality rate in the first year is the estimated leading parameter \eqref{T4.1} and in subsequent years the mortality rate deviates from the previous year based on the estimated deviation parameter $\varphi_t$.  If the mortality deviation parameters are not estimated, then $M$ is assumed to be time invariant.
+
+% State variables in each year are updated using equations \ref{T4.8}--\ref{T4.11}, where the spawning biomass is the product of the numbers-at-age and the mature biomass-at-age \eqref{T4.8}.  The total mortality rate is given by \eqref{T4.9}, and the total catch (in weight) for each gear is given by \eqref{T4.10} assuming that both natural and fishing mortality occur simultaneously throughout the year.  The numbers-at-age are propagated over time using \eqref{T4.11}, where members of the plus group (age $A$) are all assumed to have the same total mortality rate.  
+
+% Recruitment to age $k$ can follow either a Beverton-Holt model \eqref{T4.12} or a Ricker model \eqref{T4.13} where the maximum juvenile survival rate ($s_o$) in either case is defined by $s_o=\kappa/\phi_E$.  For the Beverton-Holt model, $\beta$ is derived by solving \eqref{T4.12} for $\beta$ conditional on estimates of $\kappa$ and $R_o$:
+% \[
+% \beta = \frac{\kappa-1}{R_o \phi_E},
+% \]
+% and for the Ricker model this is given by:
+% \[
+% \beta = \frac{\ln(\kappa)}{R_o \phi_E}
+% \]
+
+
+
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{tablehere}
+%   \centering
+% \caption{Statistical catch-age model using the Baranov catch.}
+% \label{tab:statistical_catch_age_model}
+% \tableEq
+%     \begin{align}
+%         \hline \nonumber \\
+%         &\mbox{Estimated parameters} \nonumber\\
+%         \begin{split}
+%         \Theta&= 
+%                 (R_0,\kappa,M,\bar{R},\rho,\vartheta^2,\gamma_{k},%\bar{F}_k,
+%                 \digamma_{k,t},
+%                 \{\omega_t\}_{t=1-A}^{t=T},
+%                 \{\varphi_t \}_{t=2}^T)
+%     \end{split} \label{T4.1}\\
+%         \sigma^2&=\rho /\vartheta^2, \quad
+%         \tau^2=(1-\rho)/\vartheta^2\label{T4.2}\\[1ex]
+%         %\vartheta^2=\sigma^2+\tau^2, \quad
+%         %\rho=\frac{\sigma^2}{\sigma^2+\tau^2}\label{T4.3}\\[1ex]
+%         %%
+%         %%
+%         &\mbox{Unobserved states} \nonumber\\
+%         &N_{t,a},B_t,Z_{t,a}    \label{T4.3}\\
+%     %%
+%     %%          
+%         &\mbox{Initial states} \nonumber\\
+%         %v_a=\left[1+e^{-(\hat{a}-a)/\hat{\gamma}}\right]^{-1}\label{T4.7}\\
+%         N_{t,a}&=\bar{R}e^{\omega_{t-a}} \exp(-M_t)^{(a-1)};\quad t=1;  2\leq a\leq A \label{T4.4}\\
+%         N_{t,a}&=\bar{R}e^{\omega_{t}} ;\quad 1\leq t\leq T;  a=1 \label{T4.5}\\
+%         v_{k,a}&=f(\gamma_k) \label{T4.6}\\
+%         M_t &= M_{t-1} \exp(\varphi_t), \quad t>1 \label{T4.6b}\\
+%         F_{k,t}&=\exp(\digamma_{k,t}) \label{T4.7}\\[1ex]
+%         %%
+%         %%
+%         &\mbox{State dynamics (t$>$1)} \nonumber\\
+%         B_t&=\sum_a N_{t,a}f_a \label{T4.8}\\
+%         Z_{t,a}&=M_t+\sum_k F_{k,t} v_{k,t,a}\label{T4.9}\\
+%         \hat{C}_{k,t}&=\sum _ a\frac {N_{{t,a}}w_{{a}}F_{k,t} v_{{k,t,a}}
+%         \left( 1-{e^{-Z_{t,a}}} \right) }{Z_{t,a}}^{\eta_t} \label{T4.10}\\
+%         %F_{t_{i+1}}= \ F_{t_{i}} -\frac{\hat{C}_t-C_t}{\hat{C}_t'} \label{T4.12}\\
+%         N_{t,a}&=\begin{cases}
+%             %\dfrac{s_oE_{t-1}}{1+\beta E_{t-1}} \exp(\omega_t-0.5\tau^2) &a=1\\ \\
+%             N_{t-1,a-1} \exp(-Z_{t-1,a-1}) &a>1\\
+%             N_{t-1,a} \exp(-Z_{t-1,a}) & a=A
+%         \end{cases}\label{T4.11}\\[1ex]
+%         %%
+%         %%
+%         &\mbox{Recruitment models} \nonumber\\
+%         R_t &= \frac{s_oB_{t-k}}{1+\beta B_{t-k}}e^{\delta_{t}-0.5\tau^2} \quad \mbox{Beverton-Holt} \label{T4.12}\\
+%         R_t &= s_oB_{t-k}e^{-\beta B_{t-k}+\delta_t-0.5\tau^2} \quad \mbox{Ricker} \label{T4.13}\\
+%     %%        \mbox{Residuals \& predicted observations} \nonumber\\
+%     %%        \epsilon_t=\ln\left(\frac{I_t}{B_t}\right)-\frac{1}{n}\sum_{t \in I_t}\ln\left(\frac{I_t}{B_t}\right)\label{T4.15}\\
+%     %%        \hat{A}_{t,a}=\dfrac{N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}
+%     %%        {\sum_a N_{t,a}\dfrac{F_tv_a}{Z_{t,a}}\left(1-e^{-Z_{t,a}}\right)}\label{T4.16}\\
+%         \hline \hline \nonumber
+%     \end{align}
+
+%     \normalEq
+% \end{tablehere}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

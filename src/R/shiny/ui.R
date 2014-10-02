@@ -17,7 +17,7 @@ renderEquilInputs <- function(prefix)
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
 				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
 				
-				selectInput('chartType',"Model Output",
+				selectInput(paste0(prefix,"_",'chartType'),"Model Output",
 				            c("Equilibrium Yield",
 				              "Performance Metrics",
 				              "Reference Points",

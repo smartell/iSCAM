@@ -180,16 +180,17 @@ shinyServer(function(input, output, session) {
 
   output$a_equilPlot <- renderPlot({
     # A <- scnA()
-    switch(input$chartType,
-           "Equilibrium Yield" = .plotEquilYield(scnA())
+    switch(input$a_chartType,
+           "Equilibrium Yield" = .plotEquilYield(scnA()),
+           "Performance Metrics" = .plotPerformanceMetrics(scnA())
            )
     
   })
   output$b_equilPlot <- renderPlot({
     B <- rbind(scnA(),scnB())
-    print(head(B))
-    switch(input$chartType,
-           "Equilibrium Yield" = .plotEquilYield(B)
+    switch(input$b_chartType,
+           "Equilibrium Yield"   = .plotEquilYield(B),
+           "Performance Metrics" = .plotPerformanceMetrics(scnB())
            )
   })
 
@@ -208,7 +209,13 @@ shinyServer(function(input, output, session) {
 }
 
 
-
+.plotPerformanceMetrics <- function(Scenario)
+{
+  ir <- which.max(Scenario$Ye)
+  print(ir)
+  barplot(as.matrix(Scenario[ir,]))
+  barplot(as.matrix(Scenario[ir,]))
+}
 
 
 
