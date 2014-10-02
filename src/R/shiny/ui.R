@@ -19,7 +19,7 @@ renderEquilInputs <- function(prefix)
 				
 				selectInput(paste0(prefix,"_",'chartType'),"Model Output",
 				            c("Equilibrium Yield",
-				              "Performance Metrics",
+				              "Performance Metrics at MSY",
 				              "Reference Points",
 				              "Selectivity curves"))
 
@@ -249,7 +249,8 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	      plotOutput("a_equilPlot", height = "500px")
 	    ),
 	    column(6,
-	      plotOutput("b_equilPlot", height = "500px")
+	      # plotOutput("b_equilPlot", height = "500px")
+	    	tableOutput("b_table")
 	    )
 	  ),
 		fluidRow(

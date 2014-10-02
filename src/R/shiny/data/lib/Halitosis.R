@@ -33,7 +33,7 @@ mytheme <- function (base_size = 12, base_family = "")
 # | Stock -> is a list object with all parameters and output.
    regArea <- "2B"
    A	<- 30					# maximum age.
-   G	<- 3					# number of growth groups
+   G	<- 9					# number of growth groups
    S	<- 2					# number of sexes
    dim	<- c(A, G, S)			# array dimensions
    age	<- 1:A					# vector of ages
@@ -280,7 +280,7 @@ mytheme <- function (base_size = 12, base_family = "")
 			va[,,i]  <- sc[,,i]*(sr[,,i]+sd[,,i]*dm)
 			
 			# bycatch fishery selecitvity
-			pd       <- plogis(xl, 40,  5) - (1-0.65)*plogis(xl, 100.3, 5.0)
+			pd       <- .plogis95(xl,selex_bycatch50,selex_bycatch90) - (1-0.65)*plogis(xl, 100.3, 5.0)
 			vd[,,i]  <- .calcPage(la[,,i],sd_la[,,i], pd, xl)
 			
 
@@ -449,12 +449,13 @@ mytheme <- function (base_size = 12, base_family = "")
 		
 		# 5. Calculate average weight-at-age
 		wbar <- matrix(0, nrow=S, ncol=A)
-		for(i in 1:S)
-		{
-			tmp      <- lz[,,i]/rowSums(lz[,,i])
-			wbar[i,] <- rowSums(wa[,,i]*tmp)
+		if(re > 0 ){
+			for(i in 1:S)
+			{
+				tmp      <- lz[,,i]/rowSums(lz[,,i])
+				wbar[i,] <- rowSums(wa[,,i]*tmp)
+			}
 		}
-
 		
 		# 6. Calculate average weight of the landed catch.
 

@@ -147,9 +147,14 @@ shinyServer(function(input, output, session) {
   })
 
 
+
+
+
+
+
   # EQUILIBRIUM MODEL INTERFACE 
   getParams <- function(prefix) {
-    print("Hello")
+    
     input[[paste0(prefix, "_recalc")]]
 
     params <- lapply(paramNames, function(p) {
@@ -176,23 +181,33 @@ shinyServer(function(input, output, session) {
 
   scnA <- reactive(do.call(equilibrium_model, getParams("a")))
   scnB <- reactive(do.call(equilibrium_model, getParams("b")))
-  
 
   output$a_equilPlot <- renderPlot({
-    # A <- scnA()
+    AB <<- rbind(scnA(),scnB())
     switch(input$a_chartType,
-           "Equilibrium Yield" = .plotEquilYield(scnA()),
-           "Performance Metrics" = .plotPerformanceMetrics(scnA())
+           "Equilibrium Yield"          = .plotEquilYield(AB),
+           "Performance Metrics at MSY" = .plotPerformanceMSY(scnA())
            )
+  })
+
+  output$b_table <- renderTable({
+    cat("Equilibrium MSY summary table")
+    AB <- rbind(scnA(),scnB())
     
+    test <- ddply(AB,.(prefix),plyr::summarize,
+                  Fmsy=fe[which.max(AB$Ye)],
+                  MSY =Ye[which.max(AB$Ye)]
+                  )
+    return(test)
+    # return(DD)
   })
-  output$b_equilPlot <- renderPlot({
-    B <- rbind(scnA(),scnB())
-    switch(input$b_chartType,
-           "Equilibrium Yield"   = .plotEquilYield(B),
-           "Performance Metrics" = .plotPerformanceMetrics(scnB())
-           )
-  })
+  # output$b_equilPlot <- renderPlot({
+  #   # B <- rbind(scnA(),scnB())
+  #   switch(input$b_chartType,
+  #          "Equilibrium Yield"          = .plotEquilYield(scnB()),
+  #          "Performance Metrics at MSY" = .plotPerformanceMSY(scnB())
+  #          )
+  # })
 
 
 })
@@ -201,20 +216,36 @@ shinyServer(function(input, output, session) {
 
 .plotEquilYield <- function(Scenario)
 {
-  # qplot(fe,Ye,data=Scenario,geom_line)
-  p <- ggplot(Scenario,aes(x=fe,y=Ye,color=prefix)) + geom_line()
-  p <- p + labs(x="Fishing intensity",y="Directed yield (Mlb)",col="Scenario")
-  print(p + mytheme())
+  
+
+  mdf<-melt(Scenario,id.vars=1:5)
+  sdf<-subset(mdf,variable %in% c("Ye","De","wbar_f","wbar_m"))
+  p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
+  p <- p+ facet_wrap(~variable,scales="free")
+  print(p + theme_bw(14))
 
 }
 
 
-.plotPerformanceMetrics <- function(Scenario)
+.plotPerformanceMSY<- function(Scenario)
 {
-  ir <- which.max(Scenario$Ye)
-  print(ir)
-  barplot(as.matrix(Scenario[ir,]))
-  barplot(as.matrix(Scenario[ir,]))
+  # Row in which fisheries yield is maximized.
+  ir <- which.max(Scenario$"Fishery Yield")
+
+  out <- as.vector(Scenario[ir,])
+  mdf <- melt(out,measure.vars=c("Ye","De","bycatch"))
+
+  YIELD    <- out$"Ye"
+  DISCARD  <- out$"De"
+  BYCATCH  <- out$"bycatch"
+  TOTAL    <- YIELD + BYCATCH + DISCARD
+
+
+
+  p <- ggplot(melt(out),aes(variable,value)) + geom_bar(stat="identity")
+  # print(ir)\
+  # barplot(as.matrix(Scenario[ir,]))
+  # barplot(as.matrix(Scenario[ir,]))
 }
 
 
