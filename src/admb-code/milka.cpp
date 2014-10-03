@@ -597,6 +597,7 @@ void OperatingModel::calculateTAC()
             case 1: // Constant harvest rate
                  // m_dTAC(g)  = harvest_rate * btmp;
                 f_rate = m_est_fmsy(g);
+                cout<<"m_est_fmsy"<<m_est_fmsy<<endl;
             break; 
 
             case 2: // Bthreshold:Blimit HCR.
@@ -637,16 +638,20 @@ void OperatingModel::calculateTAC()
         va  = exp(m_est_log_sel(ig));
         //cout<<"And made it to here"<<endl;
         ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
+        
 
         for( k = 1; k <= nfleet; k++ )
         {
             za  = m_est_M(ig) + f_rate(k)*va;
+            //cout<<"m_est_M is "<<m_est_M<<endl;
+            //cout<<"f_rate is "<<f_rate<<endl;
+            //cout<<"za is "<<za<<endl;
+
             ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
         }
 
         m_dTAC(g) += sum(ca);
     }
-    // cout<<m_nHCR<<endl;
     // exit(1);
 }
 
@@ -769,6 +774,7 @@ void OperatingModel::implementFisheries(const int &iyr)
         for(int g = 1; g <= ngroup; g++ )
         {
             ct = m_dTAC(g);  // Catch for each fleet.
+
             for(int h = 1; h <= nsex; h++ )
             {
                 int ig = pntr_ags(f,g,h);
@@ -796,9 +802,17 @@ void OperatingModel::implementFisheries(const int &iyr)
             }  // nsex
 
             // Calculate instantaneous fishing mortality rates.
-            cout<<"chegou aqui?"<<endl;
-            cout<<"_hCt is "<<_hCt<<endl;
+            //cout<<"chegou aqui?"<<endl;
+            //cout<<"_hCt is "<<_hCt<<endl;
+            //cout<<"na "<<na<<endl;
+            //cout<<"wa "<<wa<<endl;
+            //cout<<"nsex "<<nsex<<endl;
+            //cout<<"ma "<<ma<<"endl"<<endl;
+            //cout<<"size_count(ct) "<<size_count(ct)<<endl;
+            //cout<<"d3_Va "<<d3_Va<<endl;
+
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
+            //dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa);
 
             cout<<"fishing rate "<<ft<<endl;
 

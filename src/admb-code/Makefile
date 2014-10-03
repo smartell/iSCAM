@@ -7,7 +7,7 @@ SRCS:=$(wildcard *.cpp *.c *.cc *.cxx )
 
 # Path to ADMB distribution directory
 # enter the following line in your ~/.bash_profile
-# export ADMB_HOME=/Users/stevenmartell1/admb-trunk/build/dist
+ export ADMB_HOME=/Users/catarinawor/admb-trunk/build/dist
 
 # Compiler
 CXX:=clang++

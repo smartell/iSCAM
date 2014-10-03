@@ -2,27 +2,72 @@ library(shiny)
 library(markdown)
 
 # RENDER EQUILIBRIUM USER INTERFACE
-renderEquilInputs <- function()
+renderEquilInputs <- function(prefix)
 {
-	fluidRow(
 
-	  column(3,
-			wellPanel("Equilibrium model inputs",
-			  br(),
-				sliderInput("sldr_fe","Fishing rate (fe)",
-				            min = 0,
-				            max = 1.0,
-				            value = 0.10,
-				            format="#.##"),
+	wellPanel(
+		fluidRow(
+			column(6,
+				sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
+				sliderInput(paste0(prefix,"_","size_limit"),"Minimum size limit (inches)",min=0,max=100,value=c(32,100),step=1),
+				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01)
+				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
+			),
+			column(6,
+				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
+				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
+				
+				selectInput(paste0(prefix,"_",'chartType'),"Model Output",
+				            c("Equilibrium Yield",
+				              "Performance Metrics at MSY",
+				              "Reference Points",
+				              "Selectivity curves"))
 
-				 checkboxGroupInput("chck_plot","View plot",
-				                    c("Yield","Biomass","Recruitment"),selected ="Yield")
-			) 
-		),
-		column(9)
+				# absolutePanel(id=paste0(prefix,"_","selex_panel"),class="modal",
+				#               draggable=TRUE,fixed=FALSE,cursor="auto",
+				#               top="auto",left="auto",right="auto",bottom="auto",
+				#               width=300,
+				#   h4("Selectivity curves"),
+				#   plotOutput(paste0(prefix,"_","selex"), height = "200px"),
+				#   style = "opacity: 0.60"
+				# )
+			),
+
+			p(actionButton(paste0(prefix, "_", "recalc"),
+      "Re-run scenario", icon("random")
+    	))
+		)
 	)
 
 }
+
+  # absolutePanel(id = "controls", class = "modal", fixed = TRUE, draggable = TRUE,
+  #       top = 60, left = "auto", right = 20, bottom = "auto",
+  #       width = 330, height = "auto",
+        
+
+renderInputs <- function(prefix) {
+  wellPanel(
+    fluidRow(
+      column(6,
+        sliderInput(paste0(prefix, "_", "n_obs"), "Number of observations (in Years):", min = 0, max = 40, value = 20),
+        sliderInput(paste0(prefix, "_", "start_capital"), "Initial capital invested :", min = 100000, max = 10000000, value = 2000000, step = 100000, format="$#,##0", locale="us"),
+        sliderInput(paste0(prefix, "_", "annual_mean_return"), "Annual investment return (in %):", min = 0.0, max = 30.0, value = 5.0, step = 0.5),
+        sliderInput(paste0(prefix, "_", "annual_ret_std_dev"), "Annual investment volatility (in %):", min = 0.0, max = 25.0, value = 7.0, step = 0.1)
+      ),
+      column(6,
+        sliderInput(paste0(prefix, "_", "annual_inflation"), "Annual inflation (in %):", min = 0, max = 20, value = 2.5, step = 0.1),
+        sliderInput(paste0(prefix, "_", "annual_inf_std_dev"), "Annual inflation volatility. (in %):", min = 0.0, max = 5.0, value = 1.5, step = 0.05),
+        sliderInput(paste0(prefix, "_", "monthly_withdrawals"), "Monthly capital withdrawals:", min = 1000, max = 100000, value = 10000, step = 1000, format="$#,##0", locale="us",),
+        sliderInput(paste0(prefix, "_", "n_sim"), "Number of simulations:", min = 0, max = 2000, value = 200)
+      )
+    ),
+    p(actionButton(paste0(prefix, "_", "recalc"),
+      "Re-run simulation", icon("random")
+    ))
+  )
+}
+
 
 
 # RENDER FILTER FOR CHOOSING SCENARIOS AND PROCEDURES
@@ -139,15 +184,19 @@ renderMSEtabs <- function()
 renderOMI <- function()
 {
 	fluidRow(
-	  column(3,
+	  column(4,
 			wellPanel("Operating Model Interface",
 				selectInput('omiplotType',"Choose Graphic",
 			  	          c("Spawning biomass",
-			    	          "Depletion"),
+			    	          "Depletion",
+			    	          "Recruitment",
+			    	          "Stock Recruitment",
+			    	          "Relative abundance",
+			    	          "Mortality"),
 			      	      selected="Spawning biomass")
 			)
 		),
-		column(9,
+		column(8,
 		  plotOutput("omiPlot")
 		)
 	)
@@ -185,10 +234,25 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	# EQUILIBRIUM INTERFACE
 	tabPanel("Equilibrium",
 
+	  tags$h3("Equilibrium Model: determining reference points under alternative procedures"),
 	  fluidRow(
-	  	renderEquilInputs()
+    	column(6, tags$h4("Scenario A")),
+    	column(6, tags$h4("Scenario B"))
+  	),
+	  fluidRow(
+	  	column(6,renderEquilInputs("a")),
+	  	column(6,renderEquilInputs("b"))
 	  ),
 
+	  fluidRow(
+	    column(6,
+	      plotOutput("a_equilPlot", height = "500px")
+	    ),
+	    column(6,
+	      # plotOutput("b_equilPlot", height = "500px")
+	    	tableOutput("b_table")
+	    )
+	  ),
 		fluidRow(
 			renderBanner()
 		)
@@ -218,6 +282,7 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
     fluidRow(
   		renderBanner()
   	)
+
   )
 
 

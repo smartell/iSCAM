@@ -1,9 +1,13 @@
 library(shiny)
 source("helpers.R")
 
-
+paramNames <- c("size_limit",
+                "discard_mortality_rate",
+                "selex_fishery",
+                "selex_bycatch",
+                "num_bycatch")
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
@@ -131,9 +135,122 @@ shinyServer(function(input, output) {
 
   # OPERATING MODEL INTERFACE FUNCTIONS
   output$omiPlot <- renderPlot({
-    cat("omiplotType\n")
-    .plotSpawnBiomass(M)
+    cat(input$omiplotType)
+    switch(input$omiplotType,
+           "Spawning biomass"   = .plotSpawnBiomass(M),
+           "Depletion"          = .plotDepletion(M),
+           "Recruitment"        = .plotRecruitment(M),
+           "Stock Recruitment"  = .plotStockRecruit(M),
+           "Relative abundance" = .plotSurveyFit(M),
+           "Mortality"          = .plotMortality(M)
+           )
   })
 
+
+
+
+
+
+
+  # EQUILIBRIUM MODEL INTERFACE 
+  getParams <- function(prefix) {
+    
+    input[[paste0(prefix, "_recalc")]]
+
+    params <- lapply(paramNames, function(p) {
+      input[[paste0(prefix, "_", p)]]
+    })
+    names(params) <- paramNames
+    params <- c(params,prefix=prefix)
+    print(params)
+    params
+  }
+
+  # output$a_selex <- renderPlot({
+  #   x = 0:80
+  #   par(mar=c(4,3,0,0))
+  #   plot(x,.plogis95(x,input$a_selex_fishery[1],input$a_selex_fishery[2]),
+  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
+  # })
+  # output$b_selex <- renderPlot({
+  #   x = 0:80
+  #   par(mar=c(4,3,0,0))
+  #   plot(x,.plogis95(x,input$b_selex_fishery[1],input$b_selex_fishery[2]),
+  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
+  # })
+
+  scnA <- reactive(do.call(equilibrium_model, getParams("a")))
+  scnB <- reactive(do.call(equilibrium_model, getParams("b")))
+
+  output$a_equilPlot <- renderPlot({
+    AB <<- rbind(scnA(),scnB())
+    switch(input$a_chartType,
+           "Equilibrium Yield"          = .plotEquilYield(AB),
+           "Performance Metrics at MSY" = .plotPerformanceMSY(scnA())
+           )
+  })
+
+  output$b_table <- renderTable({
+    cat("Equilibrium MSY summary table")
+    AB <- rbind(scnA(),scnB())
+    
+    test <- ddply(AB,.(prefix),plyr::summarize,
+                  Fmsy=fe[which.max(AB$Ye)],
+                  MSY =Ye[which.max(AB$Ye)]
+                  )
+    return(test)
+    # return(DD)
+  })
+  # output$b_equilPlot <- renderPlot({
+  #   # B <- rbind(scnA(),scnB())
+  #   switch(input$b_chartType,
+  #          "Equilibrium Yield"          = .plotEquilYield(scnB()),
+  #          "Performance Metrics at MSY" = .plotPerformanceMSY(scnB())
+  #          )
+  # })
+
+
 })
+
+
+
+.plotEquilYield <- function(Scenario)
+{
+  
+
+  mdf<-melt(Scenario,id.vars=1:5)
+  sdf<-subset(mdf,variable %in% c("Ye","De","wbar_f","wbar_m"))
+  p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
+  p <- p+ facet_wrap(~variable,scales="free")
+  print(p + theme_bw(14))
+
+}
+
+
+.plotPerformanceMSY<- function(Scenario)
+{
+  # Row in which fisheries yield is maximized.
+  ir <- which.max(Scenario$"Fishery Yield")
+
+  out <- as.vector(Scenario[ir,])
+  mdf <- melt(out,measure.vars=c("Ye","De","bycatch"))
+
+  YIELD    <- out$"Ye"
+  DISCARD  <- out$"De"
+  BYCATCH  <- out$"bycatch"
+  TOTAL    <- YIELD + BYCATCH + DISCARD
+
+
+
+  p <- ggplot(melt(out),aes(variable,value)) + geom_bar(stat="identity")
+  # print(ir)\
+  # barplot(as.matrix(Scenario[ir,]))
+  # barplot(as.matrix(Scenario[ir,]))
+}
+
+
+
+
+
+
 

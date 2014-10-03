@@ -3884,7 +3884,6 @@ FUNCTION void calcReferencePoints()
 		msy(g)  = value(dmsy);
 		fmsy(g) = value(dfmsy);
 		c_MSY.print();
-
 		
 	}
 
@@ -3916,8 +3915,8 @@ FUNCTION void calcReferencePoints()
 		//cout<<"group \t"<<g<<endl;
 		//exit(1);
 
-
-		Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
+		//Why is this being done again?
+		Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V); //why are is the order of M_bar and d_rho changed?
 		fmsy(g) = 0.1;
 		c_msy.get_fmsy(fmsy(g));
 		bo = c_msy.getBo();

@@ -546,7 +546,6 @@ dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatr
 **/
 dvector BaranovCatchEquation::getFishingMortality(const dvector &ct, const dmatrix &ma, const d3_array *_V, const dmatrix &na, const dmatrix &wa)
 {
-
 	int h,i,j,k,its;
 	d3_array V;
 	V.allocate(*_V); //V(1,nsex,1,ngear,1,nage)
