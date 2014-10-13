@@ -219,14 +219,15 @@ shinyServer(function(input, output, session) {
   
 
   mdf<-melt(Scenario,id.vars=1:5)
-  sdf<-subset(mdf,variable %in% c("Ye","De","We","wbar_m"))
+  sdf<-subset(mdf,variable %in% c("Ye","De","We","OE"))
   levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
+  levels(sdf$variable)[levels(sdf$variable)=="OE"] <- "Operational Efficiency (%)"
   
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
   p <- p + facet_wrap(~variable,scales="free")
-  p <- p + labs(x="Fishing Intensity",col="Scenario",y=NA)
+  p <- p + labs(x="Fishing Intensity",col="Scenario",y="")
   print(p + theme_bw(14))
 
 }

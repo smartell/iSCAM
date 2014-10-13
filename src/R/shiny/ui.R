@@ -236,23 +236,35 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 
 	  tags$h3("Equilibrium Model: determining reference points under alternative procedures"),
 	  fluidRow(
-    	column(6, tags$h4("Scenario A")),
-    	column(6, tags$h4("Scenario B"))
-  	),
-	  fluidRow(
-	  	column(6,renderEquilInputs("a")),
-	  	column(6,renderEquilInputs("b"))
-	  ),
-
-	  fluidRow(
-	    column(6,
+	  	column(6,
+	  	  tags$h4("Scenario A"),
+	  	  renderEquilInputs("a"),
+	  	  tags$h4("Scenario B"),
+	  	  renderEquilInputs("b")
+	  	),
+	  	column(6,
 	      plotOutput("a_equilPlot", height = "500px")
-	    ),
-	    column(6,
-	      # plotOutput("b_equilPlot", height = "500px")
-	    	tableOutput("b_table")
 	    )
+	    
 	  ),
+	  # fluidRow(
+   #  	column(6, tags$h4("Scenario A")),
+   #  	column(6, tags$h4("Scenario B"))
+  	# ),
+	  # fluidRow(
+	  # 	column(6,renderEquilInputs("a")),
+	  # 	column(6,renderEquilInputs("b"))
+	  # ),
+
+	  # fluidRow(
+	  #   column(6,
+	  #     plotOutput("a_equilPlot", height = "500px")
+	  #   ),
+	  #   column(6,
+	  #     # plotOutput("b_equilPlot", height = "500px")
+	  #   	tableOutput("b_table")
+	  #   )
+	  # ),
 		fluidRow(
 			renderBanner()
 		)

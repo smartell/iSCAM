@@ -510,7 +510,7 @@ mytheme <- function (base_size = 12, base_family = "")
 		         Ye=M1$ye,De=M1$de,We=M1$we,Be=M1$be,Re=M1$re,
 		         SPR=M1$spr,YPR=M1$ypr,DPR=M1$dpr,WPR=M1$wpr,BPR=M1$bpr,
 		         Cbar=M1$cbar,EE=M1$ye/(M1$ye+M1$de),Fd = M1$fd,
-		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,
+		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,OE=M1$ye/(M1$ye+M1$de+bycatch),
 		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18])
 		return(out)
 	})
