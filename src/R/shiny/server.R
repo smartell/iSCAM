@@ -5,7 +5,11 @@ paramNames <- c("size_limit",
                 "discard_mortality_rate",
                 "selex_fishery",
                 "selex_bycatch",
-                "num_bycatch")
+                "num_bycatch",
+                "five",
+                "ten",
+                "twenty",
+                "forty")
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
 
@@ -155,7 +159,7 @@ shinyServer(function(input, output, session) {
   # EQUILIBRIUM MODEL INTERFACE 
   getParams <- function(prefix) {
     
-    input[[paste0(prefix, "_recalc")]]
+    # input[[paste0(prefix, "_recalc")]]
 
     params <- lapply(paramNames, function(p) {
       input[[paste0(prefix, "_", p)]]
@@ -184,9 +188,11 @@ shinyServer(function(input, output, session) {
 
   output$a_equilPlot <- renderPlot({
     AB <<- rbind(scnA(),scnB())
-    switch(input$a_chartType,
+    switch(input$selChartType,
            "Equilibrium Yield"          = .plotEquilYield(AB),
-           "Performance Metrics at MSY" = .plotPerformanceMSY(scnA())
+           "Performance Metrics at MSY" = .plotPerformanceMSY(AB),
+           "Equilibrium Value"          = .plotEquilValue(AB),
+           "Value at MSY"               = .plotPerformanceValue(AB)
            )
   })
 
@@ -232,29 +238,56 @@ shinyServer(function(input, output, session) {
 
 }
 
-
-.plotPerformanceMSY<- function(Scenario)
+.plotEquilValue <- function(Scenario)
 {
-  # Row in which fisheries yield is maximized.
-  ir <- which.max(Scenario$"Fishery Yield")
+  
 
-  out <- as.vector(Scenario[ir,])
-  mdf <- melt(out,measure.vars=c("Ye","De","bycatch"))
+  mdf<-melt(Scenario,id.vars=1:5)
+  sdf<-subset(mdf,variable %in% c("YEv","DEv","BYv","WEv"))
+  levels(sdf$variable)[levels(sdf$variable)=="YEv"] <- "Landed value"
+  levels(sdf$variable)[levels(sdf$variable)=="DEv"] <- "Value of discards"
+  levels(sdf$variable)[levels(sdf$variable)=="BYv"] <- "Value of bycatch mortality"
+  levels(sdf$variable)[levels(sdf$variable)=="WEv"] <- "Value of wastage"
+  
+  p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
+  p <- p + facet_wrap(~variable,scales="free")
+  p <- p + labs(x="Fishing Intensity",col="Scenario",y="Millions of dollars")
+  print(p + theme_bw(14))
 
-  YIELD    <- out$"Ye"
-  DISCARD  <- out$"De"
-  BYCATCH  <- out$"bycatch"
-  TOTAL    <- YIELD + BYCATCH + DISCARD
-
-
-
-  p <- ggplot(melt(out),aes(variable,value)) + geom_bar(stat="identity")
-  # print(ir)\
-  # barplot(as.matrix(Scenario[ir,]))
-  # barplot(as.matrix(Scenario[ir,]))
 }
 
 
+.plotPerformanceMSY<- function(Scenario)
+{
+  x<-ddply(AB,.(prefix),plyr::summarize,
+           "Fishing Intensity @ MSY"=fe[which.max(Ye)],
+           "Maximum Fishery Yield"  =Ye[which.max(Ye)],
+           "Discards"               =De[which.max(Ye)],
+           "Wastage"                =We[which.max(Ye)]
+           )
+
+  p <- ggplot(melt(x),aes(variable,value,fill=prefix))
+  p <- p + geom_bar(stat="identity",position="dodge")
+  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",col="Scenario")
+  p <- p +facet_wrap(~variable,scales="free")
+  print(p + theme_bw(14))
+}
+
+.plotPerformanceValue<- function(Scenario)
+{
+  x<-ddply(AB,.(prefix),plyr::summarize,
+         "Landed Value @ MSY"           =YEv[which.max(Ye)],
+         "Value of Wastage"             =WEv[which.max(Ye)],
+         "Total Value of all mortality" =YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)],
+         "Value of losses"              =(YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)])-YEv[which.max(Ye)]
+         )
+
+  p <- ggplot(melt(x),aes(variable,value,fill=prefix))
+  p <- p + geom_bar(stat="identity",position="dodge")
+  p <- p + labs(x="Variable",y="Value (million $)",col="Scenario")
+  p <- p +facet_wrap(~variable,scales="free")
+  print(p + theme_bw(14))
+}
 
 
 

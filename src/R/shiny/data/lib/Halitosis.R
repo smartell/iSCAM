@@ -225,10 +225,10 @@ mytheme <- function (base_size = 12, base_family = "")
 		}
 
 		# price premiums based on fish weight
-		pa[wa<10]  <- 0.00
-		pa[wa>=10] <- 6.75
-		pa[wa>=20] <- 7.30
-		pa[wa>=40] <- 7.50
+		pa[wa<10]  <- price[1]
+		pa[wa>=10] <- price[2]
+		pa[wa>=20] <- price[3]
+		pa[wa>=40] <- price[4]
 
 		Stock$lx	   = lx	
 		Stock$la	   = la	
@@ -411,8 +411,9 @@ mytheme <- function (base_size = 12, base_family = "")
 		ne    <- 0
 		de		<- 0
 		we    <- 0
-		yev   <- 0
-		dev   <- 0  # Value of wastage.
+		yev   <- 0  # Value of landed fish retained.
+		dev   <- 0  # Value of discarded fish.
+		wev   <- 0  # Value of wastage.
 		byv   <- 0 	# Value of discarded bycatch.
 		ypr		<- 0
 		dpr   <- 0
@@ -436,6 +437,10 @@ mytheme <- function (base_size = 12, base_family = "")
 			# landed value of retained fish.
 			#
 			yev <- yev + sum( re * fe * t(lz[,,i]*wa[,,i]*qa[,,i]*pa[,,i])*pg )
+			# 
+			# value of wastage.
+			# 
+			wev <- wev + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i]*pa[,,i])*pg )
 			# 
 			# value of discarded fish.
 			# 
@@ -476,6 +481,7 @@ mytheme <- function (base_size = 12, base_family = "")
 		Stock$yev  <- yev 
 		Stock$dev  <- dev
 		Stock$byv  <- byv
+		Stock$wev  <- wev
 
 		
 		return(Stock)
@@ -493,7 +499,7 @@ mytheme <- function (base_size = 12, base_family = "")
 # | 4. .calcSRR (Stock recruitment relationship)
 # | 5. .calcEquilibrium (data frame of values versus fe)
 
-.runModel <- function(df)
+.runModel <- function(df,price)
 {
 	# print(df)
 	with(as.list(df), {
@@ -501,6 +507,7 @@ mytheme <- function (base_size = 12, base_family = "")
 		Stock$selex_90 = selex_90
 		Stock$selex_bycatch50 = selex_bycatch50
 		Stock$selex_bycatch90 = selex_bycatch90
+		Stock$price = price
 		M1 <- .calcLifeTable(Stock)
 		M1 <- .calcSelectivities(M1,slim=slim,ulim=ulim,cvlm=0.1,dm=dm)
 		M1 <- .calcSRR(M1)
@@ -510,7 +517,8 @@ mytheme <- function (base_size = 12, base_family = "")
 		         Ye=M1$ye,De=M1$de,We=M1$we,Be=M1$be,Re=M1$re,
 		         SPR=M1$spr,YPR=M1$ypr,DPR=M1$dpr,WPR=M1$wpr,BPR=M1$bpr,
 		         Cbar=M1$cbar,EE=M1$ye/(M1$ye+M1$de),Fd = M1$fd,
-		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,OE=M1$ye/(M1$ye+M1$de+bycatch),
+		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,WEv=M1$wev,
+		         OE=M1$ye/(M1$ye+M1$de+bycatch),
 		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18])
 		return(out)
 	})
@@ -524,6 +532,10 @@ equilibrium_model <- function(size_limit=c(32,100),
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
                               num_bycatch=8,
+                              five=0,
+                              ten=5,
+                              twenty=5,
+                              forty=5,
                               prefix="a")
 {
 	# -----------------------------------------
@@ -545,6 +557,9 @@ equilibrium_model <- function(size_limit=c(32,100),
 	# Bycatch mortality in Mlbs
 	num.bycatch   = num_bycatch
 
+	# Price vector
+	price = c(five,ten,twenty,forty)
+
 	print("Running equilibrium model")
 	
 	df <- expand.grid(fe=fe,
@@ -557,7 +572,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 	                  selex_bycatch50 = selex.bycatch[1],
 	                  selex_bycatch90 = selex.bycatch[2])
 	
-	SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel))))
+	SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel,price=price))))
 	return(SA)
 }
 

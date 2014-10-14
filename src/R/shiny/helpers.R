@@ -1,9 +1,9 @@
 #helpers.R
 # LIBRARIES
-require(ggplot2)
-require(reshape2)
-require(googleVis)
-require(plyr)
+library(ggplot2)
+library(reshape2)
+library(googleVis)
+library(plyr)
 # 
 # LOAD A mse.data DATA OBJECT
 # 

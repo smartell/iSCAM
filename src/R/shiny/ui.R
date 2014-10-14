@@ -7,21 +7,38 @@ renderEquilInputs <- function(prefix)
 
 	wellPanel(
 		fluidRow(
-			column(6,
+			# column(6,
 				sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
-				sliderInput(paste0(prefix,"_","size_limit"),"Minimum size limit (inches)",min=0,max=100,value=c(32,100),step=1),
-				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01)
+				sliderInput(paste0(prefix,"_","size_limit"),"Min & Max size limit (inches)",min=0,max=100,value=c(32,100),step=1),
+				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01),
 				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
-			),
-			column(6,
+			# ),
+			# column(6,
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
 				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
 				
-				selectInput(paste0(prefix,"_",'chartType'),"Model Output",
-				            c("Equilibrium Yield",
-				              "Performance Metrics at MSY",
-				              "Reference Points",
-				              "Selectivity curves"))
+
+				# Economic inputs
+				#fluidRow(
+				tags$p("Price per pound ($)"),
+				column(2,
+					numericInput(paste0(prefix,"_","five"), label = "5-10", value = 0, step=0.10)
+				,offset=0),
+				column(2,
+					numericInput(paste0(prefix,"_","ten"), label = "10-20", value = 5, step=0.10)
+				,offset=1),
+				column(2,
+					numericInput(paste0(prefix,"_","twenty"), label = "20-40", value = 5, step=0.10)
+				,offset=1),
+				column(2,
+					numericInput(paste0(prefix,"_","forty"), label = "40+", value = 5, step=0.10)
+				,offset=1)
+				#)
+				# selectInput(paste0(prefix,"_",'chartType'),"Model Output",
+				#             c("Equilibrium Yield",
+				#               "Performance Metrics at MSY",
+				#               "Reference Points",
+				#               "Selectivity curves"))
 
 				# absolutePanel(id=paste0(prefix,"_","selex_panel"),class="modal",
 				#               draggable=TRUE,fixed=FALSE,cursor="auto",
@@ -31,11 +48,11 @@ renderEquilInputs <- function(prefix)
 				#   plotOutput(paste0(prefix,"_","selex"), height = "200px"),
 				#   style = "opacity: 0.60"
 				# )
-			),
+			# ),
 
-			p(actionButton(paste0(prefix, "_", "recalc"),
-      "Re-run scenario", icon("random")
-    	))
+			# p(actionButton(paste0(prefix, "_", "recalc"),
+   #    "Re-run scenario", icon("random")
+   #  	))
 		)
 	)
 
@@ -233,17 +250,29 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 
 	# EQUILIBRIUM INTERFACE
 	tabPanel("Equilibrium",
-
-	  tags$h3("Equilibrium Model: determining reference points under alternative procedures"),
 	  fluidRow(
-	  	column(6,
+	    column(6,
+		  	tags$h3("Equilibrium Model: reference points")
+	   	),
+	   	column(6,
+      	selectInput('selChartType',"Model Output",
+            c("Equilibrium Yield",
+              "Performance Metrics at MSY",
+              "Equilibrium Value",
+              "Value at MSY"))
+	   	)
+	  ),
+	  fluidRow(
+	  	column(3,
 	  	  tags$h4("Scenario A"),
-	  	  renderEquilInputs("a"),
+	  	  renderEquilInputs("a")
+	  	),
+	  	column(3,
 	  	  tags$h4("Scenario B"),
 	  	  renderEquilInputs("b")
 	  	),
 	  	column(6,
-	      plotOutput("a_equilPlot", height = "500px")
+	      plotOutput("a_equilPlot", height = "550px")
 	    )
 	    
 	  ),
