@@ -166,7 +166,7 @@ shinyServer(function(input, output, session) {
     })
     names(params) <- paramNames
     params <- c(params,prefix=prefix)
-    print(params)
+    # print(params)
     params
   }
 
