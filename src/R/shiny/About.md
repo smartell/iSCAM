@@ -20,9 +20,12 @@ The interface allows you to compare two alternative Scenarios (A & B).  There ar
 * Miniumu and maximum size limits- use sliders to set the minimum and maximum size-limit (inches) for the directed fishery.
 * Discard mortality rate- adjust the slider to set the average discard mortality rate for the directed fishery.
 * Average selectivity in bycatch fisheries- use sliders to adjust the ascending limb at wich 50% and 95% of the fish are vulnerable to the fishing gear.
+* Bycatch Mortality Cap (Million lb)- Total amount of halibut bycatch mortality by all other fleets.
+* Price per pound ($)- four different size grades (in pounds) for which the average price per pound (excluding #2s).
 
 ![alt text](www/Scenario.png)
 
+The harvest policy variables can be set indpenedently for Scenarios A or B.
 
 
 ## MSE Interface

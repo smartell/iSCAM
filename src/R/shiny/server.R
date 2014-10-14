@@ -223,6 +223,7 @@ shinyServer(function(input, output, session) {
 .plotEquilYield <- function(Scenario)
 {
   
+  helpText("These are the equilibrium yield versus fishing effort.")
 
   mdf<-melt(Scenario,id.vars=1:5)
   sdf<-subset(mdf,variable %in% c("Ye","De","We","OE"))
@@ -266,7 +267,7 @@ shinyServer(function(input, output, session) {
            "Wastage"                =We[which.max(Ye)]
            )
 
-  p <- ggplot(melt(x),aes(variable,value,fill=prefix))
+  p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
   p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",col="Scenario")
   p <- p +facet_wrap(~variable,scales="free")
@@ -282,7 +283,7 @@ shinyServer(function(input, output, session) {
          "Value of losses"              =(YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)])-YEv[which.max(Ye)]
          )
 
-  p <- ggplot(melt(x),aes(variable,value,fill=prefix))
+  p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
   p <- p + labs(x="Variable",y="Value (million $)",col="Scenario")
   p <- p +facet_wrap(~variable,scales="free")

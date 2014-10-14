@@ -213,12 +213,12 @@
 
 		Stock$lx	   = lx	
 		Stock$la	   = la	
-		Stock$sd_la    = sd_la
+		Stock$sd_la  = sd_la
 		Stock$wa	   = wa
-		Stock$pa       = pa
+		Stock$pa     = pa
 		Stock$fa	   = fa	
-		Stock$M        = M
-		Stock$ma       = ma
+		Stock$M      = M
+		Stock$ma     = ma
 
 		return(Stock)
 	})

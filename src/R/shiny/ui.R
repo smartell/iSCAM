@@ -15,7 +15,7 @@ renderEquilInputs <- function(prefix)
 			# ),
 			# column(6,
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
-				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
+				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch mortality cap (Mlb)", value = 8),
 				
 
 				# Economic inputs
@@ -254,12 +254,15 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	    column(6,
 		  	tags$h3("Equilibrium Model: reference points")
 	   	),
-	   	column(6,
+	   	column(3,
       	selectInput('selChartType',"Model Output",
             c("Equilibrium Yield",
               "Performance Metrics at MSY",
               "Equilibrium Value",
               "Value at MSY"))
+	   	),
+	   	column(3,
+    		helpText('Select an output')
 	   	)
 	  ),
 	  fluidRow(
