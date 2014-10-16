@@ -196,13 +196,13 @@ shinyServer(function(input, output, session) {
            )
   })
 
-  output$b_table <- renderTable({
+  output$msytable <- renderTable({
     cat("Equilibrium MSY summary table")
     AB <- rbind(scnA(),scnB())
     
     test <- ddply(AB,.(prefix),plyr::summarize,
-                  Fmsy=fe[which.max(AB$Ye)],
-                  MSY =Ye[which.max(AB$Ye)]
+                  MSY =Ye[which.max(Ye)],
+                  Fmsy=fe[which.max(Ye)]
                   )
     return(test)
     # return(DD)

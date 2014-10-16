@@ -275,28 +275,17 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	  	  renderEquilInputs("b")
 	  	),
 	  	column(6,
-	      plotOutput("a_equilPlot", height = "550px")
+	  	  tabsetPanel(type="tabs",id="eqtab",
+	  	    tabPanel("Plots",
+		      	plotOutput("a_equilPlot", height = "550px")
+		      ),
+		      tabPanel("Tables",
+	       		tableOutput('msytable')
+       		)
+	      )
 	    )
 	    
 	  ),
-	  # fluidRow(
-   #  	column(6, tags$h4("Scenario A")),
-   #  	column(6, tags$h4("Scenario B"))
-  	# ),
-	  # fluidRow(
-	  # 	column(6,renderEquilInputs("a")),
-	  # 	column(6,renderEquilInputs("b"))
-	  # ),
-
-	  # fluidRow(
-	  #   column(6,
-	  #     plotOutput("a_equilPlot", height = "500px")
-	  #   ),
-	  #   column(6,
-	  #     # plotOutput("b_equilPlot", height = "500px")
-	  #   	tableOutput("b_table")
-	  #   )
-	  # ),
 		fluidRow(
 			renderBanner()
 		)

@@ -160,7 +160,7 @@
 # |---------------------------------------------------------------------------|
 .calcLifeTable <- function( Stock ) 
 {
-
+	print("lifetable")
 	gvonb <- function(t, linf, vbk, to, p=1)
 	{
 		l <- linf*(1.0-exp(-vbk*(t - to)))^p
@@ -174,7 +174,7 @@
 		sd_la  <- array(0, dim)
 		wa	   <- array(0, dim)
 		fa	   <- array(0, dim)
-		pa     <- array(0, dim)
+		# pa     <- array(0, dim)
 		M      <- array(0, dim)
 		ma     <- plogis(age, a50, k50)
 
@@ -206,16 +206,16 @@
 		}
 
 		# price premiums based on fish weight
-		pa[wa<10]  <- price[1]
-		pa[wa>=10] <- price[2]
-		pa[wa>=20] <- price[3]
-		pa[wa>=40] <- price[4]
+		# pa[wa<10]  <- price[1]
+		# pa[wa>=10] <- price[2]
+		# pa[wa>=20] <- price[3]
+		# pa[wa>=40] <- price[4]
 
 		Stock$lx	   = lx	
 		Stock$la	   = la	
 		Stock$sd_la  = sd_la
 		Stock$wa	   = wa
-		Stock$pa     = pa
+		# Stock$pa     = pa
 		Stock$fa	   = fa	
 		Stock$M      = M
 		Stock$ma     = ma
@@ -326,12 +326,20 @@
 		sa	<- array(0, dim)
 		qa	<- array(0, dim)
 		da	<- array(0, dim)
+		pa  <- array(0, dim)
 		ta  <- array(0, dim)	# yield per recruit in trawl discard fishery.
 		
 		bycatch <- ct
 		# bapprox <- bo * 0.15/(0.15+fe)
 		# fd      <- bycatch/bapprox
 		fd      <- 0;
+
+		# price premiums based on fish weight
+		pa[wa<10]  <- price[1]
+		pa[wa>=10] <- price[2]
+		pa[wa>=20] <- price[3]
+		pa[wa>=40] <- price[4]
+
 		#if(ct>0)
 		#cat("fe = ", fe, " fd = ", fd, "\n")
 		for(iter in 1:25)
@@ -477,16 +485,19 @@
 # | 4. .calcSRR (Stock recruitment relationship)
 # | 5. .calcEquilibrium (data frame of values versus fe)
 
+
 .runModel <- function(df,price)
 {
 	
 	with(as.list(df), {
+		# Stock <- .calcLifeTable(Stock)
 		Stock$selex_50 = selex_50
 		Stock$selex_90 = selex_90
 		Stock$selex_bycatch50 = selex_bycatch50
 		Stock$selex_bycatch90 = selex_bycatch90
 		Stock$price = price
-		M1 <- .calcLifeTable(Stock)
+		M1 <- Stock
+		# M1 <- .calcLifeTable(Stock)
 		M1 <- .calcSelectivities(M1,slim=slim,ulim=ulim,cvlm=0.1,dm=dm)
 		M1 <- .calcSRR(M1)
 		M1 <- .asem(fe,M1,bycatch)
@@ -503,6 +514,11 @@
 }
 
 
+# |---------------------------------------------------------------------------|
+# | TOP OF MAIN SECTION
+# |---------------------------------------------------------------------------|
+# | 
+Stock <- .calcLifeTable(Stock)
 
 
 equilibrium_model <- function(size_limit=c(32,100),
@@ -540,7 +556,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 
 	print("Running equilibrium model")
 	
-	df <- expand.grid(fe=fe,
+	df <<- expand.grid(fe=fe,
 	                  slim=size.limits[1],
 	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,
@@ -552,12 +568,14 @@ equilibrium_model <- function(size_limit=c(32,100),
 	
 	# Parallel calls to runModel
 	# cl<-makeCluster(getOption("cl.cores",detectCores()))
-	# clusterExport(cl,c("Stock"),envir=environment())
-	# clusterCall(cl,mget(c(".calcLifeTable",".calcSelectivities")))
+	# # clusterExport(cl,c("Stock"),envir=environment())
+	# clusterExport(cl,"Stock",envir=.GlobalEnv)
+	# # clusterCall(cl,get((".calcSelectivities")))
+	# clusterApply(cl,mget(c(".calcSelectivities",".calcSRR")))
 	# rmod <- parApply(cl,df,1,.runModel,price=price)
 	# stopCluster(cl)
 
-	SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel,price=price))))
+	print(system.time(SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel,price=price))))))
 
 
 
