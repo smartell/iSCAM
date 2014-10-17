@@ -2729,7 +2729,7 @@ FUNCTION calcTotalCatch
 		}	// end of switch
 
 		// | standardized catch residual
-		eta(ii) = (log(d_ct+TINY) - log(ct(ii)+TINY) + 0.5*square(d_sd)) / (d_sd);
+		eta(ii) = (log(d_ct) - log(ct(ii)) + 0.5*square(d_sd)) / (d_sd);
 	}
 	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
   }

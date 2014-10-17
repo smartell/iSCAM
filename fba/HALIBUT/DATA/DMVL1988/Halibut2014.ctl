@@ -20,8 +20,8 @@
 	-1.89712    -3.0     2.0    -4       1       -1.203  0.15 #log_m g&b   ##
 	6.5          0.0     10      1       0       0.0     10   #log_avgrec  ##
 	7.5          0.0     10      1       0       0.0     10   #log_recinit ##
-	0.05         0.01    0.99    3       3       3.00    5.00 #rho         ##
-	0.8          0.01    5.0     3       4       1.01    1.01 #vartheta    ##
+	0.05         0.01    0.99   -3       3       3.00    5.00 #rho         ##
+	0.8          0.01    5.0    -3       4       1.01    1.01 #vartheta    ##
 
 ## ------------------------------------------------------------------------- ##
 ##
@@ -122,8 +122,8 @@
 ## ------------------------------------------------------------------------- ##
 0         # 1  -verbose ADMB output (0=off, 1=on)
 1         # 2  -recruitment model (1=beverton-holt, 2=ricker)
-2.0       # 3  -std in observed catches in first phase.
-1.0       # 4  -std in observed catches in last phase.
+1.0       # 3  -std in observed catches in first phase.
+0.1       # 4  -std in observed catches in last phase.
 0         # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00      # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
 0.30      # 7  -Mean fishing mortality for regularizing the estimates of Ft
