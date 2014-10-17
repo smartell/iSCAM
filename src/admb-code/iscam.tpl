@@ -2108,10 +2108,10 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						if( i==sel_blocks(k,byr) )
 						{
 							bpar ++;	
-							log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
+							log_sel(kgear)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						log_sel(kgear)(ig)(i+1) = log_sel(k)(ig)(i);
+						log_sel(kgear)(ig)(i+1) = log_sel(kgear)(ig)(i);
 					}
 					break;
 					
@@ -2223,14 +2223,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					break;
 					
 			}  // switch
-
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
 				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
-		}
+			
+		}  // end of nags
 	}  //end of gear k
 
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;

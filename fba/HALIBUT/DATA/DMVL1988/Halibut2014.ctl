@@ -64,10 +64,10 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  11     1     1     1     1     11    # 1  -selectivity type ivector(isel_type) for gear
+  3      1     1     1     3     11    # 1  -selectivity type ivector(isel_type) for gear
   82     3.0   4.0   4.0   3.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
   5.5    1.5   2.5   2.0   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
-  0      0     0     0     0     5     # 4  -No. of age nodes for each gear (0=ignore)
+  5      0     0     0     5     5     # 4  -No. of age nodes for each gear (0=ignore)
   0      0     0     0     0     10    # 5  -No. of year nodes for 2d spline(0=ignore)
   2     -2    -3    -4    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
@@ -126,7 +126,7 @@
 0.1       # 4  -std in observed catches in last phase.
 0         # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00      # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.30      # 7  -Mean fishing mortality for regularizing the estimates of Ft
+0.40      # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10      # 8  -std in mean fishing mortality in first phase
 2.00      # 9  -std in mean fishing mortality in last phase
 -3        # 10 -DEPRECATED phase for estimating m_deviations (use -1 to turn off mdevs)
