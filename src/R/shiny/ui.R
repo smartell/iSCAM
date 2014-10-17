@@ -11,7 +11,7 @@ renderEquilInputs <- function(prefix)
 				sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
 				sliderInput(paste0(prefix,"_","size_limit"),"Min & Max size limit (inches)",min=0,max=100,value=c(32,100),step=1),
 				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01),
-				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
+				sliderInput(paste0(prefix,"_","spr_target"),"SPR Reference",min=0,max=1,value=0.5,step=0.05),
 			# ),
 			# column(6,
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
@@ -33,57 +33,11 @@ renderEquilInputs <- function(prefix)
 				column(2,
 					numericInput(paste0(prefix,"_","forty"), label = "40+", value = 5, step=0.10)
 				,offset=1)
-				#)
-				# selectInput(paste0(prefix,"_",'chartType'),"Model Output",
-				#             c("Equilibrium Yield",
-				#               "Performance Metrics at MSY",
-				#               "Reference Points",
-				#               "Selectivity curves"))
-
-				# absolutePanel(id=paste0(prefix,"_","selex_panel"),class="modal",
-				#               draggable=TRUE,fixed=FALSE,cursor="auto",
-				#               top="auto",left="auto",right="auto",bottom="auto",
-				#               width=300,
-				#   h4("Selectivity curves"),
-				#   plotOutput(paste0(prefix,"_","selex"), height = "200px"),
-				#   style = "opacity: 0.60"
-				# )
-			# ),
-
-			# p(actionButton(paste0(prefix, "_", "recalc"),
-   #    "Re-run scenario", icon("random")
-   #  	))
 		)
 	)
 
 }
 
-  # absolutePanel(id = "controls", class = "modal", fixed = TRUE, draggable = TRUE,
-  #       top = 60, left = "auto", right = 20, bottom = "auto",
-  #       width = 330, height = "auto",
-        
-
-renderInputs <- function(prefix) {
-  wellPanel(
-    fluidRow(
-      column(6,
-        sliderInput(paste0(prefix, "_", "n_obs"), "Number of observations (in Years):", min = 0, max = 40, value = 20),
-        sliderInput(paste0(prefix, "_", "start_capital"), "Initial capital invested :", min = 100000, max = 10000000, value = 2000000, step = 100000, format="$#,##0", locale="us"),
-        sliderInput(paste0(prefix, "_", "annual_mean_return"), "Annual investment return (in %):", min = 0.0, max = 30.0, value = 5.0, step = 0.5),
-        sliderInput(paste0(prefix, "_", "annual_ret_std_dev"), "Annual investment volatility (in %):", min = 0.0, max = 25.0, value = 7.0, step = 0.1)
-      ),
-      column(6,
-        sliderInput(paste0(prefix, "_", "annual_inflation"), "Annual inflation (in %):", min = 0, max = 20, value = 2.5, step = 0.1),
-        sliderInput(paste0(prefix, "_", "annual_inf_std_dev"), "Annual inflation volatility. (in %):", min = 0.0, max = 5.0, value = 1.5, step = 0.05),
-        sliderInput(paste0(prefix, "_", "monthly_withdrawals"), "Monthly capital withdrawals:", min = 1000, max = 100000, value = 10000, step = 1000, format="$#,##0", locale="us",),
-        sliderInput(paste0(prefix, "_", "n_sim"), "Number of simulations:", min = 0, max = 2000, value = 200)
-      )
-    ),
-    p(actionButton(paste0(prefix, "_", "recalc"),
-      "Re-run simulation", icon("random")
-    ))
-  )
-}
 
 
 
@@ -280,7 +234,12 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 		      	plotOutput("a_equilPlot", height = "550px")
 		      ),
 		      tabPanel("Tables",
-	       		tableOutput('msytable')
+		        tags$p("MSY-based reference points"),
+	       		tableOutput('msytable'),
+	       		tags$p("SPR-based reference points"),
+	       		tableOutput('sprtable'),
+	       		tags$p("U26:O26 ratios"),
+	       		tableOutput('u26ratio')
        		)
 	      )
 	    )

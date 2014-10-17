@@ -3,6 +3,7 @@ source("helpers.R")
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
+                "spr_target",
                 "selex_fishery",
                 "selex_bycatch",
                 "num_bycatch",
@@ -10,7 +11,10 @@ paramNames <- c("size_limit",
                 "ten",
                 "twenty",
                 "forty")
-# Define server logic required to draw a histogram
+
+## ------------------------------------------------------------------------------------ ##
+## Define server logic required to run scripts
+## ------------------------------------------------------------------------------------ ##
 shinyServer(function(input, output, session) {
 
   # Subset Dataframe based on User Interface Selection.
@@ -170,21 +174,10 @@ shinyServer(function(input, output, session) {
     params
   }
 
-  # output$a_selex <- renderPlot({
-  #   x = 0:80
-  #   par(mar=c(4,3,0,0))
-  #   plot(x,.plogis95(x,input$a_selex_fishery[1],input$a_selex_fishery[2]),
-  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
-  # })
-  # output$b_selex <- renderPlot({
-  #   x = 0:80
-  #   par(mar=c(4,3,0,0))
-  #   plot(x,.plogis95(x,input$b_selex_fishery[1],input$b_selex_fishery[2]),
-  #        type="l",las=1,ylab=NA,xlab="Length (in.)",bty="l")
-  # })
-
+  ## Run equilibrium models
   scnA <- reactive(do.call(equilibrium_model, getParams("a")))
   scnB <- reactive(do.call(equilibrium_model, getParams("b")))
+
 
   output$a_equilPlot <- renderPlot({
     AB <<- rbind(scnA(),scnB())
@@ -197,27 +190,67 @@ shinyServer(function(input, output, session) {
   })
 
   output$msytable <- renderTable({
-    cat("Equilibrium MSY summary table")
     AB <- rbind(scnA(),scnB())
-    
-    test <- ddply(AB,.(prefix),plyr::summarize,
-                  MSY =Ye[which.max(Ye)],
-                  Fmsy=fe[which.max(Ye)]
-                  )
-    return(test)
-    # return(DD)
+    .equilibriumTables(AB)
   })
-  # output$b_equilPlot <- renderPlot({
-  #   # B <- rbind(scnA(),scnB())
-  #   switch(input$b_chartType,
-  #          "Equilibrium Yield"          = .plotEquilYield(scnB()),
-  #          "Performance Metrics at MSY" = .plotPerformanceMSY(scnB())
-  #          )
-  # })
+  
+  output$sprtable <- renderTable({
+    AB <- rbind(scnA(),scnB())
+    .sprTables(AB)
+  })
+
+  output$u26ratio <- renderTable({
+    AB <- rbind(scnA(),scnB())
+    .u26Table(AB)
+  })
+
+})  # End of ShinyServer
+## ------------------------------------------------------------------------------------ ##
+
+.u26Table <- function(Scenario)
+{
+  test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  "Fishery @ MSY"  =f26[which.max(Ye)],
+                  "Bycatch @ MSY"  =b26[which.max(Ye)],
+                  "Fishery @ SPR"  =f26[which.min(SPR>spr_target)],
+                  "Bycatch @ SPR"  =b26[which.min(SPR>spr_target)]
+                  )
+  colnames(test)[1]="Scenario"
+  print(test) 
+}
 
 
-})
+.sprTables <- function(Scenario)
+{
+  test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  FSPR  =fe[which.min(SPR>spr_target)],
+                  Catch =Ye[which.min(SPR>spr_target)],
+                  BMSY  =Be[which.min(SPR>spr_target)],
+                  Depl  =depletion[which.min(SPR>spr_target)],
+                  DMSY  =De[which.min(SPR>spr_target)],
+                  WMSY  =We[which.min(SPR>spr_target)],
+                  EFF   =OE[which.min(SPR>spr_target)]
+                  )
+  colnames(test)[1]="Scenario"
+  print(test)
+}
 
+.equilibriumTables <- function(Scenario)
+{
+  test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  Fmsy=fe[which.max(Ye)],
+                  MSY =Ye[which.max(Ye)],
+                  BMSY=Be[which.max(Ye)],
+                  Depl=Be[which.max(Ye)]/max(Be),
+                  DMSY=De[which.max(Ye)],
+                  WMSY=We[which.max(Ye)],
+                  EFF =OE[which.max(Ye)]
+                  )
+    colnames(test)=c("Scenario","F","MSY","Biomass (♀)",
+                     "Depletion","Discards","Wastage","Efficiency")
+    rownames(test)=NULL
+    print(test)
+}
 
 
 .plotEquilYield <- function(Scenario)
@@ -232,7 +265,10 @@ shinyServer(function(input, output, session) {
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="OE"] <- "Operational Efficiency (%)"
   
+  
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
+  # p <- p + geom_vline(xintercept=0.3, subset = .(variable == "Directed Fishery Yield (Mlb)"))
+  # p <- p + geom_vline(data=sdg,aes(xintercept=fe[which.min("SPR">spr_target)],col="Scenario"),size=2,alpha=0.5)
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Scenario",y="")
   print(p + theme_bw(14))

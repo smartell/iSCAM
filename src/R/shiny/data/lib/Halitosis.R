@@ -25,12 +25,12 @@
 
 
 # |---------------------------------------------------------------------------|
-# | Population parameters 
+# | Population parameters 476.8910
 # |---------------------------------------------------------------------------|
    bo				<- 476.891							# unfished female spawning biomass
    h				<- 0.75				  				# steepness
    m        <- c(0.201826,0.169674) # natural mortality rate
-   linf     <- c(158.86,101.525)		# asymptotic length
+   linf     <- c(158.86,101.525)		# asymptotic length (cm)
    vonk     <- c(0.0684,0.0842)			# vonk
    to       <- c(-5.2,-4.838)   		# time at zero length
    p        <- c(1.451,1.0424)  		# vonb Power parameter.
@@ -289,7 +289,8 @@
 {
 	with(Stock, {
 		# Unfished SPR  (phi.E)
-		phi.E	<- sum(t(t(lx[,,1]*fa[,,1])*pg))
+		phi.E	<- sum(t(lx[,,1]*fa[,,1])*pg)
+		# phi.e	<- sum(t(lz[,,1]*fa[,,1])*pg)
 		
 		# Unfished recruitment (ro)
 		ro		<- bo/phi.E
@@ -327,6 +328,7 @@
 		qa	<- array(0, dim)
 		da	<- array(0, dim)
 		pa  <- array(0, dim)
+		ua  <- array(0, dim)
 		ta  <- array(0, dim)	# yield per recruit in trawl discard fishery.
 		
 		bycatch <- ct
@@ -342,6 +344,7 @@
 
 		#if(ct>0)
 		#cat("fe = ", fe, " fd = ", fd, "\n")
+		print(head(vd[,,2]))
 		for(iter in 1:25)
 		{
 
@@ -350,6 +353,7 @@
 			{
 				za[,,i]  <- M[,,i] + fe*va[,,i] + fd*vd[,,i]
 				sa[,,i]  <- exp(-za[,,i])
+				ua[,,i]  <- sc[,,i] * (1-sa[,,i])/za[,,i]
 				qa[,,i]  <- (sc[,,i]*sr[,,i]) * (1-sa[,,i])/za[,,i]
 				da[,,i]  <- (sc[,,i]*sd[,,i]) * (1-sa[,,i])/za[,,i]
 				ta[,,i]  <- (vd[,,i])         * (1-sa[,,i])/za[,,i]
@@ -378,6 +382,7 @@
 			#re		<- max(0, -(t1*ro*phi.E)/t2)
 			
 			be		<- re * phi.e
+			depletion <- be/bo
 			if(re ==0 ) break();
 			
 			# 3b. Calculate bycatch per recruit to determine F in bycatch fisheries.
@@ -405,6 +410,9 @@
 		dpr   <- 0
 		wpr   <- 0
 		bpr   <- 0
+		t1=t2=t3   <- 0  # U26:O26 per recruit.
+		d1=d2=d3   <- 0  # U26:O26 per recruit for bycatch.
+		u26   <- la <(26*2.54)
 		spr		<- phi.e/phi.E
 		for(i in 1:S)
 		{
@@ -413,6 +421,17 @@
 			ne  <- ne + sum( re * fe * t(lz[,,i]*qa[,,i])*pg )
 			we	<- we + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
 			de	<- de + sum( re * fe * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
+
+			# U26 ratio for directed fishery
+			t1  <- t(t(lz[,,i]*wa[,,i]*ua[,,i])*pg)
+			t2  <- t2 + sum(t1[u26[,,i]])
+			t3  <- t3 + sum(t1[!u26[,,i]])
+			
+			# U26 ratio for bycatch fishery
+			d1  <- t(t(lz[,,i]*wa[,,i]*ta[,,i])*pg)
+			d2  <- t2 + sum(d1[u26[,,i]])
+			d3  <- t3 + sum(d1[!u26[,,i]])
+
 			bpr <- bpr + sum( t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 			ypr <- ypr + sum( fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 			dpr <- dpr + sum( fe * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
@@ -437,7 +456,13 @@
 			byv <- byv + sum( re * fd * t(lz[,,i]*wa[,,i]*ta[,,i]*pa[,,i])*pg )
 		}
 		cbar <- ye / ne
+
+		# U26:O26 ratio for directed fishery
+		f26  <- t2/t3
+		b26  <- d2/d3
+
 		
+
 		# 5. Calculate average weight-at-age
 		wbar <- matrix(0, nrow=S, ncol=A)
 		if(re > 0 ){
@@ -448,6 +473,10 @@
 			}
 		}
 		
+		# f26   <- 0  # ratio of U26:O26 fish in fishery.
+		# f26   <- (lz[la<(26*2.54)] * sc[la<(26*2.54)])
+
+
 		# 6. Calculate average weight of the landed catch.
 
 		Stock$lz   <- lz
@@ -468,6 +497,9 @@
 		Stock$dev  <- dev
 		Stock$byv  <- byv
 		Stock$wev  <- wev
+		Stock$f26  <- f26
+		Stock$b26  <- b26
+		Stock$depletion <- depletion
 
 		
 		return(Stock)
@@ -508,7 +540,8 @@
 		         Cbar=M1$cbar,EE=M1$ye/(M1$ye+M1$de),Fd = M1$fd,
 		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,WEv=M1$wev,
 		         OE=M1$ye/(M1$ye+M1$de+bycatch),
-		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18])
+		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18],
+		         depletion=M1$depletion,f26=M1$f26,b26=M1$b26)
 		return(out)
 	})
 }
@@ -523,6 +556,7 @@ Stock <- .calcLifeTable(Stock)
 
 equilibrium_model <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
+                              spr_target=0.30,
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
                               num_bycatch=8,
@@ -554,6 +588,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 	# Price vector
 	price = c(five,ten,twenty,forty)
 
+
 	print("Running equilibrium model")
 	
 	df <<- expand.grid(fe=fe,
@@ -575,7 +610,11 @@ equilibrium_model <- function(size_limit=c(32,100),
 	# rmod <- parApply(cl,df,1,.runModel,price=price)
 	# stopCluster(cl)
 
-	print(system.time(SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel,price=price))))))
+	print(system.time(
+	     	SA <- cbind(prefix=prefix,spr_target=spr_target,
+	      as.data.frame(t(apply(df,1,.runModel,
+	                    price=price))))
+	))
 
 
 

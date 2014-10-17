@@ -97,8 +97,8 @@
 ## ------------------------------------------------------------------------- ##
 0     # 1  -verbose ADMB output (0=off, 1=on)                                ##
 1     # 2  -recruitment model (1=beverton-holt, 2=ricker)                    ##
-0.05  # 3  -std in observed catches in first phase.                          ##
-0.025 # 4  -std in observed catches in last phase.                           ##
+2.0   # 3  -std in observed catches in first phase.                          ##
+1.0   # 4  -std in observed catches in last phase.                           ##
 1     # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)                  ##
 1.00  # 6  -Maternal effects power parameter (1=fecundity proto weight-at-age)      ##
 0.20  # 7  -Mean fishing mortality for regularizing the estimates of Ft      ##
