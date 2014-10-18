@@ -2652,7 +2652,7 @@ FUNCTION calcTotalCatch
 		h    = dCatchData(ii,5);
 		l    = dCatchData(ii,6);
 		d_ct = dCatchData(ii,7);
-		d_sd = dCatchData(ii,8) * d_ct;
+		d_sd = dCatchData(ii,8);// * d_ct;  this is SE(logspace)
   		
   		// | trap for retro year
   		if( i<syr ) continue;
@@ -2837,6 +2837,7 @@ FUNCTION calcSurveyObservations
 		dvector     it = trans(d3_survey_data(kk))(2)(iz,nz);
 		dvector     wt = trans(d3_survey_data(kk))(7)(iz,nz);
 		            wt = wt/sum(wt);
+
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(iz,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));

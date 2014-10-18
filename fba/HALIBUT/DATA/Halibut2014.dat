@@ -353,16 +353,16 @@
 ## ------------------------------------------------------------------------- ##
 ## ABUNDANCE INDICES -A RAGGED ARRAY: (1,nit,1,nit_nobs,1,5)                 ##
 ## ------------------------------------------------------------------------- ##
-2           # Number of abundance series         int(nit)
-104  27        # Number of observations in series   ivector(nit_nobs(1,nit))
+2            # Number of abundance series         int(nit)
+104  27      # Number of observations in series   ivector(nit_nobs(1,nit))
 2  2         # Survey type (see key below)        ivector(survey_type(1,nit))
 ## 1 = survey is proportional to vulnerable numbers
 ## 2 = survey is proportional to vulnerable biomass
 ## 3 = survey is proportional to spawning biomass (e.g., a spawn survey)
 ## 
 ## commercial_data:
-##                                        survey
-## iyr     index(it) gear area group sex  wt    timing
+##                                                      survey
+## iyr     index(it) gear area group sex  wt            timing
    1907     280      1     1     1     0 	 0.5555222       0.5
    1910     271      1     1     1     0   0.5555222       0.5
    1911     237      1     1     1     0   0.5555222       0.5
