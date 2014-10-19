@@ -603,6 +603,7 @@ DATA_SECTION
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
 	matrix                it_wt(1,nItNobs,1,n_it_nobs);
+	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
@@ -617,7 +618,9 @@ DATA_SECTION
 		}
 		for(k=1;k<=nItNobs;k++)
 		{
-			it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			it_log_se(k) = column(d3_survey_data(k),7);
+			it_wt(k) = 1.0/exp(it_log_se(k));
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
@@ -2763,13 +2766,10 @@ FUNCTION calcTotalCatch
   		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	    [?] - add capability to accomodate priors for survey q's.
-  	    [ ] - verify q_prior=2 option for random walk in q.
+  	    [] - add capability to accomodate priors for survey q's.
+  	    [] - verify q_prior=2 option for random walk in q.
   	    [ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
  
-  	TODO LIST:
-	  [ ] - add capability to accompodate priors for survey catchabiliyt coefficients.
-
   */
 FUNCTION calcSurveyObservations
   {
@@ -2844,7 +2844,7 @@ FUNCTION calcSurveyObservations
 				 q(kk) = mfexp(zbar);
 
 		// | survey residuals
-		epsilon(kk).sub(iz,nz) = zt - zbar;
+		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
 		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
 
 		// | SPECIAL CASE: penalized random walk in q.
@@ -2853,7 +2853,7 @@ FUNCTION calcSurveyObservations
 			epsilon(kk).initialize();
 			dvar_vector fd_zt     = first_difference(zt);
 			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
-			epsilon(kk).sub(iz,nz-1) = fd_zt - zw_bar;
+			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
 			qt(kk)(iz) = exp(zt(iz));
 			for(ii=iz+1;ii<=nz;ii++)
 			{
@@ -3080,9 +3080,11 @@ FUNCTION calcObjectiveFunction
 		dvar_vector sig_it(1,n_it_nobs(k)); 
 		for( i = 1; i <= n_it_nobs(k); i++ )
 		{
-			sig_it(i) = sig(ig(i))/it_wt(k,i);
+			// sig_it(i) = sig(ig(i))/it_wt(k,i);
+			sig_it(i) = it_log_se(k,i);
 		}
-		nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		//nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		nlvec(2,k)=dnorm(epsilon(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -4716,7 +4718,7 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		cout<<"Calculating MSY-based reference points"<<endl;
-		calcReferencePoints();
+		// calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
