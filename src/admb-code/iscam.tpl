@@ -1578,11 +1578,11 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
-	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
+	// | DEPRECATE AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
 	// |---------------------------------------------------------------------------------|
 	// | gamma_r: what fraction of the residual from year t-2 carries over to t-1.
-	init_bounded_number gamma_r(0,1,-4);
-	!!gamma_r = 0;
+	//init_bounded_number gamma_r(0,1,-4);
+	//!!gamma_r = 0;
 
 	// |---------------------------------------------------------------------------------|
 	// | OBJECTIVE FUNCTION VALUE
@@ -1636,10 +1636,11 @@ PARAMETER_SECTION
 	vector         ct(1,nCtNobs);
 	vector        eta(1,nCtNobs);	
 	vector log_m_devs(syr+1,nyr);
-	vector    rho(1,ngroup);	
-	vector varphi(1,ngroup);
-	vector    sig(1,ngroup);	
-	vector    tau(1,ngroup); 
+	vector     rho(1,ngroup);	
+	vector  varphi(1,ngroup);
+	vector     sig(1,ngroup);	
+	vector     tau(1,ngroup);
+  vector sigma_r(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1877,9 +1878,10 @@ FUNCTION void initParameters()
 	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6);
-	varphi    = sqrt(1.0/theta(7));
+  sigma_r   = theta(7);
+	//varphi    = sqrt(1.0/theta(7));
 	sig       = elem_prod(sqrt(rho) , varphi);
-	tau       = elem_prod(sqrt(1.0-rho) , varphi);
+	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
 
 	for(ih=1;ih<=n_ag;ih++)
 	{
@@ -2922,7 +2924,8 @@ FUNCTION void calcStockRecruitment()
 	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector     lx(sage,nage); 
-	dvar_vector     lw(sage,nage); 
+	dvar_vector     lw(sage,nage);
+  dvar_vector    tau = sigma_r;
 	
 	
 	for(g=1;g<=ngroup;g++)
@@ -2993,16 +2996,17 @@ FUNCTION void calcStockRecruitment()
 		}
 		
 		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
+
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau(g)*tau(g);
 
 		// Autocorrelation in recruitment residuals.
 		// if gamma_r > 0 then 
-		if( active(gamma_r) )
+		if( active(theta(6)) )
 		{
 			int byr = syr+sage+1;
 			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
-									- (1.0-gamma_r)*log(tmp_rt(byr,nyr)) 
-									- gamma_r*log(++rt(g)(byr-1,nyr-1))
+									- (1.0-rho(g))*log(tmp_rt(byr,nyr)) 
+									- rho(g)*log(++rt(g)(byr-1,nyr-1))
 									+ 0.5*tau(g)*tau(g);			
 		}
 
@@ -3238,7 +3242,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),tau(g));
+			nlvec(4,g) = dnorm(delta(g),sigma_r(g));
 		}
 	}
 
@@ -4101,7 +4105,7 @@ FUNCTION void simulationModel(const long& seed)
     // | Scale process errors
     for(ih=1;ih<=n_ag;ih++)
     {
-		std              = value(tau(1));
+		std              = value(sigma_r(1));
 		rec_dev(ih)      = rec_dev(ih) * std - 0.5*std*std;
 		init_rec_dev(ih) = init_rec_dev(ih)*std - 0.5*std*std;
     }
@@ -4536,7 +4540,7 @@ REPORT_SECTION
 	REPORT(m);
 	// double tau = value(sqrt(1.-rho)*varphi);
 	// double sig = value(sqrt(rho)*varphi);
-	REPORT(tau);
+	REPORT(sigma_r);
 	REPORT(sig);
 	REPORT(age_tau2);
 	
