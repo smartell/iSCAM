@@ -15,7 +15,7 @@
 		kappa <- M[[i]]$kappa
 		ro <- M[[i]]$ro
 		sbo <-  M[[i]]$sbo
-		tau <-  M[[i]]$tau
+		tau <-  M[[i]]$sigma_r
 		rectype <- M[[i]]$rectype
 		ssbt <- seq(0,sbo,length.out=length(SBt))
 		
@@ -38,7 +38,7 @@
 	print(head(mdf,3))
 
 	p <- ggplot(mdf) + geom_point(aes(SBt,Rt,color=Year))
-	p <- p + geom_line(aes(ssbt, Rt_hat),size=2)
+	p <- p + geom_line(aes(ssbt, Rt_hat),size=2,alpha=0.5)
 	p <- p + labs(x="Spawning Stock Biomass",y="Recruitment")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
@@ -116,7 +116,7 @@
 	ro <- M[[i]]$ro
 	sbo <-  M[[i]]$sbo
 	bo <-  M[[i]]$bo
-	tau <-  M[[i]]$tau
+	tau <-  M[[i]]$sigma_r
 	rectype <- M[[i]]$rectype
 	st <- seq(10,sbo,length.out=length(SBt))
 
@@ -143,7 +143,7 @@
 		print(head(mdf,3))
 
 		p <- ggplot(mdf) + geom_point(aes(x=SSB, y=RS, color=Year))
-		p <- p + geom_line(aes(x=st, y=log(rm/st)), size=2)
+		p <- p + geom_line(aes(x=st, y=log(rm/st)), size=2,alpha=0.5)
 		p <- p + labs(x="Spawning stock biomass (SSB)", y="Log(recruits/SSB)")
 		p <- p + facet_wrap(~Model,scales="free")
 		print(p + .THEME)

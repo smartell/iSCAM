@@ -180,7 +180,7 @@ shinyServer(function(input, output, session) {
 
 
   output$a_equilPlot <- renderPlot({
-    AB <<- rbind(scnA(),scnB())
+    AB <- rbind(scnA(),scnB())
     switch(input$selChartType,
            "Equilibrium Yield"          = .plotEquilYield(AB),
            "Performance Metrics at MSY" = .plotPerformanceMSY(AB),
@@ -199,20 +199,25 @@ shinyServer(function(input, output, session) {
     .fisheryTable(AB)
   })
 
+  output$table_economics <- renderTable({
+    AB <- rbind(scnA(),scnB())
+    .economicTable(AB)
+  })
+
   output$msytable <- renderTable({
     AB <- rbind(scnA(),scnB())
     .equilibriumTables(AB)
   })
   
-  output$sprtable <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    # .sprTables(AB)
-  })
+  # output$sprtable <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   # .sprTables(AB)
+  # })
 
-  output$u26ratio <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    # .u26Table(AB)
-  })
+  # output$u26ratio <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   # .u26Table(AB)
+  # })
 
 })  # End of ShinyServer
 ## ------------------------------------------------------------------------------------ ##
@@ -224,40 +229,48 @@ shinyServer(function(input, output, session) {
                   DMSY    = depletion[which.max(Ye)],
                   BTarget = Be[which.min(depletion>ssb_threshold)],
                   BLimit  = Be[which.min(depletion>ssb_limit)],
+                  SPR     = SPR[which.min(depletion>ssb_threshold)],
                   Fmsy    = fe[which.max(Ye)],
-                  Ftarget = fe[which.min(depletion>ssb_threshold)]
-
+                  Ftarget = fe[which.min(depletion>ssb_threshold)],
+                  Flimit  = fe[which.min(depletion>ssb_limit)]
                   )
     colnames(test)=c("Scenario",
                      "♀ SSB_MSY",
-                     "♀ Stock status",
-                     "♀ SSB_Target",
-                     "♀ SSB_Limit",
+                     "♀ Depletion",
+                     "♀ SSB Threshold",
+                     "♀ SSB Limit",
+                     "SPR Threshold",
                      "F MSY",
-                     "F Target")
+                     "F Target",
+                     "F Limit")
     rownames(test)=NULL
     print(test)
 }
 
 .fisheryTable <- function(Scenario)
 {
-  t1 <- quote(which.min(depletion>ssb_threshold))
+  
   test <- ddply(Scenario,.(prefix),plyr::summarize,
-                  "TCEY = "    = TCEY[which.min(depletion>ssb_threshold)],#+O26[which.min(depletion>ssb_threshold)]+We[which.min(depletion>ssb_threshold)]+Ye[which.min(depletion>ssb_threshold)],
-                  "U26 Bycatch" = U26[which.min(depletion>ssb_threshold)],
-                  "+ O26 Bycatch" = O26[which.min(depletion>ssb_threshold)],
-                  "+ Wastage" = We[which.min(depletion>ssb_threshold)],
-                  "+ FCEY"    = Ye[which.min(depletion>ssb_threshold)],
-                  "FCEY/TCEY (%)" = OE[which.min(depletion>ssb_threshold)]*100
+                  "TCEY"    = TCEY[which.min(depletion>ssb_threshold)],#+O26[which.min(depletion>ssb_threshold)]+We[which.min(depletion>ssb_threshold)]+Ye[which.min(depletion>ssb_threshold)],
+                  "O26 Bycatch" = O26[which.min(depletion>ssb_threshold)],
+                  "Wastage" = We[which.min(depletion>ssb_threshold)],
+                  "FCEY"    = Ye[which.min(depletion>ssb_threshold)],
+                  "FCEY/TCEY (%)" = OE[which.min(depletion>ssb_threshold)]*100,
+                  "U26 Bycatch" = U26[which.min(depletion>ssb_threshold)]
 
                   )
-    # colnames(test)=c("Scenario",
-    #                  "TCEY",
-    #                  "♀ Stock status",
-    #                  "♀ SSB_Target",
-    #                  "♀ SSB_Limit",
-    #                  "F MSY",
-    #                  "F Target")
+    colnames(test)[1]="Scenario"
+    print(test)
+}
+
+.economicTable <- function(Scenario)
+{
+  test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  "Landed value"= YEv[which.min(depletion>ssb_threshold)],
+                  "Wastage value" = WEv[which.min(depletion>ssb_threshold)],
+                  "Bycatch value" = BYv[which.min(depletion>ssb_threshold)],
+                  "Total value of all mortality" = YEv[which.min(depletion>ssb_threshold)]+WEv[which.min(depletion>ssb_threshold)]+BYv[which.min(depletion>ssb_threshold)]
+                  )
     colnames(test)[1]="Scenario"
     print(test)
 }
@@ -296,13 +309,12 @@ shinyServer(function(input, output, session) {
                   Fmsy=fe[which.max(Ye)],
                   MSY =Ye[which.max(Ye)],
                   BMSY=Be[which.max(Ye)],
-                  Depl=Be[which.max(Ye)]/max(Be),
+                  Depl=depletion[which.max(Ye)],
                   DMSY=De[which.max(Ye)],
-                  WMSY=We[which.max(Ye)],
-                  EFF =OE[which.max(Ye)]
+                  WMSY=We[which.max(Ye)]
                   )
     colnames(test)=c("Scenario","F","MSY","Biomass (♀)",
-                     "Depletion","Discards","Wastage","Efficiency")
+                     "Depletion","Discards","Wastage")
     rownames(test)=NULL
     print(test)
 }
@@ -351,7 +363,7 @@ shinyServer(function(input, output, session) {
 
 .plotPerformanceMSY<- function(Scenario)
 {
-  x<-ddply(AB,.(prefix),plyr::summarize,
+  x<-ddply(Scenario,.(prefix),plyr::summarize,
            "Fishing Intensity @ MSY"=fe[which.max(Ye)],
            "Maximum Fishery Yield"  =Ye[which.max(Ye)],
            "Discards"               =De[which.max(Ye)],
@@ -367,7 +379,7 @@ shinyServer(function(input, output, session) {
 
 .plotPerformanceValue<- function(Scenario)
 {
-  x<-ddply(AB,.(prefix),plyr::summarize,
+  x<-ddply(Scenario,.(prefix),plyr::summarize,
          "Landed Value @ MSY"           =YEv[which.max(Ye)],
          "Value of Wastage"             =WEv[which.max(Ye)],
          "Total Value of all mortality" =YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)],

@@ -208,16 +208,16 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	    column(6,
 		  	tags$h3("Equilibrium Model: reference points")
 	   	),
-	   	column(3,
+	   	column(6,
       	selectInput('selChartType',"Model Output",
             c("Equilibrium Yield",
               "Performance Metrics at MSY",
               "Equilibrium Value",
               "Value at MSY"))
-	   	),
-	   	column(3,
-    		helpText('Select an output')
 	   	)
+	   	# column(3,
+    	# 	# helpText('Select an output')
+	   	# )
 	  ),
 	  fluidRow(
 	  	column(3,
@@ -236,14 +236,16 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 		      tabPanel("Tables",
 		        tags$p("Biological sustainability"),
 		        tableOutput('table_biological'),
-		        tags$p("Fisheries sustainability at SSB-threshold"),
+		        tags$p("Fisheries sustainability at SSB-threshold. TCEY=(O26 bycatch)+(Wastage)+(FCEY)"),
 		        tableOutput('table_fishery'),
+		        tags$p("Economic performance at SSB-threshold (million $)"),
+		        tableOutput('table_economics'),
 		        tags$p("MSY-based reference points"),
-	       		tableOutput('msytable'),
-	       		tags$p("SPR-based reference points"),
-	       		tableOutput('sprtable'),
-	       		tags$p("U26:O26 ratios"),
-	       		tableOutput('u26ratio')
+	       		tableOutput('msytable')
+	       		# tags$p("SPR-based reference points"),
+	       		# tableOutput('sprtable'),
+	       		# tags$p("U26:O26 ratios"),
+	       		# tableOutput('u26ratio')
        		)
 	      )
 	    )

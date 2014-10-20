@@ -14,7 +14,7 @@
 # |---------------------------------------------------------------------------|
 # | Stock -> is a list object with all parameters and output.
    A	<- 30								# maximum age.
-   G	<- 9								# number of growth groups
+   G	<- 3								# number of growth groups
    S	<- 2								# number of sexes
    dim	<- c(A, G, S)			# array dimensions
    age	<- 1:A					 	# vector of ages

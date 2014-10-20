@@ -32,7 +32,7 @@ require(reshape2)
 						norm_it_wt,it,it_hat,Ub,Lb)
 		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing", "norm_wt"
 		                  ,"It","It_hat","low_bnd","high_bnd")
-		mdf <- rbind(mdf,df)
+		mdf <- rbind(mdf,subset(df,Year>=M[[i]]$syr))
 	}
 	print(head(mdf,3))
 
