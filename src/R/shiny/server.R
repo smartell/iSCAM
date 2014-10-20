@@ -189,6 +189,16 @@ shinyServer(function(input, output, session) {
            )
   })
 
+  output$table_biological <- renderTable({
+    AB <- rbind(scnA(),scnB())
+    .biologicalTable(AB)
+  })
+
+  output$table_fishery <- renderTable({
+    AB <- rbind(scnA(),scnB())
+    .fisheryTable(AB)
+  })
+
   output$msytable <- renderTable({
     AB <- rbind(scnA(),scnB())
     .equilibriumTables(AB)
@@ -196,16 +206,61 @@ shinyServer(function(input, output, session) {
   
   output$sprtable <- renderTable({
     AB <- rbind(scnA(),scnB())
-    .sprTables(AB)
+    # .sprTables(AB)
   })
 
   output$u26ratio <- renderTable({
     AB <- rbind(scnA(),scnB())
-    .u26Table(AB)
+    # .u26Table(AB)
   })
 
 })  # End of ShinyServer
 ## ------------------------------------------------------------------------------------ ##
+
+.biologicalTable <- function(Scenario)
+{
+   test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  BMSY    = Be[which.max(Ye)],
+                  DMSY    = depletion[which.max(Ye)],
+                  BTarget = Be[which.min(depletion>ssb_threshold)],
+                  BLimit  = Be[which.min(depletion>ssb_limit)],
+                  Fmsy    = fe[which.max(Ye)],
+                  Ftarget = fe[which.min(depletion>ssb_threshold)]
+
+                  )
+    colnames(test)=c("Scenario",
+                     "♀ SSB_MSY",
+                     "♀ Stock status",
+                     "♀ SSB_Target",
+                     "♀ SSB_Limit",
+                     "F MSY",
+                     "F Target")
+    rownames(test)=NULL
+    print(test)
+}
+
+.fisheryTable <- function(Scenario)
+{
+  t1 <- quote(which.min(depletion>ssb_threshold))
+  test <- ddply(Scenario,.(prefix),plyr::summarize,
+                  "TCEY = "    = TCEY[which.min(depletion>ssb_threshold)],#+O26[which.min(depletion>ssb_threshold)]+We[which.min(depletion>ssb_threshold)]+Ye[which.min(depletion>ssb_threshold)],
+                  "U26 Bycatch" = U26[which.min(depletion>ssb_threshold)],
+                  "+ O26 Bycatch" = O26[which.min(depletion>ssb_threshold)],
+                  "+ Wastage" = We[which.min(depletion>ssb_threshold)],
+                  "+ FCEY"    = Ye[which.min(depletion>ssb_threshold)],
+                  "FCEY/TCEY (%)" = OE[which.min(depletion>ssb_threshold)]*100
+
+                  )
+    # colnames(test)=c("Scenario",
+    #                  "TCEY",
+    #                  "♀ Stock status",
+    #                  "♀ SSB_Target",
+    #                  "♀ SSB_Limit",
+    #                  "F MSY",
+    #                  "F Target")
+    colnames(test)[1]="Scenario"
+    print(test)
+}
 
 .u26Table <- function(Scenario)
 {
@@ -305,7 +360,7 @@ shinyServer(function(input, output, session) {
 
   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",col="Scenario")
+  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",fill="Scenario")
   p <- p +facet_wrap(~variable,scales="free")
   print(p + theme_bw(14))
 }
@@ -321,7 +376,7 @@ shinyServer(function(input, output, session) {
 
   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million $)",col="Scenario")
+  p <- p + labs(x="Variable",y="Value (million $)",fill="Scenario")
   p <- p +facet_wrap(~variable,scales="free")
   print(p + theme_bw(14))
 }

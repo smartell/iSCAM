@@ -344,7 +344,7 @@
 
 		#if(ct>0)
 		#cat("fe = ", fe, " fd = ", fd, "\n")
-		print(head(vd[,,2]))
+		#print(head(vd[,,2]))
 		for(iter in 1:25)
 		{
 
@@ -429,8 +429,8 @@
 			
 			# U26 ratio for bycatch fishery
 			d1  <- t(t(lz[,,i]*wa[,,i]*ta[,,i])*pg)
-			d2  <- t2 + sum(d1[u26[,,i]])
-			d3  <- t3 + sum(d1[!u26[,,i]])
+			d2  <- d2 + sum(re * fd * d1[u26[,,i]])
+			d3  <- d3 + sum(re * fd * d1[!u26[,,i]])
 
 			bpr <- bpr + sum( t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 			ypr <- ypr + sum( fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
@@ -460,6 +460,8 @@
 		# U26:O26 ratio for directed fishery
 		f26  <- t2/t3
 		b26  <- d2/d3
+		U26  <- d2
+		O26  <- d3
 
 		
 
@@ -499,6 +501,8 @@
 		Stock$wev  <- wev
 		Stock$f26  <- f26
 		Stock$b26  <- b26
+		Stock$U26  <- U26
+		Stock$O26  <- O26
 		Stock$depletion <- depletion
 
 		
@@ -539,9 +543,11 @@
 		         SPR=M1$spr,YPR=M1$ypr,DPR=M1$dpr,WPR=M1$wpr,BPR=M1$bpr,
 		         Cbar=M1$cbar,EE=M1$ye/(M1$ye+M1$de),Fd = M1$fd,
 		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,WEv=M1$wev,
-		         OE=M1$ye/(M1$ye+M1$de+bycatch),
+		         OE=M1$ye/(M1$ye+M1$U26+M1$O26+M1$we),
+		         TCEY=(M1$ye+M1$U26+M1$O26+M1$we),
 		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18],
-		         depletion=M1$depletion,f26=M1$f26,b26=M1$b26)
+		         depletion=M1$depletion,f26=M1$f26,b26=M1$b26,
+		         U26=M1$U26,O26=M1$O26)
 		return(out)
 	})
 }
@@ -556,7 +562,7 @@ Stock <- .calcLifeTable(Stock)
 
 equilibrium_model <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
-                              spr_target=0.30,
+                              spr_target=c(0.2,0.30),
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
                               num_bycatch=8,
@@ -611,7 +617,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 	# stopCluster(cl)
 
 	print(system.time(
-	     	SA <- cbind(prefix=prefix,spr_target=spr_target,
+	     	SA <- cbind(prefix=prefix,ssb_limit=spr_target[1],ssb_threshold=spr_target[2],
 	      as.data.frame(t(apply(df,1,.runModel,
 	                    price=price))))
 	))

@@ -3097,6 +3097,7 @@ FUNCTION calcObjectiveFunction
 	// | - Two options based on d_iscamCntrl(14):
 	// | - 	1 -> multivariate logistic using conditional MLE of the variance for weight.
 	// | -  2 -> multnomial, assumes input sample size as n in n log(p)
+  // | -  3 -> logistic normal w no autocorrelation.
 	// | -  Both likelihoods pool pmin (d_iscamCntrl(16)) into adjacent yearclass.
 	// | -  PSEUDOCODE:
 	// | -    => first determine appropriate dimensions for each of nAgears arrays (naa)
