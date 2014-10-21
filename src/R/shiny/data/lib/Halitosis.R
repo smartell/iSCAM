@@ -1,42 +1,23 @@
 #EquilibriumModel.R
 # |---------------------------------------------------------------------------|
-# | Libraries
+# | LIBRARIES
 # |---------------------------------------------------------------------------| 
-   require(Hmisc)
-   require(ggplot2)
-   require(reshape2)
-   # require(Riscam)
-   require(grid)            #arrow function
-   require(plyr)
-
-   #source("Selex.R")
-   #source("mytheme.R")
-
-mytheme <- function (base_size = 12, base_family = "") 
-{
-    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
-        theme(axis.text = element_text(size = rel(0.8)), axis.ticks = element_line(colour = "black"), 
-            legend.key = element_rect(colour = "grey80"), panel.background = element_rect(fill = "white", 
-                colour = NA), panel.border = element_rect(fill = NA, 
-                colour = "grey50"), panel.grid.major = element_line(colour = "grey90", 
-                size = 0.2), panel.grid.minor = element_line(colour = "grey98", 
-                size = 0.5), strip.background = element_rect(fill = "grey80", 
-                colour = "grey50"), strip.background = element_rect(fill = "grey80", 
-                colour = "grey50"),
-                legend.position = 'bottom')
-}
+   library(Hmisc)
+   library(ggplot2)
+   library(reshape2)
+   library(plyr)
+   library(parallel)
 
 
 # |---------------------------------------------------------------------------|
-# | Data and other constants
+# | MODEL DIMENSIONS
 # |---------------------------------------------------------------------------|
 # | Stock -> is a list object with all parameters and output.
-   regArea <- "2B"
-   A	<- 30					# maximum age.
-   G	<- 9					# number of growth groups
-   S	<- 2					# number of sexes
+   A	<- 30								# maximum age.
+   G	<- 3								# number of growth groups
+   S	<- 2								# number of sexes
    dim	<- c(A, G, S)			# array dimensions
-   age	<- 1:A					# vector of ages
+   age	<- 1:A					 	# vector of ages
    pg	<- dnorm(seq(-1.96, 1.96, length=G), 0, 1); 
    pg  <- pg/sum(pg) 			# proportion assigned to each growth-type group.
    
@@ -44,20 +25,20 @@ mytheme <- function (base_size = 12, base_family = "")
 
 
 # |---------------------------------------------------------------------------|
-# | Population parameters 
+# | Population parameters 476.8910
 # |---------------------------------------------------------------------------|
-   bo		<- 476.891			# unfished female spawning biomass
-   h		<- 0.75				# steepness
+   bo				<- 476.891							# unfished female spawning biomass
+   h				<- 0.75				  				# steepness
    m        <- c(0.201826,0.169674) # natural mortality rate
-   linf     <- c(158.86,101.525)		# asymptotic length
-   vonk     <- c(0.0684,0.0842)	# vonk
-   to       <- c(-5.2,-4.838)   # time at zero length
-   p        <- c(1.451,1.0424)  # vonb Power parameter.
-   cv       <- c(0.1,0.1)		# CV in length-at-age.
-   a50      <- rep(10.91,2)     # age at 50% maturity.
-   k50      <- rep(1.406,2)     # std at 50% maturity.
-	 a				<- rep(6.821e-6, 2) # length-weight allometry (Clark 1992)
-	 b				<- rep(3.24, 2)		# length-weight allometry (CLark 1992)
+   linf     <- c(158.86,101.525)		# asymptotic length (cm)
+   vonk     <- c(0.0684,0.0842)			# vonk
+   to       <- c(-5.2,-4.838)   		# time at zero length
+   p        <- c(1.451,1.0424)  		# vonb Power parameter.
+   cv       <- c(0.1,0.1)						# CV in length-at-age.
+   a50      <- rep(10.91,2)     		# age at 50% maturity.
+   k50      <- rep(1.406,2)     		# std at 50% maturity.
+	 a				<- rep(6.821e-6, 2) 		# length-weight allometry (Clark 1992)
+	 b				<- rep(3.24, 2)					# length-weight allometry (CLark 1992)
 
    # dm		<- 0.16				# discard mortality rate
    cm		<- 0				# Size-dependent natural mortality rate (-0.5, 0.5)
@@ -67,33 +48,33 @@ mytheme <- function (base_size = 12, base_family = "")
 # |---------------------------------------------------------------------------|
 # | Commercial selectivities from Stewart 2012.                               
 # |---------------------------------------------------------------------------|
-   bin   <- seq(60, 130, by=10)
-   CSelL <- matrix(
-   (data=c(0,  0.0252252,  0.250685,  0.617268,  1,  1.36809,  1.74292,  2.12022, 
-   		0,  0.0151914,  0.144236,  0.513552,  1,  1.48663,  1.97208,  2.45702)
-   ), nrow=8, ncol=2)
+ #   bin   <- seq(60, 130, by=10)
+ #   CSelL <- matrix(
+ #   (data=c(0,  0.0252252,  0.250685,  0.617268,  1,  1.36809,  1.74292,  2.12022, 
+ #   		0,  0.0151914,  0.144236,  0.513552,  1,  1.48663,  1.97208,  2.45702)
+ #   ), nrow=8, ncol=2)
    
 
-   # THis is from the survey selectivity
-   SSelL <- matrix(
-	data=c(0,  0.285875,  0.579811,  0.822709,  1,  1.13862,  1.29717,  1.46621, 
-		0,  0.246216,  0.454654,  0.68445,  1,  1.29683,  1.58379,  1.86742)
-	, nrow=8, ncol=2)
+ #   # THis is from the survey selectivity
+ #   SSelL <- matrix(
+	# data=c(0,  0.285875,  0.579811,  0.822709,  1,  1.13862,  1.29717,  1.46621, 
+	# 	0,  0.246216,  0.454654,  0.68445,  1,  1.29683,  1.58379,  1.86742)
+	# , nrow=8, ncol=2)
 	
-   #CSelL <- t(t(CSelL)/apply(CSelL,2,max))
-   CSelL <- t(t(SSelL)/apply(SSelL,2,max))
-   #CSelL <- CSelL/max(CSelL)
-   #CSelL <- SSelL/max(SSelL)
-   slim	<- 81.28
-   ulim	<- 1500
+ #   #CSelL <- t(t(CSelL)/apply(CSelL,2,max))
+ #   CSelL <- t(t(SSelL)/apply(SSelL,2,max))
+ #   #CSelL <- CSelL/max(CSelL)
+ #   #CSelL <- SSelL/max(SSelL)
+ #   slim	<- 81.28
+ #   ulim	<- 1500
    cvlm	<- 0.1
 
    fe  <- seq(0, 0.50, by=0.01)#sequence of fishing mortality rates.
-   sizelimit <- 2.54 * c(32)
-   discardmortality <- c(0.16)
-   bycatch  <- c(10)
+   # sizelimit <- 2.54 * c(32)
+   # discardmortality <- c(0.16)
+   # bycatch  <- c(10)
 
-   bycatchSel <- c(0, 0, 0.379083, 0.923116, 1, 0.748264, rep(0.650509,length=29))
+   # bycatchSel <- c(0, 0, 0.379083, 0.923116, 1, 0.748264, rep(0.650509,length=29))
 # |---------------------------------------------------------------------------|
 
 
@@ -179,7 +160,7 @@ mytheme <- function (base_size = 12, base_family = "")
 # |---------------------------------------------------------------------------|
 .calcLifeTable <- function( Stock ) 
 {
-
+	print("lifetable")
 	gvonb <- function(t, linf, vbk, to, p=1)
 	{
 		l <- linf*(1.0-exp(-vbk*(t - to)))^p
@@ -193,7 +174,7 @@ mytheme <- function (base_size = 12, base_family = "")
 		sd_la  <- array(0, dim)
 		wa	   <- array(0, dim)
 		fa	   <- array(0, dim)
-		pa     <- array(0, dim)
+		# pa     <- array(0, dim)
 		M      <- array(0, dim)
 		ma     <- plogis(age, a50, k50)
 
@@ -225,19 +206,19 @@ mytheme <- function (base_size = 12, base_family = "")
 		}
 
 		# price premiums based on fish weight
-		pa[wa<10]  <- 0.00
-		pa[wa>=10] <- 6.75
-		pa[wa>=20] <- 7.30
-		pa[wa>=40] <- 7.50
+		# pa[wa<10]  <- price[1]
+		# pa[wa>=10] <- price[2]
+		# pa[wa>=20] <- price[3]
+		# pa[wa>=40] <- price[4]
 
 		Stock$lx	   = lx	
 		Stock$la	   = la	
-		Stock$sd_la    = sd_la
+		Stock$sd_la  = sd_la
 		Stock$wa	   = wa
-		Stock$pa       = pa
+		# Stock$pa     = pa
 		Stock$fa	   = fa	
-		Stock$M        = M
-		Stock$ma       = ma
+		Stock$M      = M
+		Stock$ma     = ma
 
 		return(Stock)
 	})
@@ -250,7 +231,6 @@ mytheme <- function (base_size = 12, base_family = "")
 # | This function calls .calcPage(la, sa, pl, xl) in Selex.R
 .calcSelectivities <- function(Stock,slim=0,ulim=1500,cvlm=0.1,dm=0)
 {
-	# TODO Fix selectivities such that va is roughly the same with G=1 or G=11 groups.
 	# Calculate capture probabilities
 	with(Stock, {
 		# Length-interval midpoints for integration
@@ -262,20 +242,18 @@ mytheme <- function (base_size = 12, base_family = "")
 		sd	<- array(0, dim)  #size discard
 		va	<- array(0, dim)  #retained
 		vd	<- array(0, dim)  #bycatch fishery
-		std	<- cvlm*slim+1.e-30	
+		# std	<- cvlm*slim+1.e-30	
 		for(i in 1:S)
 		{
-			# pl       <- approx(bin, CSelL[,i], xl, yright=1, yleft=0)$y
-			# pl       <- 1.0/(1.0+exp(-log(19)*(xl-selex_50)/(selex_90-selex_50)))
+			# Directed fishery selectivity
 			pl       <- .plogis95(xl,selex_50,selex_90)
 			sc[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pl,xl)
-			#sc[,,i]  <- approx(bin, CSelL[,i], la[,,i], yleft=0, yright=1)$y
 			
-			# retention proability
+			# Retention proability in directed fishery
 			pr       <-  plogis(xl, slim, 0.1) - plogis(xl, ulim, 0.1)
 			sr[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pr,xl)
 			
-			#sr[,,i]  <-  plogis(la[,,i],location=slim, scale=std) - plogis(la[,,i],location=ulim, scale=std)
+			# Discard probability in directed fishery
 			sd[,,i]  <- 1-sr[,,i]
 			va[,,i]  <- sc[,,i]*(sr[,,i]+sd[,,i]*dm)
 			
@@ -311,7 +289,8 @@ mytheme <- function (base_size = 12, base_family = "")
 {
 	with(Stock, {
 		# Unfished SPR  (phi.E)
-		phi.E	<- sum(t(t(lx[,,1]*fa[,,1])*pg))
+		phi.E	<- sum(t(lx[,,1]*fa[,,1])*pg)
+		# phi.e	<- sum(t(lz[,,1]*fa[,,1])*pg)
 		
 		# Unfished recruitment (ro)
 		ro		<- bo/phi.E
@@ -348,14 +327,24 @@ mytheme <- function (base_size = 12, base_family = "")
 		sa	<- array(0, dim)
 		qa	<- array(0, dim)
 		da	<- array(0, dim)
+		pa  <- array(0, dim)
+		ua  <- array(0, dim)
 		ta  <- array(0, dim)	# yield per recruit in trawl discard fishery.
 		
 		bycatch <- ct
 		# bapprox <- bo * 0.15/(0.15+fe)
 		# fd      <- bycatch/bapprox
 		fd      <- 0;
+
+		# price premiums based on fish weight
+		pa[wa<10]  <- price[1]
+		pa[wa>=10] <- price[2]
+		pa[wa>=20] <- price[3]
+		pa[wa>=40] <- price[4]
+
 		#if(ct>0)
 		#cat("fe = ", fe, " fd = ", fd, "\n")
+		#print(head(vd[,,2]))
 		for(iter in 1:25)
 		{
 
@@ -364,6 +353,7 @@ mytheme <- function (base_size = 12, base_family = "")
 			{
 				za[,,i]  <- M[,,i] + fe*va[,,i] + fd*vd[,,i]
 				sa[,,i]  <- exp(-za[,,i])
+				ua[,,i]  <- sc[,,i] * (1-sa[,,i])/za[,,i]
 				qa[,,i]  <- (sc[,,i]*sr[,,i]) * (1-sa[,,i])/za[,,i]
 				da[,,i]  <- (sc[,,i]*sd[,,i]) * (1-sa[,,i])/za[,,i]
 				ta[,,i]  <- (vd[,,i])         * (1-sa[,,i])/za[,,i]
@@ -392,6 +382,7 @@ mytheme <- function (base_size = 12, base_family = "")
 			#re		<- max(0, -(t1*ro*phi.E)/t2)
 			
 			be		<- re * phi.e
+			depletion <- be/bo
 			if(re ==0 ) break();
 			
 			# 3b. Calculate bycatch per recruit to determine F in bycatch fisheries.
@@ -411,13 +402,17 @@ mytheme <- function (base_size = 12, base_family = "")
 		ne    <- 0
 		de		<- 0
 		we    <- 0
-		yev   <- 0
-		dev   <- 0  # Value of wastage.
+		yev   <- 0  # Value of landed fish retained.
+		dev   <- 0  # Value of discarded fish.
+		wev   <- 0  # Value of wastage.
 		byv   <- 0 	# Value of discarded bycatch.
 		ypr		<- 0
 		dpr   <- 0
 		wpr   <- 0
 		bpr   <- 0
+		t1=t2=t3   <- 0  # U26:O26 per recruit.
+		d1=d2=d3   <- 0  # U26:O26 per recruit for bycatch.
+		u26   <- la <(26*2.54)
 		spr		<- phi.e/phi.E
 		for(i in 1:S)
 		{
@@ -426,6 +421,17 @@ mytheme <- function (base_size = 12, base_family = "")
 			ne  <- ne + sum( re * fe * t(lz[,,i]*qa[,,i])*pg )
 			we	<- we + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
 			de	<- de + sum( re * fe * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
+
+			# U26 ratio for directed fishery
+			t1  <- t(t(lz[,,i]*wa[,,i]*ua[,,i])*pg)
+			t2  <- t2 + sum(t1[u26[,,i]])
+			t3  <- t3 + sum(t1[!u26[,,i]])
+			
+			# U26 ratio for bycatch fishery
+			d1  <- t(t(lz[,,i]*wa[,,i]*ta[,,i])*pg)
+			d2  <- d2 + sum(re * fd * d1[u26[,,i]])
+			d3  <- d3 + sum(re * fd * d1[!u26[,,i]])
+
 			bpr <- bpr + sum( t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 			ypr <- ypr + sum( fe * t(lz[,,i]*wa[,,i]*qa[,,i])*pg )
 			dpr <- dpr + sum( fe * t(lz[,,i]*wa[,,i]*da[,,i])*pg )
@@ -437,6 +443,10 @@ mytheme <- function (base_size = 12, base_family = "")
 			#
 			yev <- yev + sum( re * fe * t(lz[,,i]*wa[,,i]*qa[,,i]*pa[,,i])*pg )
 			# 
+			# value of wastage.
+			# 
+			wev <- wev + sum( re * fe * dm * t(lz[,,i]*wa[,,i]*da[,,i]*pa[,,i])*pg )
+			# 
 			# value of discarded fish.
 			# 
 			dev <- dev + sum( re * fe * t(lz[,,i]*wa[,,i]*da[,,i]*pa[,,i])*pg )
@@ -446,7 +456,15 @@ mytheme <- function (base_size = 12, base_family = "")
 			byv <- byv + sum( re * fd * t(lz[,,i]*wa[,,i]*ta[,,i]*pa[,,i])*pg )
 		}
 		cbar <- ye / ne
+
+		# U26:O26 ratio for directed fishery
+		f26  <- t2/t3
+		b26  <- d2/d3
+		U26  <- d2
+		O26  <- d3
+
 		
+
 		# 5. Calculate average weight-at-age
 		wbar <- matrix(0, nrow=S, ncol=A)
 		if(re > 0 ){
@@ -457,6 +475,10 @@ mytheme <- function (base_size = 12, base_family = "")
 			}
 		}
 		
+		# f26   <- 0  # ratio of U26:O26 fish in fishery.
+		# f26   <- (lz[la<(26*2.54)] * sc[la<(26*2.54)])
+
+
 		# 6. Calculate average weight of the landed catch.
 
 		Stock$lz   <- lz
@@ -476,6 +498,12 @@ mytheme <- function (base_size = 12, base_family = "")
 		Stock$yev  <- yev 
 		Stock$dev  <- dev
 		Stock$byv  <- byv
+		Stock$wev  <- wev
+		Stock$f26  <- f26
+		Stock$b26  <- b26
+		Stock$U26  <- U26
+		Stock$O26  <- O26
+		Stock$depletion <- depletion
 
 		
 		return(Stock)
@@ -493,15 +521,19 @@ mytheme <- function (base_size = 12, base_family = "")
 # | 4. .calcSRR (Stock recruitment relationship)
 # | 5. .calcEquilibrium (data frame of values versus fe)
 
-.runModel <- function(df)
+
+.runModel <- function(df,price)
 {
-	# print(df)
+	
 	with(as.list(df), {
+		# Stock <- .calcLifeTable(Stock)
 		Stock$selex_50 = selex_50
 		Stock$selex_90 = selex_90
 		Stock$selex_bycatch50 = selex_bycatch50
 		Stock$selex_bycatch90 = selex_bycatch90
-		M1 <- .calcLifeTable(Stock)
+		Stock$price = price
+		M1 <- Stock
+		# M1 <- .calcLifeTable(Stock)
 		M1 <- .calcSelectivities(M1,slim=slim,ulim=ulim,cvlm=0.1,dm=dm)
 		M1 <- .calcSRR(M1)
 		M1 <- .asem(fe,M1,bycatch)
@@ -510,20 +542,34 @@ mytheme <- function (base_size = 12, base_family = "")
 		         Ye=M1$ye,De=M1$de,We=M1$we,Be=M1$be,Re=M1$re,
 		         SPR=M1$spr,YPR=M1$ypr,DPR=M1$dpr,WPR=M1$wpr,BPR=M1$bpr,
 		         Cbar=M1$cbar,EE=M1$ye/(M1$ye+M1$de),Fd = M1$fd,
-		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,
-		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18])
+		         YEv=M1$yev,DEv=M1$dev,BYv=M1$byv,WEv=M1$wev,
+		         OE=M1$ye/(M1$ye+M1$U26+M1$O26+M1$we),
+		         TCEY=(M1$ye+M1$U26+M1$O26+M1$we),
+		         wbar_f=M1$wbar[1,18],wbar_m=M1$wbar[2,18],
+		         depletion=M1$depletion,f26=M1$f26,b26=M1$b26,
+		         U26=M1$U26,O26=M1$O26)
 		return(out)
 	})
 }
 
 
+# |---------------------------------------------------------------------------|
+# | TOP OF MAIN SECTION
+# |---------------------------------------------------------------------------|
+# | 
+Stock <- .calcLifeTable(Stock)
 
 
 equilibrium_model <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
+                              spr_target=c(0.2,0.30),
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
                               num_bycatch=8,
+                              five=0,
+                              ten=5,
+                              twenty=5,
+                              forty=5,
                               prefix="a")
 {
 	# -----------------------------------------
@@ -545,9 +591,13 @@ equilibrium_model <- function(size_limit=c(32,100),
 	# Bycatch mortality in Mlbs
 	num.bycatch   = num_bycatch
 
+	# Price vector
+	price = c(five,ten,twenty,forty)
+
+
 	print("Running equilibrium model")
 	
-	df <- expand.grid(fe=fe,
+	df <<- expand.grid(fe=fe,
 	                  slim=size.limits[1],
 	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,
@@ -557,7 +607,23 @@ equilibrium_model <- function(size_limit=c(32,100),
 	                  selex_bycatch50 = selex.bycatch[1],
 	                  selex_bycatch90 = selex.bycatch[2])
 	
-	SA <- cbind(prefix=prefix,as.data.frame(t(apply(df,1,.runModel))))
+	# Parallel calls to runModel
+	# cl<-makeCluster(getOption("cl.cores",detectCores()))
+	# # clusterExport(cl,c("Stock"),envir=environment())
+	# clusterExport(cl,"Stock",envir=.GlobalEnv)
+	# # clusterCall(cl,get((".calcSelectivities")))
+	# clusterApply(cl,mget(c(".calcSelectivities",".calcSRR")))
+	# rmod <- parApply(cl,df,1,.runModel,price=price)
+	# stopCluster(cl)
+
+	print(system.time(
+	     	SA <- cbind(prefix=prefix,ssb_limit=spr_target[1],ssb_threshold=spr_target[2],
+	      as.data.frame(t(apply(df,1,.runModel,
+	                    price=price))))
+	))
+
+
+
 	return(SA)
 }
 

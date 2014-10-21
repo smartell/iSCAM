@@ -7,66 +7,37 @@ renderEquilInputs <- function(prefix)
 
 	wellPanel(
 		fluidRow(
-			column(6,
+			# column(6,
 				sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
-				sliderInput(paste0(prefix,"_","size_limit"),"Minimum size limit (inches)",min=0,max=100,value=c(32,100),step=1),
-				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01)
-				# sliderInput(paste0(prefix,"_","max_size_limit"),"Maximum size limit (inches)",min=0,max=100,value=100,step=1)
-			),
-			column(6,
+				sliderInput(paste0(prefix,"_","size_limit"),"Min & Max size limit (inches)",min=0,max=100,value=c(32,100),step=1),
+				sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01),
+				sliderInput(paste0(prefix,"_","spr_target"),"SSB limit-threshold reference",min=0,max=1,value=c(0.2,0.3),step=0.05),
+			# ),
+			# column(6,
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
-				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch cap (Mlb)", value = 8),
+				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch mortality cap (Mlb)", value = 8),
 				
-				selectInput(paste0(prefix,"_",'chartType'),"Model Output",
-				            c("Equilibrium Yield",
-				              "Performance Metrics at MSY",
-				              "Reference Points",
-				              "Selectivity curves"))
 
-				# absolutePanel(id=paste0(prefix,"_","selex_panel"),class="modal",
-				#               draggable=TRUE,fixed=FALSE,cursor="auto",
-				#               top="auto",left="auto",right="auto",bottom="auto",
-				#               width=300,
-				#   h4("Selectivity curves"),
-				#   plotOutput(paste0(prefix,"_","selex"), height = "200px"),
-				#   style = "opacity: 0.60"
-				# )
-			),
-
-			p(actionButton(paste0(prefix, "_", "recalc"),
-      "Re-run scenario", icon("random")
-    	))
+				# Economic inputs
+				#fluidRow(
+				tags$p("Price per pound ($)"),
+				column(2,
+					numericInput(paste0(prefix,"_","five"), label = "5-10", value = 0, step=0.10)
+				,offset=0),
+				column(2,
+					numericInput(paste0(prefix,"_","ten"), label = "10-20", value = 5, step=0.10)
+				,offset=1),
+				column(2,
+					numericInput(paste0(prefix,"_","twenty"), label = "20-40", value = 5, step=0.10)
+				,offset=1),
+				column(2,
+					numericInput(paste0(prefix,"_","forty"), label = "40+", value = 5, step=0.10)
+				,offset=1)
 		)
 	)
 
 }
 
-  # absolutePanel(id = "controls", class = "modal", fixed = TRUE, draggable = TRUE,
-  #       top = 60, left = "auto", right = 20, bottom = "auto",
-  #       width = 330, height = "auto",
-        
-
-renderInputs <- function(prefix) {
-  wellPanel(
-    fluidRow(
-      column(6,
-        sliderInput(paste0(prefix, "_", "n_obs"), "Number of observations (in Years):", min = 0, max = 40, value = 20),
-        sliderInput(paste0(prefix, "_", "start_capital"), "Initial capital invested :", min = 100000, max = 10000000, value = 2000000, step = 100000, format="$#,##0", locale="us"),
-        sliderInput(paste0(prefix, "_", "annual_mean_return"), "Annual investment return (in %):", min = 0.0, max = 30.0, value = 5.0, step = 0.5),
-        sliderInput(paste0(prefix, "_", "annual_ret_std_dev"), "Annual investment volatility (in %):", min = 0.0, max = 25.0, value = 7.0, step = 0.1)
-      ),
-      column(6,
-        sliderInput(paste0(prefix, "_", "annual_inflation"), "Annual inflation (in %):", min = 0, max = 20, value = 2.5, step = 0.1),
-        sliderInput(paste0(prefix, "_", "annual_inf_std_dev"), "Annual inflation volatility. (in %):", min = 0.0, max = 5.0, value = 1.5, step = 0.05),
-        sliderInput(paste0(prefix, "_", "monthly_withdrawals"), "Monthly capital withdrawals:", min = 1000, max = 100000, value = 10000, step = 1000, format="$#,##0", locale="us",),
-        sliderInput(paste0(prefix, "_", "n_sim"), "Number of simulations:", min = 0, max = 2000, value = 200)
-      )
-    ),
-    p(actionButton(paste0(prefix, "_", "recalc"),
-      "Re-run simulation", icon("random")
-    ))
-  )
-}
 
 
 
@@ -233,25 +204,52 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 
 	# EQUILIBRIUM INTERFACE
 	tabPanel("Equilibrium",
-
-	  tags$h3("Equilibrium Model: determining reference points under alternative procedures"),
 	  fluidRow(
-    	column(6, tags$h4("Scenario A")),
-    	column(6, tags$h4("Scenario B"))
-  	),
-	  fluidRow(
-	  	column(6,renderEquilInputs("a")),
-	  	column(6,renderEquilInputs("b"))
+	    column(6,
+		  	tags$h3("Equilibrium Model: reference points")
+	   	),
+	   	column(6,
+      	selectInput('selChartType',"Model Output",
+            c("Equilibrium Yield",
+              "Performance Metrics at MSY",
+              "Equilibrium Value",
+              "Value at MSY"))
+	   	)
+	   	# column(3,
+    	# 	# helpText('Select an output')
+	   	# )
 	  ),
-
 	  fluidRow(
-	    column(6,
-	      plotOutput("a_equilPlot", height = "500px")
-	    ),
-	    column(6,
-	      # plotOutput("b_equilPlot", height = "500px")
-	    	tableOutput("b_table")
+	  	column(3,
+	  	  tags$h4("Scenario A"),
+	  	  renderEquilInputs("a")
+	  	),
+	  	column(3,
+	  	  tags$h4("Scenario B"),
+	  	  renderEquilInputs("b")
+	  	),
+	  	column(6,
+	  	  tabsetPanel(type="tabs",id="eqtab",
+	  	    tabPanel("Plots",
+		      	plotOutput("a_equilPlot", height = "550px")
+		      ),
+		      tabPanel("Tables",
+		        tags$p("Biological sustainability"),
+		        tableOutput('table_biological'),
+		        tags$p("Fisheries sustainability at SSB-threshold. TCEY=(O26 bycatch)+(Wastage)+(FCEY)"),
+		        tableOutput('table_fishery'),
+		        tags$p("Economic performance at SSB-threshold (million $)"),
+		        tableOutput('table_economics'),
+		        tags$p("MSY-based reference points"),
+	       		tableOutput('msytable')
+	       		# tags$p("SPR-based reference points"),
+	       		# tableOutput('sprtable'),
+	       		# tags$p("U26:O26 ratios"),
+	       		# tableOutput('u26ratio')
+       		)
+	      )
 	    )
+	    
 	  ),
 		fluidRow(
 			renderBanner()

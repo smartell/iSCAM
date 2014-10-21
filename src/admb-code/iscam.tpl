@@ -603,6 +603,7 @@ DATA_SECTION
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
 	matrix                it_wt(1,nItNobs,1,n_it_nobs);
+	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
@@ -617,7 +618,9 @@ DATA_SECTION
 		}
 		for(k=1;k<=nItNobs;k++)
 		{
-			it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			it_log_se(k) = column(d3_survey_data(k),7);
+			it_wt(k) = 1.0/exp(it_log_se(k));
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
@@ -1575,11 +1578,11 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
-	// | AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
+	// | DEPRECATE AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
 	// |---------------------------------------------------------------------------------|
 	// | gamma_r: what fraction of the residual from year t-2 carries over to t-1.
-	init_bounded_number gamma_r(0,1,-4);
-	!!gamma_r = 0;
+	//init_bounded_number gamma_r(0,1,-4);
+	//!!gamma_r = 0;
 
 	// |---------------------------------------------------------------------------------|
 	// | OBJECTIVE FUNCTION VALUE
@@ -1633,10 +1636,11 @@ PARAMETER_SECTION
 	vector         ct(1,nCtNobs);
 	vector        eta(1,nCtNobs);	
 	vector log_m_devs(syr+1,nyr);
-	vector    rho(1,ngroup);	
-	vector varphi(1,ngroup);
-	vector    sig(1,ngroup);	
-	vector    tau(1,ngroup); 
+	vector     rho(1,ngroup);	
+	vector  varphi(1,ngroup);
+	vector     sig(1,ngroup);	
+	vector     tau(1,ngroup);
+  vector sigma_r(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1874,9 +1878,10 @@ FUNCTION void initParameters()
 	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6);
-	varphi    = sqrt(1.0/theta(7));
+  sigma_r   = theta(7);
+	//varphi    = sqrt(1.0/theta(7));
 	sig       = elem_prod(sqrt(rho) , varphi);
-	tau       = elem_prod(sqrt(1.0-rho) , varphi);
+	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
 
 	for(ih=1;ih<=n_ag;ih++)
 	{
@@ -2108,10 +2113,10 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 						if( i==sel_blocks(k,byr) )
 						{
 							bpar ++;	
-							log_sel(k)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
+							log_sel(kgear)(ig)(i)=cubic_spline( sel_par(k)(bpar) );
 							if( byr < n_sel_blocks(k) ) byr++;
 						}
-						log_sel(kgear)(ig)(i+1) = log_sel(k)(ig)(i);
+						log_sel(kgear)(ig)(i+1) = log_sel(kgear)(ig)(i);
 					}
 					break;
 					
@@ -2223,14 +2228,14 @@ FUNCTION void calcSelectivities(const ivector& isel_type)
 					break;
 					
 			}  // switch
-
 			//subtract mean to ensure mean(exp(log_sel))==1
 			for(i=syr;i<=nyr;i++)
 			{
 				log_sel(kgear)(ig)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 				// log_sel(k)(ig)(i) -= log( max(mfexp(log_sel(k)(ig)(i))) );
 			}
-		}
+			
+		}  // end of nags
 	}  //end of gear k
 
 	if(verbose)cout<<"**** Ok after calcSelectivities ****"<<endl;
@@ -2652,7 +2657,7 @@ FUNCTION calcTotalCatch
 		h    = dCatchData(ii,5);
 		l    = dCatchData(ii,6);
 		d_ct = dCatchData(ii,7);
-		d_sd = dCatchData(ii,8) * d_ct;
+		d_sd = dCatchData(ii,8);// * d_ct;  this is SE(logspace)
   		
   		// | trap for retro year
   		if( i<syr ) continue;
@@ -2729,7 +2734,7 @@ FUNCTION calcTotalCatch
 		}	// end of switch
 
 		// | standardized catch residual
-		eta(ii) = (log(d_ct+TINY) - log(ct(ii)+TINY) + 0.5*square(d_sd)) / (d_sd);
+		eta(ii) = (log(d_ct) - log(ct(ii)) + 0.5*square(d_sd)) / (d_sd);
 	}
 	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
   }
@@ -2763,13 +2768,10 @@ FUNCTION calcTotalCatch
   		- for MLE of survey q, using weighted mean of zt to calculate q.
 
   	TODO list:
-  	    [?] - add capability to accomodate priors for survey q's.
-  	    [ ] - verify q_prior=2 option for random walk in q.
+  	    [] - add capability to accomodate priors for survey q's.
+  	    [] - verify q_prior=2 option for random walk in q.
   	    [ ] - For sel_type==3, may need to reduce abundance by F on spawning biomass (herring)
  
-  	TODO LIST:
-	  [ ] - add capability to accompodate priors for survey catchabiliyt coefficients.
-
   */
 FUNCTION calcSurveyObservations
   {
@@ -2837,13 +2839,14 @@ FUNCTION calcSurveyObservations
 		dvector     it = trans(d3_survey_data(kk))(2)(iz,nz);
 		dvector     wt = trans(d3_survey_data(kk))(7)(iz,nz);
 		            wt = wt/sum(wt);
+
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(iz,nz));
 		dvariable zbar = sum(elem_prod(zt,wt));
 				 q(kk) = mfexp(zbar);
 
 		// | survey residuals
-		epsilon(kk).sub(iz,nz) = zt - zbar;
+		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
 		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
 
 		// | SPECIAL CASE: penalized random walk in q.
@@ -2852,7 +2855,7 @@ FUNCTION calcSurveyObservations
 			epsilon(kk).initialize();
 			dvar_vector fd_zt     = first_difference(zt);
 			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
-			epsilon(kk).sub(iz,nz-1) = fd_zt - zw_bar;
+			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
 			qt(kk)(iz) = exp(zt(iz));
 			for(ii=iz+1;ii<=nz;ii++)
 			{
@@ -2921,7 +2924,8 @@ FUNCTION void calcStockRecruitment()
 	dvar_vector     ma(sage,nage);
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector     lx(sage,nage); 
-	dvar_vector     lw(sage,nage); 
+	dvar_vector     lw(sage,nage);
+  dvar_vector    tau = sigma_r;
 	
 	
 	for(g=1;g<=ngroup;g++)
@@ -2992,16 +2996,17 @@ FUNCTION void calcStockRecruitment()
 		}
 		
 		// | Step 8. // residuals in stock-recruitment curve with gamma_r = 0
+
 		delta(g) = log(rt(g))-log(tmp_rt)+0.5*tau(g)*tau(g);
 
 		// Autocorrelation in recruitment residuals.
 		// if gamma_r > 0 then 
-		if( active(gamma_r) )
+		if( active(theta(6)) )
 		{
 			int byr = syr+sage+1;
 			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
-									- (1.0-gamma_r)*log(tmp_rt(byr,nyr)) 
-									- gamma_r*log(++rt(g)(byr-1,nyr-1))
+									- (1.0-rho(g))*log(tmp_rt(byr,nyr)) 
+									- rho(g)*log(++rt(g)(byr-1,nyr-1))
 									+ 0.5*tau(g)*tau(g);			
 		}
 
@@ -3079,9 +3084,11 @@ FUNCTION calcObjectiveFunction
 		dvar_vector sig_it(1,n_it_nobs(k)); 
 		for( i = 1; i <= n_it_nobs(k); i++ )
 		{
-			sig_it(i) = sig(ig(i))/it_wt(k,i);
+			// sig_it(i) = sig(ig(i))/it_wt(k,i);
+			sig_it(i) = it_log_se(k,i);
 		}
-		nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		//nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		nlvec(2,k)=dnorm(epsilon(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3090,6 +3097,7 @@ FUNCTION calcObjectiveFunction
 	// | - Two options based on d_iscamCntrl(14):
 	// | - 	1 -> multivariate logistic using conditional MLE of the variance for weight.
 	// | -  2 -> multnomial, assumes input sample size as n in n log(p)
+  // | -  3 -> logistic normal w no autocorrelation.
 	// | -  Both likelihoods pool pmin (d_iscamCntrl(16)) into adjacent yearclass.
 	// | -  PSEUDOCODE:
 	// | -    => first determine appropriate dimensions for each of nAgears arrays (naa)
@@ -3235,7 +3243,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),tau(g));
+			nlvec(4,g) = dnorm(delta(g),sigma_r(g));
 		}
 	}
 
@@ -4097,7 +4105,7 @@ FUNCTION void simulationModel(const long& seed)
     // | Scale process errors
     for(ih=1;ih<=n_ag;ih++)
     {
-		std              = value(tau(1));
+		std              = value(sigma_r(1));
 		rec_dev(ih)      = rec_dev(ih) * std - 0.5*std*std;
 		init_rec_dev(ih) = init_rec_dev(ih)*std - 0.5*std*std;
     }
@@ -4532,7 +4540,7 @@ REPORT_SECTION
 	REPORT(m);
 	// double tau = value(sqrt(1.-rho)*varphi);
 	// double sig = value(sqrt(rho)*varphi);
-	REPORT(tau);
+	REPORT(sigma_r);
 	REPORT(sig);
 	REPORT(age_tau2);
 	
@@ -4714,7 +4722,7 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		cout<<"Calculating MSY-based reference points"<<endl;
-		calcReferencePoints();
+		// calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
