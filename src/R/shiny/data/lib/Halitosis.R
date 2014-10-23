@@ -14,7 +14,7 @@
 # |---------------------------------------------------------------------------|
 # | Stock -> is a list object with all parameters and output.
    A	<- 30								# maximum age.
-   G	<- 3								# number of growth groups
+   G	<- 11								# number of growth groups
    S	<- 2								# number of sexes
    dim	<- c(A, G, S)			# array dimensions
    age	<- 1:A					 	# vector of ages
@@ -190,7 +190,7 @@
 			sd_la[,,i] <- sqrt(1/G*(cv[i]*mu)^2)
 			wa[,,i]    <- a[i]*la[,,i]^b[i]
 			fa[,,i]    <- ma*wa[,,i]
-
+			
 			# Size dependent natural mortality rate 
 			# M_l = M (l_a/l_r)^c
 			l_r     <- 100
@@ -205,17 +205,10 @@
 			lx[A,,i] <- lx[A,,i]/(1-exp(-M[A,,i]))
 		}
 
-		# price premiums based on fish weight
-		# pa[wa<10]  <- price[1]
-		# pa[wa>=10] <- price[2]
-		# pa[wa>=20] <- price[3]
-		# pa[wa>=40] <- price[4]
-
 		Stock$lx	   = lx	
 		Stock$la	   = la	
 		Stock$sd_la  = sd_la
 		Stock$wa	   = wa
-		# Stock$pa     = pa
 		Stock$fa	   = fa	
 		Stock$M      = M
 		Stock$ma     = ma
