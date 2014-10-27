@@ -1,7 +1,7 @@
-library(shiny)
-library(Rcpp)
+
 source("helpers.R")
-sourceCpp("./data/cpp/test.cpp")
+# sourceCpp("./data/cpp/test.cpp")
+# sourceCpp("./data/cpp/halitosis.cpp")
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
@@ -226,6 +226,9 @@ shinyServer(function(input, output, session) {
 
 .biologicalTable <- function(Scenario)
 {
+    x <- runif(1e5)
+    cat("Mean of x = ",meanC(x))
+
    test <- ddply(Scenario,.(prefix),plyr::summarize,
                   BMSY    = Be[which.max(Ye)],
                   DMSY    = depletion[which.max(Ye)],
@@ -328,11 +331,11 @@ shinyServer(function(input, output, session) {
   helpText("These are the equilibrium yield versus fishing effort.")
 
   mdf<-melt(Scenario,id.vars=1:5)
-  sdf<-subset(mdf,variable %in% c("Ye","De","We","OE"))
+  sdf<-subset(mdf,variable %in% c("Ye","De","We","SPR"))
   levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
-  levels(sdf$variable)[levels(sdf$variable)=="OE"] <- "Operational Efficiency (%)"
+  levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
   
   
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()

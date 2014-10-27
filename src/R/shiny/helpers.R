@@ -5,6 +5,12 @@ library(ggplot2)
 library(reshape2)
 library(googleVis)
 library(plyr)
+library(Rcpp)
+# library(RcppArmadillo)
+
+sourceCpp("./data/cpp/halitosis.cpp")
+
+
 # 
 # LOAD A mse.data DATA OBJECT
 # 
