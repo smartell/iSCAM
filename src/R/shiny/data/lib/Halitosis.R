@@ -80,14 +80,14 @@
 # |---------------------------------------------------------------------------|
 
 # |	RCPP version of the equilibrium model
-procedure <- list(slim=0,ulim=1500,dm=0.16,
-                  selex_50=35,selex_95=70,
-                  selex_bycatch50=35,selex_bycatch95=45,selex_asymptote=0.65,
-                  xl = seq(50,200, by = 2.5))
+# procedure <- list(slim=0,ulim=1500,dm=0.16,
+#                   selex_50=35,selex_95=70,
+#                   selex_bycatch50=35,selex_bycatch95=45,selex_asymptote=0.65,
+#                   xl = seq(50,200, by = 2.5))
 
-mod <- 	new(Equilibrium,Stock)
-out <-	mod$calcLifeTable(Stock)
-mod$calcSelectivities(procedure)
+# mod <- 	new(Equilibrium,Stock)
+# out <-	mod$calcLifeTable(Stock)
+# mod$calcSelectivities(procedure)
 
 
 
@@ -302,7 +302,8 @@ mod$calcSelectivities(procedure)
 		# Unfished SPR  (phi.E)
 		phi.E	<- sum(t(lx[,,1]*fa[,,1])*pg)
 		# phi.e	<- sum(t(lz[,,1]*fa[,,1])*pg)
-		
+		print("phiE from calcSRR")
+		print(phi.E)
 		# Unfished recruitment (ro)
 		ro		<- bo/phi.E
 		
