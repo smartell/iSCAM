@@ -576,7 +576,7 @@ namespace rfp {
 
 		// Equilibrium recruits, yield and first derivative of ye
 		re   = m_ro*(kappa-m_phie/phif) / km1;
-		re<0?re=0.01:re=re;
+		re<0?re=0.01:re=re;  // could try setting re =0 instead of 0.01
 		ye   = re*elem_prod(fe,phiq);
 		be   = re * phif;
 		dye  = re*phiq 
@@ -587,6 +587,7 @@ namespace rfp {
 		// cout<<"dye "<<dye<<endl;
 
 		// Jacobian matrix (2nd derivative of the catch equations)
+		// This could be suspect, SM to check, CW to prove me wrong
 		for(j=1; j<=m_nGear; j++)
 		{
 			for(k=1; k<=m_nGear; k++)
