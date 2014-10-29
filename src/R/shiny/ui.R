@@ -38,6 +38,77 @@ renderEquilInputs <- function(prefix)
 
 }
 
+renderStockInputs <- function(prefix)
+{
+	wellPanel(
+		fluidRow(
+			sliderInput(paste0(prefix,"_","maternal_effect"),"Maturnal effect",min=0,max=3,value=0)
+		)
+	)
+}
+
+
+renderEquilriumInterface <- function()
+{
+	
+	
+
+	fluidRow(
+	  
+	  column(6,
+		  tabsetPanel(type="pills",id="eqpar",
+		    tabPanel("Procedures",
+					column(6,
+					  tags$h4("Procedure a"),
+					  renderEquilInputs("a")
+					), 
+
+					column(6,
+					  tags$h4("Procedure b"),
+					  renderEquilInputs("b")
+					)
+				),
+				tabPanel("Scenarios",
+					column(6,
+						tags$h4("Scenario A"),
+						renderStockInputs("A")
+					),
+					column(6,
+						tags$h4("Scenario B"),
+						renderStockInputs("B")
+					)
+				)
+			)
+		),
+
+
+		column(6,
+		  tabsetPanel(type="pills",id="eqtab",
+		    tabPanel("Plots",
+		      selectInput('selChartType',"Model Output",
+							      c("Equilibrium Yield",
+							        "Performance Metrics at MSY",
+							        "Equilibrium Value",
+							        "Value at MSY")),
+	      	plotOutput("a_equilPlot", height = "550px")
+	      ),
+	      tabPanel("Tables",
+	        tags$p("Biological sustainability"),
+	        tableOutput('table_biological'),
+	        tags$p("Fisheries sustainability at SSB-threshold. TCEY=(O26 bycatch)+(Wastage)+(FCEY)"),
+	        tableOutput('table_fishery'),
+	        tags$p("Economic performance at SSB-threshold (million $)"),
+	        tableOutput('table_economics'),
+	        tags$p("MSY-based reference points"),
+	     		tableOutput('msytable')
+	   		)
+	    )
+	  )
+	  
+	)
+
+
+}
 
 
 
@@ -205,55 +276,19 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 	# EQUILIBRIUM INTERFACE
 	tabPanel("Equilibrium",
 	  fluidRow(
-	    column(6,
-		  	tags$h3("Equilibrium Model: reference points")
-	   	),
-	   	column(6,
-      	selectInput('selChartType',"Model Output",
-            c("Equilibrium Yield",
-              "Performance Metrics at MSY",
-              "Equilibrium Value",
-              "Value at MSY"))
-	   	)
-	   	# column(3,
-    	# 	# helpText('Select an output')
-	   	# )
+			tags$h3("Equilibrium Model: reference points")
 	  ),
+
 	  fluidRow(
-	  	column(3,
-	  	  tags$h4("Scenario A"),
-	  	  renderEquilInputs("a")
-	  	),
-	  	column(3,
-	  	  tags$h4("Scenario B"),
-	  	  renderEquilInputs("b")
-	  	),
-	  	column(6,
-	  	  tabsetPanel(type="tabs",id="eqtab",
-	  	    tabPanel("Plots",
-		      	plotOutput("a_equilPlot", height = "550px")
-		      ),
-		      tabPanel("Tables",
-		        tags$p("Biological sustainability"),
-		        tableOutput('table_biological'),
-		        tags$p("Fisheries sustainability at SSB-threshold. TCEY=(O26 bycatch)+(Wastage)+(FCEY)"),
-		        tableOutput('table_fishery'),
-		        tags$p("Economic performance at SSB-threshold (million $)"),
-		        tableOutput('table_economics'),
-		        tags$p("MSY-based reference points"),
-	       		tableOutput('msytable')
-	       		# tags$p("SPR-based reference points"),
-	       		# tableOutput('sprtable'),
-	       		# tags$p("U26:O26 ratios"),
-	       		# tableOutput('u26ratio')
-       		)
-	      )
-	    )
-	    
+			renderEquilriumInterface()
 	  ),
+
 		fluidRow(
 			renderBanner()
 		)
+
+
+
 	),
 
 	# MANAGEMENT STRATEGY EVALUATION INTERFACE

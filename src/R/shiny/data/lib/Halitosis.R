@@ -2,19 +2,19 @@
 # |---------------------------------------------------------------------------|
 # | LIBRARIES
 # |---------------------------------------------------------------------------| 
-   library(Hmisc)
-   library(ggplot2)
-   library(reshape2)
-   library(plyr)
-   library(parallel)
-
+	library(Hmisc)
+	library(ggplot2)
+	library(reshape2)
+	library(plyr)
+	library(parallel)
+	
 
 # |---------------------------------------------------------------------------|
 # | MODEL DIMENSIONS
 # |---------------------------------------------------------------------------|
 # | Stock -> is a list object with all parameters and output.
    A	<- 30								# maximum age.
-   G	<- 3								# number of growth groups
+   G	<- 11								# number of growth groups
    S	<- 2								# number of sexes
    dim	<- c(A, G, S)			# array dimensions
    age	<- 1:A					 	# vector of ages
@@ -42,8 +42,10 @@
 
    # dm		<- 0.16				# discard mortality rate
    cm		<- 0				# Size-dependent natural mortality rate (-0.5, 0.5)
+   dev   <- seq(-1.96, 1.96, length=G)
+   if(G==1) dev <- 0
    Stock <- c(Stock,list(bo=bo,h=h,m=m,linf=linf,vonk=vonk,to=to,p=p,cv=cv,a50=a50,k50=k50))
-   Stock <- c(Stock,list(a=a,b=b,cm=cm))
+   Stock <- c(Stock,list(a=a,b=b,cm=cm,dev=dev))
 
 # |---------------------------------------------------------------------------|
 # | Commercial selectivities from Stewart 2012.                               
@@ -76,6 +78,18 @@
 
    # bycatchSel <- c(0, 0, 0.379083, 0.923116, 1, 0.748264, rep(0.650509,length=29))
 # |---------------------------------------------------------------------------|
+
+# |	RCPP version of the equilibrium model
+# procedure <- list(slim=0,ulim=1500,dm=0.16,
+#                   selex_50=35,selex_95=70,
+#                   selex_bycatch50=35,selex_bycatch95=45,selex_asymptote=0.65,
+#                   xl = seq(50,200, by = 2.5))
+
+# mod <- 	new(Equilibrium,Stock)
+# out <-	mod$calcLifeTable(Stock)
+# mod$calcSelectivities(procedure)
+
+
 
 
 # |---------------------------------------------------------------------------|
@@ -160,7 +174,7 @@
 # |---------------------------------------------------------------------------|
 .calcLifeTable <- function( Stock ) 
 {
-	print("lifetable")
+	# print("lifetable")
 	gvonb <- function(t, linf, vbk, to, p=1)
 	{
 		l <- linf*(1.0-exp(-vbk*(t - to)))^p
@@ -181,7 +195,9 @@
 		for(i in 1:S)
 		{
 			# Lenght-at-age
-			mu    <- gvonb(age,linf[i],vonk[i],to[i],p[i])
+			# mu    <- gvonb(age,linf[i],vonk[i],to[i],p[i])
+			mu    <- gvonb_cpp(age,linf[i],vonk[i],to[i],p[i])
+			
 			sigma <- cv[i] * mu
 			dev   <- seq(-1.96, 1.96, length=G)
 			if(G==1) dev <- 0
@@ -190,7 +206,7 @@
 			sd_la[,,i] <- sqrt(1/G*(cv[i]*mu)^2)
 			wa[,,i]    <- a[i]*la[,,i]^b[i]
 			fa[,,i]    <- ma*wa[,,i]
-
+			
 			# Size dependent natural mortality rate 
 			# M_l = M (l_a/l_r)^c
 			l_r     <- 100
@@ -205,17 +221,10 @@
 			lx[A,,i] <- lx[A,,i]/(1-exp(-M[A,,i]))
 		}
 
-		# price premiums based on fish weight
-		# pa[wa<10]  <- price[1]
-		# pa[wa>=10] <- price[2]
-		# pa[wa>=20] <- price[3]
-		# pa[wa>=40] <- price[4]
-
 		Stock$lx	   = lx	
 		Stock$la	   = la	
 		Stock$sd_la  = sd_la
 		Stock$wa	   = wa
-		# Stock$pa     = pa
 		Stock$fa	   = fa	
 		Stock$M      = M
 		Stock$ma     = ma
@@ -249,7 +258,7 @@
 			pl       <- .plogis95(xl,selex_50,selex_90)
 			sc[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pl,xl)
 			
-			# Retention proability in directed fishery
+			# Retention probability in directed fishery
 			pr       <-  plogis(xl, slim, 0.1) - plogis(xl, ulim, 0.1)
 			sr[,,i]  <- .calcPage(la[,,i],sd_la[,,i],pr,xl)
 			
@@ -276,6 +285,8 @@
 	})
 }
 
+
+
 .plogis95 <- function(x,s50,s90)
 {
 	1.0/(1.0+exp(-log(19)*(x-s50)/(s90-s50)))
@@ -291,7 +302,8 @@
 		# Unfished SPR  (phi.E)
 		phi.E	<- sum(t(lx[,,1]*fa[,,1])*pg)
 		# phi.e	<- sum(t(lz[,,1]*fa[,,1])*pg)
-		
+		print("phiE from calcSRR")
+		print(phi.E)
 		# Unfished recruitment (ro)
 		ro		<- bo/phi.E
 		
@@ -558,6 +570,7 @@
 # |---------------------------------------------------------------------------|
 # | 
 Stock <- .calcLifeTable(Stock)
+# Stock2 <- calcLifeTable_cpp(Stock)
 
 
 equilibrium_model <- function(size_limit=c(32,100),
@@ -636,4 +649,16 @@ equilibrium_model <- function(size_limit=c(32,100),
 # 		return selex;
 # 	}
 
+## Rcpp example
+# xx <- faithful$eruptions 
+# fit1 <- density(xx)
+# fit2 <- replicate(10000, {
+# x <- sample(xx,replace=TRUE); density(x, from=min(fit1$x),
+#           to=max(fit1$x))$y
+# })
+# fit3 <- apply(fit2, 1,
+#   quantile,c(0.025,0.975))
+# plot(fit1, ylim=range(fit3))
+# polygon(c(fit1$x,rev(fit1$x)),c(fit3[1,], rev(fit3[2,])),  col="grey", border=F)
+# lines(fit1)
 

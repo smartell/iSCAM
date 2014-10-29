@@ -1,5 +1,7 @@
-library(shiny)
+
 source("helpers.R")
+# sourceCpp("./data/cpp/test.cpp")
+# sourceCpp("./data/cpp/halitosis.cpp")
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
@@ -224,6 +226,9 @@ shinyServer(function(input, output, session) {
 
 .biologicalTable <- function(Scenario)
 {
+    x <- runif(1e5)
+    cat("Mean of x = ",meanC(x))
+
    test <- ddply(Scenario,.(prefix),plyr::summarize,
                   BMSY    = Be[which.max(Ye)],
                   DMSY    = depletion[which.max(Ye)],
@@ -234,7 +239,7 @@ shinyServer(function(input, output, session) {
                   Ftarget = fe[which.min(depletion>ssb_threshold)],
                   Flimit  = fe[which.min(depletion>ssb_limit)]
                   )
-    colnames(test)=c("Scenario",
+    colnames(test)=c("Procedure",
                      "♀ SSB_MSY",
                      "♀ Depletion",
                      "♀ SSB Threshold",
@@ -259,7 +264,7 @@ shinyServer(function(input, output, session) {
                   "U26 Bycatch" = U26[which.min(depletion>ssb_threshold)]
 
                   )
-    colnames(test)[1]="Scenario"
+    colnames(test)[1]="Procedure"
     print(test)
 }
 
@@ -271,7 +276,7 @@ shinyServer(function(input, output, session) {
                   "Bycatch value" = BYv[which.min(depletion>ssb_threshold)],
                   "Total value of all mortality" = YEv[which.min(depletion>ssb_threshold)]+WEv[which.min(depletion>ssb_threshold)]+BYv[which.min(depletion>ssb_threshold)]
                   )
-    colnames(test)[1]="Scenario"
+    colnames(test)[1]="Procedure"
     print(test)
 }
 
@@ -299,7 +304,7 @@ shinyServer(function(input, output, session) {
                   WMSY  =We[which.min(SPR>spr_target)],
                   EFF   =OE[which.min(SPR>spr_target)]
                   )
-  colnames(test)[1]="Scenario"
+  colnames(test)[1]="Procedure"
   print(test)
 }
 
@@ -313,7 +318,7 @@ shinyServer(function(input, output, session) {
                   DMSY=De[which.max(Ye)],
                   WMSY=We[which.max(Ye)]
                   )
-    colnames(test)=c("Scenario","F","MSY","Biomass (♀)",
+    colnames(test)=c("Procedure","F","MSY","Biomass (♀)",
                      "Depletion","Discards","Wastage")
     rownames(test)=NULL
     print(test)
@@ -326,18 +331,18 @@ shinyServer(function(input, output, session) {
   helpText("These are the equilibrium yield versus fishing effort.")
 
   mdf<-melt(Scenario,id.vars=1:5)
-  sdf<-subset(mdf,variable %in% c("Ye","De","We","OE"))
+  sdf<-subset(mdf,variable %in% c("Ye","De","We","SPR"))
   levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
-  levels(sdf$variable)[levels(sdf$variable)=="OE"] <- "Operational Efficiency (%)"
+  levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
   
   
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
   # p <- p + geom_vline(xintercept=0.3, subset = .(variable == "Directed Fishery Yield (Mlb)"))
   # p <- p + geom_vline(data=sdg,aes(xintercept=fe[which.min("SPR">spr_target)],col="Scenario"),size=2,alpha=0.5)
   p <- p + facet_wrap(~variable,scales="free")
-  p <- p + labs(x="Fishing Intensity",col="Scenario",y="")
+  p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
   print(p + theme_bw(14))
 
 }
@@ -355,7 +360,7 @@ shinyServer(function(input, output, session) {
   
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
   p <- p + facet_wrap(~variable,scales="free")
-  p <- p + labs(x="Fishing Intensity",col="Scenario",y="Millions of dollars")
+  p <- p + labs(x="Fishing Intensity",col="Procedure",y="Millions of dollars")
   print(p + theme_bw(14))
 
 }
@@ -372,7 +377,7 @@ shinyServer(function(input, output, session) {
 
   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",fill="Scenario")
+  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",fill="Procedure")
   p <- p +facet_wrap(~variable,scales="free")
   print(p + theme_bw(14))
 }
@@ -388,7 +393,7 @@ shinyServer(function(input, output, session) {
 
   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
   p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million $)",fill="Scenario")
+  p <- p + labs(x="Variable",y="Value (million $)",fill="Procedure")
   p <- p +facet_wrap(~variable,scales="free")
   print(p + theme_bw(14))
 }
