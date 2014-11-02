@@ -60,14 +60,6 @@ shinyServer(function(input, output, session) {
   #     when inputs change
   #  2) Its output type is a plot
 
-  output$distPlot <- renderPlot({
-    x    <- faithful[, 2]  # Old Faithful Geyser data
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
-  })
-
   # TULIP PLOTS FOR MSE PROCEDURES AND SCENARIOS
   output$funnelPlot <- renderPlot({
     tulip.plot(data(),input)
@@ -226,8 +218,8 @@ shinyServer(function(input, output, session) {
 
 .biologicalTable <- function(Scenario)
 {
-    x <- runif(1e5)
-    cat("Mean of x = ",meanC(x))
+    # x <- runif(1e5)
+    # cat("Mean of x = ",meanC(x))
 
    test <- ddply(Scenario,.(prefix),plyr::summarize,
                   BMSY    = Be[which.max(Ye)],
@@ -343,7 +335,9 @@ shinyServer(function(input, output, session) {
   # p <- p + geom_vline(data=sdg,aes(xintercept=fe[which.min("SPR">spr_target)],col="Scenario"),size=2,alpha=0.5)
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
-  print(p + theme_bw(14))
+  p <- p + theme_bw(14) + theme(legend.position="top") 
+  print(p)
+  
 
 }
 
@@ -361,7 +355,8 @@ shinyServer(function(input, output, session) {
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="Millions of dollars")
-  print(p + theme_bw(14))
+  p <- p + theme_bw(14) + theme(legend.position="top") 
+  print(p)
 
 }
 

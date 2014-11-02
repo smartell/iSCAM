@@ -8,7 +8,7 @@ library(plyr)
 library(Rcpp)
 # library(RcppArmadillo)
 
-# sourceCpp("./data/cpp/halitosis.cpp")
+sourceCpp("./data/cpp/halitosis.cpp")
 
 
 # 
