@@ -59,6 +59,7 @@ private:
 	double m_dmr;
 
 	double m_ye  ;
+	double m_fc	 ;
 	double m_ne  ;
 	double m_wbar;
 	double m_we  ;
@@ -122,6 +123,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 
 	double bycatch = as<double>(m_mp["bycatch"]);
 	NumericVector fe = as<NumericVector>(m_mp["fe"]);
+	NumericVector   fc(fe.size());
 	NumericVector   Ye(fe.size());
 	NumericVector   Ne(fe.size());
 	NumericVector   We(fe.size());
@@ -132,6 +134,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 	for (NumericVector::iterator i = fe.begin(); i != fe.end(); ++i)
 	{
 		calcEquilibrium(*i,bycatch);
+		fc[ii]   = m_fc;
 		Ye[ii]   = m_ye;
 		Ne[ii]   = m_ne;
 		We[ii]   = m_we;
@@ -143,6 +146,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 
 	DataFrame df = DataFrame::create(
 	          Named("fe") = fe,
+	          Named("fc") = fc,
 	          Named("Ye") = Ye,
 	          Named("Ne") = Ne,
 	          Named("We") = We
@@ -163,19 +167,19 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	5. calculate other metrics (average weight-at-age)
 	*/
 	int n = A*G*S;
-	NumericVector za(n);
-	NumericVector sa(n);
-	NumericVector qa(n);
-	NumericVector da(n);
-	NumericVector pa(n);
-	NumericVector ua(n);
-	NumericVector ta(n);
-	NumericVector lz(n);
+	NumericVector za(n-1);
+	NumericVector sa(n-1);
+	NumericVector qa(n-1);
+	NumericVector da(n-1);
+	NumericVector pa(n-1);
+	NumericVector ua(n-1);
+	NumericVector ta(n-1);
+	NumericVector lz(n-1);
 
-	int MAXIT=25;
+	int MAXIT=35;
 	double TOL=1.e-7;
 	double fa = 0.00;
-	double fb = 1.00;
+	double fb = 2.00;
 	double fc = 0.5*(fa+fb);
 	double re,phie;
 
@@ -183,7 +187,11 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	for (int iter = 0; iter < MAXIT; ++iter)
 	{
 
-		NumericVector ilz(n);
+		// for (int i = 0; i < n; ++i)
+		// {
+		// 	lz[i] = 0;
+		// }
+		
 		int ii = 0;
 		for (IntegerVector::iterator h = sex.begin(); h != sex.end(); ++h)
 		{
@@ -201,45 +209,45 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 					// survivorship under fished conditions
 					if( i==age.begin() )
 					{
-						ilz[ii] = 1.0;
+						lz[ii] = 1.0;
 					}
 					else
 					{
-						ilz[ii] = lz[ii-1] * exp(-za[ii-1]);
+						lz[ii] = lz[ii-1] * exp(-za[ii-1]);
 					}
 
 					++ii;
 				}
 				--ii;
-				ilz[ii] = ilz[ii]/(1.-exp(-za[ii]));
+				lz[ii] = lz[ii]/(1.-exp(-za[ii]));
 				++ii;
 			}
 		}
-
+		// Rcpp:Rcout<<ii<<std::endl;
 
 
 		// Fished SSB per recruit (phiE)
 		phie = 0;
-		for (int ii = 0; ii < A*G*S; ++ii)
+		for (int ii = 0; ii < n; ++ii)
 		{
-			phie += ilz[ii]*m_fa[ii];
+			phie += lz[ii]*m_fa[ii];
 		}
 
 		// Equilibrium recruitment
 		double t1 = m_phiE/phie;
 		double t2 = (m_kap -t1);
 		
-		// t2 > 0 ? re = m_ro*t2/(m_kap-1.0) : re = 0.0;
-		re = m_ro*t2/(m_kap-1.0);
+		t2 > 0 ? re = m_ro*t2/(m_kap-1.0) : re = 0.0;
+		// re = m_ro*t2/(m_kap-1.0);
 
 		// Now calculate bycatch given fc
 		double de = 0;
-		for (int ii = 0; ii < A*G*S; ++ii)
+		for (int ii = 0; ii < n; ++ii)
 		{
-			de += re*fc*ilz[ii] * m_wa[ii]*ta[ii]; 
+			de += re*fc*lz[ii] * m_wa[ii]*ta[ii]; 
 		}
 
-		Rcpp::Rcout<<iter<<" fc = "<<fc<<" fe = "<<fe<<" lz[n] = "<<ilz[n-1]<<std::endl;
+		Rcpp::Rcout<<iter<<" fc = "<<fc<<" fe = "<<fe<<" de "<<de<<std::endl;
 		
 		double tmp = de - bycatch;// - de;
 		if( (tmp==0 || 0.5*(fb-fa) < TOL) && de >=0 )
@@ -247,9 +255,16 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 			break;
 		}
 		// bisection update
-		if(tmp > 0)
+		if(re > 0)
 		{
-			fa = fc;
+			if(tmp < 0)
+			{
+				fa = fc;
+			}
+			else
+			{
+				fb = fc;
+			}
 		}
 		else
 		{
@@ -257,14 +272,12 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 		}
 		fc = 0.5*(fa+fb);
 
-		lz = ilz;
-
 	} // end of iteration loop
 	if(re < 0) re = 0;
 	double be  = re * phie;
 	double spr = phie / m_phiE;
 
-
+	// Rcpp::Rcout<<"re = "<<re<<" phie = "<<phie<<std::endl;
 	// Rcpp::Rcout<<"Fe = "<<fe<<std::endl;
 	// Rcpp::Rcout<<"Re = "<<re<<std::endl;
 
@@ -289,6 +302,7 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	}
 
 	m_ye   = ye;
+	m_fc   = fc;
 	m_ne   = ne;
 	m_wbar = ye/ne;
 	m_we   = we;
@@ -297,7 +311,7 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	m_de   = de;
 	m_spr  = spr;
 
-	Rcpp::Rcout<<"Ye = "<<ye<<std::endl;
+	// Rcpp::Rcout<<"Ye = "<<ye<<std::endl;
 	// Rcpp::Rcout<<"We = "<<we<<std::endl;
 }
 
@@ -501,6 +515,7 @@ void Equilibrium::calcSelectivities(List procedure)
 	m_stock["va"] = va;
 	m_stock["vd"] = vd;
 	
+
 }
 
 
