@@ -127,6 +127,10 @@ DataFrame Equilibrium::runModel(const List mp_)
 	NumericVector   Ye(fe.size());
 	NumericVector   Ne(fe.size());
 	NumericVector   We(fe.size());
+	NumericVector   De(fe.size());
+	NumericVector   Be(fe.size());
+	NumericVector   Re(fe.size());
+	NumericVector  SPR(fe.size());
 	NumericVector Wbar(fe.size());
 
 
@@ -138,8 +142,12 @@ DataFrame Equilibrium::runModel(const List mp_)
 		Ye[ii]   = m_ye;
 		Ne[ii]   = m_ne;
 		We[ii]   = m_we;
+		De[ii]   = m_de;
+		Be[ii]   = m_be;
+		Re[ii]   = m_re;
+		SPR[ii]  = m_spr;
 		Wbar[ii] = m_wbar;
-		Rcpp::Rcout<<"fe = "<<*i<<" ye = "<<Ye[ii]<<std::endl;
+		// Rcpp::Rcout<<"fe = "<<*i<<" ye = "<<Ye[ii]<<std::endl;
 		++ii;
 
 	}
@@ -148,8 +156,12 @@ DataFrame Equilibrium::runModel(const List mp_)
 	          Named("fe") = fe,
 	          Named("fc") = fc,
 	          Named("Ye") = Ye,
+	          Named("De") = De,
 	          Named("Ne") = Ne,
-	          Named("We") = We
+	          Named("We") = We,
+	          Named("Be") = Be,
+	          Named("Re") = Re,
+	          Named("SPR")= SPR
 	          );
 	
 
@@ -177,20 +189,20 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	NumericVector lz(n-1);
 
 	int MAXIT=35;
-	double TOL=1.e-7;
-	double fa = 0.00;
-	double fb = 2.00;
-	double fc = 0.5*(fa+fb);
+	// double TOL=1.e-8;
+	// double fa = 0.00;
+	// double fb = 2.50;
+	double fc = 0;//0.5*(fa+fb);
 	double re,phie;
 
 	if(bycatch==0) {MAXIT=1; fc=0;}
 	for (int iter = 0; iter < MAXIT; ++iter)
 	{
 
-		// for (int i = 0; i < n; ++i)
-		// {
-		// 	lz[i] = 0;
-		// }
+		for (int i = 0; i < n; ++i)
+		{
+			lz[i] = 0;
+		}
 		
 		int ii = 0;
 		for (IntegerVector::iterator h = sex.begin(); h != sex.end(); ++h)
@@ -238,39 +250,50 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 		double t2 = (m_kap -t1);
 		
 		t2 > 0 ? re = m_ro*t2/(m_kap-1.0) : re = 0.0;
-		// re = m_ro*t2/(m_kap-1.0);
+		
 
 		// Now calculate bycatch given fc
 		double de = 0;
+		double btmp = 0;
 		for (int ii = 0; ii < n; ++ii)
 		{
 			de += re*fc*lz[ii] * m_wa[ii]*ta[ii]; 
+			btmp += re*lz[ii]*m_wa[ii]*ta[ii];
 		}
-
-		Rcpp::Rcout<<iter<<" fc = "<<fc<<" fe = "<<fe<<" de "<<de<<std::endl;
 		
-		double tmp = de - bycatch;// - de;
-		if( (tmp==0 || 0.5*(fb-fa) < TOL) && de >=0 )
+		if(bycatch < btmp)
 		{
-			break;
-		}
-		// bisection update
-		if(re > 0)
-		{
-			if(tmp < 0)
-			{
-				fa = fc;
-			}
-			else
-			{
-				fb = fc;
-			}
-		}
+			fc = -log(1.0-bycatch/btmp);	
+		} 
 		else
 		{
-			fb = fc;
+			fc = -log(0.01);
 		}
-		fc = 0.5*(fa+fb);
+
+		// Rcpp::Rcout<<iter<<" fc = "<<fc<<" ftmp = "<<ftmp<<" de "<<de<<std::endl;
+		
+		// double tmp = de - bycatch;// - de;
+		// if( (tmp==0 || 0.5*(fb-fa) < TOL) && de >=0 )
+		// {
+		// 	break;
+		// }
+		// // bisection update
+		// if(re > 0)
+		// {
+		// 	if(tmp < 0)
+		// 	{
+		// 		fa = fc;
+		// 	}
+		// 	else
+		// 	{
+		// 		fb = fc;
+		// 	}
+		// }
+		// else
+		// {
+		// 	fb = fc;
+		// }
+		// fc = 0.5*(fa+fb);
 
 	} // end of iteration loop
 	if(re < 0) re = 0;

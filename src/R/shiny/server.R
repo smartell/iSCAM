@@ -164,13 +164,18 @@ shinyServer(function(input, output, session) {
     })
     names(params) <- paramNames
     params <- c(params,prefix=prefix)
-    # print(params)
+    print(params)
     params
   }
 
+  # getProcedure <- function(prefix) {
+
+  # }
+
+
   ## Run equilibrium models
-  scnA <- reactive(do.call(equilibrium_model, getParams("a")))
-  scnB <- reactive(do.call(equilibrium_model, getParams("b")))
+  scnA <- reactive(do.call(equilibrium_model_cpp, getParams("a")))
+  scnB <- reactive(do.call(equilibrium_model_cpp, getParams("b")))
 
 
   output$a_equilPlot <- renderPlot({
@@ -319,20 +324,18 @@ shinyServer(function(input, output, session) {
 
 .plotEquilYield <- function(Scenario)
 {
-  
   helpText("These are the equilibrium yield versus fishing effort.")
 
-  mdf<-melt(Scenario,id.vars=1:5)
+  mdf<-melt(Scenario,id.vars=1:7)
   sdf<-subset(mdf,variable %in% c("Ye","De","We","SPR"))
   levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
   
+  print(head(sdf))
   
-  p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
-  # p <- p + geom_vline(xintercept=0.3, subset = .(variable == "Directed Fishery Yield (Mlb)"))
-  # p <- p + geom_vline(data=sdg,aes(xintercept=fe[which.min("SPR">spr_target)],col="Scenario"),size=2,alpha=0.5)
+  p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
   p <- p + theme_bw(14) + theme(legend.position="top") 

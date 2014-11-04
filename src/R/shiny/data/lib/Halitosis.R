@@ -610,7 +610,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 
 	print("Running equilibrium model")
 	
-	df <<- expand.grid(fe=fe,
+	df <- expand.grid(fe=fe,
 	                  slim=size.limits[1],
 	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,

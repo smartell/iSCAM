@@ -90,6 +90,9 @@ renderEquilriumInterface <- function()
 							        "Performance Metrics at MSY",
 							        "Equilibrium Value",
 							        "Value at MSY")),
+		      selectInput('selEquilPlot',"Equilibrium Plots",
+		                  c("Yield","Discards","Wastage","SPR"),
+		                  multiple=TRUE),
 	      	plotOutput("a_equilPlot", height = "550px")
 	      ),
 	      tabPanel("Tables",

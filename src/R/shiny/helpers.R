@@ -7,8 +7,8 @@ library(googleVis)
 library(plyr)
 library(Rcpp)
 # library(RcppArmadillo)
-
-sourceCpp("./data/cpp/halitosis.cpp")
+source("runHalitosis_cpp.R")
+# sourceCpp("./data/cpp/halitosis.cpp")
 
 
 # 
