@@ -1,18 +1,7 @@
-
 source("helpers.R")
-# sourceCpp("./data/cpp/test.cpp")
-# sourceCpp("./data/cpp/halitosis.cpp")
 
-paramNames <- c("size_limit",
-                "discard_mortality_rate",
-                "spr_target",
-                "selex_fishery",
-                "selex_bycatch",
-                "num_bycatch",
-                "five",
-                "ten",
-                "twenty",
-                "forty")
+
+
 
 ## ------------------------------------------------------------------------------------ ##
 ## Define server logic required to run scripts
@@ -174,19 +163,25 @@ shinyServer(function(input, output, session) {
 
 
   ## Run equilibrium models
-  scnA <- reactive(do.call(equilibrium_model_cpp, getParams("a")))
-  scnB <- reactive(do.call(equilibrium_model_cpp, getParams("b")))
+  scnA <- reactive(do.call(equilibrium_model_cpp, getParams("A")))
+  scnB <- reactive(do.call(equilibrium_model_cpp, getParams("B")))
 
-
-  output$a_equilPlot <- renderPlot({
+  output$plot_equil <- renderPlot({
     AB <- rbind(scnA(),scnB())
-    switch(input$selChartType,
-           "Equilibrium Yield"          = .plotEquilYield(AB),
-           "Performance Metrics at MSY" = .plotPerformanceMSY(AB),
-           "Equilibrium Value"          = .plotEquilValue(AB),
-           "Value at MSY"               = .plotPerformanceValue(AB)
-           )
+    xx <- input$selEquilPlot
+    print(xx)
+    .plotObject(AB,xx)
   })
+
+  # output$a_equilPlot <- renderPlot({
+  #   AB <- rbind(scnA(),scnB())
+  #   switch(input$selChartType,
+  #          "Equilibrium Yield"          = .plotEquilYield(AB),
+  #          "Performance Metrics at MSY" = .plotPerformanceMSY(AB),
+  #          "Equilibrium Value"          = .plotEquilValue(AB),
+  #          "Value at MSY"               = .plotPerformanceValue(AB)
+  #          )
+  # })
 
   output$table_biological <- renderTable({
     AB <- rbind(scnA(),scnB())
@@ -220,6 +215,21 @@ shinyServer(function(input, output, session) {
 
 })  # End of ShinyServer
 ## ------------------------------------------------------------------------------------ ##
+
+.plotObject <- function(Scenario,objs)
+{
+  mdf<-melt(Scenario,id.vars=1:7)
+
+  sdf<-subset(mdf,variable %in% objs)
+
+  p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
+  p <- p + facet_wrap(~variable,scales="free")
+  p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
+  p <- p + theme_bw(14) + theme(legend.position="top") 
+  print(p)
+  
+
+}
 
 .biologicalTable <- function(Scenario)
 {

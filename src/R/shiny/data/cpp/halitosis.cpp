@@ -57,6 +57,7 @@ private:
 	double m_kap;
 	double m_ro;
 	double m_dmr;
+	double m_mate;
 
 	double m_ye  ;
 	double m_fc	 ;
@@ -385,11 +386,12 @@ List Equilibrium::calcLifeTable(List &stock)
 	age = as<NumericVector>(stock["age"]);
 	grp = seq(0,G-1);
 	sex = seq(0,S-1);
-	// Rcpp::Rcout<<dim<<std::endl;
+	Rcpp::Rcout<<dim<<std::endl;
 
 	// Population parameters
 	double bo          = as<double>(stock["bo"]);
 	double  h          = as<double>(stock["h"]);
+	double mate        = as<double>(stock["mate"]);
 	NumericVector m    = as<NumericVector>(stock["m"]);
 	NumericVector linf = as<NumericVector>(stock["linf"]);
 	NumericVector vonk = as<NumericVector>(stock["vonk"]);
@@ -430,12 +432,12 @@ List Equilibrium::calcLifeTable(List &stock)
 				la[ii]    = mu[*i-1] + dev[*g]*sigma[*i-1];
 				sd_la[ii] = sqrt(1./G* pow(cv[*h]*mu[*i-1],2.0) );
 				wa[ii]    = a[*h]* pow(la[ii],b[*h]);
-				fa[ii]    = ma[*i-1] * wa[ii] * pg[*g];
+				fa[ii]    = ma[*i-1] * pow(wa[ii],mate) * pg[*g];
 			}
 			lx[ii] = lx[ii] / (1.0 - exp(-m[*h]));
 		}
 	}
-
+	Rcpp::Rcout<<mate<<std::endl;
 	// Unfished SSB per recruit (phiE)
 	double phiE = 0;
 	for (int ii = 0; ii < A*G*S; ++ii)
@@ -454,6 +456,7 @@ List Equilibrium::calcLifeTable(List &stock)
 	out["fa"]    = fa;
 	
 	m_M  = m;
+	m_mate = mate;
 	m_la = la;
 	m_sa = sd_la;
 	m_fa = fa;

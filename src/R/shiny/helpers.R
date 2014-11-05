@@ -6,9 +6,11 @@ library(reshape2)
 library(googleVis)
 library(plyr)
 library(Rcpp)
-# library(RcppArmadillo)
+library(inline)
+library(RcppArmadillo)
+
+sourceCpp("data/cpp/halitosis.cpp")
 source("runHalitosis_cpp.R")
-# sourceCpp("./data/cpp/halitosis.cpp")
 
 
 # 
@@ -24,7 +26,7 @@ load("data/OMI.Rdata")
 
 .THEME      <- theme_bw(11)
 .OVERLAY    <- FALSE
-.UNITS			<- "(Mlb)"
+.UNITS		<- "(Mlb)"
 .LIB        <- "data/lib/"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
@@ -56,6 +58,23 @@ MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
 MOT.DF$idvar <- paste0(MOT.DF$Scenario,MOT.DF$Procedure)
 names(MOT.DF) <- c("Scenario","Procedure","Year","Median biomass","Depletion",
                    "Median catch","Median AAV","idvar")
+
+
+paramNames <- c("size_limit",
+                "discard_mortality_rate",
+                "spr_target",
+                "selex_fishery",
+                "selex_bycatch",
+                "selex_asymptote",
+                "num_bycatch",
+                "five",
+                "ten",
+                "twenty",
+                "forty",
+                "linf_dev",
+                "vonk_dev",
+                "maternal_effect")
+
 
 
 tulip.plot <- function(df,input)

@@ -15,6 +15,7 @@ renderEquilInputs <- function(prefix)
 			# ),
 			# column(6,
 				sliderInput(paste0(prefix,"_","selex_bycatch"),"Bycatch: 50% & 95% selectivity (inches)",min=15,max=60,value=c(24,40),step=1),
+				numericInput(paste0(prefix,"_","selex_asymptote"),"Asymptote",value=0.65,step=0.05),
 				numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch mortality cap (Mlb)", value = 8),
 				
 
@@ -42,7 +43,9 @@ renderStockInputs <- function(prefix)
 {
 	wellPanel(
 		fluidRow(
-			sliderInput(paste0(prefix,"_","maternal_effect"),"Maturnal effect",min=0,max=3,value=0)
+		    sliderInput(paste0(prefix,"_","linf_dev"),"Deviation in max length (%)",min=-40,max=40,value=0,step=5),
+		    sliderInput(paste0(prefix,"_","vonk_dev"),"Deviation in metabolic rate (%)",min=-20,max=20,value=0,step=5),
+			sliderInput(paste0(prefix,"_","maternal_effect"),"Maternal effect",min=0,max=3,value=1,step=0.05)
 		)
 	)
 }
@@ -59,13 +62,13 @@ renderEquilriumInterface <- function()
 		  tabsetPanel(type="pills",id="eqpar",
 		    tabPanel("Procedures",
 					column(6,
-					  tags$h4("Procedure a"),
-					  renderEquilInputs("a")
+					  tags$h4("Procedure A"),
+					  renderEquilInputs("A")
 					), 
 
 					column(6,
-					  tags$h4("Procedure b"),
-					  renderEquilInputs("b")
+					  tags$h4("Procedure B"),
+					  renderEquilInputs("B")
 					)
 				),
 				tabPanel("Scenarios",
@@ -85,15 +88,17 @@ renderEquilriumInterface <- function()
 		column(6,
 		  tabsetPanel(type="pills",id="eqtab",
 		    tabPanel("Plots",
-		      selectInput('selChartType',"Model Output",
-							      c("Equilibrium Yield",
-							        "Performance Metrics at MSY",
-							        "Equilibrium Value",
-							        "Value at MSY")),
-		      selectInput('selEquilPlot',"Equilibrium Plots",
-		                  c("Yield","Discards","Wastage","SPR"),
-		                  multiple=TRUE),
-	      	plotOutput("a_equilPlot", height = "550px")
+		      # selectInput('selChartType',"Model Output",
+							 #      c("Equilibrium Yield",
+							 #        "Performance Metrics at MSY",
+							 #        "Equilibrium Value",
+							 #        "Value at MSY")),
+		      selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
+		                  c("Ye","De","We","SPR","Be","Re"),
+		                  multiple=TRUE,selected="Ye"),
+	      	# plotOutput("a_equilPlot", height = "500px"),
+	      	plotOutput("plot_equil",height = "500px")
+
 	      ),
 	      tabPanel("Tables",
 	        tags$p("Biological sustainability"),
