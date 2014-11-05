@@ -196,7 +196,7 @@
 		{
 			# Lenght-at-age
 			# mu    <- gvonb(age,linf[i],vonk[i],to[i],p[i])
-			mu    <- gvonb_cpp(age,linf[i],vonk[i],to[i],p[i])
+			# mu    <- gvonb_cpp(age,linf[i],vonk[i],to[i],p[i])
 			
 			sigma <- cv[i] * mu
 			dev   <- seq(-1.96, 1.96, length=G)

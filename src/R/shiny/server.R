@@ -219,7 +219,7 @@ shinyServer(function(input, output, session) {
 .plotObject <- function(Scenario,objs)
 {
   mdf<-melt(Scenario,id.vars=1:7)
-
+  print(head(mdf))
   sdf<-subset(mdf,variable %in% objs)
 
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()

@@ -162,7 +162,8 @@ DataFrame Equilibrium::runModel(const List mp_)
 	          Named("We") = We,
 	          Named("Be") = Be,
 	          Named("Re") = Re,
-	          Named("SPR")= SPR
+	          Named("SPR")= SPR,
+	          Named("Wbar")=Wbar
 	          );
 	
 
