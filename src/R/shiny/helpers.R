@@ -7,6 +7,11 @@ library(reshape2)
 library(googleVis)
 library(plyr)
 library(Rcpp)
+library(dplyr)
+library(magrittr)
+library(grid)
+# library(BH)
+
 sourceCpp("data/halitosis.cpp")
 
 

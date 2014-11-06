@@ -94,8 +94,8 @@ renderEquilriumInterface <- function()
 							 #        "Equilibrium Value",
 							 #        "Value at MSY")),
 		      selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
-		                  c("Ye","De","We","SPR","Be","Re","Wbar"),
-		                  multiple=TRUE,selected="Ye"),
+		                  c("Yield","Discard","Waste","SPR","Spawning.Biomass","Recruitment","Avg.Weight"),
+		                  multiple=TRUE,selected="Yield"),
 	      	# plotOutput("a_equilPlot", height = "500px"),
 	      	plotOutput("plot_equil",height = "500px")
 

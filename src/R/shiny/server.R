@@ -219,13 +219,19 @@ shinyServer(function(input, output, session) {
 .plotObject <- function(Scenario,objs)
 {
   mdf<-melt(Scenario,id.vars=1:7)
-  print(head(mdf))
+  # print(tail(Scenario))
+  SS <- Scenario  %>% group_by(prefix) %>% filter(Yield == max(Yield))
+  # print(SS)
+  mSS <- subset(melt(SS,id.vars=1:7),variable %in% objs)
   sdf<-subset(mdf,variable %in% objs)
 
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
+  
+  p <- p + geom_segment(aes(x=fe,xend=fe,y=value,yend=0,col=prefix),data=mSS, arrow = arrow(length = unit(0.5,"cm")))
+  p <- p + geom_segment(aes(x=fe,xend=0,y=value,yend=value,col=prefix),data=mSS, arrow = arrow(length = unit(0.5,"cm")))
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
-  p <- p + theme_bw(14) + theme(legend.position="top") 
+  p <- p + theme_bw(18) + theme(legend.position="top") 
   print(p)
   
 
