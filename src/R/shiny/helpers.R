@@ -31,6 +31,12 @@ load("data/MSE.Rdata")
 load("data/OMI.Rdata")
 
 
+# 
+# LOAD data from halibut size-at-age
+# 
+load("data/halibutSAA.Rdata")
+
+
 .THEME      <- theme_bw(11)
 .OVERLAY    <- FALSE
 .UNITS		<- "(Mlb)"
