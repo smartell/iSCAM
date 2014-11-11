@@ -1,131 +1,228 @@
-library(shiny)
+# NOTATION
+# For R-scripts that deal with user interface, prefix file with "gui_*.R"
 
-# Define UI for application that draws a histogram
-#shinyUI(navbarPage(
-shinyUI(fluidPage(
-	  titlePanel("IPHC MSE-tool"),
+source("helpers.R")
 
-	fluidRow(
-		column(3,
-			wellPanel(
-				h4("Filter"),
-				sliderInput("years", "Years:",
-                  			min = min(BIO.DF$Year), 
-                  			max = max(BIO.DF$Year), 
-                  			value = range(BIO.DF$Year),
-                  			format= "####"),
 
-				selectInput('scenario',"Secnario",
-							levels(BIO.DF$Scenario),
-							selected = levels(BIO.DF$Scenario)[1],
-							multiple = TRUE),
+# RENDER FILTER FOR CHOOSING SCENARIOS AND PROCEDURES
+renderFilterInputs <- function()
+{
+	wellPanel(
+		h4("Filter"),
+		sliderInput("years", "Years:",
+              			min = min(BIO.DF$Year), 
+              			max = max(BIO.DF$Year), 
+              			value = range(BIO.DF$Year),
+              			format= "####"),
 
-				selectInput('procedure',"Procedure",
-		              		levels(BIO.DF$Procedure),
-		              		selected =  levels(BIO.DF$Procedure)[1],
-		              		multiple = TRUE),
+		selectInput('scenario',"Secnario",
+					levels(BIO.DF$Scenario),
+					selected = levels(BIO.DF$Scenario)[1],
+					multiple = TRUE),
 
-				selectInput('plotType',"Select variable to plot",
-			        		c("Spawning biomass",
-			        		  "Depletion",
-			        	  	   "Catch",
-			        	  	   "Sub-legal Catch",
-			        	  	   "AAV in Catch",
-			        	  	   "Wastage",
-			        	  	   "Efficiency",
-			        	  	   "Fishing mortality"),
-			        		selected="Spawning biomass")
+		selectInput('procedure',"Procedure",
+              		levels(BIO.DF$Procedure),
+              		selected =  levels(BIO.DF$Procedure)[1],
+              		multiple = TRUE)
+	)
+}
+
+# RENDER LAYOUT CONTROLS FOR TUPLIP PLOTS
+renderLayoutInputs <- function()
+{
+	wellPanel(
+	  fluidRow(
+		  column(3,
+			selectInput("icolor","Facet color",
+								c(None = ".",
+								  "Scenario",
+								  "Procedure",
+								  "gear",
+								  "area",
+								  "sex",
+								  "group"),
+								selected=".")
 			),
-			wellPanel(
-				selectInput("icolor","Color Variable",
-				            c(None = ".",
-				              "Scenario",
-				              "Procedure",
-				              "gear",
-				              "area",
-				              "sex",
-				              "group"),
-				            selected="."),
 
-				selectInput("facet_row","Facet row",
-				            c(None = ".",
-				              "Scenario",
-				              "Procedure",
-				              "gear",
-				              "area",
-				              "sex",
-				              "group"),
-				            selected="Procedure"),
-
-				selectInput("facet_col","Facet column",
-				            c(None = ".",
-				              "Scenario",
-				              "Procedure",
-				              "gear",
-				              "area",
-				              "sex",
-				              "group"),
-				            selected="Scenario")
-			)
-		),
-		column(9,
-		    tabsetPanel(type="tabs",
-			    # Funnel plots
-			    tabPanel("Tulip plots", 
-				  plotOutput("funnelPlot")
-				),
-				# Google Vis plots
-				tabPanel("Motion chart",
-				  htmlOutput("googleVisPlot")
-				),
-				# Summary tables
-				tabPanel("Performance Metrics",
-					h4("Median depletion"),
-					tableOutput("viewDepletionTable"),
-					h4("Median catch"),
-					tableOutput("viewCatchTable"),
-					h4("Probability of falling below limit reference point P(SB<0.20)"),
-					tableOutput("viewSSBlimit"),
-					h4("Probability of falling below threshold reference point P(SB<0.30)"),
-					tableOutput("viewSSBthreshold")
-				)
+			column(3,
+			selectInput("facet_row","Facet row",
+		            c(None = ".",
+		              "Scenario",
+		              "Procedure",
+		              "gear",
+		              "area",
+		              "sex",
+		              "group"),
+		            selected="Procedure")
 			),
-			wellPanel(
-				# Logo image
-			    #img(src="iphclogo.png", height = 100, width = 100),
-				img(src="iscamLogo.png", height = 100, width = 100)
+
+			column(3,
+			selectInput("facet_col","Facet column",
+								c(None = ".",
+								  "Scenario",
+								  "Procedure",
+								  "gear",
+								  "area",
+								  "sex",
+								  "group"),
+								selected="Scenario")
+			),
+
+			column(3,
+			selectInput('plotType',"Facet variable",
+								c( "Spawning biomass",
+								   "Depletion",
+								   "Catch",
+								   "Sub-legal Catch",
+								   "AAV in Catch",
+								   "Wastage",
+								   "Efficiency",
+								   "Fishing mortality"),
+								selected="Spawning biomass")	       
 			)
 		)
 	)
-	# tabPanel HELP
-	# tabPanel
-	# (
-	#  	"Help",
-	#  	h3("Introduction"),
-	#  	p("Welcome to the IPHC Managment Strategy Evaluation Toolbox. The purpose of this
-	#  	  tool is to explore alternative managment procedures for Pacific halibut and 
-	#  	  evaluating the performance of each procedure with respect to the management
-	#  	  objectives."),
+}
 
-	#  	h4("Toolbox menu"),
-	#  	p("Under the toolbox menu item, there are two submenus: Proceudres and Scenarios.
-	#  	  Default management procedures and scenarios are already selected, but you may 
-	#  	  wish to select or unselect alternative procedures and scenarios to explore. By 
-	#  	  definition, procedures are things that you can manage (e.g., size-limits), and 
-	#  	  scenarios are things that you cannot manage (e.g., recruitment variability)."),
+renderMSEtabs <- function()
+{
+	tabsetPanel(type="tabs",id="tab",
 
-	#  	h4("Plots menu"),
-	#  	p("Select the plots menu to view the chosen combinations of management procedures 
-	#  	  and scenarios.  The sidebar allows you to explore a variety of different 
-	#  	  plotting options."),
+    # Tulip plots
+	  tabPanel("Tulip plots", 
+	    renderLayoutInputs(),
+		  plotOutput("funnelPlot")
+		),
 
-	#  	h4("Tables menu"),
-	#  	p("Select the table menu to view summary performance metrics of the chosen 
-	#  	  combinations of management procedures and scenarios. Again the sidebar will 
-	#  	  allows you to customize the summary statistics.")
-	# ),
+		# Google Vis plots
+		tabPanel("Motion chart",
+		  htmlOutput("googleVisPlot")
+		),
+
+		# Summary tables
+		tabPanel("Performance Metrics",
+			h4("Median depletion"),
+			tableOutput("viewDepletionTable"),
+			h4("Median catch"),
+			tableOutput("viewCatchTable"),
+			h4("Probability of falling below limit reference point P(SB<0.20)"),
+			tableOutput("viewSSBlimit"),
+			h4("Probability of falling below threshold reference point P(SB<0.30)"),
+			tableOutput("viewSSBthreshold")
+		)
+
+	)
+}
+
+
+renderOMI <- function()
+{
+	fluidRow(
+	  column(4,
+			wellPanel("Operating Model Interface",
+				selectInput('omiplotType',"Choose Graphic",
+			  	          c("Spawning biomass",
+			    	          "Depletion",
+			    	          "Recruitment",
+			    	          "Stock Recruitment",
+			    	          "Relative abundance",
+			    	          "Mortality"),
+			      	      selected="Spawning biomass")
+			)
+		),
+		column(8,
+		  plotOutput("omiPlot")
+		)
+	)
+
+}
+
+renderBanner <- function()
+{
+	wellPanel(
+		# Logo image
+	  column(9),
+	  column(3,
+	  	img(src="iphclogo.png",  height = 80, width = 80),
+			img(src="iscamLogo.png", height = 80, width = 80)
+	  )
+	)
+}
+
+# ----------------------------------------#
+# MAIN USER INTERFACE FOR THE APPLICATION #
+# ----------------------------------------#
+shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
+	
+
+
 
 	
-))
+    # ---------------------------------------- #
+	# EQUILIBRIUM INTERFACE
+    # ---------------------------------------- #
+	tabPanel("Equilibrium",
+	    includeCSS("styles.css"),
+		fluidRow(
+			tags$h4("Equilibrium Model")
+		),
+
+		renderEquilriumInterface(),
+		renderShutter(),	  
+		fluidRow(
+			renderBanner()
+		)
+
+	),
+
+	# ---------------------------------------- #
+	# MANAGEMENT STRATEGY EVALUATION INTERFACE
+	# ---------------------------------------- #
+	tabPanel("MSE",
+
+	  fluidRow(
+			column(3,
+				renderFilterInputs()
+			),
+
+			column(9,
+		    renderMSEtabs()
+			)
+		),
+
+		fluidRow(
+			renderBanner()
+		)
+	),
+
+	# ---------------------------------------- #
+	# OPERATING MODEL INTERFACE
+	# ---------------------------------------- #
+	tabPanel("OMI",
+		renderOMI(),
+	fluidRow(
+			renderBanner()
+		)
+
+	),
+
+	# ---------------------------------------- #
+	# INFORMATION INTERFACE (NEEDS TOC)
+	# ---------------------------------------- #
+	tabPanel("About",
+	  fluidRow(
+			includeMarkdown("About.md")
+		),
+
+		fluidRow(
+			renderBanner()
+		)
+	)
+
+
+)))
+# ---------------------------------------- #
+# END OF SHINY UI
+# ---------------------------------------- # 
 
 

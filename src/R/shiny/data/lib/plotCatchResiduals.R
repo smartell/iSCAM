@@ -13,7 +13,7 @@ require(reshape2)
 	for( i in 1:n )
 	{
 		ct <- data.frame( cbind(M[[i]]$dCatchData,M[[i]]$eta) )
-		colnames(ct) <- c("Year","Gear","Area","Group","Sex","Type","Catch","CV","Residual")
+		colnames(ct) <- c("Year","Gear","Area","Group","Sex","Type","Catch","Residual")
 		ct <- data.frame(Model=names(M)[i],ct)
 		mdf <- rbind(mdf,ct)
 	}
