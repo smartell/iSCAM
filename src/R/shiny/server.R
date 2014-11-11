@@ -161,11 +161,16 @@ shinyServer(function(input, output, session) {
 
   # }
 
-
+  ## ------------------------------------------------------------ ##
   ## Run equilibrium models
+  ## ------------------------------------------------------------ ##
   scnA <- reactive(do.call(equilibrium_model_cpp, getParams("A")))
   scnB <- reactive(do.call(equilibrium_model_cpp, getParams("B")))
 
+
+  ## ------------------------------------------------------------ ##
+  ## Plot Equilibrium values versus fishing mortality
+  ## ------------------------------------------------------------ ##
   output$plot_equil <- renderPlot({
     AB <- rbind(scnA(),scnB())
     xx <- input$selEquilPlot
@@ -175,37 +180,58 @@ shinyServer(function(input, output, session) {
   })
 
 
+  ## ------------------------------------------------------------ ##
   ## Run Selex plots
-  
+  ## ------------------------------------------------------------ ##
   output$plotSelex <-renderPlot({
     pars <- list(getParams("A"),getParams("B"))
-    
     .plotSelex(pars)
+  })
+
+  output$plotFishSelex <-renderPlot({
+    pars <- list(getParams("A"),getParams("B"))
+    .plotFishSelex(pars)
+  })
     
-  })
 
 
+    ## ------------------------------------------------------------ ##
+    ## Print Equilirium Tables
+    ## ------------------------------------------------------------ ##
+    output$msyTable <- renderTable({
+      AB <- rbind(scnA(),scnB())
+      xx <- input$selMSYTable
 
+      .msyTable(AB,xx)
 
-  output$table_biological <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    .biologicalTable(AB)
-  })
+    })
+    output$sprTable <- renderTable({
+      AB <- rbind(scnA(),scnB())
+      xx <- input$selMSYTable
 
-  output$table_fishery <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    .fisheryTable(AB)
-  })
+      .sprTable(AB,xx)
 
-  output$table_economics <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    .economicTable(AB)
-  })
+    })
 
-  output$msytable <- renderTable({
-    AB <- rbind(scnA(),scnB())
-    .equilibriumTables(AB)
-  })
+  # output$table_biological <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   .biologicalTable(AB)
+  # })
+
+  # output$table_fishery <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   .fisheryTable(AB)
+  # })
+
+  # output$table_economics <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   .economicTable(AB)
+  # })
+
+  # output$msytable <- renderTable({
+  #   AB <- rbind(scnA(),scnB())
+  #   .equilibriumTables(AB)
+  # })
   
   # output$sprtable <- renderTable({
   #   AB <- rbind(scnA(),scnB())
@@ -220,16 +246,17 @@ shinyServer(function(input, output, session) {
 })  # End of ShinyServer
 ## ------------------------------------------------------------------------------------ ##
 
+
 .plotObject <- function(Scenario,objs)
 {
   SS  <- Scenario  %>% group_by(prefix) %>% filter(Yield == max(Yield))
   mSS <- subset(melt(SS,id.vars=1:5),variable %in% objs)
   sdf <- subset(melt(Scenario,id.vars=1:5),variable %in% objs)
 
-  p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
+  p <- ggplot(sdf,(aes(Fe,value,col=prefix))) + geom_line(size=1.25)
   
-  p <- p + geom_segment(aes(x=fe,xend=fe,y=value,yend=0,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4)
-  p <- p + geom_segment(aes(x=fe,xend=0,y=value,yend=value,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4)
+  p <- p + geom_segment(aes(x=Fe,xend=Fe,y=value,yend=0,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4,size=1.25)
+  p <- p + geom_segment(aes(x=Fe,xend=0,y=value,yend=value,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4,size=1.25)
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
   p <- p + theme_bw(18) + theme(legend.position="top") 
@@ -238,29 +265,57 @@ shinyServer(function(input, output, session) {
 
 }
 
-.plotSelex <- function(pars)
-  {
+.plotFishSelex <- function(pars)
+{
     # assume units are in inches
-    n <- length(pars)
-    x = seq(50,200,by=2.5)/2.54
-    df <- NULL
-    for( i in 1:n )
-    {
-      pref <- pars[[i]]$prefix
-      bL50 <- pars[[i]]$selex_bycatch[1]
-      bL95 <- pars[[i]]$selex_bycatch[2]
-      bR50 <- pars[[i]]$selex_bycatch_desc[1]
-      bR95 <- pars[[i]]$selex_bycatch_desc[2]
+  n <- length(pars)
+  x = seq(50,200,by=2.5)/2.54
+  df <- NULL
+  for( i in 1:n )
+  {
+    pref <- pars[[i]]$prefix
+    bL50 <- pars[[i]]$selex_fishery[1]
+    bL95 <- pars[[i]]$selex_fishery[2]
+    # bR50 <- pars[[i]]$selex_bycatch_desc[1]
+    # bR95 <- pars[[i]]$selex_bycatch_desc[2]
 
-      sel  <- plogis95_cpp(x,bL50,bL95)*plogis95_cpp(x,bR95,bR50)
-      df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
-    }
-    # y = plogis95_cpp(x,50,84)
-    print(pars)
-    # plot(x,y,xlab="",ylab="",las=1)
-    p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line()
-    print(p + theme_bw())
+    sel  <- plogis95_cpp(x,bL50,bL95)#*plogis95_cpp(x,bR95,bR50)
+    df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
   }
+  # y = plogis95_cpp(x,50,84)
+  print(pars)
+  # plot(x,y,xlab="",ylab="",las=1)
+  p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
+  p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
+  print(p + theme_bw())
+
+}
+
+
+.plotSelex <- function(pars)
+{
+  # assume units are in inches
+  n <- length(pars)
+  x = seq(50,200,by=2.5)/2.54
+  df <- NULL
+  for( i in 1:n )
+  {
+    pref <- pars[[i]]$prefix
+    bL50 <- pars[[i]]$selex_bycatch[1]
+    bL95 <- pars[[i]]$selex_bycatch[2]
+    bR50 <- pars[[i]]$selex_bycatch_desc[1]
+    bR95 <- pars[[i]]$selex_bycatch_desc[2]
+
+    sel  <- plogis95_cpp(x,bL50,bL95)*plogis95_cpp(x,bR95,bR50)
+    df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
+  }
+  # y = plogis95_cpp(x,50,84)
+  print(pars)
+  # plot(x,y,xlab="",ylab="",las=1)
+  p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
+  p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
+  print(p + theme_bw())
+}
 
 
 
@@ -365,79 +420,79 @@ shinyServer(function(input, output, session) {
 }
 
 
-.plotEquilYield <- function(Scenario)
-{
-  helpText("These are the equilibrium yield versus fishing effort.")
+# .plotEquilYield <- function(Scenario)
+# {
+#   helpText("These are the equilibrium yield versus fishing effort.")
 
-  mdf<-melt(Scenario,id.vars=1:7)
-  sdf<-subset(mdf,variable %in% c("Ye","De","We","SPR"))
-  levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
-  levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
-  levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
-  levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
+#   mdf<-melt(Scenario,id.vars=1:7)
+#   sdf<-subset(mdf,variable %in% c("Ye","De","We","SPR"))
+#   levels(sdf$variable)[levels(sdf$variable)=="Ye"] <- "Directed Fishery Yield (Mlb)"
+#   levels(sdf$variable)[levels(sdf$variable)=="De"] <- "Directed Fishery Discard (Mlb)"
+#   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
+#   levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
   
-  # print(head(sdf))
+#   # print(head(sdf))
   
-  p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
-  p <- p + facet_wrap(~variable,scales="free")
-  p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
-  p <- p + theme_bw(14) + theme(legend.position="top") 
-  print(p)
-  
-
-}
-
-.plotEquilValue <- function(Scenario)
-{
+#   p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
+#   p <- p + facet_wrap(~variable,scales="free")
+#   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
+#   p <- p + theme_bw(14) + theme(legend.position="top") 
+#   print(p)
   
 
-  mdf<-melt(Scenario,id.vars=1:5)
-  sdf<-subset(mdf,variable %in% c("YEv","DEv","BYv","WEv"))
-  levels(sdf$variable)[levels(sdf$variable)=="YEv"] <- "Landed value"
-  levels(sdf$variable)[levels(sdf$variable)=="DEv"] <- "Value of discards"
-  levels(sdf$variable)[levels(sdf$variable)=="BYv"] <- "Value of bycatch mortality"
-  levels(sdf$variable)[levels(sdf$variable)=="WEv"] <- "Value of wastage"
+# }
+
+# .plotEquilValue <- function(Scenario)
+# {
   
-  p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
-  p <- p + facet_wrap(~variable,scales="free")
-  p <- p + labs(x="Fishing Intensity",col="Procedure",y="Millions of dollars")
-  p <- p + theme_bw(14) + theme(legend.position="top") 
-  print(p)
 
-}
+#   mdf<-melt(Scenario,id.vars=1:5)
+#   sdf<-subset(mdf,variable %in% c("YEv","DEv","BYv","WEv"))
+#   levels(sdf$variable)[levels(sdf$variable)=="YEv"] <- "Landed value"
+#   levels(sdf$variable)[levels(sdf$variable)=="DEv"] <- "Value of discards"
+#   levels(sdf$variable)[levels(sdf$variable)=="BYv"] <- "Value of bycatch mortality"
+#   levels(sdf$variable)[levels(sdf$variable)=="WEv"] <- "Value of wastage"
+  
+#   p <- ggplot(sdf,(aes(fe,value,col=prefix))) +geom_line()
+#   p <- p + facet_wrap(~variable,scales="free")
+#   p <- p + labs(x="Fishing Intensity",col="Procedure",y="Millions of dollars")
+#   p <- p + theme_bw(14) + theme(legend.position="top") 
+#   print(p)
+
+# }
 
 
-.plotPerformanceMSY<- function(Scenario)
-{
-  x<-ddply(Scenario,.(prefix),plyr::summarize,
-           "Fishing Intensity @ MSY"=fe[which.max(Ye)],
-           "Maximum Fishery Yield"  =Ye[which.max(Ye)],
-           "Discards"               =De[which.max(Ye)],
-           "Wastage"                =We[which.max(Ye)]
-           )
+# .plotPerformanceMSY<- function(Scenario)
+# {
+#   x<-ddply(Scenario,.(prefix),plyr::summarize,
+#            "Fishing Intensity @ MSY"=fe[which.max(Ye)],
+#            "Maximum Fishery Yield"  =Ye[which.max(Ye)],
+#            "Discards"               =De[which.max(Ye)],
+#            "Wastage"                =We[which.max(Ye)]
+#            )
 
-  p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
-  p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",fill="Procedure")
-  p <- p +facet_wrap(~variable,scales="free")
-  print(p + theme_bw(14))
-}
+#   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
+#   p <- p + geom_bar(stat="identity",position="dodge")
+#   p <- p + labs(x="Variable",y="Value (million lbs or fishing intensity)",fill="Procedure")
+#   p <- p +facet_wrap(~variable,scales="free")
+#   print(p + theme_bw(14))
+# }
 
-.plotPerformanceValue<- function(Scenario)
-{
-  x<-ddply(Scenario,.(prefix),plyr::summarize,
-         "Landed Value @ MSY"           =YEv[which.max(Ye)],
-         "Value of Wastage"             =WEv[which.max(Ye)],
-         "Total Value of all mortality" =YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)],
-         "Value of losses"              =(YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)])-YEv[which.max(Ye)]
-         )
+# .plotPerformanceValue<- function(Scenario)
+# {
+#   x<-ddply(Scenario,.(prefix),plyr::summarize,
+#          "Landed Value @ MSY"           =YEv[which.max(Ye)],
+#          "Value of Wastage"             =WEv[which.max(Ye)],
+#          "Total Value of all mortality" =YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)],
+#          "Value of losses"              =(YEv[which.max(Ye)]+WEv[which.max(Ye)]+BYv[which.max(Ye)])-YEv[which.max(Ye)]
+#          )
 
-  p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
-  p <- p + geom_bar(stat="identity",position="dodge")
-  p <- p + labs(x="Variable",y="Value (million $)",fill="Procedure")
-  p <- p +facet_wrap(~variable,scales="free")
-  print(p + theme_bw(14))
-}
+#   p <- ggplot(melt(x,id.vars=1),aes(variable,value,fill=prefix))
+#   p <- p + geom_bar(stat="identity",position="dodge")
+#   p <- p + labs(x="Variable",y="Value (million $)",fill="Procedure")
+#   p <- p +facet_wrap(~variable,scales="free")
+#   print(p + theme_bw(14))
+# }
 
 
 

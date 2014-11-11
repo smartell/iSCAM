@@ -154,11 +154,11 @@ DataFrame Equilibrium::runModel(const List mp_)
 	}
 
 	DataFrame df = DataFrame::create(
-	          Named("fe") = fe,
-	          Named("fc") = fc,
+	          Named("Fe") = fe,
+	          Named("Fbycatch") = fc,
 	          Named("Yield") = Ye,
 	          Named("Discard") = De,
-	          Named("Ne") = Ne,
+	          Named("Numbers") = Ne,
 	          Named("Waste") = We,
 	          Named("Spawning.Biomass") = Be,
 	          Named("Recruitment") = Re,
