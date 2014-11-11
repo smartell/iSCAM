@@ -10,6 +10,7 @@ library(Rcpp)
 library(dplyr)
 library(magrittr)
 library(grid)
+library(leaflet)
 
 
 sourceCpp("data/src/halitosis.cpp")
