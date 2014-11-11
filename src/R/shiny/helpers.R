@@ -10,6 +10,8 @@ library(Rcpp)
 library(dplyr)
 library(magrittr)
 library(grid)
+library(leafletR)
+library(leaflet)
 
 
 sourceCpp("data/src/halitosis.cpp")
@@ -28,6 +30,12 @@ load("data/MSE.Rdata")
 # LOAD data from assessment model
 # 
 load("data/OMI.Rdata")
+
+
+# 
+# LOAD data from halibut size-at-age
+# 
+load("data/halibutSAA.Rdata")
 
 
 .THEME      <- theme_bw(11)

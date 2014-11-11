@@ -243,6 +243,22 @@ shinyServer(function(input, output, session) {
   #   # .u26Table(AB)
   # })
 
+
+    # MAPS
+    map <- createLeafletMap(session, "map")
+    map$addGeoJSON(dat, "map")
+
+
+
+
+  #   map <- createLeafletMap(session, "map")
+  
+  # session$onFlushed(once=TRUE, function() {
+  #   map$addGeoJSON(dat)
+  # })
+
+
+
 })  # End of ShinyServer
 ## ------------------------------------------------------------------------------------ ##
 
