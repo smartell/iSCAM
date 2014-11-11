@@ -10,9 +10,10 @@ library(Rcpp)
 library(dplyr)
 library(magrittr)
 library(grid)
-# library(BH)
 
-sourceCpp("data/halitosis.cpp")
+
+sourceCpp("data/src/halitosis.cpp")
+
 
 
 
@@ -43,10 +44,11 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
-                "spr_target",
+                # "spr_target",
                 "selex_fishery",
                 "selex_bycatch",
-                "selex_asymptote",
+                "selex_bycatch_desc",
+                # "selex_asymptote",
                 "num_bycatch",
                 "five",
                 "ten",

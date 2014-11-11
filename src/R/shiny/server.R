@@ -153,7 +153,7 @@ shinyServer(function(input, output, session) {
     })
     names(params) <- paramNames
     params <- c(params,prefix=prefix)
-    print(params)
+    # print(params)
     params
   }
 
@@ -169,19 +169,23 @@ shinyServer(function(input, output, session) {
   output$plot_equil <- renderPlot({
     AB <- rbind(scnA(),scnB())
     xx <- input$selEquilPlot
-    print(xx)
+    
     .plotObject(AB,xx)
+
   })
 
-  # output$a_equilPlot <- renderPlot({
-  #   AB <- rbind(scnA(),scnB())
-  #   switch(input$selChartType,
-  #          "Equilibrium Yield"          = .plotEquilYield(AB),
-  #          "Performance Metrics at MSY" = .plotPerformanceMSY(AB),
-  #          "Equilibrium Value"          = .plotEquilValue(AB),
-  #          "Value at MSY"               = .plotPerformanceValue(AB)
-  #          )
-  # })
+
+  ## Run Selex plots
+  
+  output$plotSelex <-renderPlot({
+    pars <- list(getParams("A"),getParams("B"))
+    
+    .plotSelex(pars)
+    
+  })
+
+
+
 
   output$table_biological <- renderTable({
     AB <- rbind(scnA(),scnB())
@@ -218,17 +222,14 @@ shinyServer(function(input, output, session) {
 
 .plotObject <- function(Scenario,objs)
 {
-  mdf<-melt(Scenario,id.vars=1:7)
-  # print(tail(Scenario))
-  SS <- Scenario  %>% group_by(prefix) %>% filter(Yield == max(Yield))
-  # print(SS)
-  mSS <- subset(melt(SS,id.vars=1:7),variable %in% objs)
-  sdf<-subset(mdf,variable %in% objs)
+  SS  <- Scenario  %>% group_by(prefix) %>% filter(Yield == max(Yield))
+  mSS <- subset(melt(SS,id.vars=1:5),variable %in% objs)
+  sdf <- subset(melt(Scenario,id.vars=1:5),variable %in% objs)
 
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
   
-  p <- p + geom_segment(aes(x=fe,xend=fe,y=value,yend=0,col=prefix),data=mSS, arrow = arrow(length = unit(0.5,"cm")))
-  p <- p + geom_segment(aes(x=fe,xend=0,y=value,yend=value,col=prefix),data=mSS, arrow = arrow(length = unit(0.5,"cm")))
+  p <- p + geom_segment(aes(x=fe,xend=fe,y=value,yend=0,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4)
+  p <- p + geom_segment(aes(x=fe,xend=0,y=value,yend=value,col=prefix),data=mSS, arrow = arrow(length = unit(0.25,"cm")),alpha=0.4)
   p <- p + facet_wrap(~variable,scales="free")
   p <- p + labs(x="Fishing Intensity",col="Procedure",y="")
   p <- p + theme_bw(18) + theme(legend.position="top") 
@@ -236,6 +237,32 @@ shinyServer(function(input, output, session) {
   
 
 }
+
+.plotSelex <- function(pars)
+  {
+    # assume units are in inches
+    n <- length(pars)
+    x = seq(50,200,by=2.5)/2.54
+    df <- NULL
+    for( i in 1:n )
+    {
+      pref <- pars[[i]]$prefix
+      bL50 <- pars[[i]]$selex_bycatch[1]
+      bL95 <- pars[[i]]$selex_bycatch[2]
+      bR50 <- pars[[i]]$selex_bycatch_desc[1]
+      bR95 <- pars[[i]]$selex_bycatch_desc[2]
+
+      sel  <- plogis95_cpp(x,bL50,bL95)*plogis95_cpp(x,bR95,bR50)
+      df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
+    }
+    # y = plogis95_cpp(x,50,84)
+    print(pars)
+    # plot(x,y,xlab="",ylab="",las=1)
+    p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line()
+    print(p + theme_bw())
+  }
+
+
 
 .biologicalTable <- function(Scenario)
 {
@@ -262,7 +289,7 @@ shinyServer(function(input, output, session) {
                      "F Target",
                      "F Limit")
     rownames(test)=NULL
-    print(test)
+    return(test)
 }
 
 .fisheryTable <- function(Scenario)
@@ -278,7 +305,7 @@ shinyServer(function(input, output, session) {
 
                   )
     colnames(test)[1]="Procedure"
-    print(test)
+    return(test)
 }
 
 .economicTable <- function(Scenario)
@@ -290,7 +317,7 @@ shinyServer(function(input, output, session) {
                   "Total value of all mortality" = YEv[which.min(depletion>ssb_threshold)]+WEv[which.min(depletion>ssb_threshold)]+BYv[which.min(depletion>ssb_threshold)]
                   )
     colnames(test)[1]="Procedure"
-    print(test)
+    return(test)
 }
 
 .u26Table <- function(Scenario)
@@ -302,7 +329,7 @@ shinyServer(function(input, output, session) {
                   "Bycatch @ SPR"  =b26[which.min(SPR>spr_target)]
                   )
   colnames(test)[1]="Scenario"
-  print(test) 
+  return(test) 
 }
 
 
@@ -318,7 +345,7 @@ shinyServer(function(input, output, session) {
                   EFF   =OE[which.min(SPR>spr_target)]
                   )
   colnames(test)[1]="Procedure"
-  print(test)
+  return(test)
 }
 
 .equilibriumTables <- function(Scenario)
@@ -334,7 +361,7 @@ shinyServer(function(input, output, session) {
     colnames(test)=c("Procedure","F","MSY","Biomass (♀)",
                      "Depletion","Discards","Wastage")
     rownames(test)=NULL
-    print(test)
+    return(test)
 }
 
 
@@ -349,7 +376,7 @@ shinyServer(function(input, output, session) {
   levels(sdf$variable)[levels(sdf$variable)=="We"] <- "Directed Fishery Wastage (Mlb)"
   levels(sdf$variable)[levels(sdf$variable)=="SPR"] <- "SPR"
   
-  print(head(sdf))
+  # print(head(sdf))
   
   p <- ggplot(sdf,(aes(fe,value,col=prefix))) + geom_line()
   p <- p + facet_wrap(~variable,scales="free")

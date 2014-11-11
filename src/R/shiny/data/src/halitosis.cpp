@@ -24,24 +24,24 @@ NumericVector plogis95_cpp (NumericVector x,double s50, double s95)
 
 
 
-class Uniform { public:
-    Uniform(double min_, double max_) : min(min_), max(max_) {}
-    NumericVector draw(int n) const {
-        RNGScope scope;
-		return runif( n, min, max ); }
-    double min, max;
-};
-double uniformRange( Uniform* w) { return w->max - w->min;
-}
-RCPP_MODULE(unif_module) {
-    class_<Uniform>( "Uniform" )
-    .constructor<double,double>()
-    .field( "min", &Uniform::min )
-    .field( "max", &Uniform::max )
-    .method( "draw", &Uniform::draw )
-    .method( "range", &uniformRange )
-    ;
-}
+// class Uniform { public:
+//     Uniform(double min_, double max_) : min(min_), max(max_) {}
+//     NumericVector draw(int n) const {
+//         RNGScope scope;
+// 		return runif( n, min, max ); }
+//     double min, max;
+// };
+// double uniformRange( Uniform* w) { return w->max - w->min;
+// }
+// RCPP_MODULE(unif_module) {
+//     class_<Uniform>( "Uniform" )
+//     .constructor<double,double>()
+//     .field( "min", &Uniform::min )
+//     .field( "max", &Uniform::max )
+//     .method( "draw", &Uniform::draw )
+//     .method( "range", &uniformRange )
+//     ;
+// }
 
 
 
@@ -347,8 +347,7 @@ NumericVector Equilibrium::calcPage(NumericVector la, NumericVector sa, NumericV
 	double hbw = 0.5*(xl(2)-xl(1));
 	NumericMatrix ALK(A,L);
 	NumericVector tva(A);
-	// Rcpp::Rcout<<A<<std::endl;
-	// ALK = sapply(xl+hbw,pnorm,la,sa)-- sapply(xl-hbw,pnorm,mean=la,sd=sa);
+	
 	for (int i = 0; i < A; ++i)
 	{
 		double mu = la(i);
@@ -387,7 +386,7 @@ List Equilibrium::calcLifeTable(List &stock)
 	age = as<NumericVector>(stock["age"]);
 	grp = seq(0,G-1);
 	sex = seq(0,S-1);
-	Rcpp::Rcout<<dim<<std::endl;
+	// Rcpp::Rcout<<dim<<std::endl;
 
 	// Population parameters
 	double bo          = as<double>(stock["bo"]);
@@ -438,7 +437,7 @@ List Equilibrium::calcLifeTable(List &stock)
 			lx[ii] = lx[ii] / (1.0 - exp(-m[*h]));
 		}
 	}
-	Rcpp::Rcout<<mate<<std::endl;
+	// Rcpp::Rcout<<mate<<std::endl;
 	// Unfished SSB per recruit (phiE)
 	double phiE = 0;
 	for (int ii = 0; ii < A*G*S; ++ii)
@@ -499,14 +498,17 @@ void Equilibrium::calcSelectivities(List procedure)
 	double dmr = as<double>(procedure["dmr"]);
 	double slim = as<double>(procedure["slim"]);
 	double ulim = as<double>(procedure["ulim"]);
-	double selex_bycatch50 = as<double>(procedure["selex_bycatch50"]);
-	double selex_bycatch95 = as<double>(procedure["selex_bycatch95"]);
-	double selex_asymptote = as<double>(procedure["selex_asymptote"]);
+	double bL50 = as<double>(procedure["selex_bycatch50"]);
+	double bL95 = as<double>(procedure["selex_bycatch95"]);
+	double bR50 = as<double>(procedure["selex_bycatchR50"]);
+	double bR95 = as<double>(procedure["selex_bycatchR95"]);
+	// double selex_asymptote = as<double>(procedure["selex_asymptote"]);
 
 	NumericVector xl = as<NumericVector>(procedure["mid_points"]);
 	NumericVector pl = plogis95_cpp(xl,s50,s95);
 	NumericVector pr = plogis95_cpp(xl,slim,1.01*slim) - plogis95_cpp(xl,ulim,1.01*ulim);
-	NumericVector pd = plogis95_cpp(xl,selex_bycatch50,selex_bycatch95) - (1.-selex_asymptote)*plogis95_cpp(xl,100.3,5.0);
+	// NumericVector pd = plogis95_cpp(xl,selex_bycatch50,selex_bycatch95) - (1.-selex_asymptote)*plogis95_cpp(xl,100.3,5.0);
+	NumericVector pd = plogis95_cpp(xl,bL50,bL95) * plogis95_cpp(xl,bR95,bR50);
 
 	// Capture
 	sc = calcPage(m_la,m_sa,pl,xl);

@@ -1,9 +1,5 @@
 # runHalitosis_cpp.R
-# library(inline)
-# library(Rcpp)
-# library(RcppArmadillo)
-# # setwd("/Users/stevenmartell1/Documents/iSCAM-project/src/R/shiny")
-sourceCpp("data/halitosis.cpp")
+
 
 
 
@@ -58,6 +54,8 @@ mp1 <- list(slim=82,
             selex_95=70,
             selex_bycatch50=45,
             selex_bycatch95=55,
+            selex_bycatchR50=100,
+            selex_bycatchR95=75,
             selex_asymptote=0.65,
             mid_points = seq(50,200, by = 2.5),
             fe = seq(0,0.5,by=0.01),
@@ -74,9 +72,10 @@ mp1 <- list(slim=82,
 
 equilibrium_model_cpp <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
-                              spr_target=c(0.2,0.30),
+                              # spr_target=c(0.2,0.30),
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
+                              selex_bycatch_desc=c(100,75),
                               selex_asymptote=0.65,
                               num_bycatch=8,
                               five=0,
@@ -122,8 +121,10 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	            selex_95=selex_fishery[2]*2.54,
 	            selex_bycatch50=selex_bycatch[1]*2.54,
 	            selex_bycatch95=selex_bycatch[2]*2.54,
-	            selex_asymptote=selex_asymptote,
-	            mid_points = seq(50,200, by = 2.5),
+               selex_bycatchR50=selex_bycatch_desc[1]*2.54,
+               selex_bycatchR95=selex_bycatch_desc[2]*2.54,
+	            # selex_asymptote=selex_asymptote,
+	            mid_points = seq(20,200, by = 2.5),
 	            fe = seq(0,0.5,by=0.01),
 	            bycatch = num_bycatch)
 	print("Running cpp equilibrium model")
@@ -132,8 +133,8 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	out <-	mod$calcLifeTable(Stock)
 	df  <-  mod$runModel(mp1)
 	df  <-  cbind(prefix=prefix,
-	              ssb_limit=spr_target[1],
-	              ssb_threshold=spr_target[2],
+	              # ssb_limit=spr_target[1],
+	              # ssb_threshold=spr_target[2],
 	              slim=size_limit[1]*2.54,
 	              dm = discard_mortality_rate,
 	              bycatch = num_bycatch,
