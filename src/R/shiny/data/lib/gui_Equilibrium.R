@@ -10,7 +10,7 @@ buildEquilibriumGui <- function()
 		)
 		
 		renderEquilriumInterface()
-
+		
 }
 
 
@@ -102,38 +102,37 @@ renderEquilriumInterface <- function()
 
 	
 		column(6,
-	  		checkboxInput("chk_viewSelex","View selectivity curves"),
+	  	# checkboxInput("chk_viewSelex","View selectivity curves"),
 			tabsetPanel(type="pills",id="eqtab",
-			tabPanel("Plots",
-			 
-				selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
-			              c("Yield","Discard","Waste","SPR","Spawning.Biomass","Recruitment","Avg.Weight"),
-			              multiple=TRUE,selected="Yield"),
+				tabPanel("Plots",
+				 
+					selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
+				              c("Yield","Discard","Waste","SPR","Spawning.Biomass","Recruitment","Avg.Weight"),
+				              multiple=TRUE,selected="Yield"),
+					
+					plotOutput("plot_equil",height = "550px")
+
+				),
+
+				tabPanel("Tables",
+				    selectInput('selMSYTable',"Select input columns",
+				                c("Spawning.Biomass","SPR","Recruitment","Yield",
+				                  "Fe","Fbycatch","Numbers"),
+				                multiple=TRUE,
+				                selected=c("Fe","Spawning.Biomass","Yield","SPR")),
+
+				    tags$h5("Equilibrium values at MSY"),
+					tableOutput('msyTable'),
+
+					tags$h5("Eqiulibrium values at SPR=30%"),
+					tableOutput('sprTable')				
+
 				
-				plotOutput("plot_equil",height = "550px")
-
-			),
-
-			tabPanel("Tables",
-			    selectInput('selMSYTable',"Select input columns",
-			                c("Spawning.Biomass","SPR","Recruitment","Yield",
-			                  "Fe","Fbycatch","Numbers"),
-			                multiple=TRUE,
-			                selected=c("Fe","Spawning.Biomass","Yield","SPR")),
-
-			    tags$h5("Equilibrium values at MSY"),
-				tableOutput('msyTable'),
-
-				tags$h5("Eqiulibrium values at SPR=30%"),
-				tableOutput('sprTable')				
-
-			
+				)
 			)
 		)
-		)
-	  
 	)
-
+	  
 	
 
 
