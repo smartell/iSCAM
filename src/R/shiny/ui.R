@@ -1,6 +1,6 @@
 # NOTATION
 # For R-scripts that deal with user interface, prefix file with "gui_*.R"
-
+library(leaflet)
 source("helpers.R")
 
 
@@ -152,27 +152,14 @@ renderBanner <- function()
 # ----------------------------------------#
 # MAIN USER INTERFACE FOR THE APPLICATION #
 # ----------------------------------------#
-shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
+shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",id="nav",
 	
-
-
-
 	
     # ---------------------------------------- #
 	# EQUILIBRIUM INTERFACE
     # ---------------------------------------- #
 	tabPanel("Equilibrium",
-	    includeCSS("styles.css"),
-		fluidRow(
-			tags$h4("Equilibrium Model")
-		),
-
-		renderEquilriumInterface(),
-		renderShutter(),	  
-		fluidRow(
-			renderBanner()
-		)
-
+	    buildEquilibriumGui()
 	),
 
 	# ---------------------------------------- #
@@ -206,34 +193,41 @@ shinyUI(fluidPage(navbarPage("IPHC MSE TOOL",
 
 	),
 
-	# ---------------------------------------- #
-	# MAPS
-	# ---------------------------------------- #
-	tabPanel("MAP",
-	    htmlOutput("map")
-		# leafletMap("map", width="100%", height="100%",
-	 #        initialTileLayer = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
-	 #        initialTileLayerAttribution = HTML('Maps by <a href="http://www.mapbox.com/">Mapbox</a>'),
-	 #        options=list(
-	 #          center = c(37.45, -93.85),
-	 #          zoom = 4,
-	 #          maxBounds = list(list(15.961329,-129.92981), list(52.908902,-56.80481)) # Show US only
-	 #        )
-  #     	)
-	),
-
+	
 
 	# ---------------------------------------- #
 	# INFORMATION INTERFACE (NEEDS TOC)
 	# ---------------------------------------- #
 	tabPanel("About",
 	  fluidRow(
-			includeMarkdown("About.md")
+	    	navlistPanel(widths=c(3,9),
+	    		"Navigation",
+	    		tabPanel("Equilibrium",
+					includeMarkdown("About.md")
+	    		),
+	    		tabPanel("MSE"),
+	    		tabPanel("OMI"),
+	    		"----",
+	    		tabPanel("MAP")
+	    	)
 		),
 
 		fluidRow(
 			renderBanner()
 		)
+	),
+
+	# ---------------------------------------- #
+	# MAPS
+	# ---------------------------------------- #
+	tabPanel("MAP",
+	 	leafletMap("map",width=1600,height=800,
+	 	    # initialTileLayer = "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+	 	   	initialTileLayer = "http://oatile3.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg",
+		    options = list(
+			center = c(52, -155),
+			zoom = 5
+		))
 	)
 
 

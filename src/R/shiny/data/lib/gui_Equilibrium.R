@@ -1,6 +1,19 @@
 #gui_Equilibrium.R
 
 # RENDER EQUILIBRIUM USER INTERFACE
+buildEquilibriumGui <- function()
+{
+	print("Start")
+	includeCSS("styles.css")
+		fluidRow(
+			tags$h4("Equilibrium Model")
+		)
+		
+		renderEquilriumInterface()
+
+}
+
+
 renderEquilInputs <- function(prefix)
 {
 
@@ -10,6 +23,7 @@ renderEquilInputs <- function(prefix)
 		    # Directed fishery controls.
 		    wellPanel( fluidRow(
 		    tags$h5("Directed fishery"),
+		    
 			sliderInput(paste0(prefix,"_","selex_fishery"),"Fishery: 50% & 95% selectivity (inches)",min=15,max=60,value=c(34,40),step=1),
 			sliderInput(paste0(prefix,"_","size_limit"),"Min & Max size limit (inches)",min=0,max=100,value=c(32,100),step=1),
 			sliderInput(paste0(prefix,"_","discard_mortality_rate"),"Discard mortality rate",min=0,max=1,value=0.16,step=0.01)
@@ -57,7 +71,6 @@ renderEquilInputs <- function(prefix)
 renderEquilriumInterface <- function()
 {
 	
-	
 
 	fluidRow(
 	  
@@ -87,8 +100,9 @@ renderEquilriumInterface <- function()
 			)
 		),
 
-
+	
 		column(6,
+	  		checkboxInput("chk_viewSelex","View selectivity curves"),
 			tabsetPanel(type="pills",id="eqtab",
 			tabPanel("Plots",
 			 
@@ -129,28 +143,30 @@ renderEquilriumInterface <- function()
 
 renderShutter <-function()
 {
+	
+	conditionalPanel(" input.chk_viewSelex == true ",
 	absolutePanel(id = "controls", class = "modal", fixed = TRUE, draggable = TRUE,
-	        top = 40, left = "auto", right = 20, bottom = "auto",
-	        width = 330, height = "auto",
-	        
-	        h4("Selectivity Explorer"),
-	        
-	        h5("Fishery selectiity"),
-	        plotOutput("plotFishSelex",height=200),
+        top = 40, left = "auto", right = 20, bottom = "auto",
+        width = 330, height = "auto",
+        
+        h4("Selectivity Explorer"),
+        
+        h5("Fishery selectiity"),
+        plotOutput("plotFishSelex",height=200),
 
-	        h5("Bycatch selectivity"),
-	        plotOutput("plotSelex",height=200)
-	        
-	        # selectInput("color", "Color", vars),
-	        # selectInput("size", "Size", vars, selected = "adultpop"),
-	        # conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
-	        #   # Only prompt for threshold when coloring or sizing by superzip
-	        #   numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
-	        # ),
-	        
-	        # plotOutput("histCentile", height = 200),
-	        # plotOutput("scatterCollegeIncome", height = 250)
-	    )
+        h5("Bycatch selectivity"),
+        plotOutput("plotSelex",height=200)
+        
+        # selectInput("color", "Color", vars),
+        # selectInput("size", "Size", vars, selected = "adultpop"),
+        # conditionalPanel("input.color == 'superzip' || input.size == 'superzip'",
+        #   # Only prompt for threshold when coloring or sizing by superzip
+        #   numericInput("threshold", "SuperZIP threshold (top n percentile)", 5)
+        # ),
+        
+        # plotOutput("histCentile", height = 200),
+        # plotOutput("scatterCollegeIncome", height = 250)
+	))
 	
 }
 
@@ -165,5 +181,7 @@ renderStockInputs <- function(prefix)
 		)
 	)
 }
+
+
 
 

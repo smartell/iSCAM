@@ -8,6 +8,10 @@ source("helpers.R")
 ## ------------------------------------------------------------------------------------ ##
 shinyServer(function(input, output, session) {
 
+   
+
+
+
   # Subset Dataframe based on User Interface Selection.
   data <- reactive({
       
@@ -142,61 +146,63 @@ shinyServer(function(input, output, session) {
 
 
 
+    ## ------------------------------------------------------------ ##
+    # EQUILIBRIUM MODEL INTERFACE 
+    ## ------------------------------------------------------------ ##
+    getParams <- function(prefix) {
+      
+      # input[[paste0(prefix, "_recalc")]]
 
-  # EQUILIBRIUM MODEL INTERFACE 
-  getParams <- function(prefix) {
-    
-    # input[[paste0(prefix, "_recalc")]]
+      params <- lapply(paramNames, function(p) {
+        input[[paste0(prefix, "_", p)]]
+      })
+      names(params) <- paramNames
+      params <- c(params,prefix=prefix)
+      # print(params)
+      params
+    }
 
-    params <- lapply(paramNames, function(p) {
-      input[[paste0(prefix, "_", p)]]
+  
+
+    ## ------------------------------------------------------------ ##
+    ## Run equilibrium models
+    ## ------------------------------------------------------------ ##
+    scnA <- reactive(do.call(equilibrium_model_cpp, getParams("A")))
+    scnB <- reactive(do.call(equilibrium_model_cpp, getParams("B")))
+
+
+    ## ------------------------------------------------------------ ##
+    ## Plot Equilibrium values versus fishing mortality
+    ## ------------------------------------------------------------ ##
+    output$plot_equil <- renderPlot({
+      AB <- rbind(scnA(),scnB())
+      xx <- input$selEquilPlot
+      
+      if(length(xx) != 0)
+      {
+        .plotObject(AB,xx)
+      }
+
     })
-    names(params) <- paramNames
-    params <- c(params,prefix=prefix)
-    # print(params)
-    params
-  }
-
-  # getProcedure <- function(prefix) {
-
-  # }
-
-  ## ------------------------------------------------------------ ##
-  ## Run equilibrium models
-  ## ------------------------------------------------------------ ##
-  scnA <- reactive(do.call(equilibrium_model_cpp, getParams("A")))
-  scnB <- reactive(do.call(equilibrium_model_cpp, getParams("B")))
 
 
-  ## ------------------------------------------------------------ ##
-  ## Plot Equilibrium values versus fishing mortality
-  ## ------------------------------------------------------------ ##
-  output$plot_equil <- renderPlot({
-    AB <- rbind(scnA(),scnB())
-    xx <- input$selEquilPlot
-    
-    .plotObject(AB,xx)
+    ## ------------------------------------------------------------ ##
+    ## Run Selex plots
+    ## ------------------------------------------------------------ ##
+    output$plotSelex <-renderPlot({
+      pars <- list(getParams("A"),getParams("B"))
+      .plotSelex(pars)
+    })
 
-  })
-
-
-  ## ------------------------------------------------------------ ##
-  ## Run Selex plots
-  ## ------------------------------------------------------------ ##
-  output$plotSelex <-renderPlot({
-    pars <- list(getParams("A"),getParams("B"))
-    .plotSelex(pars)
-  })
-
-  output$plotFishSelex <-renderPlot({
-    pars <- list(getParams("A"),getParams("B"))
-    .plotFishSelex(pars)
-  })
+    output$plotFishSelex <-renderPlot({
+      pars <- list(getParams("A"),getParams("B"))
+      .plotFishSelex(pars)
+    })
     
 
 
     ## ------------------------------------------------------------ ##
-    ## Print Equilirium Tables
+    ## Print Equilibrium Tables
     ## ------------------------------------------------------------ ##
     output$msyTable <- renderTable({
       AB <- rbind(scnA(),scnB())
@@ -213,49 +219,36 @@ shinyServer(function(input, output, session) {
 
     })
 
-  # output$table_biological <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   .biologicalTable(AB)
-  # })
-
-  # output$table_fishery <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   .fisheryTable(AB)
-  # })
-
-  # output$table_economics <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   .economicTable(AB)
-  # })
-
-  # output$msytable <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   .equilibriumTables(AB)
-  # })
   
-  # output$sprtable <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   # .sprTables(AB)
-  # })
 
-  # output$u26ratio <- renderTable({
-  #   AB <- rbind(scnA(),scnB())
-  #   # .u26Table(AB)
-  # })
-
-
-    # MAPS
+    ## ------------------------------------------------------------ ##
+    ## MAPS
+    ## ------------------------------------------------------------ ##
     map <- createLeafletMap(session, "map")
-    map$addGeoJSON(dat, "map")
+    
+
+    # session$onFlushed is necessary to work around a bug in the Shiny/Leaflet
+    # integration; without it, the addCircle commands arrive in the browser
+    # before the map is created.
+    # session$onFlushed(once=TRUE, function() {
+    #   # map$addGeoJSON(seattle_geojson)
+    #   geo_ml <- fromJSON("data/geo_medianLen.geojson")
+    #   map$addGeoJSON(geo_ml)
+    #   print("Goto here dude")
+
+    #   # rng <- seq(min(sdf$median_forklength),max(sdf$median_forklength),by=10)
+    #   # sty <- styleGrad(prop="median_forklength",breaks=rng,
+    #   #            style.val=(heat.colors(length(rng))),
+    #   #            leg="Median Length",rad=4)
+
+    #   # map <- leaflet(geo_ml,base.map="osm")
+    #   # print(map)
+    #   #Clear existing circles before drawing
+    #   # map$clearShapes()
+
+    # })
 
 
-
-
-  #   map <- createLeafletMap(session, "map")
-  
-  # session$onFlushed(once=TRUE, function() {
-  #   map$addGeoJSON(dat)
-  # })
 
 
 
@@ -298,9 +291,7 @@ shinyServer(function(input, output, session) {
     sel  <- plogis95_cpp(x,bL50,bL95)#*plogis95_cpp(x,bR95,bR50)
     df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
   }
-  # y = plogis95_cpp(x,50,84)
-  print(pars)
-  # plot(x,y,xlab="",ylab="",las=1)
+  
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
   p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
   print(p + theme_bw())
@@ -325,9 +316,7 @@ shinyServer(function(input, output, session) {
     sel  <- plogis95_cpp(x,bL50,bL95)*plogis95_cpp(x,bR95,bR50)
     df   <- rbind(df,data.frame("prefix"=pref,"len"=x,"sel"=sel))
   }
-  # y = plogis95_cpp(x,50,84)
-  print(pars)
-  # plot(x,y,xlab="",ylab="",las=1)
+  
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
   p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
   print(p + theme_bw())
