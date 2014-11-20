@@ -79,7 +79,9 @@ shinyUI(fluidPage(
 	    			includeMarkdown("www/Equilibrium.md")
 	    		),
 	    		tabPanel("MSE"),
-	    		tabPanel("OMI"),
+	    		tabPanel("OMI",
+	    			includeMarkdown("www/OMI.md")
+	    		),
 	    		"----",
 	    		tabPanel("MAP")
 	    	)

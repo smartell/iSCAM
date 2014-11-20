@@ -68,6 +68,7 @@ private:
 	double m_re  ;
 	double m_de  ; 
 	double m_spr ;
+	double m_ye_val;
 
 	IntegerVector dim;
 	NumericVector age;
@@ -85,6 +86,7 @@ private:
 	NumericVector m_sd;
 	NumericVector m_vd;
 	NumericVector m_pg;
+	NumericVector m_pa;
 
 	List m_stock;
 	List m_mp;
@@ -133,6 +135,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 	NumericVector   Re(fe.size());
 	NumericVector  SPR(fe.size());
 	NumericVector Wbar(fe.size());
+	NumericVector Ye_val(fe.size());
 
 
 	int ii = 0;
@@ -148,6 +151,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 		Re[ii]   = m_re;
 		SPR[ii]  = m_spr;
 		Wbar[ii] = m_wbar;
+		Ye_val[ii] = m_ye_val;
 		// Rcpp::Rcout<<"fe = "<<*i<<" ye = "<<Ye[ii]<<std::endl;
 		++ii;
 
@@ -163,7 +167,8 @@ DataFrame Equilibrium::runModel(const List mp_)
 	          Named("Spawning.Biomass") = Be,
 	          Named("Recruitment") = Re,
 	          Named("SPR")= SPR,
-	          Named("Avg.Weight")=Wbar
+	          Named("Avg.Weight")=Wbar,
+	          Named("Landed.Value")=Ye_val
 	          );
 	
 
@@ -313,6 +318,8 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	double de = 0;	// sublegal catch
 	double we = 0;  // wastage in biomass
 
+	double ye_val = 0; // landed value of catch.
+
 	for (int ii = 0; ii < n; ++ii)
 	{
 		ypr += fe * m_wa[ii]*qa[ii];
@@ -324,6 +331,9 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 		ne += npr * qa[ii];
 		de += npr * m_wa[ii]*da[ii];
 		we += npr * m_wa[ii]*da[ii]*m_dmr;
+
+		// economic variables
+		ye_val += npr * m_wa[ii]*qa[ii]*m_pa[ii];
 	}
 
 	m_ye   = ye;
@@ -335,6 +345,7 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	m_re   = re;
 	m_de   = de;
 	m_spr  = spr;
+	m_ye_val = ye_val;
 
 	// Rcpp::Rcout<<"Ye = "<<ye<<std::endl;
 	// Rcpp::Rcout<<"We = "<<we<<std::endl;
@@ -377,7 +388,8 @@ Equilibrium::Equilibrium(List stock_)
 List Equilibrium::calcLifeTable(List &stock)
 {
 	List out=clone(stock);
-	
+	double lval;
+
 	// Model dimensions
 	A   = as<int>(stock["A"]);
 	G   = as<int>(stock["G"]);
@@ -386,24 +398,25 @@ List Equilibrium::calcLifeTable(List &stock)
 	age = as<NumericVector>(stock["age"]);
 	grp = seq(0,G-1);
 	sex = seq(0,S-1);
-	// Rcpp::Rcout<<dim<<std::endl;
+	// Rcpp::Rcout<<m_price[1]<<std::endl;
 
 	// Population parameters
-	double bo          = as<double>(stock["bo"]);
-	double  h          = as<double>(stock["h"]);
-	double mate        = as<double>(stock["mate"]);
-	NumericVector m    = as<NumericVector>(stock["m"]);
-	NumericVector linf = as<NumericVector>(stock["linf"]);
-	NumericVector vonk = as<NumericVector>(stock["vonk"]);
-	NumericVector to   = as<NumericVector>(stock["to"]);
-	NumericVector p    = as<NumericVector>(stock["p"]);
-	NumericVector cv   = as<NumericVector>(stock["cv"]);
-	NumericVector a50  = as<NumericVector>(stock["a50"]);
-	NumericVector k50  = as<NumericVector>(stock["k50"]);
-	NumericVector a    = as<NumericVector>(stock["a"]);
-	NumericVector b    = as<NumericVector>(stock["b"]);
-	NumericVector pg   = as<NumericVector>(stock["pg"]);
-	NumericVector dev  = as<NumericVector>(stock["dev"]);
+	double bo           = as<double>(stock["bo"]);
+	double  h           = as<double>(stock["h"]);
+	double mate         = as<double>(stock["mate"]);
+	NumericVector m     = as<NumericVector>(stock["m"]);
+	NumericVector linf  = as<NumericVector>(stock["linf"]);
+	NumericVector vonk  = as<NumericVector>(stock["vonk"]);
+	NumericVector to    = as<NumericVector>(stock["to"]);
+	NumericVector p     = as<NumericVector>(stock["p"]);
+	NumericVector cv    = as<NumericVector>(stock["cv"]);
+	NumericVector a50   = as<NumericVector>(stock["a50"]);
+	NumericVector k50   = as<NumericVector>(stock["k50"]);
+	NumericVector a     = as<NumericVector>(stock["a"]);
+	NumericVector b     = as<NumericVector>(stock["b"]);
+	NumericVector pg    = as<NumericVector>(stock["pg"]);
+	NumericVector dev   = as<NumericVector>(stock["dev"]);
+	NumericVector price = as<NumericVector>(stock["price"]);
 	
 
 	// Age-schedule information
@@ -412,6 +425,7 @@ List Equilibrium::calcLifeTable(List &stock)
 	NumericVector wa(A*G*S);    wa.attr("dim")    = dim;
 	NumericVector fa(A*G*S);    fa.attr("dim")    = dim;
 	NumericVector sd_la(A*G*S); sd_la.attr("dim") = dim;
+	NumericVector pa(A*G*S);    pa.attr("dim")    = dim;
 	NumericVector mu,sigma;
 
 
@@ -433,6 +447,25 @@ List Equilibrium::calcLifeTable(List &stock)
 				sd_la[ii] = sqrt(1./G* pow(cv[*h]*mu[*i-1],2.0) );
 				wa[ii]    = a[*h]* pow(la[ii],b[*h]);
 				fa[ii]    = ma[*i-1] * pow(wa[ii],mate) * pg[*g];
+
+				// price schedule
+				if( wa[ii] < 10 )
+				{
+					lval = price[0];
+				}
+				else if( wa[ii] >= 10 && wa[ii] < 20)
+				{
+					lval = price[1];
+				}
+				else if( wa[ii] >= 20 && wa[ii] < 40)
+				{
+					lval = price[2];
+				}
+				else if( wa[ii] >= 40 )
+				{
+					lval = price[3];
+				}
+				pa[ii]    = lval;
 			}
 			lx[ii] = lx[ii] / (1.0 - exp(-m[*h]));
 		}
@@ -461,6 +494,7 @@ List Equilibrium::calcLifeTable(List &stock)
 	m_sa = sd_la;
 	m_fa = fa;
 	m_wa = wa;
+	m_pa = pa;
 	m_pg = pg;
 	m_phiE = phiE;
 	m_kap  = 4.*h/(1.-h);

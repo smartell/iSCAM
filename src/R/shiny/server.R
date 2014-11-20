@@ -176,7 +176,8 @@ shinyServer(function(input, output, session) {
     ## ------------------------------------------------------------ ##
     output$plot_equil <- renderPlot({
       AB <- rbind(scnA(),scnB())
-      xx <- input$selEquilPlot
+      # xx <- input$selEquilPlot
+      xx <- input$chkEquilPlot
       
       if(length(xx) != 0)
       {
@@ -206,19 +207,26 @@ shinyServer(function(input, output, session) {
     ## ------------------------------------------------------------ ##
     output$msyTable <- renderTable({
       AB <- rbind(scnA(),scnB())
-      xx <- input$selMSYTable
+      xx <- input$chkMSYTable
 
       .msyTable(AB,xx)
 
     })
     output$sprTable <- renderTable({
       AB <- rbind(scnA(),scnB())
-      xx <- input$selMSYTable
+      xx <- input$chkMSYTable
 
       .sprTable(AB,xx)
 
     })
 
+    output$meyTable <- renderTable({
+      AB <- rbind(scnA(),scnB())
+      xx <- input$chkMSYTable
+
+      .meyTable(AB,xx)
+
+    })
   
 
     ## ------------------------------------------------------------ ##
@@ -278,7 +286,7 @@ shinyServer(function(input, output, session) {
 {
     # assume units are in inches
   n <- length(pars)
-  x = seq(50,200,by=2.5)/2.54
+  x = seq(10,200,by=2.5)/2.54
   df <- NULL
   for( i in 1:n )
   {
@@ -293,6 +301,7 @@ shinyServer(function(input, output, session) {
   }
   
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
+  p <- p + ylim(c(0,1))
   p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
   print(p + theme_bw())
 
@@ -303,7 +312,7 @@ shinyServer(function(input, output, session) {
 {
   # assume units are in inches
   n <- length(pars)
-  x = seq(50,200,by=2.5)/2.54
+  x = seq(10,200,by=2.5)/2.54
   df <- NULL
   for( i in 1:n )
   {
@@ -318,6 +327,7 @@ shinyServer(function(input, output, session) {
   }
   
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
+  p <- p + ylim(c(0,1))
   p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
   print(p + theme_bw())
 }

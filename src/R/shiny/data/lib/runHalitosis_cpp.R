@@ -57,8 +57,8 @@ mp1 <- list(slim=82,
             selex_bycatchR50=100,
             selex_bycatchR95=75,
             selex_asymptote=0.65,
-            mid_points = seq(50,200, by = 2.5),
-            fe = seq(0,0.5,by=0.01),
+            mid_points = seq(10,200, by = 2.5),
+            fe = seq(0,0.5,by=0.005),
             bycatch = 5)
 
 
@@ -112,6 +112,7 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	Stock$linf = Stock$linf +(linf_dev/100*Stock$linf)
 	Stock$vonk = Stock$vonk +(vonk_dev/100*Stock$vonk)
 	Stock$mate = maternal_effect;
+   Stock$price = price;
 
 	# Procedure list
 	mp1 <- list(slim=size_limit[1]*2.54,

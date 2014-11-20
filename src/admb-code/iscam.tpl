@@ -5364,9 +5364,7 @@ GLOBALS_SECTION
 		j = 1;
 		for( i = a.indexmin(); i <= a.indexmax(); i++ )
 		{
-			// cout<<"Luke I am your father"<<endl;
-			// cout<<i<<endl;
-			// exit(1);
+
 			 if(b(i) != NA) n++;
 		}
 		ivector tmp(1,n);

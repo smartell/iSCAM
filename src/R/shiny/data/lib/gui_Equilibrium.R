@@ -56,9 +56,20 @@ renderEquilInputs <- function(prefix)
 			  ),
 			  column(5,
 			    sliderInput(paste0(prefix,"_","selex_bycatch_desc"),"Descending 95% & 50% (in.)",min=40,max=80,value=c(60,80),step=1)
-			  ,offset=1)),
-			  	# numericInput(paste0(prefix,"_","selex_asymptote"),"Asymptote",value=0.65,step=0.05),
-			  	numericInput(paste0(prefix,"_","num_bycatch"), label = "Bycatch mortality cap (Mlb)", value = 8)
+			  ,offset=1),
+
+			  # bycatch DMR
+			  sliderInput(paste0(prefix,"_","bycatch_dmr"),"Bycatch discard mortality rate",min=0,max=1,value=0.06,step=0.01),
+
+			  # bycatch amounts
+			  column(5, offset=0,
+			  	numericInput(paste0(prefix,"_","num_bycatch_total"), label = "Bycatch (Mlb)", value = 39)
+			  ),
+			  column(5,offset=1,
+			    numericInput(paste0(prefix,"_","num_bycatch"), label = "Mortality (Mlb)", value = 8)
+			  )
+			  ) 
+			  	
 			)
 		# )
 	)
@@ -106,28 +117,64 @@ renderEquilriumInterface <- function()
 			tabsetPanel(type="pills",id="eqtab",
 				tabPanel("Plots",
 				 
-					selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
-				              c("Yield","Discard","Waste","SPR","Spawning.Biomass","Recruitment","Avg.Weight"),
-				              multiple=TRUE,selected="Yield"),
+					# selectInput('selEquilPlot',"Equilibrium Vs Fishing Intensity",
+				 #              c("Yield","Discard","Waste","SPR","Spawning.Biomass",
+				 #                "Recruitment","Avg.Weight","Landed.Value"),
+				 #              multiple=TRUE,selected="Yield"),
 					
+					checkboxGroupInput("chkEquilPlot", "Plot Variable:",
+	                   c("Yield" = "Yield",
+	                     "Discard" = "Discard",
+	                     "Waste" = "Waste",
+	                     "Spawning Biomass" = "Spawning.Biomass",
+	                     "SPR" = "SPR",
+	                     "Recruitment"="Recruitment",
+	                     "Average weight"="Avg.Weight",
+	                     "Landed value (million $)"="Landed.Value"),
+	                   	selected = "Yield", inline=TRUE),
+
 					plotOutput("plot_equil",height = "550px")
 
 				),
 
 				tabPanel("Tables",
-				    selectInput('selMSYTable',"Select input columns",
-				                c("Spawning.Biomass","SPR","Recruitment","Yield",
-				                  "Fe","Fbycatch","Numbers"),
-				                multiple=TRUE,
-				                selected=c("Fe","Spawning.Biomass","Yield","SPR")),
+				    # selectInput('selMSYTable',"Select input columns",
+				    #             c("Spawning.Biomass","SPR","Recruitment","Yield",
+				    #               "Fe","Fbycatch","Numbers","Landed.Value"),
+				    #             multiple=TRUE,
+				    #             selected=c("Fe","Spawning.Biomass","Yield","SPR")),
+
+				    checkboxGroupInput("chkMSYTable", "Plot Variable:",
+	                   c("Fishing Rate" = "Fe",
+	                     "Yield" = "Yield",
+	                     "Discard" = "Discard",
+	                     "Waste" = "Waste",
+	                     "SSB" = "Spawning.Biomass",
+	                     "SPR" = "SPR",
+	                     "Recruitment"="Recruitment",
+	                     "Avg. weight"="Avg.Weight",
+	                     "Landed value (million $)"="Landed.Value"),
+	                   	selected = c("Yield","Spawning.Biomass"), inline=TRUE),
+
 
 				    tags$h5("Equilibrium values at MSY"),
 					tableOutput('msyTable'),
 
 					tags$h5("Eqiulibrium values at SPR=30%"),
-					tableOutput('sprTable')				
+					tableOutput('sprTable'),
+
+					tags$h5("Equilibrium values at MEY"),
+					tableOutput('meyTable')		
 
 				
+				),
+				
+				tabPanel("Selectivity",
+					h5("Fishery selectiity"),
+			        plotOutput("plotFishSelex",height=200),
+
+			        h5("Bycatch selectivity"),
+			        plotOutput("plotSelex",height=200)
 				)
 			)
 		)
