@@ -1,5 +1,5 @@
 #include <admodel.h>
-#include "LogisticNormal.h"
+#include "../include/LogisticNormal.h"
 
 // Constructor
 logistic_student_t::logistic_student_t(const dmatrix& _O,const dvar_matrix& _E,

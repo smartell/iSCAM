@@ -4,7 +4,10 @@
 #ifndef _MSY_H_
 #define _MSY_H_
 #define MAXITER 300
+
+#ifndef TOL
 #define TOL 1.e-04
+#endif
 
 #include <admodel.h>
 #include <fvar.hpp>

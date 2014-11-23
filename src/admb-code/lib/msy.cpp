@@ -1,4 +1,4 @@
-#include "msy.h"
+#include "../include/msy.h"
 
 
 /// Constructor with arguments (most likely way user will create an Msy object)

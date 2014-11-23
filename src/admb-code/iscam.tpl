@@ -5345,16 +5345,10 @@ GLOBALS_SECTION
 	#include <OpenGL/gl.h>
 	#include <admodel.h>
 	#include <time.h>
-
 	#include <string.h>
-	//#include "lib/ADMB_XMLDoc.h"
-	#include "msy.h"
-	#include "msy.hpp"
-	#include "baranov.h"
-  #include "LogisticNormal.h"
-  #include "milka.h"
-  #include "multinomial.h"
-	#include "Selex.h"
+	#include "include/lib_iscam.h"
+  	#include "milka.h"
+
 
 
 	ivector getIndex(const dvector& a, const dvector& b)
@@ -5414,27 +5408,7 @@ GLOBALS_SECTION
 	
 	
 
-	// class selex_vector
-	// {
-	// 	private:
-	// 		int m_length;
-			
-
-	// 	public:
-
-	// 	selex_vector()
-	// 	{
-	// 		m_length = 0;
-			
-	// 	}
-
-	// 	~selex_vector()
-	// 	{
-			
-	// 	}
-
-		
-	// };
+	
 
 
 	

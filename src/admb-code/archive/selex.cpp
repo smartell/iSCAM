@@ -16,8 +16,7 @@
 
 
 #include <admodel.h>
-#include <contrib.h>
-#include "Selex.h"
+#include "../include/Selex.h"
 
 /** 
 \brief Default destructor	

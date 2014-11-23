@@ -1,5 +1,5 @@
 #include <admodel.h>
-#include "LogisticNormal.h"
+#include "../include/LogisticNormal.h"
 
 /**
 	Implementation of the logistic normal negative loglikelihood.
