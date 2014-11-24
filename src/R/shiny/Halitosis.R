@@ -196,7 +196,7 @@
 		{
 			# Lenght-at-age
 			# mu    <- gvonb(age,linf[i],vonk[i],to[i],p[i])
-			mu    <- gvonb_cpp(age,linf[i],vonk[i],to[i],p[i])
+			# mu    <- gvonb_cpp(age,linf[i],vonk[i],to[i],p[i])
 			
 			sigma <- cv[i] * mu
 			dev   <- seq(-1.96, 1.96, length=G)
@@ -610,7 +610,7 @@ equilibrium_model <- function(size_limit=c(32,100),
 
 	print("Running equilibrium model")
 	
-	df <<- expand.grid(fe=fe,
+	df <- expand.grid(fe=fe,
 	                  slim=size.limits[1],
 	                  ulim=size.limits[2],
 	                  dm=discard.mortality.rate,
