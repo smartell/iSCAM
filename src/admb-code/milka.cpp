@@ -235,7 +235,6 @@ void OperatingModel::initParameters()
     m_dCatchData.allocate(1,m_nCtNobs,1,ncol);
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
-    cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Whats up doc"<<endl;
 
     m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
@@ -305,6 +304,10 @@ void OperatingModel::initParameters()
         m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);
     }
     
+    m_fa_bar.allocate(1,n_ags,sage,nage); m_fa_bar.initialize();
+    m_dWt_bar.allocate(1,n_ags,sage,nage); m_dWt_bar.initialize();
+    m_M_bar.allocate(1,n_ags,sage,nage); m_M_bar.initialize();
+
 
     // initializing population parameters
     m_dRo        = exp(mv.log_ro);
@@ -398,6 +401,8 @@ void OperatingModel::initMemberVariables()
     }
 
     // Selectivity
+    m_d_ak.allocate(1,nfleet);m_d_ak.initialize();
+    m_d3_V.allocate(1,n_ags,1,nfleet,sage,nage);m_d3_V.initialize();
     d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
     d4_logSel.initialize();
     for( k = 1; k <= ngear; k++ )
@@ -507,17 +512,20 @@ void OperatingModel::setRandomVariables(const int& seed)
 
 void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
 {
+    dvector dftry(1,nfleet);
+    dftry = 0.6/nfleet * mean(m_M_bar);
+
     switch( int(m_nAssessOpt) ) // option read in from .mpc file
     {
         case 0:
             //  set reference points to true milka values
             
-            m_est_bo = m_dBo;
+            //m_est_bo = m_dBo;
             m_est_fmsy = fmsy;
-            m_est_msy = msy;
-            m_est_bmsy = bmsy;
-            m_est_sbtt = m_sbt(iyr)(1,ngroup);
-            m_est_btt = m_bt(iyr)(1,ngroup);;
+            //m_est_msy = msy;
+            //m_est_bmsy = bmsy;
+            //m_est_sbtt = m_sbt(iyr)(1,ngroup);
+            //m_est_btt = m_bt(iyr)(1,ngroup);;
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
@@ -541,8 +549,57 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
+                    m_d3_V(ig)(k)(sage,nage) =  exp(d4_logSel(k)(ig)(iyr)(sage,nage));
                 }
             }
+
+            //Calculate reference points 
+
+            //calculate allocation and sftry
+            int kk;
+        
+            for(int k=1;k<=nfleet;k++)
+               {
+                    kk = nFleetIndex(k);
+                    m_d_ak(k) = dAllocation(kk);        
+                }
+            m_d_ak /= sum(m_d_ak);
+
+            //calculate true average weight, average M and fecundity at age
+           
+            for(int ig=1;ig<=n_ags;ig++)
+            {
+                m_dWt_bar(ig)        = colsum(m_d3_wt_avg(ig).sub(syr,iyr));
+                m_dWt_bar(ig)       /= iyr-syr+1;
+               
+                m_fa_bar(ig) = elem_prod(m_dWt_bar(ig),ma(ig));
+                m_M_bar(ig)  = colsum(value(m_M(ig).sub(syr,iyr)));
+                m_M_bar(ig) /= iyr-syr+1; 
+            }
+             
+
+            for(int g=1;g<=ngroup;g++)
+            {
+                
+                double rho = m_dRho(g);
+                dvector d_mbar = m_M_bar(g);
+                dvector   d_wa = m_dWt_bar(g);
+                dvector   d_fa = m_fa_bar(g);
+
+                rfp::msy<dvariable,dvar_vector,dvar_matrix,dvar3_array> 
+                c_MSY(m_dRo(g),m_dSteepness(g),rho,m_M_bar,m_dWt_bar,m_fa_bar,m_d3_V);
+            
+                
+                m_est_fmsy(g) = value(c_MSY.getFmsy(dftry,m_d_ak));
+                m_est_bo(g)  = value(c_MSY.getBo());
+                m_est_bmsy(g) = value(c_MSY.getBmsy());
+                m_est_msy(g)(1,nfleet) = value(c_MSY.getMsy());
+                
+                c_MSY.print();
+
+            }
+
+
     
         case 1:
             // read iscam.res file to get this information.
@@ -597,7 +654,6 @@ void OperatingModel::calculateTAC()
             case 1: // Constant harvest rate
                  // m_dTAC(g)  = harvest_rate * btmp;
                 f_rate = m_est_fmsy(g);
-                cout<<"m_est_fmsy"<<m_est_fmsy<<endl;
             break; 
 
             case 2: // Bthreshold:Blimit HCR.
@@ -802,15 +858,7 @@ void OperatingModel::implementFisheries(const int &iyr)
             }  // nsex
 
             // Calculate instantaneous fishing mortality rates.
-            //cout<<"chegou aqui?"<<endl;
-            //cout<<"_hCt is "<<_hCt<<endl;
-            //cout<<"na "<<na<<endl;
-            //cout<<"wa "<<wa<<endl;
-            //cout<<"nsex "<<nsex<<endl;
-            //cout<<"ma "<<ma<<"endl"<<endl;
-            //cout<<"size_count(ct) "<<size_count(ct)<<endl;
-            //cout<<"d3_Va "<<d3_Va<<endl;
-
+            
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
             //dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa);
 
@@ -1029,7 +1077,6 @@ void OperatingModel::calcCompositionData(const int& iyr)
                     int hh = m_nASex(k);   // flag for sex
                     for( h = 1; h <= hh+1; h++ )
                     {
-                        cout<<hh<<endl;
                         m_A_irow(k) ++;
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
@@ -1337,7 +1384,6 @@ void OperatingModel::runStockAssessment()
             cout<<"running stock assessment"<<endl;
 
             #if defined __APPLE__ || defined __linux
-            cout<<m_est_fmsy<<endl;
             system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
 
             #endif

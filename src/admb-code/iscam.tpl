@@ -4722,7 +4722,7 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		cout<<"Calculating MSY-based reference points"<<endl;
-		// calcReferencePoints();
+		 calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);

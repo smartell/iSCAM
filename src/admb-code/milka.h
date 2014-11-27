@@ -9,6 +9,8 @@
 #include <admodel.h>
 #include <contrib.h>
 #include "iscam.htp"
+#include "msy.h"
+#include "msy.hpp"
 
 /**
  * @defgroup Milka Operating model for iSCAM
@@ -106,6 +108,11 @@
 		ivector m_W_irow;
 		ivector m_nWtNobs;
 		d3_array m_d3_inp_wt_avg;
+		dmatrix  m_fa_bar;
+		dmatrix  m_dWt_bar;
+
+		//mortality
+		dmatrix  m_M_bar;
 
 		// MSE controls
 		int m_nPyr;				/// Terminal year for Operating Model.
@@ -170,6 +177,8 @@
 		//d3_array m_log_sel_par;
 
 		d4_array d4_logSel;
+		dvector m_d_ak;
+        d3_array  m_d3_V;
 
 		//PerformanceVariables
 		dmatrix m_AAV;
