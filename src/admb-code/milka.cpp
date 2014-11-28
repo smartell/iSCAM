@@ -521,7 +521,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             //  set reference points to true milka values
             
             //m_est_bo = m_dBo;
-            m_est_fmsy = fmsy;
+            //m_est_fmsy = fmsy;
             //m_est_msy = msy;
             //m_est_bmsy = bmsy;
             //m_est_sbtt = m_sbt(iyr)(1,ngroup);
@@ -548,11 +548,12 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
+                    
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
-                    m_d3_V(ig)(k)(sage,nage) =  exp(d4_logSel(k)(ig)(iyr)(sage,nage));
+                   
                 }
             }
-
+            
             //Calculate reference points 
 
             //calculate allocation and sftry
@@ -561,7 +562,14 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             for(int k=1;k<=nfleet;k++)
                {
                     kk = nFleetIndex(k);
-                    m_d_ak(k) = dAllocation(kk);        
+                    m_d_ak(k) = dAllocation(kk);
+
+                for(int ig = 1; ig <= n_ags; ig++ )
+                {
+
+                    m_d3_V(ig)(k)(sage,nage) =  exp(d4_logSel(k)(ig)(iyr)(sage,nage));
+                }
+
                 }
             m_d_ak /= sum(m_d_ak);
 
