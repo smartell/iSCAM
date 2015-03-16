@@ -23,7 +23,8 @@
 # |---------------------------------------------------------------------------|
    bo				<- 476.891							# unfished female spawning biomass
    h				<- 0.75				  				# steepness
-   m        <- c(0.201826,0.169674) # natural mortality rate
+   #m        <- c(0.201826,0.169674) # natural mortality rate
+   m        <- c(0.15,0.169674) # natural mortality rate
    linf     <- c(158.86,101.525)		# asymptotic length (cm)
    vonk     <- c(0.0684,0.0842)			# vonk
    to       <- c(-5.2,-4.838)   		# time at zero length
@@ -72,7 +73,6 @@ mp1 <- list(slim=82,
 
 equilibrium_model_cpp <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
-                              # spr_target=c(0.2,0.30),
                               selex_fishery=c(34,40),
                               selex_bycatch=c(24,40),
                               selex_bycatch_desc=c(100,75),
@@ -82,6 +82,7 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
                               ten=5,
                               twenty=5,
                               forty=5,
+                              regArea="all",
                               linf_dev=0,
                               vonk_dev=0,
                               maternal_effect=1,
@@ -109,8 +110,17 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	# Price vector
 	price = c(five,ten,twenty,forty)
 
-	Stock$linf = Stock$linf +(linf_dev/100*Stock$linf)
-	Stock$vonk = Stock$vonk +(vonk_dev/100*Stock$vonk)
+   # Growth parameters by Regualtory area
+   ss <- regArea
+   gpar <-  subset(par.df,regArea==ss)
+   
+
+	# Stock$linf = Stock$linf +(linf_dev/100*Stock$linf)
+   Stock$linf = gpar$linf +(linf_dev/100*gpar$linf)
+	Stock$vonk = gpar$vbk +(vonk_dev/100*gpar$vbk)
+   Stock$to   = gpar$to
+   Stock$p    = rep(1.0,S)
+   Stock$cv   = gpar$cv
 	Stock$mate = maternal_effect;
    Stock$price = price;
 
@@ -128,7 +138,7 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	            mid_points = seq(20,200, by = 2.5),
 	            fe = seq(0,0.5,by=0.01),
 	            bycatch = num_bycatch)
-	print("Running cpp equilibrium model")
+	cat("Running cpp equilibrium model."," Procedure ",prefix ,"\n")
 
 	mod <- 	new(Equilibrium,Stock)
 	out <-	mod$calcLifeTable(Stock)
@@ -139,6 +149,7 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	              slim=size_limit[1]*2.54,
 	              dm = discard_mortality_rate,
 	              bycatch = num_bycatch,
+                 regarea = regArea,
 	              df)
 
 	return(df)

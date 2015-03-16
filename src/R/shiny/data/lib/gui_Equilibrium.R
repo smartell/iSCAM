@@ -122,16 +122,21 @@ renderEquilriumInterface <- function()
 				 #                "Recruitment","Avg.Weight","Landed.Value"),
 				 #              multiple=TRUE,selected="Yield"),
 					
-					checkboxGroupInput("chkEquilPlot", "Plot Variable:",
+					checkboxGroupInput("chkEquilPlot", tags$b("Select Variable to display in plot"),
 	                   c("Yield" = "Yield",
+	                     "Total Mortality"  = "Total.Mortality",
 	                     "Discard" = "Discard",
 	                     "Waste" = "Waste",
+	                     "Fbycatch" = "Fbycatch",
 	                     "Spawning Biomass" = "Spawning.Biomass",
 	                     "SPR" = "SPR",
+	                     "YPR" = "YPR",
 	                     "Recruitment"="Recruitment",
 	                     "Average weight"="Avg.Weight",
 	                     "Landed value (million $)"="Landed.Value"),
 	                   	selected = "Yield", inline=TRUE),
+
+					tags$hr(),
 
 					plotOutput("plot_equil",height = "550px")
 
@@ -144,18 +149,24 @@ renderEquilriumInterface <- function()
 				    #             multiple=TRUE,
 				    #             selected=c("Fe","Spawning.Biomass","Yield","SPR")),
 
-				    checkboxGroupInput("chkMSYTable", "Plot Variable:",
-	                   c("Fishing Rate" = "Fe",
-	                     "Yield" = "Yield",
+				    checkboxGroupInput("chkMSYTable", tags$b("Select Variable to display in tables"),
+	                   c("Fishing Rate" = "Fishing.Mortality",
+	                     "Total Mortality"  = "Total.Mortality",
+	                     "FCEY"  = "FCEY",
 	                     "Discard" = "Discard",
 	                     "Waste" = "Waste",
 	                     "SSB" = "Spawning.Biomass",
 	                     "SPR" = "SPR",
+	                     "YPR" = "YPR",
 	                     "Recruitment"="Recruitment",
 	                     "Avg. weight"="Avg.Weight",
-	                     "Landed value (million $)"="Landed.Value"),
+	                     "Landed value (million $)"="Landed.Value",
+	                   	 "Legal numbers caught" = "Legal.numbers",
+	                   	 "Sublegal numbers caught" = "Sublegal.numbers",
+	                   	 "Sublegals per 100" = "Sublegal.100"),
 	                   	selected = c("Yield","Spawning.Biomass"), inline=TRUE),
 
+				    tags$hr(),
 
 				    tags$h5("Equilibrium values at MSY"),
 					tableOutput('msyTable'),
@@ -171,10 +182,15 @@ renderEquilriumInterface <- function()
 				
 				tabPanel("Selectivity",
 					h5("Fishery selectiity"),
-			        plotOutput("plotFishSelex",height=200),
+			        plotOutput("plotFishSelex",height=300),
 
 			        h5("Bycatch selectivity"),
-			        plotOutput("plotSelex",height=200)
+			        plotOutput("plotSelex",height=300)
+				),
+
+				tabPanel("Size-at-age",
+				    h5("Size-at-age for a given area"),
+				    plotOutput("plotSAA",height=500)
 				)
 			)
 		)
@@ -221,9 +237,13 @@ renderStockInputs <- function(prefix)
 {
 	wellPanel(
 		fluidRow(
+		    selectInput(paste0(prefix,"_","regArea"),"Regulatory Area 2014 Growth Parameters",
+		                .REGAREA),
+
 		    sliderInput(paste0(prefix,"_","linf_dev"),"Deviation in max length (%)",min=-40,max=40,value=0,step=5),
 		    sliderInput(paste0(prefix,"_","vonk_dev"),"Deviation in metabolic rate (%)",min=-20,max=20,value=0,step=5),
 			sliderInput(paste0(prefix,"_","maternal_effect"),"Maternal effect",min=0,max=3,value=1,step=0.05)
+
 		)
 	)
 }

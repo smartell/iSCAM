@@ -44,9 +44,7 @@
 
 #include <admodel.h>
 #include "milka.h"
-// #include "baranov.h"
-// #include "include/lib_iscam.h"
-// #include <contrib.h>
+
 
 // Destructor
 OperatingModel::~OperatingModel(){}

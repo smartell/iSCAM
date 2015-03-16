@@ -68,7 +68,11 @@ private:
 	double m_re  ;
 	double m_de  ; 
 	double m_spr ;
+	double m_ypr ;
 	double m_ye_val;
+	double m_legal;
+	double m_sublegal;
+	double m_bycatch;
 
 	IntegerVector dim;
 	NumericVector age;
@@ -87,6 +91,7 @@ private:
 	NumericVector m_vd;
 	NumericVector m_pg;
 	NumericVector m_pa;
+	IntegerVector m_bLegal;
 
 	List m_stock;
 	List m_mp;
@@ -134,8 +139,13 @@ DataFrame Equilibrium::runModel(const List mp_)
 	NumericVector   Be(fe.size());
 	NumericVector   Re(fe.size());
 	NumericVector  SPR(fe.size());
+	NumericVector  YPR(fe.size());
+	NumericVector TCEY(fe.size());
 	NumericVector Wbar(fe.size());
 	NumericVector Ye_val(fe.size());
+	NumericVector legal(fe.size());
+	NumericVector sublegal(fe.size());
+	IntegerVector sublegalratio(fe.size());
 
 
 	int ii = 0;
@@ -143,6 +153,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 	{
 		calcEquilibrium(*i,bycatch);
 		fc[ii]   = m_fc;
+		TCEY[ii] = m_ye + m_we + m_bycatch;
 		Ye[ii]   = m_ye;
 		Ne[ii]   = m_ne;
 		We[ii]   = m_we;
@@ -150,25 +161,36 @@ DataFrame Equilibrium::runModel(const List mp_)
 		Be[ii]   = m_be;
 		Re[ii]   = m_re;
 		SPR[ii]  = m_spr;
+		YPR[ii]  = m_ypr;
 		Wbar[ii] = m_wbar;
 		Ye_val[ii] = m_ye_val;
+		legal[ii] = m_legal;
+		sublegal[ii] = m_sublegal;
+		sublegalratio[ii] = m_sublegal/(m_sublegal+m_legal)*100;
 		// Rcpp::Rcout<<"fe = "<<*i<<" ye = "<<Ye[ii]<<std::endl;
 		++ii;
 
 	}
-
+	
 	DataFrame df = DataFrame::create(
-	          Named("Fe") = fe,
-	          Named("Fbycatch") = fc,
-	          Named("Yield") = Ye,
-	          Named("Discard") = De,
-	          Named("Numbers") = Ne,
-	          Named("Waste") = We,
-	          Named("Spawning.Biomass") = Be,
-	          Named("Recruitment") = Re,
-	          Named("SPR")= SPR,
-	          Named("Avg.Weight")=Wbar,
-	          Named("Landed.Value")=Ye_val
+				Named("Fe")                = fe,
+				Named("Fishing.Mortality") = fe,
+				Named("Fbycatch")          = fc,
+				Named("Total.Mortality")   = TCEY,
+				Named("FCEY")              = Ye,
+				Named("Yield")             = Ye,
+				Named("Discard")           = De,
+				Named("Numbers")           = Ne,
+				Named("Waste")             = We,
+				Named("Spawning.Biomass")  = Be,
+				Named("Recruitment")       = Re,
+				Named("SPR")               = SPR,
+				Named("YPR")   			   = YPR,
+				Named("Avg.Weight")        = Wbar,
+				Named("Landed.Value")      = Ye_val,
+				Named("Legal.numbers")     = legal,
+				Named("Sublegal.numbers")  = sublegal,
+				Named("Sublegal.100")      = sublegalratio
 	          );
 	
 
@@ -201,7 +223,7 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	// double fb = 2.50;
 	double fc = 0;//0.5*(fa+fb);
 	double re,phie;
-
+	m_bycatch=bycatch;
 	if(bycatch==0) {MAXIT=1; fc=0;}
 	for (int iter = 0; iter < MAXIT; ++iter)
 	{
@@ -320,9 +342,13 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 
 	double ye_val = 0; // landed value of catch.
 
+	// Sublegal and legal numbers caught
+	double sublegal = 0;
+	double legal    = 0;
+
 	for (int ii = 0; ii < n; ++ii)
 	{
-		ypr += fe * m_wa[ii]*qa[ii];
+		ypr += fe * lz[ii]*m_wa[ii]*qa[ii];
 
 
 		// total yields
@@ -334,6 +360,16 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 
 		// economic variables
 		ye_val += npr * m_wa[ii]*qa[ii]*m_pa[ii];
+
+		// legal & sublegal catch in numbers
+		if(m_bLegal[ii] == 1)
+		{
+			legal += npr * qa[ii];
+		}
+		else
+		{
+			sublegal += npr * da[ii];
+		}
 	}
 
 	m_ye   = ye;
@@ -345,10 +381,16 @@ void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 	m_re   = re;
 	m_de   = de;
 	m_spr  = spr;
-	m_ye_val = ye_val;
+	m_ypr  = ypr;
+
+	m_ye_val   = ye_val;
+	m_legal    = legal;
+	m_sublegal = sublegal;
 
 	// Rcpp::Rcout<<"Ye = "<<ye<<std::endl;
 	// Rcpp::Rcout<<"We = "<<we<<std::endl;
+	// Rcpp::Rcout<<"Legal = "<<legal<<std::endl;
+	// Rcpp::Rcout<<"Sublegal = "<<sublegal<<std::endl;
 }
 
 NumericVector Equilibrium::calcPage(NumericVector la, NumericVector sa, NumericVector pl, NumericVector xl)
@@ -417,6 +459,7 @@ List Equilibrium::calcLifeTable(List &stock)
 	NumericVector pg    = as<NumericVector>(stock["pg"]);
 	NumericVector dev   = as<NumericVector>(stock["dev"]);
 	NumericVector price = as<NumericVector>(stock["price"]);
+
 	
 
 	// Age-schedule information
@@ -427,7 +470,10 @@ List Equilibrium::calcLifeTable(List &stock)
 	NumericVector sd_la(A*G*S); sd_la.attr("dim") = dim;
 	NumericVector pa(A*G*S);    pa.attr("dim")    = dim;
 	NumericVector mu,sigma;
+	
 
+	//double slim = as<double>(m_mp["slim"]);
+	//double ulim = as<double>(m_mp["ulim"]);
 
 	int ii = -1;
 	for (IntegerVector::iterator h = sex.begin(); h != sex.end(); ++h)
@@ -447,6 +493,7 @@ List Equilibrium::calcLifeTable(List &stock)
 				sd_la[ii] = sqrt(1./G* pow(cv[*h]*mu[*i-1],2.0) );
 				wa[ii]    = a[*h]* pow(la[ii],b[*h]);
 				fa[ii]    = ma[*i-1] * pow(wa[ii],mate) * pg[*g];
+
 
 				// price schedule
 				if( wa[ii] < 10 )
@@ -525,6 +572,8 @@ void Equilibrium::calcSelectivities(List procedure)
 	NumericVector sd(A*G*S);    
 	NumericVector va(A*G*S);    va.attr("dim")    = dim;
 	NumericVector vd(A*G*S);    vd.attr("dim")    = dim;
+	IntegerVector bLegal(A*G*S);
+
 
 	// // Compute selectivities for each array element.
 	double s50 = as<double>(procedure["selex_50"]);
@@ -564,12 +613,20 @@ void Equilibrium::calcSelectivities(List procedure)
 	vd = calcPage(m_la,m_sa,pd,xl);
 	vd.attr("dim")    = dim;
 
+	for (int i = 0; i < A*G*S; ++i)
+	{
+		bLegal[i] = 0;
+		if( m_la[i] >= slim && m_la[i] <= ulim )
+			bLegal[i] = 1;
+	}
+
 	m_va = va;
 	m_sc = sc;
 	m_sr = sr;
 	m_sd = sd;
 	m_vd = vd;
 	m_dmr = dmr;
+	m_bLegal = bLegal;
 
 	m_stock["pl"] = pl;
 	m_stock["sc"] = sc;

@@ -175,8 +175,7 @@ shinyServer(function(input, output, session) {
     ## Plot Equilibrium values versus fishing mortality
     ## ------------------------------------------------------------ ##
     output$plot_equil <- renderPlot({
-      AB <- rbind(scnA(),scnB())
-      # xx <- input$selEquilPlot
+      AB <<- rbind(scnA(),scnB())
       xx <- input$chkEquilPlot
       
       if(length(xx) != 0)
@@ -201,9 +200,17 @@ shinyServer(function(input, output, session) {
     })
     
 
+    ## ------------------------------------------------------------ ##
+    ## Run Size-at-age Plots
+    ## ------------------------------------------------------------ ##
+    output$plotSAA <- renderPlot({
+      pars <- list(getParams("A"),getParams("B"))
+      print(str(input$A_regArea))
+      .plotSAA(pars)
+    })
 
     ## ------------------------------------------------------------ ##
-    ## Print Equilibrium Tables
+    ## Print Equilibrium MSY Table
     ## ------------------------------------------------------------ ##
     output$msyTable <- renderTable({
       AB <- rbind(scnA(),scnB())
@@ -212,6 +219,10 @@ shinyServer(function(input, output, session) {
       .msyTable(AB,xx)
 
     })
+
+    ## ------------------------------------------------------------ ##
+    ## Print Equilibrium SPR Table
+    ## ------------------------------------------------------------ ##
     output$sprTable <- renderTable({
       AB <- rbind(scnA(),scnB())
       xx <- input$chkMSYTable
@@ -220,6 +231,9 @@ shinyServer(function(input, output, session) {
 
     })
 
+    ## ------------------------------------------------------------ ##
+    ## Print Equilibrium MEY Table
+    ## ------------------------------------------------------------ ##
     output$meyTable <- renderTable({
       AB <- rbind(scnA(),scnB())
       xx <- input$chkMSYTable
@@ -267,8 +281,8 @@ shinyServer(function(input, output, session) {
 .plotObject <- function(Scenario,objs)
 {
   SS  <- Scenario  %>% group_by(prefix) %>% filter(Yield == max(Yield))
-  mSS <- subset(melt(SS,id.vars=1:5),variable %in% objs)
-  sdf <- subset(melt(Scenario,id.vars=1:5),variable %in% objs)
+  mSS <- subset(melt(SS,id.vars=1:7),variable %in% objs)
+  sdf <- subset(melt(Scenario,id.vars=1:7),variable %in% objs)
 
   p <- ggplot(sdf,(aes(Fe,value,col=prefix))) + geom_line(size=1.25)
   
@@ -302,7 +316,7 @@ shinyServer(function(input, output, session) {
   
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
   p <- p + ylim(c(0,1))
-  p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
+  p <- p + labs(x="Length (in.)",y="Selectivity",col="Procedure")
   print(p + theme_bw())
 
 }
@@ -328,11 +342,16 @@ shinyServer(function(input, output, session) {
   
   p <- ggplot(df,aes(len,sel,col=prefix)) + geom_line(size=1.1)
   p <- p + ylim(c(0,1))
-  p <- p + labs(x="Length (in.)",y="Selectivity",col="Scenario")
+  p <- p + labs(x="Length (in.)",y="Selectivity",col="Procedure")
   print(p + theme_bw())
 }
 
+.plotSAA <- function(pars)
+{
 
+  
+  plot(hist(rnorm(100)))
+}
 
 .biologicalTable <- function(Scenario)
 {

@@ -33,9 +33,16 @@ load("data/OMI.Rdata")
 
 
 # 
-# LOAD data from halibut size-at-age
+# LOAD data from halibut size-at-age (par.df Object)
 # 
 load("data/halibutSAA.Rdata")
+
+
+# 
+# LOAD estimated growth parameters from 2014 SAA data.
+#
+load("data/halGrowthParams.Rdata")
+.REGAREA <- c("all","2A","2B","2C","3A","3B","4A","4B","4CDE")
 
 
 .THEME      <- theme_bw(11)
@@ -49,20 +56,18 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
-                # "spr_target",
                 "selex_fishery",
                 "selex_bycatch",
                 "selex_bycatch_desc",
-                # "selex_asymptote",
                 "num_bycatch",
                 "five",
                 "ten",
                 "twenty",
                 "forty",
+                "regArea",
                 "linf_dev",
                 "vonk_dev",
                 "maternal_effect")
-
 
 
 tulip.plot <- function(df,input)
