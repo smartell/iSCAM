@@ -1288,7 +1288,9 @@ DATA_SECTION
 		  	cout<<"|          eofc = "<<eofc<<"          |"<<endl;
 			cout<<"|______________________________|"<<endl;
 		}else{
-			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; exit(1);
+			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; 
+			cout<<"|          eofc = "<<eofc<<"          |"<<endl;
+			exit(1);
 		}
 	END_CALCS
 	
