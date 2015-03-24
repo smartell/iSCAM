@@ -16,33 +16,6 @@
 /// \brief A small number (1.e-08)`
 ///
 
-// SUGGESTED MODEL NAMES
-// HUBBLE -> Larid Sadorus
-// PHAT (Pacific Halibut Assessment Tool) -> Steve Barbeaux
-// MARTELL 9000 -> Gregg Williams.
-// BARN DOOR    -> Chris b/c halibut were as  big as  a barn door.
-// PHASE Pacific Halibut Assessment Simulation Evaluation.  <-Ianelli.
-// From Bruce Leaman:
-//      HISTOP (HIppoglossus STenolepis OPerating model)
-//      HALPOP (HALibut POPulation)
-//      FGROW (FlatfishGrow)
-//      TRUEPOP (We never lie…)
-// PMS         -> Robert Tobin
-// Martell:
-// PHOM Pacific Halibut Operating Model
-// SEAM Spatiallly Explicit Assessment Model
-// HANSOM  Halibut AssessmeNt StOck Management
-// Tracee Greenhart:
-//		Thresher  - like wheat thresher = harvesting..
-//		Sir Mix (reference to Sir Mix-A-lot’s I like Big Butts)
-//		Becket
-//		Gangion
-//		Abby – for Dear Abby.. advice ~ SRB for halibut
-//		Dr Phil – “
-//		Dorothy or Scandia – first halibut boats on charter
-//		Gordon or Jensen for the halibut fishermen in Petersburg who always preached conservation and lower quotas
-// TOM KONG
-// HERMAN -> Halibut Ensemble Resource Modelling ANalytics - HERMAN
 // ----------------------------------------------------------------------------- //
 //         integrated Statistical Catch Age Model (iSCAM)                        //
 //                                                                               //
