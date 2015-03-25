@@ -3,7 +3,7 @@
 \alias{readADMB}
 \docType{package}
 \title{
-What the package does (short line)
+Read AD Model Builder Output into an R list object.
 ~~ package title ~~
 }
 \description{
