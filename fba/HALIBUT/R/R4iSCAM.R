@@ -44,7 +44,7 @@ setwd(.PWD)
 	.srcRlib()
 	m1 <- .getModelNames()
 	M  <- lapply(m1,.getRunObject)
-	names(M) <- .MODELDIRS
+	names(M) <- basename(.MODELDIRS)
 	.plotCatch( M )
   .plotIndex( M )
 }
