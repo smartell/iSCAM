@@ -1,31 +1,42 @@
 ## Unix shell script: generate new project folders
 ## example ./makeproject Demo
 ## use chmod 777 makeproject to change permissions if necessary
-mkdir $1
-mkdir $1/DATA
-mkdir $1/FIGS
-mkdir $1/TABLES
-mkdir $1/WRITEUP
-mkdir $1/PRESENTATION
-mkdir $1/MISC
-mkdir $1/R
+mkdir -p $1
+mkdir -p $1/DATA
+mkdir -p $1/FIGS
+mkdir -p $1/TABLES
+mkdir -p $1/WRITEUP
+mkdir -p $1/PRESENTATION
+mkdir -p $1/MISC
+mkdir -p $1/R
 ## don't forget to add to the git repository
 
 ## copy R-code directory into ./R/
-cp ../dist/R/R4iSCAM.R $1/R
-cp ../dist/R/iscamViewTracker.txt $1/R
-cp ../dist/R/logo/iscamLogo.gif $1/FIGS
-#cp -r ../src/r-code/ $1/R
-#cp -r ../src/R/  $1/R
-#cp ../src/r-code/logo/iScamLogo.eps $1/MISC
+cp ../src/R/R4iSCAM.R $1/R
+cp ../src/R/iscamViewTracker.txt $1/R
+cp ../src/R/logo/iscamLogo.gif $1/FIGS
+
 
 ## Copy Beamer template to PRESENTATION FOLDER
 cp ../scripts/BeamerTemplate.tex $1/PRESENTATION/$1.tex
 cp ../scripts/iScamLogo.pdf $1/PRESENTATION/iScamLogo.pdf
 
 ## Copy Makefile from Scripts to DATA directory
-cp ../scripts/ADMB_Makefile $1/DATA/Makefile
-cp ../scripts/RUN.dat	$1/DATA/RUN.dat
-cp ../scripts/DATATemplate.dat $1/DATA/DataTemplate.dat
-cp ../scripts/ControlTemplate.ctl $1/DATA/ControlTemplate.ctl
-cp ../scripts/ProjectionTemplate.pfc $1/DATA/ProjectionTemplate.pfc
+cp ../scripts/ADMB_Makefile             $1/DATA/Makefile
+gsed -i "0,/^CTL=/s/^CTL=/CTL=$1/"      $1/DATA/Makefile
+
+
+cp ../scripts/Template.dat      		$1/DATA/$1.dat
+cp ../scripts/Template.ctl      		$1/DATA/$1.ctl
+cp ../scripts/Template.pfc   				$1/DATA/$1.pfc
+cp ../scripts/Template.mpc 					$1/DATA/$1.mpc
+cp ../scripts/Template.scn 	    		$1/DATA/$1.scn
+cp ../scripts/buildRdata.R 					$1/R/buildRdata.R
+cp ../scripts/collectAll.R      		$1/R/collectAll.R
+cp ../scripts/saveMSEdataframe.R		$1/R/saveMSEdataframe.R
+
+echo $1.dat >  $1/DATA/RUN.dat
+echo $1.ctl >> $1/DATA/RUN.dat
+echo $1.pfc >> $1/DATA/RUN.dat
+echo $1.mpc >> $1/DATA/RUN.dat
+echo $1.scn >> $1/DATA/RUN.dat

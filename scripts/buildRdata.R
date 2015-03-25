@@ -1,0 +1,7 @@
+if(!require("readADMB"))devtools::install_github("smartell/iSCAM",subdir="/src/R/readADMB",ref="IPHC-developer")
+library("readADMB")
+ctl <- list.files(pattern="*.ctl")
+ctl <- strsplit(ctl,"[.]ctl")
+M   <- lapply(ctl,read.admb)
+names(M) <-  basename(getwd())
+save(M,file=paste0(ctl,".RData"))

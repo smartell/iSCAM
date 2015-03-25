@@ -143,11 +143,11 @@ cleanmse:
 # |------------------------------------------------------------------------------------|
 # |
 
-RDATA='source(file.path("../","R","buildRdata.r"))'
+RDATA='source(file.path("../..","R","buildRdata.r"))'
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
 SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
 
-rdata: $(EXEC).rep
+rdata: 
 	-@echo $(RDATA) | R --vanilla --slave
 
 allSims.Rdata: simdone

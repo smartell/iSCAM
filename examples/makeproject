@@ -31,6 +31,7 @@ cp ../scripts/Template.ctl      		$1/DATA/$1.ctl
 cp ../scripts/Template.pfc   				$1/DATA/$1.pfc
 cp ../scripts/Template.mpc 					$1/DATA/$1.mpc
 cp ../scripts/Template.scn 	    		$1/DATA/$1.scn
+cp ../scripts/buildRdata.R 					$1/R/buildRdata.R
 cp ../scripts/collectAll.R      		$1/R/collectAll.R
 cp ../scripts/saveMSEdataframe.R		$1/R/saveMSEdataframe.R
 
