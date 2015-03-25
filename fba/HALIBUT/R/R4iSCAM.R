@@ -6,6 +6,7 @@
 #|    use ⌘ + \ to set working directory to the directory of the current file.
 #|    use ⌘ + enter to source a single line or highligted lines.
 #|    use ⌘ + B to source entire file.
+require(ggplot2)
 
 # |----------------------------------------------------------------------------------|
 # | DEFINITIONS
@@ -18,12 +19,35 @@
 .WIN        <- "../../../src/R/iScamWin2.txt"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
+.MODELDIRS  <- list.dirs("../DATA",recursive=FALSE)
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
-require(ggplot2)
 .THEME      <- theme_bw(12)
 .UNITS      <- "(mlb)"
+
+
+.srcRlib  <- function()
+{
+	setwd(.PWD)
+	for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+}
+
+.getModelNames <- function()
+{
+	t1 <- list.files(.MODELDIRS,"*.ctl",full.names=TRUE,include.dirs=TRUE)
+	strsplit(t1,"[.]ctl")
+}
+
+.runRplots <- function()
+{
+	.srcRlib()
+	m1 <- .getModelNames()
+	M  <- lapply(m1,.getRunObject)
+	names(M) <- .MODELDIRS
+	.plotCatch( M )
+  .plotIndex( M )
+}
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
@@ -31,8 +55,7 @@ require(ggplot2)
 # |
 guiView  <- function()
  {
-	setwd(.PWD)
-	for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+	.srcRlib()
 	.gui2("iSCAMView") 	
  }
 

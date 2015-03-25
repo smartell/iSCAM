@@ -20,7 +20,7 @@ require(reshape2)
 	print(head(mdf,3))
 
 	p <- ggplot(mdf,aes(Year,Index,linetype=factor(Gear)))
-	p <- p + geom_line()
+	p <- p + geom_point()
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
