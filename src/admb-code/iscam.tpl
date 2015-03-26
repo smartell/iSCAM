@@ -457,6 +457,19 @@ DATA_SECTION
 	
 	init_vector 	d_maturityVector(t1,t2);
 
+	// |----------------------|
+	// | Aging error matrixes |
+	// |----------------------|
+	init_int n_age_err;
+	init_3darray age_err(1,n_age_err,1,2,sage,nage);
+	3darray age_age(1,n_age_err,sage,nage,sage,nage);
+	LOC_CALCS
+		for(int i = 1; i<=n_age_err; i++)
+		{
+			age_age(i) = ageErrorKey(age_err(i)(1),age_err(i)(2),age);
+		}
+	END_CALCS
+
 
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -465,7 +478,7 @@ DATA_SECTION
 		if(!mseFlag)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
-	  	cout<<"| ----------------------- |"<<endl;
+	  cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| d_linf  \t"<<d_linf<<endl;
@@ -5382,6 +5395,36 @@ GLOBALS_SECTION
 	}
 	
 	
+
+	// age error key
+	dmatrix ageErrorKey(const dvector& mu, const dvector& sig, const dvector& x)
+	{
+	 //RETURN_ARRAYS_INCREMENT();
+	 int i, j;
+	 double z1;
+	 double z2;
+	 int si,ni; si=mu.indexmin(); ni=mu.indexmax();
+	 int sj,nj; sj=x.indexmin(); nj=x.indexmax();
+
+	 COUT(si); COUT(sj);
+	 COUT(ni); COUT(nj);
+	 dmatrix pdf(si,ni,sj,nj);
+	 pdf.initialize();
+	 double xs=0.5*(x[sj+1]-x[sj]);
+	 for(i=si;i<=ni;i++) //loop true ages
+	 {
+	    for(j=sj;j<=nj;j++) //loop observed ages
+	   {
+	     z1=(x(j)-xs-mu(i))/sig(i);
+	     z2=(x(j)+xs-mu(i))/sig(i);
+	     pdf(i,j)=cumd_norm(z2)-cumd_norm(z1);
+	   }//end nbins
+	   pdf(i)/=sum(pdf(i));
+	 }//end nage
+	 
+	 //RETURN_ARRAYS_DECREMENT();
+	 return(pdf);
+	}
 
 	
 
