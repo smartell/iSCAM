@@ -2569,13 +2569,15 @@ FUNCTION calcComposition
 	  		}
 
 	  		// This is the age-composition
+	  		// March 26, 2015.  Added ageing error matrix age_age
 	  		if( n_ageFlag(kk) )
 	  		{
-	  			A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
+	  			dvar_vector pred_ca = ca * age_age(4);
+	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
 	  			if( n_A_nage(kk) < nage )
-				{
-					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-				}
+					{
+						A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
+					}
 	  		}
 	  		else
 	  		{
@@ -2586,11 +2588,11 @@ FUNCTION calcComposition
 					-Ahat = ca * ALK
 	  			*/
 	  			dvar_vector mu = d3_len_age(ig)(i);
-				dvar_vector sig= 0.1 * mu;
-				dvector x(n_A_sage(kk),n_A_nage(kk));
-				x.fill_seqadd(n_A_sage(kk),1);
-				
-				dvar_matrix alk = ALK(mu,sig,x);
+					dvar_vector sig= 0.1 * mu;
+					dvector x(n_A_sage(kk),n_A_nage(kk));
+					x.fill_seqadd(n_A_sage(kk),1);
+					
+					dvar_matrix alk = ALK(mu,sig,x);
 	  			
 	  			A_hat(kk)(ii) = ca * alk;
 	  		}
