@@ -587,9 +587,10 @@ DATA_SECTION
 	ivector        nSurveyIndex(1,nItNobs);
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
-	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
+	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
 	matrix                it_wt(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
+	matrix            it_log_pe(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
@@ -606,7 +607,8 @@ DATA_SECTION
 		{
 			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
 			it_log_se(k) = column(d3_survey_data(k),7);
-			it_wt(k) = 1.0/exp(it_log_se(k));
+			it_wt(k) = 1.0/square(it_log_se(k));
+			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
@@ -1637,7 +1639,8 @@ PARAMETER_SECTION
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
 	// | - nlvec    -> matrix for negative loglikelihoods.
-	// | - epsilon  -> residuals for survey abundance index
+	// | - epsilon  -> residuals for survey abundance index observation errors.
+	// | - xi       -> residual process errors for changes in catchability.
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
 	// | - qt       -> catchability coefficients (time-varying)
 	// | - sbt      -> spawning stock biomass by group used in S-R relationship.
@@ -1648,6 +1651,7 @@ PARAMETER_SECTION
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nItNobs,1,n_it_nobs);
+	matrix      xi(1,nItNobs,1,n_it_nobs);
 	matrix  it_hat(1,nItNobs,1,n_it_nobs);
 	matrix      qt(1,nItNobs,1,n_it_nobs);
 	matrix     sbt(1,ngroup,syr,nyr+1);
@@ -2774,6 +2778,7 @@ FUNCTION calcSurveyObservations
 	dvar_vector va(sage,nage);
 	dvar_vector sa(sage,nage);
 	epsilon.initialize();
+	xi.initialize();
 	it_hat.initialize();
 
 	for(kk=1;kk<=nItNobs;kk++)
@@ -2790,7 +2795,7 @@ FUNCTION calcSurveyObservations
 			f    = d3_survey_data(kk)(ii)(4);
 			g    = d3_survey_data(kk)(ii)(5);
 			h    = d3_survey_data(kk)(ii)(6);
-			di   = d3_survey_data(kk)(ii)(8);
+			di   = d3_survey_data(kk)(ii)(9);
 
 			// | trap for retrospective nyr change
 			if( i < syr )
@@ -2829,7 +2834,9 @@ FUNCTION calcSurveyObservations
 		} // end of ii loop
 		dvector     it = trans(d3_survey_data(kk))(2)(iz,nz);
 		dvector     wt = trans(d3_survey_data(kk))(7)(iz,nz);
+					wt = 1.0/square(exp(wt));
 		            wt = wt/sum(wt);
+
 
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(iz,nz));
@@ -2840,7 +2847,7 @@ FUNCTION calcSurveyObservations
 		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
 		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
 
-		// | SPECIAL CASE: penalized random walk in q.
+		// | SPECIAL CASE: penalized random walk in q process error only.
 		if( q_prior(kk)==2 )
 		{
 			epsilon(kk).initialize();
@@ -2852,6 +2859,20 @@ FUNCTION calcSurveyObservations
 			{
 				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
 			}
+			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+		}
+
+		// | MIXED ERROR MODEL for random walk in q
+		if( q_prior(kk)==3 )
+		{
+			dvar_vector proerr = zt - zbar;
+			qt(kk)(ii) = exp(zbar + proerr(iz));
+			for(ii=iz+1;ii<=nz;ii++)
+			{
+				proerr(ii) = zt(ii) - zt(ii-1);
+				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
+			}
+			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
 			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 		}
 	}
@@ -3071,15 +3092,16 @@ FUNCTION calcObjectiveFunction
 	// |
 	for(k=1;k<=nItNobs;k++)
 	{
-		ivector ig = it_grp(k);
-		dvar_vector sig_it(1,n_it_nobs(k)); 
-		for( i = 1; i <= n_it_nobs(k); i++ )
-		{
-			// sig_it(i) = sig(ig(i))/it_wt(k,i);
-			sig_it(i) = it_log_se(k,i);
-		}
-		//nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		// ivector ig = it_grp(k);
+		// dvar_vector sig_it(1,n_it_nobs(k)); 
+		// for( i = 1; i <= n_it_nobs(k); i++ )
+		// {
+		// 	// sig_it(i) = sig(ig(i))/it_wt(k,i);
+		// 	sig_it(i) = it_log_se(k,i);
+		// }
+		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
+		nlvec(2,k)=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
