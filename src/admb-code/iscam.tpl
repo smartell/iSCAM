@@ -2556,7 +2556,7 @@ FUNCTION calcComposition
 					na = N(ig)(i);
 					if( ft(ig)(k)(i)==0 )
 					{
-						ca = elem_prod(na,0.5*sa);
+						ca = elem_prod(elem_prod(na,va),0.5*sa);
 					}
 					else
 					{
