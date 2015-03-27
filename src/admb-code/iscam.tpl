@@ -639,7 +639,7 @@ DATA_SECTION
   // The 5 in the next command is to remove the first 5 columns
   // from the age comp 'data' because they are not the actual ages,
   // but the header data.
-	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
+	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-6,n_A_nage);
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
@@ -1328,7 +1328,7 @@ DATA_SECTION
 		{
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr <= nyr ) n_naa(k)++;
 			}
 		}
@@ -1368,7 +1368,7 @@ DATA_SECTION
 		{
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr < syr ) n_saa(k)++;
 			}
 		}
@@ -2493,7 +2493,7 @@ FUNCTION calcNumbersAtAge
   	
 FUNCTION calcComposition
   {
-  	int ii,ig,kk;
+  	int ii,ig,kk,e;
   	dvar_vector va(sage,nage);
   	dvar_vector fa(sage,nage);
   	dvar_vector sa(sage,nage);
@@ -2506,11 +2506,12 @@ FUNCTION calcComposition
   	 {
   	 	for(ii=1;ii<=n_A_nobs(kk);ii++)
   	 	{
-	  		i = d3_A(kk)(ii)(n_A_sage(kk)-5);
-	  		k = d3_A(kk)(ii)(n_A_sage(kk)-4);
-	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
-	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
-	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
+	  		i = d3_A(kk)(ii)(n_A_sage(kk)-6);
+	  		k = d3_A(kk)(ii)(n_A_sage(kk)-5);
+	  		f = d3_A(kk)(ii)(n_A_sage(kk)-4);
+	  		g = d3_A(kk)(ii)(n_A_sage(kk)-3);
+	  		h = d3_A(kk)(ii)(n_A_sage(kk)-2);
+	  		e = d3_A(kk)(ii)(n_A_sage(kk)-1);
 
 	  		// | trap for retrospecitve analysis.
 	  		if(i < syr) continue;
@@ -2572,7 +2573,7 @@ FUNCTION calcComposition
 	  		// March 26, 2015.  Added ageing error matrix age_age
 	  		if( n_ageFlag(kk) )
 	  		{
-	  			dvar_vector pred_ca = ca * age_age(4);
+	  			dvar_vector pred_ca = ca * age_age(e);
 	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
 	  			if( n_A_nage(kk) < nage )
 					{
@@ -3115,7 +3116,7 @@ FUNCTION calcObjectiveFunction
 			int ii=n_saa(k);
 			for(i=1;i<=n_A_nobs(k);i++)
 			{
-				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if(iyr >= syr && iyr <= nyr)
 				{
 					O(ii) = d3_A_obs(k)(i).sub(n_A_sage(k),n_A_nage(k));
@@ -3216,7 +3217,7 @@ FUNCTION calcObjectiveFunction
 			ii = n_saa(k);
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if(iyr >= syr && iyr <= nyr)
 				{
 					A_nu(k)(i)(n_A_sage(k),n_A_nage(k))=nu(ii++);		
@@ -4603,7 +4604,7 @@ REPORT_SECTION
 				//retrospective counter
 				for(i=1;i<=n_A_nobs(k);i++)
 				{
-					iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+					iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 					if(iyr<=nyr) naa++; else continue;
 				}
 				
