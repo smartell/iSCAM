@@ -30,8 +30,15 @@ require(ggplot2)
 
 .MODELDIRS   <- "../DATA"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
-M            <- lapply(.MODELNAME,load)
+load(.MODELNAME)
 names(M)     <- strsplit(basename(.MODELNAME),".RData")
+
+for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+.plotCatch( M )
+.plotIndex( M )
+.plotAgeComps( M )
+.plotAgeSummary( M )
+
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
