@@ -13,25 +13,25 @@ require(reshape2)
 	{
 		A   <- data.frame(M[[i]]$d3_A)
 		# Ensure proportions are being plotted.
-		A[,-1:-5] <- A[,-1:-5]/rowSums(A[,-1:-5],na.rm=TRUE)
+		A[,-1:-6] <- A[,-1:-6]/rowSums(A[,-1:-6],na.rm=TRUE)
 		age <- seq(min(M[[i]]$n_A_sage),max(M[[i]]$n_A_nage))
 		# year gear area group sex
 		A   <- data.frame(Model=names(M)[i],A)
-		colnames(A) <- c("Model","Year","Gear","Area","Group","Sex",paste(age))
+		colnames(A) <- c("Model","Year","Gear","Area","Group","Sex","AgeErr",paste(age))
 		mdf <- rbind(mdf,A)
 
 	}
-	mdf <- melt(mdf,id.vars=c("Model","Year","Gear","Area","Group","Sex"))
+	mdf <- melt(mdf,id.vars=c("Model","Year","Gear","Area","Group","Sex","AgeErr"))
 	BroodYear <- mdf$Year-as.double(mdf$variable)
 	mdf <- cbind(mdf,BroodYear)
 	print(head(mdf,3))
 
 	p <- ggplot(mdf,aes(factor(Year),variable,size=value))
 	p <- p + geom_point(alpha=0.75,aes(colour=factor(BroodYear))) 
-	p <- p + scale_area(range = c(0,10))
+	p <- p + scale_size_area(max_size=10)
 	p <- p + labs(x="Year",y="Age",size="Count")
 	p <- p + facet_wrap(~Model+Sex+Gear,scales="free")
-	p <- p + scale_colour_discrete(legend=FALSE)
+	p <- p + scale_colour_discrete(guide="none")
 	print(p + .THEME)
 }
 
@@ -42,7 +42,7 @@ require(reshape2)
 	mdf <- NULL
 	for( i in 1:n )
 	{
-		A   <- cbind(M[[i]]$d3_A[,1:5],M[[i]]$A_nu)
+		A   <- cbind(M[[i]]$d3_A[,1:6],M[[i]]$A_nu)
 		A   <- data.frame(A)
 		age <- seq(min(M[[i]]$n_A_sage),max(M[[i]]$n_A_nage))
 		# year gear area group sex
@@ -72,16 +72,16 @@ require(reshape2)
 		age <- seq(min(M[[i]]$n_A_sage),max(M[[i]]$n_A_nage))
 
 		# Predicted data
-		A   <- cbind(M[[i]]$d3_A[,1:5],M[[i]]$A_hat)
+		A   <- cbind(M[[i]]$d3_A[,1:6],M[[i]]$A_hat)
 		A   <- data.frame(A)
-		A[,-1:-5] <- A[,-1:-5]/rowSums(A[,-1:-5],na.rm=TRUE)
-		agA <- aggregate(A[,-1:-5],by=list(A[,2],A[,3],A[,4],A[,5]),FUN=mean,na.rm=TRUE)
+		A[,-1:-6] <- A[,-1:-6]/rowSums(A[,-1:-6],na.rm=TRUE)
+		agA <- aggregate(A[,-1:-6],by=list(A[,2],A[,3],A[,4],A[,5]),FUN=mean,na.rm=TRUE)
 		colnames(agA) = c("Gear","Area","Group","Sex",paste(age))
 
 		# Observed data
 		O   <- data.frame(M[[i]]$d3_A)
-		O[,-1:-5] <- O[,-1:-5]/rowSums(O[,-1:-5],na.rm=TRUE)
-		agO <- aggregate(O[,-1:-5],by=list(O[,2],O[,3],A[,4],O[,5]),FUN=mean,na.rm=TRUE)
+		O[,-1:-6] <- O[,-1:-6]/rowSums(O[,-1:-6],na.rm=TRUE)
+		agO <- aggregate(O[,-1:-6],by=list(O[,2],O[,3],A[,4],O[,5]),FUN=mean,na.rm=TRUE)
 		colnames(agO) = c("Gear","Area","Group","Sex",paste(age))
 
 		# Create data frame

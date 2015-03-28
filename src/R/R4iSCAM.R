@@ -27,6 +27,12 @@ require(ggplot2)
 .THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"
 
+
+.MODELDIRS   <- "../DATA"
+.MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
+M            <- lapply(.MODELNAME,load)
+names(M)     <- strsplit(basename(.MODELNAME),".RData")
+
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
 # |----------------------------------------------------------------------------------|
@@ -129,4 +135,4 @@ guiView  <- function()
 	save(mse.DF,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 
-cat("Type: \n guiView()\n to start the iSCAM gui")
+cat("Type: \n guiView()\n to start the iSCAM gui\n")

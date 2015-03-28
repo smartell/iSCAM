@@ -46,7 +46,7 @@ setwd(.PWD)
 	M  <- lapply(m1,.getRunObject)
 	names(M) <- basename(.MODELDIRS)
 	.plotCatch( M )
-  .plotIndex( M )
+  	.plotIndex( M )
 }
 
 # |----------------------------------------------------------------------------------|
