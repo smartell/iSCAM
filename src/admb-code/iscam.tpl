@@ -1557,6 +1557,12 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
 
 	// |---------------------------------------------------------------------------------|
+	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
+	// |---------------------------------------------------------------------------------|
+	// | 
+	init_bounded_matrix log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,-1);
+
+	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
 	// |---------------------------------------------------------------------------------|
 	// | log_age_tau2 is the variance of the composition errors.
@@ -1630,7 +1636,7 @@ PARAMETER_SECTION
 	vector  varphi(1,ngroup);
 	vector     sig(1,ngroup);	
 	vector     tau(1,ngroup);
-  vector sigma_r(1,ngroup); 
+  	vector sigma_r(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
