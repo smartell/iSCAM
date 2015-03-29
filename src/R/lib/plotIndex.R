@@ -35,7 +35,7 @@ require(reshape2)
 	{
 		epsilon <- na.omit(as.vector(t(M[[1]]$epsilon)))
 		it <- data.frame( cbind(M[[i]]$d3_survey_data,epsilon) )
-		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","wt","timing","Residual")
+		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","ln(SE)","ln(PE)","timing","Residual")
 		it <- data.frame(Model=names(M)[i],it)
 		mdf <- rbind(mdf,it)
 	}

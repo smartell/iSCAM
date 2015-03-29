@@ -24,7 +24,7 @@ else
 	DIST=$(prefix)/build/debug/iscam
 endif
 
-all: $(EXEC) $(EXEC).rep
+all: $(EXEC) $(EXEC).rep rdata rplot
 
 $(EXEC): $(prefix)$EXEC.tpl $(DIST)
 	ln -sf $(DIST) $@
@@ -143,8 +143,18 @@ cleanmse:
 # |------------------------------------------------------------------------------------|
 # |
 
+RDATA='source(file.path("..","..","R","buildRdata.r"))'
+RPLOT='source(file.path("..","..","R","R4iSCAM.r"))'
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
 SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
+
+rplot: $(CTL).RData
+	@echo "Writing Rplots.pdf"
+	-@echo $(RPLOT) | R --vanilla --slave
+
+rdata: $(CTL).ctl
+	@echo "Creating R Data file"
+	-@echo $(RDATA) | R --vanilla --slave
 
 allSims.Rdata: simdone
 	-@echo $(COLLECTALL) | R --vanilla --slave
@@ -157,3 +167,4 @@ collect: allSims.Rdata MSE.Rdata
 # target: help - Display callable targets.
 help:
 	egrep "^# target:" [Mm]akefile
+

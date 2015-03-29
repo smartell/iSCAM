@@ -34,6 +34,7 @@
 ##     -3 : logistic_normal, no autocorrelation, AR1, AR2.
 ##     -4 : logistic_normal, AR1
 ##     -5 : logistic_normal, AR2
+##     -6 : multinomial with estimated effective sample size.
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 	1       6       6      ## : Gear Index
@@ -111,7 +112,7 @@
 ##			2 - random walk in q                                             ##
 ## ------------------------------------------------------------------------- ##
 2	     				# -number of surveys (nits) 
-3  2					# -prior type (see legend above
+0  0					# -prior type (see legend above
 0  0					# -prior log(mean)
 0  0					# -prior sd
 ## ------------------------------------------------------------------------- ##
