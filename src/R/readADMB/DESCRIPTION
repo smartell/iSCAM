@@ -1,9 +1,10 @@
 Package: readADMB
 Type: Package
-Title: What the package does (short line)
+Title: Read AD Model Builder output into an R list object.
 Version: 1.0
 Date: 2015-03-25
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Steve Martell
+Maintainer: Steve Martell <martell.steve@gmail.com>
+Description: A collection of R scripts to read report files,
+parameter files, correlation files and psv files from MCMC output.
+License: Karma

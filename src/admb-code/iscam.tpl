@@ -457,6 +457,19 @@ DATA_SECTION
 	
 	init_vector 	d_maturityVector(t1,t2);
 
+	// |----------------------|
+	// | Aging error matrixes |
+	// |----------------------|
+	init_int n_age_err;
+	init_3darray age_err(1,n_age_err,1,2,sage,nage);
+	3darray age_age(1,n_age_err,sage,nage,sage,nage);
+	LOC_CALCS
+		for(int i = 1; i<=n_age_err; i++)
+		{
+			age_age(i) = ageErrorKey(age_err(i)(1),age_err(i)(2),age);
+		}
+	END_CALCS
+
 
 	matrix la(1,n_ags,sage,nage);		//length-at-age
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
@@ -465,7 +478,7 @@ DATA_SECTION
 		if(!mseFlag)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
-	  	cout<<"| ----------------------- |"<<endl;
+	  cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| d_linf  \t"<<d_linf<<endl;
@@ -574,9 +587,10 @@ DATA_SECTION
 	ivector        nSurveyIndex(1,nItNobs);
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
-	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,8);
+	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
 	matrix                it_wt(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
+	matrix            it_log_pe(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
@@ -593,7 +607,8 @@ DATA_SECTION
 		{
 			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
 			it_log_se(k) = column(d3_survey_data(k),7);
-			it_wt(k) = 1.0/exp(it_log_se(k));
+			it_wt(k) = 1.0/square(it_log_se(k));
+			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 		}
@@ -626,7 +641,7 @@ DATA_SECTION
   // The 5 in the next command is to remove the first 5 columns
   // from the age comp 'data' because they are not the actual ages,
   // but the header data.
-	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-5,n_A_nage);
+	init_3darray d3_A(1,nAgears,1,n_A_nobs,n_A_sage-6,n_A_nage);
 	3darray d3_A_obs(1,nAgears,1,n_A_nobs,n_A_sage,n_A_nage);
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
@@ -1315,7 +1330,7 @@ DATA_SECTION
 		{
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr <= nyr ) n_naa(k)++;
 			}
 		}
@@ -1355,7 +1370,7 @@ DATA_SECTION
 		{
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				int iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr < syr ) n_saa(k)++;
 			}
 		}
@@ -1624,7 +1639,8 @@ PARAMETER_SECTION
 	// | - catch_df -> Catch data_frame (year,gear,area,group,sex,type,obs,pred,resid)
 	// | - eta      -> log residuals between observed and predicted total catch.
 	// | - nlvec    -> matrix for negative loglikelihoods.
-	// | - epsilon  -> residuals for survey abundance index
+	// | - epsilon  -> residuals for survey abundance index observation errors.
+	// | - xi       -> residual process errors for changes in catchability.
 	// | - it_hat   -> predicted survey index (no need to be differentiable)
 	// | - qt       -> catchability coefficients (time-varying)
 	// | - sbt      -> spawning stock biomass by group used in S-R relationship.
@@ -1635,6 +1651,7 @@ PARAMETER_SECTION
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
 	matrix   nlvec(1,7,1,ilvec);	
 	matrix epsilon(1,nItNobs,1,n_it_nobs);
+	matrix      xi(1,nItNobs,1,n_it_nobs);
 	matrix  it_hat(1,nItNobs,1,n_it_nobs);
 	matrix      qt(1,nItNobs,1,n_it_nobs);
 	matrix     sbt(1,ngroup,syr,nyr+1);
@@ -2480,7 +2497,7 @@ FUNCTION calcNumbersAtAge
   	
 FUNCTION calcComposition
   {
-  	int ii,ig,kk;
+  	int ii,ig,kk,e;
   	dvar_vector va(sage,nage);
   	dvar_vector fa(sage,nage);
   	dvar_vector sa(sage,nage);
@@ -2493,11 +2510,12 @@ FUNCTION calcComposition
   	 {
   	 	for(ii=1;ii<=n_A_nobs(kk);ii++)
   	 	{
-	  		i = d3_A(kk)(ii)(n_A_sage(kk)-5);
-	  		k = d3_A(kk)(ii)(n_A_sage(kk)-4);
-	  		f = d3_A(kk)(ii)(n_A_sage(kk)-3);
-	  		g = d3_A(kk)(ii)(n_A_sage(kk)-2);
-	  		h = d3_A(kk)(ii)(n_A_sage(kk)-1);
+	  		i = d3_A(kk)(ii)(n_A_sage(kk)-6);
+	  		k = d3_A(kk)(ii)(n_A_sage(kk)-5);
+	  		f = d3_A(kk)(ii)(n_A_sage(kk)-4);
+	  		g = d3_A(kk)(ii)(n_A_sage(kk)-3);
+	  		h = d3_A(kk)(ii)(n_A_sage(kk)-2);
+	  		e = d3_A(kk)(ii)(n_A_sage(kk)-1);
 
 	  		// | trap for retrospecitve analysis.
 	  		if(i < syr) continue;
@@ -2538,7 +2556,7 @@ FUNCTION calcComposition
 					na = N(ig)(i);
 					if( ft(ig)(k)(i)==0 )
 					{
-						ca = elem_prod(na,0.5*sa);
+						ca = elem_prod(elem_prod(na,va),0.5*sa);
 					}
 					else
 					{
@@ -2556,13 +2574,15 @@ FUNCTION calcComposition
 	  		}
 
 	  		// This is the age-composition
+	  		// March 26, 2015.  Added ageing error matrix age_age
 	  		if( n_ageFlag(kk) )
 	  		{
-	  			A_hat(kk)(ii) = ca(n_A_sage(kk),n_A_nage(kk));
+	  			dvar_vector pred_ca = ca * age_age(e);
+	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
 	  			if( n_A_nage(kk) < nage )
-				{
-					A_hat(kk)(ii)(n_A_nage(kk)) += sum( ca(n_A_nage(kk)+1,nage) );
-				}
+					{
+						A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
+					}
 	  		}
 	  		else
 	  		{
@@ -2573,11 +2593,11 @@ FUNCTION calcComposition
 					-Ahat = ca * ALK
 	  			*/
 	  			dvar_vector mu = d3_len_age(ig)(i);
-				dvar_vector sig= 0.1 * mu;
-				dvector x(n_A_sage(kk),n_A_nage(kk));
-				x.fill_seqadd(n_A_sage(kk),1);
-				
-				dvar_matrix alk = ALK(mu,sig,x);
+					dvar_vector sig= 0.1 * mu;
+					dvector x(n_A_sage(kk),n_A_nage(kk));
+					x.fill_seqadd(n_A_sage(kk),1);
+					
+					dvar_matrix alk = ALK(mu,sig,x);
 	  			
 	  			A_hat(kk)(ii) = ca * alk;
 	  		}
@@ -2758,6 +2778,7 @@ FUNCTION calcSurveyObservations
 	dvar_vector va(sage,nage);
 	dvar_vector sa(sage,nage);
 	epsilon.initialize();
+	xi.initialize();
 	it_hat.initialize();
 
 	for(kk=1;kk<=nItNobs;kk++)
@@ -2774,7 +2795,7 @@ FUNCTION calcSurveyObservations
 			f    = d3_survey_data(kk)(ii)(4);
 			g    = d3_survey_data(kk)(ii)(5);
 			h    = d3_survey_data(kk)(ii)(6);
-			di   = d3_survey_data(kk)(ii)(8);
+			di   = d3_survey_data(kk)(ii)(9);
 
 			// | trap for retrospective nyr change
 			if( i < syr )
@@ -2813,7 +2834,9 @@ FUNCTION calcSurveyObservations
 		} // end of ii loop
 		dvector     it = trans(d3_survey_data(kk))(2)(iz,nz);
 		dvector     wt = trans(d3_survey_data(kk))(7)(iz,nz);
+					wt = 1.0/square(exp(wt));
 		            wt = wt/sum(wt);
+
 
 		dvar_vector t1 = rowsum(V);
 		dvar_vector zt = log(it) - log(t1(iz,nz));
@@ -2824,7 +2847,7 @@ FUNCTION calcSurveyObservations
 		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
 		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
 
-		// | SPECIAL CASE: penalized random walk in q.
+		// | SPECIAL CASE: penalized random walk in q process error only.
 		if( q_prior(kk)==2 )
 		{
 			epsilon(kk).initialize();
@@ -2836,6 +2859,20 @@ FUNCTION calcSurveyObservations
 			{
 				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
 			}
+			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+		}
+
+		// | MIXED ERROR MODEL for random walk in q
+		if( q_prior(kk)==3 )
+		{
+			dvar_vector proerr = zt - zbar;
+			qt(kk)(ii) = exp(zbar + proerr(iz));
+			for(ii=iz+1;ii<=nz;ii++)
+			{
+				proerr(ii) = zt(ii) - zt(ii-1);
+				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
+			}
+			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
 			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 		}
 	}
@@ -3055,15 +3092,16 @@ FUNCTION calcObjectiveFunction
 	// |
 	for(k=1;k<=nItNobs;k++)
 	{
-		ivector ig = it_grp(k);
-		dvar_vector sig_it(1,n_it_nobs(k)); 
-		for( i = 1; i <= n_it_nobs(k); i++ )
-		{
-			// sig_it(i) = sig(ig(i))/it_wt(k,i);
-			sig_it(i) = it_log_se(k,i);
-		}
-		//nlvec(2,k)=dnorm(epsilon(k),sig_it);
+		// ivector ig = it_grp(k);
+		// dvar_vector sig_it(1,n_it_nobs(k)); 
+		// for( i = 1; i <= n_it_nobs(k); i++ )
+		// {
+		// 	// sig_it(i) = sig(ig(i))/it_wt(k,i);
+		// 	sig_it(i) = it_log_se(k,i);
+		// }
+		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
+		nlvec(2,k)=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3100,7 +3138,7 @@ FUNCTION calcObjectiveFunction
 			int ii=n_saa(k);
 			for(i=1;i<=n_A_nobs(k);i++)
 			{
-				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if(iyr >= syr && iyr <= nyr)
 				{
 					O(ii) = d3_A_obs(k)(i).sub(n_A_sage(k),n_A_nage(k));
@@ -3201,7 +3239,7 @@ FUNCTION calcObjectiveFunction
 			ii = n_saa(k);
 			for( i = 1; i <= n_A_nobs(k); i++ )
 			{
-				iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+				iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if(iyr >= syr && iyr <= nyr)
 				{
 					A_nu(k)(i)(n_A_sage(k),n_A_nage(k))=nu(ii++);		
@@ -4588,7 +4626,7 @@ REPORT_SECTION
 				//retrospective counter
 				for(i=1;i<=n_A_nobs(k);i++)
 				{
-					iyr = d3_A(k)(i)(n_A_sage(k)-5);	//index for year
+					iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 					if(iyr<=nyr) naa++; else continue;
 				}
 				
@@ -5382,6 +5420,36 @@ GLOBALS_SECTION
 	}
 	
 	
+
+	// age error key
+	dmatrix ageErrorKey(const dvector& mu, const dvector& sig, const dvector& x)
+	{
+	 //RETURN_ARRAYS_INCREMENT();
+	 int i, j;
+	 double z1;
+	 double z2;
+	 int si,ni; si=mu.indexmin(); ni=mu.indexmax();
+	 int sj,nj; sj=x.indexmin(); nj=x.indexmax();
+
+	 COUT(si); COUT(sj);
+	 COUT(ni); COUT(nj);
+	 dmatrix pdf(si,ni,sj,nj);
+	 pdf.initialize();
+	 double xs=0.5*(x[sj+1]-x[sj]);
+	 for(i=si;i<=ni;i++) //loop true ages
+	 {
+	    for(j=sj;j<=nj;j++) //loop observed ages
+	   {
+	     z1=(x(j)-xs-mu(i))/sig(i);
+	     z2=(x(j)+xs-mu(i))/sig(i);
+	     pdf(i,j)=cumd_norm(z2)-cumd_norm(z1);
+	   }//end nbins
+	   pdf(i)/=sum(pdf(i));
+	 }//end nage
+	 
+	 //RETURN_ARRAYS_DECREMENT();
+	 return(pdf);
+	}
 
 	
 

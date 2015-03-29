@@ -23,6 +23,7 @@ setwd(.PWD)
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 .VIEWTRCK   <- "iscamViewTracker.txt"
 .BOOLREADFN <- TRUE
+.OVERLAY    <- TRUE
 .THEME      <- theme_bw(12)
 .UNITS      <- "(mlb)"
 
@@ -46,8 +47,31 @@ setwd(.PWD)
 	M  <- lapply(m1,.getRunObject)
 	names(M) <- basename(.MODELDIRS)
 	.plotCatch( M )
-  .plotIndex( M )
+  	.plotIndex( M )
 }
+
+.MODELDIRS   <- "../DATA/DMVL1988"
+.MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
+load(.MODELNAME)
+names(M)     <- strsplit(basename(.MODELNAME),".RData")
+
+for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+.plotCatch( M )
+.plotIndex( M )
+.plotWeightAtAge( M )
+.plotAgeComps( M )
+.plotAgeCompResiduals( M )
+.plotAgeSummary( M )
+.plotSpawnBiomass( M )
+.plotDepletion( M )
+.plotMortality( M )
+.plotRecruitment( M )
+.plotStockRecruit( M )
+.plotRecruitsPerSpawner( M )
+.plotSurveyFit( M )
+.plotCatchResidual( M )
+.plotIndexResidual( M )
+.plotRecruitmentResidual( M )
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
@@ -149,4 +173,5 @@ guiView  <- function()
 	save(mse.DF,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 
-cat("Type: \n guiView()\n to start the iSCAM gui")
+cat("Type: \n guiView()\n to start the iSCAM gui\n")
+

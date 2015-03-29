@@ -27,6 +27,31 @@ require(ggplot2)
 .THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"
 
+
+.MODELDIRS   <- "../DATA"
+.MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
+load(.MODELNAME)
+names(M)     <- strsplit(basename(.MODELNAME),".RData")
+
+for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
+.plotCatch( M )
+.plotIndex( M )
+.plotWeightAtAge( M )
+.plotAgeComps( M )
+.plotAgeCompResiduals( M )
+.plotAgeSummary( M )
+.plotSpawnBiomass( M )
+.plotDepletion( M )
+.plotMortality( M )
+.plotRecruitment( M )
+.plotStockRecruit( M )
+.plotRecruitsPerSpawner( M )
+.plotSurveyFit( M )
+.plotCatchResidual( M )
+.plotIndexResidual( M )
+.plotRecruitmentResidual( M )
+
+
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
 # |----------------------------------------------------------------------------------|
@@ -129,4 +154,4 @@ guiView  <- function()
 	save(mse.DF,file=paste0(.MSELIB,"MSE.Rdata"))
 }
 
-cat("Type: \n guiView()\n to start the iSCAM gui")
+cat("Type: \n guiView()\n to start the iSCAM gui\n")
