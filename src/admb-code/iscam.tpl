@@ -2558,9 +2558,9 @@ FUNCTION calcComposition
 	  			dvar_vector pred_ca = ca * age_age(e);
 	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
 	  			if( n_A_nage(kk) < nage )
-					{
-						A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
-					}
+				{
+					A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
+				}
 	  		}
 	  		else
 	  		{
@@ -3167,6 +3167,9 @@ FUNCTION calcObjectiveFunction
 				{
 					O(ii) = d3_A_obs(k)(i).sub(n_A_sage(k),n_A_nage(k));
 					P(ii) = A_hat(k)(i).sub(n_A_sage(k),n_A_nage(k));
+					COUT(O(ii));
+					COUT(P(ii));
+					exit(1);
 					ii ++;
 				}
 				//if( iyr <= nyr ) naa++;
