@@ -16,6 +16,12 @@
 namespace acl
 {
 
+	/**
+	 * @brief Base class for composition likelihoods.
+	 * @details Virtual methods for negative loglikelihood and standardized residuals.
+	 * 
+	 * @tparam T [description]
+	 */
 	template<class T>
 	class compositionLikelihoods
 	{
@@ -28,17 +34,35 @@ namespace acl
 		T m_O;  		/// observed composition object
 
 	public:
+		// constructors
+		compositionLikelihoods(){}
+		compositionLikelihoods(const T& _O)
+		:m_O(_O)
+		{
+			r1 = m_O.rowmin();
+			r2 = m_O.rowmax();
+			c1 = m_O.colmin();
+			c2 = m_O.colmax();
+		}
+
+		// virtual methods
+		virtual ~compositionLikelihoods(){};
 		virtual const T nloglike(const T & _O) const = 0;
 		virtual const T residual(const T & _O) const = 0;
-		virtual ~compositionLikelihoods(){};
 		
+		// getters & setters
 		void set_O(T & O) { this -> m_O = O; }
 		T    get_O() const{ return m_O;      }
 
+		// methods
 		void tail_compression_indexes();
+
 	};
 
-	void acl::test();
+	// void comtail_compression_indexes()
+	// {
+
+	// }
 	
 
 
@@ -64,7 +88,8 @@ namespace acl
 	 	T m_P; 		/// predicted composition object.
 
 	 public:
-	 	multivariteLogistic(T _P): m_P(_P) {}
+	 	multivariteLogistic(T &_O, T &_P)
+	 	:compositionLikelihoods(_O),m_P(_P) {}
 
 	 	const T nloglike(const T &O) const
 	 	{
