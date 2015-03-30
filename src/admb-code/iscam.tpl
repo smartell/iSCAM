@@ -1292,12 +1292,13 @@ DATA_SECTION
 	// | ilvec[2]       -> number of surveys       (nItNobs)
 	// | ilvec[3]       -> number of age-compisition data sets (nAgears)
 	// | ilvec[4]       -> container for recruitment deviations.
-	ivector ilvec(1,7);
+	ivector ilvec(1,8);
 	!! ilvec    = ngear;
 	!! ilvec(1) = 1;			
 	!! ilvec(2) = nItNobs;			
-	!! ilvec(3) = nAgears;		
-	!! ilvec(4) = ngroup;
+	!! ilvec(3) = nItNobs;			
+	!! ilvec(4) = nAgears;		
+	!! ilvec(5) = ngroup;
 	
 
 	// |---------------------------------------------------------------------------------|
@@ -1409,29 +1410,16 @@ DATA_SECTION
 	// | MANAGEMENT STRATEGY EVALUATION INPUTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	
-
-	//LOC_CALCS
-	//	ifstream ifile("Halibut2012.mse");
-	//	if(ifile)
-	//	{
-	//		cout<<"Vader is happy"<<endl;
-	//		readMseInputs();
-	//		
-	//		
-	//		exit(1);
-	//	}
-	//END_CALCS
 
 
-	// END OF DATA_SECTION
-	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 	// |--------------------------------------|
 	// | Friend Class Operating Model for MSE |
 	// |--------------------------------------|
 	friend_class OperatingModel;
 	
+	// END OF DATA_SECTION
+	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 INITIALIZATION_SECTION
   theta theta_ival;
@@ -1516,7 +1504,6 @@ PARAMETER_SECTION
 	// | - If in simulation mode then initialize with F=0.1; Actual F is conditioned on 
 	// |   the observed catch.
 	// |
-	
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
@@ -1563,6 +1550,7 @@ PARAMETER_SECTION
 	// | 
 	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
 
+
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
 	// |---------------------------------------------------------------------------------|
@@ -1587,7 +1575,6 @@ PARAMETER_SECTION
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
 	objective_function_value objfun;
-	
 
     // |---------------------------------------------------------------------------------|
     // | POPULATION VARIABLES
@@ -1666,7 +1653,7 @@ PARAMETER_SECTION
 	matrix      rt(1,ngroup,syr+sage,nyr); 
 	matrix   delta(1,ngroup,syr+sage,nyr);
 
-
+	
 	// |---------------------------------------------------------------------------------|
 	// | THREE DIMENSIONAL ARRAYS
 	// |---------------------------------------------------------------------------------|
@@ -1728,7 +1715,7 @@ PRELIMINARY_CALCS_SECTION
 	// | - nf is a function evaluation counter.
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
-
+  
   nf=0;
 	if( testMSY )
 	{
