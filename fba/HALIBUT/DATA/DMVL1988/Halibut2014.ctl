@@ -113,10 +113,10 @@
 ##      2 = RANDOM WALK Q  (use prior mean & sd for penalized random walk)
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 2	     				# -number of surveys (n_it_nobs) 
- 1   1					# -QTYPE (see legend above)
+ 2   2					# -QTYPE (see legend above)
  0   0					# -prior log(mean)
  0   0					# -prior sd (set to 0 for uniformative prior)
--2  -2                  # -Estimation phase
+ 1   1                  # -Estimation phase
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ##
 
