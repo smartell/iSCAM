@@ -1561,7 +1561,7 @@ PARAMETER_SECTION
 	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
 	// |---------------------------------------------------------------------------------|
 	// | 
-	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.1,5.0,q_phz);
+	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
 
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
@@ -2864,7 +2864,6 @@ FUNCTION calcSurveyObservations
 				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(iz) );
 				for(ii=iz+1; ii<=nz; ii++)
 				{
-					COUT(ii);
 					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(ii));
 				}
 				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
@@ -2874,13 +2873,12 @@ FUNCTION calcSurveyObservations
 		}
 
 		// Standardized observation error residuals.
-		COUT(qt);
 		epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
 
 		// Standardized process error residuals.
 		if(active(log_q_devs(kk)))
 		{
-			dvar_vector fd_qt = first_difference( log(qt(kk)(iz,nz)) );
+			dvar_vector fd_qt = first_difference( log_q_devs(kk)(iz,nz) );
 			xi(kk).sub(iz,nz-1) = elem_div(fd_qt,it_log_pe(kk)(iz,nz-1));
 		}
 
@@ -3139,7 +3137,7 @@ FUNCTION calcObjectiveFunction
 		// }
 		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(2,k)=dnorm(xi(k),1.0);
+		nlvec(2,k)+=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
