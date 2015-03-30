@@ -1656,7 +1656,7 @@ PARAMETER_SECTION
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
-	matrix   nlvec(1,7,1,ilvec);	
+	matrix   nlvec(1,8,1,ilvec);	
 	matrix epsilon(1,nItNobs,1,n_it_nobs);
 	matrix      xi(1,nItNobs,1,n_it_nobs);
 	matrix  it_hat(1,nItNobs,1,n_it_nobs);
@@ -3079,10 +3079,11 @@ FUNCTION calcObjectiveFunction
 		Likelihoods (nlvec):
 			-1) likelihood of the catch data
 			-2) likelihood of the survey abundance index
-			-3) likelihood of age composition data 
-			-4) likelihood for stock-recruitment relationship
-			-5) penalized likelihood for fishery selectivities
+			-3) likelihood component for random walk in q.
+			-4) likelihood of age composition data 
+			-5) likelihood for stock-recruitment relationship
 			-6) penalized likelihood for fishery selectivities
+			-7) penalized likelihood for fishery selectivities
   		
   	
   	TODO list:
@@ -3137,7 +3138,7 @@ FUNCTION calcObjectiveFunction
 		// }
 		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(2,k)+=dnorm(xi(k),1.0);
+		nlvec(3,k)=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3196,19 +3197,19 @@ FUNCTION calcObjectiveFunction
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 2:
-					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
-						nlvec(3,k)  = cLN_Age();	
+						nlvec(4,k)  = cLN_Age();	
 					}
 					else
 					{
-						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
+						nlvec(4,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
 
 					// Residual
@@ -3223,11 +3224,11 @@ FUNCTION calcObjectiveFunction
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
 					}
 					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
 					}
 
 					// Residual
@@ -3242,11 +3243,11 @@ FUNCTION calcObjectiveFunction
 				case 5: // Logistic-normal with student-t
 					if( !active(log_degrees_of_freedom(k)) )
 					{
-						nlvec(3,k) = cLST_Age();
+						nlvec(4,k) = cLST_Age();
 					}
 					else
 					{
-						nlvec(3,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
+						nlvec(4,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
 					}
 
 					// Residual
@@ -3257,10 +3258,10 @@ FUNCTION calcObjectiveFunction
 					}
 				break;
 				case 6: // Multinomial with estimated effective sample size.
-					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+					nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 				break; 
 				case 7: // Multivariate-t 
-					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
+					nlvec(4,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
 					                                       log_degrees_of_freedom(k),
 					                                       phi1(k),nu);
 					age_tau2(k) = exp(value(log_age_tau2(k)));
@@ -3292,7 +3293,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),sigma_r(g));
+			nlvec(5,g) = dnorm(delta(g),sigma_r(g));
 		}
 	}
 
@@ -3322,12 +3323,12 @@ FUNCTION calcObjectiveFunction
 				{
 					//curvature in selectivity parameters
 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(ig)(i)));
-					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
+					nlvec(6,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,ig,i,j)>log_sel(k,ig,i,j+1))
-							nlvec(6,k)+=lambda_2(k)
+							nlvec(7,k)+=lambda_2(k)
 										*square( log_sel(k,ig,i,j)-log_sel(k,ig,i,j+1) );
 				}
 				}
@@ -3348,7 +3349,7 @@ FUNCTION calcObjectiveFunction
 				for(j=sage;j<=nage;j++)
 				{
 					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
-					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
+					nlvec(8,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
 				}
 				}
 			}
