@@ -1233,6 +1233,7 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
+	init_ivector q_phz(1,nits);
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -1560,7 +1561,7 @@ PARAMETER_SECTION
 	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
 	// |---------------------------------------------------------------------------------|
 	// | 
-	init_bounded_matrix log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,-1);
+	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.1,5.0,q_phz);
 
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
@@ -1876,7 +1877,7 @@ FUNCTION void initParameters()
 	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6);
-  sigma_r   = theta(7);
+	sigma_r   = theta(7);
 	//varphi    = sqrt(1.0/theta(7));
 	sig       = elem_prod(sqrt(rho) , varphi);
 	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
@@ -1966,23 +1967,7 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 	//return(1.0*la);
   }
 
-// FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
-//   {
-// 	RETURN_ARRAYS_INCREMENT();
-// 	int nodes= spline_coffs.colmax()-spline_coffs.colmin()+1;
-// 	int rmin = spline_coffs.rowmin();
-// 	int rmax = spline_coffs.rowmax();
-	
-// 	dvector ia(1,nodes);
-// 	dvector fa(sage,nage);
-// 	ia.fill_seqadd(0,1./(nodes-1));
-// 	//fa.fill_seqadd(sage,1);
-// 	fa.fill_seqadd(0,1./(nage-sage));
-// 	vcubic_spline_function_array fna(rmin,rmax,ia,spline_coffs);
-// 	RETURN_ARRAYS_DECREMENT();
-// 	return(fna(fa));
-	
-//   }
+
 
 
   	/**
@@ -2767,6 +2752,7 @@ FUNCTION calcTotalCatch
   		fishery that would remove potential spawn that would not be surveyed.
   		- d3_survey_data: (iyr index(it) gear area group sex wt timing)
   		- for MLE of survey q, using weighted mean of zt to calculate q.
+		- March 30, 2015.  Added deviation in q for random walk.
 
   	TODO list:
   	    [] - add capability to accomodate priors for survey q's.
@@ -2779,11 +2765,12 @@ FUNCTION calcSurveyObservations
 	
 	int ii,kk,ig,nz;
 	double di;
-	dvariable ftmp;
+	dvariable ftmp,zbar;
 	dvar_vector Na(sage,nage);
 	dvar_vector va(sage,nage);
 	dvar_vector sa(sage,nage);
 	epsilon.initialize();
+	qt.initialize();
 	xi.initialize();
 	it_hat.initialize();
 
@@ -2845,42 +2832,87 @@ FUNCTION calcSurveyObservations
 
 
 		dvar_vector t1 = rowsum(V);
-		dvar_vector zt = log(it) - log(t1(iz,nz));
-		dvariable zbar = sum(elem_prod(zt,wt));
-				 q(kk) = mfexp(zbar);
+		dvar_vector zt = log(it);
+		
 
-		// | survey residuals
-		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
-		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
-
-		// | SPECIAL CASE: penalized random walk in q process error only.
-		if( q_prior(kk)==2 )
+		// | March 30, 2015. Issue #37.
+		// | Added switch for 3 q_prior(kk) options.
+		// | 	q_prior(kk) = 0 = constant fixed Q
+		// | 	q_prior(kk) = 1 = constant MLE Q
+		// | 	q_prior(kk) = 2 = penalized random walk in Q
+		switch( q_prior(kk) )
 		{
-			epsilon(kk).initialize();
-			dvar_vector fd_zt     = first_difference(zt);
-			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
-			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
-			qt(kk)(iz) = exp(zt(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
-			}
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			case 0:		// Constant fixed Q
+				q(kk)                  = exp(mu_log_q(kk));
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -=  log(it_hat(kk).sub(iz,nz));
+			break;
+
+			case 1:		// Constant MLE Q
+				zt                     -= log(t1(iz,nz));
+				zbar                   = sum(elem_prod(zt,wt));
+				q(kk)                  = mfexp(zbar);
+				
+				// | survey residuals
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -= zbar;
+				//epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
+
+			case 2: 	// Penalized random walk in Q
+				zt     -= log(t1(iz,nz));
+				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(iz) );
+				for(ii=iz+1; ii<=nz; ii++)
+				{
+					COUT(ii);
+					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(ii));
+				}
+				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+				zt -= log(qt(kk)(iz,nz));
+				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
 		}
 
-		// | MIXED ERROR MODEL for random walk in q
-		if( q_prior(kk)==3 )
+		// Standardized observation error residuals.
+		COUT(qt);
+		epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+
+		// Standardized process error residuals.
+		if(active(log_q_devs(kk)))
 		{
-			dvar_vector proerr = zt - zbar;
-			qt(kk)(ii) = exp(zbar + proerr(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				proerr(ii) = zt(ii) - zt(ii-1);
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
-			}
-			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			dvar_vector fd_qt = first_difference( log(qt(kk)(iz,nz)) );
+			xi(kk).sub(iz,nz-1) = elem_div(fd_qt,it_log_pe(kk)(iz,nz-1));
 		}
+
+//       TO BE DEPRECATED
+//		// | SPECIAL CASE: penalized random walk in q process error only.
+//		if( q_prior(kk)==2 )
+//		{
+//			epsilon(kk).initialize();
+//			dvar_vector fd_zt     = first_difference(zt);
+//			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
+//			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
+//			qt(kk)(iz) = exp(zt(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
+//			}
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
+//
+//		// | MIXED ERROR MODEL for random walk in q
+//		if( q_prior(kk)==3 )
+//		{
+//			dvar_vector proerr = zt - zbar;
+//			qt(kk)(ii) = exp(zbar + proerr(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				proerr(ii) = zt(ii) - zt(ii-1);
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
+//			}
+//			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
 	}
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
@@ -3419,7 +3451,7 @@ FUNCTION calcObjectiveFunction
 	qvec.initialize();
 	for(k=1;k<=nits;k++)
 	{
-		if(q_prior(k) == 1 )
+		if(q_prior(k) == 1 && sd_log_q(k) != 0 )
 		{
 			qvec(k) = dnorm( log(q(k)), mu_log_q(k), sd_log_q(k) );
 		}
