@@ -3144,6 +3144,15 @@ FUNCTION calcObjectiveFunction
 	// | TODO:
 	// | [ ] - change A_nu to data-type variable, does not need to be differentiable.
 	// | [ ] - issue 29. Fix submatrix O, P for prospective analysis & sex/area/group.
+
+	// Testing new abstract compositionLikelihood class.
+
+	acl::compositionLikelihoods<dvar_matrix> *ptr_AgeCompLike;
+
+
+	// delete *ptr_AgeComeLike;
+
+
 	A_nu.initialize();
 	for(k=1;k<=nAgears;k++)
 	{	
@@ -3167,14 +3176,13 @@ FUNCTION calcObjectiveFunction
 				{
 					O(ii) = d3_A_obs(k)(i).sub(n_A_sage(k),n_A_nage(k));
 					P(ii) = A_hat(k)(i).sub(n_A_sage(k),n_A_nage(k));
-					COUT(O(ii));
-					COUT(P(ii));
-					exit(1);
 					ii ++;
 				}
 				//if( iyr <= nyr ) naa++;
 				//if( iyr <  syr ) iaa++;
 			}
+	ptr_AgeCompLike = new acl::multivariteLogistic<dvar_matrix>(O,P); 
+	dvar_matrix ell = ptr_AgeCompLike->nloglike(P);
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
