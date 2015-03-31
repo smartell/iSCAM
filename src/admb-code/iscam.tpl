@@ -3147,7 +3147,7 @@ FUNCTION calcObjectiveFunction
 
 	// Testing new abstract compositionLikelihood class.
 
-	acl::compositionLikelihoods<dvar_matrix> *ptr_AgeCompLike;
+	acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike;
 
 
 	// delete *ptr_AgeComeLike;
@@ -3181,8 +3181,8 @@ FUNCTION calcObjectiveFunction
 				//if( iyr <= nyr ) naa++;
 				//if( iyr <  syr ) iaa++;
 			}
-	ptr_AgeCompLike = new acl::multivariteLogistic<dvar_matrix>(O,P); 
-	dvar_matrix ell = ptr_AgeCompLike->nloglike(P);
+	ptr_AgeCompLike = new acl::multivariteLogistic<dmatrix,dvar_matrix>(O,P); 
+	//dvar_matrix ell = ptr_AgeCompLike->nloglike(P);
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
