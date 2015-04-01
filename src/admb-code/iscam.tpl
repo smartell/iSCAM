@@ -3183,7 +3183,7 @@ FUNCTION calcObjectiveFunction
 			}
 	ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P); 
 	dvariable ell = ptr_AgeCompLike->nloglike();
-	COUT(ell);
+	//COUT(ell);
 
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
@@ -3198,6 +3198,7 @@ FUNCTION calcObjectiveFunction
 			{
 				case 1:
 					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
 				break;
 				case 2:
 					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));

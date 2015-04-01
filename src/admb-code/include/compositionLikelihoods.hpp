@@ -16,53 +16,6 @@
 namespace acl
 {
 
-	// template<class T>
-	// inline
-	// const T tailCompression(const T &_M, const double pmin=0.0)
-	// {
-	// 	int r1,r2,c1,c2;
-	// 	r1 = _M.rowmin();
-	// 	r2 = _M.rowmax();
-	// 	c1 = _M.colmin();
-	// 	c2 = _M.colmax();
-
-	// 	ivector jmin(r1,r2);
-	// 	ivector jmax(r1,r2);
-	// 	for(int i = r1; i <= r2; i++ )
-	// 	{				
-	// 		auto o = _M(i);
-
-	// 		jmin(i) = c1+1;			// index for min column
-	// 		jmax(i) = c2;			// index for max column
-	// 		auto cumsum = o/sum(o);
-	// 		for(int j = c1+1; j <= c2; j++ )
-	// 		{
-	// 			 cumsum(j) += cumsum(j-1);
-	// 			 cumsum(j) <= pmin ? jmin(i)++ : NULL;
-	// 			 j != c2 ? 1.0 - cumsum(j) < pmin ? jmax(i)-- : NULL : NULL;
-	// 		}
-	// 	}
-
-	// 	// Now compress the matrix.
-	// 	T M_;
-	// 	T M = _M;
-	// 	M_.allocate(r1,r2,jmin,jmax);
-	// 	M_.initialize();
-
-	// 	// fill ragged array M_
-	// 	for(int i = r1; i <= r2; i++ )
-	// 	{
-	// 		M(i) /= sum(M(i));
-	// 		M_(i)(jmin(i),jmax(i)) = M(i)(jmin(i),jmax(i));
-
-	// 		// add cumulative sum to tails.
-	// 		M_(i)(jmin(i)) = sum(M(i)(c1,jmin(i)));
-	// 		M_(i)(jmax(i)) = sum(M(i)(jmax(i),c2));
-	// 	}
-	// 	return M_;
-
-	// }
-
 	/**
 	 * @brief Base class for composition likelihoods.
 	 * @details Virtual methods for negative loglikelihood and standardized residuals.
@@ -248,7 +201,7 @@ namespace acl
 
 	 	const DVAR residual() const
 	 	{
-	 		return acl::dmvlogisticResidual(this->get_O(), this->get_P());
+	 		return this->get_nu();
 	 	}
 	 	
 	 	DATA get_rO() const {return m_rO; }
