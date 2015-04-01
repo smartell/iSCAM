@@ -31,9 +31,14 @@ namespace acl
 		int c1,c2;		/// index for rist and last column.
 		ivector m_jmin; /// index for ragged start columns.
 		ivector m_jmax;	/// index for ragged end columns.
+		imatrix m_jagg; /// index for aggregation among bins.
 
 		DATA m_O;  		/// observed composition object
+		DATA m_rO; 		/// observed ragged composition object
+
 		DVAR m_P;       /// predicted composition object
+		DVAR m_rP;      /// predicted ragged composition object
+
 
 	public:
 		// constructors
@@ -57,12 +62,13 @@ namespace acl
 		// virtual methods
 		inline
 		const DATA tailCompression(const DATA &_M) const;
-		// inline
-		// const DVAR tailCompression(const DVAR &_M) const;
-
+		
 		// methods
 		inline
 		void getRaggedVectors(double pmin = 0.0);
+
+		inline
+		void aggregate(const double pmin = 0.0);
 
 		// getters & setters
 		void set_O(DATA & O) { this -> m_O = O; }
@@ -70,6 +76,13 @@ namespace acl
 
 	 	DVAR get_P() const  {return m_P; }
 	 	void set_P(DVAR &P) {this->m_P=P;}
+
+	 	DATA get_rO() const {return m_rO; }
+	 	void set_rO(DATA &X){this->m_rO=X;}
+
+	 	DVAR get_rP() const {return m_rP; }
+	 	void set_rP(DVAR &X){this->m_rP=X;}
+
 
 		template <typename T>
 		inline
@@ -95,6 +108,44 @@ namespace acl
 	
 	};
 
+	template<class DATA, class DVAR>
+	inline
+	void acl::negLogLikelihood<DATA,DVAR>::aggregate(const double pmin)
+	{
+		m_jmin.allocate(r1,r2);
+		m_jmax.allocate(r1,r2);
+		ivector n(r1,r2);
+		n.initialize();
+
+		// get number of observations > pmin each year.		
+		for(int i = r1; i <= r2; i++ )
+		{
+			dvector oo = m_O(i)/sum(m_O(i));
+			for(int j = c1; j <= c2; j++ )
+			{
+				if( oo(j) > pmin ) n(i)++;
+			}		
+		}
+
+		m_rO.allocate(r1,r2,1,n);
+		m_rP.allocate(r1,r2,1,n);
+		m_rO.initialize();
+		m_rP.initialize();
+
+		for(int i = r1; i <= r2; i++ )
+		{
+			int k = 1;
+			dvector     oo = m_O(i)/sum(m_O(i));
+			dvar_vector pp = m_P(i)/sum(m_P(i));
+			for(int j = c1; j <= c2; j++ )
+			{
+				m_rO(i)(k) += oo(j);
+				m_rP(i)(k) += pp(j);
+				if( oo(j)>pmin && k<n(i)) k++;
+			}		
+		}
+	}
+
 	/**
 	 * @brief Get column indicies for each row to compress matrix into ragged array.
 	 * @details Determine the start and end positions of each row in which to compute
@@ -109,7 +160,7 @@ namespace acl
 	{
 		m_jmin.allocate(r1,r2);
 		m_jmax.allocate(r1,r2);
-
+		
 		for(int i = r1; i <= r2; i++ )
 		{				
 			dvector o = m_O(i);
@@ -119,18 +170,36 @@ namespace acl
 			dvector cumsum = o/sum(o);
 			for(int j = c1; j < c2; j++ )
 			{
-				 cumsum(j) <= pmin ? m_jmin(i)++ : NULL;
-				 j != c2 ? 1.0 - cumsum(j) <= pmin ? m_jmax(i)-- : NULL : NULL;
-				 
-				 cumsum(j+1) += cumsum(j);
+				// min bin and plus bin column index.
+				 cumsum(j)       <= pmin ? m_jmin(i)++ : NULL;
+				 1.0 - cumsum(j) <= pmin ? m_jmax(i)-- : NULL;
+				 cumsum(j+1)     += cumsum(j);
+
+				 // o(j) > pmin ? n(i)++ : NULL;
 			}
 		}
+		
 	}
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// |--------------------------------------------------------------------------------|
 	// | MULTIVARIATE LOGISTIC NEGATIVE LOGLIKELIHOOD derived class                     |
 	// |--------------------------------------------------------------------------------|
+	
 	/**
 	 * @brief multivariate logistic negative log likelihood
 	 * @details The negative log likeihood for the multivariate 
@@ -178,19 +247,22 @@ namespace acl
 	 public:
 	 	// constructor
 	 	// todo: add eps value to constructor.
-	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=1.e-8)
+	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=1.e-3)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
 	 		// tail compression
 	 		DATA tmp = this->compress(this->get_O()) + eps;
-	 		set_rO(tmp);
+	 		this->set_rO(tmp);
 	 		DVAR vmp = this->compress(this->get_P()) + eps;
-	 		set_rP(vmp);
+	 		this->set_rP(vmp);
+
 
 
 	 		// residuals
+	 		this->aggregate(eps);
 	 		DVAR tnu = acl::dmvlogisticResidual(this->get_rO(),this->get_rP());
 	 		set_nu(tnu);
+
 	 	}
 
 
@@ -204,12 +276,8 @@ namespace acl
 	 		return this->get_nu();
 	 	}
 	 	
-	 	DATA get_rO() const {return m_rO; }
-	 	DVAR get_rP() const {return m_rP; }
 	 	DVAR get_nu() const {return m_nu; }
 
-	 	void set_rO(DATA &X){this->m_rO=X;}
-	 	void set_rP(DVAR &X){this->m_rP=X;}
 	 	void set_nu(DVAR &R){this->m_nu=R;}
 
 	 };

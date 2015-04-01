@@ -3181,7 +3181,7 @@ FUNCTION calcObjectiveFunction
 				//if( iyr <= nyr ) naa++;
 				//if( iyr <  syr ) iaa++;
 			}
-	ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P); 
+	ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
 	dvariable ell = ptr_AgeCompLike->nloglike();
 	//COUT(ell);
 
