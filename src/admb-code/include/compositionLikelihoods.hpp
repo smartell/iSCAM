@@ -230,9 +230,10 @@ namespace acl
 	 	{
 	 		// tail compression
 	 		DATA tmp = this->compress(this->get_O());
-	 		set_rO(tmp);
+	 		set_rO(tmp+eps);
 	 		DVAR vmp = this->compress(this->get_P());
-	 		set_rP(vmp);
+	 		set_rP(vmp+eps);
+
 
 	 		// residuals
 	 		DVAR tnu = acl::dmvlogisticResidual(this->get_rO(),this->get_rP());
