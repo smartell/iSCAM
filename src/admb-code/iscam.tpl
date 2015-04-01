@@ -3181,9 +3181,9 @@ FUNCTION calcObjectiveFunction
 				//if( iyr <= nyr ) naa++;
 				//if( iyr <  syr ) iaa++;
 			}
-	ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
-	dvariable ell = ptr_AgeCompLike->nloglike();
-	//COUT(ell);
+	
+	
+
 
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
@@ -3197,8 +3197,10 @@ FUNCTION calcObjectiveFunction
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
-					cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
+					//nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					//cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
+					ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
+					nlvec(4,k) = ptr_AgeCompLike->nloglike();
 				break;
 				case 2:
 					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));

@@ -12,6 +12,7 @@
  * @date   Feb 10, 2014
  * @title Selectivity functions
  * @details  Uses abstract base class for computing negative loglikelihoods
+ * TODO:  Still need to fix templates so it works with df1b2variables.
  */
 namespace acl
 {
