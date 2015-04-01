@@ -80,12 +80,13 @@ namespace acl
 		ivector m_jmax;	/// index for ragged end columns.
 
 		DATA m_O;  		/// observed composition object
+		DVAR m_P;       /// predicted composition object
 
 	public:
 		// constructors
 		negLogLikelihood(){}
-		negLogLikelihood(const DATA& _O)
-		:m_O(_O)
+		negLogLikelihood(const DATA& _O, const DVAR& _P)
+		:m_O(_O), m_P(_P)
 		{
 			r1 = m_O.rowmin();
 			r2 = m_O.rowmax();
@@ -97,12 +98,14 @@ namespace acl
 
 		// pure virtual methods
 		virtual ~negLogLikelihood(){};
-		virtual const DVAR nloglike(const DVAR & _P) const = 0;
-		virtual const DVAR residual(const DVAR & _P) const = 0;
+		virtual const dvariable nloglike() const = 0;
+		virtual const DVAR      residual() const = 0;
 		
 		// virtual methods
 		inline
 		const DATA tailCompression(const DATA &_M) const;
+		// inline
+		// const DVAR tailCompression(const DVAR &_M) const;
 
 		// methods
 		inline
@@ -111,29 +114,33 @@ namespace acl
 		// getters & setters
 		void set_O(DATA & O) { this -> m_O = O; }
 		DATA get_O()    const{ return m_O;      }
+
+	 	DVAR get_P() const  {return m_P; }
+	 	void set_P(DVAR &P) {this->m_P=P;}
+
+		template <typename T>
+		inline
+		const T compress(const T& _M) const
+		{
+			T R;
+			T M = _M;
+			R.allocate(r1,r2,m_jmin,m_jmax);
+			R.initialize();
+			// fill ragged array R
+			for(int i = r1; i <= r2; i++ )
+			{
+				M(i) /= sum(M(i));
+				R(i)(m_jmin(i),m_jmax(i)) = M(i)(m_jmin(i),m_jmax(i));
+
+				// add cumulative sum to tails.
+				R(i)(m_jmin(i)) = sum(M(i)(c1,m_jmin(i)));
+				R(i)(m_jmax(i)) = sum(M(i)(m_jmax(i),c2));
+			}
+			
+			return R;
+		}
 	
 	};
-
-	template<class DATA, class DVAR>
-	inline
-	const DATA acl::negLogLikelihood<DATA,DVAR>::tailCompression(const DATA &_M) const
-	{
-		DATA R;
-		DATA M;
-		R.allocate(r1,r2,m_jmin,m_jmax);
-		R.initialize();
-		// fill ragged array R
-		for(int i = r1; i <= r2; i++ )
-		{
-			M(i) /= sum(M(i));
-			R(i)(m_jmin(i),m_jmax(i)) = M(i)(m_jmin(i),m_jmax(i));
-
-			// add cumulative sum to tails.
-			R(i)(m_jmin(i)) = sum(M(i)(c1,m_jmin(i)));
-			R(i)(m_jmax(i)) = sum(M(i)(m_jmax(i),c2));
-		}
-		return R;
-	}
 
 	/**
 	 * @brief Get column indicies for each row to compress matrix into ragged array.
@@ -154,28 +161,35 @@ namespace acl
 		{				
 			dvector o = m_O(i);
 
-			m_jmin(i) = c1+1;			// index for min column
+			m_jmin(i) = c1;			// index for min column
 			m_jmax(i) = c2;			// index for max column
 			dvector cumsum = o/sum(o);
-			for(int j = c1+1; j <= c2; j++ )
+			for(int j = c1; j < c2; j++ )
 			{
-				 cumsum(j) += cumsum(j-1);
 				 cumsum(j) <= pmin ? m_jmin(i)++ : NULL;
-				 j != c2 ? 1.0 - cumsum(j) < pmin ? m_jmax(i)-- : NULL : NULL;
+				 j != c2 ? 1.0 - cumsum(j) <= pmin ? m_jmax(i)-- : NULL : NULL;
+				 
+				 cumsum(j+1) += cumsum(j);
 			}
 		}
-
 	}
 	
 
 	// |--------------------------------------------------------------------------------|
 	// | MULTIVARIATE LOGISTIC NEGATIVE LOGLIKELIHOOD derived class                     |
 	// |--------------------------------------------------------------------------------|
-	template<class DATA, class DVAR>
+	template<class T,class DATA, class DVAR>
 	inline
-	const DVAR dmvlogistic(const DATA& O, const DVAR& P)
+	const T dmvlogistic(const DATA& O, const DVAR& P)
 	{
-		DVAR nll;
+		T nll;
+		// nll.allocate(P);
+		// int i;
+		// for( i = O.rowmin(); i<= O.rowmax(); i++)
+		// {
+		// 	nll(i) = log(O(i)) - log(P(i));
+		// 	nll(i) -= mean(nll(i));
+		// }
 		return nll;
 	}
 
@@ -184,6 +198,13 @@ namespace acl
 	const DVAR dmvlogisticResidual(const DATA& O, const DVAR& P)
 	{
 		DVAR nu;
+		nu.allocate(P);
+		int i;
+		for( i = O.rowmin(); i<= O.rowmax(); i++)
+		{
+			nu(i) = log(O(i)) - log(P(i));
+			nu(i) -= mean(nu(i));
+		}
 		return nu;
 	}
 
@@ -196,26 +217,40 @@ namespace acl
 	 class multivariteLogistic: public negLogLikelihood<DATA,DVAR>
 	 {
 	 private:
-	 	DVAR m_P; 		/// predicted composition object.
+	 	DVAR m_rO; 		/// ragged observed  composition object.
+	 	DVAR m_rP; 		/// ragged predicted composition object.
+	 	DVAR m_nu;		/// logistic residuals.
 
 	 public:
 	 	// constructor
+	 	// todo: add eps value to constructor.
 	 	multivariteLogistic(const DATA &_O, const DVAR &_P)
-	 	:negLogLikelihood<DATA,DVAR>(_O),m_P(_P) {}
-
-	 	const DVAR nloglike(const DVAR &P) const
+	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
-	 		//DATA rO = tailCompression(this->get_O);
-	 		return acl::dmvlogistic(this->get_O(), this->get_P());
+	 		DATA tmp = this->compress(this->get_O());
+	 		cout<<tmp<<endl;
+	 		// m_rP = this->compress(_P);
+	 		// m_nu = acl::dmvlogisticResidual(m_rO,m_rP);
 	 	}
 
-	 	const DVAR residual(const DVAR &P) const
+
+	 	const dvariable nloglike() const
+	 	{
+	 		// DATA rO = this->compress(this->get_O());
+	 		// DVAR rP = this->compress(this->get_P());
+	 		// m_nu  = acl::dmvlogisticResidual(rO,rP);
+	 		// return acl::dmvlogistic<dvariable,DATA,DVAR>(rO, rP);
+	 		return 0;
+	 	}
+
+	 	const DVAR residual() const
 	 	{
 	 		return acl::dmvlogisticResidual(this->get_O(), this->get_P());
 	 	}
 	 	
-	 	DVAR get_P() const {return m_P; }
-	 	void set_P(DVAR P) {this->m_P=P;}
+
+	 	DVAR get_nu() const {return m_nu; }
+	 	void set_nu(DVAR &R){this->m_nu=R;}
 
 	 };
 

@@ -3182,7 +3182,9 @@ FUNCTION calcObjectiveFunction
 				//if( iyr <  syr ) iaa++;
 			}
 	ptr_AgeCompLike = new acl::multivariteLogistic<dmatrix,dvar_matrix>(O,P); 
-	//dvar_matrix ell = ptr_AgeCompLike->nloglike(P);
+	dvariable ell = ptr_AgeCompLike->nloglike();
+	COUT(ell);
+
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
