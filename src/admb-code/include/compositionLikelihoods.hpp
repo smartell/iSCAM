@@ -212,8 +212,9 @@ namespace acl
 	inline
 	const T dmvlogistic(const DVAR& NU)
 	{
-		T var = 1.0/size_count(NU)*norm2(NU);
-		return size_count(NU) * log(var);
+		int n = size_count(NU) - (NU.rowmax()-NU.rowmin()+1);
+		T var = 1.0/n * norm2(NU);
+		return n * log(var);
 	}
 
 	template<class DATA, class DVAR>
