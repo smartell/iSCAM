@@ -1233,6 +1233,7 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
+	init_ivector q_phz(1,nits);
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -1291,12 +1292,13 @@ DATA_SECTION
 	// | ilvec[2]       -> number of surveys       (nItNobs)
 	// | ilvec[3]       -> number of age-compisition data sets (nAgears)
 	// | ilvec[4]       -> container for recruitment deviations.
-	ivector ilvec(1,7);
+	ivector ilvec(1,8);
 	!! ilvec    = ngear;
 	!! ilvec(1) = 1;			
 	!! ilvec(2) = nItNobs;			
-	!! ilvec(3) = nAgears;		
-	!! ilvec(4) = ngroup;
+	!! ilvec(3) = nItNobs;			
+	!! ilvec(4) = nAgears;		
+	!! ilvec(5) = ngroup;
 	
 
 	// |---------------------------------------------------------------------------------|
@@ -1408,29 +1410,16 @@ DATA_SECTION
 	// | MANAGEMENT STRATEGY EVALUATION INPUTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	
-
-	//LOC_CALCS
-	//	ifstream ifile("Halibut2012.mse");
-	//	if(ifile)
-	//	{
-	//		cout<<"Vader is happy"<<endl;
-	//		readMseInputs();
-	//		
-	//		
-	//		exit(1);
-	//	}
-	//END_CALCS
 
 
-	// END OF DATA_SECTION
-	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 	// |--------------------------------------|
 	// | Friend Class Operating Model for MSE |
 	// |--------------------------------------|
 	friend_class OperatingModel;
 	
+	// END OF DATA_SECTION
+	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 INITIALIZATION_SECTION
   theta theta_ival;
@@ -1515,7 +1504,6 @@ PARAMETER_SECTION
 	// | - If in simulation mode then initialize with F=0.1; Actual F is conditioned on 
 	// |   the observed catch.
 	// |
-	
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
@@ -1557,6 +1545,13 @@ PARAMETER_SECTION
 	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
 
 	// |---------------------------------------------------------------------------------|
+	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
+	// |---------------------------------------------------------------------------------|
+	// | 
+	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
+
+
+	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
 	// |---------------------------------------------------------------------------------|
 	// | log_age_tau2 is the variance of the composition errors.
@@ -1580,7 +1575,6 @@ PARAMETER_SECTION
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
 	objective_function_value objfun;
-	
 
     // |---------------------------------------------------------------------------------|
     // | POPULATION VARIABLES
@@ -1630,7 +1624,7 @@ PARAMETER_SECTION
 	vector  varphi(1,ngroup);
 	vector     sig(1,ngroup);	
 	vector     tau(1,ngroup);
-  vector sigma_r(1,ngroup); 
+  	vector sigma_r(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1649,7 +1643,7 @@ PARAMETER_SECTION
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
-	matrix   nlvec(1,7,1,ilvec);	
+	matrix   nlvec(1,8,1,ilvec);	
 	matrix epsilon(1,nItNobs,1,n_it_nobs);
 	matrix      xi(1,nItNobs,1,n_it_nobs);
 	matrix  it_hat(1,nItNobs,1,n_it_nobs);
@@ -1659,7 +1653,7 @@ PARAMETER_SECTION
 	matrix      rt(1,ngroup,syr+sage,nyr); 
 	matrix   delta(1,ngroup,syr+sage,nyr);
 
-
+	
 	// |---------------------------------------------------------------------------------|
 	// | THREE DIMENSIONAL ARRAYS
 	// |---------------------------------------------------------------------------------|
@@ -1721,7 +1715,7 @@ PRELIMINARY_CALCS_SECTION
 	// | - nf is a function evaluation counter.
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
-
+  
   nf=0;
 	if( testMSY )
 	{
@@ -1870,7 +1864,7 @@ FUNCTION void initParameters()
 	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6);
-  sigma_r   = theta(7);
+	sigma_r   = theta(7);
 	//varphi    = sqrt(1.0/theta(7));
 	sig       = elem_prod(sqrt(rho) , varphi);
 	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
@@ -1960,23 +1954,7 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 	//return(1.0*la);
   }
 
-// FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
-//   {
-// 	RETURN_ARRAYS_INCREMENT();
-// 	int nodes= spline_coffs.colmax()-spline_coffs.colmin()+1;
-// 	int rmin = spline_coffs.rowmin();
-// 	int rmax = spline_coffs.rowmax();
-	
-// 	dvector ia(1,nodes);
-// 	dvector fa(sage,nage);
-// 	ia.fill_seqadd(0,1./(nodes-1));
-// 	//fa.fill_seqadd(sage,1);
-// 	fa.fill_seqadd(0,1./(nage-sage));
-// 	vcubic_spline_function_array fna(rmin,rmax,ia,spline_coffs);
-// 	RETURN_ARRAYS_DECREMENT();
-// 	return(fna(fa));
-	
-//   }
+
 
 
   	/**
@@ -2580,9 +2558,9 @@ FUNCTION calcComposition
 	  			dvar_vector pred_ca = ca * age_age(e);
 	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
 	  			if( n_A_nage(kk) < nage )
-					{
-						A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
-					}
+				{
+					A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
+				}
 	  		}
 	  		else
 	  		{
@@ -2761,6 +2739,7 @@ FUNCTION calcTotalCatch
   		fishery that would remove potential spawn that would not be surveyed.
   		- d3_survey_data: (iyr index(it) gear area group sex wt timing)
   		- for MLE of survey q, using weighted mean of zt to calculate q.
+		- March 30, 2015.  Added deviation in q for random walk.
 
   	TODO list:
   	    [] - add capability to accomodate priors for survey q's.
@@ -2773,11 +2752,12 @@ FUNCTION calcSurveyObservations
 	
 	int ii,kk,ig,nz;
 	double di;
-	dvariable ftmp;
+	dvariable ftmp,zbar;
 	dvar_vector Na(sage,nage);
 	dvar_vector va(sage,nage);
 	dvar_vector sa(sage,nage);
 	epsilon.initialize();
+	qt.initialize();
 	xi.initialize();
 	it_hat.initialize();
 
@@ -2839,42 +2819,85 @@ FUNCTION calcSurveyObservations
 
 
 		dvar_vector t1 = rowsum(V);
-		dvar_vector zt = log(it) - log(t1(iz,nz));
-		dvariable zbar = sum(elem_prod(zt,wt));
-				 q(kk) = mfexp(zbar);
+		dvar_vector zt = log(it);
+		
 
-		// | survey residuals
-		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
-		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
-
-		// | SPECIAL CASE: penalized random walk in q process error only.
-		if( q_prior(kk)==2 )
+		// | March 30, 2015. Issue #37.
+		// | Added switch for 3 q_prior(kk) options.
+		// | 	q_prior(kk) = 0 = constant fixed Q
+		// | 	q_prior(kk) = 1 = constant MLE Q
+		// | 	q_prior(kk) = 2 = penalized random walk in Q
+		switch( q_prior(kk) )
 		{
-			epsilon(kk).initialize();
-			dvar_vector fd_zt     = first_difference(zt);
-			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
-			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
-			qt(kk)(iz) = exp(zt(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
-			}
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			case 0:		// Constant fixed Q
+				q(kk)                  = exp(mu_log_q(kk));
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -=  log(it_hat(kk).sub(iz,nz));
+			break;
+
+			case 1:		// Constant MLE Q
+				zt                     -= log(t1(iz,nz));
+				zbar                   = sum(elem_prod(zt,wt));
+				q(kk)                  = mfexp(zbar);
+				
+				// | survey residuals
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -= zbar;
+				//epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
+
+			case 2: 	// Penalized random walk in Q
+				zt     -= log(t1(iz,nz));
+				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(iz) );
+				for(ii=iz+1; ii<=nz; ii++)
+				{
+					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(ii));
+				}
+				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+				zt -= log(qt(kk)(iz,nz));
+				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
 		}
 
-		// | MIXED ERROR MODEL for random walk in q
-		if( q_prior(kk)==3 )
+		// Standardized observation error residuals.
+		epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+
+		// Standardized process error residuals.
+		if(active(log_q_devs(kk)))
 		{
-			dvar_vector proerr = zt - zbar;
-			qt(kk)(ii) = exp(zbar + proerr(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				proerr(ii) = zt(ii) - zt(ii-1);
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
-			}
-			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			dvar_vector fd_qt = first_difference( log_q_devs(kk)(iz,nz) );
+			xi(kk).sub(iz,nz-1) = elem_div(fd_qt,it_log_pe(kk)(iz,nz-1));
 		}
+
+//       TO BE DEPRECATED
+//		// | SPECIAL CASE: penalized random walk in q process error only.
+//		if( q_prior(kk)==2 )
+//		{
+//			epsilon(kk).initialize();
+//			dvar_vector fd_zt     = first_difference(zt);
+//			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
+//			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
+//			qt(kk)(iz) = exp(zt(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
+//			}
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
+//
+//		// | MIXED ERROR MODEL for random walk in q
+//		if( q_prior(kk)==3 )
+//		{
+//			dvar_vector proerr = zt - zbar;
+//			qt(kk)(ii) = exp(zbar + proerr(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				proerr(ii) = zt(ii) - zt(ii-1);
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
+//			}
+//			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
 	}
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
@@ -3043,10 +3066,11 @@ FUNCTION calcObjectiveFunction
 		Likelihoods (nlvec):
 			-1) likelihood of the catch data
 			-2) likelihood of the survey abundance index
-			-3) likelihood of age composition data 
-			-4) likelihood for stock-recruitment relationship
-			-5) penalized likelihood for fishery selectivities
+			-3) likelihood component for random walk in q.
+			-4) likelihood of age composition data 
+			-5) likelihood for stock-recruitment relationship
 			-6) penalized likelihood for fishery selectivities
+			-7) penalized likelihood for fishery selectivities
   		
   	
   	TODO list:
@@ -3101,7 +3125,7 @@ FUNCTION calcObjectiveFunction
 		// }
 		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(2,k)=dnorm(xi(k),1.0);
+		nlvec(3,k)=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3120,6 +3144,15 @@ FUNCTION calcObjectiveFunction
 	// | TODO:
 	// | [ ] - change A_nu to data-type variable, does not need to be differentiable.
 	// | [ ] - issue 29. Fix submatrix O, P for prospective analysis & sex/area/group.
+
+	// Testing new abstract compositionLikelihood class.
+
+	acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike;
+
+
+	// delete *ptr_AgeComeLike;
+
+
 	A_nu.initialize();
 	for(k=1;k<=nAgears;k++)
 	{	
@@ -3148,6 +3181,10 @@ FUNCTION calcObjectiveFunction
 				//if( iyr <= nyr ) naa++;
 				//if( iyr <  syr ) iaa++;
 			}
+	ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
+	dvariable ell = ptr_AgeCompLike->nloglike();
+	//COUT(ell);
+
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
@@ -3160,19 +3197,20 @@ FUNCTION calcObjectiveFunction
 			switch( int(nCompLikelihood(k)) )
 			{
 				case 1:
-					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
 				break;
 				case 2:
-					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
-						nlvec(3,k)  = cLN_Age();	
+						nlvec(4,k)  = cLN_Age();	
 					}
 					else
 					{
-						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
+						nlvec(4,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
 
 					// Residual
@@ -3187,11 +3225,11 @@ FUNCTION calcObjectiveFunction
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
 					}
 					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
 					}
 
 					// Residual
@@ -3206,11 +3244,11 @@ FUNCTION calcObjectiveFunction
 				case 5: // Logistic-normal with student-t
 					if( !active(log_degrees_of_freedom(k)) )
 					{
-						nlvec(3,k) = cLST_Age();
+						nlvec(4,k) = cLST_Age();
 					}
 					else
 					{
-						nlvec(3,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
+						nlvec(4,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
 					}
 
 					// Residual
@@ -3221,10 +3259,10 @@ FUNCTION calcObjectiveFunction
 					}
 				break;
 				case 6: // Multinomial with estimated effective sample size.
-					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+					nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 				break; 
 				case 7: // Multivariate-t 
-					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
+					nlvec(4,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
 					                                       log_degrees_of_freedom(k),
 					                                       phi1(k),nu);
 					age_tau2(k) = exp(value(log_age_tau2(k)));
@@ -3256,7 +3294,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),sigma_r(g));
+			nlvec(5,g) = dnorm(delta(g),sigma_r(g));
 		}
 	}
 
@@ -3286,12 +3324,12 @@ FUNCTION calcObjectiveFunction
 				{
 					//curvature in selectivity parameters
 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(ig)(i)));
-					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
+					nlvec(6,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,ig,i,j)>log_sel(k,ig,i,j+1))
-							nlvec(6,k)+=lambda_2(k)
+							nlvec(7,k)+=lambda_2(k)
 										*square( log_sel(k,ig,i,j)-log_sel(k,ig,i,j+1) );
 				}
 				}
@@ -3312,7 +3350,7 @@ FUNCTION calcObjectiveFunction
 				for(j=sage;j<=nage;j++)
 				{
 					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
-					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
+					nlvec(8,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
 				}
 				}
 			}
@@ -3413,7 +3451,7 @@ FUNCTION calcObjectiveFunction
 	qvec.initialize();
 	for(k=1;k<=nits;k++)
 	{
-		if(q_prior(k) == 1 )
+		if(q_prior(k) == 1 && sd_log_q(k) != 0 )
 		{
 			qvec(k) = dnorm( log(q(k)), mu_log_q(k), sd_log_q(k) );
 		}
