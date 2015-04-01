@@ -178,19 +178,20 @@ namespace acl
 	// |--------------------------------------------------------------------------------|
 	// | MULTIVARIATE LOGISTIC NEGATIVE LOGLIKELIHOOD derived class                     |
 	// |--------------------------------------------------------------------------------|
-	template<class T,class DATA, class DVAR>
+	/**
+	 * @brief multivariate logistic negative log likelihood
+	 * @details The negative log likeihood for the multivariate 
+	 * logistic distribution based on the MLE of the variance.
+	 * 
+	 * @param NU Matrix of residuals
+	 * @return the negative loglikelihood
+	 */
+	template<class T, class DVAR>
 	inline
-	const T dmvlogistic(const DATA& O, const DVAR& P)
+	const T dmvlogistic(const DVAR& NU)
 	{
-		T nll;
-		// nll.allocate(P);
-		// int i;
-		// for( i = O.rowmin(); i<= O.rowmax(); i++)
-		// {
-		// 	nll(i) = log(O(i)) - log(P(i));
-		// 	nll(i) -= mean(nll(i));
-		// }
-		return nll;
+		T var = 1.0/size_count(NU)*norm2(NU);
+		return size_count(NU) * log(var);
 	}
 
 	template<class DATA, class DVAR>
@@ -213,34 +214,35 @@ namespace acl
 	 * @author Steve Martell
 	 * @param T usually a dmatrix
 	 */
-	 template<class DATA, class DVAR>
+	 template<class T, class DATA, class DVAR>
 	 class multivariteLogistic: public negLogLikelihood<DATA,DVAR>
 	 {
 	 private:
-	 	DVAR m_rO; 		/// ragged observed  composition object.
+	 	DATA m_rO; 		/// ragged observed  composition object.
 	 	DVAR m_rP; 		/// ragged predicted composition object.
 	 	DVAR m_nu;		/// logistic residuals.
 
 	 public:
 	 	// constructor
 	 	// todo: add eps value to constructor.
-	 	multivariteLogistic(const DATA &_O, const DVAR &_P)
+	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=1.e-8)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
+	 		// tail compression
 	 		DATA tmp = this->compress(this->get_O());
-	 		cout<<tmp<<endl;
-	 		// m_rP = this->compress(_P);
-	 		// m_nu = acl::dmvlogisticResidual(m_rO,m_rP);
+	 		set_rO(tmp);
+	 		DVAR vmp = this->compress(this->get_P());
+	 		set_rP(vmp);
+
+	 		// residuals
+	 		DVAR tnu = acl::dmvlogisticResidual(this->get_rO(),this->get_rP());
+	 		set_nu(tnu);
 	 	}
 
 
-	 	const dvariable nloglike() const
+	 	const T nloglike() const
 	 	{
-	 		// DATA rO = this->compress(this->get_O());
-	 		// DVAR rP = this->compress(this->get_P());
-	 		// m_nu  = acl::dmvlogisticResidual(rO,rP);
-	 		// return acl::dmvlogistic<dvariable,DATA,DVAR>(rO, rP);
-	 		return 0;
+	 		return acl::dmvlogistic<T,DVAR>(this->get_nu());
 	 	}
 
 	 	const DVAR residual() const
@@ -248,8 +250,12 @@ namespace acl
 	 		return acl::dmvlogisticResidual(this->get_O(), this->get_P());
 	 	}
 	 	
-
+	 	DATA get_rO() const {return m_rO; }
+	 	DVAR get_rP() const {return m_rP; }
 	 	DVAR get_nu() const {return m_nu; }
+
+	 	void set_rO(DATA &X){this->m_rO=X;}
+	 	void set_rP(DVAR &X){this->m_rP=X;}
 	 	void set_nu(DVAR &R){this->m_nu=R;}
 
 	 };
