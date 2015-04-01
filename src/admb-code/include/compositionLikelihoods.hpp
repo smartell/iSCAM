@@ -229,10 +229,10 @@ namespace acl
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
 	 		// tail compression
-	 		DATA tmp = this->compress(this->get_O());
-	 		set_rO(tmp+eps);
-	 		DVAR vmp = this->compress(this->get_P());
-	 		set_rP(vmp+eps);
+	 		DATA tmp = this->compress(this->get_O()) + eps;
+	 		set_rO(tmp);
+	 		DVAR vmp = this->compress(this->get_P()) + eps;
+	 		set_rP(vmp);
 
 
 	 		// residuals
