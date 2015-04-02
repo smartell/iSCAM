@@ -319,7 +319,15 @@ namespace acl
 
 	 	}
 	 	
+	 	const T nloglike() const
+	 	{
+	 		return 0;
+	 	}
 	 	
+	 	const DVAR residual() const
+	 	{
+	 		return 0;
+	 	}
 	 };
 
 }
