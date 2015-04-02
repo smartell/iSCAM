@@ -39,7 +39,7 @@ namespace acl
 
 		DVAR m_P;       /// predicted composition object
 		DVAR m_rP;      /// predicted ragged composition object
-
+		
 
 	public:
 		// constructors
@@ -84,6 +84,7 @@ namespace acl
 	 	DVAR get_rP() const {return m_rP; }
 	 	void set_rP(DVAR &X){this->m_rP=X;}
 
+	 	imatrix get_jagg() const {return m_jagg;}
 
 		template <typename T>
 		inline
@@ -130,8 +131,10 @@ namespace acl
 
 		m_rO.allocate(r1,r2,1,n);
 		m_rP.allocate(r1,r2,1,n);
+		m_jagg.allocate(r1,r2,1,n);
 		m_rO.initialize();
 		m_rP.initialize();
+		m_jagg.initialize();
 
 		for(int i = r1; i <= r2; i++ )
 		{
@@ -142,9 +145,11 @@ namespace acl
 			{
 				m_rO(i)(k) += oo(j);
 				m_rP(i)(k) += pp(j);
+				if(k<=n(i)) m_jagg(i,k) = j;
 				if( oo(j)>pmin && k<n(i)) k++;
 			}		
 		}
+
 	}
 
 	/**
@@ -242,13 +247,12 @@ namespace acl
 	 class multivariteLogistic: public negLogLikelihood<DATA,DVAR>
 	 {
 	 private:
-	 	DATA m_rO; 		/// ragged observed  composition object.
-	 	DVAR m_rP; 		/// ragged predicted composition object.
-	 	DVAR m_nu;		/// logistic residuals.
+
+	 	DVAR m_nu;		/// logistic residuals based on ragged object.
+	 	DVAR m_NU;		/// residuals for rectangular matrix
 
 	 public:
 	 	// constructor
-	 	// todo: add eps value to constructor.
 	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=1.e-3)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
@@ -259,12 +263,22 @@ namespace acl
 	 		this->set_rP(vmp);
 
 
-
 	 		// residuals
 	 		this->aggregate(eps);
 	 		DVAR tnu = acl::dmvlogisticResidual(this->get_rO(),this->get_rP());
 	 		set_nu(tnu);
 
+	 		m_NU.allocate(_P);
+	 		m_NU.initialize();
+	 		imatrix idx = this->get_jagg();
+	 		for(int i = _O.rowmin(); i <= _O.rowmax(); i++ )
+	 		{
+	 			for(int j = 1; j <= size_count(m_nu(i)); j++ )
+	 			{
+	 				int jj = idx(i,j); /* code */
+		 			m_NU(i)(jj) = m_nu(i)(j);
+	 			}
+	 		}
 	 	}
 
 
@@ -277,12 +291,14 @@ namespace acl
 	 	{
 	 		// This should return the residuals for the original container.
 	 		// Not the residuals for the ragged object.
-	 		return this->get_nu();
+
+	 		return this->get_NU();
 	 	}
 	 	
 	 	DVAR get_nu() const {return m_nu; }
-
+	 	DVAR get_NU() const {return m_NU; }
 	 	void set_nu(DVAR &R){this->m_nu=R;}
+
 
 	 };
 

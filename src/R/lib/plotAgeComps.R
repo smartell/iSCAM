@@ -75,13 +75,13 @@ require(reshape2)
 		A   <- cbind(M[[i]]$d3_A[,1:6],M[[i]]$A_hat)
 		A   <- data.frame(A)
 		A[,-1:-6] <- A[,-1:-6]/rowSums(A[,-1:-6],na.rm=TRUE)
-		agA <- aggregate(A[,-1:-6],by=list(A[,2],A[,3],A[,4],A[,5]),FUN=mean,na.rm=TRUE)
+		agA <- aggregate(A[,-1:-6],by=list(A[,2],A[,3],A[,4],A[,5],A[,6]),FUN=mean,na.rm=TRUE)
 		colnames(agA) = c("Gear","Area","Group","Sex","Err",paste(age))
 
 		# Observed data
 		O   <- data.frame(M[[i]]$d3_A)
 		O[,-1:-6] <- O[,-1:-6]/rowSums(O[,-1:-6],na.rm=TRUE)
-		agO <- aggregate(O[,-1:-6],by=list(O[,2],O[,3],A[,4],O[,5]),FUN=mean,na.rm=TRUE)
+		agO <- aggregate(O[,-1:-6],by=list(O[,2],O[,3],A[,4],O[,5],O[,6]),FUN=mean,na.rm=TRUE)
 		colnames(agO) = c("Gear","Area","Group","Sex","Err",paste(age))
 
 		# Create data frame
@@ -91,7 +91,7 @@ require(reshape2)
 		colnames(df) <- c("Model","Type","Gear","Area","Group","Sex","Err",paste(age))
 		mdf <- rbind(mdf,df)
 	}
-	mdf <- melt(mdf,id.vars=c("Model","Type","Gear","Area","Group","Sex"))
+	mdf <- melt(mdf,id.vars=c("Model","Type","Gear","Area","Group","Sex","Err"))
 	print(head(mdf,3))
 
 	p <- ggplot( mdf,aes(variable,value,col=Type) )

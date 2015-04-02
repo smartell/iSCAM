@@ -3150,7 +3150,7 @@ FUNCTION calcObjectiveFunction
 	acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike;
 
 
-	// delete *ptr_AgeComeLike;
+	
 
 
 	A_nu.initialize();
@@ -3202,6 +3202,7 @@ FUNCTION calcObjectiveFunction
 					ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
 					nlvec(4,k)      = ptr_AgeCompLike -> nloglike();
 					nu              = ptr_AgeCompLike -> residual();
+
 				break;
 				case 2:
 					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
@@ -3288,6 +3289,8 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
+	delete ptr_AgeCompLike;
+
 	
 	// |---------------------------------------------------------------------------------|
 	// | STOCK-RECRUITMENT LIKELIHOOD COMPONENT
