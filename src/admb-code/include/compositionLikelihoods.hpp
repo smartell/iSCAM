@@ -275,6 +275,8 @@ namespace acl
 
 	 	const DVAR residual() const
 	 	{
+	 		// This should return the residuals for the original container.
+	 		// Not the residuals for the ragged object.
 	 		return this->get_nu();
 	 	}
 	 	

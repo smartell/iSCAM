@@ -55,7 +55,7 @@ require(reshape2)
 
 	p <- ggplot(mdf,aes(factor(Year),variable,col=factor(sign(value)),size=abs(value)))
 	p <- p + geom_point(alpha=0.75)
-	p <- p + scale_size_area(max_size=6)
+	p <- p + scale_size_area(max_size=10)
 	p <- p + labs(x="Year",y="Age",size="Residual",colour="Sign")
 	p <- p + facet_wrap(~Model+Sex+Gear,scales="free")
 	print(p + .THEME)
@@ -76,19 +76,19 @@ require(reshape2)
 		A   <- data.frame(A)
 		A[,-1:-6] <- A[,-1:-6]/rowSums(A[,-1:-6],na.rm=TRUE)
 		agA <- aggregate(A[,-1:-6],by=list(A[,2],A[,3],A[,4],A[,5]),FUN=mean,na.rm=TRUE)
-		colnames(agA) = c("Gear","Area","Group","Sex",paste(age))
+		colnames(agA) = c("Gear","Area","Group","Sex","Err",paste(age))
 
 		# Observed data
 		O   <- data.frame(M[[i]]$d3_A)
 		O[,-1:-6] <- O[,-1:-6]/rowSums(O[,-1:-6],na.rm=TRUE)
 		agO <- aggregate(O[,-1:-6],by=list(O[,2],O[,3],A[,4],O[,5]),FUN=mean,na.rm=TRUE)
-		colnames(agO) = c("Gear","Area","Group","Sex",paste(age))
+		colnames(agO) = c("Gear","Area","Group","Sex","Err",paste(age))
 
 		# Create data frame
 		df  <- rbind(cbind(type="Predicted",agA),cbind(type="Observed",agO))
 		# year gear area group sex
 		df   <- data.frame(Model=names(M)[i],df)
-		colnames(df) <- c("Model","Type","Gear","Area","Group","Sex",paste(age))
+		colnames(df) <- c("Model","Type","Gear","Area","Group","Sex","Err",paste(age))
 		mdf <- rbind(mdf,df)
 	}
 	mdf <- melt(mdf,id.vars=c("Model","Type","Gear","Area","Group","Sex"))

@@ -3200,7 +3200,8 @@ FUNCTION calcObjectiveFunction
 					//nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 					//cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
 					ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
-					nlvec(4,k) = ptr_AgeCompLike->nloglike();
+					nlvec(4,k)      = ptr_AgeCompLike -> nloglike();
+					nu              = ptr_AgeCompLike -> residual();
 				break;
 				case 2:
 					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
