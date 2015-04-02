@@ -253,7 +253,7 @@ namespace acl
 
 	 public:
 	 	// constructor
-	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=1.e-3)
+	 	multivariteLogistic(const DATA &_O, const DVAR &_P, const double eps=0)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P) 
 	 	{
 	 		// tail compression
@@ -268,6 +268,7 @@ namespace acl
 	 		DVAR tnu = acl::dmvlogisticResidual(this->get_rO(),this->get_rP());
 	 		set_nu(tnu);
 
+	 		// residuals to return.
 	 		m_NU.allocate(_P);
 	 		m_NU.initialize();
 	 		imatrix idx = this->get_jagg();
@@ -302,6 +303,24 @@ namespace acl
 
 	 };
 
+
+	 // |-------------------------------------------------------------------------------|
+	 // | MULTINOMIAL DISTRIBUTION                                                      |
+	 // |-------------------------------------------------------------------------------|
+
+	 template <class T, class DATA, class DVAR>
+	 class multinomial: public negLogLikelihood<DATA,DVAR>
+	 {
+	 public:
+	 	// constructor
+	 	multinomial(const DATA &_O, const DVAR &_P, const double eps=0)
+	 	:negLogLikelihood<DATA,DVAR>(_O,_P)
+	 	{
+
+	 	}
+	 	
+	 	
+	 };
 
 }
 
