@@ -30,7 +30,7 @@ require(reshape2)
 	p <- p + geom_point(alpha=0.75,aes(colour=factor(BroodYear))) 
 	p <- p + scale_size_area(max_size=10)
 	p <- p + labs(x="Year",y="Age",size="Count")
-	p <- p + facet_wrap(~Model+Sex+Gear,scales="free")
+	p <- p + facet_wrap(~Model+Sex+Gear+AgeErr,scales="free")
 	p <- p + scale_colour_discrete(guide="none")
 	print(p + .THEME)
 }
@@ -57,7 +57,7 @@ require(reshape2)
 	p <- p + geom_point(alpha=0.75)
 	p <- p + scale_size_area(max_size=10)
 	p <- p + labs(x="Year",y="Age",size="Residual",colour="Sign")
-	p <- p + facet_wrap(~Model+Sex+Gear,scales="free")
+	p <- p + facet_wrap(~Model+Sex+Gear+Err,scales="free")
 	print(p + .THEME)
 }
 
@@ -67,6 +67,7 @@ require(reshape2)
 	n <- length(M)
 	cat(".plotAgeSummary\n")
 	mdf <- NULL
+	cat("length of M ",length(M),"\n")
 	for( i in 1:n )
 	{
 		age <- seq(min(M[[i]]$n_A_sage),max(M[[i]]$n_A_nage))
@@ -91,14 +92,14 @@ require(reshape2)
 		colnames(df) <- c("Model","Type","Gear","Area","Group","Sex","Err",paste(age))
 		mdf <- rbind(mdf,df)
 	}
-	mdf <- melt(mdf,id.vars=c("Model","Type","Gear","Area","Group","Sex","Err"))
+	mdf <- melt(mdf,id.vars=c("Model","Type","Gear","Area","Group","Sex","Err"),measured.vars=age)
 	print(head(mdf,3))
 
-	p <- ggplot( mdf,aes(variable,value,col=Type) )
+	p <- ggplot( mdf,aes(variable,value,col=Type,shape=factor(Sex)) )
 	p <- p + geom_point(alpha=0.75)
 	# p <- p + scale_area(range = c(0,10))
-	p <- p + labs(x="Age",y="Mean proportion",colour="Type")
-	p <- p + facet_wrap(~Model+Sex+Gear,scales="free")
+	p <- p + labs(x="Age",y="Mean proportion",colour="Type",shape="Sex")
+	p <- p + facet_wrap(~Model+Sex+Gear+Err,scales="free")
 	print(p + .THEME)
 }
 

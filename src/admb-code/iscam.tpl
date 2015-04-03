@@ -2557,6 +2557,8 @@ FUNCTION calcComposition
 	  		{
 	  			dvar_vector pred_ca = ca * age_age(e);
 	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
+
+	  			// predicted plus group age.
 	  			if( n_A_nage(kk) < nage )
 				{
 					A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
@@ -3134,7 +3136,7 @@ FUNCTION calcObjectiveFunction
 	// | - Two options based on d_iscamCntrl(14):
 	// | - 	1 -> multivariate logistic using conditional MLE of the variance for weight.
 	// | -  2 -> multnomial, assumes input sample size as n in n log(p)
-  // | -  3 -> logistic normal w no autocorrelation.
+    // | -  3 -> logistic normal w no autocorrelation.
 	// | -  Both likelihoods pool pmin (d_iscamCntrl(16)) into adjacent yearclass.
 	// | -  PSEUDOCODE:
 	// | -    => first determine appropriate dimensions for each of nAgears arrays (naa)
@@ -3145,7 +3147,7 @@ FUNCTION calcObjectiveFunction
 	// | [ ] - change A_nu to data-type variable, does not need to be differentiable.
 	// | [ ] - issue 29. Fix submatrix O, P for prospective analysis & sex/area/group.
 
-	// Testing new abstract compositionLikelihood class.
+	// Testing new abstract compositionLikelihood class. SUXS.
 
 	//acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike[nAgears-1];
 
@@ -3178,8 +3180,6 @@ FUNCTION calcObjectiveFunction
 					P(ii) = A_hat(k)(i).sub(n_A_sage(k),n_A_nage(k));
 					ii ++;
 				}
-				//if( iyr <= nyr ) naa++;
-				//if( iyr <  syr ) iaa++;
 			}
 	
 	
@@ -3198,10 +3198,10 @@ FUNCTION calcObjectiveFunction
 			{
 				case 1:	// multivariate Logistic
 					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
-					//cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
-					//ptr_AgeCompLike[k-1] = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
-					//nlvec(4,k)      = ptr_AgeCompLike[k-1] -> nloglike();
-					//nu              = ptr_AgeCompLike[k-1] -> residual();
+					// cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
+					// ptr_AgeCompLike[k-1] = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
+					// nlvec(4,k)      = ptr_AgeCompLike[k-1] -> nloglike();
+					// nu              = ptr_AgeCompLike[k-1] -> residual();
 
 				break;
 
@@ -4668,11 +4668,21 @@ REPORT_SECTION
 
 	if(n_A_nobs(nAgears) > 0)
 	{
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "d3_A"+str(k);
+			report<<lbl<<endl<<d3_A(k)<<endl;
+		}
+
+
+
 		REPORT(n_A_sage);
 		REPORT(n_A_nage);
 		REPORT(d3_A);
 		REPORT(A_hat);
 		REPORT(A_nu);
+
+
 
 
 		/// The following is a total hack job to get the effective sample size
@@ -4684,6 +4694,7 @@ REPORT_SECTION
 		nscaler.initialize();
 		for(k = 1; k<=nAgears; k++)
 		{
+
 			if( int(nCompLikelihood(k)) )
 			{
 				int naa=0;

@@ -37,14 +37,14 @@
 ##     -6 : multinomial with estimated effective sample size.
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
-	1       6       6      ## : Gear Index
-	1       1       1      ## : Likelihood type
-	0.000   0.000   0.000  ## : Minimum proportion for aggregation & compression
-	0.0000  0.0000  0.0000 ## : Small constant to add to comps & renormalize
-	-1      -1      -1     ## : phase for log_age_tau2 estimation.
-	-2      -2      -2     ## : phase for phi1 estimation : bounded (-1,1) AR1
-	-2      -2      -2     ## : phase for phi2 estimation : bounded (0,1)  AR2
-	2       2       2      ## : phase for degrees of freedom for student T.
+	1        1       6       6      ## : Gear Index
+	1        1       1       1      ## : Likelihood type
+	0.000    0.000   0.000   0.000  ## : Minimum proportion for aggregation & compression
+	0.0000   0.0000  0.0000  0.0000 ## : Small constant to add to comps & renormalize
+	-1       -1      -1      -1     ## : phase for log_age_tau2 estimation.
+	-2       -2      -2      -2     ## : phase for phi1 estimation : bounded (-1,1) AR1
+	-2       -2      -2      -2     ## : phase for phi2 estimation : bounded (0,1)  AR2
+	2        2       2       2      ## : phase for degrees of freedom for student T.
 	-12345                 ## : int check (-12345)
 ## ------------------------------------------------------------------------- ##
 
@@ -135,7 +135,7 @@
 -3        # 10 -DEPRECATED phase for estimating m_deviations (use -1 to turn off mdevs)
 0.1       # 11 -DEPRECATED std in deviations for natural mortality 
 12        # 12 -DEPRECATED number of estimated nodes for deviations in natural mortality
-0.00      # 13 -fraction of total mortality that takes place prior to spawning
+1.00      # 13 -fraction of total mortality that takes place prior to spawning
 82        # 14 -number of perspective years to start assessment at.
 0         # 15 -switch for IFD distribution in selectivity simulations
 ##
