@@ -71,6 +71,9 @@ namespace acl
 		inline
 		void aggregate(const double pmin = 0.0);
 
+		inline
+		DVAR disaggregate(const DVAR &nu);
+
 		// getters & setters
 		void set_O(DATA & O) { this -> m_O = O; }
 		DATA get_O()    const{ return m_O;      }
@@ -151,6 +154,26 @@ namespace acl
 			}		
 		}
 
+	}
+
+	template <class DATA, class DVAR>
+	inline
+	DVAR acl::negLogLikelihood<DATA,DVAR>::disaggregate(const DVAR &nu)
+	{
+		// residuals to return.
+ 		DVAR NU;
+ 		NU.allocate(m_P);
+ 		NU.initialize();
+ 		imatrix idx = this->get_jagg();
+ 		for(int i = m_O.rowmin(); i <= m_O.rowmax(); i++ )
+ 		{
+ 			for(int j = 1; j <= size_count(nu(i)); j++ )
+ 			{
+ 				int jj = idx(i,j); /* code */
+	 			NU(i)(jj) = nu(i)(j);
+ 			}
+ 		}
+ 		return NU;
 	}
 
 	/**
@@ -270,17 +293,18 @@ namespace acl
 	 		set_nu(tnu);
 
 	 		// residuals to return.
-	 		m_NU.allocate(_P);
-	 		m_NU.initialize();
-	 		imatrix idx = this->get_jagg();
-	 		for(int i = _O.rowmin(); i <= _O.rowmax(); i++ )
-	 		{
-	 			for(int j = 1; j <= size_count(m_nu(i)); j++ )
-	 			{
-	 				int jj = idx(i,j); /* code */
-		 			m_NU(i)(jj) = m_nu(i)(j);
-	 			}
-	 		}
+	 		m_NU = this-> disaggregate(this -> get_nu());
+	 		// m_NU.allocate(_P);
+	 		// m_NU.initialize();
+	 		// imatrix idx = this->get_jagg();
+	 		// for(int i = _O.rowmin(); i <= _O.rowmax(); i++ )
+	 		// {
+	 		// 	for(int j = 1; j <= size_count(m_nu(i)); j++ )
+	 		// 	{
+	 		// 		int jj = idx(i,j); /* code */
+		 	// 		m_NU(i)(jj) = m_nu(i)(j);
+	 		// 	}
+	 		// }
 	 	}
 
 
@@ -326,7 +350,7 @@ namespace acl
 	 // |-------------------------------------------------------------------------------|
 
 	template <class T, class DATA, class DVAR>
-	T dmultinom(const DATA& x, const DVAR& p)
+	T dmultinom(const DATA& x, const DVAR& p, const double eps)
 	{
 		if(x.rowmin() != p.rowmin() || x.colmax() != p.colmax())
 		{
@@ -339,11 +363,40 @@ namespace acl
 		for(int i = x.rowmin(); i <= x.rowmax(); i++ )
 		{
 			double n=sum(x(i));
-			ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(p(i)/sum(p(i)));
+			ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(eps + p(i)/sum(p(i)));
 		}
 		return ell;
 	}
 
+
+	template <class T, class DATA, class DVAR>
+	T dmultinom(const DATA& x, const DVAR& p, const T& log_vn, const double eps)
+	{
+		if(x.rowmin() != p.rowmin() || x.colmax() != p.colmax())
+		{
+			cerr << "Index bounds do not macth in"
+			" dmultinom(const dvector& x, const dvar_vector& p)\n";
+			exit(1);
+		}
+
+		T ell = 0;
+		T vn  = exp(log_vn);
+		DVAR sobs = x;
+		for(int i = x.rowmin(); i <= x.rowmax(); i++ )
+		{
+			// double n=sum(x(i));
+			// ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(p(i)/sum(p(i)));
+			ell -= gammln(vn);
+			sobs(i) = vn * x(i) / sum(sobs(i));
+			for(int j = x(i).indexmin(); j <= x(i).indexmax(); j++ )
+			{
+				if( sobs(i,j) > 0.0 )
+					ell += gammln(sobs(i,j));
+			}
+			ell -= sobs(i) * log(eps + p(i)/sum(p(i)));
+		}
+		return ell;
+	}
 
 	template<class DATA, class DVAR>
 	inline
@@ -370,12 +423,12 @@ namespace acl
 	 class multinomial: public negLogLikelihood<DATA,DVAR>
 	 {
 	 private:
-
+	 	T    m_nll;
 	 	DVAR m_nu;		/// logistic residuals based on ragged object.
 	 	DVAR m_NU;		/// residuals for rectangular matrix
 
 	 public:
-	 	// constructor
+	 	// constructor with fixed sample size in _O
 	 	multinomial(const DATA &_O, const DVAR &_P, const double eps=0)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P)
 	 	{
@@ -384,23 +437,37 @@ namespace acl
 	 		DVAR tnu = acl::dmultinomialResidual(this->get_rO(),this->get_rP());
 	 		set_nu(tnu);
 
+	 		// compute negative loglikelihood
+	 		T negLL = acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP(),eps);
+	 		set_nll(negLL);
+
 	 		// residuals to return.
-	 		m_NU.allocate(_P);
-	 		m_NU.initialize();
-	 		imatrix idx = this->get_jagg();
-	 		for(int i = _O.rowmin(); i <= _O.rowmax(); i++ )
-	 		{
-	 			for(int j = 1; j <= size_count(m_nu(i)); j++ )
-	 			{
-	 				int jj = idx(i,j); /* code */
-		 			m_NU(i)(jj) = m_nu(i)(j);
-	 			}
-	 		}
+	 		m_NU = this-> disaggregate(this -> get_nu());
+	 		
+	 	}
+
+	 	// constructor with estimated sample size in _O
+	 	multinomial(const DATA &_O, const DVAR &_P, const T &log_vn, const double eps=0)
+	 	:negLogLikelihood<DATA,DVAR>(_O,_P)
+	 	{
+ 			// residuals
+	 		this -> aggregate(eps);
+	 		DVAR tnu = acl::dmultinomialResidual(this->get_rO(),this->get_rP());
+	 		set_nu(tnu);
+			
+			// compute negative loglikelihood
+	 		T negLL = acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP(),log_vn,eps);
+	 		set_nll(negLL);
+
+
+	 		// residuals to return.
+	 		m_NU = this-> disaggregate(this -> get_nu());
 	 	}
 	 	
 	 	const T nloglike() const
 	 	{
-	 		return acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP());
+	 		//return acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP());
+	 		return get_nll();
 	 	}
 	 	
 	 	const DVAR residual() const
@@ -410,7 +477,9 @@ namespace acl
 
 	 	DVAR get_nu() const {return m_nu; }
 	 	DVAR get_NU() const {return m_NU; }
+	 	T    get_nll() const {return m_nll; }
 	 	void set_nu(DVAR &R){this->m_nu=R;}
+	 	void set_nll(T &x)  {this->m_nll=x; }
 	 };
 
 }
