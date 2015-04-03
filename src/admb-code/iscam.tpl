@@ -3147,7 +3147,7 @@ FUNCTION calcObjectiveFunction
 
 	// Testing new abstract compositionLikelihood class.
 
-	acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike;
+	//acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike[nAgears-1];
 
 
 	
@@ -3196,36 +3196,34 @@ FUNCTION calcObjectiveFunction
 			logistic_student_t cLST_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
-				case 1:
-					//nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+				case 1:	// multivariate Logistic
+					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
 					//cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
-					ptr_AgeCompLike = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
-					nlvec(4,k)      = ptr_AgeCompLike -> nloglike();
-					nu              = ptr_AgeCompLike -> residual();
+					//ptr_AgeCompLike[k-1] = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
+					//nlvec(4,k)      = ptr_AgeCompLike[k-1] -> nloglike();
+					//nu              = ptr_AgeCompLike[k-1] -> residual();
 
 				break;
 
-				case 2:
-					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k));
-					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
-					nu         = ptr_AgeCompLike -> residual();
+				case 2:	// multinomial with fixed sample size.
+					//ptr_AgeCompLike[k-1] = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k));
+					//nlvec(4,k) = ptr_AgeCompLike[k-1] -> nloglike();
+					//nu         = ptr_AgeCompLike[k-1] -> residual();
 					//COUT(nlvec(4,k));
-					//nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
 					//COUT(nlvec(4,k));
 					//exit(1);
 				break;
 
 				case 6: // Multinomial with estimated effective sample size.
-					
-					//nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
-					//cout<<nlvec(4,k)<<"\t";
-					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,log_degrees_of_freedom(k),dMinP(k));
-					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
-					nu         = ptr_AgeCompLike -> residual();
+					//ptr_AgeCompLike[k-1] = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,log_degrees_of_freedom(k),dMinP(k));
+					//nlvec(4,k) = ptr_AgeCompLike[k-1] -> nloglike();
+					//nu         = ptr_AgeCompLike[k-1] -> residual();
+					// deprecate
+					nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
 
-					//cout<<nlvec(4,k)<<endl;
 				break; 
-				
+
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
@@ -3287,6 +3285,7 @@ FUNCTION calcObjectiveFunction
 					                                       log_degrees_of_freedom(k),
 					                                       phi1(k),nu);
 					age_tau2(k) = exp(value(log_age_tau2(k)));
+					cout<<"Here we go dude"<<endl;
 				break;
 			}
 			
@@ -3306,7 +3305,12 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
-	delete ptr_AgeCompLike;
+
+	//if(ptr_AgeCompLike != NULL)
+	//{
+	//	delete *ptr_AgeCompLike;
+	//	cout<<"It was deleted"<<endl;
+	//} 
 
 	
 	// |---------------------------------------------------------------------------------|
@@ -5392,11 +5396,12 @@ FUNCTION void runMSE()
 
 TOP_OF_MAIN_SECTION
 	time(&start);
-	arrmblsize = 50000000;
+	arrmblsize = 5000000000;
 	gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7);
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
+	gradient_structure::set_MAX_DLINKS(10000);
 
 
 GLOBALS_SECTION

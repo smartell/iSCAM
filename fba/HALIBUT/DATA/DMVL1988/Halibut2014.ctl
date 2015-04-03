@@ -38,7 +38,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 	1       6       6      ## : Gear Index
-	6       6       6      ## : Likelihood type
+	1       1       1      ## : Likelihood type
 	0.000   0.000   0.000  ## : Minimum proportion for aggregation & compression
 	0.0000  0.0000  0.0000 ## : Small constant to add to comps & renormalize
 	-1      -1      -1     ## : phase for log_age_tau2 estimation.
