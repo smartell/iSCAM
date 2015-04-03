@@ -1560,7 +1560,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
-	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,-10.0,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | DEPRECATE AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -3204,6 +3204,7 @@ FUNCTION calcObjectiveFunction
 					nu              = ptr_AgeCompLike -> residual();
 
 				break;
+
 				case 2:
 					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k));
 					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
@@ -3213,6 +3214,18 @@ FUNCTION calcObjectiveFunction
 					//COUT(nlvec(4,k));
 					//exit(1);
 				break;
+
+				case 6: // Multinomial with estimated effective sample size.
+					
+					//nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+					//cout<<nlvec(4,k)<<"\t";
+					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,log_degrees_of_freedom(k),dMinP(k));
+					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
+					nu         = ptr_AgeCompLike -> residual();
+
+					//cout<<nlvec(4,k)<<endl;
+				break; 
+				
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
@@ -3231,16 +3244,6 @@ FUNCTION calcObjectiveFunction
 					}
 				break;
 				
-				case 6: // Multinomial with estimated effective sample size.
-					
-					//nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
-					//cout<<nlvec(4,k)<<"\t";
-					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,log_degrees_of_freedom(k));
-					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
-					nu         = ptr_AgeCompLike -> residual();
-					
-					//cout<<nlvec(4,k)<<endl;
-				break; 
 
 				case 4:
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );

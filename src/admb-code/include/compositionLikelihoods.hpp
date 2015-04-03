@@ -349,8 +349,19 @@ namespace acl
 	 // | MULTINOMIAL DISTRIBUTION                                                      |
 	 // |-------------------------------------------------------------------------------|
 
+	/**
+	 * @brief negative log density for multinomial distribution.
+	 * @details Returns the negative log density for the multinomial distribution.
+	 * Note that the sample size is based on the actual numbers in the matrix X.
+	 * 
+	 * @param x Observed numbers in each bin
+	 * @param p Predicted proportions in each bin.
+	 * @param eps A tiny number to prevent log(0)
+	 * @tparam T Templated variable (dvariable or df1b2variable)
+	 * @return negative log density.
+	 */
 	template <class T, class DATA, class DVAR>
-	T dmultinom(const DATA& x, const DVAR& p, const double eps)
+	T dmultinom(const DATA& x, const DVAR& p)
 	{
 		if(x.rowmin() != p.rowmin() || x.colmax() != p.colmax())
 		{
@@ -363,14 +374,14 @@ namespace acl
 		for(int i = x.rowmin(); i <= x.rowmax(); i++ )
 		{
 			double n=sum(x(i));
-			ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(eps + p(i)/sum(p(i)));
+			ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log( p(i)/sum(p(i)) );
 		}
 		return ell;
 	}
 
 
 	template <class T, class DATA, class DVAR>
-	T dmultinom(const DATA& x, const DVAR& p, const T& log_vn, const double eps)
+	T dmultinom(const DATA& x, const DVAR& p, const T& log_vn)
 	{
 		if(x.rowmin() != p.rowmin() || x.colmax() != p.colmax())
 		{
@@ -384,8 +395,7 @@ namespace acl
 		DVAR sobs = x;
 		for(int i = x.rowmin(); i <= x.rowmax(); i++ )
 		{
-			// double n=sum(x(i));
-			// ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(p(i)/sum(p(i)));
+			
 			ell -= gammln(vn);
 			sobs(i) = vn * x(i) / sum(sobs(i));
 			for(int j = x(i).indexmin(); j <= x(i).indexmax(); j++ )
@@ -393,7 +403,7 @@ namespace acl
 				if( sobs(i,j) > 0.0 )
 					ell += gammln(sobs(i,j));
 			}
-			ell -= sobs(i) * log(eps + p(i)/sum(p(i)));
+			ell -= sobs(i) * log( p(i)/sum(p(i)) );
 		}
 		return ell;
 	}
@@ -456,7 +466,7 @@ namespace acl
 	 		set_nu(tnu);
 			
 			// compute negative loglikelihood
-	 		T negLL = acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP(),log_vn,eps);
+	 		T negLL = acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP(),log_vn);
 	 		set_nll(negLL);
 
 
