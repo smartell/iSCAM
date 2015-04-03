@@ -3205,7 +3205,13 @@ FUNCTION calcObjectiveFunction
 
 				break;
 				case 2:
-					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					ptr_AgeCompLike = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k));
+					nlvec(4,k) = ptr_AgeCompLike -> nloglike();
+					nu         = ptr_AgeCompLike -> residual();
+					//COUT(nlvec(4,k));
+					//nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					//COUT(nlvec(4,k));
+					//exit(1);
 				break;
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model

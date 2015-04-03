@@ -118,14 +118,17 @@ namespace acl
 		m_jmax.allocate(r1,r2);
 		ivector n(r1,r2);
 		n.initialize();
+		DATA oo(r1,r2,c1,c2);
+		DVAR pp(r1,r2,c1,c2);
 
 		// get number of observations > pmin each year.		
 		for(int i = r1; i <= r2; i++ )
 		{
-			dvector oo = m_O(i)/sum(m_O(i));
+			oo(i) = m_O(i)/sum(m_O(i));
+			pp(i) = m_P(i)/sum(m_P(i));
 			for(int j = c1; j <= c2; j++ )
 			{
-				if( oo(j) > pmin ) n(i)++;
+				if( oo(i)(j) > pmin ) n(i)++;
 			}		
 		}
 
@@ -139,14 +142,12 @@ namespace acl
 		for(int i = r1; i <= r2; i++ )
 		{
 			int k = 1;
-			dvector     oo = m_O(i)/sum(m_O(i));
-			dvar_vector pp = m_P(i)/sum(m_P(i));
 			for(int j = c1; j <= c2; j++ )
 			{
-				m_rO(i)(k) += oo(j);
-				m_rP(i)(k) += pp(j);
+				m_rO(i)(k) += m_O(i)(j);
+				m_rP(i)(k) += m_P(i)(j);
 				if(k<=n(i)) m_jagg(i,k) = j;
-				if( oo(j)>pmin && k<n(i)) k++;
+				if( oo(i)(j)>pmin && k<n(i)) k++;
 			}		
 		}
 
@@ -232,7 +233,7 @@ namespace acl
 		int i;
 		for( i = O.rowmin(); i<= O.rowmax(); i++)
 		{
-			nu(i) = log(O(i)) - log(P(i));
+			nu(i) = log(O(i)/sum(O(i))) - log(P(i)/sum(P(i)));
 			nu(i) -= mean(nu(i));
 		}
 		return nu;
@@ -304,30 +305,112 @@ namespace acl
 	 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	 // |-------------------------------------------------------------------------------|
 	 // | MULTINOMIAL DISTRIBUTION                                                      |
 	 // |-------------------------------------------------------------------------------|
 
+	template <class T, class DATA, class DVAR>
+	T dmultinom(const DATA& x, const DVAR& p)
+	{
+		if(x.rowmin() != p.rowmin() || x.colmax() != p.colmax())
+		{
+			cerr << "Index bounds do not macth in"
+			" dmultinom(const dvector& x, const dvar_vector& p)\n";
+			exit(1);
+		}
+
+		T ell = 0;
+		for(int i = x.rowmin(); i <= x.rowmax(); i++ )
+		{
+			double n=sum(x(i));
+			ell += -gammln(n+1.)+sum(gammln(x(i)+1.))-x(i)*log(p(i)/sum(p(i)));
+		}
+		return ell;
+	}
+
+
+	template<class DATA, class DVAR>
+	inline
+	const DVAR dmultinomialResidual(const DATA& O, const DVAR& P)
+	{
+		// dvar_vector t1 = elem_div(o1-p1,sqrt(elem_prod(p1,1.-p1)/Nsamp));
+		DVAR nu;
+		DVAR var;
+		nu.allocate(P);   nu.initialize();
+		var.allocate(P); var.initialize();
+
+		int i;
+		for( i = O.rowmin(); i<= O.rowmax(); i++)
+		{
+			nu(i)  = O(i)/sum(O(i)) - P(i)/sum(P(i));
+			var(i) = elem_prod(P(i),1.0-P(i)) / sum(O(i));
+			nu(i)  = elem_div(nu(i),sqrt(var(i)));
+		}
+		return nu;
+	}
+
+
 	 template <class T, class DATA, class DVAR>
 	 class multinomial: public negLogLikelihood<DATA,DVAR>
 	 {
+	 private:
+
+	 	DVAR m_nu;		/// logistic residuals based on ragged object.
+	 	DVAR m_NU;		/// residuals for rectangular matrix
+
 	 public:
 	 	// constructor
 	 	multinomial(const DATA &_O, const DVAR &_P, const double eps=0)
 	 	:negLogLikelihood<DATA,DVAR>(_O,_P)
 	 	{
+	 		// residuals
+	 		this -> aggregate(eps);
+	 		DVAR tnu = acl::dmultinomialResidual(this->get_rO(),this->get_rP());
+	 		set_nu(tnu);
 
+	 		// residuals to return.
+	 		m_NU.allocate(_P);
+	 		m_NU.initialize();
+	 		imatrix idx = this->get_jagg();
+	 		for(int i = _O.rowmin(); i <= _O.rowmax(); i++ )
+	 		{
+	 			for(int j = 1; j <= size_count(m_nu(i)); j++ )
+	 			{
+	 				int jj = idx(i,j); /* code */
+		 			m_NU(i)(jj) = m_nu(i)(j);
+	 			}
+	 		}
 	 	}
 	 	
 	 	const T nloglike() const
 	 	{
-	 		return 0;
+	 		return acl::dmultinom<T,DATA,DVAR>(this->get_rO(),this->get_rP());
 	 	}
 	 	
 	 	const DVAR residual() const
 	 	{
-	 		return 0;
+	 		return get_NU();
 	 	}
+
+	 	DVAR get_nu() const {return m_nu; }
+	 	DVAR get_NU() const {return m_NU; }
+	 	void set_nu(DVAR &R){this->m_nu=R;}
 	 };
 
 }
