@@ -4668,16 +4668,27 @@ REPORT_SECTION
 
 	if(n_A_nobs(nAgears) > 0)
 	{
+		REPORT(n_A_sage);
+		REPORT(n_A_nage);
+
 		for(k = 1; k<=nAgears; k++)
 		{
 			adstring lbl = "d3_A"+str(k);
 			report<<lbl<<endl<<d3_A(k)<<endl;
 		}
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "A_hat"+str(k);
+			report<<lbl<<endl<<A_hat(k)<<endl;
+		}
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "A_nu"+str(k);
+			report<<lbl<<endl<<A_nu(k)<<endl;
+		}
 
 
-
-		REPORT(n_A_sage);
-		REPORT(n_A_nage);
+		// Deprecate in version 2.0
 		REPORT(d3_A);
 		REPORT(A_hat);
 		REPORT(A_nu);
