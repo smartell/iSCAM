@@ -585,6 +585,7 @@ DATA_SECTION
 
 	init_int nItNobs;
 	ivector        nSurveyIndex(1,nItNobs);
+	ivector          qdev_count(1,nItNobs);
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
@@ -611,6 +612,7 @@ DATA_SECTION
 			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
+			qdev_count(k) = size_count(it_log_se(k));
 		}
 		double tmp_mu = mean(it_wt);
 		for(k=1;k<=nItNobs;k++)
@@ -1205,10 +1207,10 @@ DATA_SECTION
 	// | m_stdev		-> Standard deviation for constraint.
 	// | m_nNodes		-> number of nodes for cubic spline.
 	// | m_nodeyear -> position of the nodes.
-	int 					nMdev;
+	int 				nMdev;
 	init_int 			m_type;
 	init_int 			Mdev_phz;
-	init_number 	m_stdev;
+	init_number 		m_stdev;
 	init_int 			m_nNodes;
 	init_ivector m_nodeyear(1,m_nNodes);
 	
@@ -1345,6 +1347,7 @@ DATA_SECTION
 	// | - adjust sel_blocks to new syr
 	// | - Reduce ft_count so as not to bias estimates of ft.
 	// | - Establish prospective counter for Composition data   n_saa;
+	// | - Reduce qdev_count
 
 	ivector n_saa(1,nAgears);
 
@@ -1374,6 +1377,14 @@ DATA_SECTION
 			{
 				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr < syr ) n_saa(k)++;
+			}
+		}
+
+		for( k = 1; k <= nItNobs; k++ )
+		{
+			for( i = 1; i <= n_it_nobs(k); i++ )
+			{
+				if( d3_survey_data(k)(i)(1) < syr) qdev_count(k) --;
 			}
 		}
 	END_CALCS
@@ -1548,7 +1559,11 @@ PARAMETER_SECTION
 	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
 	// |---------------------------------------------------------------------------------|
 	// | 
-	init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
+	//init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
+	!! COUT(n_it_nobs);
+	!! COUT(qdev_count);
+	//!! exit(1);
+	init_bounded_vector_vector log_q_devs(1,nItNobs,1,qdev_count,-5.0,5.0,q_phz);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -2849,14 +2864,18 @@ FUNCTION calcSurveyObservations
 			break;
 
 			case 2: 	// Penalized random walk in Q
+				int jj = 1;  // index for qdevs.
 				zt     -= log(t1(iz,nz));
-				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(iz) );
+				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(jj) );
 				for(ii=iz+1; ii<=nz; ii++)
 				{
-					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(ii));
+					jj ++;
+					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(jj));
+					
 				}
 				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 				zt -= log(qt(kk)(iz,nz));
+				
 				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
 			break;
 		}
@@ -2867,8 +2886,8 @@ FUNCTION calcSurveyObservations
 		// Standardized process error residuals.
 		if(active(log_q_devs(kk)))
 		{
-			dvar_vector fd_qt = first_difference( log_q_devs(kk)(iz,nz) );
-			xi(kk).sub(iz,nz-1) = elem_div(fd_qt,it_log_pe(kk)(iz,nz-1));
+			dvar_vector fd_qt = first_difference( log_q_devs(kk) );
+			xi(kk).sub(iz,nz-1) = elem_div(fd_qt.shift(iz),it_log_pe(kk)(iz,nz-1));
 		}
 
 //       TO BE DEPRECATED
