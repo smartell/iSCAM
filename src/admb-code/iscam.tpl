@@ -1328,6 +1328,14 @@ DATA_SECTION
 			if( dCatchData(i)(1) > nyr ) ft_count --;
 		}
 
+		for( k = 1; k <= nItNobs; k++ )
+		{
+			for( i = 1; i <= n_it_nobs(k); i++ )
+			{
+				if( d3_survey_data(k)(i)(1) > nyr) qdev_count(k) --;
+			}
+		}
+
 		// Retrospective counter for n_A_nobs
 		n_naa.initialize();
 		for( k = 1; k <= nAgears; k++ )
