@@ -178,7 +178,7 @@ library(reshape2)
 	# p <- p + scale_area(range = c(0,10))
 	p <- p + labs(x="Age",y="Mean proportion",colour="Type",shape="Sex")
 	p <- p + facet_wrap(~Model+Sex+Gear+AgeErr+L1,scales="free")
-	print(p + .THEME)
+	print(p + .THEME+theme(legend.position="top"))
 }
 
 # .plotAgecomps	<- function(repObj, meanAge = FALSE )
