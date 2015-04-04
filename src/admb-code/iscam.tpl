@@ -478,7 +478,7 @@ DATA_SECTION
 		if(!mseFlag)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
-	  cout<<"| ----------------------- |"<<endl;
+	    cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| d_linf  \t"<<d_linf<<endl;
