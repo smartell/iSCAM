@@ -133,8 +133,10 @@ library(reshape2)
 			colnames(aO) <- c("Gear","Area","Group","Sex","AgeErr",paste(age))
 
 			# create data frame
-			df <- cbind(data.frame(Type="Predicted",aP),data.frame(Type="Observed",aO))
+			df <- rbind(data.frame(Type="Predicted",aP),data.frame(Type="Observed",aO))
 			df <- data.frame(Model=names(M)[i],df)
+			colnames(df) <- c("Model","Type","Gear","Area","Group","Sex","AgeErr",paste(age))
+
 			return(df)
 		}
 		
