@@ -1245,7 +1245,7 @@ DATA_SECTION
 	// | 3 -> std in catch first phase
 	// | 4 -> std in catch in last phase
 	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
-	// | 6 -> Maternal effects power parameter.
+	// | 6 -> Maternal effects power parameter (1=no maternal effects).
 	// | 7 -> mean fishing mortality rate to regularize the solution
 	// | 8 -> standard deviation of mean F penalty in first phases
 	// | 9 -> standard deviation of mean F penalty in last phase.
@@ -1557,8 +1557,8 @@ PARAMETER_SECTION
 	// |   then natural mortality rate deviates are not estimated and M is assumed const.
 	// | - This model is implemented as a random walk, where M{t+1} = M{t} + dev.
 	
-	!! int m_dev_phz = -1;
-	!!     m_dev_phz = d_iscamCntrl(10);
+	//!! int m_dev_phz = -1;
+	//!!     m_dev_phz = d_iscamCntrl(10);
 	//!! int  n_m_devs = d_iscamCntrl(12);
 	//init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
@@ -1729,6 +1729,7 @@ PARAMETER_SECTION
 	sdreport_vector sd_depletion(1,ngroup);	
 	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
 	
+	
 
 
 PRELIMINARY_CALCS_SECTION
@@ -1850,6 +1851,9 @@ FUNCTION void calcSdreportVariables()
 
 		sd_log_sbt(g) = log(sbt(g));
 	}
+
+	
+
 	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
 
@@ -2492,8 +2496,8 @@ FUNCTION calcNumbersAtAge
   	[x] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[?] - add plus group if n_A_nage < nage;  Aug 7, 2013
-
+	[x] - add plus group if n_A_nage < nage;  Aug 7, 2013
+	[ ] - Need to calculate probability of catching male or female of a given age. 
   	*/
   	
 FUNCTION calcComposition
@@ -2505,6 +2509,7 @@ FUNCTION calcComposition
   	dvar_vector za(sage,nage);
   	dvar_vector ca(sage,nage);
   	dvar_vector na(sage,nage);
+  	dvar_vector ta(sage,nage);  // total numbers at age
   	A_hat.initialize();
 
   	 for(kk=1;kk<=nAgears;kk++)
@@ -2521,6 +2526,14 @@ FUNCTION calcComposition
 	  		// | trap for retrospecitve analysis.
 	  		if(i < syr) continue;
 	  		if(i > nyr) continue;
+
+	  		// total numbers-at-age
+	  		// ta.initialize();
+	  		// for( h = 1; h <= nsex; h++ )
+	  		// {
+	  		// 	ig = pntr_ags(f,g,h);
+	  		// 	ta += N(ig)(i);
+	  		// }
 
 	  		if( h )  // age comps are sexed (h > 0)
 	  		{

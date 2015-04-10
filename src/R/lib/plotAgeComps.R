@@ -52,9 +52,9 @@ library(reshape2)
 	p <- p + geom_point(alpha=0.75,aes(colour=factor(BroodYear))) 
 	p <- p + scale_size_area(max_size=5)
 	p <- p + labs(x="Year",y="Age",size="Count")
-	p <- p + facet_wrap(~Model+Sex+Gear+AgeErr+L1,scales="free")
+	p <- p + facet_wrap(~L1+Model+Gear+AgeErr+Sex,scales="free")
 	p <- p + scale_colour_discrete(guide="none")
-	print(p + .THEME)
+	print(p + .THEME + theme(legend.position="top"))
 }
 
 .plotAgeCompResiduals <- function( M )
@@ -101,8 +101,8 @@ library(reshape2)
 	p <- p + geom_point(alpha=0.75)
 	p <- p + scale_size_area(max_size=5)
 	p <- p + labs(x="Year",y="Age",size="Residual",colour="Sign")
-	p <- p + facet_wrap(~Model+Sex+Gear+AgeErr+L1,scales="free")
-	print(p + .THEME)
+	p <- p + facet_wrap(~L1+Model+Gear+AgeErr+Sex,scales="free")
+	print(p + .THEME + theme(legend.position="top"))
 }
 
 
@@ -177,8 +177,8 @@ library(reshape2)
 	p <- p + geom_point(alpha=0.75)
 	# p <- p + scale_area(range = c(0,10))
 	p <- p + labs(x="Age",y="Mean proportion",colour="Type",shape="Sex")
-	p <- p + facet_wrap(~Model+Sex+Gear+AgeErr+L1,scales="free")
-	print(p + .THEME+theme(legend.position="top"))
+	p <- p + facet_wrap(~L1+Model+Gear+AgeErr+Sex,scales="free")
+	print(p + .THEME + theme(legend.position="top"))
 }
 
 # .plotAgecomps	<- function(repObj, meanAge = FALSE )

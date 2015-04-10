@@ -38,7 +38,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 	1        1       6       6       6       6      ## : Gear Index
-	1        1       1       1       1       1      ## : Likelihood type
+	2        2       2       2       2       2      ## : Likelihood type
 	0.000    0.000   0.000   0.000   0.000   0.000  ## : Minimum proportion for aggregation & compression
 	0.0000   0.0000  0.0000  0.0000  0.0000  0.0000 ## : Small constant to add to comps & renormalize
 	-1       -1      -1      -1      -1      -1     ## : phase for log_age_tau2 estimation.
@@ -128,8 +128,8 @@
 1.0       # 3  -std in observed catches in first phase.
 1.0       # 4  -std in observed catches in last phase.
 0         # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
-0.00      # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.40      # 7  -Mean fishing mortality for regularizing the estimates of Ft
+1.00      # 6  -Maternal effects power parameter (1.0 = no maternal effects)
+0.30      # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10      # 8  -std in mean fishing mortality in first phase
 2.00      # 9  -std in mean fishing mortality in last phase
 -3        # 10 -DEPRECATED phase for estimating m_deviations (use -1 to turn off mdevs)
