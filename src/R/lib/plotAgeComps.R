@@ -123,11 +123,13 @@ library(reshape2)
 			jx <- iu[x]
 			
 			P <- data.frame(M[[i]][[ix]][,1:6],M[[i]][jx])
+			P[,-1:-6] <- P[,-1:-6]/rowSums(P[,-1:-6],na.rm=TRUE)
 			age <- seq(M[[i]]$n_A_sage[x],M[[i]]$n_A_nage[x])
 			aP <- aggregate(P[,-1:-6],by=list(P[,2],P[,3],P[,4],P[,5],P[,6]),FUN=mean,na.rm=TRUE)
 			colnames(aP) <- c("Gear","Area","Group","Sex","AgeErr",paste(age))
 
 			O <- data.frame(M[[i]][[ix]])
+			O[,-1:-6] <- O[,-1:-6]/rowSums(O[,-1:-6],na.rm=TRUE)
 			age <- seq(M[[i]]$n_A_sage[x],M[[i]]$n_A_nage[x])
 			aO <- aggregate(O[,-1:-6],by=list(O[,2],O[,3],O[,4],O[,5],O[,6]),FUN=mean,na.rm=TRUE)
 			colnames(aO) <- c("Gear","Area","Group","Sex","AgeErr",paste(age))
