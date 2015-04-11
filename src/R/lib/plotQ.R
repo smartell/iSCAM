@@ -37,4 +37,5 @@
 	p <- p + geom_point(aes(Year,delta)) + geom_pointrange(aes(Year,delta,ymax=ub,ymin=lb))
 	p <- p + facet_grid(Gear~Model,scales="free")
 	print(p + .THEME)
+	
 }

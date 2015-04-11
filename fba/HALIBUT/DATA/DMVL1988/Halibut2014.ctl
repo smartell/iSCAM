@@ -65,11 +65,11 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  3      1     1     1     3     11    # 1  -selectivity type ivector(isel_type) for gear
+  3      1     1     1     3     5     # 1  -selectivity type ivector(isel_type) for gear
   82     3.0   4.0   4.0   3.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
   5.5    1.5   2.5   2.0   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
   5      0     0     0     5     5     # 4  -No. of age nodes for each gear (0=ignore)
-  0      0     0     0     0     10    # 5  -No. of year nodes for 2d spline(0=ignore)
+  0      0     0     0     0     5     # 5  -No. of year nodes for 2d spline(0=ignore)
   2     -2    -3    -4    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   200.0  200.0 200.0 200.0 200.0 200.0 # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
@@ -82,7 +82,7 @@
 1888  
 1888  
 1888 
-1888
+1970
 ## 
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## TIME VARYING NATURAL MORTALIIY RATES                                                 ##

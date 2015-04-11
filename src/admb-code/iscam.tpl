@@ -2907,7 +2907,8 @@ FUNCTION calcSurveyObservations
 		// Standardized process error residuals.
 		if(active(log_q_devs(kk)))
 		{
-			dvar_vector fd_qt = first_difference( log_q_devs(kk) );
+			//dvar_vector fd_qt = first_difference( log_q_devs(kk) );
+			dvar_vector fd_qt = first_difference( log(qt(kk)(iz,nz)) );
 			xi(kk).sub(iz,nz-1) = elem_div(fd_qt.shift(iz),it_log_pe(kk)(iz,nz-1));
 		}
 
