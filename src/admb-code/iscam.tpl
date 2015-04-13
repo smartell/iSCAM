@@ -1081,6 +1081,20 @@ DATA_SECTION
 	// |  10 -> Number of discrete selectivity blocks.
 	// |
 
+
+	/// April 13, issue 39.  Changing the way selectivity/retention is controlled.
+	!! #define NEW_SELEX
+	!! #ifdef  NEW_SELEX
+	init_imatrix slx_nBlocks(1,ngear,1,2);
+	int slx_nrow;
+	int ret_nrow
+	!!  slx_nrow = sum(column(slx_nBlocks,1));
+	!!  ret_nrow = sum(column(slx_nBlocks,2));
+	init_matrix  slx_dControls(1,slx_nrow,1,12);
+	init_matrix  ret_dControls(1,slx_nrow,1,12);
+	!! #endif
+
+
 	init_matrix selex_controls(1,10,1,ngear);
 	
 

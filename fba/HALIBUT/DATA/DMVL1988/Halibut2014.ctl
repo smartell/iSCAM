@@ -25,9 +25,9 @@
 
 ## ------------------------------------------------------------------------- ##
 ##
-## ------------------------------------------------------------------------- ##
-## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears                        ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Likelihood type for each gear:
 ##     -1 : multivariate logistic (dmvlogistic)
 ##     -2 : multinomial, sample size based on input data
@@ -35,7 +35,7 @@
 ##     -4 : logistic_normal, AR1
 ##     -5 : logistic_normal, AR2
 ##     -6 : multinomial with estimated effective sample size.
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Number of columns == na_gears.
 	1        1       6       6       6       6      ## : Gear Index
 	2        2       2       2       2       2      ## : Likelihood type
@@ -46,9 +46,69 @@
 	-2       -2      -2      -2      -2      -2     ## : phase for phi2 estimation : bounded (0,1)  AR2
 	-2       -2      -2      -2      -2      -2      ## : phase for degrees of freedom for student T.
 	-12345                 ## : int check (-12345)
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 
-##
+
+
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## SELECTIVITY CONTROLS                                                                 ##
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## - Each gear must have a selectivity and retention curve.
+# ## • Index       = gear index for selectivity curve.
+# ## • sel_type    = type of selectivity function (see Legend).
+# ## • sel_mu      = mean age/length 50% selectivity.
+# ## • sel_sd      = std in 50% selectivity
+# ## • sex_dep     = 0 -> no;  1 -> offset for sex 2.
+# ## • size_nodes  = # of nodes for age/size cubic spline.
+# ## • year_nodes  = # of nodes for time varying bicubic spline.
+# ## • phz_mirror  = phase of estimation (-ve phase to mirror selextivity index)
+# ## • lam1        = penalty weight for 2nd differences (w = 1/(2•sig^2)).
+# ## • lam2        = penalty weight for dome-shaped selectivity.
+# ## • lam3        = penalty weight for time-varying selectivity.
+# ## • start_block = year index for first year of selectivity curve.
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## sel_nBlocks    ret_nBlocks    ## Gear Description.
+#    1              1              ## Commercial retained
+#    1              1              ## Commercial discards
+#    1              1              ## Bycatch in non-directed fisheries.
+#    1              1              ## Sport
+#    1              1              ## Personal use
+#    1              1              ## Setline survey.
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## slx_dControls
+# ##        sel   sel  sel  sex  size   year  phz                       start  end        ##
+# ## Index  type  mu   sd   dep  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## Selectivity P(capture of all size/age)
+#    1      3     10   2.0  1    5      0     2      0.0   0.0   0.0    1888
+#    2      1     3.0  1.5  0    5      0    -2      0.0   0.0   0.0    1888
+#    3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888
+#    4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888
+#    5      3     10   2.0  1    5      0    -1      0.0   0.0   0.0    1888
+#    6      5     3.0  2.0  1    5      0     2      0.0   0.0   0.0    1888
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## ret_dControls
+# ##        sel   sel  sel  sex  size   year  phz                       start  end        ##
+# ## Index  type  mu   sd   dep  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+# ## ———————————————————————————————————————————————————————————————————————————————————— ##
+# ## Retention P(retaining size/age)
+#   -1      3     10   2.0  1    5      0     2      0.0   0.0   0.0    1888
+#   -2      1     3.0  1.5  0    5      0    -2      0.0   0.0   0.0    1888
+#   -3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888
+#   -4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888
+#   -5      3     10   2.0  1    5      0    -1      0.0   0.0   0.0    1888
+#   -6      5     3.0  2.0  1    5      0     2      0.0   0.0   0.0    1888
+
+
+
+
+
+
+
+
+
+
+##  TO BE DEPRECATED
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##
