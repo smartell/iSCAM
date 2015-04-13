@@ -38,7 +38,7 @@
 ## ------------------------------------------------------------------------- ##
 ## Number of columns == na_gears.
 	1        1       6       6       6       6      ## : Gear Index
-	1        1       1       1       1       1      ## : Likelihood type
+	2        2       2       2       2       2      ## : Likelihood type
 	0.000    0.000   0.000   0.000   0.000   0.000  ## : Minimum proportion for aggregation & compression
 	0.0000   0.0000  0.0000  0.0000  0.0000  0.0000 ## : Small constant to add to comps & renormalize
 	-1       -1      -1      -1      -1      -1     ## : phase for log_age_tau2 estimation.
@@ -65,11 +65,11 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-  3      1     1     1     3     11    # 1  -selectivity type ivector(isel_type) for gear
+  3      1     1     1     3     5     # 1  -selectivity type ivector(isel_type) for gear
   82     3.0   4.0   4.0   3.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
   5.5    1.5   2.5   2.0   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
   5      0     0     0     5     5     # 4  -No. of age nodes for each gear (0=ignore)
-  0      0     0     0     0     10    # 5  -No. of year nodes for 2d spline(0=ignore)
+  0      0     0     0     0     5     # 5  -No. of year nodes for 2d spline(0=ignore)
   2     -2    -3    -4    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   200.0  200.0 200.0 200.0 200.0 200.0 # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
@@ -82,7 +82,7 @@
 1888  
 1888  
 1888 
-1888
+1970
 ## 
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## TIME VARYING NATURAL MORTALIIY RATES                                                 ##
@@ -128,8 +128,8 @@
 1.0       # 3  -std in observed catches in first phase.
 1.0       # 4  -std in observed catches in last phase.
 0         # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
-0.00      # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
-0.40      # 7  -Mean fishing mortality for regularizing the estimates of Ft
+1.00      # 6  -Maternal effects power parameter (1.0 = no maternal effects)
+0.30      # 7  -Mean fishing mortality for regularizing the estimates of Ft
 0.10      # 8  -std in mean fishing mortality in first phase
 2.00      # 9  -std in mean fishing mortality in last phase
 -3        # 10 -DEPRECATED phase for estimating m_deviations (use -1 to turn off mdevs)
