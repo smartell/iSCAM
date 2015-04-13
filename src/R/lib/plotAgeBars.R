@@ -18,23 +18,31 @@ library(ggplot2)
 			jx <- iu[x]
 
 			age <- seq(M[[i]]$n_A_sage[x],M[[i]]$n_A_nage[x])
-			df   <- data.frame(M[[i]][[ix]])
-			colnames(df) = c(hr,paste(age))
+			df  <- data.frame(V="Observed",M[[i]][[ix]])
+			df[,-1:-6] <- df[,-1:-6]/rowSums(df[,-1:-6],na.rm=TRUE)
+			colnames(df) = c("V",hr,paste(age))
+
+			dp  <- data.frame(V="Predicted",M[[i]][[ix]][,1:6],M[[i]][[jx]])
+			dp[,-1:-6] <- dp[,-1:-6]/rowSums(dp[,-1:-6],na.rm=TRUE)
+			colnames(dp) = c("V",hr,paste(age))
 			
-			
-			return(df)
+			return(rbind(df,dp))
 		}
 
 		B  <- lapply(1:length(id),getDF)
 	}
 	
-	mB <- melt(B,id.vars=hr)
+	mB <- melt(B,id.vars=c("V",hr))
 	mB$BroodYear <- mB$Year - as.integer(mB$variable)
 
-	p <- ggplot(subset(mB,L1==5),aes(as.integer(variable),value,fill=factor(BroodYear)))
+	O <- subset(mB,V=="Observed")
+	I <- subset(mB,V=="Predicted")
+
+	p <- ggplot(O,aes(as.numeric(variable),as.double(value),fill=BroodYear))
 	p <- p + geom_bar(stat="identity")
-	p <- p + labs(x="Age",y="Proportion",fill=NULL)
-	p <- p + guides(fill = guide_legend(nrow = 4,keyheight=0.5))
-	p <- p + facet_wrap(~Year)+coord_flip()
-	print(p + .THEME + theme(legend.position="top"))
+	p <- p + geom_line(data=I,aes(as.numeric(variable),value),color="red")
+	p <- p + labs(x="Age",y="Proportion")
+	p <- p + guides(title.position = "top")
+	p <- p + facet_wrap(~Year,nrow=4)+coord_flip()
+	print(p + .THEME + theme(legend.position="top") + theme_bw(8))
 }
