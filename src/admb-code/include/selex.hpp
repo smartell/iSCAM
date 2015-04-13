@@ -21,6 +21,12 @@
  */
 namespace slx {
 	
+	template<class T,class T2>
+	const T plogis(const T &x, const T2 &mean, const T2 & sd)
+	{
+		return T2(1.0)/(T2(1.0)+exp(-(x-mean)/sd));
+	}
+	
 	/**
 	 * @ingroup Selectivities
 	 * @brief An abstract class for Selectivity functions.	
@@ -50,11 +56,6 @@ namespace slx {
 	};
 
 
-	template<class T,class T2>
-	const T plogis(const T &x, const T2 &mean, const T2 & sd)
-	{
-		return T2(1.0)/(T2(1.0)+exp(-(x-mean)/sd));
-	}
 
 	/**
 	 * @brief Logistic curve

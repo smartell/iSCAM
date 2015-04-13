@@ -8,6 +8,7 @@
 
 #include <admodel.h>
 #include <contrib.h>
+#include "include/lib_iscam.h"
 #include "iscam.htp"
 
 /**

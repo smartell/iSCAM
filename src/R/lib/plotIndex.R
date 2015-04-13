@@ -20,7 +20,7 @@ require(reshape2)
 	print(head(mdf,3))
 
 	p <- ggplot(mdf,aes(Year,Index,linetype=factor(Gear)))
-	p <- p + geom_line()
+	p <- p + geom_point()
 	p <- p + labs(x="Year",y="Relative abundance",linetype="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
@@ -35,7 +35,7 @@ require(reshape2)
 	{
 		epsilon <- na.omit(as.vector(t(M[[1]]$epsilon)))
 		it <- data.frame( cbind(M[[i]]$d3_survey_data,epsilon) )
-		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","wt","timing","Residual")
+		colnames(it) <- c("Year","Index","Gear","Area","Group","Sex","ln(SE)","ln(PE)","timing","Residual")
 		it <- data.frame(Model=names(M)[i],it)
 		mdf <- rbind(mdf,it)
 	}

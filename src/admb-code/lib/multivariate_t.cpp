@@ -1,5 +1,5 @@
 #include <admodel.h>
-#include "multinomial.h"
+#include "../include/multinomial.h"
 
 
 dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p, 
@@ -13,7 +13,6 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 		" are not the same size"<<endl;
 		ad_exit(1);
 	}
-	
 	dmatrix O = o;
 	dvar_matrix P = p;
 	O.colshift(1);
@@ -56,6 +55,7 @@ dvariable multivariate_t_likelihood(const dmatrix &o, const dvar_matrix &p,
 	tmp_nu.rowshift(nu.rowmin());
 	tmp_nu.colshift(nu.colmin());
 	nu = tmp_nu;
+	// cout<<"Multivariate t "<<ll<<endl;
 	return ll;
 }
 

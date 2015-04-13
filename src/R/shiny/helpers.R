@@ -5,13 +5,13 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(googleVis)
-library(plyr)
+# library(plyr)
 library(Rcpp)
 library(dplyr)
 library(magrittr)
 library(grid)
-library(leafletR)
 library(leaflet)
+library(maps)
 
 
 sourceCpp("data/src/halitosis.cpp")
@@ -33,9 +33,16 @@ load("data/OMI.Rdata")
 
 
 # 
-# LOAD data from halibut size-at-age
+# LOAD data from halibut size-at-age (par.df Object)
 # 
 load("data/halibutSAA.Rdata")
+
+
+# 
+# LOAD estimated growth parameters from 2014 SAA data.
+#
+load("data/halGrowthParams.Rdata")
+.REGAREA <- c("all","2A","2B","2C","3A","3B","4A","4B","4CDE")
 
 
 .THEME      <- theme_bw(11)
@@ -44,28 +51,23 @@ load("data/halibutSAA.Rdata")
 .LIB        <- "data/lib/"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
 for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
-# source("data/lib/plotIndex.R")
-# source("data/lib/plotBiomass.R")
-# source("data/lib/plotDepletion.R")
 
 
 
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
-                # "spr_target",
                 "selex_fishery",
                 "selex_bycatch",
                 "selex_bycatch_desc",
-                # "selex_asymptote",
                 "num_bycatch",
                 "five",
                 "ten",
                 "twenty",
                 "forty",
+                "regArea",
                 "linf_dev",
                 "vonk_dev",
                 "maternal_effect")
-
 
 
 tulip.plot <- function(df,input)
@@ -146,40 +148,4 @@ motionChart <- function(df,input)
 	return(M1)
 }
 
-
-# .plotSpawnBiomass <- function( M )
-# {
-# 	n <- length(M)
-# 	cat(".plotSpawnBiomass\n")
-
-# 	mdf <- NULL
-# 	for(i in 1:n)
-# 	{
-# 		fit = M[[i]]$fit
-# 		yr  = M[[i]]$yr
-# 		nyr = length(yr)
-# 		log.sbt <- fit$est[fit$names=="sd_log_sbt"][1:nyr]
-# 		log.std <- fit$std[fit$names=="sd_log_sbt"][1:nyr]
-# 		bt <- data.frame(Model=names(M)[i],Year=yr,log.sbt=log.sbt,log.se=log.std)
-# 		bt <- data.frame(bt,Bo=M[[i]]$bo)
-# 		mdf <- rbind(mdf,bt)
-# 	}
-
-# 	if(.OVERLAY)
-# 	{
-# 		p <- ggplot(mdf,aes(Year,exp(log.sbt),col=Model)) + geom_line(width=2)
-# 		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
-# 		                     ymin=exp(log.sbt-1.96*log.se),fill=Model),alpha=0.2)
-# 	}
-# 	else
-# 	{
-# 		p <- ggplot(mdf,aes(Year,exp(log.sbt))) + geom_line(width=2)
-# 		p <- p + geom_ribbon(aes(ymax=exp(log.sbt+1.96*log.se),
-# 		                     ymin=exp(log.sbt-1.96*log.se)),alpha=0.2)
-# 		p <- p + facet_wrap(~Model,scales="free")
-# 	}
-# 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
-# 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
-# 	print(p + .THEME)
-# }
 

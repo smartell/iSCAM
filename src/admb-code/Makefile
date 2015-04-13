@@ -18,14 +18,18 @@ LDFLAGS:=
 
 # Release specific flags.
 RELEASE_CXXFLAGS:=-O3 -DOPT_LIB
-RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contribo.a -lxml2
+RELEASE_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contribo.a \
+                   lib/bin/release/lib_iscam.a        \
+                  -lxml2
 	
 # Debug specific flags.
 DEBUG_CXXFLAGS:=-O0 -DSAFE_ALL
-DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contrib.a -lxml2
+DEBUG_LDFLAGS:= $(ADMB_HOME)/lib/libadmb-contrib.a    \
+	             lib/bin/debug/lib_iscam.a            \
+	            -lxml2
 
 # Name of text file containing build number.
-BUILD_NUMBER_FILE=build-number.txt
+# BUILD_NUMBER_FILE=build-number.txt
 
 # ======================= END OF CONFIGURABLE THINGS ===========================
 # Create debug & release list of object files as well as dep files.
@@ -35,7 +39,10 @@ RELEASE_OBJS:=$(addprefix build/release/,$(addsuffix .o,$(BASEFILES)))
 DEPFILES:=$(addprefix build/deps/,$(addsuffix .d,$(BASEFILES)))
 
 # Default to release build.
-all: $(OUTPUT).cpp release debug
+all: $(OUTPUT).cpp libs release debug
+
+libs:
+	@$(MAKE) --directory=lib
 
 $(OUTPUT).cpp: $(OUTPUT).tpl
 	$(ADMB_HOME)/bin/tpl2cpp $(OUTPUT)

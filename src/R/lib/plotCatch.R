@@ -20,9 +20,9 @@ require(reshape2)
 	print(head(mdf,3))
 	print(tail(mdf,3))
 
-	p <- ggplot(mdf,aes(x=factor(Year),Catch,fill=factor(Gear)))
-	p <- p + geom_bar(width=0.75,position="dodge",stat='identity')
-	p <- p + labs(x="Year",y="Catch (t)",fill="Gear")
+	p <- ggplot(mdf,aes(x=Year,Catch,fill=factor(Gear),color=factor(Gear)))
+	p <- p + geom_bar(width=0.8,position="stack",stat='identity')
+	p <- p + labs(x="Year",y="Catch (t)",fill="Gear",color="Gear")
 	p <- p + facet_wrap(~Model,scales="free")
 	print(p + .THEME)
 }

@@ -44,8 +44,7 @@
 
 #include <admodel.h>
 #include "milka.h"
-#include "baranov.h"
-#include <contrib.h>
+
 
 // Destructor
 OperatingModel::~OperatingModel(){}

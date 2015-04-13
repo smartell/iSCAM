@@ -1,5 +1,5 @@
 
-#include "baranov.h"
+#include "../include/baranov.h"
 
 BaranovCatchEquation::BaranovCatchEquation()
 {

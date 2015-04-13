@@ -29,7 +29,7 @@
 # |---------------------------------------------------------------------------|
    bo				<- 476.891							# unfished female spawning biomass
    h				<- 0.75				  				# steepness
-   m        <- c(0.201826,0.169674) # natural mortality rate
+   m        <- c(0.201826,0.169674) 	# natural mortality rate
    linf     <- c(158.86,101.525)		# asymptotic length (cm)
    vonk     <- c(0.0684,0.0842)			# vonk
    to       <- c(-5.2,-4.838)   		# time at zero length

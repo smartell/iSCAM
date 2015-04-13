@@ -24,7 +24,7 @@ else
 	DIST=$(prefix)/build/debug/iscam
 endif
 
-all: $(EXEC) $(EXEC).rep
+all: $(EXEC) $(EXEC).rep rdata
 
 $(EXEC): $(prefix)$EXEC.tpl $(DIST)
 	ln -sf $(DIST) $@
@@ -143,8 +143,12 @@ cleanmse:
 # |------------------------------------------------------------------------------------|
 # |
 
+RDATA='source(file.path("../..","R","buildRdata.r"))'
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
 SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
+
+rdata: 
+	-@echo $(RDATA) | R --vanilla --slave
 
 allSims.Rdata: simdone
 	-@echo $(COLLECTALL) | R --vanilla --slave
