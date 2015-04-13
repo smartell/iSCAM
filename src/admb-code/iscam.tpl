@@ -1083,16 +1083,100 @@ DATA_SECTION
 
 
 	/// April 13, issue 39.  Changing the way selectivity/retention is controlled.
-	!! #define NEW_SELEX
-	!! #ifdef  NEW_SELEX
+
+!! #ifdef  NEW_SELEX
 	init_imatrix slx_nBlocks(1,ngear,1,2);
 	int slx_nrow;
 	int ret_nrow
 	!!  slx_nrow = sum(column(slx_nBlocks,1));
 	!!  ret_nrow = sum(column(slx_nBlocks,2));
-	init_matrix  slx_dControls(1,slx_nrow,1,12);
-	init_matrix  ret_dControls(1,slx_nrow,1,12);
-	!! #endif
+	init_matrix  slx_dControls(1,slx_nrow,1,13);
+	init_matrix  ret_dControls(1,slx_nrow,1,13);
+
+	ivector     slx_nIpar(1,slx_nrow);   /// number of rows for each slx
+	ivector     slx_nJpar(1,slx_nrow);   /// number of cols for each slx
+	ivector  slx_nSelType(1,slx_nrow);   /// type of selectivity function
+	ivector slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
+	ivector  slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
+	ivector       slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
+	ivector       slx_nsb(1,slx_nrow);   /// start of block year.
+	ivector       slx_neb(1,slx_nrow);   /// end of block year.
+
+	LOC_CALCS
+		slx_nSelType  = ivector(column(slx_dControls,2));
+		slx_nAgeNodes = ivector(column(slx_dControls,6));
+		slx_nYrNodes  = ivector(column(slx_dControls,7));
+		slx_phz       = ivector(column(slx_dControls,8));
+		slx_nsb       = ivector(column(slx_dControls,12));
+		slx_neb       = ivector(column(slx_dControls,13));
+
+		// • Count number of selectivity parameters required for each slx_type
+		for(i = 1; i <= slx_nrow; i++)
+		{
+			int hsex     = int(slx_dControls(i,5)) + 1;
+			slx_nIpar(i) = hsex;
+
+			switch(slx_nSelType(i))
+			{
+				// • logistic selectivity
+				case 1:    
+					slx_nJpar(i) = 2;
+				break;
+
+				// • age-specific coefficients
+				case 2:
+					slx_nJpar(i) = int(nage - sage);
+				break;
+
+				// • cubic spline over age/size
+				case 3:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+
+				// • cubic spline over age/size each year
+				case 4:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+					slx_nIpar(i) = hsex * (slx_neb(i) - slx_nsb(i) + 1);
+				break;
+
+				// • bicubic spline over age-size / years
+				case 5:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+					slx_nIpar(i) = hsex * slx_nYrNodes(i);
+				break;
+
+				// • logistic based on weight-at-age deviations.
+				case 6:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • logistic based on weight-at-age devs and scalar parameter.
+				case 7:
+					slx_nJpar(i) = 3;
+				break;
+
+				// • age-specific coefficients between lb_age <= age <= ub_age
+				// case 8:
+
+				// • logistic based on mean length-at-age.
+				case 11:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • size-specific coefficients.
+				//case 12:
+
+				// • size-based cubic spline over mean size-at-age
+				case 13:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+			}
+		}
+	END_CALCS
+
+
+
+!! #endif
 
 
 	init_matrix selex_controls(1,10,1,ngear);
@@ -1486,6 +1570,11 @@ PARAMETER_SECTION
 	// | - Special case: if SimFlag=TRUE, then add some random noise to ahat.
 	// | - NB  sel_par is in log space.
 	// |
+!! #ifdef NEW_SELEX
+	init_bounded_matrix_vector slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar,-25.0,25.0,slx_phz);
+	// TO DO set initial values for slx parameters.
+!! #endif
+
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 
 	LOC_CALCS
@@ -5482,6 +5571,13 @@ TOP_OF_MAIN_SECTION
 
 
 GLOBALS_SECTION
+	
+	/**
+	 * \def NEW_SELEX
+	 * Testing new selectivity controls.
+	 */
+	#define NEW_SELEX
+
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.
