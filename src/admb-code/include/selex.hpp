@@ -4,6 +4,8 @@
 #define SELEX_HPP
 
 #include <admodel.h>
+#include <iostream>
+#include <assert.h>
 
 /**
  * @defgroup Selectivities
@@ -21,6 +23,106 @@
  */
 namespace slx {
 	
+	#define Register(x) slxInterface<REAL_T>::template Init<x>();
+
+	/**
+	 * A Generic Selectivity Interface class.
+	 */
+	template<typename REAL_T>
+	class slxInterface
+	{
+	private:
+
+		typedef REAL_T(*EVAL_FUNCTION_PTR)(void* const);
+
+		EVAL_FUNCTION_PTR eval_ptr;
+
+		template<typename T> static
+		REAL_T Evaluate_T(void* const pObj)
+		{
+			return static_cast<T*> (pObj)->Evaluate();
+		}
+
+	protected:
+
+		// set a pointer to the evaluate function.
+		template<typename T> void Init()
+		{
+			eval_ptr = (EVAL_FUNCTION_PTR) & Evaluate_T<T>;
+		}
+
+	public:
+
+		slxInterface()
+		: eval_ptr(0){
+
+		}
+
+		virtual ~ slxInterface(){
+
+		}
+
+		inline REAL_T Evaluate(){
+			assert(eval_ptr);    // ensure Init() was called.
+			return (*eval_ptr)(this);
+		}
+
+	};
+
+	/**
+	 * Logistic Selectivity Class that inherits from the slxInterface
+	 */
+	template<typename REAL_T>
+	class slx_Logistic: public slxInterface<REAL_T>
+	{
+	private:
+		friend class slxInterface<REAL_T>;
+
+		// Evaluate should return a dvar_vector or a df1b2_vector
+		inline REAL_T Evaluate() {
+			cout<<"Evaluating slx_Logistic"<<endl;
+			cout<<m_log_mu<<endl;
+			cout<<m_log_sd<<endl;
+			//COUT(x);
+
+			return m_log_mu;
+		}
+
+	protected:
+		REAL_T m_log_mu;
+		REAL_T m_log_sd;
+
+	public:
+		slx_Logistic(REAL_T log_mu, REAL_T log_sd)
+		:m_log_mu(log_mu),m_log_sd(log_sd)
+		{
+			cout<<"Constructor"<<endl;
+			Register(slx_Logistic<REAL_T>);
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	template<class T,class T2>
 	const T plogis(const T &x, const T2 &mean, const T2 & sd)
 	{

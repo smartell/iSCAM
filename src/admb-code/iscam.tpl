@@ -1098,12 +1098,14 @@ DATA_SECTION
 	ivector  slx_nSelType(1,slx_nrow);   /// type of selectivity function
 	ivector slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
 	ivector  slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
+	ivector      slx_nSex(1,slx_nrow);   /// number of sexes
 	ivector       slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
 	ivector       slx_nsb(1,slx_nrow);   /// start of block year.
 	ivector       slx_neb(1,slx_nrow);   /// end of block year.
 
 	LOC_CALCS
 		slx_nSelType  = ivector(column(slx_dControls,2));
+		slx_nSex      = ivector(column(slx_dControls,5)) + 1;
 		slx_nAgeNodes = ivector(column(slx_dControls,6));
 		slx_nYrNodes  = ivector(column(slx_dControls,7));
 		slx_phz       = ivector(column(slx_dControls,8));
@@ -1113,7 +1115,7 @@ DATA_SECTION
 		// • Count number of selectivity parameters required for each slx_type
 		for(i = 1; i <= slx_nrow; i++)
 		{
-			int hsex     = int(slx_dControls(i,5)) + 1;
+			int hsex     = slx_nSex(i);
 			slx_nIpar(i) = hsex;
 
 			switch(slx_nSelType(i))
@@ -1172,6 +1174,8 @@ DATA_SECTION
 				break;
 			}
 		}
+
+		cout<<"Ok after new selex stuff in data section"<<endl;
 	END_CALCS
 
 
@@ -1888,6 +1892,10 @@ RUNTIME_SECTION
 PROCEDURE_SECTION
 	
 	initParameters();
+
+	#ifdef NEW_SELEX
+	calcSelex();
+	#endif
 	
 	calcSelectivities(isel_type);
 	
@@ -2085,6 +2093,42 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
   }
 
 
+FUNCTION calcSelex
+  {
+  	cout<<"START of CalcSelex"<<endl;
+  	log_sel.initialize();
+
+  	int h,i,j,k;
+  	int ig;
+  	dvariable p1,p2;
+  	COUT(slx_nrow);
+
+  	for(k = 1; k <= slx_nrow; k++)
+  	{
+  		
+	  	slx::slxInterface<dvariable> *ptrSlx[slx_nIpar(k)-1];
+	  	for( j = 0; j < slx_nIpar(k); j++ )
+	  	{
+		 
+	  		switch(slx_nSelType(k))
+	  		{
+	  			// logistic selectivity based on age.
+	  			case 1:
+	  				p1 = slx_log_par(k,j+1,1);
+	  				p2 = slx_log_par(k,j+1,2);
+	  				COUT(p1);
+	  				ptrSlx[j] = new slx::slx_Logistic<dvariable>(p1,p2);
+	  			break;
+	  		}
+  			ptrSlx[j]->Evaluate();
+	  	}
+
+  	}
+
+  	cout<<"End of CalcSelex"<<endl;
+  	exit(1);
+
+  }
 
 
   	/**
