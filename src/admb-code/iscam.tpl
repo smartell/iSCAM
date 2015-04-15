@@ -1093,24 +1093,26 @@ DATA_SECTION
 	init_matrix  slx_dControls(1,slx_nrow,1,13);
 	init_matrix  ret_dControls(1,slx_nrow,1,13);
 
-	ivector     slx_nIpar(1,slx_nrow);   /// number of rows for each slx
-	ivector     slx_nJpar(1,slx_nrow);   /// number of cols for each slx
-	ivector  slx_nSelType(1,slx_nrow);   /// type of selectivity function
-	ivector slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
-	ivector  slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
-	ivector      slx_nSex(1,slx_nrow);   /// number of sexes
-	ivector       slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
-	ivector       slx_nsb(1,slx_nrow);   /// start of block year.
-	ivector       slx_neb(1,slx_nrow);   /// end of block year.
+	ivector slx_nGearIndex(1,slx_nrow);   /// index for fishing gear.
+	ivector      slx_nIpar(1,slx_nrow);   /// number of rows for each slx
+	ivector      slx_nJpar(1,slx_nrow);   /// number of cols for each slx
+	ivector   slx_nSelType(1,slx_nrow);   /// type of selectivity function
+	ivector  slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
+	ivector   slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
+	ivector       slx_nSex(1,slx_nrow);   /// number of sexes
+	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
+	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
+	ivector        slx_neb(1,slx_nrow);   /// end of block year.
 
 	LOC_CALCS
-		slx_nSelType  = ivector(column(slx_dControls,2));
-		slx_nSex      = ivector(column(slx_dControls,5)) + 1;
-		slx_nAgeNodes = ivector(column(slx_dControls,6));
-		slx_nYrNodes  = ivector(column(slx_dControls,7));
-		slx_phz       = ivector(column(slx_dControls,8));
-		slx_nsb       = ivector(column(slx_dControls,12));
-		slx_neb       = ivector(column(slx_dControls,13));
+		slx_nGearIndex = ivector(column(slx_dControls,1));
+		slx_nSelType   = ivector(column(slx_dControls,2));
+		slx_nSex       = ivector(column(slx_dControls,5)) + 1;
+		slx_nAgeNodes  = ivector(column(slx_dControls,6));
+		slx_nYrNodes   = ivector(column(slx_dControls,7));
+		slx_phz        = ivector(column(slx_dControls,8));
+		slx_nsb        = ivector(column(slx_dControls,12));
+		slx_neb        = ivector(column(slx_dControls,13));
 
 		// • Count number of selectivity parameters required for each slx_type
 		for(i = 1; i <= slx_nrow; i++)
@@ -2099,14 +2101,14 @@ FUNCTION calcSelex
   	log_sel.initialize();
 
   	int h,i,j,k;
-  	int ig;
+  	int ig,kgear;
   	dvariable p1,p2;
-  	COUT(slx_nrow);
+  	COUT(nyr );
 
   	for(k = 1; k <= slx_nrow; k++)
   	{
   		
-	  	slx::slxInterface<dvariable> *ptrSlx[slx_nIpar(k)-1];
+	  	slx::slxInterface<dvar_vector> *ptrSlx[slx_nIpar(k)-1];
 	  	for( j = 0; j < slx_nIpar(k); j++ )
 	  	{
 		 
@@ -2116,12 +2118,34 @@ FUNCTION calcSelex
 	  			case 1:
 	  				p1 = slx_log_par(k,j+1,1);
 	  				p2 = slx_log_par(k,j+1,2);
-	  				COUT(p1);
-	  				ptrSlx[j] = new slx::slx_Logistic<dvariable>(p1,p2);
+	  				
+	  				ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
 	  			break;
 	  		}
-  			ptrSlx[j]->Evaluate();
+  			COUT(ptrSlx[j]->Evaluate());
 	  	}
+
+
+	  	// fill arrays with selectivity coefficients.
+	  	j = 0;
+	  	for( ig = 1; ig <= n_ags; ig++ )
+		{
+			kgear = slx_nGearIndex(k);
+			if( slx_phz(k) < 0 )  /// check mirroring.
+			{
+				kgear = fabs(slx_phz(k));
+			}
+
+			for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= nyr<slx_neb(k)?nyr:slx_neb(k); i++)
+			{
+				COUT(i);
+				log_sel(kgear)(ig)(i) = ptrSlx[j] -> Evaluate();
+			}
+
+		}
+
+		delete *ptrSlx;
+
 
   	}
 

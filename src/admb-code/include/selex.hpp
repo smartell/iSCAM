@@ -81,20 +81,20 @@ namespace slx {
 		// Evaluate should return a dvar_vector or a df1b2_vector
 		inline REAL_T Evaluate() {
 			cout<<"Evaluating slx_Logistic"<<endl;
-			cout<<m_log_mu<<endl;
-			cout<<m_log_sd<<endl;
-			//COUT(x);
-
-			return m_log_mu;
+			dvariable mu = exp(m_log_mu);
+			dvariable sd = exp(m_log_sd);
+			
+			return log( 1.0/(1.0+exp(-(m_x-mu)/sd)) );
 		}
 
 	protected:
-		REAL_T m_log_mu;
-		REAL_T m_log_sd;
+		dvariable m_log_mu;
+		dvariable m_log_sd;
+		dvector   m_x;
 
 	public:
-		slx_Logistic(REAL_T log_mu, REAL_T log_sd)
-		:m_log_mu(log_mu),m_log_sd(log_sd)
+		slx_Logistic(dvector x, dvariable log_mu, dvariable log_sd)
+		:m_log_mu(log_mu),m_log_sd(log_sd),m_x(x)
 		{
 			cout<<"Constructor"<<endl;
 			Register(slx_Logistic<REAL_T>);
