@@ -53,7 +53,7 @@
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## SELECTIVITY CONTROLS                                                                 ##
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
-## - Each gear must have a selectivity and retention curve.
+## - Each gear must have at least one selectivity and retention curve.
 ## • Index       = gear index for selectivity curve.
 ## • sel_type    = type of selectivity function (see Legend).
 ## • sel_mu      = mean age/length 50% selectivity.
@@ -77,20 +77,22 @@
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Selectivity P(capture of all size/age)
 ## slx_dControls
-##        sel   sel  sel  sex  age    year  phz                       start  end        ##
-## Index  type  mu   sd   dep  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## • index for sex (0=both, 1=female, 2=male)
+##        sel   sel  sel       age    year  phz                       start  end        ##
+## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
-   1      1     10   2.0  1    5      0     2      0.0   0.0   0.0    1888   2014
+   1      4     10   2.0  0    5      0     2      0.0   0.0   0.0    1888   2014
    2      1     3.0  1.5  0    5      0    -2      0.0   0.0   0.0    1888   2014
    3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888   2014
    4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888   2014
-   5      1     10   2.0  1    5      0    -1      0.0   0.0   0.0    1888   2014
-   6      1     3.0  2.0  1    5      0     2      0.0   0.0   0.0    1888   2014
+   5      1     10   2.0  0    5      0    -1      0.0   0.0   0.0    1888   2014
+   6      2     3.0  2.0  0    5      0     2      0.0   0.0   0.0    1888   2014
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Retention P(retaining size/age)
 ## ret_dControls
-##        sel   sel  sel  sex  age    year  phz                       start  end        ##
-## Index  type  mu   sd   dep  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## • index for sex (0=both, 1=female, 2=male)
+##        sel   sel  sel       age    year  phz                       start  end        ##
+## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
   -1      3     10   2.0  1    5      0     2      0.0   0.0   0.0    1888   2014
   -2      1     3.0  1.5  0    5      0    -2      0.0   0.0   0.0    1888   2014

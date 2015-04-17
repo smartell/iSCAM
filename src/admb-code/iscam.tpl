@@ -1099,7 +1099,7 @@ DATA_SECTION
 	ivector   slx_nSelType(1,slx_nrow);   /// type of selectivity function
 	ivector  slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
 	ivector   slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
-	ivector       slx_nSex(1,slx_nrow);   /// number of sexes
+	ivector       slx_nSex(1,slx_nrow);   /// index for sex (0=both, 1=female, 2=male)
 	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
 	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
 	ivector        slx_neb(1,slx_nrow);   /// end of block year.
@@ -1107,7 +1107,7 @@ DATA_SECTION
 	LOC_CALCS
 		slx_nGearIndex = ivector(column(slx_dControls,1));
 		slx_nSelType   = ivector(column(slx_dControls,2));
-		slx_nSex       = ivector(column(slx_dControls,5)) + 1;
+		slx_nSex       = ivector(column(slx_dControls,5));
 		slx_nAgeNodes  = ivector(column(slx_dControls,6));
 		slx_nYrNodes   = ivector(column(slx_dControls,7));
 		slx_phz        = ivector(column(slx_dControls,8));
@@ -1117,8 +1117,7 @@ DATA_SECTION
 		// • Count number of selectivity parameters required for each slx_type
 		for(i = 1; i <= slx_nrow; i++)
 		{
-			int hsex     = slx_nSex(i);
-			slx_nIpar(i) = hsex;
+			slx_nIpar(i) = 1;
 
 			switch(slx_nSelType(i))
 			{
@@ -1140,13 +1139,13 @@ DATA_SECTION
 				// • cubic spline over age/size each year
 				case 4:
 					slx_nJpar(i) = slx_nAgeNodes(i);
-					slx_nIpar(i) = hsex * (slx_neb(i) - slx_nsb(i) + 1);
+					slx_nIpar(i) = slx_neb(i) - slx_nsb(i) + 1;
 				break;
 
 				// • bicubic spline over age-size / years
 				case 5:
 					slx_nJpar(i) = slx_nAgeNodes(i);
-					slx_nIpar(i) = hsex * slx_nYrNodes(i);
+					slx_nIpar(i) = slx_nYrNodes(i);
 				break;
 
 				// • logistic based on weight-at-age deviations.
@@ -2100,14 +2099,13 @@ FUNCTION calcSelex
   	cout<<"START of CalcSelex"<<endl;
   	log_sel.initialize();
 
-  	int h,i,j,k;
-  	int ig,kgear;
+  	int i,j,k;
+  	
   	dvariable p1,p2;
   	COUT(nyr );
 
   	for(k = 1; k <= slx_nrow; k++)
   	{
-  		
 	  	slx::slxInterface<dvar_vector> *ptrSlx[slx_nIpar(k)-1];
 	  	for( j = 0; j < slx_nIpar(k); j++ )
 	  	{
@@ -2118,37 +2116,76 @@ FUNCTION calcSelex
 	  			case 1:
 	  				p1 = slx_log_par(k,j+1,1);
 	  				p2 = slx_log_par(k,j+1,2);
-	  				
 	  				ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
 	  			break;
+
+	  			// age-specific selectivity coefficients.
+	  			case 2:
+	  				ptrSlx[j] = new slx::slx_Coefficients<dvar_vector>(age,slx_log_par(k)(j+1));
+	  			break;
+
+	  			// cubic spline
+	  			case 3:
+	  				ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_log_par(k)(j+1));
+	  			break;
+
+	  			// • cubic spline over age/size each year
+	  			case 4:
+	  				ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_log_par(k)(j+1));
+	  			break;
 	  		}
-  			COUT(ptrSlx[j]->Evaluate());
+  			
 	  	}
 
 
 	  	// fill arrays with selectivity coefficients.
+	  	// NOTES:
+		// • h = index for sex (0=both, 1=female, 2=male)
+	  	// • If slx_nSex(k) == 0, then apply same slx curve to both sexes.
+	  	//   Do this by looping over area and group, and assign to specific sex.
 	  	j = 0;
-	  	for( ig = 1; ig <= n_ags; ig++ )
+	  	int f,g,h,ih;
+  		int h_sex = slx_nSex(k);  
+		int kgear = slx_nGearIndex(k);
+	  	//int ngrp  = h_sex==0? n_ag: n_ags;
+		
+
+
+	  	for(int ig = 1; ig <= n_ags; ig++ )
 		{
-			kgear = slx_nGearIndex(k);
-			if( slx_phz(k) < 0 )  /// check mirroring.
-			{
-				kgear = fabs(slx_phz(k));
-			}
+			f  = n_area(ig);
+			g  = n_group(ig);
+			h  = n_sex(ig);
+			
+			
+			//if( slx_phz(k) < 0 )  /// check mirroring.
+			//{
+			//	kgear = fabs(slx_phz(k));
+			//}
+			
+			// if h_sex == 0, then you need to reset j = 0
+			if ( h_sex == 0 ) j = 0;
 
-			for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= nyr<slx_neb(k)?nyr:slx_neb(k); i++)
+			// if !h_sex, skip the process if current group is not the right sex
+			if ( h_sex != 0 && h != h_sex) continue;
+			
+			int igrp = pntr_ags(f,g,h);
+			for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= slx_neb(k); i++)
 			{
-				COUT(i);
-				log_sel(kgear)(ig)(i) = ptrSlx[j] -> Evaluate();
-			}
+				log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
 
+				if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
+			}
+			//cout<<j<<"\t"<<ig<<endl;
+			//COUT(exp(log_sel(ig)));
+			//exit(1);
 		}
 
 		delete *ptrSlx;
 
 
   	}
-
+  	COUT(pntr_ag);
   	cout<<"End of CalcSelex"<<endl;
   	exit(1);
 
