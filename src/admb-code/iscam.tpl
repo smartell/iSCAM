@@ -2104,8 +2104,17 @@ FUNCTION calcSelex
   	dvariable p1,p2;
 
 
-  	for(k = 1; k <= slx_nrow; k++)
+  	for(int kr = 1; kr <= slx_nrow; kr++)
   	{
+  		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		k  = kr;
+		if(sel_phz(k) < 0)
+		{
+			k = abs(sel_phz(kr));
+			slx_log_par(k) = slx_log_par(kr);
+		}
+
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
 		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
 		int nn = slx_nIpar(k)-1;
@@ -2205,9 +2214,10 @@ FUNCTION calcSelex
 			// Fill vectors of selex
 			if (ptrSlx[j])
 			{
-				for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= slx_neb(k); i++)
+				for(i = yr1; i <= yr2; i++)
 				{
 					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
+					
 
 					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
 				}
@@ -2217,6 +2227,12 @@ FUNCTION calcSelex
 			if (ptrSlxM)
 			{
 				log_sel(kgear)(igrp) = ptrSlxM -> Evaluate();
+			}
+
+			//subtract mean to ensure mean(exp(log_sel))==1
+			for(i = yr1; i <= yr2; i++)
+			{
+				log_sel(kgear)(igrp)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
 			}
 		}
 
