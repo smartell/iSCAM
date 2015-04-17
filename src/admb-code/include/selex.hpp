@@ -169,22 +169,22 @@ namespace slx {
 		friend class slxInterface<REAL_T>;
 
 		inline REAL_T Evaluate() {
-			cout<<"Evaluating CubicSpline"<<endl;
-			int nodes = size_count(m_log_spline_coeffs);
+			//cout<<"Evaluating CubicSpline"<<endl;
+			int nodes = size_count(m_log_spline_knots);
 			dvector ia(1,nodes);
 			dvector fa = (m_x-min(m_x))/(max(m_x)-min(m_x));
 			ia.fill_seqadd(0,1./(nodes-1));
-			vcubic_spline_function ffa(ia,m_log_spline_coeffs);
+			vcubic_spline_function ffa(ia,m_log_spline_knots);
 			return ffa(fa);
 		}
 
 	protected:
 		dvector m_x;
-		REAL_T m_log_spline_coeffs;
+		REAL_T m_log_spline_knots;
 	public:
 		template<typename T1, typename T2>
 		slx_CubicSpline(T1 &x, T2 &log_spline_coeffs)
-		:m_x(x),m_log_spline_coeffs(log_spline_coeffs)
+		:m_x(x),m_log_spline_knots(log_spline_coeffs)
 		{
 			Register(slx_CubicSpline<REAL_T>);
 		}
@@ -202,22 +202,23 @@ namespace slx {
 		friend class slxInterface<REAL_T>;
 
 		inline REAL_T Evaluate() {
-			cout<<"Evaluating BiCubicSpline"<<endl;
-			int nodes = size_count(m_log_spline_coeffs);
-			dvector ia(1,nodes);
-			dvector fa = (m_x-min(m_x))/(max(m_x)-min(m_x));
-			ia.fill_seqadd(0,1./(nodes-1));
-			vcubic_spline_function ffa(ia,m_log_spline_coeffs);
-			return ffa(fa);
+			//cout<<"Evaluating BiCubicSpline"<<endl;
+			//cout<<m_log_sel.rowmax()<<endl;
+			//cout<<m_log_spline_knots.colmin()<<endl;
+			bicubic_spline(m_x,m_y,m_log_spline_knots,m_log_sel);
+			
+			return(m_log_sel);
 		}
 
 	protected:
 		dvector m_x;
-		REAL_T m_log_spline_coeffs;
+		dvector m_y;
+		dvar_matrix m_log_sel;
+		REAL_T m_log_spline_knots;
 	public:
 		template<typename T1, typename T2>
-		slx_BiCubicSpline(T1 &x, T2 &log_spline_coeffs)
-		:m_x(x),m_log_spline_coeffs(log_spline_coeffs)
+		slx_BiCubicSpline(const T1 &x, const T1 &y, T2 &log_spline_coeffs, T2 &A)
+		:m_x(x),m_y(y),m_log_sel(A),m_log_spline_knots(log_spline_coeffs)
 		{
 			Register(slx_BiCubicSpline<REAL_T>);
 		}

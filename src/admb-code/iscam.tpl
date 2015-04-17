@@ -1894,12 +1894,12 @@ PROCEDURE_SECTION
 	
 	initParameters();
 
+	//calcSelectivities(isel_type);
+	
 	#ifdef NEW_SELEX
 	calcSelex();
 	#endif
-	
-	calcSelectivities(isel_type);
-	
+
 	calcTotalMortality();
 	
 	calcNumbersAtAge();
@@ -2096,46 +2096,82 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 
 FUNCTION calcSelex
   {
-  	cout<<"START of CalcSelex"<<endl;
+  	//cout<<"START of CalcSelex"<<endl;
   	log_sel.initialize();
 
   	int i,j,k;
   	
   	dvariable p1,p2;
-  	COUT(nyr );
+
 
   	for(k = 1; k <= slx_nrow; k++)
   	{
-	  	slx::slxInterface<dvar_vector> *ptrSlx[slx_nIpar(k)-1];
-	  	for( j = 0; j < slx_nIpar(k); j++ )
+		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
+		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
+		int nn = slx_nIpar(k)-1;
+	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
+	  	for( i = 0; i <= nn; i++ )
 	  	{
-		 
-	  		switch(slx_nSelType(k))
-	  		{
-	  			// logistic selectivity based on age.
-	  			case 1:
-	  				p1 = slx_log_par(k,j+1,1);
-	  				p2 = slx_log_par(k,j+1,2);
-	  				ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
-	  			break;
-
-	  			// age-specific selectivity coefficients.
-	  			case 2:
-	  				ptrSlx[j] = new slx::slx_Coefficients<dvar_vector>(age,slx_log_par(k)(j+1));
-	  			break;
-
-	  			// cubic spline
-	  			case 3:
-	  				ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_log_par(k)(j+1));
-	  			break;
-
-	  			// • cubic spline over age/size each year
-	  			case 4:
-	  				ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_log_par(k)(j+1));
-	  			break;
-	  		}
-  			
+	  		ptrSlx[i] = NULL;
 	  	}
+	  	slx::slxInterface<dvar_matrix> *ptrSlxM = NULL;
+
+
+  		switch(slx_nSelType(k))
+  		{
+  			// logistic selectivity based on age.
+  			case 1:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+  					p1 = slx_log_par(k,j+1,1);
+  					p2 = slx_log_par(k,j+1,2);
+  					ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
+  				}
+  			break;
+
+  			// age-specific selectivity coefficients.
+  			case 2:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_Coefficients<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// cubic spline
+  			case 3:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • cubic spline over age/size each year
+  			case 4:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • bicubic spline over age and year knots
+  			case 5:
+  				dvar_matrix tmp(yr1,yr2,sage,nage);
+  				dvector iyr(1,slx_nYrNodes(k));
+  				dvector iag(1,slx_nAgeNodes(k));
+  				iyr.fill_seqadd(0,1.0/(slx_nYrNodes(k)-1));
+  				iag.fill_seqadd(0,1.0/(slx_nAgeNodes(k)-1));
+  				dvar_matrix slx_theta = slx_log_par(k);
+  				tmp.initialize();
+  				
+  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
+  				//COUT(ptrSlxM -> Evaluate());
+  			break;
+  		}
+  			
+	  	
 
 
 	  	// fill arrays with selectivity coefficients.
@@ -2144,13 +2180,9 @@ FUNCTION calcSelex
 	  	// • If slx_nSex(k) == 0, then apply same slx curve to both sexes.
 	  	//   Do this by looping over area and group, and assign to specific sex.
 	  	j = 0;
-	  	int f,g,h,ih;
+	  	int f,g,h;
   		int h_sex = slx_nSex(k);  
 		int kgear = slx_nGearIndex(k);
-	  	//int ngrp  = h_sex==0? n_ag: n_ags;
-		
-
-
 	  	for(int ig = 1; ig <= n_ags; ig++ )
 		{
 			f  = n_area(ig);
@@ -2168,26 +2200,34 @@ FUNCTION calcSelex
 
 			// if !h_sex, skip the process if current group is not the right sex
 			if ( h_sex != 0 && h != h_sex) continue;
-			
 			int igrp = pntr_ags(f,g,h);
-			for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= slx_neb(k); i++)
+			
+			// Fill vectors of selex
+			if (ptrSlx[j])
 			{
-				log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
+				for(i = syr>slx_nsb(k)?syr:slx_nsb(k); i <= slx_neb(k); i++)
+				{
+					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
 
-				if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
+					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
+				}
 			}
-			//cout<<j<<"\t"<<ig<<endl;
-			//COUT(exp(log_sel(ig)));
-			//exit(1);
+			
+			// Fill matrix of selex
+			if (ptrSlxM)
+			{
+				log_sel(kgear)(igrp) = ptrSlxM -> Evaluate();
+			}
 		}
 
-		delete *ptrSlx;
+		if( !ptrSlxM ) delete ptrSlxM;
+		if( !*ptrSlx ) delete *ptrSlx;
 
 
   	}
-  	COUT(pntr_ag);
-  	cout<<"End of CalcSelex"<<endl;
-  	exit(1);
+  	
+  	//cout<<"End of CalcSelex"<<endl;
+  	//exit(1);
 
   }
 
@@ -5672,7 +5712,7 @@ TOP_OF_MAIN_SECTION
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
-	gradient_structure::set_MAX_DLINKS(10000);
+	gradient_structure::set_MAX_DLINKS(40000);
 
 
 GLOBALS_SECTION
@@ -5807,6 +5847,65 @@ GLOBALS_SECTION
 	double dicValue = 0;
 
 
+	// DEPRECATE Testing bicubic spline to get indexing right.
+	void bbicubic_spline(const dvector& x, const dvector& y, dvar_matrix& knots, dvar_matrix& S)
+    {
+      /*
+      Author:  Steven Martell
+      Date: July 29, 2010
+      Comments:  Based on code from Numerical Recipies.
+    
+      This function returns matrix S which is the interpolated values of knots
+      over knots[1..m][1..n] grid.
+    
+      first call splie2 to get second-derivatives at knot points
+      void splie2(const dvector& _x1a,const dvector& _x2a,const dmatrix& _ya,dvar_matrix& _y2a)
+    
+      then run the splin2 to get the spline points
+      dvariable splin2(const dvector& _x1a,const dvector* _x2a, const dmatrix _ya,
+        dvar_matrix& _y2a, const double& x1,const double& x2)
+      */
+      RETURN_ARRAYS_INCREMENT();
+      int i,j;
+      int m=knots.rowmax();
+      int n=knots.colmax();
+    
+      int mm=S.rowmax()-S.rowmin()+1;
+      int nn=S.colmax()-S.colmin()+1;
+    
+      dvar_matrix shift_S(1,mm,1,nn);
+    
+      dvector im(1,mm); im.fill_seqadd(0,1./(mm-1.));
+      dvector in(1,nn); in.fill_seqadd(0,1./(nn-1.));
+      dvar_matrix y2(1,m,1,n);  //matrix of second-derivatives
+      COUT(x);
+      COUT(y.indexmin());
+      COUT(knots)
+      y2=splie2(x,y,knots);
+    	COUT("HERE IAM TO SAVE THE DAY")
+    
+      for(i=1;i<=mm;i++){
+        for(j=1;j<=nn;j++){
+          shift_S(i,j)=splin2(x,y,knots,y2,in(j),im(i));
+        }
+      }
+    
+      int ii,jj;
+      ii=0;
+      for(i=S.rowmin();i<=S.rowmax();i++)
+      {
+        ii++; jj=0;
+        for(j=S.colmin();j<=S.colmax();j++)
+        {
+          jj++;
+          S(i,j)=shift_S(ii,jj);
+        }
+      }
+    
+      //cout<<shift_S<<endl;
+      RETURN_ARRAYS_DECREMENT();
+      //cout<<"Bicubic"<<endl;
+    }
 
 
 // 	void function_minimizer::mcmc_eval(void)
