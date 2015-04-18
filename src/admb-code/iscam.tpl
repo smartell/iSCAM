@@ -3789,7 +3789,7 @@ FUNCTION calcObjectiveFunction
 		}
 	}
 	#endif
-	
+
 	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
@@ -5833,7 +5833,7 @@ GLOBALS_SECTION
 	 * \def NEW_SELEX
 	 * Testing new selectivity controls.
 	 */
-	#define NEW_SELEX
+	//#define NEW_SELEX
 
 	/**
 	\def REPORT(object)
