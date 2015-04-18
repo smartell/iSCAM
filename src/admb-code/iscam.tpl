@@ -1091,7 +1091,7 @@ DATA_SECTION
 	!!  slx_nrow = sum(column(slx_nBlocks,1));
 	!!  ret_nrow = sum(column(slx_nBlocks,2));
 	init_matrix  slx_dControls(1,slx_nrow,1,13);
-	init_matrix  ret_dControls(1,slx_nrow,1,13);
+	init_matrix  ret_dControls(1,ret_nrow,1,13);
 
 	ivector slx_nGearIndex(1,slx_nrow);   /// index for fishing gear.
 	ivector      slx_nIpar(1,slx_nrow);   /// number of rows for each slx
@@ -1103,6 +1103,10 @@ DATA_SECTION
 	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
 	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
 	ivector        slx_neb(1,slx_nrow);   /// end of block year.
+	vector  slx_lam1(1,slx_nrow);
+	vector  slx_lam2(1,slx_nrow);
+	vector  slx_lam3(1,slx_nrow);
+
 
 	LOC_CALCS
 		slx_nGearIndex = ivector(column(slx_dControls,1));
@@ -1113,6 +1117,9 @@ DATA_SECTION
 		slx_phz        = ivector(column(slx_dControls,8));
 		slx_nsb        = ivector(column(slx_dControls,12));
 		slx_neb        = ivector(column(slx_dControls,13));
+		slx_lam1       = column(slx_dControls,9);
+		slx_lam2       = column(slx_dControls,10);
+		slx_lam3       = column(slx_dControls,11);
 
 		// • Count number of selectivity parameters required for each slx_type
 		for(i = 1; i <= slx_nrow; i++)
@@ -1175,7 +1182,7 @@ DATA_SECTION
 				break;
 			}
 		}
-
+		COUT(slx_nrow);
 		cout<<"Ok after new selex stuff in data section"<<endl;
 	END_CALCS
 
@@ -1894,8 +1901,10 @@ PROCEDURE_SECTION
 	
 	initParameters();
 
-	//calcSelectivities(isel_type);
-	
+	#ifndef NEW_SELEX
+	calcSelectivities(isel_type);
+	#endif
+
 	#ifdef NEW_SELEX
 	calcSelex();
 	#endif
@@ -2112,7 +2121,7 @@ FUNCTION calcSelex
 		if(sel_phz(k) < 0)
 		{
 			k = abs(sel_phz(kr));
-			slx_log_par(k) = slx_log_par(kr);
+			slx_log_par(kr) = slx_log_par(k);
 		}
 
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
@@ -3639,9 +3648,62 @@ FUNCTION calcObjectiveFunction
 	dvar_vector lvec(1,7); 
 	lvec.initialize();
 	int ig;
+	#ifdef NEW_SELEX
+	for(int kr = 1; kr <= slx_nrow; kr++ )
+	{
+		int yr1 = syr>slx_nsb(kr)?syr:slx_nsb(kr);
+		int yr2 = nyr<slx_neb(kr)?nyr:slx_neb(kr);
+		k = slx_nGearIndex(kr);
+		if( active(slx_log_par(kr)) )
+		{
+			// penalty in curviture  (nlvec(6,k)).
+			// penalty in dome-shape (nlvec(7,k)).
+			if( slx_nSelType(kr) != 1)
+			{
+				for( ig = 1; ig <= n_ags; ig++ )
+				{
+					for( i = yr1; i <= yr2; i++ )
+					{
+						dvar_vector df1 = first_difference(log_sel(k)(ig)(i));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(6,k)     += slx_lam1(k)/(nage-sage+1)*norm2(df2);
+
+						for( j = sage; j <  nage; j++ )
+						{
+							dvariable diff = log_sel(k,ig,i,j) - log_sel(k,ig,i,j+1);
+							if(diff > 0)
+							{
+								nlvec(7,k) += slx_lam2(k) * square(diff);
+							}
+						}
+					}
+				}
+			}
+
+			// penalty in time-varying changes (nlvec(8,k)).
+			if( slx_nSelType(kr) == 4 || slx_nSelType(kr) == 5)
+			{
+				for(ig=1;ig<=n_ags;ig++)
+				{
+					dvar_matrix trans_log_sel = trans( log_sel(k)(ig) );
+					for(j=sage;j<=nage;j++)
+					{
+						dvar_vector df1 = first_difference(trans_log_sel(j));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(8,k)     += slx_lam3(k)/(nage-sage+1)*norm2(df2);
+					}
+				}
+			}
+		}
+		
+	}
+	#endif
+
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k)))
+
+		if( active(sel_par(k)) )
 		{
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
@@ -3689,13 +3751,46 @@ FUNCTION calcObjectiveFunction
 			
 		}
 	}
-	
+	#endif
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | [?] - TODO for isel_type==2 ensure mean 0 as well.
 	// |
+
+	#ifdef NEW_SELEX
+	for(k=1;k<=ngear;k++)
+	{
+		if( active(slx_log_par(k)) && slx_nSelType(k)!=1 )
+		{
+			dvariable s = 0;
+			if(slx_nSelType(k)==5)  //bicubic spline version ensure column mean = 0
+			{
+				dvar_matrix tmp = trans(slx_log_par(k));
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+			if( slx_nSelType(k)==2 ||
+			    slx_nSelType(k)==3 ||
+			 	slx_nSelType(k)==4 || 
+				slx_nSelType(k)==12 )
+			{
+				dvar_matrix tmp = slx_log_par(k);
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+		}
+	}
+	#endif
+	
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
 		if( active(sel_par(k)) &&
@@ -3728,6 +3823,7 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
+	#endif
 	
 	
 	// |---------------------------------------------------------------------------------|
