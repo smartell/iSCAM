@@ -1103,9 +1103,11 @@ DATA_SECTION
 	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
 	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
 	ivector        slx_neb(1,slx_nrow);   /// end of block year.
-	vector  slx_lam1(1,slx_nrow);
-	vector  slx_lam2(1,slx_nrow);
-	vector  slx_lam3(1,slx_nrow);
+	vector      slx_sel_mu(1,slx_nrow);
+	vector      slx_sel_sd(1,slx_nrow);
+	vector        slx_lam1(1,slx_nrow);
+	vector        slx_lam2(1,slx_nrow);
+	vector        slx_lam3(1,slx_nrow);
 
 
 	LOC_CALCS
@@ -1117,6 +1119,8 @@ DATA_SECTION
 		slx_phz        = ivector(column(slx_dControls,8));
 		slx_nsb        = ivector(column(slx_dControls,12));
 		slx_neb        = ivector(column(slx_dControls,13));
+		slx_sel_mu     = column(slx_dControls,3);
+		slx_sel_sd     = column(slx_dControls,4);
 		slx_lam1       = column(slx_dControls,9);
 		slx_lam2       = column(slx_dControls,10);
 		slx_lam3       = column(slx_dControls,11);
@@ -1585,6 +1589,25 @@ PARAMETER_SECTION
 !! #ifdef NEW_SELEX
 	init_bounded_matrix_vector slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar,-25.0,25.0,slx_phz);
 	// TO DO set initial values for slx parameters.
+	LOC_CALCS
+		if( !global_parfile )
+		{
+			for(int k = 1; k <= slx_nrow; k++ )
+			{
+				if(slx_nSelType(k)==1)
+				{
+					for(int j = 1; j <= slx_nIpar(k); j++ )
+					{
+						cout<<"Made it here"<<endl;
+						slx_log_par(k)(j)(1) = log(slx_sel_mu(k));
+						slx_log_par(k)(j)(2) = log(slx_sel_sd(k));
+						cout<<"and here too"<<endl;
+					}
+				}
+			}
+		}
+	END_CALCS
+
 !! #endif
 
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
@@ -2134,7 +2157,7 @@ FUNCTION calcSelex
 	  	}
 	  	slx::slxInterface<dvar_matrix> *ptrSlxM = NULL;
 
-
+	  	cout<<"Made it here "<<kr<<endl;
   		switch(slx_nSelType(k))
   		{
   			// logistic selectivity based on age.
@@ -3765,9 +3788,9 @@ FUNCTION calcObjectiveFunction
 		if( active(slx_log_par(k)) && slx_nSelType(k)!=1 )
 		{
 			dvariable s = 0;
-			if(slx_nSelType(k)==5)  //bicubic spline version ensure column mean = 0
+			if(slx_nSelType(k)==5)  //bicubic spline version ensure row mean = 0
 			{
-				dvar_matrix tmp = trans(slx_log_par(k));
+				dvar_matrix tmp = slx_log_par(k);
 				for(j=1;j<=tmp.rowmax();j++)
 				{
 					s=mean(tmp(j));
@@ -5833,7 +5856,7 @@ GLOBALS_SECTION
 	 * \def NEW_SELEX
 	 * Testing new selectivity controls.
 	 */
-	//#define NEW_SELEX
+	#define NEW_SELEX
 
 	/**
 	\def REPORT(object)

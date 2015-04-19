@@ -2,6 +2,7 @@
 library(reshape2)
 library(ggplot2)
 
+
 .plotAgeBars <- function( M )
 {
 	n <- length( M )
@@ -48,12 +49,19 @@ library(ggplot2)
 		O <- subset(mB,V=="Observed")
 		I <- subset(mB,V=="Predicted")
 
+		klbl <- .GEAR[O$Gear]
+		albl <- .AREA[O$Area]
+		glbl <- .GROUP[O$Group]
+		slbl <- .SEX[O$Sex+1]
+
 		p <- ggplot(O,aes(variable,as.double(value),fill=BroodYear))
 		p <- p + geom_bar(stat="identity",alpha=0.7)
+		p <- p + scale_fill_distiller(type = "div")
 		p <- p + geom_line(data=I,aes(as.numeric(variable),value),color="red")
 		p <- p + labs(x="Age",y="Proportion")
+		p <- p + ggtitle(paste(klbl,":Area",albl,":Group",glbl,":Sex",slbl))
 		p <- p + guides(title.position = "top")
-		p <- p + facet_wrap(~Year,nrow=4)+coord_flip()
+		p <- p + facet_wrap(~Year)+coord_flip()
 		return (p + .THEME + theme(legend.position="top") + theme_bw(8))
 	}
 

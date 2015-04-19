@@ -27,6 +27,12 @@ setwd(.PWD)
 .THEME      <- theme_bw(12)
 .UNITS      <- "(mlb)"
 
+# | Labels for gear sex area and group index.
+.GEAR  = c("Directed","Wasteage","Bycatch","Sport","Personal","Setline Survey")
+.SEX   = c("F & M","Female","Male")
+.AREA  = c("Coast wide")
+.GROUP = c("Pacific Halibut")
+
 
 .srcRlib  <- function()
 {
