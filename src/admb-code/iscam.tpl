@@ -2131,20 +2131,20 @@ FUNCTION calcSelex
   	//cout<<"START of CalcSelex"<<endl;
   	log_sel.initialize();
 
-  	int i,j,k;
+  	int i,j,k,kr;
   	
   	dvariable p1,p2;
 
-
-  	for(int kr = 1; kr <= slx_nrow; kr++)
+  	kr = 0;
+  	for(k = 1; k <= slx_nrow; k++)
   	{
   		// The following is used to mirror another gear-type
 		// based on the absolute value of sel_phz.
-		k  = kr;
+	
 		if(slx_phz(k) < 0)
 		{
-			k = abs(slx_phz(kr));
-			slx_log_par(kr) = slx_log_par(k);
+			kr = abs(slx_phz(k));
+			slx_log_par(k) = slx_log_par(kr);
 		}
 	  	//cout<<"Made it here "<<kr<<" "<<slx_nrow<<endl;
 
@@ -2199,6 +2199,7 @@ FUNCTION calcSelex
 
   			// • bicubic spline over age and year knots
   			case 5:
+  				//cout<<"Start of bicubic spline"<<endl;
   				dvar_matrix tmp(yr1,yr2,sage,nage);
   				dvector iyr(1,slx_nYrNodes(k));
   				dvector iag(1,slx_nAgeNodes(k));
@@ -2207,7 +2208,8 @@ FUNCTION calcSelex
   				dvar_matrix slx_theta = slx_log_par(k);
   				tmp.initialize();
   				
-  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
+  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iyr,iag,slx_theta,tmp);
+  				
   				//COUT(ptrSlxM -> Evaluate());
   			break;
   		}
@@ -2258,7 +2260,7 @@ FUNCTION calcSelex
 			// Fill matrix of selex
 			if (ptrSlxM)
 			{
-				log_sel(kgear)(igrp) = ptrSlxM -> Evaluate();
+				log_sel(kgear)(igrp).sub(yr1,yr2) = ptrSlxM -> Evaluate();
 			}
 
 			//subtract mean to ensure mean(exp(log_sel))==1
@@ -2274,7 +2276,7 @@ FUNCTION calcSelex
 
   	}
   	
-  	//cout<<"End of CalcSelex"<<endl;
+  	if(verbose==1) cout<<"End of CalcSelex"<<endl;
   	//exit(1);
 
   }
@@ -5197,9 +5199,13 @@ REPORT_SECTION
 	{
 		for(int ig=1;ig<=n_ags;ig++)
 		{
+			int h = n_sex(ig);
+			int f = n_area(ig);
+			int g = n_group(ig);
 			for(i=syr;i<=nyr;i++)
 			{
-				report<<k<<"\t"<<ig<<"\t"<<i<<"\t"<<log_sel(k)(ig)(i)<<endl;	
+				report<<k<<"\t"<<f<<"\t"<<g<<"\t"<<h<<"\t"<<i<<"\t";
+				report<<log_sel(k)(ig)(i)<<endl;	
 			}
 		}
 	}
@@ -5238,7 +5244,7 @@ REPORT_SECTION
 	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
-	// | ABUNDANCE IN NUMBERS 
+	// | ABUNDANCE IN NUMBERS `
 	// |---------------------------------------------------------------------------------|
 	// |
 	REPORT(N);
@@ -5859,7 +5865,7 @@ GLOBALS_SECTION
 	 * \def NEW_SELEX
 	 * Testing new selectivity controls.
 	 */
-	// #define NEW_SELEX
+	#define NEW_SELEX
 
 	/**
 	\def REPORT(object)

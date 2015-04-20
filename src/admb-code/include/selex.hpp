@@ -205,7 +205,7 @@ namespace slx {
 			//cout<<"Evaluating BiCubicSpline"<<endl;
 			//cout<<m_log_sel.rowmax()<<endl;
 			//cout<<m_log_spline_knots.colmin()<<endl;
-			bicubic_spline(m_x,m_y,m_log_spline_knots,m_log_sel);
+			bicubic_spline(m_y,m_x,m_log_spline_knots,m_log_sel);
 			
 			return(m_log_sel);
 		}

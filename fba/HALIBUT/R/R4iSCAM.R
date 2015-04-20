@@ -80,6 +80,7 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotAgeCompResiduals( M )
 .plotAgeSummary( M )
 .plotAgeBars( M )
+.plotSlx( M )
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui
