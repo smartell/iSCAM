@@ -50,62 +50,62 @@
 
 
 
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-## SELECTIVITY CONTROLS                                                                 ##
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-## - Each gear must have at least one selectivity and retention curve.
-## - Use a -ve phase with the gear index to mirror another gear.  Note 
-##   that if you mirror another gear, it must have the same sel type and
-##   age and year nodes so that the arrays are the same shape & block years.
-##
-## • Index       = gear index for selectivity curve.
-## • sel_type    = type of selectivity function (see Legend).
-## • sel_mu      = mean age/length 50% selectivity.
-## • sel_sd      = std in 50% selectivity
-## • sex_dep     = 0 -> no;  1 -> offset for sex 2.
-## • size_nodes  = # of nodes for age/size cubic spline.
-## • year_nodes  = # of nodes for time varying bicubic spline.
-## • phz_mirror  = phase of estimation (-ve phase to mirror selextivity index)
-## • lam1        = penalty weight for 2nd differences (w = 1/(2•sig^2)).
-## • lam2        = penalty weight for dome-shaped selectivity.
-## • lam3        = penalty weight for time-varying selectivity.
-## • start_block = year index for first year of selectivity curve.
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-## sel_nBlocks    ret_nBlocks    ## Gear Description.
-   1              1              ## Commercial retained
-   1              1              ## Commercial discards
-   1              1              ## Bycatch in non-directed fisheries.
-   1              1              ## Sport
-   1              1              ## Personal use
-   2              1              ## Setline survey.
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-## Selectivity P(capture of all size/age)
-## slx_dControls
-## • index for sex (0=both, 1=female, 2=male)
-##        sel   sel  sel       age    year  phz or                    start  end        ##
-## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-   1      3     10   2.0  0    5      0     2      0.0   200  50.5    1888   2014
-   2      1     3.0  1.5  0    0      0    -2      0.0   0.0   0.0    1888   2014
-   3      1     4.0  2.5  0    0      0    -3      0.0   0.0   0.0    1888   2014
-   4      1     4.0  2.0  0    0      0    -4      0.0   0.0   0.0    1888   2014
-   5      3     10   2.0  0    5      0    -1      0.0   200  50.5    1888   2014
-   6      5     3.0  2.0  1    5      6     2     12.5   200  50.5    1888   2014
-   6      5     3.0  2.0  2    5      6     2     12.5   200  50.5    1888   2014
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-## Retention P(retaining size/age)
-## ret_dControls
-## • index for sex (0=both, 1=female, 2=male)
-##        sel   sel  sel       age    year  phz or                    start  end        ##
-## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
-## ———————————————————————————————————————————————————————————————————————————————————— ##
-  -1      3     10   2.0  1    5      0     2      0.0   0.0   0.0    1888   2014
-  -2      1     3.0  1.5  0    5      0    -2      0.0   200  50.5    1888   2014
-  -3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888   2014
-  -4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888   2014
-  -5      3     10   2.0  1    5      0    -1      0.0   0.0   0.0    1888   2014
-  -6      5     3.0  2.0  1    5      5     2     12.5   200  50.5    1888   2014
-
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+## ## SELECTIVITY CONTROLS                                                                 ##
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+## ## - Each gear must have at least one selectivity and retention curve.
+## ## - Use a -ve phase with the gear index to mirror another gear.  Note 
+## ##   that if you mirror another gear, it must have the same sel type and
+## ##   age and year nodes so that the arrays are the same shape & block years.
+## ##
+## ## • Index       = gear index for selectivity curve.
+## ## • sel_type    = type of selectivity function (see Legend).
+## ## • sel_mu      = mean age/length 50% selectivity.
+## ## • sel_sd      = std in 50% selectivity
+## ## • sex_dep     = 0 -> no;  1 -> offset for sex 2.
+## ## • size_nodes  = # of nodes for age/size cubic spline.
+## ## • year_nodes  = # of nodes for time varying bicubic spline.
+## ## • phz_mirror  = phase of estimation (-ve phase to mirror selextivity index)
+## ## • lam1        = penalty weight for 2nd differences (w = 1/(2•sig^2)).
+## ## • lam2        = penalty weight for dome-shaped selectivity.
+## ## • lam3        = penalty weight for time-varying selectivity.
+## ## • start_block = year index for first year of selectivity curve.
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+## ## sel_nBlocks    ret_nBlocks    ## Gear Description.
+##    1              1              ## Commercial retained
+##    1              1              ## Commercial discards
+##    1              1              ## Bycatch in non-directed fisheries.
+##    1              1              ## Sport
+##    1              1              ## Personal use
+##    2              1              ## Setline survey.
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+## ## Selectivity P(capture of all size/age)
+## ## slx_dControls
+## ## • index for sex (0=both, 1=female, 2=male)
+## ##        sel   sel  sel       age    year  phz or                    start  end        ##
+## ## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+##    1      3     10   2.0  0    5      0     2      0.0   200  50.5    1888   2014
+##    2      1     3.0  1.5  0    0      0    -2      0.0   0.0   0.0    1888   2014
+##    3      1     4.0  2.5  0    0      0    -3      0.0   0.0   0.0    1888   2014
+##    4      1     4.0  2.0  0    0      0    -4      0.0   0.0   0.0    1888   2014
+##    5      3     10   2.0  0    5      0    -1      0.0   200  50.5    1888   2014
+##    6      5     3.0  2.0  1    5      6     2     12.5   200  50.5    1888   2014
+##    6      5     3.0  2.0  2    5      6     2     12.5   200  50.5    1888   2014
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+## ## Retention P(retaining size/age)
+## ## ret_dControls
+## ## • index for sex (0=both, 1=female, 2=male)
+## ##        sel   sel  sel       age    year  phz or                    start  end        ##
+## ## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## ## ———————————————————————————————————————————————————————————————————————————————————— ##
+##   -1      3     10   2.0  1    5      0     2      0.0   0.0   0.0    1888   2014
+##   -2      1     3.0  1.5  0    5      0    -2      0.0   200  50.5    1888   2014
+##   -3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888   2014
+##   -4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888   2014
+##   -5      3     10   2.0  1    5      0    -1      0.0   0.0   0.0    1888   2014
+##   -6      5     3.0  2.0  1    5      5     2     12.5   200  50.5    1888   2014
+## 
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## LEGEND FOR SELECTIVITY TYPES (sel_type)                                              ##
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
@@ -146,7 +146,7 @@
   82     3.0   4.0   4.0   3.0   65.0  # 2  -Age/length at 50% selectivity (logistic)
   5.5    1.5   2.5   2.0   2.5   5.5   # 3  -STD at 50% selectivity (logistic)
   5      0     0     0     5     5     # 4  -No. of age nodes for each gear (0=ignore)
-  0      0     0     0     0     5     # 5  -No. of year nodes for 2d spline(0=ignore)
+  0      0     0     0     0     6     # 5  -No. of year nodes for 2d spline(0=ignore)
   2     -2    -3    -4    -1     2     # 6  -Phase of estimation (-1 for fixed)
   0.0    0.0   0.0   0.0   0.0   12.5  # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
   200.0  200.0 200.0 200.0 200.0 200.0 # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)

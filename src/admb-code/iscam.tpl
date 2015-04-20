@@ -2141,11 +2141,12 @@ FUNCTION calcSelex
   		// The following is used to mirror another gear-type
 		// based on the absolute value of sel_phz.
 		k  = kr;
-		if(sel_phz(k) < 0)
+		if(slx_phz(k) < 0)
 		{
-			k = abs(sel_phz(kr));
+			k = abs(slx_phz(kr));
 			slx_log_par(kr) = slx_log_par(k);
 		}
+	  	//cout<<"Made it here "<<kr<<" "<<slx_nrow<<endl;
 
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
 		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
@@ -2157,7 +2158,6 @@ FUNCTION calcSelex
 	  	}
 	  	slx::slxInterface<dvar_matrix> *ptrSlxM = NULL;
 
-	  	cout<<"Made it here "<<kr<<endl;
   		switch(slx_nSelType(k))
   		{
   			// logistic selectivity based on age.
@@ -3783,23 +3783,26 @@ FUNCTION calcObjectiveFunction
 	// |
 
 	#ifdef NEW_SELEX
-	for(k=1;k<=ngear;k++)
+	for(k=1;k<=slx_nrow;k++)
 	{
 		if( active(slx_log_par(k)) && slx_nSelType(k)!=1 )
 		{
 			dvariable s = 0;
-			if(slx_nSelType(k)==5)  //bicubic spline version ensure row mean = 0
+			//bicubic spline version ensure col mean = 0
+			if(slx_nSelType(k)==5)  
 			{
-				dvar_matrix tmp = slx_log_par(k);
+				dvar_matrix tmp = trans(slx_log_par(k));
 				for(j=1;j<=tmp.rowmax();j++)
 				{
 					s=mean(tmp(j));
 					lvec(1)+=10000.0*s*s;
 				}
 			}
+
 			if( slx_nSelType(k)==2 ||
 			    slx_nSelType(k)==3 ||
 			 	slx_nSelType(k)==4 || 
+			 	//slx_nSelType(k)==5 || 
 				slx_nSelType(k)==12 )
 			{
 				dvar_matrix tmp = slx_log_par(k);
@@ -5856,7 +5859,7 @@ GLOBALS_SECTION
 	 * \def NEW_SELEX
 	 * Testing new selectivity controls.
 	 */
-	#define NEW_SELEX
+	// #define NEW_SELEX
 
 	/**
 	\def REPORT(object)
