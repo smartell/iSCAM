@@ -1155,8 +1155,8 @@ DATA_SECTION
 
 				// • bicubic spline over age-size / years
 				case 5:
-					slx_nJpar(i) = slx_nAgeNodes(i);
-					slx_nIpar(i) = slx_nYrNodes(i);
+					slx_nIpar(i) = slx_nAgeNodes(i);
+					slx_nJpar(i) = slx_nYrNodes(i);
 				break;
 
 				// • logistic based on weight-at-age deviations.
@@ -2208,7 +2208,7 @@ FUNCTION calcSelex
   				dvar_matrix slx_theta = slx_log_par(k);
   				tmp.initialize();
   				
-  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iyr,iag,slx_theta,tmp);
+  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
   				
   				//COUT(ptrSlxM -> Evaluate());
   			break;
@@ -3760,7 +3760,11 @@ FUNCTION calcObjectiveFunction
 
 			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
 			*/
-			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
+			if( lambda_3(k) && 
+				  (isel_type(k)==4 ||
+				   isel_type(k)==5 || 
+				   n_sel_blocks(k) > 1) 
+			  )
 			{
 				for(ig=1;ig<=n_ags;ig++)
 				{
@@ -3804,7 +3808,6 @@ FUNCTION calcObjectiveFunction
 			if( slx_nSelType(k)==2 ||
 			    slx_nSelType(k)==3 ||
 			 	slx_nSelType(k)==4 || 
-			 	//slx_nSelType(k)==5 || 
 				slx_nSelType(k)==12 )
 			{
 				dvar_matrix tmp = slx_log_par(k);
@@ -5991,65 +5994,7 @@ GLOBALS_SECTION
 	double dicValue = 0;
 
 
-	// DEPRECATE Testing bicubic spline to get indexing right.
-	void bbicubic_spline(const dvector& x, const dvector& y, dvar_matrix& knots, dvar_matrix& S)
-    {
-      /*
-      Author:  Steven Martell
-      Date: July 29, 2010
-      Comments:  Based on code from Numerical Recipies.
-    
-      This function returns matrix S which is the interpolated values of knots
-      over knots[1..m][1..n] grid.
-    
-      first call splie2 to get second-derivatives at knot points
-      void splie2(const dvector& _x1a,const dvector& _x2a,const dmatrix& _ya,dvar_matrix& _y2a)
-    
-      then run the splin2 to get the spline points
-      dvariable splin2(const dvector& _x1a,const dvector* _x2a, const dmatrix _ya,
-        dvar_matrix& _y2a, const double& x1,const double& x2)
-      */
-      RETURN_ARRAYS_INCREMENT();
-      int i,j;
-      int m=knots.rowmax();
-      int n=knots.colmax();
-    
-      int mm=S.rowmax()-S.rowmin()+1;
-      int nn=S.colmax()-S.colmin()+1;
-    
-      dvar_matrix shift_S(1,mm,1,nn);
-    
-      dvector im(1,mm); im.fill_seqadd(0,1./(mm-1.));
-      dvector in(1,nn); in.fill_seqadd(0,1./(nn-1.));
-      dvar_matrix y2(1,m,1,n);  //matrix of second-derivatives
-      COUT(x);
-      COUT(y.indexmin());
-      COUT(knots)
-      y2=splie2(x,y,knots);
-    	COUT("HERE IAM TO SAVE THE DAY")
-    
-      for(i=1;i<=mm;i++){
-        for(j=1;j<=nn;j++){
-          shift_S(i,j)=splin2(x,y,knots,y2,in(j),im(i));
-        }
-      }
-    
-      int ii,jj;
-      ii=0;
-      for(i=S.rowmin();i<=S.rowmax();i++)
-      {
-        ii++; jj=0;
-        for(j=S.colmin();j<=S.colmax();j++)
-        {
-          jj++;
-          S(i,j)=shift_S(ii,jj);
-        }
-      }
-    
-      //cout<<shift_S<<endl;
-      RETURN_ARRAYS_DECREMENT();
-      //cout<<"Bicubic"<<endl;
-    }
+	
 
 
 // 	void function_minimizer::mcmc_eval(void)
