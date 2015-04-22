@@ -77,7 +77,7 @@
 ##        sel   sel  sel       age    year  phz or                    start  end        ##
 ## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
-   1      2     3.5   2.0  0   0      0     2      12.5   2.0  50.5   1968   1979
+   1      2     3.5   2.0  0    0      0     2      2.0   2.0  12.5   1968   1979
 ## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Retention P(retaining size/age)
 ## ret_dControls
@@ -118,16 +118,16 @@
 ##      sig=0.05 0.10 0.15 0.20 0.30 0.40 0.50                               ##
 ##      wt =200. 50.0 22.2 12.5 5.56 3.12 2.00                               ##
 ## ------------------------------------------------------------------------- ##
-	2		        # 1  -selectivity type ivector(isel_type) for gear
-	3.5		        # 2  -Age/length at 50% selectivity (logistic)
-	0.5		        # 3  -STD at 50% selectivity (logistic)
-	7				# 4  -No. of age nodes for each gear (0=ignore)
-	12				# 5  -No. of year nodes for 2d spline(0=ignore)
-	3				# 6  -Phase of estimation (-1 for fixed)
-	2.00			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
-	2.00 			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
-	12.5			# 9  -Penalty wt for time-varying selectivity
-	1               # 10 -n_sel_blocks (number of selex blocks)
+  2           # 1  -selectivity type ivector(isel_type) for gear
+  3.5           # 2  -Age/length at 50% selectivity (logistic)
+  0.5           # 3  -STD at 50% selectivity (logistic)
+  7       # 4  -No. of age nodes for each gear (0=ignore)
+  12        # 5  -No. of year nodes for 2d spline(0=ignore)
+  3       # 6  -Phase of estimation (-1 for fixed)
+  2.00      # 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
+  2.00      # 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
+  12.5      # 9  -Penalty wt for time-varying selectivity
+  1               # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
 1968
