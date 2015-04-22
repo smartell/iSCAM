@@ -2140,7 +2140,6 @@ FUNCTION calcSelex
   	{
   		// The following is used to mirror another gear-type
 		// based on the absolute value of sel_phz.
-	
 		if(slx_phz(k) < 0)
 		{
 			kr = abs(slx_phz(k));
@@ -2199,7 +2198,6 @@ FUNCTION calcSelex
 
   			// • bicubic spline over age and year knots
   			case 5:
-  				//cout<<"Start of bicubic spline"<<endl;
   				dvar_matrix tmp(yr1,yr2,sage,nage);
   				dvector iyr(1,slx_nYrNodes(k));
   				dvector iag(1,slx_nAgeNodes(k));
@@ -2209,13 +2207,8 @@ FUNCTION calcSelex
   				tmp.initialize();
   				
   				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
-  				
-  				//COUT(ptrSlxM -> Evaluate());
   			break;
   		}
-  			
-	  	//cout<<"Made it here "<<kr<<" "<<slx_nrow<<endl;
-
 
 	  	// fill arrays with selectivity coefficients.
 	  	// NOTES:
@@ -2232,12 +2225,6 @@ FUNCTION calcSelex
 			g  = n_group(ig);
 			h  = n_sex(ig);
 			
-			
-			//if( slx_phz(k) < 0 )  /// check mirroring.
-			//{
-			//	kgear = fabs(slx_phz(k));
-			//}
-			
 			// if h_sex == 0, then you need to reset j = 0
 			if ( h_sex == 0 ) j = 0;
 
@@ -2245,16 +2232,11 @@ FUNCTION calcSelex
 			if ( h_sex != 0 && h != h_sex) continue;
 			int igrp = pntr_ags(f,g,h);
 			// Fill vectors of selex
-			//cout<<"Made it here "<<j<<" "<<slx_nrow<<endl;
 			if (ptrSlx[j])
 			{
 				for(i = yr1; i <= yr2; i++)
 				{
-			//		COUT(kgear); COUT(igrp);
 					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
-			//cout<<"Made it here "<<i<<" "<<yr1<<endl;
-					
-
 					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
 				}
 			}

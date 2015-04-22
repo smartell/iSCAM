@@ -15,8 +15,8 @@
 # | .RFILES    <- List of R functions to source from the lib directory.
 # .PWD        <- "/Users/stevenmartell1/Documents/iSCAM/examples/PacificHake14/R"
 .PWD        <- "/Users/stevenmartell1/Documents/iSCAM-project/src/R"
-.LIB        <- "../../../dist/R/lib/"
-.WIN        <- "../../../dist/R/iScamWin2.txt"
+.LIB        <- "../../../src/R/lib/"
+.WIN        <- "../../../src/R/iScamWin2.txt"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
