@@ -254,13 +254,12 @@ void OperatingModel::initParameters()
     m_n_it_nobs.initialize();
     m_n_it_nobs = n_it_nobs + m_nyrs;
     
-    m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
+    m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,9);
     m_d3SurveyData.initialize();
     for(int k=1;k<=nItNobs;k++)
     {
         m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);  
     }
-
     // Age-composition arrays   
     m_A_irow.allocate(1,nAgears);
     m_A_irow.initialize(); 
@@ -275,8 +274,9 @@ void OperatingModel::initParameters()
         }
     }
     
-    m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
+    m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-6,n_A_nage);
     m_d3_A.initialize();
+    cout<<"Ok today"<<endl;
     
     for(int k=1;k<=nAgears;k++)
     {
@@ -336,7 +336,7 @@ void OperatingModel::initParameters()
     }
 
     
-    //cout<<"finished init parameters"<<endl;
+    cout<<"finished init parameters"<<endl;
 }
 
 
