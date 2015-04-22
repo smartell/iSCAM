@@ -478,7 +478,7 @@ DATA_SECTION
 		if(!mseFlag)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
-	  cout<<"| ----------------------- |"<<endl;
+	    cout<<"| ----------------------- |"<<endl;
 		cout<<"| GROWTH PARAMETERS       |"<<endl;
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| d_linf  \t"<<d_linf<<endl;
@@ -585,6 +585,7 @@ DATA_SECTION
 
 	init_int nItNobs;
 	ivector        nSurveyIndex(1,nItNobs);
+	ivector          qdev_count(1,nItNobs);
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
@@ -611,6 +612,7 @@ DATA_SECTION
 			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
+			qdev_count(k) = size_count(it_log_se(k));
 		}
 		double tmp_mu = mean(it_wt);
 		for(k=1;k<=nItNobs;k++)
@@ -1079,6 +1081,120 @@ DATA_SECTION
 	// |  10 -> Number of discrete selectivity blocks.
 	// |
 
+
+	/// April 13, issue 39.  Changing the way selectivity/retention is controlled.
+
+!! #ifdef  NEW_SELEX
+	init_imatrix slx_nBlocks(1,ngear,1,2);
+	int slx_nrow;
+	int ret_nrow
+	!!  slx_nrow = sum(column(slx_nBlocks,1));
+	!!  ret_nrow = sum(column(slx_nBlocks,2));
+	init_matrix  slx_dControls(1,slx_nrow,1,13);
+	init_matrix  ret_dControls(1,ret_nrow,1,13);
+
+	ivector slx_nGearIndex(1,slx_nrow);   /// index for fishing gear.
+	ivector      slx_nIpar(1,slx_nrow);   /// number of rows for each slx
+	ivector      slx_nJpar(1,slx_nrow);   /// number of cols for each slx
+	ivector   slx_nSelType(1,slx_nrow);   /// type of selectivity function
+	ivector  slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
+	ivector   slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
+	ivector       slx_nSex(1,slx_nrow);   /// index for sex (0=both, 1=female, 2=male)
+	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
+	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
+	ivector        slx_neb(1,slx_nrow);   /// end of block year.
+	vector      slx_sel_mu(1,slx_nrow);
+	vector      slx_sel_sd(1,slx_nrow);
+	vector        slx_lam1(1,slx_nrow);
+	vector        slx_lam2(1,slx_nrow);
+	vector        slx_lam3(1,slx_nrow);
+
+
+	LOC_CALCS
+		slx_nGearIndex = ivector(column(slx_dControls,1));
+		slx_nSelType   = ivector(column(slx_dControls,2));
+		slx_nSex       = ivector(column(slx_dControls,5));
+		slx_nAgeNodes  = ivector(column(slx_dControls,6));
+		slx_nYrNodes   = ivector(column(slx_dControls,7));
+		slx_phz        = ivector(column(slx_dControls,8));
+		slx_nsb        = ivector(column(slx_dControls,12));
+		slx_neb        = ivector(column(slx_dControls,13));
+		slx_sel_mu     = column(slx_dControls,3);
+		slx_sel_sd     = column(slx_dControls,4);
+		slx_lam1       = column(slx_dControls,9);
+		slx_lam2       = column(slx_dControls,10);
+		slx_lam3       = column(slx_dControls,11);
+
+		// • Count number of selectivity parameters required for each slx_type
+		for(i = 1; i <= slx_nrow; i++)
+		{
+			slx_nIpar(i) = 1;
+
+			switch(slx_nSelType(i))
+			{
+				// • logistic selectivity
+				case 1:    
+					slx_nJpar(i) = 2;
+				break;
+
+				// • age-specific coefficients
+				case 2:
+					slx_nJpar(i) = int(nage - sage);
+				break;
+
+				// • cubic spline over age/size
+				case 3:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+
+				// • cubic spline over age/size each year
+				case 4:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+					slx_nIpar(i) = slx_neb(i) - slx_nsb(i) + 1;
+				break;
+
+				// • bicubic spline over age-size / years
+				case 5:
+					slx_nIpar(i) = slx_nAgeNodes(i);
+					slx_nJpar(i) = slx_nYrNodes(i);
+				break;
+
+				// • logistic based on weight-at-age deviations.
+				case 6:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • logistic based on weight-at-age devs and scalar parameter.
+				case 7:
+					slx_nJpar(i) = 3;
+				break;
+
+				// • age-specific coefficients between lb_age <= age <= ub_age
+				// case 8:
+
+				// • logistic based on mean length-at-age.
+				case 11:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • size-specific coefficients.
+				//case 12:
+
+				// • size-based cubic spline over mean size-at-age
+				case 13:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+			}
+		}
+		COUT(slx_nrow);
+		cout<<"Ok after new selex stuff in data section"<<endl;
+	END_CALCS
+
+
+
+!! #endif
+
+
 	init_matrix selex_controls(1,10,1,ngear);
 	
 
@@ -1205,10 +1321,10 @@ DATA_SECTION
 	// | m_stdev		-> Standard deviation for constraint.
 	// | m_nNodes		-> number of nodes for cubic spline.
 	// | m_nodeyear -> position of the nodes.
-	int 					nMdev;
+	int 				nMdev;
 	init_int 			m_type;
 	init_int 			Mdev_phz;
-	init_number 	m_stdev;
+	init_number 		m_stdev;
 	init_int 			m_nNodes;
 	init_ivector m_nodeyear(1,m_nNodes);
 	
@@ -1233,6 +1349,7 @@ DATA_SECTION
 	init_ivector q_prior(1,nits);
 	init_vector mu_log_q(1,nits);
 	init_vector sd_log_q(1,nits);
+	init_ivector q_phz(1,nits);
 	
 	// |---------------------------------------------------------------------------------|
 	// | Miscellaneous controls                                                          |
@@ -1242,7 +1359,7 @@ DATA_SECTION
 	// | 3 -> std in catch first phase
 	// | 4 -> std in catch in last phase
 	// | 5 -> assumed unfished in first year (0=FALSE, 1=TRUE)
-	// | 6 -> Maternal effects power parameter.
+	// | 6 -> Maternal effects power parameter (1=no maternal effects).
 	// | 7 -> mean fishing mortality rate to regularize the solution
 	// | 8 -> standard deviation of mean F penalty in first phases
 	// | 9 -> standard deviation of mean F penalty in last phase.
@@ -1291,12 +1408,13 @@ DATA_SECTION
 	// | ilvec[2]       -> number of surveys       (nItNobs)
 	// | ilvec[3]       -> number of age-compisition data sets (nAgears)
 	// | ilvec[4]       -> container for recruitment deviations.
-	ivector ilvec(1,7);
+	ivector ilvec(1,8);
 	!! ilvec    = ngear;
 	!! ilvec(1) = 1;			
 	!! ilvec(2) = nItNobs;			
-	!! ilvec(3) = nAgears;		
-	!! ilvec(4) = ngroup;
+	!! ilvec(3) = nItNobs;			
+	!! ilvec(4) = nAgears;		
+	!! ilvec(5) = ngroup;
 	
 
 	// |---------------------------------------------------------------------------------|
@@ -1324,6 +1442,14 @@ DATA_SECTION
 			if( dCatchData(i)(1) > nyr ) ft_count --;
 		}
 
+		for( k = 1; k <= nItNobs; k++ )
+		{
+			for( i = 1; i <= n_it_nobs(k); i++ )
+			{
+				if( d3_survey_data(k)(i)(1) > nyr) qdev_count(k) --;
+			}
+		}
+
 		// Retrospective counter for n_A_nobs
 		n_naa.initialize();
 		for( k = 1; k <= nAgears; k++ )
@@ -1343,6 +1469,7 @@ DATA_SECTION
 	// | - adjust sel_blocks to new syr
 	// | - Reduce ft_count so as not to bias estimates of ft.
 	// | - Establish prospective counter for Composition data   n_saa;
+	// | - Reduce qdev_count
 
 	ivector n_saa(1,nAgears);
 
@@ -1372,6 +1499,14 @@ DATA_SECTION
 			{
 				int iyr = d3_A(k)(i)(n_A_sage(k)-6);	//index for year
 				if( iyr < syr ) n_saa(k)++;
+			}
+		}
+
+		for( k = 1; k <= nItNobs; k++ )
+		{
+			for( i = 1; i <= n_it_nobs(k); i++ )
+			{
+				if( d3_survey_data(k)(i)(1) < syr) qdev_count(k) --;
 			}
 		}
 	END_CALCS
@@ -1408,29 +1543,16 @@ DATA_SECTION
 	// | MANAGEMENT STRATEGY EVALUATION INPUTS
 	// |---------------------------------------------------------------------------------|
 	// |
-	
-
-	//LOC_CALCS
-	//	ifstream ifile("Halibut2012.mse");
-	//	if(ifile)
-	//	{
-	//		cout<<"Vader is happy"<<endl;
-	//		readMseInputs();
-	//		
-	//		
-	//		exit(1);
-	//	}
-	//END_CALCS
 
 
-	// END OF DATA_SECTION
-	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 	// |--------------------------------------|
 	// | Friend Class Operating Model for MSE |
 	// |--------------------------------------|
 	friend_class OperatingModel;
 	
+	// END OF DATA_SECTION
+	!! if(verbose) cout<<"||-- END OF DATA_SECTION --||"<<endl;
 
 INITIALIZATION_SECTION
   theta theta_ival;
@@ -1464,6 +1586,30 @@ PARAMETER_SECTION
 	// | - Special case: if SimFlag=TRUE, then add some random noise to ahat.
 	// | - NB  sel_par is in log space.
 	// |
+!! #ifdef NEW_SELEX
+	init_bounded_matrix_vector slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar,-25.0,25.0,slx_phz);
+	// TO DO set initial values for slx parameters.
+	LOC_CALCS
+		if( !global_parfile )
+		{
+			for(int k = 1; k <= slx_nrow; k++ )
+			{
+				if(slx_nSelType(k)==1)
+				{
+					for(int j = 1; j <= slx_nIpar(k); j++ )
+					{
+						cout<<"Made it here"<<endl;
+						slx_log_par(k)(j)(1) = log(slx_sel_mu(k));
+						slx_log_par(k)(j)(2) = log(slx_sel_sd(k));
+						cout<<"and here too"<<endl;
+					}
+				}
+			}
+		}
+	END_CALCS
+
+!! #endif
+
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 
 	LOC_CALCS
@@ -1515,7 +1661,6 @@ PARAMETER_SECTION
 	// | - If in simulation mode then initialize with F=0.1; Actual F is conditioned on 
 	// |   the observed catch.
 	// |
-	
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
@@ -1550,11 +1695,22 @@ PARAMETER_SECTION
 	// |   then natural mortality rate deviates are not estimated and M is assumed const.
 	// | - This model is implemented as a random walk, where M{t+1} = M{t} + dev.
 	
-	!! int m_dev_phz = -1;
-	!!     m_dev_phz = d_iscamCntrl(10);
+	//!! int m_dev_phz = -1;
+	//!!     m_dev_phz = d_iscamCntrl(10);
 	//!! int  n_m_devs = d_iscamCntrl(12);
 	//init_bounded_vector log_m_nodes(1,n_m_devs,-5.0,5.0,m_dev_phz);
 	init_bounded_vector log_m_nodes(1,nMdev,-5.0,5.0,Mdev_phz);
+
+	// |---------------------------------------------------------------------------------|
+	// | DEVIATIONS IN CATCHABILITY COEFFICIENTS ASSUMING A RANDOM WALK                  |
+	// |---------------------------------------------------------------------------------|
+	// | 
+	//init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
+	!! COUT(n_it_nobs);
+	!! COUT(qdev_count);
+	//!! exit(1);
+	init_bounded_vector_vector log_q_devs(1,nItNobs,1,qdev_count,-5.0,5.0,q_phz);
+
 
 	// |---------------------------------------------------------------------------------|
 	// | CORRELATION COEFFICIENTS FOR AGE COMPOSITION DATA USED IN LOGISTIC NORMAL       |
@@ -1565,7 +1721,7 @@ PARAMETER_SECTION
 	init_bounded_number_vector log_age_tau2(1,nAgears,-4.65,5.30,nPhz_age_tau2);
 	init_bounded_number_vector phi1(1,nAgears,-1.0,1.0,nPhz_phi1);
 	init_bounded_number_vector phi2(1,nAgears,0.0,1.0,nPhz_phi2);
-	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,0.70,10.0,nPhz_df);
+	init_bounded_number_vector log_degrees_of_freedom(1,nAgears,-10.0,10.0,nPhz_df);
 
 	// |---------------------------------------------------------------------------------|
 	// | DEPRECATE AUTOCORRELATION IN RECRUITMENT DEVIATIONS                                       |
@@ -1580,7 +1736,6 @@ PARAMETER_SECTION
 	// | - the value that ADMB will minimize, called objfun in iSCAM
 	// |
 	objective_function_value objfun;
-	
 
     // |---------------------------------------------------------------------------------|
     // | POPULATION VARIABLES
@@ -1630,7 +1785,7 @@ PARAMETER_SECTION
 	vector  varphi(1,ngroup);
 	vector     sig(1,ngroup);	
 	vector     tau(1,ngroup);
-  vector sigma_r(1,ngroup); 
+  	vector sigma_r(1,ngroup); 
 	
 	// |---------------------------------------------------------------------------------|
 	// | MATRIX OBJECTS
@@ -1649,7 +1804,7 @@ PARAMETER_SECTION
 	// | - delta       -> residuals between estimated R and R from S-R curve (process err)
 	// | 
 	matrix  log_rt(1,n_ag,syr-nage+sage,nyr);
-	matrix   nlvec(1,7,1,ilvec);	
+	matrix   nlvec(1,8,1,ilvec);	
 	matrix epsilon(1,nItNobs,1,n_it_nobs);
 	matrix      xi(1,nItNobs,1,n_it_nobs);
 	matrix  it_hat(1,nItNobs,1,n_it_nobs);
@@ -1659,7 +1814,7 @@ PARAMETER_SECTION
 	matrix      rt(1,ngroup,syr+sage,nyr); 
 	matrix   delta(1,ngroup,syr+sage,nyr);
 
-
+	
 	// |---------------------------------------------------------------------------------|
 	// | THREE DIMENSIONAL ARRAYS
 	// |---------------------------------------------------------------------------------|
@@ -1712,6 +1867,7 @@ PARAMETER_SECTION
 	sdreport_vector sd_depletion(1,ngroup);	
 	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
 	
+	
 
 
 PRELIMINARY_CALCS_SECTION
@@ -1721,7 +1877,7 @@ PRELIMINARY_CALCS_SECTION
 	// | - nf is a function evaluation counter.
  	// | - SimFlag comes from the -sim command line argument to simulate fake data.
  	// |
-
+  
   nf=0;
 	if( testMSY )
 	{
@@ -1767,9 +1923,15 @@ RUNTIME_SECTION
 PROCEDURE_SECTION
 	
 	initParameters();
-	
+
+	#ifndef NEW_SELEX
 	calcSelectivities(isel_type);
-	
+	#endif
+
+	#ifdef NEW_SELEX
+	calcSelex();
+	#endif
+
 	calcTotalMortality();
 	
 	calcNumbersAtAge();
@@ -1833,6 +1995,9 @@ FUNCTION void calcSdreportVariables()
 
 		sd_log_sbt(g) = log(sbt(g));
 	}
+
+	
+
 	if( verbose ) { cout<<"**** Ok after calcSdreportVariables ****"<<endl;}
   }
 
@@ -1870,7 +2035,7 @@ FUNCTION void initParameters()
 	steepness = theta(2);
 	m         = mfexp(theta(3));
 	rho       = theta(6);
-  sigma_r   = theta(7);
+	sigma_r   = theta(7);
 	//varphi    = sqrt(1.0/theta(7));
 	sig       = elem_prod(sqrt(rho) , varphi);
 	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
@@ -1960,23 +2125,145 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 	//return(1.0*la);
   }
 
-// FUNCTION dvar_matrix cubic_spline_matrix(const dvar_matrix& spline_coffs)
-//   {
-// 	RETURN_ARRAYS_INCREMENT();
-// 	int nodes= spline_coffs.colmax()-spline_coffs.colmin()+1;
-// 	int rmin = spline_coffs.rowmin();
-// 	int rmax = spline_coffs.rowmax();
-	
-// 	dvector ia(1,nodes);
-// 	dvector fa(sage,nage);
-// 	ia.fill_seqadd(0,1./(nodes-1));
-// 	//fa.fill_seqadd(sage,1);
-// 	fa.fill_seqadd(0,1./(nage-sage));
-// 	vcubic_spline_function_array fna(rmin,rmax,ia,spline_coffs);
-// 	RETURN_ARRAYS_DECREMENT();
-// 	return(fna(fa));
-	
-//   }
+
+FUNCTION calcSelex
+  {
+  	//cout<<"START of CalcSelex"<<endl;
+  	log_sel.initialize();
+  	
+  	int i,j,k,kr;
+  	
+  	dvariable p1,p2;
+
+  	kr = 0;
+  	for(k = 1; k <= slx_nrow; k++)
+  	{
+  		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		if(slx_phz(k) < 0)
+		{
+			kr = abs(slx_phz(k));
+			slx_log_par(k) = slx_log_par(kr);
+		}
+
+		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
+		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
+		int nn = slx_nIpar(k)-1;
+		
+	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
+	  	for( i = 0; i <= nn; i++ )
+	  	{
+	  		ptrSlx[i] = NULL;
+	  	}
+	  	slx::slxInterface<dvar_matrix> *ptrSlxM = NULL;
+
+  		switch(slx_nSelType(k))
+  		{
+  			// logistic selectivity based on age.
+  			case 1:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+  					p1 = slx_log_par(k,j+1,1);
+  					p2 = slx_log_par(k,j+1,2);
+  					ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
+  				}
+  			break;
+
+  			// age-specific selectivity coefficients.
+  			case 2:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_Coefficients<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// cubic spline
+  			case 3:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • cubic spline over age/size each year
+  			case 4:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • bicubic spline over age and year knots
+  			case 5:
+  				dvar_matrix tmp(yr1,yr2,sage,nage);
+  				dvector iyr(1,slx_nYrNodes(k));
+  				dvector iag(1,slx_nAgeNodes(k));
+  				iyr.fill_seqadd(0,1.0/(slx_nYrNodes(k)-1));
+  				iag.fill_seqadd(0,1.0/(slx_nAgeNodes(k)-1));
+  				dvar_matrix slx_theta = slx_log_par(k);
+  				tmp.initialize();
+  				
+  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
+  			break;
+  		}
+
+	  	// fill arrays with selectivity coefficients.
+	  	// NOTES:
+		// • h = index for sex (0=both, 1=female, 2=male)
+	  	// • If slx_nSex(k) == 0, then apply same slx curve to both sexes.
+	  	//   Do this by looping over area and group, and assign to specific sex.
+	  	j = 0;
+	  	int f,g,h;
+  		int h_sex = slx_nSex(k);  
+		int kgear = slx_nGearIndex(k);
+	  	for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			f  = n_area(ig);
+			g  = n_group(ig);
+			h  = n_sex(ig);
+			
+			// if h_sex == 0, then you need to reset j = 0
+			if ( h_sex == 0 ) j = 0;
+
+			// if !h_sex, skip the process if current group is not the right sex
+			if ( h_sex != 0 && h != h_sex) continue;
+			int igrp = pntr_ags(f,g,h);
+			// Fill vectors of selex
+			if (ptrSlx[j])
+			{
+				for(i = yr1; i <= yr2; i++)
+				{
+					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
+					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
+				}
+			}
+			
+			// Fill matrix of selex
+			if (ptrSlxM)
+			{
+				log_sel(kgear)(igrp).sub(yr1,yr2) = ptrSlxM -> Evaluate();
+			}
+
+			//subtract mean to ensure mean(exp(log_sel))==1
+			for(i = yr1; i <= yr2; i++)
+			{
+				log_sel(kgear)(igrp)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
+			}
+		}
+
+		if( !ptrSlxM ) delete ptrSlxM;
+		if( !*ptrSlx ) delete *ptrSlx;
+
+
+  	}
+  	
+  	if(verbose==1) cout<<"End of CalcSelex"<<endl;
+  	//exit(1);
+
+  }
 
 
   	/**
@@ -2491,8 +2778,8 @@ FUNCTION calcNumbersAtAge
   	[x] - Merge redundant code from calcCatchAtAge
   	[*] - Add case where Chat data do not exsist.
 	[x] - Calculate residuals A_nu; gets done automatically in dmvlogistic
-	[?] - add plus group if n_A_nage < nage;  Aug 7, 2013
-
+	[x] - add plus group if n_A_nage < nage;  Aug 7, 2013
+	[ ] - Need to calculate probability of catching male or female of a given age. 
   	*/
   	
 FUNCTION calcComposition
@@ -2504,6 +2791,7 @@ FUNCTION calcComposition
   	dvar_vector za(sage,nage);
   	dvar_vector ca(sage,nage);
   	dvar_vector na(sage,nage);
+  	dvar_vector ta(sage,nage);  // total numbers at age
   	A_hat.initialize();
 
   	 for(kk=1;kk<=nAgears;kk++)
@@ -2520,6 +2808,14 @@ FUNCTION calcComposition
 	  		// | trap for retrospecitve analysis.
 	  		if(i < syr) continue;
 	  		if(i > nyr) continue;
+
+	  		// total numbers-at-age
+	  		// ta.initialize();
+	  		// for( h = 1; h <= nsex; h++ )
+	  		// {
+	  		// 	ig = pntr_ags(f,g,h);
+	  		// 	ta += N(ig)(i);
+	  		// }
 
 	  		if( h )  // age comps are sexed (h > 0)
 	  		{
@@ -2579,10 +2875,12 @@ FUNCTION calcComposition
 	  		{
 	  			dvar_vector pred_ca = ca * age_age(e);
 	  			A_hat(kk)(ii) = pred_ca(n_A_sage(kk),n_A_nage(kk));
+
+	  			// predicted plus group age.
 	  			if( n_A_nage(kk) < nage )
-					{
-						A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
-					}
+				{
+					A_hat(kk)(ii)(n_A_nage(kk)) += sum( pred_ca(n_A_nage(kk)+1,nage) );
+				}
 	  		}
 	  		else
 	  		{
@@ -2761,6 +3059,7 @@ FUNCTION calcTotalCatch
   		fishery that would remove potential spawn that would not be surveyed.
   		- d3_survey_data: (iyr index(it) gear area group sex wt timing)
   		- for MLE of survey q, using weighted mean of zt to calculate q.
+		- March 30, 2015.  Added deviation in q for random walk.
 
   	TODO list:
   	    [] - add capability to accomodate priors for survey q's.
@@ -2773,11 +3072,12 @@ FUNCTION calcSurveyObservations
 	
 	int ii,kk,ig,nz;
 	double di;
-	dvariable ftmp;
+	dvariable ftmp,zbar;
 	dvar_vector Na(sage,nage);
 	dvar_vector va(sage,nage);
 	dvar_vector sa(sage,nage);
 	epsilon.initialize();
+	qt.initialize();
 	xi.initialize();
 	it_hat.initialize();
 
@@ -2839,42 +3139,90 @@ FUNCTION calcSurveyObservations
 
 
 		dvar_vector t1 = rowsum(V);
-		dvar_vector zt = log(it) - log(t1(iz,nz));
-		dvariable zbar = sum(elem_prod(zt,wt));
-				 q(kk) = mfexp(zbar);
+		dvar_vector zt = log(it);
+		
 
-		// | survey residuals
-		epsilon(kk).sub(iz,nz) = elem_div(zt - zbar,it_log_se(kk)(iz,nz));
-		 it_hat(kk).sub(iz,nz) = q(kk) * t1(iz,nz);
-
-		// | SPECIAL CASE: penalized random walk in q process error only.
-		if( q_prior(kk)==2 )
+		// | March 30, 2015. Issue #37.
+		// | Added switch for 3 q_prior(kk) options.
+		// | 	q_prior(kk) = 0 = constant fixed Q
+		// | 	q_prior(kk) = 1 = constant MLE Q
+		// | 	q_prior(kk) = 2 = penalized random walk in Q
+		switch( q_prior(kk) )
 		{
-			epsilon(kk).initialize();
-			dvar_vector fd_zt     = first_difference(zt);
-			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
-			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
-			qt(kk)(iz) = exp(zt(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
-			}
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			case 0:		// Constant fixed Q
+				q(kk)                  = exp(mu_log_q(kk));
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -=  log(it_hat(kk).sub(iz,nz));
+			break;
+
+			case 1:		// Constant MLE Q
+				zt                     -= log(t1(iz,nz));
+				zbar                   = sum(elem_prod(zt,wt));
+				q(kk)                  = mfexp(zbar);
+				
+				// | survey residuals
+				it_hat(kk).sub(iz,nz)  = q(kk) * t1(iz,nz);
+				zt                     -= zbar;
+				//epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
+
+			case 2: 	// Penalized random walk in Q
+				int jj = 1;  // index for qdevs.
+				zt     -= log(t1(iz,nz));
+				qt(kk)(iz)   = exp( zt(iz) + log_q_devs(kk)(jj) );
+				for(ii=iz+1; ii<=nz; ii++)
+				{
+					jj ++;
+					qt(kk)(ii) = qt(kk)(ii-1) * exp(log_q_devs(kk)(jj));
+					
+				}
+				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+				zt -= log(qt(kk)(iz,nz));
+				
+				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
+			break;
 		}
 
-		// | MIXED ERROR MODEL for random walk in q
-		if( q_prior(kk)==3 )
+		// Standardized observation error residuals.
+		epsilon(kk).sub(iz,nz) = elem_div(zt,it_log_se(kk)(iz,nz));
+
+		// Standardized process error residuals.
+		if(active(log_q_devs(kk)))
 		{
-			dvar_vector proerr = zt - zbar;
-			qt(kk)(ii) = exp(zbar + proerr(iz));
-			for(ii=iz+1;ii<=nz;ii++)
-			{
-				proerr(ii) = zt(ii) - zt(ii-1);
-				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
-			}
-			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
-			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+			//dvar_vector fd_qt = first_difference( log_q_devs(kk) );
+			dvar_vector fd_qt = first_difference( log(qt(kk)(iz,nz)) );
+			xi(kk).sub(iz,nz-1) = elem_div(fd_qt.shift(iz),it_log_pe(kk)(iz,nz-1));
 		}
+
+//       TO BE DEPRECATED
+//		// | SPECIAL CASE: penalized random walk in q process error only.
+//		if( q_prior(kk)==2 )
+//		{
+//			epsilon(kk).initialize();
+//			dvar_vector fd_zt     = first_difference(zt);
+//			dvariable  zw_bar     = sum(elem_prod(fd_zt,wt(iz,nz-1)));
+//			epsilon(kk).sub(iz,nz-1) = elem_div(fd_zt - zw_bar,it_log_se(kk)(iz,nz-1));
+//			qt(kk)(iz) = exp(zt(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(fd_zt(ii-1));
+//			}
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
+//
+//		// | MIXED ERROR MODEL for random walk in q
+//		if( q_prior(kk)==3 )
+//		{
+//			dvar_vector proerr = zt - zbar;
+//			qt(kk)(ii) = exp(zbar + proerr(iz));
+//			for(ii=iz+1;ii<=nz;ii++)
+//			{
+//				proerr(ii) = zt(ii) - zt(ii-1);
+//				qt(kk)(ii) = qt(kk)(ii-1) * exp(proerr(ii));
+//			}
+//			xi(kk).sub(iz,nz)     = elem_div(proerr,it_log_pe(kk)(iz,nz));
+//			it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
+//		}
 	}
 	if(verbose)cout<<"**** Ok after calcSurveyObservations ****"<<endl;
 	
@@ -3043,10 +3391,11 @@ FUNCTION calcObjectiveFunction
 		Likelihoods (nlvec):
 			-1) likelihood of the catch data
 			-2) likelihood of the survey abundance index
-			-3) likelihood of age composition data 
-			-4) likelihood for stock-recruitment relationship
-			-5) penalized likelihood for fishery selectivities
+			-3) likelihood component for random walk in q.
+			-4) likelihood of age composition data 
+			-5) likelihood for stock-recruitment relationship
 			-6) penalized likelihood for fishery selectivities
+			-7) penalized likelihood for fishery selectivities
   		
   	
   	TODO list:
@@ -3101,7 +3450,7 @@ FUNCTION calcObjectiveFunction
 		// }
 		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
 		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(2,k)=dnorm(xi(k),1.0);
+		nlvec(3,k)=dnorm(xi(k),1.0);
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3110,7 +3459,7 @@ FUNCTION calcObjectiveFunction
 	// | - Two options based on d_iscamCntrl(14):
 	// | - 	1 -> multivariate logistic using conditional MLE of the variance for weight.
 	// | -  2 -> multnomial, assumes input sample size as n in n log(p)
-  // | -  3 -> logistic normal w no autocorrelation.
+    // | -  3 -> logistic normal w no autocorrelation.
 	// | -  Both likelihoods pool pmin (d_iscamCntrl(16)) into adjacent yearclass.
 	// | -  PSEUDOCODE:
 	// | -    => first determine appropriate dimensions for each of nAgears arrays (naa)
@@ -3120,6 +3469,15 @@ FUNCTION calcObjectiveFunction
 	// | TODO:
 	// | [ ] - change A_nu to data-type variable, does not need to be differentiable.
 	// | [ ] - issue 29. Fix submatrix O, P for prospective analysis & sex/area/group.
+
+	// Testing new abstract compositionLikelihood class. SUXS.
+
+	//acl::negLogLikelihood<dmatrix,dvar_matrix> *ptr_AgeCompLike[nAgears-1];
+
+
+	
+
+
 	A_nu.initialize();
 	for(k=1;k<=nAgears;k++)
 	{	
@@ -3145,9 +3503,11 @@ FUNCTION calcObjectiveFunction
 					P(ii) = A_hat(k)(i).sub(n_A_sage(k),n_A_nage(k));
 					ii ++;
 				}
-				//if( iyr <= nyr ) naa++;
-				//if( iyr <  syr ) iaa++;
 			}
+	
+	
+
+
 			
 			//dmatrix     O = trans(trans(d3_A_obs(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
 			//dvar_matrix P = trans(trans(A_hat(k)).sub(n_A_sage(k),n_A_nage(k))).sub(iaa,naa);
@@ -3159,20 +3519,42 @@ FUNCTION calcObjectiveFunction
 			logistic_student_t cLST_Age( O,P,dMinP(k),dEps(k) );
 			switch( int(nCompLikelihood(k)) )
 			{
-				case 1:
-					nlvec(3,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+				case 1:	// multivariate Logistic
+					nlvec(4,k) = dmvlogistic(O,P,nu,age_tau2(k),dMinP(k));
+					// cout<<"like: "<<ell<<" "<<nlvec(4,k)<<endl;
+					// ptr_AgeCompLike[k-1] = new acl::multivariteLogistic<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k)); 
+					// nlvec(4,k)      = ptr_AgeCompLike[k-1] -> nloglike();
+					// nu              = ptr_AgeCompLike[k-1] -> residual();
+
 				break;
-				case 2:
-					nlvec(3,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+
+				case 2:	// multinomial with fixed sample size.
+					//ptr_AgeCompLike[k-1] = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,dMinP(k));
+					//nlvec(4,k) = ptr_AgeCompLike[k-1] -> nloglike();
+					//nu         = ptr_AgeCompLike[k-1] -> residual();
+					//COUT(nlvec(4,k));
+					nlvec(4,k) = dmultinom(O,P,nu,age_tau2(k),dMinP(k));
+					//COUT(nlvec(4,k));
+					//exit(1);
 				break;
+
+				case 6: // Multinomial with estimated effective sample size.
+					//ptr_AgeCompLike[k-1] = new acl::multinomial<dvariable,dmatrix,dvar_matrix>(O,P,log_degrees_of_freedom(k),dMinP(k));
+					//nlvec(4,k) = ptr_AgeCompLike[k-1] -> nloglike();
+					//nu         = ptr_AgeCompLike[k-1] -> residual();
+					// deprecate
+					nlvec(4,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
+
+				break; 
+
 				case 3:
 					if( !active(log_age_tau2(k)) )                 // LN1 Model
 					{
-						nlvec(3,k)  = cLN_Age();	
+						nlvec(4,k)  = cLN_Age();	
 					}
 					else
 					{
-						nlvec(3,k) = cLN_Age( exp(log_age_tau2(k)) );
+						nlvec(4,k) = cLN_Age( exp(log_age_tau2(k)) );
 					}
 
 					// Residual
@@ -3182,16 +3564,17 @@ FUNCTION calcObjectiveFunction
 						age_tau2(k) = cLN_Age.get_sigma2();
 					}
 				break;
+				
 
 				case 4:
 					//logistic_normal cLN_Age( O,P,dMinP(k),dEps(k) );
 					if( active(phi1(k)) && !active(phi2(k)) )  // LN2 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k));	
 					}
 					if( active(phi1(k)) && active(phi2(k)) )   // LN3 Model
 					{
-						nlvec(3,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
+						nlvec(4,k)   = cLN_Age(exp(log_age_tau2(k)),phi1(k),phi2(k));	
 					}
 
 					// Residual
@@ -3206,11 +3589,11 @@ FUNCTION calcObjectiveFunction
 				case 5: // Logistic-normal with student-t
 					if( !active(log_degrees_of_freedom(k)) )
 					{
-						nlvec(3,k) = cLST_Age();
+						nlvec(4,k) = cLST_Age();
 					}
 					else
 					{
-						nlvec(3,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
+						nlvec(4,k) = cLST_Age(exp(log_degrees_of_freedom(k)));
 					}
 
 					// Residual
@@ -3220,14 +3603,12 @@ FUNCTION calcObjectiveFunction
 						age_tau2(k) = cLST_Age.get_sigma2();
 					}
 				break;
-				case 6: // Multinomial with estimated effective sample size.
-					nlvec(3,k) = mult_likelihood(O,P,nu,log_degrees_of_freedom(k));
-				break; 
 				case 7: // Multivariate-t 
-					nlvec(3,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
+					nlvec(4,k) = multivariate_t_likelihood(O,P,log_age_tau2(k),
 					                                       log_degrees_of_freedom(k),
 					                                       phi1(k),nu);
 					age_tau2(k) = exp(value(log_age_tau2(k)));
+					cout<<"Here we go dude"<<endl;
 				break;
 			}
 			
@@ -3247,6 +3628,13 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
+
+	//if(ptr_AgeCompLike != NULL)
+	//{
+	//	delete *ptr_AgeCompLike;
+	//	cout<<"It was deleted"<<endl;
+	//} 
+
 	
 	// |---------------------------------------------------------------------------------|
 	// | STOCK-RECRUITMENT LIKELIHOOD COMPONENT
@@ -3256,7 +3644,7 @@ FUNCTION calcObjectiveFunction
 	{
 		for(g=1;g<=ngroup;g++)
 		{
-			nlvec(4,g) = dnorm(delta(g),sigma_r(g));
+			nlvec(5,g) = dnorm(delta(g),sigma_r(g));
 		}
 	}
 
@@ -3269,9 +3657,62 @@ FUNCTION calcObjectiveFunction
 	dvar_vector lvec(1,7); 
 	lvec.initialize();
 	int ig;
+	#ifdef NEW_SELEX
+	for(int kr = 1; kr <= slx_nrow; kr++ )
+	{
+		int yr1 = syr>slx_nsb(kr)?syr:slx_nsb(kr);
+		int yr2 = nyr<slx_neb(kr)?nyr:slx_neb(kr);
+		k = slx_nGearIndex(kr);
+		if( active(slx_log_par(kr)) )
+		{
+			// penalty in curviture  (nlvec(6,k)).
+			// penalty in dome-shape (nlvec(7,k)).
+			if( slx_nSelType(kr) != 1)
+			{
+				for( ig = 1; ig <= n_ags; ig++ )
+				{
+					for( i = yr1; i <= yr2; i++ )
+					{
+						dvar_vector df1 = first_difference(log_sel(k)(ig)(i));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(6,k)     += slx_lam1(k)/(nage-sage+1)*norm2(df2);
+
+						for( j = sage; j <  nage; j++ )
+						{
+							dvariable diff = log_sel(k,ig,i,j) - log_sel(k,ig,i,j+1);
+							if(diff > 0)
+							{
+								nlvec(7,k) += slx_lam2(k) * square(diff);
+							}
+						}
+					}
+				}
+			}
+
+			// penalty in time-varying changes (nlvec(8,k)).
+			if( slx_nSelType(kr) == 4 || slx_nSelType(kr) == 5)
+			{
+				for(ig=1;ig<=n_ags;ig++)
+				{
+					dvar_matrix trans_log_sel = trans( log_sel(k)(ig) );
+					for(j=sage;j<=nage;j++)
+					{
+						dvar_vector df1 = first_difference(trans_log_sel(j));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(8,k)     += slx_lam3(k)/(nage-sage+1)*norm2(df2);
+					}
+				}
+			}
+		}
+		
+	}
+	#endif
+
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k)))
+
+		if( active(sel_par(k)) )
 		{
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
@@ -3286,12 +3727,12 @@ FUNCTION calcObjectiveFunction
 				{
 					//curvature in selectivity parameters
 					dvar_vector df2 = first_difference(first_difference(log_sel(k)(ig)(i)));
-					nlvec(5,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
+					nlvec(6,k)     += lambda_1(k)/(nage-sage+1)*df2*df2;
 
 					//penalty for dome-shapeness
 					for(j=sage;j<=nage-1;j++)
 						if(log_sel(k,ig,i,j)>log_sel(k,ig,i,j+1))
-							nlvec(6,k)+=lambda_2(k)
+							nlvec(7,k)+=lambda_2(k)
 										*square( log_sel(k,ig,i,j)-log_sel(k,ig,i,j+1) );
 				}
 				}
@@ -3303,7 +3744,11 @@ FUNCTION calcObjectiveFunction
 
 			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
 			*/
-			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
+			if( lambda_3(k) && 
+				  (isel_type(k)==4 ||
+				   isel_type(k)==5 || 
+				   n_sel_blocks(k) > 1) 
+			  )
 			{
 				for(ig=1;ig<=n_ags;ig++)
 				{
@@ -3312,20 +3757,55 @@ FUNCTION calcObjectiveFunction
 				for(j=sage;j<=nage;j++)
 				{
 					dvar_vector df2 = first_difference(first_difference(trans_log_sel(j)));
-					nlvec(7,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
+					nlvec(8,k)     +=  lambda_3(k)/(nage-sage+1)*norm2(df2);
 				}
 				}
 			}
 			
 		}
 	}
-	
+	#endif
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | [?] - TODO for isel_type==2 ensure mean 0 as well.
 	// |
+
+	#ifdef NEW_SELEX
+	for(k=1;k<=slx_nrow;k++)
+	{
+		if( active(slx_log_par(k)) && slx_nSelType(k)!=1 )
+		{
+			dvariable s = 0;
+			//bicubic spline version ensure col mean = 0
+			if(slx_nSelType(k)==5)  
+			{
+				dvar_matrix tmp = trans(slx_log_par(k));
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+
+			if( slx_nSelType(k)==2 ||
+			    slx_nSelType(k)==3 ||
+			 	slx_nSelType(k)==4 || 
+				slx_nSelType(k)==12 )
+			{
+				dvar_matrix tmp = slx_log_par(k);
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+		}
+	}
+	#endif
+
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
 		if( active(sel_par(k)) &&
@@ -3358,6 +3838,7 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
+	#endif
 	
 	
 	// |---------------------------------------------------------------------------------|
@@ -3413,7 +3894,7 @@ FUNCTION calcObjectiveFunction
 	qvec.initialize();
 	for(k=1;k<=nits;k++)
 	{
-		if(q_prior(k) == 1 )
+		if(q_prior(k) == 1 && sd_log_q(k) != 0 )
 		{
 			qvec(k) = dnorm( log(q(k)), mu_log_q(k), sd_log_q(k) );
 		}
@@ -4605,9 +5086,30 @@ REPORT_SECTION
 	{
 		REPORT(n_A_sage);
 		REPORT(n_A_nage);
+
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "d3_A"+str(k);
+			report<<lbl<<endl<<d3_A(k)<<endl;
+		}
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "A_hat"+str(k);
+			report<<lbl<<endl<<A_hat(k)<<endl;
+		}
+		for(k = 1; k<=nAgears; k++)
+		{
+			adstring lbl = "A_nu"+str(k);
+			report<<lbl<<endl<<A_nu(k)<<endl;
+		}
+
+
+		// Deprecate in version 2.0
 		REPORT(d3_A);
 		REPORT(A_hat);
 		REPORT(A_nu);
+
+
 
 
 		/// The following is a total hack job to get the effective sample size
@@ -4619,6 +5121,7 @@ REPORT_SECTION
 		nscaler.initialize();
 		for(k = 1; k<=nAgears; k++)
 		{
+
 			if( int(nCompLikelihood(k)) )
 			{
 				int naa=0;
@@ -4683,9 +5186,13 @@ REPORT_SECTION
 	{
 		for(int ig=1;ig<=n_ags;ig++)
 		{
+			int h = n_sex(ig);
+			int f = n_area(ig);
+			int g = n_group(ig);
 			for(i=syr;i<=nyr;i++)
 			{
-				report<<k<<"\t"<<ig<<"\t"<<i<<"\t"<<log_sel(k)(ig)(i)<<endl;	
+				report<<k<<"\t"<<f<<"\t"<<g<<"\t"<<h<<"\t"<<i<<"\t";
+				report<<log_sel(k)(ig)(i)<<endl;	
 			}
 		}
 	}
@@ -4724,7 +5231,7 @@ REPORT_SECTION
 	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
-	// | ABUNDANCE IN NUMBERS 
+	// | ABUNDANCE IN NUMBERS `
 	// |---------------------------------------------------------------------------------|
 	// |
 	REPORT(N);
@@ -5331,14 +5838,22 @@ FUNCTION void runMSE()
 
 TOP_OF_MAIN_SECTION
 	time(&start);
-	arrmblsize = 50000000;
+	arrmblsize = 5000000000;
 	gradient_structure::set_GRADSTACK_BUFFER_SIZE(1.e7);
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
+	gradient_structure::set_MAX_DLINKS(40000);
 
 
 GLOBALS_SECTION
+	
+	/**
+	 * \def NEW_SELEX
+	 * Testing new selectivity controls.
+	 */
+	#define NEW_SELEX
+
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.
@@ -5463,6 +5978,7 @@ GLOBALS_SECTION
 	double dicValue = 0;
 
 
+	
 
 
 // 	void function_minimizer::mcmc_eval(void)

@@ -27,6 +27,12 @@ setwd(.PWD)
 .THEME      <- theme_bw(12)
 .UNITS      <- "(mlb)"
 
+# | Labels for gear sex area and group index.
+.GEAR  = c("Directed","Wasteage","Bycatch","Sport","Personal","Setline Survey")
+.SEX   = c("F & M","Female","Male")
+.AREA  = c("Coast wide")
+.GROUP = c("Pacific Halibut")
+
 
 .srcRlib  <- function()
 {
@@ -59,9 +65,6 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotCatch( M )
 .plotIndex( M )
 .plotWeightAtAge( M )
-.plotAgeComps( M )
-.plotAgeCompResiduals( M )
-.plotAgeSummary( M )
 .plotSpawnBiomass( M )
 .plotDepletion( M )
 .plotMortality( M )
@@ -69,9 +72,15 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotStockRecruit( M )
 .plotRecruitsPerSpawner( M )
 .plotSurveyFit( M )
+.plotQ( M )
 .plotCatchResidual( M )
 .plotIndexResidual( M )
 .plotRecruitmentResidual( M )
+.plotAgeComps( M )
+.plotAgeCompResiduals( M )
+.plotAgeSummary( M )
+.plotAgeBars( M )
+.plotSlx( M )
 
 # |----------------------------------------------------------------------------------|
 # | guiView: Main function for starting the iSCAM Gui

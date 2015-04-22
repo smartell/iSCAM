@@ -8,6 +8,7 @@
 #include "growthModels.hpp"
 #include "multinomial.h"
 #include "selex.hpp"
+#include "compositionLikelihoods.hpp"
 
 
 #endif

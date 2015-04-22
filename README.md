@@ -279,3 +279,6 @@ _____________________________________________________________
 						Last changed on:
 						Source code: https://github.com/smartell/iSCAM
 _____________________________________________________________
+
+## Code Changes
+	- March 30, 2015.  Added time varying catchbility options (random walk).
