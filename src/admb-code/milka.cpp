@@ -67,7 +67,6 @@ void OperatingModel::runScenario(const int &seed)
     readMSEcontrols();
 
     initParameters();
-    cout<<"Here I am to save the day"<<endl;
 
     initMemberVariables();
 
@@ -276,7 +275,7 @@ void OperatingModel::initParameters()
     
     m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-6,n_A_nage);
     m_d3_A.initialize();
-    cout<<"Ok today"<<endl;
+    // cout<<"Ok today"<<endl;
     
     for(int k=1;k<=nAgears;k++)
     {
@@ -336,7 +335,7 @@ void OperatingModel::initParameters()
     }
 
     
-    cout<<"finished init parameters"<<endl;
+    // cout<<"finished init parameters"<<endl;
 }
 
 
@@ -831,8 +830,9 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dCatchData(m_irow,3) = f;
                         m_dCatchData(m_irow,4) = g;
                         m_dCatchData(m_irow,5) = hh>0?h:0;
-                        m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
+                        m_dCatchData(m_irow,6) = 1;  //TODO: set type of catch
                         m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
+                        m_dCatchData(m_irow,8) = 0.02;  //TODO: add real log_se for catch obs.
 
                         m_dSubLegalData(m_irow,1) = iyr;
                         m_dSubLegalData(m_irow,2) = kk;
@@ -883,8 +883,8 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 {
     //m_d3SurveyData
     // Survey data header:
-    // 1    2      3     4     5      6    7   8
-    // iyr  index  gear  area  group  sex  wt  timing
+    // 1    2      3     4     5      6    7   8    9
+    // iyr  index  gear  area  group  sex  se  pe     timing
     static int irow = 0;
     irow ++;
     int gear;
@@ -927,6 +927,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                 }
                 // Relative abundance index.
                 double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)); 
+                // cout<<"q "<<m_q(k)<<endl;
 
                 // V is the population that is proportional to the index.
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
@@ -935,13 +936,14 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,6) = 0;    //TODO add to MSE controls
-                m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 1.0;  //TODO add to MSE controls
-                m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.5;  //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 0.2;  //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.01; //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,9) = 0.5;  //TODO add to MSE controls
                 
             }
         }
     }   // end loop over surveys
-
+    
     //cout<<"finished calculating relative abundance"<<endl;
 
 }
@@ -983,7 +985,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
     {
         if( m_n_A_nobs(k) ) 
         {
-            gear = m_d3_A(k)(1)(n_A_sage(k)-4);
+            gear = m_d3_A(k)(1)(n_A_sage(k)-5);
             for(int f = 1; f <= narea; f++ )
             {
                 for(int g = 1; g <= ngroup; g++ )
@@ -1010,11 +1012,13 @@ void OperatingModel::calcCompositionData(const int& iyr)
                     {
                         cout<<hh<<endl;
                         m_A_irow(k) ++;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-6) = iyr;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = gear;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = f;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = g;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = hh>0?h:0;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = 1;  //age_err
+
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
                         = hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
                     }
@@ -1225,7 +1229,7 @@ void OperatingModel::writeDataFile(const int& iyr)
         ivector tmp_n_A_nobs(1,nAgears);
         tmp_n_A_nobs.initialize();
 
-        d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage); //n_A_sage is a vector!!
+        d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-6,n_A_nage); //n_A_sage is a vector!!
         tmp_d3_A.initialize();
         
         for(int k=1;k<=nAgears;k++)

@@ -122,7 +122,8 @@
 		adstring MseCtlFile;
 		adstring MsePfcFile;
 		
-		int m_nn;
+		int m_nn;				/// m_nn is a counter for the number of rows of catch data that will be
+    							/// added to the data file each year.
 		
 		dvector m_dRo;
 		dvector m_dBo;
