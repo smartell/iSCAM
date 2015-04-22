@@ -943,7 +943,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
             }
         }
     }   // end loop over surveys
-    
+
     //cout<<"finished calculating relative abundance"<<endl;
 
 }
@@ -1199,6 +1199,11 @@ void OperatingModel::writeDataFile(const int& iyr)
         dfs<< n_MAT             <<endl;
         dfs<< d_maturityVector  <<endl;
     
+        // Write aging error definitions
+        dfs<<"#Aging Error Vectors" <<endl;
+        dfs<< n_age_err             <<endl;
+        dfs<< age_err               <<endl;
+
         // Write catch array
         dfs<<"#Observed catch data"             <<endl;
         int tmp_nCtNobs = nCtNobs+(iyr-nyr)*m_nn;
@@ -1303,7 +1308,7 @@ void OperatingModel::runStockAssessment()
         
         ofstream rd("mseRUN.dat");
         rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
-        rd << m_controlFile          <<endl;
+        rd << m_controlFile        <<endl;
         rd << ProjectFileControl   <<endl;
         rd << ProcedureControlFile <<endl;
         rd << ScenarioControlFile  <<endl;
