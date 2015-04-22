@@ -2128,9 +2128,9 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
 
 FUNCTION calcSelex
   {
-  	//cout<<"START of CalcSelex"<<endl;
+  	cout<<"START of CalcSelex"<<endl;
   	log_sel.initialize();
-
+  	COUT(slx_nrow);
   	int i,j,k,kr;
   	
   	dvariable p1,p2;
@@ -2146,11 +2146,11 @@ FUNCTION calcSelex
 			kr = abs(slx_phz(k));
 			slx_log_par(k) = slx_log_par(kr);
 		}
-	  	//cout<<"Made it here "<<kr<<" "<<slx_nrow<<endl;
 
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
 		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
 		int nn = slx_nIpar(k)-1;
+		
 	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
 	  	for( i = 0; i <= nn; i++ )
 	  	{
@@ -2214,7 +2214,7 @@ FUNCTION calcSelex
   			break;
   		}
   			
-	  	
+	  	cout<<"Made it here "<<kr<<" "<<slx_nrow<<endl;
 
 
 	  	// fill arrays with selectivity coefficients.
@@ -2244,13 +2244,15 @@ FUNCTION calcSelex
 			// if !h_sex, skip the process if current group is not the right sex
 			if ( h_sex != 0 && h != h_sex) continue;
 			int igrp = pntr_ags(f,g,h);
-			
 			// Fill vectors of selex
+			cout<<"Made it here "<<j<<" "<<slx_nrow<<endl;
 			if (ptrSlx[j])
 			{
 				for(i = yr1; i <= yr2; i++)
 				{
+					COUT(kgear); COUT(igrp);
 					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
+			cout<<"Made it here "<<i<<" "<<yr1<<endl;
 					
 
 					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;

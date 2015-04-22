@@ -130,13 +130,23 @@ namespace slx {
 			int x1 = m_x.indexmin();
 			int x2 = m_x.indexmax();
 			REAL_T log_sel(x1,x2);
-
-			for(int i = s1; i <= s2; i++ )
+			cout<<x1<<endl;
+			cout<<s1<<endl;
+			int i,j;
+			for( i = s1, j = x1; j <= x2; i++, j++ )
 			{
-				log_sel(i) = m_log_sel_coeffs(i);
+				if( i <= s2 )
+				{
+					log_sel(j) = m_log_sel_coeffs(i);
+				}
+				else
+				{
+					log_sel(j) = log_sel(j-1);	
+				}
 			}
-			log_sel(x1,s1) = log_sel(s1);
-			log_sel(s2,x2) = log_sel(s2);
+			cout<<"THis is where I'm stuck"<<endl;
+			//log_sel(x1,s1) = log_sel(s1);
+			//log_sel(s2,x2) = log_sel(s2);
 			return log_sel;
 		}
 
