@@ -27,6 +27,12 @@ require(ggplot2)
 .THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"
 
+# | Labels for gear sex area and group index.
+.GEAR  = c("Directed","Wasteage","Bycatch","Sport","Personal","Setline Survey")
+.SEX   = c("F & M","Female","Male")
+.AREA  = c("Coast wide")
+.GROUP = c("Pacific Halibut")
+
 
 .MODELDIRS   <- "../DATA"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
