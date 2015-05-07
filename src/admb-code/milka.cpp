@@ -541,7 +541,8 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
                 }
             }
-    
+        break;
+
         case 1:
             // read iscam.res file to get this information.
             cifstream ifs("iSCAM.res");
@@ -555,6 +556,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             ifs >> m_est_wa;
             ifs >> m_est_M;
             ifs >> m_est_log_sel;
+        break;
     }
 
 }

@@ -3285,7 +3285,7 @@ FUNCTION void calcStockRecruitment()
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector     lx(sage,nage); 
 	dvar_vector     lw(sage,nage);
-  dvar_vector    tau = sigma_r;
+    dvar_vector    tau = sigma_r;
 	
 	
 	for(g=1;g<=ngroup;g++)
@@ -3363,7 +3363,7 @@ FUNCTION void calcStockRecruitment()
 		// if gamma_r > 0 then 
 		if( active(theta(6)) )
 		{
-			int byr = syr+sage+1;
+			int byr = syr+sage+1;	
 			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
 									- (1.0-rho(g))*log(tmp_rt(byr,nyr)) 
 									- rho(g)*log(++rt(g)(byr-1,nyr-1))
@@ -5809,19 +5809,19 @@ FUNCTION void runMSE()
 		d3_F(ig) = value(F(ig));
 	}
 
-	s_mv.d3_M = &d3_M;
-	s_mv.d3_F = &d3_F;
-	s_mv.log_rec_devs = value(log_rec_devs);
+	s_mv.d3_M              = &d3_M;
+	s_mv.d3_F              = &d3_F;
+	s_mv.log_rec_devs      = value(log_rec_devs);
 	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
-	s_mv.q = value(q);
-	s_mv.sbt = value(sbt);
-	s_mv.bt = value(bt);
-	d3_array tmp_ft=value(ft);
-	s_mv.d3_ft = &tmp_ft;
+	s_mv.q          = value(q);
+	s_mv.sbt        = value(sbt);
+	s_mv.bt         = value(bt);
+	d3_array tmp_ft =value(ft);
+	s_mv.d3_ft      = &tmp_ft;
 
 	s_mv.sbo = value(sbo);
-	s_mv.so = value(so);
+	s_mv.so  = value(so);
 
 
 	// |-----------------------------------|
