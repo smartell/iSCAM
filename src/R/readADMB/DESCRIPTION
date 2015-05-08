@@ -5,6 +5,5 @@ Version: 1.0
 Date: 2015-03-25
 Author: Steve Martell
 Maintainer: Steve Martell <martell.steve@gmail.com>
-Description: A collection of R scripts to read report files,
-parameter files, correlation files and psv files from MCMC output.
+Description: A collection of R scripts to read report files, parameter files, correlation files and psv files from MCMC output.
 License: Karma
