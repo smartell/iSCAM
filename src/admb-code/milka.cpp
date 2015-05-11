@@ -44,6 +44,7 @@
 
 #include <admodel.h>
 #include "milka.h"
+#include "include/lib_iscam.h"
 
 
 // Destructor
@@ -71,6 +72,9 @@ void OperatingModel::runScenario(const int &seed)
     initMemberVariables();
 
     conditionReferenceModel();
+
+    /* Calculate msy-based reference points for reference model */
+    calcMSY();
 
     setRandomVariables(seed);
     for(int i = nyr+1; i <= m_nPyr; i++ )
@@ -113,6 +117,22 @@ void OperatingModel::runScenario(const int &seed)
 
     writeSimulationVariables();
 }
+
+
+/**
+ * @brief Calculate MSY-based reference points for reference model.
+ * @details This routine calculates the MSY-based reference points based 
+ * on the true parameter values and selectivity coefficients used in 
+ * the population reference model.  Needed for perfect information 
+ * scenarios.
+ * 
+ * Requires msy.hpp
+ */
+void OperatingModel::calcMSY()
+{
+
+}
+
 
 /**
  * @brief Read control file for Management Strategy Evaluation.
@@ -510,12 +530,12 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
         case 0:
             //  set reference points to true milka values
             
-            m_est_bo = m_dBo;
-            m_est_fmsy = fmsy;
-            m_est_msy = msy;
-            m_est_bmsy = bmsy;
+            m_est_bo   = m_dBo;
+            m_est_fmsy = fmsy;      // Bug
+            m_est_msy  = msy;       // Bug here, these variables are from model_data class.
+            m_est_bmsy = bmsy;      // Bug
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
-            m_est_btt = m_bt(iyr)(1,ngroup);;
+            m_est_btt  = m_bt(iyr)(1,ngroup);;
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
@@ -531,6 +551,8 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
+            //cout<<"TIme to goto dance"<<endl;
+            //cout<<"Fmsy = "<<m_est_fmsy<<endl;
 
 
             // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
@@ -539,8 +561,10 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
+
                 }
             }
+            //exit(1);
         break;
 
         case 1:

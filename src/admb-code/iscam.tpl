@@ -5243,7 +5243,7 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		cout<<"Calculating MSY-based reference points"<<endl;
-		// calcReferencePoints();
+		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
@@ -5778,6 +5778,7 @@ FUNCTION mcmc_output
 
 FUNCTION void runMSE()
 	cout<<"Start of runMSE"<<endl;
+	
 
 	// STRUCT FOR MODEL VARIABLES
 	ModelVariables s_mv;
@@ -5817,7 +5818,7 @@ FUNCTION void runMSE()
 	s_mv.q          = value(q);
 	s_mv.sbt        = value(sbt);
 	s_mv.bt         = value(bt);
-	d3_array tmp_ft =value(ft);
+	d3_array tmp_ft = value(ft);
 	s_mv.d3_ft      = &tmp_ft;
 
 	s_mv.sbo = value(sbo);

@@ -202,6 +202,7 @@
 		void writeDataFile(const int& iyr);
 		void runStockAssessment();
 		void writeSimulationVariables();
+		void calcMSY();
 
 		
 	};
