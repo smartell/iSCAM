@@ -116,7 +116,7 @@
 		double m_dBthreshold;
 		double m_dBlimit;
 		double m_maxf;
-		
+
 		adstring m_controlFile;
 
 		dmatrix m_dispersal; 
@@ -158,9 +158,8 @@
 		dmatrix m_sbt;
 		dmatrix m_bt;
 
+		int      m_nHCR;
 		dmatrix  m_dTAC;
-		int     m_nHCR;
-
 		dmatrix  m_log_rt;
 
 		d3_array m_N;

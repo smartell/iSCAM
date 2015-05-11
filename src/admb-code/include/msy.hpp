@@ -296,7 +296,8 @@ namespace rfp {
 				// fbar += 0.98 * m_dYe/m_d2Ye;
 				fbar += 0.98 * m_fbar_stp;
 			}
-
+		cout<<iter<<" Fe = "<<m_fe<<endl;
+			
 		}
 		m_fe = fk;
 		m_rmsy = m_re; 

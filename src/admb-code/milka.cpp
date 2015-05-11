@@ -46,7 +46,8 @@
 #include "milka.h"
 #include "include/lib_iscam.h"
 
-
+#undef COUT
+#define COUT(object) cout<<#object"\n"<<object<<endl;
 // Destructor
 OperatingModel::~OperatingModel(){}
 
@@ -127,12 +128,63 @@ void OperatingModel::runScenario(const int &seed)
  * scenarios.
  * 
  * Requires msy.hpp
- * rfp::msy(ro,h,m,rho,wbar,fa,_V)
+ * rfp::msy(ro,h,rho,ma,wa,fa,_V)
+ * 
+ * rho is the fraction of mortality that occurs prior to spawning.
  */
 void OperatingModel::calcMSY()
 {
-    rfp::msy<double,dvector,dmatrix,d3_array>
-    cMSY(m_dRo,m_dSteepness,m_dM)
+    COUT(m_dRo);
+    COUT(m_dSteepness);
+    COUT(m_dRho(1));
+    dmatrix fa_bar(1,n_ags,sage,nage);
+    dmatrix  M_bar(1,n_ags,sage,nage);
+    for(int ig=1;ig<=n_ags;ig++)
+    {
+        fa_bar(ig) = elem_prod(dWt_bar(ig),ma(ig));
+        M_bar(ig)  = colsum(value(m_M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
+        M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1; 
+    }
+    COUT(fa_bar);
+    COUT(M_bar);
+
+
+    // | (1) : Matrix of selectivities for directed fisheries.
+    // |     : log_sel(gear)(n_ags)(year)(age)
+    // |     : ensure dAllocation sums to 1.
+    dvector d_ak(1,nfleet);
+    d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
+    //dvar3_array  dvar_V(1,n_ags,1,nfleet,sage,nage);
+    for(int k=1;k<=nfleet;k++)
+    {
+        int kk  = nFleetIndex(k);
+        d_ak(k) = dAllocation(kk);
+        for(int ig=1;ig<=n_ags;ig++)
+        {
+            d_V(ig)(k) = ( exp(d4_logSel(kk)(ig)(nyr)) );
+            //dvar_V(ig)(k) =( exp(d4_logSel(kk)(ig)(nyr)) );
+
+        }
+    }
+    d_ak /= sum(d_ak);
+    COUT(d_ak);
+    COUT(d_V);
+    COUT(dWt_bar);
+    cout<<"Calculating MSY"<<endl;
+    dvector dftry(1,nfleet);
+    dftry  = 0.6/nfleet * mean(M_bar);
+    COUT(dftry);
+    dvector m_fmsy(1,nfleet);
+    for(int g=1; g<=ngroup; g++)
+    {
+        rfp::msy<double,dvector,dmatrix,d3_array>
+        cMSY(m_dRo(g),m_dSteepness(g),m_dRho(g),M_bar,dWt_bar,fa_bar,d_V);
+        
+        m_fmsy = cMSY.getFmsy(dftry,d_ak);
+        cMSY.print();
+    }
+    COUT(m_fmsy);
+    exit(1);
 }
 
 
