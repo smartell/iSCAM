@@ -8,7 +8,7 @@
 
 #ifdef TOL
 #undef TOL
-#define TOL     1.e-04
+#define TOL     1.e-08
 #endif
 
 #include <admodel.h>

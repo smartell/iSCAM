@@ -4419,14 +4419,14 @@ FUNCTION void calcReferencePoints()
 		//exit(1);
 
 
-		Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
-		fmsy(g) = 0.1;
-		c_msy.get_fmsy(fmsy(g));
-		bo = c_msy.getBo();
-		bmsy(g) = c_msy.getBmsy();
-		msy(g) = c_msy.getMsy();
-		cout<<"Old Msy class"<<endl;
-		c_msy.print();
+		// Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
+		// fmsy(g) = 0.1;
+		// c_msy.get_fmsy(fmsy(g));
+		// bo = c_msy.getBo();
+		// bmsy(g) = c_msy.getBmsy();
+		// msy(g) = c_msy.getMsy();
+		// cout<<"Old Msy class"<<endl;
+		// c_msy.print();
 	}
 
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;

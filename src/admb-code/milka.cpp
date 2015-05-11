@@ -134,6 +134,10 @@ void OperatingModel::runScenario(const int &seed)
  */
 void OperatingModel::calcMSY()
 {
+    m_fmsy.allocate(1,nfleet);
+    m_fmsy.initialize();
+
+
     COUT(m_dRo);
     COUT(m_dSteepness);
     COUT(m_dRho(1));
@@ -174,7 +178,7 @@ void OperatingModel::calcMSY()
     dvector dftry(1,nfleet);
     dftry  = 0.6/nfleet * mean(M_bar);
     COUT(dftry);
-    dvector m_fmsy(1,nfleet);
+    // dvector m_fmsy(1,nfleet);
     for(int g=1; g<=ngroup; g++)
     {
         rfp::msy<double,dvector,dmatrix,d3_array>
