@@ -112,9 +112,11 @@
 		int m_nPyr;				/// Terminal year for Operating Model.
 		int m_nSeed;			/// random number seed
 		int m_nRecType;
+
 		double m_dBthreshold;
 		double m_dBlimit;
 		double m_maxf;
+		
 		adstring m_controlFile;
 
 		dmatrix m_dispersal; 

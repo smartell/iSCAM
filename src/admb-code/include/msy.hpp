@@ -72,12 +72,12 @@ namespace rfp {
 		int m_nGrp;
 		
 
-		T m_ro;
-		T m_bo;
-		T m_rmsy;
+		T m_ro;			/// Unfished equilibrium recruits
+		T m_bo;			/// Unfished equilibrium biomass
+		T m_rmsy;		/// Recruitment at MSY
 		T m_be;			/// Equilibrium biomass
-		T m_re;
-		T m_h;
+		T m_re;			/// Equilibrium recruitment
+		T m_h;			/// Steepness
 		T m_rho;	    /// Fraction of mortality that occurs before spawning.
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.

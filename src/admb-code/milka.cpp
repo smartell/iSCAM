@@ -127,10 +127,12 @@ void OperatingModel::runScenario(const int &seed)
  * scenarios.
  * 
  * Requires msy.hpp
+ * rfp::msy(ro,h,m,rho,wbar,fa,_V)
  */
 void OperatingModel::calcMSY()
 {
-
+    rfp::msy<double,dvector,dmatrix,d3_array>
+    cMSY(m_dRo,m_dSteepness,m_dM)
 }
 
 
