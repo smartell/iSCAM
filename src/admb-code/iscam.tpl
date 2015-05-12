@@ -5832,6 +5832,9 @@ FUNCTION void runMSE()
 	OperatingModel om(s_mv,argc,argv);
 	om.runScenario(rseed);
 
+
+	om.checkMSYcalcs();
+
 	COUT("DONE");
 
 

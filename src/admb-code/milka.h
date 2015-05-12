@@ -140,7 +140,10 @@
 		dvector m_dKappa;
 		dvector m_dbeta;
 		dvector m_q;
-		dvector m_fmsy;
+		dvector m_bmsy;
+		dmatrix m_fmsy;
+		dmatrix m_msy;
+
 
 
 
@@ -185,6 +188,8 @@
 		~OperatingModel();
 	
 		void runScenario(const int &seed);
+
+		void checkMSYcalcs();
 
 	protected:
 		void readMSEcontrols();

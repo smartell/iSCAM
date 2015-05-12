@@ -296,8 +296,9 @@ namespace rfp {
 				// fbar += 0.98 * m_dYe/m_d2Ye;
 				fbar += 0.98 * m_fbar_stp;
 			}
-		cout<<iter<<" Fe = "<<m_fe<<endl;
 			
+			// cout<<iter<<" Fe = "<<m_fbar_stp<<endl;
+			if( fabs(m_fbar_stp) < TOL ) break;
 		}
 		m_fe = fk;
 		m_rmsy = m_re; 

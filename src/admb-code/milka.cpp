@@ -63,6 +63,38 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 
 }
 
+/**
+ * @brief Verify Equilibrium MSY calculations numerically.
+ * @details This runs the model for upto 100 years to verify
+ * that the equilibrium MSY-based reference points are calcualted correctly.
+ * 
+ */
+void OperatingModel::checkMSYcalcs()
+{
+    dvector tmp_tau = m_dTau;
+    m_dTau = 0;
+
+
+    readMSEcontrols();
+
+    initParameters();
+
+    initMemberVariables();
+
+    conditionReferenceModel();
+
+    calcMSY();
+
+    for(int i = nyr+1; i <= m_nPyr; i++ )
+    {
+        calcTotalMortality(i);
+
+        updateReferenceModel(i);
+    }
+    COUT(m_sbt);
+
+    m_dTau = tmp_tau;
+}
 
 void OperatingModel::runScenario(const int &seed)
 {
@@ -81,6 +113,7 @@ void OperatingModel::runScenario(const int &seed)
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
         getReferencePointsAndStockStatus(i);
+        if(verbose) cout<<"getReferencePointsAndStockStatus OK"<<endl;
 
         calculateTAC();
         if(verbose) cout<<"calculateTAC OK"<<endl;
@@ -134,13 +167,15 @@ void OperatingModel::runScenario(const int &seed)
  */
 void OperatingModel::calcMSY()
 {
-    m_fmsy.allocate(1,nfleet);
+    m_msy.allocate(1,ngroup,1,nfleet);
+    m_bmsy.allocate(1,ngroup);
+    m_fmsy.allocate(1,ngroup,1,nfleet);
+    m_msy.initialize();
     m_fmsy.initialize();
+    m_bmsy.initialize();
 
 
-    COUT(m_dRo);
-    COUT(m_dSteepness);
-    COUT(m_dRho(1));
+    /* Fecundity at age and natural mortality*/
     dmatrix fa_bar(1,n_ags,sage,nage);
     dmatrix  M_bar(1,n_ags,sage,nage);
     for(int ig=1;ig<=n_ags;ig++)
@@ -149,16 +184,13 @@ void OperatingModel::calcMSY()
         M_bar(ig)  = colsum(value(m_M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
         M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1; 
     }
-    COUT(fa_bar);
-    COUT(M_bar);
-
 
     // | (1) : Matrix of selectivities for directed fisheries.
     // |     : log_sel(gear)(n_ags)(year)(age)
     // |     : ensure dAllocation sums to 1.
     dvector d_ak(1,nfleet);
     d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
-    //dvar3_array  dvar_V(1,n_ags,1,nfleet,sage,nage);
+    
     for(int k=1;k<=nfleet;k++)
     {
         int kk  = nFleetIndex(k);
@@ -166,29 +198,32 @@ void OperatingModel::calcMSY()
         for(int ig=1;ig<=n_ags;ig++)
         {
             d_V(ig)(k) = ( exp(d4_logSel(kk)(ig)(nyr)) );
-            //dvar_V(ig)(k) =( exp(d4_logSel(kk)(ig)(nyr)) );
-
         }
     }
     d_ak /= sum(d_ak);
-    COUT(d_ak);
-    COUT(d_V);
-    COUT(dWt_bar);
-    cout<<"Calculating MSY"<<endl;
+
+    // COUT(d_ak);
+    // COUT(d_V);
+    // COUT(dWt_bar);
+    // cout<<"Calculating MSY"<<endl;
     dvector dftry(1,nfleet);
     dftry  = 0.6/nfleet * mean(M_bar);
-    COUT(dftry);
+    // COUT(dftry);
     // dvector m_fmsy(1,nfleet);
     for(int g=1; g<=ngroup; g++)
     {
         rfp::msy<double,dvector,dmatrix,d3_array>
         cMSY(m_dRo(g),m_dSteepness(g),m_dRho(g),M_bar,dWt_bar,fa_bar,d_V);
         
-        m_fmsy = cMSY.getFmsy(dftry,d_ak);
+        m_fmsy(g) = cMSY.getFmsy(dftry,d_ak);
+        m_bmsy(g) = cMSY.getBmsy();
+        m_msy(g)  = cMSY.getMsy();
         cMSY.print();
     }
-    COUT(m_fmsy);
-    exit(1);
+    
+
+
+    // exit(1);
 }
 
 
@@ -589,9 +624,13 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             //  set reference points to true milka values
             
             m_est_bo   = m_dBo;
-            m_est_fmsy = fmsy;      // Bug
-            m_est_msy  = msy;       // Bug here, these variables are from model_data class.
-            m_est_bmsy = bmsy;      // Bug
+            m_est_fmsy = m_fmsy;      // Bug
+            // COUT(m_fmsy);
+            // COUT(m_bmsy);
+            // COUT(m_msy);
+            // exit(1);
+            m_est_msy  = m_msy;       // Bug here, these variables are from model_data class.
+            m_est_bmsy = m_bmsy;      // Bug
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
             m_est_btt  = m_bt(iyr)(1,ngroup);;
             
@@ -833,8 +872,8 @@ void OperatingModel::implementFisheries(const int &iyr)
     dmatrix  sd(1,nsex,sage,nage);
     dmatrix  d_allocation(1,narea,1,nfleet);
     dmatrix  _hCt(1,nsex,1,nfleet);
-    dmatrix  _hDt(1,nsex,1,nfleet);            // Discarded catch
-    dmatrix  _hWt(1,nsex,1,nfleet);            // Watage = (discard mort)*(discard catch)
+    dmatrix  _hDt(1,nsex,1,nfleet);             // Discarded catch
+    dmatrix  _hWt(1,nsex,1,nfleet);             // Wastage = (discard mort)*(discard catch)
     d3_array d3_Va(1,nsex,1,nfleet,sage,nage);  // Retained fraction
     d3_array d3_Da(1,nsex,1,nfleet,sage,nage);  // Discard fraction
     tac.initialize();
