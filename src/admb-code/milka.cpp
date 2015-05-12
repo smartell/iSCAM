@@ -422,7 +422,7 @@ void OperatingModel::initParameters()
     m_dBo        = mv.sbo;
     m_dSteepness = mv.steepness;
     m_dM         = exp(mv.m);
-    m_dRho       = mv.rho;
+    m_dRho       = mv.rho;          // now autocorrelation
     m_dVarphi    = sqrt(1.0/mv.varphi);
     m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
     m_dTau       = elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);

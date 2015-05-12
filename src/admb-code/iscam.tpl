@@ -579,8 +579,8 @@ DATA_SECTION
 	// | n_survey_type = 2: survey is proportional to vulnerable biomass
 	// | n_survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | d3_survey_data: (iyr index(it) gear area group sex wt timing)
-	// | it_wt       = relative weights for each relative abundance normalized to have a
-	// |               mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
+	// | DEPRECATED it_se = relative weights for each relative abundance normalized to have a
+	// | DEPRECATED mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
 	// |
 
 	init_int nItNobs;
@@ -589,7 +589,7 @@ DATA_SECTION
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
-	matrix                it_wt(1,nItNobs,1,n_it_nobs);
+	matrix                it_se(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_pe(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
@@ -606,19 +606,19 @@ DATA_SECTION
 		}
 		for(k=1;k<=nItNobs;k++)
 		{
-			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			//it_se(k) = column(d3_survey_data(k),7) + 1.e-30;
 			it_log_se(k) = column(d3_survey_data(k),7);
-			it_wt(k) = 1.0/square(it_log_se(k));
+			it_se(k) = 1.0/square(it_log_se(k));
 			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 			qdev_count(k) = size_count(it_log_se(k));
 		}
-		double tmp_mu = mean(it_wt);
-		for(k=1;k<=nItNobs;k++)
-		{
-			it_wt(k) = it_wt(k)/tmp_mu;
-		}
+		// double tmp_mu = mean(it_se);
+		// for(k=1;k<=nItNobs;k++)
+		// {
+		// 	it_se(k) = it_se(k)/tmp_mu;
+		// }
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -3445,7 +3445,7 @@ FUNCTION calcObjectiveFunction
 		// dvar_vector sig_it(1,n_it_nobs(k)); 
 		// for( i = 1; i <= n_it_nobs(k); i++ )
 		// {
-		// 	// sig_it(i) = sig(ig(i))/it_wt(k,i);
+		// 	// sig_it(i) = sig(ig(i))/it_se(k,i);
 		// 	sig_it(i) = it_log_se(k,i);
 		// }
 		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
@@ -4589,9 +4589,9 @@ FUNCTION void simulationModel(const long& seed)
     	for(i=1;i<=n_it_nobs(k);i++)
     	{
     		std = 1.0e3;
-    		if( it_wt(k,i)>0 )
+    		if( it_se(k,i)>0 )
     		{
-    			std = value(sig(it_grp(k,i))/it_wt(k,i));
+    			std = value(sig(it_grp(k,i))/it_se(k,i));
     		}
     		epsilon(k,i) = epsilon(k,i)*std - 0.5*std*std;
     	}
@@ -5079,7 +5079,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(d3_survey_data);
 	REPORT(it_hat);
-	REPORT(it_wt);
+	REPORT(it_se);
 	REPORT(epsilon);
 
 	if(n_A_nobs(nAgears) > 0)
