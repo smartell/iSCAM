@@ -39,8 +39,8 @@
 		dvector m;
 		dvector log_rbar;
 		dvector log_rinit;
-		dvector rho;
-		dvector varphi;
+		dvector rho;      // autocorrelation
+		dvector varphi;	  // sigma r
 		dvector q;
 		dmatrix sbt;
 		dmatrix bt;

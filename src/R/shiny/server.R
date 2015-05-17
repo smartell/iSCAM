@@ -59,9 +59,9 @@ shinyServer(function(input, output, session) {
   })
 
   # GVIS GRAPHICS FOR COMPARING SCENARIOS DYNAMICALLY
-  output$googleVisPlot <- renderGvis({
-    motionChart(MOT.DF,input)
-  })
+  # output$googleVisPlot <- renderGvis({
+    # motionChart(MOT.DF,input)
+  # })
 
 
   # MEDIAN DEPLETION TABLE
@@ -262,7 +262,7 @@ shinyServer(function(input, output, session) {
     ## ------------------------------------------------------------ ##
     ## MAPS
     ## ------------------------------------------------------------ ##
-    map <- createLeafletMap(session, "map")
+    # map <- createLeafletMap(session, "map")
     
 
     # session$onFlushed is necessary to work around a bug in the Shiny/Leaflet

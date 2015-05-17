@@ -87,11 +87,19 @@ void OperatingModel::checkMSYcalcs()
 
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
+        calculateTAC();
+        COUT(m_dTAC);
+        exit(1);
+
         calcTotalMortality(i);
+
+        implementFisheries(i);
 
         updateReferenceModel(i);
     }
-    COUT(m_sbt);
+    // COUT(m_sbt);
+    // COUT(m_d3_Ct);
+
 
     m_dTau = tmp_tau;
 }
@@ -106,10 +114,10 @@ void OperatingModel::runScenario(const int &seed)
 
     conditionReferenceModel();
 
-    /* Calculate msy-based reference points for reference model */
     calcMSY();
 
     setRandomVariables(seed);
+
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
         getReferencePointsAndStockStatus(i);
@@ -202,28 +210,23 @@ void OperatingModel::calcMSY()
     }
     d_ak /= sum(d_ak);
 
-    // COUT(d_ak);
-    // COUT(d_V);
-    // COUT(dWt_bar);
-    // cout<<"Calculating MSY"<<endl;
+    
+    // initial guess for fmsy
     dvector dftry(1,nfleet);
     dftry  = 0.6/nfleet * mean(M_bar);
-    // COUT(dftry);
-    // dvector m_fmsy(1,nfleet);
+    
+    
+    double rho = d_iscamCntrl(13);
     for(int g=1; g<=ngroup; g++)
     {
         rfp::msy<double,dvector,dmatrix,d3_array>
-        cMSY(m_dRo(g),m_dSteepness(g),m_dRho(g),M_bar,dWt_bar,fa_bar,d_V);
+        cMSY(m_dRo(g),m_dSteepness(g),rho,M_bar,dWt_bar,fa_bar,d_V);
         
         m_fmsy(g) = cMSY.getFmsy(dftry,d_ak);
         m_bmsy(g) = cMSY.getBmsy();
         m_msy(g)  = cMSY.getMsy();
         cMSY.print();
     }
-    
-
-
-    // exit(1);
 }
 
 
@@ -238,10 +241,10 @@ void OperatingModel::readMSEcontrols()
     if(verbose) cout<<"MSE Scenario file\n"<<ScenarioControlFile<<endl;
 
     cifstream ifs_mpc(ProcedureControlFile);
-    ifs_mpc>>m_nPyr;
+    ifs_mpc >> m_nPyr;
 
     //assessment option
-    ifs_mpc>>m_nAssessOpt;
+    ifs_mpc >> m_nAssessOpt;
 
     // Control file.
     ifs_mpc >> m_controlFile;
@@ -251,11 +254,11 @@ void OperatingModel::readMSEcontrols()
         m_controlFile = ControlFile;
     }
     //harvest control rule
-    ifs_mpc>>m_nHCR;
+    ifs_mpc >> m_nHCR;
 
-    ifs_mpc>>m_dBthreshold;
-    ifs_mpc>>m_dBlimit;
-    ifs_mpc>>m_maxf;
+    ifs_mpc >> m_dBthreshold;
+    ifs_mpc >> m_dBlimit;
+    ifs_mpc >> m_maxf;
 
     m_nGearIndex.allocate(1,ngear);
     m_nCSex.allocate(1,ngear);
@@ -282,7 +285,7 @@ void OperatingModel::readMSEcontrols()
 
     int eof=0;
     ifs_mpc >> eof;
-    cout<<"End of MPC file "<<eof<<endl;
+    // cout<<"End of MPC file "<<eof<<endl;
     if(eof != 999)
     {
         cout<<"Error reading Management Procedure Control File"<<endl;
@@ -346,7 +349,7 @@ void OperatingModel::initParameters()
     m_dCatchData.allocate(1,m_nCtNobs,1,ncol);
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
-    cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Whats up doc"<<endl;
+    
 
     m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
@@ -416,16 +419,16 @@ void OperatingModel::initParameters()
         m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);
     }
     
-
+    // TODO: allow user to specify observation error
     // initializing population parameters
     m_dRo        = exp(mv.log_ro);
     m_dBo        = mv.sbo;
     m_dSteepness = mv.steepness;
     m_dM         = exp(mv.m);
-    m_dRho       = mv.rho;          // now autocorrelation
-    m_dVarphi    = sqrt(1.0/mv.varphi);
-    m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
-    m_dTau       = elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
+    m_dRho       = mv.rho;    // now autocorrelation
+    m_dVarphi    = mv.varphi; //sqrt(1.0/mv.varphi);
+    m_dSigma     = 0.2 * mv.varphi;//elem_prod(sqrt(m_dRho) , m_dVarphi);
+    m_dTau       = m_dVarphi; //elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
 
     m_dRbar.allocate(1,n_ag);
     m_dRinit.allocate(1,n_ag);
@@ -713,6 +716,7 @@ void OperatingModel::calculateTAC()
         
         
 
+
         switch( int(m_nHCR) )
         {
             case 1: // Constant harvest rate
@@ -747,8 +751,9 @@ void OperatingModel::calculateTAC()
     // Todo: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
     // Working here, need to implement the Baranov
     // Catch equation to calculate the m_dTAC for group g.
-    cout<<"I'm Here "<<endl;
+    // cout<<"I'm Here "<<endl;
     ba.initialize();
+    m_dTAC.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         //int f = n_area(ig);
@@ -756,7 +761,7 @@ void OperatingModel::calculateTAC()
         //int h = n_sex(ig);
 
         va  = exp(m_est_log_sel(ig));
-        cout<<"And made it to here"<<endl;
+        // cout<<"And made it to here"<<endl;
         ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
 
         for( k = 1; k <= nfleet; k++ )
@@ -767,6 +772,7 @@ void OperatingModel::calculateTAC()
 
         m_dTAC(g) += sum(ca);
     }
+
     // cout<<m_nHCR<<endl;
     // exit(1);
 }
@@ -917,7 +923,7 @@ void OperatingModel::implementFisheries(const int &iyr)
             // Calculate instantaneous fishing mortality rates.
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
 
-            cout<<"fishing rate "<<ft<<endl;
+            // cout<<"fishing rate "<<ft<<endl;
 
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
@@ -938,7 +944,7 @@ void OperatingModel::implementFisheries(const int &iyr)
                     _hWt(h)   += elem_prod(elem_div(fa,za),1.0-exp(-za)) 
                                  * ba*m_dDiscMortRate(k);
                 }
-                cout<<"Sublegal Discards \n"<<_hDt<<endl;
+                // cout<<"Sublegal Discards \n"<<_hDt<<endl;
                 
 
                 if( ft(k) > 0 )
@@ -1017,6 +1023,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
     dvector ma(sage,nage);
     dvector wa(sage,nage);
     double dV;
+
     for(int k = 1; k <= nItNobs; k++ )
     {
         gear = d3_survey_data(k)(1)(3);
@@ -1049,9 +1056,10 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                     }
                 }
                 // Relative abundance index.
-                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)); 
-                // cout<<"q "<<m_q(k)<<endl;
-
+                double sd = m_dSigma(g);
+                // cout<<"Awe man"<<endl;
+                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*sd); 
+                cout<<"q "<<m_q(k)<<endl;
                 // V is the population that is proportional to the index.
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = it;
@@ -1133,7 +1141,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
                     int hh = m_nASex(k);   // flag for sex
                     for( h = 1; h <= hh+1; h++ )
                     {
-                        cout<<hh<<endl;
+                        // cout<<hh<<endl;
                         m_A_irow(k) ++;
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-6) = iyr;
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = gear;
@@ -1448,7 +1456,7 @@ void OperatingModel::runStockAssessment()
             cout<<"running stock assessment"<<endl;
 
             #if defined __APPLE__ || defined __linux
-            cout<<m_est_fmsy<<endl;
+            // cout<<m_est_fmsy<<endl;
             system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
 
             #endif
@@ -1470,7 +1478,9 @@ void OperatingModel::runStockAssessment()
  */
 void OperatingModel::writeSimulationVariables()
 {
+
     ofstream report("milka.rep");
+
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);

@@ -579,7 +579,7 @@ DATA_SECTION
 	// | n_survey_type = 2: survey is proportional to vulnerable biomass
 	// | n_survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | d3_survey_data: (iyr index(it) gear area group sex wt timing)
-	// | DEPRECATED it_se = relative weights for each relative abundance normalized to have a
+	// | DEPRECATED it_wt = relative weights for each relative abundance normalized to have a
 	// | DEPRECATED mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
 	// |
 
@@ -608,7 +608,15 @@ DATA_SECTION
 		{
 			//it_se(k) = column(d3_survey_data(k),7) + 1.e-30;
 			it_log_se(k) = column(d3_survey_data(k),7);
-			it_se(k) = 1.0/square(it_log_se(k));
+			
+
+			//I think this is a bug.
+			//it_se(k) = 1.0/square(it_log_se(k));
+
+			// and this is my fix
+			it_se(k) = it_log_se(k);
+
+
 			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
@@ -1763,7 +1771,7 @@ PARAMETER_SECTION
 	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
     // | - rho         -> Proportion of total variance associated with obs error.
     // | - varphi      -> Total precision of CPUE and Recruitment deviations.
-    // | - sig         -> STD of the observation errors in relative abundance data.
+    // | - sig         -> DEPRCATE. STD of the observation errors in relative abundance data.
     // | - tau         -> STD of the process errors (recruitment deviations).
 	// |
 	 
@@ -2037,7 +2045,7 @@ FUNCTION void initParameters()
 	rho       = theta(6);
 	sigma_r   = theta(7);
 	//varphi    = sqrt(1.0/theta(7));
-	sig       = elem_prod(sqrt(rho) , varphi);
+	//sig       = elem_prod(sqrt(rho) , varphi);
 	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
 
 	for(ih=1;ih<=n_ag;ih++)
@@ -2891,11 +2899,11 @@ FUNCTION calcComposition
 					-Ahat = ca * ALK
 	  			*/
 	  			dvar_vector mu = d3_len_age(ig)(i);
-					dvar_vector sig= 0.1 * mu;
-					dvector x(n_A_sage(kk),n_A_nage(kk));
-					x.fill_seqadd(n_A_sage(kk),1);
-					
-					dvar_matrix alk = ALK(mu,sig,x);
+				dvar_vector sig= 0.1 * mu;
+				dvector x(n_A_sage(kk),n_A_nage(kk));
+				x.fill_seqadd(n_A_sage(kk),1);
+				
+				dvar_matrix alk = ALK(mu,sig,x);
 	  			
 	  			A_hat(kk)(ii) = ca * alk;
 	  		}
@@ -3178,7 +3186,7 @@ FUNCTION calcSurveyObservations
 				}
 				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 				zt -= log(qt(kk)(iz,nz));
-				
+				q(kk) = qt(kk)(nz);
 				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
 			break;
 		}
@@ -4591,7 +4599,7 @@ FUNCTION void simulationModel(const long& seed)
     		std = 1.0e3;
     		if( it_se(k,i)>0 )
     		{
-    			std = value(sig(it_grp(k,i))/it_se(k,i));
+    			std = (it_se(k,i));
     		}
     		epsilon(k,i) = epsilon(k,i)*std - 0.5*std*std;
     	}
@@ -5831,11 +5839,12 @@ FUNCTION void runMSE()
 	cout<<"Starting Operating Model"<<endl;
 	OperatingModel om(s_mv,argc,argv);
 	om.runScenario(rseed);
+	
 
 
-	om.checkMSYcalcs();
+	//om.checkMSYcalcs();
 
-	COUT("DONE");
+	
 
 
 
@@ -5880,7 +5889,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include "include/lib_iscam.h"
   	#include "milka.h"
-
+  	// #include "mcmc_eval_dic.cpp"
 
 
 	ivector getIndex(const dvector& a, const dvector& b)

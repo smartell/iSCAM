@@ -16,6 +16,7 @@ AAV.DF <- mse.data$AAV.df
 MRG.DF <- merge(BIO.DF,CAT.DF,by=c("Scenario","Procedure","Year"))
 MRG.DF <- merge(MRG.DF,AAV.DF,by=c("Scenario","Procedure","Year","gear","area","group"))
 MSE.DF <- merge(MRG.DF,SUB.DF,by=c("Scenario","Procedure","Year","gear","area","sex","group"))
+
 # Restricted data frame for gvisMotionChart for increased speed & less clutter.
 hdr <- c("Scenario","Procedure","Year","t.Bt0.5","t.Dt0.5","ct50","AAV50")
 MOT.DF <- MRG.DF[,which(names(MRG.DF) %in% hdr)]
