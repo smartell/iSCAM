@@ -294,16 +294,43 @@ void OperatingModel::readMSEcontrols()
     }
     //cout<<"finished MSE controls"<<endl;
 
+
+
+
+
+
+    //
+    // READ SCENARIO CONTROL FILE
+    // 
     cifstream ifs_scn(ScenarioControlFile);
     
-    //Controls for recruitment options
+    // 
+    // Controls for recruitment options
+    // 
     ifs_scn >> m_nRecType;
 
+    // 
+    // Dispersel kernel for new recruits.
+    // 
     m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
     ifs_scn >> m_dispersal; 
 
+    // 
     // Autocorrelation coefficient in recruitment.
+    // 
     ifs_scn >> m_gamma_r;
+
+    // 
+    // Recruitment Regime.
+    // 
+    ifs_scn >> m_PDO_phase;
+
+    // 
+    // Size-at-age (increase or decrease)
+    // 
+    ifs_scn >> m_SAA_flag;
+    
+
 
     // End of file
     int eof_scn=0;
@@ -607,10 +634,12 @@ void OperatingModel::setRandomVariables(const int& seed)
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
 
+
     // Add autocorrelation to recruitment deviations
     double rho = m_gamma_r;
     for( g = 1; g <= ngroup; g++ )
     {
+        m_delta(g) += m_PDO_phase;
         for( i = nyr-sage+1; i <= m_nPyr; i++ )
         {
             m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
@@ -800,7 +829,7 @@ void OperatingModel::allocateTAC(const int& iyr)
                     m_dCatchData(irow,3) = f;
                     m_dCatchData(irow,4) = g;
                     m_dCatchData(irow,5) = h;
-                    m_dCatchData(irow,6) = 1;  //TODO: Fix this catch type
+                    m_dCatchData(irow,6) = 1;             //TODO: Fix this catch type
                     m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
                 }
                 if(h)
@@ -813,7 +842,7 @@ void OperatingModel::allocateTAC(const int& iyr)
                         m_dCatchData(irow,3) = f;
                         m_dCatchData(irow,4) = g;
                         m_dCatchData(irow,5) = h;
-                        m_dCatchData(irow,6) = 1;  //TODO: Fix this
+                        m_dCatchData(irow,6) = 1;             //TODO: Fix this
                         m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
                     }
                 }
@@ -1475,12 +1504,17 @@ void OperatingModel::runStockAssessment()
  * @brief Append true state variables to iscam.rep.
  * @details This routine is called at the end of the simulation model and appends the
  * true state variables to the iscam.rep file.
+ * 
+ * Need to write out simulation scenarios: low recruitment, high recruitment, size-at-age
+ * 
  */
 void OperatingModel::writeSimulationVariables()
 {
 
     ofstream report("milka.rep");
-
+    REPORT(m_PDO_phase);
+    REPORT(m_SAA_flag);
+    REPORT(m_nRecType);
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);

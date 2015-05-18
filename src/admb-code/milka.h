@@ -111,8 +111,10 @@
 		// MSE controls
 		int m_nPyr;				/// Terminal year for Operating Model.
 		int m_nSeed;			/// random number seed
-		int m_nRecType;
+		int m_nRecType;			/// Beverton-Holt, Ricker, Average Recruitment.
+		int m_SAA_flag;			/// flag for size-at-age 1 = increase, -1 = decrease
 
+		double m_PDO_phase;		/// Recruitment regime.
 		double m_dBthreshold;
 		double m_dBlimit;
 		double m_maxf;
