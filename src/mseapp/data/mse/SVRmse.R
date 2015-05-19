@@ -52,7 +52,8 @@
 	                Year     %in% input$sldr_year_range[1]:input$sldr_year_range[2]
 	              & Scenario %in% input$siScenario 
 	              & Procedure %in% input$siProcedure
-	              & Recruitment %in% input$siRecruitment)
+	              & Recruitment %in% input$siRecruitment
+	              & SizeAtAge  %in% input$siGrowth)
 
 	
 
