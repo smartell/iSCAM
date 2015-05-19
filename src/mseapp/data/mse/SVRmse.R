@@ -37,12 +37,20 @@
 		df <- mse.data[["catch.df"]]
 		icol <- c(icol,"ct50","ct025","ct975")
 	}
+	if(input$siPlotType == "sbd")
+	{
+		df <- mse.data[["biomass.df"]]
+		icol <- c(icol,"t.Dt0.5","t.Dt0.025","t.Dt0.975")
+	}
 
 
 
-	# CONTROLLER
+	# CONTROLLER sldr_year_range
+	# Year      %in% input$years[1]:input$years[2] &
 	# Filter df 
-	sdf <- subset(df,Scenario %in% input$siScenario 
+	sdf <- subset(df,
+	                Year     %in% input$sldr_year_range[1]:input$sldr_year_range[2]
+	              & Scenario %in% input$siScenario 
 	              & Procedure %in% input$siProcedure
 	              & Recruitment %in% input$siRecruitment)
 
@@ -62,7 +70,7 @@
 	p  <- p + geom_ribbon(ci,alpha=0.25,linetype=0)
 	# p  <- p + geom_ribbon(co,alpha=0.25,linetype=0)
 	p  <- p + labs(x="Year",y=input$siPlotType)
-	print(p + theme_classic(14) + facet_wrap(~Recruitment))
+	print(p + .THEME + facet_wrap(~Recruitment))
 
 
 

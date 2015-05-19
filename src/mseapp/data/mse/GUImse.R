@@ -44,7 +44,7 @@ buildMseGUI <- function()
 			tabPanel("Procedures",
 				h3("Management Procedures"),
 
-				prc <- levels(mse.data$biomass.df$Procedure),
+				
 				selectInput("siProcedure", h5("Procedure:"),
 				    choices  = prc,
 				    selected = prc[1],
@@ -93,20 +93,19 @@ buildMseGUI <- function()
 			tabPanel("Scenarios",
 			    h3("Operating Model Scenarios"),
 
-			    scn <- levels(mse.data$biomass.df$Scenario),
+			    
 				selectInput("siScenario", h5("Scenarios:"),
 				    choices  = scn,
 				    selected = scn[1],
             		multiple=TRUE),
 
-				rcn <- c("low","high"),
-				rcn <- levels(mse.data$biomass.df$Recruitment),
+				
 				selectInput("siRecruitment",h5("Recruitment:"),
 				    choices  = rcn,
 				    selected = rcn,
 				    multiple = TRUE),
 
-				gcn <- c("decrease","increase"),
+				
 				selectInput("siGrowth",h5("Size-at-age:"),
 				    choices  = gcn,
 				    selected = gcn[1],
@@ -126,10 +125,18 @@ buildMseGUI <- function()
 
 				    selectInput("siPlotType","Select variable",
 				                c("Spawning biomass" = "ssb",
+				                  "SSB Depletion"    = "sbd",
 				                  "Fishery landings" = "fct"),
 				                selected="ssb"),
 
-					plotOutput("plotMSE")
+					plotOutput("plotMSE"),
+
+					hr(),
+
+					
+					sliderInput("sldr_year_range",h5("Trim years"),
+					            min=syr,max=nyr,value=range(yrs),
+					            sep="",width=600)
 				),
 
 				tabPanel("Tables",

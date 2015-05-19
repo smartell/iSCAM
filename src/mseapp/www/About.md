@@ -1,4 +1,4 @@
-# IPHC Siny App (ISA)
+# IPHC Shiny App (MSEApp)
 ----
 
 #### Developers
