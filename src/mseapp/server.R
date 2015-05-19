@@ -1,4 +1,5 @@
-source('./www/global.R',local=TRUE)
+source('./www/globals.R')
+source('helpers.R')
 
 
 shinyServer(function(input,output,session){

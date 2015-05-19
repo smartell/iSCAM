@@ -520,6 +520,23 @@ void OperatingModel::initMemberVariables()
     m_q = mv.q;
 
     // Initialize Mortality arrays from ModelVariables (mv)
+    // cohort-specific weight-at-age deviate
+    dvector wa_dev(nyr-sage,m_nPyr);
+    wa_dev.initialize();
+    wa_dev = 0;
+    switch( m_SAA_flag )
+    {
+        case 1:
+            wa_dev = 0.3;
+        break;
+        case -1:
+            wa_dev = -0.3;
+        break;
+        default:
+            wa_dev = 0;
+        break;
+    }
+
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         m_M(ig).sub(syr,nyr) = (*mv.d3_M)(ig);
@@ -530,14 +547,30 @@ void OperatingModel::initMemberVariables()
         m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig).sub(syr,nyr+1);
 
         // Temporary extend natural mortality out to m_nPyr
+        // Modify m_d3_wt_avg & m_d3_wt_mat to accomodate changes
+        // in size-at-age in the future.  The idea would be that
+        // each cohort would be given a multiplier specific to that 
+        // cohort. 
+        // m_SAA_flag = 1, size at age increases
+        // m_SAA_flag = 0, size-at-age decreases
         for( i = nyr+1; i <= m_nPyr; i++ )
         {
             m_M(ig)(i) = m_M(ig)(nyr);
             m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
             m_d3_wt_mat(ig)(i+1) = d3_wt_mat(ig)(nyr+1);
+
+            for( j = sage; j <= nage; j++)
+            {
+                int cohort = i - j;
+                if(cohort <= nyr) continue;
+                COUT(wa_dev(cohort));
+                m_d3_wt_avg(ig)(i+1)(j) = d3_wt_avg(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
+                m_d3_wt_mat(ig)(i+1)(j) = d3_wt_mat(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
+            }
         }
     }
-
+    // COUT(m_d3_wt_avg(1));
+    // exit(1);
     // Selectivity
     d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
     d4_logSel.initialize();

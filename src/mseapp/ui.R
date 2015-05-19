@@ -1,6 +1,7 @@
 # ----------------------------------------#
 # MAIN USER INTERFACE FOR THE APPLICATION #
 # ----------------------------------------#
+source("helpers.R")
 shinyUI(fluidPage(
         navbarPage("IPHC Shiny App (MSEApp)",
                    id="nav", collapsible=TRUE,
