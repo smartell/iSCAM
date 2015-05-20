@@ -552,7 +552,7 @@ void OperatingModel::initMemberVariables()
         // each cohort would be given a multiplier specific to that 
         // cohort. 
         // m_SAA_flag = 1, size at age increases
-        // m_SAA_flag = 0, size-at-age decreases
+        // m_SAA_flag =-1, size-at-age decreases
         for( i = nyr+1; i <= m_nPyr; i++ )
         {
             m_M(ig)(i) = m_M(ig)(nyr);
@@ -562,8 +562,8 @@ void OperatingModel::initMemberVariables()
             for( j = sage; j <= nage; j++)
             {
                 int cohort = i - j;
-                if(cohort <= nyr) continue;
-                COUT(wa_dev(cohort));
+                if(cohort <= nyr+1) continue;
+                
                 m_d3_wt_avg(ig)(i+1)(j) = d3_wt_avg(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
                 m_d3_wt_mat(ig)(i+1)(j) = d3_wt_mat(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
             }
