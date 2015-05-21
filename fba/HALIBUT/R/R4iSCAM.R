@@ -56,7 +56,7 @@ setwd(.PWD)
   	.plotIndex( M )
 }
 
-.MODELDIRS   <- "../DATA/DMVL1988"
+.MODELDIRS   <- "../DATA/MSAB2015"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.RData",full.name=TRUE)
 load(.MODELNAME)
 names(M)     <- strsplit(basename(.MODELNAME),".RData")
@@ -72,7 +72,7 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotStockRecruit( M )
 .plotRecruitsPerSpawner( M )
 .plotSurveyFit( M )
-.plotQ( M )
+# .plotQ( M )
 .plotCatchResidual( M )
 .plotIndexResidual( M )
 .plotRecruitmentResidual( M )
