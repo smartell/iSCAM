@@ -3338,8 +3338,8 @@ FUNCTION void calcStockRecruitment()
 					sbt(g,i) += elem_prod(N(ig)(i),d3_wt_mat(ig)(i)) * stmp;
 				}
 
-				// | Step 5. spawning biomass projection under natural mortality only.
-				stmp          = mfexp(-M(ig)(nyr)*d_iscamCntrl(13));
+				// | Step 5. spawning biomass projection under total mortality only.
+				stmp          = mfexp(-Z(ig)(nyr)*d_iscamCntrl(13));
 				sbt(g,nyr+1) += elem_prod(N(ig)(nyr+1),d3_wt_mat(ig)(i)) * stmp;
 			}
 
@@ -3442,7 +3442,13 @@ FUNCTION calcObjectiveFunction
 	}
 	if( active(log_ft_pars) )
 	{
-		nlvec(1) = dnorm(eta,0.0,1.0*sig_scaler);
+		for(int i = 1; i<= nCtNobs; i++)
+		{
+			int iyr = dCatchData(i,1);
+			if ( iyr < syr ) continue;
+			if ( iyr > nyr ) continue;
+			nlvec(1) += dnorm(eta(i),0.0,1.0*sig_scaler);
+		}
 	}
 
 
@@ -3453,16 +3459,18 @@ FUNCTION calcObjectiveFunction
 	// |
 	for(k=1;k<=nItNobs;k++)
 	{
-		// ivector ig = it_grp(k);
-		// dvar_vector sig_it(1,n_it_nobs(k)); 
-		// for( i = 1; i <= n_it_nobs(k); i++ )
-		// {
-		// 	// sig_it(i) = sig(ig(i))/it_se(k,i);
-		// 	sig_it(i) = it_log_se(k,i);
-		// }
-		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
-		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(3,k)=dnorm(xi(k),1.0);
+		for( i = 1; i <= n_it_nobs(k); i++ )
+		{
+			int iyr = d3_survey_data(k)(i,1);
+			if (iyr < syr) continue;
+			if (iyr > nyr) continue;
+			nlvec(2,k) += dnorm(epsilon(k)(i),0.0,1.0);
+		}
+		
+		if(active(log_q_devs(k)))
+		{
+			nlvec(3,k)=dnorm(xi(k),1.0);
+		}
 	}
 	
 	// |---------------------------------------------------------------------------------|
