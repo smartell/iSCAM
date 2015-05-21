@@ -44,6 +44,11 @@
 		dvector q;
 		dmatrix sbt;
 		dmatrix bt;
+		dvector log_age_tau2;
+		dvector phi1;
+		dvector phi2;
+		dvector log_degrees_of_freedom;
+
 
 
 		dmatrix log_rec_devs;
@@ -57,6 +62,11 @@
 		d3_array *d3_M;
 		d3_array *d3_F;
 		d3_array *d3_ft;
+
+		// Vector of fishing mortality rate parameters
+		int ft_count;
+		dvector log_ft_pars;
+		dmatrix log_q_devs;
 
 		//recruitment
 		dvector sbo;
@@ -107,6 +117,9 @@
 		ivector m_W_irow;
 		ivector m_nWtNobs;
 		d3_array m_d3_inp_wt_avg;
+
+		//fishing mortality rates
+		dvector m_log_ft_pars;
 
 		// MSE controls
 		int m_nPyr;				/// Terminal year for Operating Model.
@@ -209,6 +222,7 @@
 		void calcEmpiricalWeightAtAge(const int& iyr);
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
+		void writeParameterFile(const int& iyr);
 		void runStockAssessment();
 		void writeSimulationVariables();
 		void calcMSY();

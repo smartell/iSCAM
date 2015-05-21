@@ -139,8 +139,21 @@ buildMseGUI <- function()
 					            sep="",width=600)
 				),
 
-				tabPanel("Tables",
-					"Tables here"
+				tabPanel("Performance Metrics",
+					h5("Median depletion"),
+					tableOutput("viewDepletionTable"),
+
+					h5("Probability of falling below 20% unfished"),
+					tableOutput("viewSSBLimitTable"),
+
+					h5("Probability of falling below 30% unfished"),
+					tableOutput("viewSSBThresholdTable"),					
+
+					h5("Median catch"),
+					tableOutput("viewCatchTable"),
+
+					h5("5-year Average Annual Variation in Catch"),
+					tableOutput("viewAAVTable")
 				)
 			)
 		)

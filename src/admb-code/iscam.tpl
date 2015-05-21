@@ -167,8 +167,8 @@ DATA_SECTION
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	/// | Number of catch options to explore in the decision table.
 	init_int n_tac; ///< Number of catch options to explore in the decision table.
-	!! COUT(ProjectFileControl);
-	!! COUT(n_tac);
+	// !! COUT(ProjectFileControl);
+	// !! COUT(n_tac);
 	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
 	init_int n_pfcntrl;
@@ -347,7 +347,7 @@ DATA_SECTION
 				}
 			}
 		}
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| MODEL DIMENSION         |"<<endl;
@@ -475,7 +475,7 @@ DATA_SECTION
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
 	LOC_CALCS
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
 	    cout<<"| ----------------------- |"<<endl;
@@ -526,7 +526,7 @@ DATA_SECTION
 
 	LOC_CALCS
 		ft_count = nCtNobs;
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| HEAD(dCatchData)        |"<<endl;
@@ -596,7 +596,7 @@ DATA_SECTION
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
 	LOC_CALCS
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(d3_survey_data)       |"<<endl;
@@ -656,7 +656,7 @@ DATA_SECTION
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
 		{
-			if(!mseFlag)
+			if(!mseFlag  && verbose)
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
@@ -967,10 +967,12 @@ DATA_SECTION
 	// |
 	init_int eof;	
 	LOC_CALCS
-	  if(eof==999){
+	  if(eof==999 ){
+	  	if(verbose){
 		cout<<"\n| -- END OF DATA SECTION -- |\n";
 	  	cout<<"|         eof = "<<eof<<"         |"<<endl;
 		cout<<"|___________________________|"<<endl;
+		}
 	  }else{
 		cout<<"\n *** ERROR READING DATA *** \n"<<endl; exit(1);
 	  }
@@ -1193,9 +1195,9 @@ DATA_SECTION
 					slx_nJpar(i) = slx_nAgeNodes(i);
 				break;
 			}
-		}
-		COUT(slx_nrow);
-		cout<<"Ok after new selex stuff in data section"<<endl;
+		} 
+		// COUT(slx_nrow);
+		// cout<<"Ok after new selex stuff in data section"<<endl;
 	END_CALCS
 
 
@@ -1397,9 +1399,11 @@ DATA_SECTION
 
 
 		if(eofc==999){
+			if(verbose){
 			cout<<"\n| -- END OF CONTROL SECTION -- |\n";
 		  	cout<<"|          eofc = "<<eofc<<"          |"<<endl;
 			cout<<"|______________________________|"<<endl;
+			}
 		}else{
 			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; 
 			cout<<"|          eofc = "<<eofc<<"          |"<<endl;
@@ -1543,8 +1547,8 @@ DATA_SECTION
 		}
 	END_CALCS
 
-	!! COUT((n_saa));
-	!! COUT((n_naa));
+	// !! COUT((n_saa));
+	// !! COUT((n_naa));
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1672,7 +1676,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
-		if(!SimFlag) log_ft_pars = log(0.10);
+		if(!SimFlag && !global_parfile) log_ft_pars = log(0.10);
 	END_CALCS
 	
 	
@@ -1714,8 +1718,8 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | 
 	//init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
-	!! COUT(n_it_nobs);
-	!! COUT(qdev_count);
+	// !! COUT(n_it_nobs);
+	// !! COUT(qdev_count);
 	//!! exit(1);
 	init_bounded_vector_vector log_q_devs(1,nItNobs,1,qdev_count,-5.0,5.0,q_phz);
 
@@ -5803,7 +5807,8 @@ FUNCTION void runMSE()
 	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
 	for(int k = 1; k <= ngear; k++ )
 	{
-		log_sel_par(k) = value(sel_par(k));
+		//log_sel_par(k) = value(sel_par(k));
+		log_sel_par(k) = value(slx_log_par(k));
 		d4_log_sel(k)  = value(log_sel(k));
 	}
 	
@@ -5831,6 +5836,25 @@ FUNCTION void runMSE()
 
 	s_mv.sbo = value(sbo);
 	s_mv.so  = value(so);
+
+	s_mv.ft_count = ft_count;
+	s_mv.log_ft_pars = value(log_ft_pars);
+
+	dmatrix d_log_q_devs(1,nItNobs,1,qdev_count);
+	for(int i = 1; i<=nItNobs; i++)
+	{
+		d_log_q_devs(i) = value(log_q_devs(i));
+	}
+	s_mv.log_q_devs  = d_log_q_devs;
+
+
+	s_mv.log_age_tau2 = value(log_age_tau2);
+	s_mv.phi1         = value(phi1);
+	s_mv.phi2         = value(phi2);
+	s_mv.log_degrees_of_freedom = value(log_degrees_of_freedom);
+	
+
+
 
 
 	// |-----------------------------------|
@@ -5959,8 +5983,8 @@ GLOBALS_SECTION
 	 int si,ni; si=mu.indexmin(); ni=mu.indexmax();
 	 int sj,nj; sj=x.indexmin(); nj=x.indexmax();
 
-	 COUT(si); COUT(sj);
-	 COUT(ni); COUT(nj);
+	 // COUT(si); COUT(sj);
+	 // COUT(ni); COUT(nj);
 	 dmatrix pdf(si,ni,sj,nj);
 	 pdf.initialize();
 	 double xs=0.5*(x[sj+1]-x[sj]);

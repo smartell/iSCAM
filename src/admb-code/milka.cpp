@@ -88,9 +88,7 @@ void OperatingModel::checkMSYcalcs()
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
         calculateTAC();
-        COUT(m_dTAC);
-        exit(1);
-
+        
         calcTotalMortality(i);
 
         implementFisheries(i);
@@ -150,6 +148,8 @@ void OperatingModel::runScenario(const int &seed)
         writeDataFile(i);
         if(verbose) cout<<"writeDataFile OK"<<endl;
 
+        writeParameterFile(i);
+        if(verbose) cout<<"writeParameterFile OK"<<endl;
 
         // implement perfect info option
         // if flag is 0 - write .res with true params
@@ -381,6 +381,11 @@ void OperatingModel::initParameters()
     m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
 
+     // Fishing mortality rate parameters
+    // How many more Ft parameters are needed?
+    m_log_ft_pars.allocate(1,m_nCtNobs);
+    m_log_ft_pars.initialize();
+    m_log_ft_pars.sub(1,ft_count) = mv.log_ft_pars(1,ft_count);
 
     // Below could be deprecated
    // m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
@@ -476,6 +481,7 @@ void OperatingModel::initParameters()
             m_dKappa = pow((5.*m_dSteepness),1.25);
         break;
     }
+
 
     
     // cout<<"finished init parameters"<<endl;
@@ -689,13 +695,9 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             //  set reference points to true milka values
             
             m_est_bo   = m_dBo;
-            m_est_fmsy = m_fmsy;      // Bug
-            // COUT(m_fmsy);
-            // COUT(m_bmsy);
-            // COUT(m_msy);
-            // exit(1);
-            m_est_msy  = m_msy;       // Bug here, these variables are from model_data class.
-            m_est_bmsy = m_bmsy;      // Bug
+            m_est_fmsy = m_fmsy;      
+            m_est_msy  = m_msy;       
+            m_est_bmsy = m_bmsy;      
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
             m_est_btt  = m_bt(iyr)(1,ngroup);;
             
@@ -948,6 +950,7 @@ void OperatingModel::implementFisheries(const int &iyr)
     na.initialize();
     _hDt.initialize();
     _hWt.initialize();
+    static int ft_counter = ft_count;
 
     BaranovCatchEquation cBCE;
 
@@ -984,13 +987,14 @@ void OperatingModel::implementFisheries(const int &iyr)
 
             // Calculate instantaneous fishing mortality rates.
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
-
+            
             // cout<<"fishing rate "<<ft<<endl;
 
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
             {
-                
+                // cout<<"DFT counter +"<<ft_count<<" "<<ft_counter<<endl;
+                m_log_ft_pars(++ft_counter) = ft(k);
                 // Calculate total mortality array.
                 for(int h = 1; h <= nsex; h++ )
                 {
@@ -1121,7 +1125,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                 double sd = m_dSigma(g);
                 // cout<<"Awe man"<<endl;
                 double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*sd); 
-                cout<<"q "<<m_q(k)<<endl;
+                // cout<<"q "<<m_q(k)<<endl;
                 // V is the population that is proportional to the index.
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = it;
@@ -1320,7 +1324,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
         // add process errors assuming each area/sex has the same deviation.
         m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
-        
+        // COUT(m_dTau);
         //disperse the recruits in each year 
         // assumes all groups disperse the same and prop of groups by area remain const
         // TODO allow for separate dispersal matrices for each group
@@ -1349,6 +1353,64 @@ void OperatingModel::updateReferenceModel(const int& iyr)
     }
 
      //cout<<"finished updatinf ref pop"<<endl;
+}
+
+
+void OperatingModel::writeParameterFile(const int& iyr)
+{
+    cout<<"Writing TRUE.par"<<endl;
+    ofstream pfs("TRUE.par");
+    pfs << mv.log_ro     << endl;
+    pfs << mv.steepness  << endl;
+    pfs << mv.m          << endl;
+    pfs << mv.log_rbar   << endl;
+    pfs << mv.log_rinit  << endl;
+    pfs << mv.rho        << endl;
+    pfs << mv.varphi     << endl;
+    pfs <<"# slx_log_par" << endl;
+    pfs << *mv.d3_log_sel_par << endl;
+    pfs <<"# second instance until sel_par is deprecated" << endl;
+    pfs << *mv.d3_log_sel_par << endl;
+
+    pfs <<"# log_ft_pars " << endl;
+    int n = (iyr-syr)+1;
+    pfs << m_log_ft_pars(1,n)  <<endl;
+
+    pfs <<"# init_log_rec_devs:" << endl;
+    pfs << mv.init_log_rec_devs  << endl;
+
+    pfs <<"# log_rec_devs:"      << endl;
+
+    // add simulation devs m_delta * sigma_r
+    for( g = 1; g <= ngroup; g++ )
+    {
+        pfs << mv.log_rec_devs(g)(syr,nyr-sage-1);
+        for(int i=nyr-sage; i<=iyr; i++)
+        {
+            pfs << " " << m_delta(g)(i) * m_dTau;
+        }
+        pfs << endl;
+    }
+
+    pfs <<"# log_q_devs:  "      << endl;
+
+    // now add additional qdevs
+    for(k=1;k<=nItNobs;k++)
+    {
+        pfs << mv.log_q_devs(k);
+        for(i = nyr+1; i<= iyr; i++)
+        {
+            pfs<<" "<< 0;
+        }
+        pfs << endl;
+    }
+
+    pfs <<"# log_age_tau2 "      << endl;
+    pfs << mv.log_age_tau2       << endl;
+
+    pfs << mv.phi1 <<endl;
+    pfs << mv.phi2 <<endl;
+    pfs << mv.log_degrees_of_freedom << endl;
 }
 
 
@@ -1512,6 +1574,11 @@ void OperatingModel::runStockAssessment()
     {
         case 0:
             cout<<"Perfect information scenario"<<endl;
+
+            #if defined __APPLE__ || defined __linux
+            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 4");
+            #endif
+
         break;
         
         case 1:        

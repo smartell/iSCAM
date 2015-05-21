@@ -15,8 +15,40 @@ shinyServer(function(input,output,session){
       .funnelPlot( input )
     })
 
+    # 
+    # Median depletion table
+    # 
+    output$viewDepletionTable <- renderTable({
+      .tablePeformanceMetric(input,"t.Dt0.5")
+    })
 
+    # 
+    # Probability of falling below SB 20%
+    # 
+    output$viewSSBLimitTable <- renderTable({
+      .tablePeformanceMetric(input,"P.SSB.0.20.")
+    })
 
+    # 
+    # Probability of falling below SB 30%
+    # 
+    output$viewSSBThresholdTable <- renderTable({
+      .tablePeformanceMetric(input,"P.SSB.0.30.")
+    })
+
+    # 
+    # Median catch table
+    # 
+    output$viewCatchTable <- renderTable({
+      .tablePeformanceMetric(input,"ct50")
+    })
+
+    # 
+    # Median annual variation in catch
+    # 
+    output$viewAAVTable <- renderTable({
+      .tablePeformanceMetric(input,"AAV50")
+    })
 
 	  ## ------------------------------------------------------------ ##
     ## EQUILIBRIUM MODEL (May 7, 2015)

@@ -71,8 +71,34 @@
 	p  <- p + geom_ribbon(ci,alpha=0.25,linetype=0)
 	# p  <- p + geom_ribbon(co,alpha=0.25,linetype=0)
 	p  <- p + labs(x="Year",y=input$siPlotType)
-	print(p + .THEME + facet_wrap(~Recruitment))
+	print(p + .THEME + facet_wrap(~Recruitment+SizeAtAge))
 
 
 
 }
+
+.tablePeformanceMetric <- function(input,var = "t.Dt0.5")
+{
+	cat("Performance Metric table for ", var, "\n")
+	if(var == "t.Dt0.5")     idf = "biomass.df"
+	if(var == "t.Bt0.5")     idf = "biomass.df"
+	if(var == "P.SSB.0.20." || var == "P.SSB.0.30.") idf = "biomass.df"
+	if(var == "ct50"   )     idf = "catch.df" 
+	if(var == "AAV50"  )     idf = "AAV.df"
+
+	msedf <- mse.data[[idf]]
+	df  <- subset(msedf,
+            	  Year        %in% input$sldr_year_range[1]:input$sldr_year_range[2] 
+                & Scenario    %in% input$siScenario                
+                & Procedure   %in% input$siProcedure 
+                & Recruitment %in% input$siRecruitment
+	            & SizeAtAge   %in% input$siGrowth
+             )
+	mdf <- melt(df,id=c("Scenario","Procedure","Year","Recruitment","SizeAtAge"))
+    tmp <- dcast(mdf,Procedure~Scenario,mean,na.rm=TRUE,margins="Scenario"
+                 ,subset = .(variable==var))
+    return(tmp)	
+}
+
+
+  
