@@ -61,6 +61,8 @@ RUNRETRO = 'args = paste("-retro",c(1:$(NR),0)); \
 clean: 
 	-rm -f iscam.* admodel.* variance eigv.rpt fmin.log $(EXEC) variance
 
+clobber: clean
+	-rm -f iSCAM.res simdone *.cor *.RData *.rep *.std *.par ders.dat sims derivatives *.psv
 # |——————————————————————————————————————————————————————————————————————————————————————|
 # | Targets for Running MSE
 # |——————————————————————————————————————————————————————————————————————————————————————|
