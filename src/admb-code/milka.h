@@ -56,6 +56,7 @@
 
 		// Selectivity parameters
 		d3_array *d3_log_sel_par;
+		d3_array *d3_slx_log_par;
 		d4_array *d4_logSel;
 
 		// Mortality

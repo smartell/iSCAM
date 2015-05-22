@@ -1610,10 +1610,10 @@ PARAMETER_SECTION
 				{
 					for(int j = 1; j <= slx_nIpar(k); j++ )
 					{
-						cout<<"Made it here"<<endl;
+						// cout<<"Made it here"<<endl;
 						slx_log_par(k)(j)(1) = log(slx_sel_mu(k));
 						slx_log_par(k)(j)(2) = log(slx_sel_sd(k));
-						cout<<"and here too"<<endl;
+						// cout<<"and here too"<<endl;
 					}
 				}
 			}
@@ -5810,18 +5810,26 @@ FUNCTION void runMSE()
 	s_mv.rho       = value( theta(6) );
 	s_mv.varphi    = value( theta(7) );
 
+	COUT("Here is the problem")
 	// Selectivity parameters
+	// BUG: jsel_npar and isel_npar are deprecated.
 	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
 	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
-	for(int k = 1; k <= ngear; k++ )
+	for(int k = 1; k <= ngear; k++ )  //slx_nrow
 	{
-		//log_sel_par(k) = value(sel_par(k));
-		log_sel_par(k) = value(slx_log_par(k));
+		log_sel_par(k) = value(sel_par(k));
+		//log_sel_par(k) = value(slx_log_par(k));
 		d4_log_sel(k)  = value(log_sel(k));
 	}
-	
 	s_mv.d3_log_sel_par = &log_sel_par;
 	s_mv.d4_logSel      = &d4_log_sel;
+
+	d3_array _slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar);
+	for( k = 1; k <= slx_nrow; k++ )
+	{
+		_slx_log_par(k) = value(slx_log_par(k));
+	}
+	s_mv.d3_slx_log_par = &_slx_log_par;
 
 	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
 	d3_array d3_F(1,n_ags,syr,nyr,sage,nage);

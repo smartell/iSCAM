@@ -1368,12 +1368,14 @@ void OperatingModel::writeParameterFile(const int& iyr)
     pfs << mv.rho        << endl;
     pfs << mv.varphi     << endl;
     pfs <<"# slx_log_par" << endl;
-    pfs << *mv.d3_log_sel_par << endl;
+    pfs << *mv.d3_slx_log_par << endl;
     pfs <<"# second instance until sel_par is deprecated" << endl;
     pfs << *mv.d3_log_sel_par << endl;
 
     pfs <<"# log_ft_pars " << endl;
-    int n = (iyr-syr)+1;
+    
+    // fishing mortality rate parameters for each gear.
+    int n = nCtNobs +(iyr-nyr)*m_nn;
     pfs << m_log_ft_pars(1,n)  <<endl;
 
     pfs <<"# init_log_rec_devs:" << endl;

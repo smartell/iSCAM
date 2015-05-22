@@ -32,7 +32,7 @@ shinyServer(function(input,output,session){
     # 
     # Probability of falling below SB 30%
     # 
-    output$viewSSBThresholdTable <- renderTable({
+    output$viewSSBThresholdruTable <- renderTable({
       .tablePeformanceMetric(input,"P.SSB.0.30.")
     })
 
