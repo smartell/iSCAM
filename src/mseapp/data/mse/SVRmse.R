@@ -31,16 +31,19 @@
 	{
 		df   <- mse.data[["biomass.df"]]
 		icol <- c(icol,"t.Bt0.5","t.Bt0.025","t.Bt0.975")
+		wrap <- facet_wrap(~Recruitment+SizeAtAge)
 	}
 	if(input$siPlotType == "fct")
 	{
 		df <- mse.data[["catch.df"]]
 		icol <- c(icol,"ct50","ct025","ct975")
+		wrap <- facet_wrap(~Recruitment+SizeAtAge+gear+area+sex)
 	}
 	if(input$siPlotType == "sbd")
 	{
 		df <- mse.data[["biomass.df"]]
 		icol <- c(icol,"t.Dt0.5","t.Dt0.025","t.Dt0.975")
+		wrap <- facet_wrap(~Recruitment+SizeAtAge)
 	}
 
 
@@ -65,13 +68,12 @@
 	print(tail(idf))
 	# VIEW
 	ci <- aes(ymin=lci,ymax=uci,fill=Procedure)
-	# co <- aes(ymin=0.8*lci,ymax=1.2*uci,fill=Procedure)
+
 	p  <- ggplot(idf,aes(Year,Median,color=Procedure))
 	p  <- p + geom_line()
 	p  <- p + geom_ribbon(ci,alpha=0.25,linetype=0)
-	# p  <- p + geom_ribbon(co,alpha=0.25,linetype=0)
 	p  <- p + labs(x="Year",y=input$siPlotType)
-	print(p + .THEME + facet_wrap(~Recruitment+SizeAtAge))
+	print(p + .THEME + wrap)
 
 
 

@@ -684,6 +684,8 @@ void OperatingModel::setRandomVariables(const int& seed)
             m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
         }
     }
+    COUT(m_dTau);
+    COUT(m_delta);
 }
 
 
@@ -1575,10 +1577,10 @@ void OperatingModel::runStockAssessment()
     switch( int(m_nAssessOpt) ) // option read in from .mpc file
     {
         case 0:
-            cout<<"Perfect information scenario"<<endl;
+            cout<<"Perfect information scenario "<<m_nSeed<<endl;
 
             #if defined __APPLE__ || defined __linux
-            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 4");
+            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
             #endif
 
         break;

@@ -5810,7 +5810,7 @@ FUNCTION void runMSE()
 	s_mv.rho       = value( theta(6) );
 	s_mv.varphi    = value( theta(7) );
 
-	COUT("Here is the problem")
+
 	// Selectivity parameters
 	// BUG: jsel_npar and isel_npar are deprecated.
 	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
@@ -5818,12 +5818,12 @@ FUNCTION void runMSE()
 	for(int k = 1; k <= ngear; k++ )  //slx_nrow
 	{
 		log_sel_par(k) = value(sel_par(k));
-		//log_sel_par(k) = value(slx_log_par(k));
 		d4_log_sel(k)  = value(log_sel(k));
 	}
 	s_mv.d3_log_sel_par = &log_sel_par;
 	s_mv.d4_logSel      = &d4_log_sel;
 
+	// NEW SELEX
 	d3_array _slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar);
 	for( k = 1; k <= slx_nrow; k++ )
 	{
