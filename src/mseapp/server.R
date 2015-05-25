@@ -32,7 +32,7 @@ shinyServer(function(input,output,session){
     # 
     # Probability of falling below SB 30%
     # 
-    output$viewSSBThresholdruTable <- renderTable({
+    output$viewSSBThresholdTable <- renderTable({
       .tablePeformanceMetric(input,"P.SSB.0.30.")
     })
 
@@ -49,6 +49,25 @@ shinyServer(function(input,output,session){
     output$viewAAVTable <- renderTable({
       .tablePeformanceMetric(input,"AAV50")
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	  ## ------------------------------------------------------------ ##
     ## EQUILIBRIUM MODEL (May 7, 2015)
@@ -119,4 +138,19 @@ shinyServer(function(input,output,session){
       .meyTable(AB,xx)
 
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 })
+# End of shinyServer

@@ -24,6 +24,7 @@
  *      |- conditionReferenceModel             [-]
  *      |- setRandomVariables                  [-]
  *      |- | getReferencePointsAndStockStatus  [-]
+ *         | harvestControlRule                [ ]
  *         | calculateTAC                      [-]
  *         | allocateTAC                       [-]
  *         | implementFisheries                [-]
@@ -695,6 +696,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
     {
         case 0:
             //  set reference points to true milka values
+            //  add estimation error if desired
             
             m_est_bo   = m_dBo;
             m_est_fmsy = m_fmsy;      
@@ -717,9 +719,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
-            //cout<<"TIme to goto dance"<<endl;
-            //cout<<"Fmsy = "<<m_est_fmsy<<endl;
-
+           
 
             // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
             for(int k = 1; k <= ngear; k++ )    
@@ -757,6 +757,10 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
  * stock statuts, reference points and the harvest control rule.
  * 
  * Uses a switch statement for HCR.  The HCR is set in the pcf file.
+ * 
+ * Note that the TAC is the same as the TCEY in IPHC parlance,
+ * and the FCEY should be the remaining TAC after bycatch, wastage, and other
+ * uses have been subtracted.  i.e. the directed fishery gets the leftovers.
  */
 void OperatingModel::calculateTAC()
 {
@@ -766,7 +770,7 @@ void OperatingModel::calculateTAC()
     dvector f_rate(1,nfleet);
     m_dTAC.initialize();
 
-
+    /* HARVEST CONTROL RULES*/
     for(int g = 1; g <= ngroup; g++ )
     {
         btmp = m_est_btt(g);
