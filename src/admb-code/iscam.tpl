@@ -1674,7 +1674,6 @@ PARAMETER_SECTION
 	// |   the observed catch.
 	// |
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
-	!! COUT(log_ft_pars);
 	LOC_CALCS
 		if(!SimFlag && !global_parfile) log_ft_pars = log(0.10);
 	END_CALCS
@@ -1695,8 +1694,8 @@ PARAMETER_SECTION
 	!! if(d_iscamCntrl(5)) init_dev_phz = -1;
 	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
 	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-15.,15.,2);
-	!! COUT(log_rec_devs);
-	!! exit(1);
+	// !! COUT(log_rec_devs);
+	// !! exit(1);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -2161,6 +2160,7 @@ FUNCTION calcSelex
 
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
 		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
+		
 		int nn = slx_nIpar(k)-1;
 		
 	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
@@ -4860,6 +4860,7 @@ REPORT_SECTION
 	REPORT(m);
 	// double tau = value(sqrt(1.-rho)*varphi);
 	// double sig = value(sqrt(rho)*varphi);
+	
 	REPORT(sigma_r);
 	REPORT(sig);
 	REPORT(age_tau2);
@@ -5026,6 +5027,8 @@ REPORT_SECTION
 	// |---------------------------------------------------------------------------------|
 	// |
 	// REPORT(ft);
+	//REPORT(ft_count);
+	REPORT(ft_count);
 	REPORT(ut);
 	report<<"ft"<<endl;
 	for(int ig = 1; ig <= n_ags; ig++ )

@@ -606,7 +606,7 @@ void OperatingModel::initMemberVariables()
         }
     }
 
-
+    m_ft_counter = ft_count;
     //cout<<"finished init member variables"<<endl;
 
 }
@@ -660,6 +660,8 @@ void OperatingModel::conditionReferenceModel()
             //bt(g)(i) += N(ig)(i) * d3_wt_avg(ig)(i);
         }
         m_N(ig)(nyr+1,sage) = 1./nsex * mfexp( mv.log_rbar(ih));
+        // COUT(exp(m_log_rt(ih)(syr+sage,nyr)));
+        // exit(1);
     }
 
 }
@@ -674,6 +676,7 @@ void OperatingModel::setRandomVariables(const int& seed)
 
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
+    m_delta = 0;
 
 
     // Add autocorrelation to recruitment deviations
@@ -686,8 +689,8 @@ void OperatingModel::setRandomVariables(const int& seed)
             m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
         }
     }
-    COUT(m_dTau);
-    COUT(m_delta);
+    // COUT(m_dTau);
+    // COUT(m_delta);
 }
 
 
@@ -1000,8 +1003,10 @@ void OperatingModel::implementFisheries(const int &iyr)
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
             {
-                // cout<<"DFT counter +"<<ft_count<<" "<<ft_counter<<endl;
-                m_log_ft_pars(++ft_counter) = ft(k);
+                // cout<<"DFT counter +"<<ft_count<<" "<<++ft_counter<<endl;
+                // exit(1);
+                m_log_ft_pars(++ft_counter) = log( ft(k) );
+                m_ft_counter++;
                 // Calculate total mortality array.
                 for(int h = 1; h <= nsex; h++ )
                 {
@@ -1382,7 +1387,8 @@ void OperatingModel::writeParameterFile(const int& iyr)
     pfs <<"# log_ft_pars " << endl;
     
     // fishing mortality rate parameters for each gear.
-    int n = nCtNobs +(iyr-nyr)*m_nn;
+    // int n = nCtNobs +(iyr-nyr)*m_nn;
+    int n = m_ft_counter;
     pfs << m_log_ft_pars(1,n)  <<endl;
 
     pfs <<"# init_log_rec_devs:" << endl;
@@ -1585,8 +1591,8 @@ void OperatingModel::runStockAssessment()
             cout<<"Perfect information scenario "<<m_nSeed<<endl;
 
             #if defined __APPLE__ || defined __linux
-            // system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
-            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50");
+            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            // system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50");
             #endif
 
         break;
