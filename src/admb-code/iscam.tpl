@@ -5275,10 +5275,10 @@ FUNCTION generate_new_files
 	adstring bscmddat = "cp ../lib/iscam.dat" + NewFileName +".dat";
 		system(bscmddat);
 
-	adstring bscmdctl = "cp ../lib/ iscam.ctl" + NewFileName +".ctl";
+	adstring bscmdctl = "cp ../lib/iscam.ctl" + NewFileName +".ctl";
 		system(bscmdctl);
 
-	adstring bscmdpfc = "cp ../lib/ iscam.PFC" + NewFileName +".pfc";
+	adstring bscmdpfc = "cp ../lib/iscam.PFC" + NewFileName +".pfc";
 		system(bscmdpfc);	
 
 	#endif
@@ -5288,10 +5288,10 @@ FUNCTION generate_new_files
 	adstring bscmddat = "copy ../lib/iscam.dat" + NewFileName +".dat";
 		system(bscmddat);
 
-	adstring bscmdctl = "copy ../lib/ iscam.ctl" + NewFileName +".ctl";
+	adstring bscmdctl = "copy ../lib/iscam.ctl" + NewFileName +".ctl";
 		system(bscmdctl);
 
-	adstring bscmdpfc = "copy ../lib/ iscam.PFC" + NewFileName +".pfc";
+	adstring bscmdpfc = "copy ../lib/iscam.PFC" + NewFileName +".pfc";
 		system(bscmdpfc);	
 
 	#endif
