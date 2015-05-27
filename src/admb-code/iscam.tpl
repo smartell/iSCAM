@@ -2759,6 +2759,7 @@ FUNCTION calcNumbersAtAge
 		N(ig)(nyr+1,sage) = 1./nsex * mfexp( log_avgrec(ih));
 		bt(g)(nyr+1) += N(ig)(nyr+1) * d3_wt_avg(ig)(nyr+1);
 	}
+	cout<<"rec devs "<<log_rec_devs<<endl;
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
 
@@ -4294,6 +4295,8 @@ FUNCTION dvector getExploitationRate()
 	for(i = 1; i<= nCtNobs; i++)
 	{
 		int iyr  = dCatchData(i)(1);
+		if (iyr < syr) continue;
+		if (iyr > nyr) continue;
 		ct(iyr) += dCatchData(i)(7);
 	}
 	
@@ -4835,10 +4838,9 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mp
   }
 
 REPORT_SECTION
-  	cout<<"exploitation rate"<<endl;
   	dvector ut = getExploitationRate();
+  	
 
-  	cout<<"You got here"<<endl;
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	report<<DataFile<<endl;
 	report<<ControlFile<<endl;
@@ -5023,6 +5025,7 @@ REPORT_SECTION
 	// |---------------------------------------------------------------------------------|
 	// |
 	// REPORT(ft);
+	REPORT(ut);
 	report<<"ft"<<endl;
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{

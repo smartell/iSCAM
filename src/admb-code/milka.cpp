@@ -112,7 +112,7 @@ void OperatingModel::runScenario(const int &seed)
     initMemberVariables();
 
     conditionReferenceModel();
-
+    
     calcMSY();
 
     setRandomVariables(seed);
@@ -643,6 +643,7 @@ void OperatingModel::conditionReferenceModel()
         m_N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
         m_log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 
+        
         for(i=syr;i<=nyr;i++)
         {
             if( i>syr )
@@ -1584,7 +1585,8 @@ void OperatingModel::runStockAssessment()
             cout<<"Perfect information scenario "<<m_nSeed<<endl;
 
             #if defined __APPLE__ || defined __linux
-            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            // system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50");
             #endif
 
         break;
