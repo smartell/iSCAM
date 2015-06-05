@@ -81,7 +81,7 @@ renderEquilInputs <- function(prefix)
 			  ),
 
 			  # bycatch DMR
-			  sliderInput(paste0(prefix,"_","bycatch_dmr"),tags$h6("Bycatch discard mortality rate"),min=0,max=1,value=0.06,step=0.01),
+			  sliderInput(paste0(prefix,"_","bycatch_dmr"),tags$h6("Bycatch discard mortality rate"),min=0,max=1,value=0.09,step=0.01),
 
 			  # bycatch amounts
 			  column(6, offset=0,
@@ -100,16 +100,16 @@ renderEquilInputs <- function(prefix)
 			wellPanel( fluidRow(
 			tags$h5("Price per pound ($)"),
 			column(2,
-				numericInput(paste0(prefix,"_","five"), label = tags$h6("5-10"), value = 0, step=0.10)
+				numericInput(paste0(prefix,"_","five"), label = h6("5-10"), value = 0, step=0.10)
 			,offset=0),
 			column(2,
-				numericInput(paste0(prefix,"_","ten"), label = "10-20", value = 5, step=0.10)
+				numericInput(paste0(prefix,"_","ten"), label = h6("10-20"), value = 5, step=0.10)
 			,offset=1),
 			column(2,
-				numericInput(paste0(prefix,"_","twenty"), label = "20-40", value = 5, step=0.10)
+				numericInput(paste0(prefix,"_","twenty"), label = h6("20-40"), value = 5, step=0.10)
 			,offset=1),
 			column(2,
-				numericInput(paste0(prefix,"_","forty"), label = "40+", value = 5, step=0.10)
+				numericInput(paste0(prefix,"_","forty"), label = h6("40+"), value = 5, step=0.10)
 			,offset=1)
 			))
 

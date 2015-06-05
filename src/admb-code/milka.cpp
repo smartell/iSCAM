@@ -152,9 +152,8 @@ void OperatingModel::runScenario(const int &seed)
         writeParameterFile(i);
         if(verbose) cout<<"writeParameterFile OK"<<endl;
 
-        // implement perfect info option
-        // if flag is 0 - write .res with true params
         runStockAssessment();
+        if(verbose) cout<<"runStockAssessment OK"<<endl;
     
     }
 
@@ -676,7 +675,7 @@ void OperatingModel::setRandomVariables(const int& seed)
 
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
-    m_delta = 0;
+    // m_delta = 0;
 
 
     // Add autocorrelation to recruitment deviations
@@ -1389,7 +1388,8 @@ void OperatingModel::writeParameterFile(const int& iyr)
     // fishing mortality rate parameters for each gear.
     // int n = nCtNobs +(iyr-nyr)*m_nn;
     int n = m_ft_counter;
-    pfs << m_log_ft_pars(1,n)  <<endl;
+    cout<<m_ft_counter<<" catch rows "<<m_nCtNobs<<endl;
+    pfs << m_log_ft_pars(1,n)<<endl;
 
     pfs <<"# init_log_rec_devs:" << endl;
     pfs << mv.init_log_rec_devs  << endl;

@@ -1755,7 +1755,7 @@ PARAMETER_SECTION
     // | - m_bar       -> Average natural mortality rate from syr to nyr.
     // |
 	number m_bar;	///< Average natural mortality rate.			
-
+	number phib;//,so,beta;
 
 	// |---------------------------------------------------------------------------------|
 	// | POPULATION VECTORS
@@ -3292,7 +3292,7 @@ FUNCTION void calcStockRecruitment()
   	sbt.initialize();
   	delta.initialize();
 	
-	dvariable phib;//,so,beta;
+	//dvariable phib;//,so,beta;
 	dvector         fa(sage,nage);
 	dvar_vector   stmp(sage,nage);
 	dvar_vector     ma(sage,nage);
@@ -4858,6 +4858,7 @@ REPORT_SECTION
 	dvector steepness=value(theta(2));
 	REPORT(steepness);
 	REPORT(m);
+	REPORT(phib);
 	// double tau = value(sqrt(1.-rho)*varphi);
 	// double sig = value(sqrt(rho)*varphi);
 	

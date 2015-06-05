@@ -12,6 +12,10 @@ getParams <- function(prefix,input) {
       params
     }
 
+.updateDiscardMortality <- function(prefix,input)
+{
+  
+}
 
 
 .plotEquilFe <- function(Scenario,objs)
