@@ -15,22 +15,17 @@ require(reshape2)
 	{
 		it_hat <- na.omit(as.vector(t(M[[i]]$it_hat)))
 		it     <- M[[i]]$d3_survey_data[,2]
-		sig  	 <- M[[i]]$sig
-		se     <- M[[i]]$d3_survey_data[,7]
-		norm_it_wt <- na.omit(as.vector(t(M[[i]]$it_wt)))
-		#fit <- M[[i]]$fit
-		#rho <- fit$est[fit$names=="theta[6]"]
-		#vartheta <- fit$est[fit$names=="theta[7]"]
-		#sig <- sqrt(rho/vartheta)
-		# Ub <- exp(log(it)+1.96*sig/norm_it_wt)
-		Ub <- exp(log(it)+1.96*se)
+		log_se <- M[[i]]$d3_survey_data[,7]
+		
+		Ub <- exp(log(it)+1.96*log_se)
 		Ub <- Ub[1:length(Ub)]
-		# Lb <- exp(log(it)-1.96*sig/norm_it_wt)
-		Lb <- exp(log(it)-1.96*se)
+		
+		Lb <- exp(log(it)-1.96*log_se)
 		Lb <- Lb[1:length(Ub)]
-		df <- data.frame(Model=names(M)[i],(M[[i]]$d3_survey_data[,1]),M[[i]]$d3_survey_data[,2:8],
-						norm_it_wt,it,it_hat,Ub,Lb)
-		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing", "norm_wt"
+		df <- data.frame(Model=names(M)[i],(M[[i]]$d3_survey_data[,1]),
+		                 M[[i]]$d3_survey_data[,2:8],
+						 it,it_hat,Ub,Lb)
+		colnames(df) <- c("Model","Year","Index","Gear","Area","Group","Sex","wt","timing"
 		                  ,"It","It_hat","low_bnd","high_bnd")
 		mdf <- rbind(mdf,subset(df,Year>=M[[i]]$syr))
 	}

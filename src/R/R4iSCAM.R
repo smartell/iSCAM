@@ -15,8 +15,8 @@
 # | .RFILES    <- List of R functions to source from the lib directory.
 # .PWD        <- "/Users/stevenmartell1/Documents/iSCAM/examples/PacificHake14/R"
 .PWD        <- "/Users/stevenmartell1/Documents/iSCAM-project/src/R"
-.LIB        <- "../../../dist/R/lib/"
-.WIN        <- "../../../dist/R/iScamWin2.txt"
+.LIB        <- "../../../src/R/lib/"
+.WIN        <- "../../../src/R/iScamWin2.txt"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$")
@@ -26,6 +26,12 @@ setwd(.PWD)
 require(ggplot2)
 .THEME      <- theme_bw(11)
 .UNITS      <- "(mlb)"
+
+# | Labels for gear sex area and group index.
+.GEAR  = c("Directed","Wasteage","Bycatch","Sport","Personal","Setline Survey")
+.SEX   = c("F & M","Female","Male")
+.AREA  = c("Coast wide")
+.GROUP = c("Pacific Halibut")
 
 
 .MODELDIRS   <- "../DATA"
@@ -37,9 +43,6 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotCatch( M )
 .plotIndex( M )
 .plotWeightAtAge( M )
-.plotAgeComps( M )
-.plotAgeCompResiduals( M )
-.plotAgeSummary( M )
 .plotSpawnBiomass( M )
 .plotDepletion( M )
 .plotMortality( M )
@@ -47,9 +50,15 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .plotStockRecruit( M )
 .plotRecruitsPerSpawner( M )
 .plotSurveyFit( M )
+.plotQ( M )
 .plotCatchResidual( M )
 .plotIndexResidual( M )
 .plotRecruitmentResidual( M )
+.plotAgeComps( M )
+.plotAgeCompResiduals( M )
+.plotAgeSummary( M )
+.plotAgeBars( M )
+.plotSlx( M )
 
 
 # |----------------------------------------------------------------------------------|

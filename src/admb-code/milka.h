@@ -39,11 +39,16 @@
 		dvector m;
 		dvector log_rbar;
 		dvector log_rinit;
-		dvector rho;
-		dvector varphi;
+		dvector rho;      // autocorrelation
+		dvector varphi;	  // sigma r
 		dvector q;
 		dmatrix sbt;
 		dmatrix bt;
+		dvector log_age_tau2;
+		dvector phi1;
+		dvector phi2;
+		dvector log_degrees_of_freedom;
+
 
 
 		dmatrix log_rec_devs;
@@ -51,12 +56,18 @@
 
 		// Selectivity parameters
 		d3_array *d3_log_sel_par;
+		d3_array *d3_slx_log_par;
 		d4_array *d4_logSel;
 
 		// Mortality
 		d3_array *d3_M;
 		d3_array *d3_F;
 		d3_array *d3_ft;
+
+		// Vector of fishing mortality rate parameters
+		int ft_count;
+		dvector log_ft_pars;
+		dmatrix log_q_devs;
 
 		//recruitment
 		dvector sbo;
@@ -99,7 +110,7 @@
 		d3_array m_d3SurveyData;
 
 		// composition arrays
-		ivector m_A_irow;
+		ivector  m_A_irow;
 		ivector  m_n_A_nobs;
 		d3_array m_d3_A;
 
@@ -108,13 +119,20 @@
 		ivector m_nWtNobs;
 		d3_array m_d3_inp_wt_avg;
 
+		//fishing mortality rates
+		dvector m_log_ft_pars;
+
 		// MSE controls
 		int m_nPyr;				/// Terminal year for Operating Model.
 		int m_nSeed;			/// random number seed
-		int m_nRecType;
+		int m_nRecType;			/// Beverton-Holt, Ricker, Average Recruitment.
+		int m_SAA_flag;			/// flag for size-at-age 1 = increase, -1 = decrease
+
+		double m_PDO_phase;		/// Recruitment regime.
 		double m_dBthreshold;
 		double m_dBlimit;
 		double m_maxf;
+
 		adstring m_controlFile;
 
 		dmatrix m_dispersal; 
@@ -122,7 +140,8 @@
 		adstring MseCtlFile;
 		adstring MsePfcFile;
 		
-		int m_nn;
+		int m_nn;				/// m_nn is a counter for the number of rows of catch data that will be
+    							/// added to the data file each year.
 		
 		dvector m_dRo;
 		dvector m_dBo;
@@ -137,6 +156,10 @@
 		dvector m_dKappa;
 		dvector m_dbeta;
 		dvector m_q;
+		dvector m_bmsy;
+		dmatrix m_fmsy;
+		dmatrix m_msy;
+
 
 
 
@@ -155,9 +178,8 @@
 		dmatrix m_sbt;
 		dmatrix m_bt;
 
+		int      m_nHCR;
 		dmatrix  m_dTAC;
-		int     m_nHCR;
-
 		dmatrix  m_log_rt;
 
 		d3_array m_N;
@@ -183,6 +205,8 @@
 	
 		void runScenario(const int &seed);
 
+		void checkMSYcalcs();
+
 	protected:
 		void readMSEcontrols();
 		void initParameters();
@@ -199,8 +223,10 @@
 		void calcEmpiricalWeightAtAge(const int& iyr);
 		void updateReferenceModel(const int& iyr);
 		void writeDataFile(const int& iyr);
+		void writeParameterFile(const int& iyr);
 		void runStockAssessment();
 		void writeSimulationVariables();
+		void calcMSY();
 
 		
 	};

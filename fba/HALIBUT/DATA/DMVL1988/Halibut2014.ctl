@@ -1,9 +1,8 @@
-## ------------------------------------------------------------------------- ##
-## CONTROL FILE TEMPLATE                                                     ##
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROL FILE TEMPLATE                                                                ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ##
-##
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## CONTROLS FOR LEADING PARAMETERS                                           ##
 ##  Prior descriptions:                                                      ##
 ##                      -0 uniform      (0,0)                                ##
@@ -11,23 +10,23 @@
 ##                      -2 lognormal    (p1=log(mu),p2=sig)                  ##
 ##                      -3 beta         (p1=alpha,p2=beta)                   ##
 ##                      -4 gamma        (p1=alpha,p2=beta)                   ##
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## npar
 7
-## ival         lb      ub      phz     prior   p1      p2      #parameter   ##
-	7.0          0.0     10      4       0       0.0     12.0 #log_ro      ##
-	0.75         0.2     1.0     4       3       3.00    2.00 #steepness   ##
-	-1.89712    -3.0     2.0    -4       1       -1.203  0.15 #log_m g&b   ##
-	6.5          0.0     10      1       0       0.0     10   #log_avgrec  ##
-	7.5          0.0     10      1       0       0.0     10   #log_recinit ##
-	0.00         0.00    1.00   -3       3       3.00    5.00 #rho         ##
-	0.6          0.01    5.0    -3       4       1.01    1.01 #sigma_r     ##
-
-## ------------------------------------------------------------------------- ##
+## ival         lb      ub      phz     prior   p1      p2                 #parameter   ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+   7.0          0.0     10      4       0       0.0     10.0               #log_ro      ##
+   0.75         0.2     1.0     4       3       1.01    1.01               #steepness   ##
+  -1.89712     -3.0     2.0     2       1      -1.89712  0.15              #log_m g&b   ##
+   6.5          0.0     10      1       0       0.0     10                 #log_avgrec  ##
+   7.5          0.0     10      1       0       0.0     10                 #log_recinit ##
+   0.00         0.00    1.00   -3       3       3.00    5.00               #rho         ##
+   0.6          0.01    5.0    -3       4       1.01    1.01               #sigma_r     ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ##
-## ------------------------------------------------------------------------- ##
-## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears             ##
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## CONTROL PARAMETERS FOR AGE/SIZE COMPOSITION DATA FOR na_gears                        ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Likelihood type for each gear:
 ##     -1 : multivariate logistic (dmvlogistic)
 ##     -2 : multinomial, sample size based on input data
@@ -35,7 +34,7 @@
 ##     -4 : logistic_normal, AR1
 ##     -5 : logistic_normal, AR2
 ##     -6 : multinomial with estimated effective sample size.
-## ------------------------------------------------------------------------- ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ## Number of columns == na_gears.
 	1        1       6       6       6       6      ## : Gear Index
 	2        2       2       2       2       2      ## : Likelihood type
@@ -46,9 +45,84 @@
 	-2       -2      -2      -2      -2      -2     ## : phase for phi2 estimation : bounded (0,1)  AR2
 	-2       -2      -2      -2      -2      -2      ## : phase for degrees of freedom for student T.
 	-12345                 ## : int check (-12345)
-## ------------------------------------------------------------------------- ##
-
+## ———————————————————————————————————————————————————————————————————————————————————— ##
 ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## SELECTIVITY CONTROLS                                                                 ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## - Each gear must have at least one selectivity and retention curve.
+## - Use a -ve phase with the gear index to mirror another gear.  Note 
+##   that if you mirror another gear, it must have the same sel type and
+##   age and year nodes so that the arrays are the same shape & block years.
+##
+## • Index       = gear index for selectivity curve.
+## • sel_type    = type of selectivity function (see Legend).
+## • sel_mu      = mean age/length 50% selectivity.
+## • sel_sd      = std in 50% selectivity
+## • sex_dep     = 0 -> no;  1 -> offset for sex 2.
+## • size_nodes  = # of nodes for age/size cubic spline.
+## • year_nodes  = # of nodes for time varying bicubic spline.
+## • phz_mirror  = phase of estimation (-ve phase to mirror selextivity index)
+## • lam1        = penalty weight for 2nd differences (w = 1/(2•sig^2)).
+## • lam2        = penalty weight for dome-shaped selectivity.
+## • lam3        = penalty weight for time-varying selectivity.
+## • start_block = year index for first year of selectivity curve.
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## sel_nBlocks    ret_nBlocks    ## Gear Description.
+   1              1              ## Commercial retained
+   1              1              ## Commercial discards
+   1              1              ## Bycatch in non-directed fisheries.
+   1              1              ## Sport
+   1              1              ## Personal use
+   2              1              ## Setline survey.
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## Selectivity P(capture of all size/age)
+## slx_dControls
+## • index for sex (0=both, 1=female, 2=male)
+##        sel   sel  sel       age    year  phz or                    start  end        ##
+## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+   1      5     10   2.0  0    5      6     2     12.5   2.0  50.5    1888   2014
+   2      1     3.0  1.5  0    0      0    -2      0.0   0.0   0.0    1888   2014
+   3      1     4.0  2.5  0    0      0    -3      0.0   0.0   0.0    1888   2014
+   4      1     4.0  2.0  0    0      0    -4      0.0   0.0   0.0    1888   2014
+   5      5     10   2.0  0    5      6    -1      0.0   0.0   0.0    1888   2014
+   6      5     3.0  2.0  1    5      6     2     12.5   2.0  50.5    1980   2014
+   6      5     3.0  2.0  2    5      6     2     12.5   2.0  50.5    1980   2014
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## Retention P(retaining size/age)
+## ret_dControls
+## • index for sex (0=both, 1=female, 2=male)
+##        sel   sel  sel       age    year  phz or                    start  end        ##
+## Index  type  mu   sd   sex  nodes  nodes mirror lam1  lam2  lam3 | block  block      ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+  -1      3     10   2.0  1    5      0    -2      0.0   0.0   0.0    1888   2014
+  -2      1     3.0  1.5  0    5      0    -2      0.0   2.0  50.5    1888   2014
+  -3      1     4.0  2.5  0    5      0    -3      0.0   0.0   0.0    1888   2014
+  -4      1     4.0  2.0  0    5      0    -4      0.0   0.0   0.0    1888   2014
+  -5      3     10   2.0  1    5      0    -1      0.0   0.0   0.0    1980   2014
+  -6      5     3.0  2.0  1    5      5    -2     12.5   2.0  50.5    1980   2014
+
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## LEGEND FOR SELECTIVITY TYPES (sel_type)                                              ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## sel  | No.        | 
+## type | parameters | Description
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## 	 1  |   2        | • Logistic curve with mean and standard dev at age = p(50%)
+##   2  | (nages-1)  | • Age-specific selectivity coefficients for (sage):(nage-1)
+##   3  | age_nodes  | • Age-specific coefficients based on cubic-spline interpolation
+##   4  | n*age_nodes| • Annual age-specific coeffs using cubic-spline interpolation
+##   5  | nyr*nage   | • Bicubic spline interpolation over time & age.
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+
+
+
+
+
+
+
+##  TO BE DEPRECATED
 ## ------------------------------------------------------------------------- ##
 ## SELECTIVITY PARAMETERS Columns for gear                                   ##
 ## OPTIONS FOR SELECTIVITY (isel_type):                                      ##

@@ -529,7 +529,8 @@
 ## ivector(na_gears) of oldest age-class + group
 20 25 20 25 20 25
 ## Effective sample size from iterative re-weighting (nscaler)
-50 50 50 50 50 50
+## 96.1297 786.919 211.235 846.659 167.004 979.609
+   103.204 1088.06 197.107 1081.66 159.858 1228.99
 ## Age Flag (0=length comps, 1 = age comps)
 1  1  1  1  1  1
 ## commercial catches

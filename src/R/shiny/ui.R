@@ -1,6 +1,6 @@
 # NOTATION
 # For R-scripts that deal with user interface, prefix file with "gui_*.R"
-library(leaflet)
+# library(leaflet)
 source("helpers.R")
 
 
@@ -87,20 +87,20 @@ shinyUI(fluidPage(
 	    	)
 		)
 
-	),
+	)
 
 	# ---------------------------------------- #
 	# MAPS
 	# ---------------------------------------- #
-	tabPanel("MAP",
-	 	leafletMap("map",width=1600,height=800,
+	# tabPanel("MAP",
+	 	# leafletMap("map",width=1600,height=800,
 	 	    # initialTileLayer = "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-	 	   	initialTileLayer = "http://oatile3.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg",
-		    options = list(
-			center = c(52, -155),
-			zoom = 5
-		))
-	)
+	 	   	# initialTileLayer = "http://oatile3.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg",
+		    # options = list(
+			# center = c(52, -155),
+			# zoom = 5
+		# ))
+	# )
 
 
 )))

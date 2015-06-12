@@ -167,8 +167,8 @@ DATA_SECTION
 	!! ad_comm::change_datafile_name(ProjectFileControl);
 	/// | Number of catch options to explore in the decision table.
 	init_int n_tac; ///< Number of catch options to explore in the decision table.
-	!! COUT(ProjectFileControl);
-	!! COUT(n_tac);
+	// !! COUT(ProjectFileControl);
+	// !! COUT(n_tac);
 	/// | Vector of catch options.
 	init_vector tac(1,n_tac);
 	init_int n_pfcntrl;
@@ -347,7 +347,7 @@ DATA_SECTION
 				}
 			}
 		}
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| MODEL DIMENSION         |"<<endl;
@@ -475,7 +475,7 @@ DATA_SECTION
 	matrix wa(1,n_ags,sage,nage);		//weight-at-age
 	matrix ma(1,n_ags,sage,nage);		//maturity-at-age
 	LOC_CALCS
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<setw(8)<<setprecision(4)<<endl;
 	    cout<<"| ----------------------- |"<<endl;
@@ -526,7 +526,7 @@ DATA_SECTION
 
 	LOC_CALCS
 		ft_count = nCtNobs;
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| HEAD(dCatchData)        |"<<endl;
@@ -579,8 +579,8 @@ DATA_SECTION
 	// | n_survey_type = 2: survey is proportional to vulnerable biomass
 	// | n_survey_type = 3: survey is proportional to vulnerable spawning biomass
 	// | d3_survey_data: (iyr index(it) gear area group sex wt timing)
-	// | it_wt       = relative weights for each relative abundance normalized to have a
-	// |               mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
+	// | DEPRECATED it_wt = relative weights for each relative abundance normalized to have a
+	// | DEPRECATED mean = 1 so rho = sig^2/(sig^2+tau^2) holds true in variance pars.
 	// |
 
 	init_int nItNobs;
@@ -589,14 +589,14 @@ DATA_SECTION
 	init_ivector      n_it_nobs(1,nItNobs);
 	init_ivector  n_survey_type(1,nItNobs);
 	init_3darray d3_survey_data(1,nItNobs,1,n_it_nobs,1,9);
-	matrix                it_wt(1,nItNobs,1,n_it_nobs);
+	matrix                it_se(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_se(1,nItNobs,1,n_it_nobs);
 	matrix            it_log_pe(1,nItNobs,1,n_it_nobs);
 	matrix               it_grp(1,nItNobs,1,n_it_nobs);
 
 // 	!! cout<<"Number of surveys "<<nItNobs<<endl;
 	LOC_CALCS
-		if(!mseFlag)
+		if(!mseFlag && verbose)
 		{
 		cout<<"| ----------------------- |"<<endl;
 		cout<<"| TAIL(d3_survey_data)       |"<<endl;
@@ -606,19 +606,27 @@ DATA_SECTION
 		}
 		for(k=1;k<=nItNobs;k++)
 		{
-			//it_wt(k) = column(d3_survey_data(k),7) + 1.e-30;
+			//it_se(k) = column(d3_survey_data(k),7) + 1.e-30;
 			it_log_se(k) = column(d3_survey_data(k),7);
-			it_wt(k) = 1.0/square(it_log_se(k));
+			
+
+			//I think this is a bug.
+			//it_se(k) = 1.0/square(it_log_se(k));
+
+			// and this is my fix
+			it_se(k) = it_log_se(k);
+
+
 			it_log_pe(k) = column(d3_survey_data(k),8);
 			it_grp(k)= column(d3_survey_data(k),5);
 			nSurveyIndex(k) = d3_survey_data(k)(1,3);
 			qdev_count(k) = size_count(it_log_se(k));
 		}
-		double tmp_mu = mean(it_wt);
-		for(k=1;k<=nItNobs;k++)
-		{
-			it_wt(k) = it_wt(k)/tmp_mu;
-		}
+		// double tmp_mu = mean(it_se);
+		// for(k=1;k<=nItNobs;k++)
+		// {
+		// 	it_se(k) = it_se(k)/tmp_mu;
+		// }
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -648,7 +656,7 @@ DATA_SECTION
 	LOC_CALCS
 		if( n_A_nobs(nAgears) > 0 && n_A_nobs(nAgears) > 3)
 		{
-			if(!mseFlag)
+			if(!mseFlag  && verbose)
 			{
 			cout<<"| ----------------------- |"<<endl;
 			cout<<"| TAIL(A)       |"<<endl;
@@ -959,10 +967,12 @@ DATA_SECTION
 	// |
 	init_int eof;	
 	LOC_CALCS
-	  if(eof==999){
+	  if(eof==999 ){
+	  	if(verbose){
 		cout<<"\n| -- END OF DATA SECTION -- |\n";
 	  	cout<<"|         eof = "<<eof<<"         |"<<endl;
 		cout<<"|___________________________|"<<endl;
+		}
 	  }else{
 		cout<<"\n *** ERROR READING DATA *** \n"<<endl; exit(1);
 	  }
@@ -1080,6 +1090,120 @@ DATA_SECTION
 	// |  9  -> lambda_3  - penalty weight for 2nd difference in time-varying selectivity.
 	// |  10 -> Number of discrete selectivity blocks.
 	// |
+
+
+	/// April 13, issue 39.  Changing the way selectivity/retention is controlled.
+
+!! #ifdef  NEW_SELEX
+	init_imatrix slx_nBlocks(1,ngear,1,2);
+	int slx_nrow;
+	int ret_nrow
+	!!  slx_nrow = sum(column(slx_nBlocks,1));
+	!!  ret_nrow = sum(column(slx_nBlocks,2));
+	init_matrix  slx_dControls(1,slx_nrow,1,13);
+	init_matrix  ret_dControls(1,ret_nrow,1,13);
+
+	ivector slx_nGearIndex(1,slx_nrow);   /// index for fishing gear.
+	ivector      slx_nIpar(1,slx_nrow);   /// number of rows for each slx
+	ivector      slx_nJpar(1,slx_nrow);   /// number of cols for each slx
+	ivector   slx_nSelType(1,slx_nrow);   /// type of selectivity function
+	ivector  slx_nAgeNodes(1,slx_nrow);   /// number of age/size nodes
+	ivector   slx_nYrNodes(1,slx_nrow);   /// number of Year nodes
+	ivector       slx_nSex(1,slx_nrow);   /// index for sex (0=both, 1=female, 2=male)
+	ivector        slx_phz(1,slx_nrow);   /// phase of estimation or mirror index.
+	ivector        slx_nsb(1,slx_nrow);   /// start of block year.
+	ivector        slx_neb(1,slx_nrow);   /// end of block year.
+	vector      slx_sel_mu(1,slx_nrow);
+	vector      slx_sel_sd(1,slx_nrow);
+	vector        slx_lam1(1,slx_nrow);
+	vector        slx_lam2(1,slx_nrow);
+	vector        slx_lam3(1,slx_nrow);
+
+
+	LOC_CALCS
+		slx_nGearIndex = ivector(column(slx_dControls,1));
+		slx_nSelType   = ivector(column(slx_dControls,2));
+		slx_nSex       = ivector(column(slx_dControls,5));
+		slx_nAgeNodes  = ivector(column(slx_dControls,6));
+		slx_nYrNodes   = ivector(column(slx_dControls,7));
+		slx_phz        = ivector(column(slx_dControls,8));
+		slx_nsb        = ivector(column(slx_dControls,12));
+		slx_neb        = ivector(column(slx_dControls,13));
+		slx_sel_mu     = column(slx_dControls,3);
+		slx_sel_sd     = column(slx_dControls,4);
+		slx_lam1       = column(slx_dControls,9);
+		slx_lam2       = column(slx_dControls,10);
+		slx_lam3       = column(slx_dControls,11);
+
+		// • Count number of selectivity parameters required for each slx_type
+		for(i = 1; i <= slx_nrow; i++)
+		{
+			slx_nIpar(i) = 1;
+
+			switch(slx_nSelType(i))
+			{
+				// • logistic selectivity
+				case 1:    
+					slx_nJpar(i) = 2;
+				break;
+
+				// • age-specific coefficients
+				case 2:
+					slx_nJpar(i) = int(nage - sage);
+				break;
+
+				// • cubic spline over age/size
+				case 3:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+
+				// • cubic spline over age/size each year
+				case 4:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+					slx_nIpar(i) = slx_neb(i) - slx_nsb(i) + 1;
+				break;
+
+				// • bicubic spline over age-size / years
+				case 5:
+					slx_nIpar(i) = slx_nAgeNodes(i);
+					slx_nJpar(i) = slx_nYrNodes(i);
+				break;
+
+				// • logistic based on weight-at-age deviations.
+				case 6:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • logistic based on weight-at-age devs and scalar parameter.
+				case 7:
+					slx_nJpar(i) = 3;
+				break;
+
+				// • age-specific coefficients between lb_age <= age <= ub_age
+				// case 8:
+
+				// • logistic based on mean length-at-age.
+				case 11:
+					slx_nJpar(i) = 2;
+				break;
+
+				// • size-specific coefficients.
+				//case 12:
+
+				// • size-based cubic spline over mean size-at-age
+				case 13:
+					slx_nJpar(i) = slx_nAgeNodes(i);
+				break;
+			}
+		} 
+		// COUT(slx_nrow);
+		// cout<<"Ok after new selex stuff in data section"<<endl;
+	END_CALCS
+
+
+
+!! #endif
+
 
 	init_matrix selex_controls(1,10,1,ngear);
 	
@@ -1275,9 +1399,11 @@ DATA_SECTION
 
 
 		if(eofc==999){
+			if(verbose){
 			cout<<"\n| -- END OF CONTROL SECTION -- |\n";
 		  	cout<<"|          eofc = "<<eofc<<"          |"<<endl;
 			cout<<"|______________________________|"<<endl;
+			}
 		}else{
 			cout<<"\n ***** ERROR CONTROL FILE ***** \n"<<endl; 
 			cout<<"|          eofc = "<<eofc<<"          |"<<endl;
@@ -1421,8 +1547,8 @@ DATA_SECTION
 		}
 	END_CALCS
 
-	!! COUT((n_saa));
-	!! COUT((n_naa));
+	// !! COUT((n_saa));
+	// !! COUT((n_naa));
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1472,6 +1598,30 @@ PARAMETER_SECTION
 	// | - Special case: if SimFlag=TRUE, then add some random noise to ahat.
 	// | - NB  sel_par is in log space.
 	// |
+!! #ifdef NEW_SELEX
+	init_bounded_matrix_vector slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar,-25.0,25.0,slx_phz);
+	// TO DO set initial values for slx parameters.
+	LOC_CALCS
+		if( !global_parfile )
+		{
+			for(int k = 1; k <= slx_nrow; k++ )
+			{
+				if(slx_nSelType(k)==1)
+				{
+					for(int j = 1; j <= slx_nIpar(k); j++ )
+					{
+						// cout<<"Made it here"<<endl;
+						slx_log_par(k)(j)(1) = log(slx_sel_mu(k));
+						slx_log_par(k)(j)(2) = log(slx_sel_sd(k));
+						// cout<<"and here too"<<endl;
+					}
+				}
+			}
+		}
+	END_CALCS
+
+!! #endif
+
 	init_bounded_matrix_vector sel_par(1,ngear,1,jsel_npar,1,isel_npar,-25.,25.,sel_phz);
 
 	LOC_CALCS
@@ -1526,7 +1676,7 @@ PARAMETER_SECTION
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
 	
 	LOC_CALCS
-		if(!SimFlag) log_ft_pars = log(0.10);
+		if(!SimFlag && !global_parfile) log_ft_pars = log(0.10);
 	END_CALCS
 	
 	
@@ -1568,8 +1718,8 @@ PARAMETER_SECTION
 	// |---------------------------------------------------------------------------------|
 	// | 
 	//init_bounded_vector_vector log_q_devs(1,nItNobs,1,n_it_nobs,-5.0,5.0,q_phz);
-	!! COUT(n_it_nobs);
-	!! COUT(qdev_count);
+	// !! COUT(n_it_nobs);
+	// !! COUT(qdev_count);
 	//!! exit(1);
 	init_bounded_vector_vector log_q_devs(1,nItNobs,1,qdev_count,-5.0,5.0,q_phz);
 
@@ -1625,7 +1775,7 @@ PARAMETER_SECTION
 	// | - eta         -> standardized log residual (log(obs_ct)-log(ct))/sigma_{ct}
     // | - rho         -> Proportion of total variance associated with obs error.
     // | - varphi      -> Total precision of CPUE and Recruitment deviations.
-    // | - sig         -> STD of the observation errors in relative abundance data.
+    // | - sig         -> DEPRCATE. STD of the observation errors in relative abundance data.
     // | - tau         -> STD of the process errors (recruitment deviations).
 	// |
 	 
@@ -1785,9 +1935,15 @@ RUNTIME_SECTION
 PROCEDURE_SECTION
 	
 	initParameters();
-	
+
+	#ifndef NEW_SELEX
 	calcSelectivities(isel_type);
-	
+	#endif
+
+	#ifdef NEW_SELEX
+	calcSelex();
+	#endif
+
 	calcTotalMortality();
 	
 	calcNumbersAtAge();
@@ -1893,7 +2049,7 @@ FUNCTION void initParameters()
 	rho       = theta(6);
 	sigma_r   = theta(7);
 	//varphi    = sqrt(1.0/theta(7));
-	sig       = elem_prod(sqrt(rho) , varphi);
+	//sig       = elem_prod(sqrt(rho) , varphi);
 	//tau       = elem_prod(sqrt(1.0-rho) , varphi);
 
 	for(ih=1;ih<=n_ag;ih++)
@@ -1982,6 +2138,144 @@ FUNCTION dvector cubic_spline(const dvector& spline_coffs, const dvector& la)
   }
 
 
+FUNCTION calcSelex
+  {
+  	//cout<<"START of CalcSelex"<<endl;
+  	log_sel.initialize();
+  	
+  	int i,j,k,kr;
+  	
+  	dvariable p1,p2;
+
+  	kr = 0;
+  	for(k = 1; k <= slx_nrow; k++)
+  	{
+  		// The following is used to mirror another gear-type
+		// based on the absolute value of sel_phz.
+		if(slx_phz(k) < 0)
+		{
+			kr = abs(slx_phz(k));
+			slx_log_par(k) = slx_log_par(kr);
+		}
+
+		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
+		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
+		int nn = slx_nIpar(k)-1;
+		
+	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
+	  	for( i = 0; i <= nn; i++ )
+	  	{
+	  		ptrSlx[i] = NULL;
+	  	}
+	  	slx::slxInterface<dvar_matrix> *ptrSlxM = NULL;
+
+  		switch(slx_nSelType(k))
+  		{
+  			// logistic selectivity based on age.
+  			case 1:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+  					p1 = slx_log_par(k,j+1,1);
+  					p2 = slx_log_par(k,j+1,2);
+  					ptrSlx[j] = new slx::slx_Logistic<dvar_vector>(age,p1,p2);
+  				}
+  			break;
+
+  			// age-specific selectivity coefficients.
+  			case 2:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_Coefficients<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// cubic spline
+  			case 3:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • cubic spline over age/size each year
+  			case 4:
+  				for( j = 0; j < slx_nIpar(k); j++ )
+	  			{
+	  				dvar_vector slx_theta = slx_log_par(k)(j+1);
+  					ptrSlx[j] = new slx::slx_CubicSpline<dvar_vector>(age,slx_theta);
+  				}
+  			break;
+
+  			// • bicubic spline over age and year knots
+  			case 5:
+  				dvar_matrix tmp(yr1,yr2,sage,nage);
+  				dvector iyr(1,slx_nYrNodes(k));
+  				dvector iag(1,slx_nAgeNodes(k));
+  				iyr.fill_seqadd(0,1.0/(slx_nYrNodes(k)-1));
+  				iag.fill_seqadd(0,1.0/(slx_nAgeNodes(k)-1));
+  				dvar_matrix slx_theta = slx_log_par(k);
+  				tmp.initialize();
+  				
+  				ptrSlxM = new slx::slx_BiCubicSpline<dvar_matrix>(iag,iyr,slx_theta,tmp);
+  			break;
+  		}
+
+	  	// fill arrays with selectivity coefficients.
+	  	// NOTES:
+		// • h = index for sex (0=both, 1=female, 2=male)
+	  	// • If slx_nSex(k) == 0, then apply same slx curve to both sexes.
+	  	//   Do this by looping over area and group, and assign to specific sex.
+	  	j = 0;
+	  	int f,g,h;
+  		int h_sex = slx_nSex(k);  
+		int kgear = slx_nGearIndex(k);
+	  	for(int ig = 1; ig <= n_ags; ig++ )
+		{
+			f  = n_area(ig);
+			g  = n_group(ig);
+			h  = n_sex(ig);
+			
+			// if h_sex == 0, then you need to reset j = 0
+			if ( h_sex == 0 ) j = 0;
+
+			// if !h_sex, skip the process if current group is not the right sex
+			if ( h_sex != 0 && h != h_sex) continue;
+			int igrp = pntr_ags(f,g,h);
+			// Fill vectors of selex
+			if (ptrSlx[j])
+			{
+				for(i = yr1; i <= yr2; i++)
+				{
+					log_sel(kgear)(igrp)(i) = ptrSlx[j] -> Evaluate();
+					if(slx_nSelType(k) == 4 && j < slx_nIpar(k)) j++;
+				}
+			}
+			
+			// Fill matrix of selex
+			if (ptrSlxM)
+			{
+				log_sel(kgear)(igrp).sub(yr1,yr2) = ptrSlxM -> Evaluate();
+			}
+
+			//subtract mean to ensure mean(exp(log_sel))==1
+			for(i = yr1; i <= yr2; i++)
+			{
+				log_sel(kgear)(igrp)(i) -= log( mean(mfexp(log_sel(kgear)(ig)(i))) );
+			}
+		}
+
+		if( !ptrSlxM ) delete ptrSlxM;
+		if( !*ptrSlx ) delete *ptrSlx;
+
+
+  	}
+  	
+  	if(verbose==1) cout<<"End of CalcSelex"<<endl;
+  	//exit(1);
+
+  }
 
 
   	/**
@@ -2609,11 +2903,11 @@ FUNCTION calcComposition
 					-Ahat = ca * ALK
 	  			*/
 	  			dvar_vector mu = d3_len_age(ig)(i);
-					dvar_vector sig= 0.1 * mu;
-					dvector x(n_A_sage(kk),n_A_nage(kk));
-					x.fill_seqadd(n_A_sage(kk),1);
-					
-					dvar_matrix alk = ALK(mu,sig,x);
+				dvar_vector sig= 0.1 * mu;
+				dvector x(n_A_sage(kk),n_A_nage(kk));
+				x.fill_seqadd(n_A_sage(kk),1);
+				
+				dvar_matrix alk = ALK(mu,sig,x);
 	  			
 	  			A_hat(kk)(ii) = ca * alk;
 	  		}
@@ -2896,7 +3190,7 @@ FUNCTION calcSurveyObservations
 				}
 				it_hat(kk).sub(iz,nz) = elem_prod(qt(kk)(iz,nz),t1(iz,nz));
 				zt -= log(qt(kk)(iz,nz));
-				
+				q(kk) = qt(kk)(nz);
 				//epsilon(kk).sub(iz,nz)= elem_div(zt,it_log_se(kk)(iz,nz));
 			break;
 		}
@@ -3003,7 +3297,7 @@ FUNCTION void calcStockRecruitment()
 	dvar_vector tmp_rt(syr+sage,nyr);
 	dvar_vector     lx(sage,nage); 
 	dvar_vector     lw(sage,nage);
-  dvar_vector    tau = sigma_r;
+    dvar_vector    tau = sigma_r;
 	
 	
 	for(g=1;g<=ngroup;g++)
@@ -3044,8 +3338,8 @@ FUNCTION void calcStockRecruitment()
 					sbt(g,i) += elem_prod(N(ig)(i),d3_wt_mat(ig)(i)) * stmp;
 				}
 
-				// | Step 5. spawning biomass projection under natural mortality only.
-				stmp          = mfexp(-M(ig)(nyr)*d_iscamCntrl(13));
+				// | Step 5. spawning biomass projection under total mortality only.
+				stmp          = mfexp(-Z(ig)(nyr)*d_iscamCntrl(13));
 				sbt(g,nyr+1) += elem_prod(N(ig)(nyr+1),d3_wt_mat(ig)(i)) * stmp;
 			}
 
@@ -3081,7 +3375,7 @@ FUNCTION void calcStockRecruitment()
 		// if gamma_r > 0 then 
 		if( active(theta(6)) )
 		{
-			int byr = syr+sage+1;
+			int byr = syr+sage+1;	
 			delta(g)(byr,nyr) 	= log(rt(g)(byr,nyr)) 
 									- (1.0-rho(g))*log(tmp_rt(byr,nyr)) 
 									- rho(g)*log(++rt(g)(byr-1,nyr-1))
@@ -3148,7 +3442,13 @@ FUNCTION calcObjectiveFunction
 	}
 	if( active(log_ft_pars) )
 	{
-		nlvec(1) = dnorm(eta,0.0,1.0*sig_scaler);
+		for(int i = 1; i<= nCtNobs; i++)
+		{
+			int iyr = dCatchData(i,1);
+			if ( iyr < syr ) continue;
+			if ( iyr > nyr ) continue;
+			nlvec(1) += dnorm(eta(i),0.0,1.0*sig_scaler);
+		}
 	}
 
 
@@ -3159,16 +3459,18 @@ FUNCTION calcObjectiveFunction
 	// |
 	for(k=1;k<=nItNobs;k++)
 	{
-		// ivector ig = it_grp(k);
-		// dvar_vector sig_it(1,n_it_nobs(k)); 
-		// for( i = 1; i <= n_it_nobs(k); i++ )
-		// {
-		// 	// sig_it(i) = sig(ig(i))/it_wt(k,i);
-		// 	sig_it(i) = it_log_se(k,i);
-		// }
-		// nlvec(2,k)=dnorm(epsilon(k),sig_it);
-		nlvec(2,k)=dnorm(epsilon(k),1.0);
-		nlvec(3,k)=dnorm(xi(k),1.0);
+		for( i = 1; i <= n_it_nobs(k); i++ )
+		{
+			int iyr = d3_survey_data(k)(i,1);
+			if (iyr < syr) continue;
+			if (iyr > nyr) continue;
+			nlvec(2,k) += dnorm(epsilon(k)(i),0.0,1.0);
+		}
+		
+		if(active(log_q_devs(k)))
+		{
+			nlvec(3,k)=dnorm(xi(k),1.0);
+		}
 	}
 	
 	// |---------------------------------------------------------------------------------|
@@ -3375,9 +3677,62 @@ FUNCTION calcObjectiveFunction
 	dvar_vector lvec(1,7); 
 	lvec.initialize();
 	int ig;
+	#ifdef NEW_SELEX
+	for(int kr = 1; kr <= slx_nrow; kr++ )
+	{
+		int yr1 = syr>slx_nsb(kr)?syr:slx_nsb(kr);
+		int yr2 = nyr<slx_neb(kr)?nyr:slx_neb(kr);
+		k = slx_nGearIndex(kr);
+		if( active(slx_log_par(kr)) )
+		{
+			// penalty in curviture  (nlvec(6,k)).
+			// penalty in dome-shape (nlvec(7,k)).
+			if( slx_nSelType(kr) != 1)
+			{
+				for( ig = 1; ig <= n_ags; ig++ )
+				{
+					for( i = yr1; i <= yr2; i++ )
+					{
+						dvar_vector df1 = first_difference(log_sel(k)(ig)(i));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(6,k)     += slx_lam1(k)/(nage-sage+1)*norm2(df2);
+
+						for( j = sage; j <  nage; j++ )
+						{
+							dvariable diff = log_sel(k,ig,i,j) - log_sel(k,ig,i,j+1);
+							if(diff > 0)
+							{
+								nlvec(7,k) += slx_lam2(k) * square(diff);
+							}
+						}
+					}
+				}
+			}
+
+			// penalty in time-varying changes (nlvec(8,k)).
+			if( slx_nSelType(kr) == 4 || slx_nSelType(kr) == 5)
+			{
+				for(ig=1;ig<=n_ags;ig++)
+				{
+					dvar_matrix trans_log_sel = trans( log_sel(k)(ig) );
+					for(j=sage;j<=nage;j++)
+					{
+						dvar_vector df1 = first_difference(trans_log_sel(j));
+						dvar_vector df2 = first_difference(df1);
+						nlvec(8,k)     += slx_lam3(k)/(nage-sage+1)*norm2(df2);
+					}
+				}
+			}
+		}
+		
+	}
+	#endif
+
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
-		if(active(sel_par(k)))
+
+		if( active(sel_par(k)) )
 		{
 			//if not using logistic selectivity then
 			//CHANGED from || to &&  May 18, 2011 Vivian
@@ -3409,7 +3764,11 @@ FUNCTION calcObjectiveFunction
 
 			Mar 13, 2013, added 2nd difference penalty on isel_type==5 
 			*/
-			if( isel_type(k)==4 || isel_type(k)==5 || n_sel_blocks(k) > 1 )
+			if( lambda_3(k) && 
+				  (isel_type(k)==4 ||
+				   isel_type(k)==5 || 
+				   n_sel_blocks(k) > 1) 
+			  )
 			{
 				for(ig=1;ig<=n_ags;ig++)
 				{
@@ -3425,13 +3784,48 @@ FUNCTION calcObjectiveFunction
 			
 		}
 	}
-	
+	#endif
 	
 	// |---------------------------------------------------------------------------------|
 	// | CONSTRAINTS FOR SELECTIVITY DEVIATION VECTORS
 	// |---------------------------------------------------------------------------------|
 	// | [?] - TODO for isel_type==2 ensure mean 0 as well.
 	// |
+
+	#ifdef NEW_SELEX
+	for(k=1;k<=slx_nrow;k++)
+	{
+		if( active(slx_log_par(k)) && slx_nSelType(k)!=1 )
+		{
+			dvariable s = 0;
+			//bicubic spline version ensure col mean = 0
+			if(slx_nSelType(k)==5)  
+			{
+				dvar_matrix tmp = trans(slx_log_par(k));
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+
+			if( slx_nSelType(k)==2 ||
+			    slx_nSelType(k)==3 ||
+			 	slx_nSelType(k)==4 || 
+				slx_nSelType(k)==12 )
+			{
+				dvar_matrix tmp = slx_log_par(k);
+				for(j=1;j<=tmp.rowmax();j++)
+				{
+					s=mean(tmp(j));
+					lvec(1)+=10000.0*s*s;
+				}
+			}
+		}
+	}
+	#endif
+
+	#ifndef NEW_SELEX
 	for(k=1;k<=ngear;k++)
 	{
 		if( active(sel_par(k)) &&
@@ -3464,6 +3858,7 @@ FUNCTION calcObjectiveFunction
 			}
 		}
 	}
+	#endif
 	
 	
 	// |---------------------------------------------------------------------------------|
@@ -4011,6 +4406,7 @@ FUNCTION void calcReferencePoints()
 		msy(g)  = value(dmsy);
 		fmsy(g) = value(dfmsy);
 		c_MSY.print();
+
 		
 	}
 
@@ -4042,15 +4438,15 @@ FUNCTION void calcReferencePoints()
 		//cout<<"group \t"<<g<<endl;
 		//exit(1);
 
-		//Why is this being done again?
-		Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V); //why are is the order of M_bar and d_rho changed?
-		fmsy(g) = 0.1;
-		c_msy.get_fmsy(fmsy(g));
-		bo = c_msy.getBo();
-		bmsy(g) = c_msy.getBmsy();
-		msy(g) = c_msy.getMsy();
-		cout<<"Old Msy class"<<endl;
-		c_msy.print();
+
+		// Msy c_msy(d_ro,d_h,M_bar,d_rho,dWt_bar,fa_bar,&d_V);
+		// fmsy(g) = 0.1;
+		// c_msy.get_fmsy(fmsy(g));
+		// bo = c_msy.getBo();
+		// bmsy(g) = c_msy.getBmsy();
+		// msy(g) = c_msy.getMsy();
+		// cout<<"Old Msy class"<<endl;
+		// c_msy.print();
 	}
 
 	if(verbose)cout<<"**** Ok after calcReferencePoints ****"<<endl;
@@ -4213,9 +4609,9 @@ FUNCTION void simulationModel(const long& seed)
     	for(i=1;i<=n_it_nobs(k);i++)
     	{
     		std = 1.0e3;
-    		if( it_wt(k,i)>0 )
+    		if( it_se(k,i)>0 )
     		{
-    			std = value(sig(it_grp(k,i))/it_wt(k,i));
+    			std = (it_se(k,i));
     		}
     		epsilon(k,i) = epsilon(k,i)*std - 0.5*std*std;
     	}
@@ -4703,7 +5099,7 @@ REPORT_SECTION
 	REPORT(qt);
 	REPORT(d3_survey_data);
 	REPORT(it_hat);
-	REPORT(it_wt);
+	REPORT(it_se);
 	REPORT(epsilon);
 
 	if(n_A_nobs(nAgears) > 0)
@@ -4810,9 +5206,13 @@ REPORT_SECTION
 	{
 		for(int ig=1;ig<=n_ags;ig++)
 		{
+			int h = n_sex(ig);
+			int f = n_area(ig);
+			int g = n_group(ig);
 			for(i=syr;i<=nyr;i++)
 			{
-				report<<k<<"\t"<<ig<<"\t"<<i<<"\t"<<log_sel(k)(ig)(i)<<endl;	
+				report<<k<<"\t"<<f<<"\t"<<g<<"\t"<<h<<"\t"<<i<<"\t";
+				report<<log_sel(k)(ig)(i)<<endl;	
 			}
 		}
 	}
@@ -4851,7 +5251,7 @@ REPORT_SECTION
 	REPORT(rep_rt);
 
 	// |---------------------------------------------------------------------------------|
-	// | ABUNDANCE IN NUMBERS 
+	// | ABUNDANCE IN NUMBERS `
 	// |---------------------------------------------------------------------------------|
 	// |
 	REPORT(N);
@@ -4863,7 +5263,7 @@ REPORT_SECTION
 	if( last_phase() )
 	{
 		cout<<"Calculating MSY-based reference points"<<endl;
-		// calcReferencePoints();
+		calcReferencePoints();
 		cout<<"Finished calcReferencePoints"<<endl;
 		//exit(1);
 		REPORT(bo);
@@ -5398,6 +5798,7 @@ FUNCTION mcmc_output
 
 FUNCTION void runMSE()
 	cout<<"Start of runMSE"<<endl;
+	
 
 	// STRUCT FOR MODEL VARIABLES
 	ModelVariables s_mv;
@@ -5409,17 +5810,26 @@ FUNCTION void runMSE()
 	s_mv.rho       = value( theta(6) );
 	s_mv.varphi    = value( theta(7) );
 
+
 	// Selectivity parameters
+	// BUG: jsel_npar and isel_npar are deprecated.
 	d3_array log_sel_par(1,ngear,1,jsel_npar,1,isel_npar);
 	d4_array d4_log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
-	for(int k = 1; k <= ngear; k++ )
+	for(int k = 1; k <= ngear; k++ )  //slx_nrow
 	{
 		log_sel_par(k) = value(sel_par(k));
 		d4_log_sel(k)  = value(log_sel(k));
 	}
-	
 	s_mv.d3_log_sel_par = &log_sel_par;
 	s_mv.d4_logSel      = &d4_log_sel;
+
+	// NEW SELEX
+	d3_array _slx_log_par(1,slx_nrow,1,slx_nIpar,1,slx_nJpar);
+	for( k = 1; k <= slx_nrow; k++ )
+	{
+		_slx_log_par(k) = value(slx_log_par(k));
+	}
+	s_mv.d3_slx_log_par = &_slx_log_par;
 
 	d3_array d3_M(1,n_ags,syr,nyr,sage,nage);
 	d3_array d3_F(1,n_ags,syr,nyr,sage,nage);
@@ -5429,19 +5839,38 @@ FUNCTION void runMSE()
 		d3_F(ig) = value(F(ig));
 	}
 
-	s_mv.d3_M = &d3_M;
-	s_mv.d3_F = &d3_F;
-	s_mv.log_rec_devs = value(log_rec_devs);
+	s_mv.d3_M              = &d3_M;
+	s_mv.d3_F              = &d3_F;
+	s_mv.log_rec_devs      = value(log_rec_devs);
 	s_mv.init_log_rec_devs = value(init_log_rec_devs);
 
-	s_mv.q = value(q);
-	s_mv.sbt = value(sbt);
-	s_mv.bt = value(bt);
-	d3_array tmp_ft=value(ft);
-	s_mv.d3_ft = &tmp_ft;
+	s_mv.q          = value(q);
+	s_mv.sbt        = value(sbt);
+	s_mv.bt         = value(bt);
+	d3_array tmp_ft = value(ft);
+	s_mv.d3_ft      = &tmp_ft;
 
 	s_mv.sbo = value(sbo);
-	s_mv.so = value(so);
+	s_mv.so  = value(so);
+
+	s_mv.ft_count = ft_count;
+	s_mv.log_ft_pars = value(log_ft_pars);
+
+	dmatrix d_log_q_devs(1,nItNobs,1,qdev_count);
+	for(int i = 1; i<=nItNobs; i++)
+	{
+		d_log_q_devs(i) = value(log_q_devs(i));
+	}
+	s_mv.log_q_devs  = d_log_q_devs;
+
+
+	s_mv.log_age_tau2 = value(log_age_tau2);
+	s_mv.phi1         = value(phi1);
+	s_mv.phi2         = value(phi2);
+	s_mv.log_degrees_of_freedom = value(log_degrees_of_freedom);
+	
+
+
 
 
 	// |-----------------------------------|
@@ -5450,8 +5879,12 @@ FUNCTION void runMSE()
 	cout<<"Starting Operating Model"<<endl;
 	OperatingModel om(s_mv,argc,argv);
 	om.runScenario(rseed);
+	
 
-	COUT("DONE");
+
+	//om.checkMSYcalcs();
+
+	
 
 
 
@@ -5463,10 +5896,17 @@ TOP_OF_MAIN_SECTION
 	gradient_structure::set_CMPDIF_BUFFER_SIZE(1.e7);
 	gradient_structure::set_MAX_NVAR_OFFSET(5000);
 	gradient_structure::set_NUM_DEPENDENT_VARIABLES(5000);
-	gradient_structure::set_MAX_DLINKS(10000);
+	gradient_structure::set_MAX_DLINKS(40000);
 
 
 GLOBALS_SECTION
+	
+	/**
+	 * \def NEW_SELEX
+	 * Testing new selectivity controls.
+	 */
+	#define NEW_SELEX
+
 	/**
 	\def REPORT(object)
 	Prints name and value of \a object on ADMB report %ofstream file.
@@ -5489,7 +5929,7 @@ GLOBALS_SECTION
 	#include <string.h>
 	#include "include/lib_iscam.h"
   	#include "milka.h"
-
+  	// #include "mcmc_eval_dic.cpp"
 
 
 	ivector getIndex(const dvector& a, const dvector& b)
@@ -5559,8 +5999,8 @@ GLOBALS_SECTION
 	 int si,ni; si=mu.indexmin(); ni=mu.indexmax();
 	 int sj,nj; sj=x.indexmin(); nj=x.indexmax();
 
-	 COUT(si); COUT(sj);
-	 COUT(ni); COUT(nj);
+	 // COUT(si); COUT(sj);
+	 // COUT(ni); COUT(nj);
 	 dmatrix pdf(si,ni,sj,nj);
 	 pdf.initialize();
 	 double xs=0.5*(x[sj+1]-x[sj]);
@@ -5591,6 +6031,7 @@ GLOBALS_SECTION
 	double dicValue = 0;
 
 
+	
 
 
 // 	void function_minimizer::mcmc_eval(void)

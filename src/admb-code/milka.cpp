@@ -44,8 +44,10 @@
 
 #include <admodel.h>
 #include "milka.h"
+#include "include/lib_iscam.h"
 
-
+#undef COUT
+#define COUT(object) cout<<#object"\n"<<object<<endl;
 // Destructor
 OperatingModel::~OperatingModel(){}
 
@@ -61,22 +63,63 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
 
 }
 
+/**
+ * @brief Verify Equilibrium MSY calculations numerically.
+ * @details This runs the model for upto 100 years to verify
+ * that the equilibrium MSY-based reference points are calcualted correctly.
+ * 
+ */
+void OperatingModel::checkMSYcalcs()
+{
+    dvector tmp_tau = m_dTau;
+    m_dTau = 0;
+
+
+    readMSEcontrols();
+
+    initParameters();
+
+    initMemberVariables();
+
+    conditionReferenceModel();
+
+    calcMSY();
+
+    for(int i = nyr+1; i <= m_nPyr; i++ )
+    {
+        calculateTAC();
+        
+        calcTotalMortality(i);
+
+        implementFisheries(i);
+
+        updateReferenceModel(i);
+    }
+    // COUT(m_sbt);
+    // COUT(m_d3_Ct);
+
+
+    m_dTau = tmp_tau;
+}
 
 void OperatingModel::runScenario(const int &seed)
 {
     readMSEcontrols();
 
     initParameters();
-    cout<<"Here I am to save the day"<<endl;
 
     initMemberVariables();
 
     conditionReferenceModel();
 
+    calcMSY();
+
     setRandomVariables(seed);
+
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
         getReferencePointsAndStockStatus(i);
+        if(verbose) cout<<"getReferencePointsAndStockStatus OK"<<endl;
 
         calculateTAC();
         if(verbose) cout<<"calculateTAC OK"<<endl;
@@ -105,6 +148,8 @@ void OperatingModel::runScenario(const int &seed)
         writeDataFile(i);
         if(verbose) cout<<"writeDataFile OK"<<endl;
 
+        writeParameterFile(i);
+        if(verbose) cout<<"writeParameterFile OK"<<endl;
 
         // implement perfect info option
         // if flag is 0 - write .res with true params
@@ -114,6 +159,76 @@ void OperatingModel::runScenario(const int &seed)
 
     writeSimulationVariables();
 }
+
+
+/**
+ * @brief Calculate MSY-based reference points for reference model.
+ * @details This routine calculates the MSY-based reference points based 
+ * on the true parameter values and selectivity coefficients used in 
+ * the population reference model.  Needed for perfect information 
+ * scenarios.
+ * 
+ * Requires msy.hpp
+ * rfp::msy(ro,h,rho,ma,wa,fa,_V)
+ * 
+ * rho is the fraction of mortality that occurs prior to spawning.
+ */
+void OperatingModel::calcMSY()
+{
+    m_msy.allocate(1,ngroup,1,nfleet);
+    m_bmsy.allocate(1,ngroup);
+    m_fmsy.allocate(1,ngroup,1,nfleet);
+    m_msy.initialize();
+    m_fmsy.initialize();
+    m_bmsy.initialize();
+
+
+    /* Fecundity at age and natural mortality*/
+    dmatrix fa_bar(1,n_ags,sage,nage);
+    dmatrix  M_bar(1,n_ags,sage,nage);
+    for(int ig=1;ig<=n_ags;ig++)
+    {
+        fa_bar(ig) = elem_prod(dWt_bar(ig),ma(ig));
+        M_bar(ig)  = colsum(value(m_M(ig).sub(pf_cntrl(3),pf_cntrl(4))));
+        M_bar(ig) /= pf_cntrl(4)-pf_cntrl(3)+1; 
+    }
+
+    // | (1) : Matrix of selectivities for directed fisheries.
+    // |     : log_sel(gear)(n_ags)(year)(age)
+    // |     : ensure dAllocation sums to 1.
+    dvector d_ak(1,nfleet);
+    d3_array  d_V(1,n_ags,1,nfleet,sage,nage);
+    
+    for(int k=1;k<=nfleet;k++)
+    {
+        int kk  = nFleetIndex(k);
+        d_ak(k) = dAllocation(kk);
+        for(int ig=1;ig<=n_ags;ig++)
+        {
+            d_V(ig)(k) = ( exp(d4_logSel(kk)(ig)(nyr)) );
+        }
+    }
+    d_ak /= sum(d_ak);
+
+    
+    // initial guess for fmsy
+    dvector dftry(1,nfleet);
+    dftry  = 0.6/nfleet * mean(M_bar);
+    
+    
+    double rho = d_iscamCntrl(13);
+    for(int g=1; g<=ngroup; g++)
+    {
+        rfp::msy<double,dvector,dmatrix,d3_array>
+        cMSY(m_dRo(g),m_dSteepness(g),rho,M_bar,dWt_bar,fa_bar,d_V);
+        
+        m_fmsy(g) = cMSY.getFmsy(dftry,d_ak);
+        m_bmsy(g) = cMSY.getBmsy();
+        m_msy(g)  = cMSY.getMsy();
+        cMSY.print();
+    }
+}
+
 
 /**
  * @brief Read control file for Management Strategy Evaluation.
@@ -126,10 +241,10 @@ void OperatingModel::readMSEcontrols()
     if(verbose) cout<<"MSE Scenario file\n"<<ScenarioControlFile<<endl;
 
     cifstream ifs_mpc(ProcedureControlFile);
-    ifs_mpc>>m_nPyr;
+    ifs_mpc >> m_nPyr;
 
     //assessment option
-    ifs_mpc>>m_nAssessOpt;
+    ifs_mpc >> m_nAssessOpt;
 
     // Control file.
     ifs_mpc >> m_controlFile;
@@ -139,11 +254,11 @@ void OperatingModel::readMSEcontrols()
         m_controlFile = ControlFile;
     }
     //harvest control rule
-    ifs_mpc>>m_nHCR;
+    ifs_mpc >> m_nHCR;
 
-    ifs_mpc>>m_dBthreshold;
-    ifs_mpc>>m_dBlimit;
-    ifs_mpc>>m_maxf;
+    ifs_mpc >> m_dBthreshold;
+    ifs_mpc >> m_dBlimit;
+    ifs_mpc >> m_maxf;
 
     m_nGearIndex.allocate(1,ngear);
     m_nCSex.allocate(1,ngear);
@@ -170,7 +285,7 @@ void OperatingModel::readMSEcontrols()
 
     int eof=0;
     ifs_mpc >> eof;
-    cout<<"End of MPC file "<<eof<<endl;
+    // cout<<"End of MPC file "<<eof<<endl;
     if(eof != 999)
     {
         cout<<"Error reading Management Procedure Control File"<<endl;
@@ -179,16 +294,43 @@ void OperatingModel::readMSEcontrols()
     }
     //cout<<"finished MSE controls"<<endl;
 
+
+
+
+
+
+    //
+    // READ SCENARIO CONTROL FILE
+    // 
     cifstream ifs_scn(ScenarioControlFile);
     
-    //Controls for recruitment options
+    // 
+    // Controls for recruitment options
+    // 
     ifs_scn >> m_nRecType;
 
+    // 
+    // Dispersel kernel for new recruits.
+    // 
     m_dispersal.allocate(1,narea,1,narea); m_dispersal.initialize();
     ifs_scn >> m_dispersal; 
 
+    // 
     // Autocorrelation coefficient in recruitment.
+    // 
     ifs_scn >> m_gamma_r;
+
+    // 
+    // Recruitment Regime.
+    // 
+    ifs_scn >> m_PDO_phase;
+
+    // 
+    // Size-at-age (increase or decrease)
+    // 
+    ifs_scn >> m_SAA_flag;
+    
+
 
     // End of file
     int eof_scn=0;
@@ -234,11 +376,16 @@ void OperatingModel::initParameters()
     m_dCatchData.allocate(1,m_nCtNobs,1,ncol);
     m_dCatchData.initialize();
     m_dCatchData.sub(1,nCtNobs) = dCatchData;
-    cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Whats up doc"<<endl;
+    
 
     m_dSubLegalData.allocate(nCtNobs+1,m_nCtNobs,1,8);
     m_dSubLegalData.initialize();
 
+     // Fishing mortality rate parameters
+    // How many more Ft parameters are needed?
+    m_log_ft_pars.allocate(1,m_nCtNobs);
+    m_log_ft_pars.initialize();
+    m_log_ft_pars.sub(1,ft_count) = mv.log_ft_pars(1,ft_count);
 
     // Below could be deprecated
    // m_d3_Ct.allocate(1,n_ags,syr,m_nPyr,1,ngear);
@@ -254,13 +401,12 @@ void OperatingModel::initParameters()
     m_n_it_nobs.initialize();
     m_n_it_nobs = n_it_nobs + m_nyrs;
     
-    m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,8);
+    m_d3SurveyData.allocate(1,nItNobs,1,m_n_it_nobs,1,9);
     m_d3SurveyData.initialize();
     for(int k=1;k<=nItNobs;k++)
     {
         m_d3SurveyData(k).sub(1,n_it_nobs(k)) = d3_survey_data(k);  
     }
-
     // Age-composition arrays   
     m_A_irow.allocate(1,nAgears);
     m_A_irow.initialize(); 
@@ -275,8 +421,9 @@ void OperatingModel::initParameters()
         }
     }
     
-    m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-5,n_A_nage);
+    m_d3_A.allocate(1,nAgears,1,m_n_A_nobs,n_A_sage-6,n_A_nage);
     m_d3_A.initialize();
+    // cout<<"Ok today"<<endl;
     
     for(int k=1;k<=nAgears;k++)
     {
@@ -304,16 +451,16 @@ void OperatingModel::initParameters()
         m_d3_inp_wt_avg(k).sub(1,nWtNobs(k)) = d3_inp_wt_avg(k);
     }
     
-
+    // TODO: allow user to specify observation error
     // initializing population parameters
     m_dRo        = exp(mv.log_ro);
     m_dBo        = mv.sbo;
     m_dSteepness = mv.steepness;
     m_dM         = exp(mv.m);
-    m_dRho       = mv.rho;
-    m_dVarphi    = sqrt(1.0/mv.varphi);
-    m_dSigma     = elem_prod(sqrt(m_dRho) , m_dVarphi);
-    m_dTau       = elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
+    m_dRho       = mv.rho;    // now autocorrelation
+    m_dVarphi    = mv.varphi; //sqrt(1.0/mv.varphi);
+    m_dSigma     = 0.2 * mv.varphi;//elem_prod(sqrt(m_dRho) , m_dVarphi);
+    m_dTau       = m_dVarphi; //elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
 
     m_dRbar.allocate(1,n_ag);
     m_dRinit.allocate(1,n_ag);
@@ -335,8 +482,9 @@ void OperatingModel::initParameters()
         break;
     }
 
+
     
-    cout<<"finished init parameters"<<endl;
+    // cout<<"finished init parameters"<<endl;
 }
 
 
@@ -378,6 +526,23 @@ void OperatingModel::initMemberVariables()
     m_q = mv.q;
 
     // Initialize Mortality arrays from ModelVariables (mv)
+    // cohort-specific weight-at-age deviate
+    dvector wa_dev(nyr-sage,m_nPyr);
+    wa_dev.initialize();
+    wa_dev = 0;
+    switch( m_SAA_flag )
+    {
+        case 1:
+            wa_dev = 0.3;
+        break;
+        case -1:
+            wa_dev = -0.3;
+        break;
+        default:
+            wa_dev = 0;
+        break;
+    }
+
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         m_M(ig).sub(syr,nyr) = (*mv.d3_M)(ig);
@@ -388,14 +553,30 @@ void OperatingModel::initMemberVariables()
         m_d3_wt_mat(ig).sub(syr,nyr+1) = d3_wt_mat(ig).sub(syr,nyr+1);
 
         // Temporary extend natural mortality out to m_nPyr
+        // Modify m_d3_wt_avg & m_d3_wt_mat to accomodate changes
+        // in size-at-age in the future.  The idea would be that
+        // each cohort would be given a multiplier specific to that 
+        // cohort. 
+        // m_SAA_flag = 1, size at age increases
+        // m_SAA_flag =-1, size-at-age decreases
         for( i = nyr+1; i <= m_nPyr; i++ )
         {
             m_M(ig)(i) = m_M(ig)(nyr);
             m_d3_wt_avg(ig)(i+1) = d3_wt_avg(ig)(nyr+1);
             m_d3_wt_mat(ig)(i+1) = d3_wt_mat(ig)(nyr+1);
+
+            for( j = sage; j <= nage; j++)
+            {
+                int cohort = i - j;
+                if(cohort <= nyr+1) continue;
+                
+                m_d3_wt_avg(ig)(i+1)(j) = d3_wt_avg(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
+                m_d3_wt_mat(ig)(i+1)(j) = d3_wt_mat(ig)(nyr+1)(j)*exp(wa_dev(cohort)); 
+            }
         }
     }
-
+    // COUT(m_d3_wt_avg(1));
+    // exit(1);
     // Selectivity
     d4_logSel.allocate(1,ngear,1,n_ags,syr,m_nPyr,sage,nage);
     d4_logSel.initialize();
@@ -425,7 +606,7 @@ void OperatingModel::initMemberVariables()
     }
 
 
-    cout<<"finished init member variables"<<endl;
+    //cout<<"finished init member variables"<<endl;
 
 }
 
@@ -492,15 +673,19 @@ void OperatingModel::setRandomVariables(const int& seed)
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
 
+
     // Add autocorrelation to recruitment deviations
     double rho = m_gamma_r;
     for( g = 1; g <= ngroup; g++ )
     {
+        m_delta(g) += m_PDO_phase;
         for( i = nyr-sage+1; i <= m_nPyr; i++ )
         {
             m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
         }
     }
+    COUT(m_dTau);
+    COUT(m_delta);
 }
 
 
@@ -511,12 +696,12 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
         case 0:
             //  set reference points to true milka values
             
-            m_est_bo = m_dBo;
-            m_est_fmsy = fmsy;
-            m_est_msy = msy;
-            m_est_bmsy = bmsy;
+            m_est_bo   = m_dBo;
+            m_est_fmsy = m_fmsy;      
+            m_est_msy  = m_msy;       
+            m_est_bmsy = m_bmsy;      
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
-            m_est_btt = m_bt(iyr)(1,ngroup);;
+            m_est_btt  = m_bt(iyr)(1,ngroup);;
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
@@ -532,6 +717,8 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
+            //cout<<"TIme to goto dance"<<endl;
+            //cout<<"Fmsy = "<<m_est_fmsy<<endl;
 
 
             // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
@@ -540,9 +727,12 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
                     m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
+
                 }
             }
-    
+            //exit(1);
+        break;
+
         case 1:
             // read iscam.res file to get this information.
             cifstream ifs("iSCAM.res");
@@ -556,6 +746,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             ifs >> m_est_wa;
             ifs >> m_est_M;
             ifs >> m_est_log_sel;
+        break;
     }
 
 }
@@ -591,12 +782,12 @@ void OperatingModel::calculateTAC()
         
         
 
+
         switch( int(m_nHCR) )
         {
             case 1: // Constant harvest rate
                  // m_dTAC(g)  = harvest_rate * btmp;
                 f_rate = m_est_fmsy(g);
-                cout<<"m_est_fmsy"<<m_est_fmsy<<endl;
             break; 
 
             case 2: // Bthreshold:Blimit HCR.
@@ -626,8 +817,9 @@ void OperatingModel::calculateTAC()
     // Todo: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
     // Working here, need to implement the Baranov
     // Catch equation to calculate the m_dTAC for group g.
-    //cout<<"I'm Here "<<endl;
+    // cout<<"I'm Here "<<endl;
     ba.initialize();
+    m_dTAC.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         //int f = n_area(ig);
@@ -635,22 +827,19 @@ void OperatingModel::calculateTAC()
         //int h = n_sex(ig);
 
         va  = exp(m_est_log_sel(ig));
-        //cout<<"And made it to here"<<endl;
+        // cout<<"And made it to here"<<endl;
         ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
-        
 
         for( k = 1; k <= nfleet; k++ )
         {
             za  = m_est_M(ig) + f_rate(k)*va;
-            //cout<<"m_est_M is "<<m_est_M<<endl;
-            //cout<<"f_rate is "<<f_rate<<endl;
-            //cout<<"za is "<<za<<endl;
-
             ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
         }
 
         m_dTAC(g) += sum(ca);
     }
+
+    // cout<<m_nHCR<<endl;
     // exit(1);
 }
 
@@ -677,9 +866,8 @@ void OperatingModel::allocateTAC(const int& iyr)
                     m_dCatchData(irow,3) = f;
                     m_dCatchData(irow,4) = g;
                     m_dCatchData(irow,5) = h;
-                    m_dCatchData(irow,6) = 1;  //TODO: Fix this catch type
+                    m_dCatchData(irow,6) = 1;             //TODO: Fix this catch type
                     m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
-
                 }
                 if(h)
                 {   
@@ -691,7 +879,7 @@ void OperatingModel::allocateTAC(const int& iyr)
                         m_dCatchData(irow,3) = f;
                         m_dCatchData(irow,4) = g;
                         m_dCatchData(irow,5) = h;
-                        m_dCatchData(irow,6) = 1;  //TODO: Fix this
+                        m_dCatchData(irow,6) = 1;             //TODO: Fix this
                         m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
                     }
                 }
@@ -756,24 +944,23 @@ void OperatingModel::implementFisheries(const int &iyr)
     dmatrix  sd(1,nsex,sage,nage);
     dmatrix  d_allocation(1,narea,1,nfleet);
     dmatrix  _hCt(1,nsex,1,nfleet);
-    dmatrix  _hDt(1,nsex,1,nfleet);            // Discarded catch
-    dmatrix  _hWt(1,nsex,1,nfleet);            // Watage = (discard mort)*(discard catch)
+    dmatrix  _hDt(1,nsex,1,nfleet);             // Discarded catch
+    dmatrix  _hWt(1,nsex,1,nfleet);             // Wastage = (discard mort)*(discard catch)
     d3_array d3_Va(1,nsex,1,nfleet,sage,nage);  // Retained fraction
     d3_array d3_Da(1,nsex,1,nfleet,sage,nage);  // Discard fraction
     tac.initialize();
     na.initialize();
     _hDt.initialize();
     _hWt.initialize();
+    static int ft_counter = ft_count;
 
     BaranovCatchEquation cBCE;
-
 
     for(int f = 1; f <= narea; f++ )
     {
         for(int g = 1; g <= ngroup; g++ )
         {
             ct = m_dTAC(g);  // Catch for each fleet.
-
             for(int h = 1; h <= nsex; h++ )
             {
                 int ig = pntr_ags(f,g,h);
@@ -801,24 +988,15 @@ void OperatingModel::implementFisheries(const int &iyr)
             }  // nsex
 
             // Calculate instantaneous fishing mortality rates.
-            //cout<<"chegou aqui?"<<endl;
-            //cout<<"_hCt is "<<_hCt<<endl;
-            //cout<<"na "<<na<<endl;
-            //cout<<"wa "<<wa<<endl;
-            //cout<<"nsex "<<nsex<<endl;
-            //cout<<"ma "<<ma<<"endl"<<endl;
-            //cout<<"size_count(ct) "<<size_count(ct)<<endl;
-            //cout<<"d3_Va "<<d3_Va<<endl;
-
             dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa,_hCt);
-            //dvector ft = cBCE.getFishingMortality(ct,ma,&d3_Va,na,wa);
-
-            cout<<"fishing rate "<<ft<<endl;
+            
+            // cout<<"fishing rate "<<ft<<endl;
 
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
             {
-                
+                // cout<<"DFT counter +"<<ft_count<<" "<<ft_counter<<endl;
+                m_log_ft_pars(++ft_counter) = ft(k);
                 // Calculate total mortality array.
                 for(int h = 1; h <= nsex; h++ )
                 {
@@ -834,7 +1012,7 @@ void OperatingModel::implementFisheries(const int &iyr)
                     _hWt(h)   += elem_prod(elem_div(fa,za),1.0-exp(-za)) 
                                  * ba*m_dDiscMortRate(k);
                 }
-                cout<<"Sublegal Discards \n"<<_hDt<<endl;
+                // cout<<"Sublegal Discards \n"<<_hDt<<endl;
                 
 
                 if( ft(k) > 0 )
@@ -849,9 +1027,9 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dCatchData(m_irow,3) = f;
                         m_dCatchData(m_irow,4) = g;
                         m_dCatchData(m_irow,5) = hh>0?h:0;
-                        m_dCatchData(m_irow,6) = 1;  //TODO: Fix this
+                        m_dCatchData(m_irow,6) = 1;  //TODO: set type of catch
                         m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
-                        //m_dCatchData(m_irow,8) = 0.02; //TODO: figure out how to project cvs in the future.
+                        m_dCatchData(m_irow,8) = 0.02;  //TODO: add real log_se for catch obs.
 
                         m_dSubLegalData(m_irow,1) = iyr;
                         m_dSubLegalData(m_irow,2) = kk;
@@ -871,7 +1049,7 @@ void OperatingModel::implementFisheries(const int &iyr)
     } // narea f
     // cout<<m_dCatchData<<endl;
     // cout<<"END"<<endl;
-    cout<<"finished implementing fisheries"<<endl;
+    //cout<<"finished implementing fisheries"<<endl;
 
 }
 
@@ -891,7 +1069,6 @@ void OperatingModel::implementFisheries(const int &iyr)
  */
 void OperatingModel::calcTotalMortality(const int& iyr)
 {
-
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         m_Z(ig)(iyr) = m_M(ig)(iyr) + m_F(ig)(iyr);
@@ -903,8 +1080,8 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
 {
     //m_d3SurveyData
     // Survey data header:
-    // 1    2      3     4     5      6    7   8
-    // iyr  index  gear  area  group  sex  wt  timing
+    // 1    2      3     4     5      6    7   8    9
+    // iyr  index  gear  area  group  sex  se  pe     timing
     static int irow = 0;
     irow ++;
     int gear;
@@ -914,6 +1091,7 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
     dvector ma(sage,nage);
     dvector wa(sage,nage);
     double dV;
+
     for(int k = 1; k <= nItNobs; k++ )
     {
         gear = d3_survey_data(k)(1)(3);
@@ -946,8 +1124,10 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                     }
                 }
                 // Relative abundance index.
-                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*m_dSigma(g)-(m_dSigma(g)*m_dSigma(g)/2)); 
-
+                double sd = m_dSigma(g);
+                // cout<<"Awe man"<<endl;
+                double it = m_q(k)*dV*exp(m_epsilon(k,iyr)*sd); 
+                // cout<<"q "<<m_q(k)<<endl;
                 // V is the population that is proportional to the index.
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,1) = iyr;
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,2) = it;
@@ -955,8 +1135,9 @@ void OperatingModel::calcRelativeAbundance(const int& iyr)
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,4) = f;    //TODO add to MSE controls
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,5) = g;    //TODO add to MSE controls
                 m_d3SurveyData(k)(n_it_nobs(k)+irow,6) = 0;    //TODO add to MSE controls
-                m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 1.0;  //TODO add to MSE controls
-                m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.5;  //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,7) = 0.2;  //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,8) = 0.01; //TODO add to MSE controls
+                m_d3SurveyData(k)(n_it_nobs(k)+irow,9) = 0.5;  //TODO add to MSE controls
                 
             }
         }
@@ -1003,7 +1184,7 @@ void OperatingModel::calcCompositionData(const int& iyr)
     {
         if( m_n_A_nobs(k) ) 
         {
-            gear = m_d3_A(k)(1)(n_A_sage(k)-4);
+            gear = m_d3_A(k)(1)(n_A_sage(k)-5);
             for(int f = 1; f <= narea; f++ )
             {
                 for(int g = 1; g <= ngroup; g++ )
@@ -1028,13 +1209,15 @@ void OperatingModel::calcCompositionData(const int& iyr)
                     int hh = m_nASex(k);   // flag for sex
                     for( h = 1; h <= hh+1; h++ )
                     {
-                        cout<<hh<<endl;
+                        // cout<<hh<<endl;
                         m_A_irow(k) ++;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = iyr;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = gear;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = f;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = g;
-                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = hh>0?h:0;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-6) = iyr;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-5) = gear;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-4) = f;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-3) = g;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-2) = hh>0?h:0;
+                        m_d3_A(k)(n_A_nobs(k)+m_A_irow(k),n_A_sage(k)-1) = 1;  //age_err
+
                         m_d3_A(k)(n_A_nobs(k)+m_A_irow(k))(n_A_sage(k),n_A_nage(k))
                         = hh>0?pa(h)(n_A_sage(k),n_A_nage(k)):colsum(pa)(n_A_sage(k),n_A_nage(k));
                     }
@@ -1143,7 +1326,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
         // add process errors assuming each area/sex has the same deviation.
         m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
-        
+        // COUT(m_dTau);
         //disperse the recruits in each year 
         // assumes all groups disperse the same and prop of groups by area remain const
         // TODO allow for separate dispersal matrices for each group
@@ -1172,6 +1355,66 @@ void OperatingModel::updateReferenceModel(const int& iyr)
     }
 
      //cout<<"finished updatinf ref pop"<<endl;
+}
+
+
+void OperatingModel::writeParameterFile(const int& iyr)
+{
+    cout<<"Writing TRUE.par"<<endl;
+    ofstream pfs("TRUE.par");
+    pfs << mv.log_ro     << endl;
+    pfs << mv.steepness  << endl;
+    pfs << mv.m          << endl;
+    pfs << mv.log_rbar   << endl;
+    pfs << mv.log_rinit  << endl;
+    pfs << mv.rho        << endl;
+    pfs << mv.varphi     << endl;
+    pfs <<"# slx_log_par" << endl;
+    pfs << *mv.d3_slx_log_par << endl;
+    pfs <<"# second instance until sel_par is deprecated" << endl;
+    pfs << *mv.d3_log_sel_par << endl;
+
+    pfs <<"# log_ft_pars " << endl;
+    
+    // fishing mortality rate parameters for each gear.
+    int n = nCtNobs +(iyr-nyr)*m_nn;
+    pfs << m_log_ft_pars(1,n)  <<endl;
+
+    pfs <<"# init_log_rec_devs:" << endl;
+    pfs << mv.init_log_rec_devs  << endl;
+
+    pfs <<"# log_rec_devs:"      << endl;
+
+    // add simulation devs m_delta * sigma_r
+    for( g = 1; g <= ngroup; g++ )
+    {
+        pfs << mv.log_rec_devs(g)(syr,nyr-sage-1);
+        for(int i=nyr-sage; i<=iyr; i++)
+        {
+            pfs << " " << m_delta(g)(i) * m_dTau;
+        }
+        pfs << endl;
+    }
+
+    pfs <<"# log_q_devs:  "      << endl;
+
+    // now add additional qdevs
+    for(k=1;k<=nItNobs;k++)
+    {
+        pfs << mv.log_q_devs(k);
+        for(i = nyr+1; i<= iyr; i++)
+        {
+            pfs<<" "<< 0;
+        }
+        pfs << endl;
+    }
+
+    pfs <<"# log_age_tau2 "      << endl;
+    pfs << mv.log_age_tau2       << endl;
+
+    pfs << mv.phi1 <<endl;
+    pfs << mv.phi2 <<endl;
+    pfs << mv.log_degrees_of_freedom << endl;
 }
 
 
@@ -1215,6 +1458,11 @@ void OperatingModel::writeDataFile(const int& iyr)
         dfs<< n_MAT             <<endl;
         dfs<< d_maturityVector  <<endl;
     
+        // Write aging error definitions
+        dfs<<"#Aging Error Vectors" <<endl;
+        dfs<< n_age_err             <<endl;
+        dfs<< age_err               <<endl;
+
         // Write catch array
         dfs<<"#Observed catch data"             <<endl;
         int tmp_nCtNobs = nCtNobs+(iyr-nyr)*m_nn;
@@ -1245,7 +1493,7 @@ void OperatingModel::writeDataFile(const int& iyr)
         ivector tmp_n_A_nobs(1,nAgears);
         tmp_n_A_nobs.initialize();
 
-        d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-5,n_A_nage); //n_A_sage is a vector!!
+        d3_array tmp_d3_A(1,nAgears,1,tmp_n_A_nobs,n_A_sage-6,n_A_nage); //n_A_sage is a vector!!
         tmp_d3_A.initialize();
         
         for(int k=1;k<=nAgears;k++)
@@ -1319,7 +1567,7 @@ void OperatingModel::runStockAssessment()
         
         ofstream rd("mseRUN.dat");
         rd<<"Simulated_Data_"+str(rseed)+".dat"<<endl;
-        rd << m_controlFile          <<endl;
+        rd << m_controlFile        <<endl;
         rd << ProjectFileControl   <<endl;
         rd << ProcedureControlFile <<endl;
         rd << ScenarioControlFile  <<endl;
@@ -1329,14 +1577,19 @@ void OperatingModel::runStockAssessment()
     switch( int(m_nAssessOpt) ) // option read in from .mpc file
     {
         case 0:
-            cout<<"Perfect information scenario"<<endl;
+            cout<<"Perfect information scenario "<<m_nSeed<<endl;
+
+            #if defined __APPLE__ || defined __linux
+            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            #endif
+
         break;
         
         case 1:        
             cout<<"running stock assessment"<<endl;
 
             #if defined __APPLE__ || defined __linux
-            cout<<m_est_fmsy<<endl;
+            // cout<<m_est_fmsy<<endl;
             system("./iscam -ind mseRUN.dat -nox > /dev/null 2>&1");
 
             #endif
@@ -1355,10 +1608,17 @@ void OperatingModel::runStockAssessment()
  * @brief Append true state variables to iscam.rep.
  * @details This routine is called at the end of the simulation model and appends the
  * true state variables to the iscam.rep file.
+ * 
+ * Need to write out simulation scenarios: low recruitment, high recruitment, size-at-age
+ * 
  */
 void OperatingModel::writeSimulationVariables()
 {
+
     ofstream report("milka.rep");
+    REPORT(m_PDO_phase);
+    REPORT(m_SAA_flag);
+    REPORT(m_nRecType);
     REPORT(m_dBo);
     REPORT(m_sbt);
     REPORT(m_dCatchData);

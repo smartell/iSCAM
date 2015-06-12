@@ -59,9 +59,9 @@ shinyServer(function(input, output, session) {
   })
 
   # GVIS GRAPHICS FOR COMPARING SCENARIOS DYNAMICALLY
-  output$googleVisPlot <- renderGvis({
-    motionChart(MOT.DF,input)
-  })
+  # output$googleVisPlot <- renderGvis({
+    # motionChart(MOT.DF,input)
+  # })
 
 
   # MEDIAN DEPLETION TABLE
@@ -162,6 +162,22 @@ shinyServer(function(input, output, session) {
       params
     }
 
+    # A_bycatchT <- input[["A_num_bycatch_total"]] 
+    # observeEvent(A_bycatchT,
+    #   function() {
+    #     cat("Chaing bycatch total\n")
+    #   }
+    # )
+    # eventReactive(A_bycatchT,
+    #   function() {
+    #     updateNumericInput(session, "num_bycatch", value = 99)
+    #   }
+    # )
+
+    # observe({
+    #   bycatch_total <- input[[paste0(prefix,"_","num_bycatch_total")]]
+    # })
+    # updateNumericInput(session, "A_num_bycatch_total", value = 2)
   
 
     ## ------------------------------------------------------------ ##
@@ -246,7 +262,7 @@ shinyServer(function(input, output, session) {
     ## ------------------------------------------------------------ ##
     ## MAPS
     ## ------------------------------------------------------------ ##
-    map <- createLeafletMap(session, "map")
+    # map <- createLeafletMap(session, "map")
     
 
     # session$onFlushed is necessary to work around a bug in the Shiny/Leaflet
@@ -293,7 +309,6 @@ shinyServer(function(input, output, session) {
   p <- p + theme_bw(18) + theme(legend.position="top") 
   print(p)
   
-
 }
 
 .plotFishSelex <- function(pars)

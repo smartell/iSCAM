@@ -8,7 +8,7 @@
 
 #ifdef TOL
 #undef TOL
-#define TOL     1.e-04
+#define TOL     1.e-08
 #endif
 
 #include <admodel.h>
@@ -72,12 +72,12 @@ namespace rfp {
 		int m_nGrp;
 		
 
-		T m_ro;
-		T m_bo;
-		T m_rmsy;
+		T m_ro;			/// Unfished equilibrium recruits
+		T m_bo;			/// Unfished equilibrium biomass
+		T m_rmsy;		/// Recruitment at MSY
 		T m_be;			/// Equilibrium biomass
-		T m_re;
-		T m_h;
+		T m_re;			/// Equilibrium recruitment
+		T m_h;			/// Steepness
 		T m_rho;	    /// Fraction of mortality that occurs before spawning.
 		T m_phie;		/// Spawning biomass per recruit in unfished conditions.
 		T m_phif;		/// Spawning biomass per recruit in fished conditions.
@@ -296,7 +296,9 @@ namespace rfp {
 				// fbar += 0.98 * m_dYe/m_d2Ye;
 				fbar += 0.98 * m_fbar_stp;
 			}
-
+			
+			// cout<<iter<<" Fe = "<<m_fbar_stp<<endl;
+			if( fabs(m_fbar_stp) < TOL ) break;
 		}
 		m_fe = fk;
 		m_rmsy = m_re; 

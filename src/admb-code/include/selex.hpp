@@ -4,6 +4,8 @@
 #define SELEX_HPP
 
 #include <admodel.h>
+#include <iostream>
+#include <assert.h>
 
 /**
  * @defgroup Selectivities
@@ -21,6 +23,224 @@
  */
 namespace slx {
 	
+	#define Register(x) slxInterface<REAL_T>::template Init<x>();
+
+	/**
+	 * A Generic Selectivity Interface class.
+	 */
+	template<typename REAL_T>
+	class slxInterface
+	{
+	private:
+
+		typedef REAL_T(*EVAL_FUNCTION_PTR)(void* const);
+
+		EVAL_FUNCTION_PTR eval_ptr;
+
+		template<typename T> static
+		REAL_T Evaluate_T(void* const pObj)
+		{
+			return static_cast<T*> (pObj)->Evaluate();
+		}
+
+	protected:
+
+		// set a pointer to the evaluate function.
+		template<typename T> void Init()
+		{
+			eval_ptr = (EVAL_FUNCTION_PTR) & Evaluate_T<T>;
+		}
+
+	public:
+
+		slxInterface()
+		: eval_ptr(0){
+
+		}
+
+		virtual ~ slxInterface(){
+
+		}
+
+		inline REAL_T Evaluate(){
+			assert(eval_ptr);    // ensure Init() was called.
+			return (*eval_ptr)(this);
+		}
+
+	};
+
+
+
+
+
+
+
+	/**
+	 * Logistic Selectivity Class that inherits from the slxInterface
+	 */
+	template<typename REAL_T>
+	class slx_Logistic: public slxInterface<REAL_T>
+	{
+	private:
+		friend class slxInterface<REAL_T>;
+
+		// Evaluate should return a dvar_vector or a df1b2_vector
+		inline REAL_T Evaluate() {
+			//cout<<"Evaluating slx_Logistic"<<endl;
+			dvariable mu = exp(m_log_mu);
+			dvariable sd = exp(m_log_sd);
+			
+			return log( 1.0/(1.0+exp(-(m_x-mu)/sd)) );
+		}
+
+	protected:
+		dvariable m_log_mu;
+		dvariable m_log_sd;
+		dvector   m_x;
+
+	public:
+		template<typename T1,typename T2>
+		slx_Logistic(T1 &x, T2 &log_mu, T2 &log_sd)
+		:m_log_mu(log_mu),m_log_sd(log_sd),m_x(x)
+		{
+			Register(slx_Logistic<REAL_T>);
+		}
+	};
+
+
+
+
+
+
+
+	/**
+	 * Selectivity coefficients.
+	 */
+
+	template<typename REAL_T>
+	class slx_Coefficients: public slxInterface<REAL_T>
+	{
+	private:
+		friend class slxInterface<REAL_T>;
+
+		inline REAL_T Evaluate() {
+			// cout<<"Evaluating slx_Coefficients"<<endl;
+			int s1 = m_log_sel_coeffs.indexmin();
+			int s2 = m_log_sel_coeffs.indexmax();
+			int x1 = m_x.indexmin();
+			int x2 = m_x.indexmax();
+			REAL_T log_sel(x1,x2);
+
+			int i,j;
+			for( i = s1, j = x1; j <= x2; i++, j++ )
+			{
+				if( i <= s2 )
+				{
+					log_sel(j) = m_log_sel_coeffs(i);
+				}
+				else
+				{
+					log_sel(j) = log_sel(j-1);	
+				}
+			}
+			return log_sel;
+		}
+
+	protected:
+		dvector m_x;
+		REAL_T m_log_sel_coeffs;
+
+	public:
+
+		template<typename T1,typename T2>
+		slx_Coefficients(T1 &x, T2 &log_sel_coeffs)
+		:m_x(x),m_log_sel_coeffs(log_sel_coeffs)
+		{
+			Register(slx_Coefficients<REAL_T>);
+		}
+	};
+
+
+
+
+
+
+	/**
+	 * Cubic spline
+	 */
+	template<typename REAL_T>
+	class slx_CubicSpline: public slxInterface<REAL_T>
+	{
+	private:
+		friend class slxInterface<REAL_T>;
+
+		inline REAL_T Evaluate() {
+			//cout<<"Evaluating CubicSpline"<<endl;
+			int nodes = size_count(m_log_spline_knots);
+			dvector ia(1,nodes);
+			dvector fa = (m_x-min(m_x))/(max(m_x)-min(m_x));
+			ia.fill_seqadd(0,1./(nodes-1));
+			vcubic_spline_function ffa(ia,m_log_spline_knots);
+			return ffa(fa);
+		}
+
+	protected:
+		dvector m_x;
+		REAL_T m_log_spline_knots;
+	public:
+		template<typename T1, typename T2>
+		slx_CubicSpline(T1 &x, T2 &log_spline_coeffs)
+		:m_x(x),m_log_spline_knots(log_spline_coeffs)
+		{
+			Register(slx_CubicSpline<REAL_T>);
+		}
+	};
+
+
+
+	/**
+	 * BiCubic spline
+	 */
+	template<typename REAL_T>
+	class slx_BiCubicSpline: public slxInterface<REAL_T>
+	{
+	private:
+		friend class slxInterface<REAL_T>;
+
+		inline REAL_T Evaluate() {
+			//cout<<"Evaluating BiCubicSpline"<<endl;
+			//cout<<m_log_sel.rowmax()<<endl;
+			//cout<<m_log_spline_knots.colmin()<<endl;
+			bicubic_spline(m_y,m_x,m_log_spline_knots,m_log_sel);
+			
+			return(m_log_sel);
+		}
+
+	protected:
+		dvector m_x;
+		dvector m_y;
+		dvar_matrix m_log_sel;
+		REAL_T m_log_spline_knots;
+	public:
+		template<typename T1, typename T2>
+		slx_BiCubicSpline(const T1 &x, const T1 &y, T2 &log_spline_coeffs, T2 &A)
+		:m_x(x),m_y(y),m_log_sel(A),m_log_spline_knots(log_spline_coeffs)
+		{
+			Register(slx_BiCubicSpline<REAL_T>);
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
 	template<class T,class T2>
 	const T plogis(const T &x, const T2 &mean, const T2 & sd)
 	{
