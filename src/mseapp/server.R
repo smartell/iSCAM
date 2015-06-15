@@ -1,4 +1,4 @@
-source('./www/globals.R')
+# source('./www/globals.R')
 source('helpers.R')
 
 
