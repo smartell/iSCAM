@@ -1674,7 +1674,6 @@ PARAMETER_SECTION
 	// |   the observed catch.
 	// |
 	init_bounded_vector log_ft_pars(1,ft_count,-30.,3.0,1);
-	
 	LOC_CALCS
 		if(!SimFlag && !global_parfile) log_ft_pars = log(0.10);
 	END_CALCS
@@ -1695,7 +1694,8 @@ PARAMETER_SECTION
 	!! if(d_iscamCntrl(5)) init_dev_phz = -1;
 	init_bounded_matrix init_log_rec_devs(1,n_ag,sage+1,nage,-15.,15.,init_dev_phz);
 	init_bounded_matrix log_rec_devs(1,n_ag,syr,nyr,-15.,15.,2);
-	
+	// !! COUT(log_rec_devs);
+	// !! exit(1);
 
 
 	// |---------------------------------------------------------------------------------|
@@ -1755,7 +1755,7 @@ PARAMETER_SECTION
     // | - m_bar       -> Average natural mortality rate from syr to nyr.
     // |
 	number m_bar;	///< Average natural mortality rate.			
-
+	number phib;//,so,beta;
 
 	// |---------------------------------------------------------------------------------|
 	// | POPULATION VECTORS
@@ -2160,6 +2160,7 @@ FUNCTION calcSelex
 
 		int yr1 = syr > slx_nsb(k)?syr:slx_nsb(k);
 		int yr2 = nyr < slx_neb(k)?nyr:slx_neb(k);
+		
 		int nn = slx_nIpar(k)-1;
 		
 	  	slx::slxInterface<dvar_vector> *ptrSlx[nn];
@@ -2759,6 +2760,7 @@ FUNCTION calcNumbersAtAge
 		N(ig)(nyr+1,sage) = 1./nsex * mfexp( log_avgrec(ih));
 		bt(g)(nyr+1) += N(ig)(nyr+1) * d3_wt_avg(ig)(nyr+1);
 	}
+	
 	if(verbose)cout<<"**** Ok after calcNumbersAtAge ****"<<endl;	
   }
 
@@ -2935,7 +2937,7 @@ FUNCTION calcTotalCatch
   		
   	
   	TODO list:
-  	[ ] get rid of the obs_ct, ct, eta array structures, inefficient, better to use
+  	[X] get rid of the obs_ct, ct, eta array structures, inefficient, better to use
   	    a matrix, then cbind the predicted catch and residuals for report. (ie. an R
   	    data.frame structure and use melt to ggplot for efficient plots.)
   	*/
@@ -3290,7 +3292,7 @@ FUNCTION void calcStockRecruitment()
   	sbt.initialize();
   	delta.initialize();
 	
-	dvariable phib;//,so,beta;
+	//dvariable phib;//,so,beta;
 	dvector         fa(sage,nage);
 	dvar_vector   stmp(sage,nage);
 	dvar_vector     ma(sage,nage);
@@ -4001,243 +4003,9 @@ FUNCTION calcObjectiveFunction
 	objfun += sum(qvec);
 	nf++;
 	if(verbose)cout<<"**** Ok after calcObjectiveFunction ****"<<endl;
-	
-	
-	//cout<<"nlvec3 is "<<nlvec(3)<<endl;
 
-	
-	//	ad_exit(1); //para!
   }
 
-
-
-
-
-
-// FUNCTION void equilibrium(const double& fe, const dvector& ak, const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dmatrix& va,double& re,double& ye,double& be,double& ve,double& dye_df,double& d2ye_df2)//,double& phiq,double& dphiq_df, double& dre_df)
-//   {
-// 	/*
-// 	Equilibrium age-structured model used to determin Fmsy and MSY based reference points.
-// 	Author: Steven Martell
-	
-// 	Comments: 
-// 	This code uses a numerical approach to determine a vector of fe_multipliers
-// 	to ensure that the dAllocation is met for each gear type.
-	
-// 	args:
-// 	fe	-steady state fishing mortality
-// 	ak	-dAllocation of total ye to gear k.
-// 	ro	-unfished sage recruits
-// 	kap	-recruitment compensation ration
-// 	m	-instantaneous natural mortality rate
-// 	age	-vector of ages
-// 	wa	-mean weight at age
-// 	fa	-mean fecundity at age
-// 	va	-mean vulnerablity at age for fe gear.
-
-	
-// 	Modified args:
-// 	re	-steady state recruitment
-// 	ye	-steady state yield
-// 	be	-steady state spawning biomass
-// 	phiq		-per recruit yield
-// 	dre_df		-partial of recruitment wrt fe
-// 	dphiq_df	-partial of per recruit yield wrt fe
-	
-// 	LUCIE'S RULE: the derivative of a sum is the sum of its derivatives.
-// 	Lucie says: there is some nasty calculus in here daddy, are you sure
-// 	you've got it right?
-	
-// 	I've got it pretty close. 
-	
-// 	DEPRECATE THIS FUNCTION.  NOW DONE IN THE MSY CLASS
-	
-// 	*/
-// 	int i,j,k;
-// 	int nage    = max(age);
-// 	int sage    = min(age);
-// 	double  dre_df;
-// 	double  phif;
-// 	dvector lx(sage,nage);
-// 	dvector lz(sage,nage);
-// 	dvector lambda(1,ngear);        //F-multiplier
-// 	dvector phix(1,ngear);
-// 	dvector phiq(1,ngear);
-// 	dvector dphiq_df(1,ngear);
-// 	dvector dyek_df(1,ngear);
-// 	dvector d2yek_df2(1,ngear);
-// 	dvector yek(1,ngear);
-// 	dmatrix qa(1,ngear,sage,nage);
-// 	dmatrix xa(1,ngear,sage,nage);  //vulnerable numbers per recruit
-	
-// 	lx          = pow(exp(-m),age-double(sage));
-// 	lx(nage)   /=(1.-exp(-m));
-// 	double phie = lx*fa;		// eggs per recruit
-// 	double so   = kap/phie;
-// 	double beta = (kap-1.)/(ro*phie);
-// 	lambda      = ak/mean(ak);	// multiplier for fe for each gear
-	
-	
-// 	/* Must iteratively solve for f-multilier */
-// 	for(int iter=1;iter<=30;iter++)
-// 	{
-// 		/* Survivorship under fished conditions */
-// 		lz(sage)    = 1.0;
-// 		lambda     /= mean(lambda);
-// 		dvector fk  = fe*lambda;
-// 		dvector ra  = lambda*va;
-// 		dvector za  = m + fe*ra;
-// 		dvector sa  = mfexp(-za);
-// 		dvector oa  = 1.0 - sa;
-		
-		
-// 		for(k=1;k<=ngear;k++)
-// 		{
-// 			qa(k) = elem_prod(elem_div(lambda(k)*va(k),za),oa);
-// 			xa(k) = elem_prod(elem_div(va(k),za),oa);
-// 		}
-		
-// 		double dlz_df = 0, dphif_df = 0;
-// 		dphiq_df.initialize();
-// 		dre_df   = 0;
-// 		for(j=sage;j<=nage;j++)
-// 		{
-// 			if(j>sage) lz(j)  = lz(j-1) * sa(j-1);
-// 			if(j>sage) dlz_df = dlz_df  * sa(j-1) - lz(j-1)*ra(j-1)*sa(j-1);
-			
-// 			if(j==nage)
-// 			{
-// 				lz(j)  = lz(j) / oa(j);
-				
-// 				double t4 = (-ra(j-1)+ra(j))*sa(j)+ra(j-1);
-// 				dlz_df = dlz_df/oa(j) - (lz(j-1)*sa(j-1)*t4) / square(oa(j));
-// 			}
-			
-// 			dphif_df   = dphif_df+fa(j)*dlz_df;
-// 			for(k=1;k<=ngear;k++)
-// 			{
-// 				double t1   = lambda(k) * wa(j) *va(k,j) * ra(j) * lz(j);
-// 				double t3   = -1. + (1.+za(j)) * sa(j);
-// 				double t9   = square(za(j));
-// 				dphiq_df(k)+= wa(j)*qa(k,j)*dlz_df + t1 * t3 / t9; 
-// 			}
-// 		} 
-		
-// 		phif   = elem_prod(lz,exp(-za*d_iscamCntrl(13)))*fa;
-// 		re     = ro*(kap-phie/phif)/(kap-1.);
-// 		dre_df = ro/(kap-1.0)*phie/square(phif)*dphif_df;
-		
-// 		/* Equilibrium yield */
-// 		for(k=1;k<=ngear;k++)
-// 		{
-// 			phix(k)      = sum(elem_prod(elem_prod(lz,wa),xa(k)));
-// 			phiq(k)      = sum(elem_prod(elem_prod(lz,wa),qa(k)));
-// 			yek(k)       = fe*re*phiq(k);
-// 			dyek_df(k)   = re*phiq(k) + fe*phiq(k)*dre_df + fe*re*dphiq_df(k);
-// 			d2yek_df2(k) = phiq(k)*dre_df + re*dphiq_df(k);
-// 		}
-		
-// 		/* Iterative soln for lambda */
-// 		dvector pk = yek/sum(yek);
-// 		dvector t1 = elem_div(ak,pk+1.e-30);
-// 		lambda     = elem_prod(lambda,t1);
-// 		if(abs(sum(ak-pk))<1.e-6) break;
-// 	} // end of iter
-// 	ve       = re*sum(elem_prod(ak,phix));
-// 	be       = re*phif;
-// 	ye       = sum(yek);
-// 	dye_df   = sum(dyek_df);
-// 	d2ye_df2 = sum(d2yek_df2);
-
-// 	// cout<<"EQUILIBRIUM CODE "<<setprecision(4)<<setw(2)<<fe<<setw(3)<<" "
-// 	// <<ye<<setw(5)<<" "<<dye_df<<"  "<<dyek_df(1,3)<<endl;
-//   }
-
-
-
-	
-// FUNCTION void equilibrium(const double& fe,const double& ro, const double& kap, const double& m, const dvector& age, const dvector& wa, const dvector& fa, const dvector& va,double& re,double& ye,double& be,double& phiq,double& dphiq_df, double& dre_df)
-//   {
-// 	/*
-// 	This is the equilibrium age-structured model that is 
-// 	conditioned on fe (the steady state fishing mortality rate).
-	
-// 	In the case of multiple fisheries, fe is to be considered as the
-// 	total fishing mortality rate and each fleet is given a specified
-// 	dAllocation based on its selectivity curve.  The dAllocation to 
-// 	each fleet must be specified a priori.
-	
-// 	args:
-// 	fe	-steady state fishing mortality
-// 	ro	-unfished sage recruits
-// 	kap	-recruitment compensation ration
-// 	m	-instantaneous natural mortality rate
-// 	age	-vector of ages
-// 	wa	-mean weight at age
-// 	fa	-mean fecundity at age
-// 	va	-mean vulnerablity at age for fe gear.
-// 	ak	-dAllocation of total ye to gear k.
-	
-// 	Modified args:
-// 	re	-steady state recruitment
-// 	ye	-steady state yield
-// 	be	-steady state spawning biomass
-// 	phiq		-per recruit yield
-// 	dre_df		-partial of recruitment wrt fe
-// 	dphiq_df	-partial of per recruit yield wrt fe
-	
-// 	FIXME add Ricker model to reference points calculations.
-// 	FIXME partial derivatives for dphif_df need to be fixed when d_iscamCntrl(13)>0.
-// 	*/
-// 	int i;
-	
-// 	int nage=max(age);
-// 	int sage=min(age);
-// 	dvector lx=pow(exp(-m),age-double(sage));
-// 	lx(nage)/=(1.-exp(-m));
-// 	dvector lz=lx;
-// 	dvector za=m+fe*va;
-// 	dvector sa=1.-exp(-za);
-// 	dvector qa=elem_prod(elem_div(va,za),sa);
-	
-// 	double phie = lx*fa;		//eggs per recruit
-// 	double so = kap/phie;
-// 	double beta = (kap-1.)/(ro*phie);
-	
-	
-// 	double dlz_df = 0, dphif_df = 0;
-// 	dphiq_df=0; dre_df=0;
-// 	for(i=sage; i<=nage; i++)
-// 	{
-// 		if(i>sage) lz[i]=lz[i-1]*exp(-za[i-1]);
-// 		if(i>sage) dlz_df=dlz_df*exp(-za[i-1]) - lz[i-1]*va[i-1]*exp(-za[i-1]);
-// 		if(i==nage){ //6/11/2007 added plus group.
-// 					lz[i]/=(1.-mfexp(-za[i]));
-					
-// 					dlz_df=dlz_df/(1.-mfexp(-za[i]))
-// 							-lz[i-1]*mfexp(-za[i-1])*va[i]*mfexp(-za[i])
-// 					/((1.-mfexp(-za[i]))*(1.-mfexp(-za[i])));
-// 				}
-// 		dphif_df=dphif_df+fa(i)*dlz_df;
-// 		dphiq_df=dphiq_df+wa(i)*qa(i)*dlz_df+(lz(i)*wa(i)*va(i)*va(i))/za(i)*(exp(-za[i])-sa(i)/za(i));
-// 	}
-// 	//CHANGED need to account for fraction of mortality that occurs
-// 	//before the spawning season in the recruitment calculation.
-// 	//cout<<"lz\t"<<elem_prod(lz,exp(-za*d_iscamCntrl(13)))<<endl;
-// 	//exit(1);
-// 	//double phif = lz*fa;
-// 	double phif = elem_prod(lz,exp(-za*d_iscamCntrl(13)))*fa;
-// 	phiq=sum(elem_prod(elem_prod(lz,wa),qa));
-// 	re=ro*(kap-phie/phif)/(kap-1.);
-// 	//cout<<fe<<" spr ="<<phif/phie<<endl;
-// 	if(re<=0) re=0;
-// 	dre_df=(ro/(kap-1.))*phie/square(phif)*dphif_df;
-// 	ye=fe*re*phiq;
-// 	be=re*phif;	//spawning biomass
-	
-// 	//cout<<"Equilibrium\n"<<ro<<"\n"<<re<<"\n"<<ye<<endl;
-	
-//   }
 	
 FUNCTION void calcReferencePoints()
   {
@@ -4499,8 +4267,44 @@ FUNCTION void testMSYxls()
 
 
 
+	/**
+	 * @brief Return annual exploiation rates
+	 * @details The exploitatoin rate is defined as the total 
+	 * catch in weight for all gear types combined, divided by the total
+	 * biomass.  ut = ct / bt
+	 * @return a vector of the total exploitation rates.
+	 */
+FUNCTION dvector getExploitationRate()
+	int i,ig;
+	dvector ut(syr,nyr);
+	dvector bt(syr,nyr);
+	dvector ct(syr,nyr);
+	ut.initialize();
+	bt.initialize();
+	ct.initialize();
 
+	// Compute total biomass (bt)
+	for( i = syr; i <= nyr; i++ )
+	{
+		for( ig = 1; ig <= n_ags; ig++ )
+		{
+			bt(i) += value(N(ig)(i)) * d3_wt_avg(ig)(i);
+		}
+	}
 
+	// Compute total catch mortality (ct)
+	for(i = 1; i<= nCtNobs; i++)
+	{
+		int iyr  = dCatchData(i)(1);
+		if (iyr < syr) continue;
+		if (iyr > nyr) continue;
+		ct(iyr) += dCatchData(i)(7);
+	}
+	
+	// exploitatoin rate
+	ut = elem_div(ct,bt);
+	return(ut);
+	
   	/**
   	Purpose:  This routine gets called from the PRELIMINARY_CALCS_SECTION if the 
   	          user has specified the -sim command line option.  The random seed
@@ -5035,8 +4839,9 @@ FUNCTION dvector ifdSelex(const dvector& va, const dvector& ba, const double& mp
   }
 
 REPORT_SECTION
-  
-  	cout<<"You got here"<<endl;
+  	dvector ut = getExploitationRate();
+  	
+
 	if(verbose)cout<<"Start of Report Section..."<<endl;
 	report<<DataFile<<endl;
 	report<<ControlFile<<endl;
@@ -5053,8 +4858,10 @@ REPORT_SECTION
 	dvector steepness=value(theta(2));
 	REPORT(steepness);
 	REPORT(m);
+	REPORT(phib);
 	// double tau = value(sqrt(1.-rho)*varphi);
 	// double sig = value(sqrt(rho)*varphi);
+	
 	REPORT(sigma_r);
 	REPORT(sig);
 	REPORT(age_tau2);
@@ -5221,6 +5028,9 @@ REPORT_SECTION
 	// |---------------------------------------------------------------------------------|
 	// |
 	// REPORT(ft);
+	//REPORT(ft_count);
+	REPORT(ft_count);
+	REPORT(ut);
 	report<<"ft"<<endl;
 	for(int ig = 1; ig <= n_ags; ig++ )
 	{
@@ -5466,10 +5276,10 @@ FUNCTION generate_new_files
 	adstring bscmddat = "cp ../lib/iscam.dat" + NewFileName +".dat";
 		system(bscmddat);
 
-	adstring bscmdctl = "cp ../lib/ iscam.ctl" + NewFileName +".ctl";
+	adstring bscmdctl = "cp ../lib/iscam.ctl" + NewFileName +".ctl";
 		system(bscmdctl);
 
-	adstring bscmdpfc = "cp ../lib/ iscam.PFC" + NewFileName +".pfc";
+	adstring bscmdpfc = "cp ../lib/iscam.PFC" + NewFileName +".pfc";
 		system(bscmdpfc);	
 
 	#endif
@@ -5479,10 +5289,10 @@ FUNCTION generate_new_files
 	adstring bscmddat = "copy ../lib/iscam.dat" + NewFileName +".dat";
 		system(bscmddat);
 
-	adstring bscmdctl = "copy ../lib/ iscam.ctl" + NewFileName +".ctl";
+	adstring bscmdctl = "copy ../lib/iscam.ctl" + NewFileName +".ctl";
 		system(bscmdctl);
 
-	adstring bscmdpfc = "copy ../lib/ iscam.PFC" + NewFileName +".pfc";
+	adstring bscmdpfc = "copy ../lib/iscam.PFC" + NewFileName +".pfc";
 		system(bscmdpfc);	
 
 	#endif

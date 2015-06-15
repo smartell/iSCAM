@@ -32,7 +32,7 @@ shinyServer(function(input,output,session){
     # 
     # Probability of falling below SB 30%
     # 
-    output$viewSSBThresholdruTable <- renderTable({
+    output$viewSSBThresholdTable <- renderTable({
       .tablePeformanceMetric(input,"P.SSB.0.30.")
     })
 
@@ -49,6 +49,25 @@ shinyServer(function(input,output,session){
     output$viewAAVTable <- renderTable({
       .tablePeformanceMetric(input,"AAV50")
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	  ## ------------------------------------------------------------ ##
     ## EQUILIBRIUM MODEL (May 7, 2015)
@@ -119,4 +138,48 @@ shinyServer(function(input,output,session){
       .meyTable(AB,xx)
 
     })
+
+
+
+    # BYCATCH
+    observe({
+      A_dmr = input$A_bycatch_dmr
+      B_dmr = input$A_bycatch_dmr
+      print(A_dmr)
+      A_bycatch = input$A_num_bycatch_total
+      B_bycatch = input$B_num_bycatch_total
+
+      A_bcm = A_dmr * A_bycatch
+      B_bcm = B_dmr * B_bycatch
+      updateNumericInput(session, paste0("A","_","num_bycatch"), value = A_bcm)
+      updateNumericInput(session, paste0("B","_","num_bycatch"), value = B_bcm)
+    })
+
+    # output$num_bycatch <- renderText({
+    #     bycatch = input$bycatch_dmr * input$num_bycatch_total
+    # })
+  #   observe({
+  #   pars <- list(getParams("A",input),getParams("B",input))
+  #   print(pars)
+  #   dmr <- input$bycatch_dmr
+  #   bct <- input$num_bycatch_total
+  #   bcm <- 8
+    
+  #   updateNumericInput(session, paste0("A","_","num_bycatch"), value = bcm)
+  #   updateNumericInput(session, paste0("B","_","num_bycatch"), value = bcm)
+
+  #   # updateNumericInput(session, "inNumber2",
+  #   #   label = paste("Number label ", x),
+  #   #   value = x, min = x-10, max = x+10, step = 5)
+  # })
+
+
+
+
+
+
+
+
+
 })
+# End of shinyServer

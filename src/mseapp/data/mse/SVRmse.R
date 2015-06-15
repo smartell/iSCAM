@@ -84,7 +84,8 @@
 	cat("Performance Metric table for ", var, "\n")
 	if(var == "t.Dt0.5")     idf = "biomass.df"
 	if(var == "t.Bt0.5")     idf = "biomass.df"
-	if(var == "P.SSB.0.20." || var == "P.SSB.0.30.") idf = "biomass.df"
+	if(var == "P.SSB.0.20.") idf = "biomass.df"
+	if(var == "P.SSB.0.30.") idf = "biomass.df"
 	if(var == "ct50"   )     idf = "catch.df" 
 	if(var == "AAV50"  )     idf = "AAV.df"
 

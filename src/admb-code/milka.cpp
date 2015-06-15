@@ -24,6 +24,7 @@
  *      |- conditionReferenceModel             [-]
  *      |- setRandomVariables                  [-]
  *      |- | getReferencePointsAndStockStatus  [-]
+ *         | harvestControlRule                [ ]
  *         | calculateTAC                      [-]
  *         | allocateTAC                       [-]
  *         | implementFisheries                [-]
@@ -111,7 +112,7 @@ void OperatingModel::runScenario(const int &seed)
     initMemberVariables();
 
     conditionReferenceModel();
-
+    
     calcMSY();
 
     setRandomVariables(seed);
@@ -151,9 +152,8 @@ void OperatingModel::runScenario(const int &seed)
         writeParameterFile(i);
         if(verbose) cout<<"writeParameterFile OK"<<endl;
 
-        // implement perfect info option
-        // if flag is 0 - write .res with true params
         runStockAssessment();
+        if(verbose) cout<<"runStockAssessment OK"<<endl;
     
     }
 
@@ -605,7 +605,7 @@ void OperatingModel::initMemberVariables()
         }
     }
 
-
+    m_ft_counter = ft_count;
     //cout<<"finished init member variables"<<endl;
 
 }
@@ -642,6 +642,7 @@ void OperatingModel::conditionReferenceModel()
         m_N(ig)(syr)(sage,nage) = 1./nsex * mfexp(tr);
         m_log_rt(ih)(syr-nage+sage,syr) = tr.shift(syr-nage+sage);
 
+        
         for(i=syr;i<=nyr;i++)
         {
             if( i>syr )
@@ -658,6 +659,8 @@ void OperatingModel::conditionReferenceModel()
             //bt(g)(i) += N(ig)(i) * d3_wt_avg(ig)(i);
         }
         m_N(ig)(nyr+1,sage) = 1./nsex * mfexp( mv.log_rbar(ih));
+        // COUT(exp(m_log_rt(ih)(syr+sage,nyr)));
+        // exit(1);
     }
 
 }
@@ -672,6 +675,7 @@ void OperatingModel::setRandomVariables(const int& seed)
 
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
+    // m_delta = 0;
 
 
     // Add autocorrelation to recruitment deviations
@@ -684,8 +688,8 @@ void OperatingModel::setRandomVariables(const int& seed)
             m_delta(g)(i) = rho * m_delta(g)(i-1) + sqrt(1.0-square(rho)) * m_delta(g)(i);
         }
     }
-    COUT(m_dTau);
-    COUT(m_delta);
+    // COUT(m_dTau);
+    // COUT(m_delta);
 }
 
 
@@ -695,6 +699,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
     {
         case 0:
             //  set reference points to true milka values
+            //  add estimation error if desired
             
             m_est_bo   = m_dBo;
             m_est_fmsy = m_fmsy;      
@@ -717,9 +722,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
-            //cout<<"TIme to goto dance"<<endl;
-            //cout<<"Fmsy = "<<m_est_fmsy<<endl;
-
+           
 
             // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
             for(int k = 1; k <= ngear; k++ )    
@@ -757,6 +760,10 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
  * stock statuts, reference points and the harvest control rule.
  * 
  * Uses a switch statement for HCR.  The HCR is set in the pcf file.
+ * 
+ * Note that the TAC is the same as the TCEY in IPHC parlance,
+ * and the FCEY should be the remaining TAC after bycatch, wastage, and other
+ * uses have been subtracted.  i.e. the directed fishery gets the leftovers.
  */
 void OperatingModel::calculateTAC()
 {
@@ -766,7 +773,7 @@ void OperatingModel::calculateTAC()
     dvector f_rate(1,nfleet);
     m_dTAC.initialize();
 
-
+    /* HARVEST CONTROL RULES*/
     for(int g = 1; g <= ngroup; g++ )
     {
         btmp = m_est_btt(g);
@@ -995,8 +1002,10 @@ void OperatingModel::implementFisheries(const int &iyr)
             // Fill m_dCatchData array with actual catches taken by each fleet.
             for(int k = 1; k <= nfleet; k++ )
             {
-                // cout<<"DFT counter +"<<ft_count<<" "<<ft_counter<<endl;
-                m_log_ft_pars(++ft_counter) = ft(k);
+                // cout<<"DFT counter +"<<ft_count<<" "<<++ft_counter<<endl;
+                // exit(1);
+                m_log_ft_pars(++ft_counter) = log( ft(k) );
+                m_ft_counter++;
                 // Calculate total mortality array.
                 for(int h = 1; h <= nsex; h++ )
                 {
@@ -1377,8 +1386,10 @@ void OperatingModel::writeParameterFile(const int& iyr)
     pfs <<"# log_ft_pars " << endl;
     
     // fishing mortality rate parameters for each gear.
-    int n = nCtNobs +(iyr-nyr)*m_nn;
-    pfs << m_log_ft_pars(1,n)  <<endl;
+    // int n = nCtNobs +(iyr-nyr)*m_nn;
+    int n = m_ft_counter;
+    cout<<m_ft_counter<<" catch rows "<<m_nCtNobs<<endl;
+    pfs << m_log_ft_pars(1,n)<<endl;
 
     pfs <<"# init_log_rec_devs:" << endl;
     pfs << mv.init_log_rec_devs  << endl;
@@ -1581,6 +1592,7 @@ void OperatingModel::runStockAssessment()
 
             #if defined __APPLE__ || defined __linux
             system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            // system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50");
             #endif
 
         break;

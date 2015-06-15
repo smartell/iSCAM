@@ -84,6 +84,8 @@
 		int m_nyrs;  // number of simulation years
 		ivector m_yr;
 
+		int m_ft_counter;
+
 		ivector m_nGearIndex;
 		ivector m_nCSex;
 		ivector m_nASex;
