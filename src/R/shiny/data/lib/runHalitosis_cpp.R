@@ -140,8 +140,8 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	            bycatch = num_bycatch)
 	cat("Running cpp equilibrium model."," Procedure ",prefix ,"\n")
 
-	mod <- 	new(Equilibrium,Stock)
-	out <-	mod$calcLifeTable(Stock)
+	mod <-  new(Equilibrium,Stock)
+	out <-  mod$calcLifeTable(Stock)
 	df  <-  mod$runModel(mp1)
 	df  <-  cbind(prefix=prefix,
 	              # ssb_limit=spr_target[1],

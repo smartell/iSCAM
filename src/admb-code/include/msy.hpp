@@ -360,7 +360,7 @@ namespace rfp {
 	template<class T, class T1, class T2, class T3>
 	void msy<T,T1,T2,T3>::calcEquilibrium(const T1 &fe)
 	{
-		//cout<<"Working on this routine"<<endl;
+		
 		int j,h,k,kk;
 		T phif = 0.0;
 		
