@@ -49,52 +49,57 @@ NumericVector plogis95_cpp (NumericVector x,double s50, double s95)
 class Equilibrium
 {
 private:
+
+	// dimensions: A: Age, G: groups, S: sex
 	int A;
 	int G;
 	int S;
 
-	double m_phiE;
-	double m_kap;
-	double m_ro;
-	double m_dmr;
-	double m_mate;
+	// incidence functions and S-R parameters
+	double m_phiE; 			//unfished SSB per recruit (phiE)
+	double m_kap; 			// recruitment compensation ratio
+	double m_ro; 			// average recruitment at unfished levels
+	double m_dmr; 			// discard mortality rate??
+	double m_mate;			// what is this?
 
-	double m_ye  ;
-	double m_fc	 ;
-	double m_ne  ;
-	double m_wbar;
-	double m_we  ;
-	double m_be  ;
-	double m_re  ;
-	double m_de  ; 
-	double m_spr ;
-	double m_ypr ;
-	double m_ye_val;
-	double m_legal;
-	double m_sublegal;
+	double m_ye  ; 			// yield in biomass
+	double m_fc	 ; 			// F_fycatch
+	double m_ne  ; 			// yield in numbers
+	double m_wbar;    		// average weight
+	double m_we  ; 			// Waste
+	double m_be  ; 			// spawning biomass
+	double m_re  ; 			// Recruitment
+	double m_de  ; 			// Discard
+	double m_spr ; 			// Spawner per recuit
+	double m_ypr ; 			// yield per recruit
+	double m_ye_val; 		// landed value
+	double m_legal; 		// Legal numbers
+	double m_sublegal; 		// sublegal numbers
 	double m_bycatch;
 
+	//counters
 	IntegerVector dim;
 	NumericVector age;
 	IntegerVector grp;
 	IntegerVector sex;
 
-	NumericVector m_la;
-	NumericVector m_sa;
-	NumericVector m_fa;
-	NumericVector m_wa;
-	NumericVector m_M;
-	NumericVector m_va;
-	NumericVector m_sc;
-	NumericVector m_sr;
-	NumericVector m_sd;
-	NumericVector m_vd;
-	NumericVector m_pg;
-	NumericVector m_pa;
-	IntegerVector m_bLegal;
+	// Age schedule information
+	NumericVector m_la; 		// length at age
+	NumericVector m_sa; 		// survival at age
+	NumericVector m_fa; 		// fecundity at age
+	NumericVector m_wa; 		// weight at age
+	NumericVector m_M; 			// natural mortality
+	NumericVector m_va; 		// vulnerability at age all
+	NumericVector m_sc; 		// catches selectivity
+	NumericVector m_sr; 		// reatined selectivity
+	NumericVector m_sd; 		// discarded selectivity
+	NumericVector m_vd; 		// vulnerability at age directed fisheries
+	NumericVector m_pg; 		// proportion of mortality for each group
+	NumericVector m_pa; 		// price at age
+	IntegerVector m_bLegal; 	// legal & sublegal catch in numbers
 
-	List m_stock;
-	List m_mp;
+	List m_stock; 				//list with stock information
+	List m_mp; 					// list with management procesure information
 public:
 	Equilibrium(List stock_);
 	~Equilibrium(){}
@@ -129,6 +134,7 @@ DataFrame Equilibrium::runModel(const List mp_)
 	m_mp = mp_;
 	calcSelectivities(m_mp);
 
+	// create objects that will be used in data frame df	
 	double bycatch = as<double>(m_mp["bycatch"]);
 	NumericVector fe = as<NumericVector>(m_mp["fe"]);
 	NumericVector   fc(fe.size());
@@ -200,8 +206,8 @@ DataFrame Equilibrium::runModel(const List mp_)
 void Equilibrium::calcEquilibrium(const double fe=0,const double bycatch=0)
 {
 	/*
-	Psuedocode:
-	1. calculate age-specific mortlaity
+	Pseudocode:
+	1. calculate age-specific mortality
 	2. calculate survivorship if fe > 0
 	3. calculate equilirbium recruitment & ssb
 	4. calculate ypr,spr,ye,de etc.
