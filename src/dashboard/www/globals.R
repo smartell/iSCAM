@@ -7,7 +7,7 @@ if(!require("ggplot2"))       install.packages("ggplot2")
 if(!require("reshape2"))      install.packages("reshape2")
 if(!require("Rcpp"))          install.packages("Rcpp")
 if(!require("markdown"))      install.packages("markdown")
-if(!require("dplyr"))         install.packages("dplyr")
+# if(!require("dplyr"))         install.packages("dplyr")
 if(!require("grid"))          install.packages("grid")
 
 

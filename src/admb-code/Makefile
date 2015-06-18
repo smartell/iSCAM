@@ -13,7 +13,14 @@ SRCS:=$(wildcard *.cpp *.c *.cc *.cxx )
 CXX:=clang++
 
 # Compiler and linker flags.
-CXXFLAGS:=-g -Wall -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  -I. -I$(ADMB_HOME)/include -I$(ADMB_HOME)/contrib/include -I/usr/include/libxml2 -Wc++11-long-long
+CXXFLAGS:=-g -Wall -D__GNUDOS__ -Dlinux -DUSE_LAPLACE  \
+	-I. \
+	-I$(ADMB_HOME)/include \
+	-I$(ADMB_HOME)/contrib/include \
+	-I/usr/include/libxml2 \
+	-std=c++11                                   \
+    -stdlib=libc++
+
 LDFLAGS:=
 
 # Release specific flags.
