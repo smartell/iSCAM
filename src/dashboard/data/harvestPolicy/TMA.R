@@ -19,8 +19,8 @@ winf  <- 100 				# maximum avetage weigth
 k     <- 1.5 * m 			# vb k
 ahat  <- 11.5  			
 ghat  <- 1.5
-s1    <- c( 8.0, 5.0)
-s2    <- c( 1.2, 0.2)
+s1    <- c( 8.0, 3.0)
+s2    <- c( 1.2, 1.2)
 s3    <- c( 0.0, 0.1)
 ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
@@ -163,24 +163,26 @@ equilibriumModel <- function(fe)
 	}
 
 	# Jacobian for SPR
-	dspr <- matrix(nrow=ng,ncol=ng)
-	for (k in gear) 
-	{
-		for (kk in gear) 
-		{
-			if(k == kk)
-			{
-				dspr[k,kk] = dphi.e[k] * phi.e
-			}
-			else
-			{
-				dspr[k,kk] = dphi.e[kk]
-			}
-		}
-	}
-	dspr   <-   dspr / phi.E
-	invJ   <- - solve(dspr)
-	fstp   <-   (spr*tma_allocation-target_spr) %*% invJ
+	dspr <- dphi.e
+	print(dspr)
+	# dspr <- matrix(nrow=ng,ncol=ng)
+	# for (k in gear) 
+	# {
+	# 	# for (kk in gear) 
+	# 	# {
+	# 	# 	if(k == kk)
+	# 	# 	{
+	# 	# 		dspr[k,kk] = dphi.e[k] * phi.e
+	# 	# 	}
+	# 	# 	else
+	# 	# 	{
+	# 	# 		dspr[k,kk] = dphi.e[kk]
+	# 	# 	}
+	# 	# }
+	# }
+	# dspr   <-   dspr / phi.E
+	# invJ   <- - solve(dspr)
+	# fstp   <-   (spr*tma_allocation-target_spr) %*% invJ
 	
 	# print(jacobi)
 
@@ -197,6 +199,7 @@ equilibriumModel <- function(fe)
 	# cat("\n ye = ", round(ye,3))
 
 	out <- c("spr"   = spr,
+	         "dspr"  = dspr,
 	         "ypr"   = as.double(ypr),
 	         "yield" = as.double(ye)
 	         )
@@ -205,12 +208,22 @@ equilibriumModel <- function(fe)
 
 
 equilibriumModel(fe)
-fd <- seq(0,0.6,by=0.02)
-fb <- seq(0,0.6,by=0.02)
+fd <- seq(0,0.2,by=0.01)
+fb <- seq(0,0.4,by=0.01)
 fs <- expand.grid(fd,fb)
 names(fs) <- c("F.d","F.b")
 
 EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+
+s1    <- c( 9.0, 3.0)
+s2    <- c( 0.2, 1.2)
+s3    <- c( 0.0, 0.1)
+EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+
+s1    <- c( 8.0, 9.0)
+s2    <- c( 1.2, 1.2)
+s3    <- c( 0.0, 0.1)
+EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
 
 
@@ -225,19 +238,27 @@ df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
 p <- ggplot(df)
 p <- p + geom_area(aes(x=age,y=lx*fa),alpha=0.3,fill="black")
 p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
+p <- p + labs(x="Age",y="Spawning biomass per recruit")
 print(p)
 
 
 p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
-p <- p + stat_contour(breaks=spr_brk,aes(color=..level..))
-p <- p + stat_contour(breaks=0.35,colour="red")
+p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
+p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
+p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
 print(p)
 
 # not sure what this is good for.
+br <- seq(2,10,by=1)
 p <- ggplot(EQM) 
-p <- p + stat_contour(aes(F.d,F.b,z=yield1,color=..level..))
-p <- p + stat_contour(aes(F.d,F.b,z=yield2,size =..level..),alpha=0.3)
+p <- p + stat_contour(aes(F.d,F.b,z=yield1,color =..level..),breaks=br,alpha=0.1)
+p <- p + stat_contour(aes(F.d,F.b,z=yield2,size =..level..),breaks=br,alpha=0.1)
 p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
+p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield1,color=..level..),breaks=br,size=1.5)
+p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield2,size=..level..),breaks=br,alpha=0.5)
+p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
 # p <- p + stat_contour(breaks=0.35,colour="red")
 p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Removals",size="Bycatch")
 print(p)
@@ -245,9 +266,10 @@ print(p)
 p <- ggplot(EQM)
 p <- p + stat_contour(aes(F.d,F.b,z=yield1+yield2,col=..level..))
 p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
+p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Yield")
 print(p)
 
-p <- ggplot(EQM,aes(spr,yield1,color=factor(F.b))) + geom_line()
+# p <- ggplot(EQM,aes(spr,yield1,color=factor(yield2))) + geom_line()
 
 # v <- ggplot(SPR,aes(Halibut.Fishery,Bycatch.Fishery,z=SPR)) 
 # v <- v + stat_contour(breaks=seq(0.05,0.50,by=0.05))
