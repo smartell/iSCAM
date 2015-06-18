@@ -1,5 +1,5 @@
 if(!require("shinydashboard"))      install.packages("shinydashboard")
-source('./www/globals.R')
+# source('./www/globals.R')
 source('helpers.R')
 server <- 
 shinyServer(function(input, output, session){

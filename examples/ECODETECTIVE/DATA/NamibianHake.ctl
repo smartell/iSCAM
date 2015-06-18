@@ -75,6 +75,25 @@
 	1         # 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 1965
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## TIME VARYING NATURAL MORTALIIY RATES                                                 ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## TYPE: 
+##      0 = constant natural mortality
+##      1 = Random walk (deviates constrained by variance in M)
+##      2 = Cubic Spline (deviates constrined by nodes & node-placement)
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+  0
+## Phase of estimation
+  3
+## STDEV in m_dev for Random walk
+  0.01
+## Number of nodes for cubic spline
+  1
+## Year position of the knots (vector must be equal to the number of nodes)
+  1980
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+
 ##
 ##
 ##
@@ -91,7 +110,6 @@
 0					# -prior sd
 ## ------------------------------------------------------------------------- ##
 ##
-
 ## ------------------------------------------------------------------------- ##
 ## OTHER MISCELANEOUS CONTROLS                                               ##
 ## ------------------------------------------------------------------------- ##

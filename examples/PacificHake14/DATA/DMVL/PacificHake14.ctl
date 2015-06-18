@@ -21,7 +21,7 @@
 	1.9   			-5.0    15      1 		0     -5.0    		15   		#log_avgrec  ##
 	1.0   			-5.0    15      1 		0     -1.0    		4.0   		#log_recinit ##
 	0.03764649		 0.01   0.999   4 		3     5.98   		155.98 		#rho         ##
-	0.4909967		 0.01 	10.0    3 		4 	  1.01 			1.01 			#vartheta    ##
+	0.4909967		 0.01 	10.0    3 		4 	  1.01 			1.01 		#sigma_r    ##
 ## ------------------------------------------------------------------------- ##
 ##
 ## ------------------------------------------------------------------------- ##
@@ -73,12 +73,31 @@
 	150  	200			# 7  -Penalty wt for 2nd differences w=1/(2*sig^2)
 	50.0  	200			# 8  -Penalty wt for dome-shaped w=1/(2*sig^2)
 	50.0 	1.0			# 9  -Penalty wt for time-varying selectivity
-	2 	    1         	# 10 -n_sel_blocks (number of selex blocks)
+	1 	    1         	# 10 -n_sel_blocks (number of selex blocks)
 ## ------------------------------------------------------------------------- ##
 ## Start year of each time block: 1 row for each gear
-1966  1991
+1966 
 1966
 ## 
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## TIME VARYING NATURAL MORTALIIY RATES                                                 ##
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+## TYPE: 
+##      0 = constant natural mortality
+##      1 = Random walk (deviates constrained by variance in M)
+##      2 = Cubic Spline (deviates constrined by nodes & node-placement)
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+  0
+## Phase of estimation
+  3
+## STDEV in m_dev for Random walk
+  0.01
+## Number of nodes for cubic spline
+  1
+## Year position of the knots (vector must be equal to the number of nodes)
+  1966
+## ———————————————————————————————————————————————————————————————————————————————————— ##
+##
 ##
 ## 
 ## ------------------------------------------------------------------------- ##
@@ -99,7 +118,7 @@
 ## ------------------------------------------------------------------------- ##
 0           # 1  -verbose ADMB output (0=off, 1=on)
 1           # 2  -recruitment model (1=beverton-holt, 2=ricker)
-0.05       	# 3  -std in observed catches in first phase.
+1.0       	# 3  -std in observed catches in first phase.
 0.01    	# 4  -std in observed catches in last phase.
 0           # 5  -Assume unfished in first year (0=FALSE, 1=TRUE)
 0.00        # 6  -Minimum proportion to consider in age-proportions for dmvlogistic
@@ -111,7 +130,7 @@
 12          # 12 -number of estimated nodes for deviations in natural mortality
 0.0         # 13 -fraction of total mortality that takes place prior to spawning
 0           # 14 -number of prospective years to add to syr.
-1           # 15 -switch for IFD distribution in selectivity simulations
+0           # 15 -switch for IFD distribution in selectivity simulations
 ##
 ## ------------------------------------------------------------------------- ##
 ## MARKER FOR END OF CONTROL FILE (eofc)
