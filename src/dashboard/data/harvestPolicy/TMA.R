@@ -9,20 +9,20 @@
 library(ggplot2)
 
 
-A     <- 50				# Plus group Age
-ro    <- 1.0             # unfished equilibrium recruitment
-h     <- 0.75			# steepness of the B-H SRR
+A     <- 50				 	# Plus group Age
+ro    <- 1.0             	# unfished equilibrium recruitment
+h     <- 0.75			 	# steepness of the B-H SRR
 kappa <- 4.0 * h / (1.0 - h)
-m     <- 0.15			# instantaneous natural mortality rate
-age   <- 1:A
-winf  <- 100
-k     <- 1.5 * m
-ahat  <- 11.5
+m     <- 0.15			 	# instantaneous natural mortality rate
+age   <- 1:A 				# age sequence
+winf  <- 100 				# maximum avetage weigth
+k     <- 1.5 * m 			# vb k
+ahat  <- 11.5  			
 ghat  <- 1.5
 s1    <- c( 8.0, 5.0)
 s2    <- c( 1.2, 0.2)
 s3    <- c( 0.0, 0.1)
-ng    <- length(s1)
+ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
 
 
@@ -52,9 +52,7 @@ phi.E <- as.double(lx %*% fa)
 
 # 
 # FISHERIES SELECTIVITY
-# 
-
-# 
+#  
 # exponential logistic curve from Grant Thompson.
 # 
 gplogis <- function(x,a,b,g)
