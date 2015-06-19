@@ -165,8 +165,8 @@ equilibriumModel <- function(fe)
 	}
 
 	# Jacobian for SPR
-	dspr <- dphi.e
-	print(dspr)
+	dspr <- dphi.e / phi.E
+	print(dspr[1]/dspr[2])
 	# dspr <- matrix(nrow=ng,ncol=ng)
 	# for (k in gear) 
 	# {
@@ -243,6 +243,11 @@ p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
 p <- p + labs(x="Age",y="Spawning biomass per recruit")
 print(p)
 
+p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
+p <- p + stat_contour(alpha=0.5,aes(color=..level..))
+p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
+p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
+print(p)
 
 p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
 p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
