@@ -70,38 +70,38 @@ OperatingModel::OperatingModel(ModelVariables _mv,int argc,char * argv[])
  * that the equilibrium MSY-based reference points are calcualted correctly.
  * 
  */
-void OperatingModel::checkMSYcalcs()
-{
-    dvector tmp_tau = m_dTau;
-    m_dTau = 0;
-
-
-    readMSEcontrols();
-
-    initParameters();
-
-    initMemberVariables();
-
-    conditionReferenceModel();
-
-    calcMSY();
-
-    for(int i = nyr+1; i <= m_nPyr; i++ )
-    {
-        calculateTAC();
-        
-        calcTotalMortality(i);
-
-        implementFisheries(i);
-
-        updateReferenceModel(i);
-    }
-    // COUT(m_sbt);
-    // COUT(m_d3_Ct);
-
-
-    m_dTau = tmp_tau;
-}
+//void OperatingModel::checkMSYcalcs()
+//{
+//    dvector tmp_tau = m_dTau;
+//    m_dTau = 0;
+//
+//
+//    readMSEcontrols();
+//
+//    initParameters();
+//
+//    initMemberVariables();
+//
+//    conditionReferenceModel();
+//
+//    calcMSY();
+//
+//    for(int i = nyr+1; i <= m_nPyr; i++ )
+//    {
+//        calculateTAC();
+//        
+//        calcTotalMortality(i);
+//
+//        implementFisheries(i);
+//
+//        updateReferenceModel(i);
+//    }
+//    // COUT(m_sbt);
+//    // COUT(m_d3_Ct);
+//
+//
+//    m_dTau = tmp_tau;
+//}
 
 void OperatingModel::runScenario(const int &seed)
 {
@@ -178,10 +178,11 @@ void OperatingModel::calcMSY()
     m_msy.allocate(1,ngroup,1,nfleet);
     m_bmsy.allocate(1,ngroup);
     m_fmsy.allocate(1,ngroup,1,nfleet);
+    m_bo.allocate(1,ngroup);
     m_msy.initialize();
     m_fmsy.initialize();
     m_bmsy.initialize();
-
+    m_bo.initialize();
 
     /* Fecundity at age and natural mortality*/
     dmatrix fa_bar(1,n_ags,sage,nage);
@@ -225,6 +226,9 @@ void OperatingModel::calcMSY()
         m_fmsy(g) = cMSY.getFmsy(dftry,d_ak);
         m_bmsy(g) = cMSY.getBmsy();
         m_msy(g)  = cMSY.getMsy();
+        m_bo(g)   = cMSY.getBo();
+
+        //add in get.bo;
         cMSY.print();
     }
 }
@@ -240,7 +244,10 @@ void OperatingModel::readMSEcontrols()
     if(verbose) cout<<"MSE Control file\n"<<ProcedureControlFile<<endl;
     if(verbose) cout<<"MSE Scenario file\n"<<ScenarioControlFile<<endl;
 
+    
     cifstream ifs_mpc(ProcedureControlFile);
+    
+    // Terminal year of projection.
     ifs_mpc >> m_nPyr;
 
     //assessment option
@@ -292,10 +299,7 @@ void OperatingModel::readMSEcontrols()
         cout<<eof<<endl;
         ad_exit(1);
     }
-    //cout<<"finished MSE controls"<<endl;
-
-
-
+    cout<<"finished MSE controls"<<endl;
 
 
 
@@ -331,7 +335,6 @@ void OperatingModel::readMSEcontrols()
     ifs_scn >> m_SAA_flag;
     
 
-
     // End of file
     int eof_scn=0;
     ifs_scn >> eof_scn;
@@ -352,15 +355,14 @@ void OperatingModel::initParameters()
 {
 
     // Initializing data members
-    m_nNyr = nyr; // needs to be updated for each year inside the mse loop do we need this here??
+    m_nNyr = nyr; // needs to be updated for each year inside the mse loop.
     m_irow = nCtNobs; // counter for current number of rows in the catch table.
     m_nyrs = m_nPyr - m_nNyr;
     
     m_yr.allocate(1,m_nPyr-syr+1);
     m_yr.fill_seqadd(syr,1);
 
-    // needs to be updated for each year in the mse loop
-
+    
     // m_nn is a counter for the number of rows of catch data that will be
     // added to the data file each year.
     m_nn = 0;
@@ -701,12 +703,14 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             //  set reference points to true milka values
             //  add estimation error if desired
             
-            m_est_bo   = m_dBo;
+            // need to calculate reference point using the msy function
+
+            m_est_bo   = m_bo;
             m_est_fmsy = m_fmsy;      
             m_est_msy  = m_msy;       
             m_est_bmsy = m_bmsy;      
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
-            m_est_btt  = m_bt(iyr)(1,ngroup);;
+            m_est_btt  = m_bt(iyr)(1,ngroup);
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
@@ -733,6 +737,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
 
                 }
             }
+
             //exit(1);
         break;
 
@@ -788,8 +793,6 @@ void OperatingModel::calculateTAC()
         }
         
         
-
-
         switch( int(m_nHCR) )
         {
             case 1: // Constant harvest rate

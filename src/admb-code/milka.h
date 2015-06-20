@@ -159,6 +159,7 @@
 		dvector m_dbeta;
 		dvector m_q;
 		dvector m_bmsy;
+		dvector m_bo;
 		dmatrix m_fmsy;
 		dmatrix m_msy;
 
