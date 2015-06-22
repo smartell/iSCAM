@@ -11,16 +11,18 @@ G       <- exp(G)/rowSums(exp(G))
 
 
 A   <- 5
+nB  <- A * nArea
 age <- 1:A
 m   <- 0.85
 lx  <- exp(-m)^(age-min(age)); lx[A] <- lx[A]/(1-exp(-m))
-S   <- matrix(0,A,A)
-r   <- c(1,rep(0,length=A-1))
+S   <- matrix(0,nB,nB)
+aG  <- matrix(0,A,A)
+r   <- rep(c(1,rep(0,length=A-1)),nArea)
 
 # survival
-for (i in age) 
+for (i in 1:nB) 
 {
-  if(i < max(age))
+  if(i %% A)
     S[i,i+1] = exp(-m)
   else
     S[i,i] = exp(-m)

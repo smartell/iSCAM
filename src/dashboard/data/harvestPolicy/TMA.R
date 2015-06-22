@@ -15,8 +15,9 @@ h     <- 0.75			# steepness of the B-H SRR
 kappa <- 4.0 * h / (1.0 - h)
 m     <- 0.15			# instantaneous natural mortality rate
 age   <- 1:A
+mx    <- rep(m,length=A)
 winf  <- 100
-k     <- 1.5 * m
+vbk   <- 1.5 * m
 ahat  <- 11.5
 ghat  <- 1.5
 s1    <- c( 8.0, 3.0)
@@ -25,6 +26,14 @@ s3    <- c( 0.0, 0.1)
 ng    <- length(s1)
 gear  <- 1:ng
 
+
+# 
+# Age-dependent natural mortality (Lorenzen)
+# 
+t1 <- exp(vbk*(age+2))-1
+t2 <- exp(vbk*(age+1))-1
+sa <- (t1/t2)^(-m/k)
+mx=m/vbk*(log(t1)-log(t2))
 
 # 
 # MANAGEMENT CONTROLS
@@ -38,10 +47,13 @@ slim           <- c(32,580)
 # 
 # AGE-SCHEDULE INFORMATION
 # 
-wa    <- winf*(1-exp(-k*age))^3
+wa    <- winf*(1-exp(-vbk*age))^3
 ma    <- plogis(age,ahat,ghat)
 fa    <- wa * ma
-lx    <- exp(-m)^(age-min(age)); lx[A] <- lx[A]/(1-exp(-m))
+lx    <- rep(1,length=A)
+for(i in 2:A)
+	lx[i] <- lx[i-1] * exp(-mx[i-1])
+lx[A] <- lx[A]/(1-exp(-mx[A]))
 va    <- matrix(nrow=ng,ncol=A)
 qa    <- matrix(nrow=ng,ncol=A)
 dlz   <- matrix(nrow=ng,ncol=A)
@@ -71,7 +83,8 @@ for(k in gear)
 {
 	va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
 }
-za <- m + colSums(fe*va)
+# za <- m + colSums(fe*va)
+za <- mx + colSums(fe*va)
 sa <- exp(-za)
 oa <- 1.0 - sa
 lz <- rep(1,length=A) 
@@ -109,7 +122,8 @@ equilibriumModel <- function(fe)
 	{
 		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
 	}
-	za <- m + colSums(fe*va)
+	# za <- m + colSums(fe*va)
+	za <- mx + colSums(fe*va)
 	sa <- exp(-za)
 	oa <- 1.0 - sa
 	lz <- rep(1,length=A) 
@@ -215,6 +229,9 @@ fb <- seq(0,0.4,by=0.01)
 fs <- expand.grid(fd,fb)
 names(fs) <- c("F.d","F.b")
 
+s1    <- c( 8.0, 3.0)
+s2    <- c( 1.2, 1.2)
+s3    <- c( 0.0, 0.1)
 EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
 s1    <- c( 9.0, 3.0)
@@ -222,8 +239,8 @@ s2    <- c( 0.2, 1.2)
 s3    <- c( 0.0, 0.1)
 EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
-s1    <- c( 8.0, 9.0)
-s2    <- c( 1.2, 1.2)
+s1    <- c( 8.0, 2.0)
+s2    <- c( 1.2, 3.2)
 s3    <- c( 0.0, 0.1)
 EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
@@ -243,16 +260,17 @@ p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
 p <- p + labs(x="Age",y="Spawning biomass per recruit")
 print(p)
 
-p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
-p <- p + stat_contour(alpha=0.5,aes(color=..level..))
-p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
-p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
-print(p)
+# p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
+# p <- p + stat_contour(alpha=0.5,aes(color=..level..))
+# p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
+# p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
+# print(p)
 
 p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
 p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
 p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
 p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
 p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
 print(p)
 
@@ -281,8 +299,19 @@ print(p)
 # v <- ggplot(SPR,aes(Halibut.Fishery,Bycatch.Fishery,z=SPR)) 
 # v <- v + stat_contour(breaks=seq(0.05,0.50,by=0.05))
 
-
-
+plot.va <- function()
+{
+	for(k in gear)
+	{
+		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
+	}
+	df  <- data.frame(Age=age,"Directed"=va[1,],"Bycatch"=va[2,])
+	mdf <- melt(df,id.vars="Age")
+	p <- ggplot(mdf) + geom_line(aes(Age,value,col=variable))
+	p <- p + labs(x="Age",y="Selectivity-at-age")
+	print(p)
+}
+m
 
 
 

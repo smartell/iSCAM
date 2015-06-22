@@ -10,7 +10,10 @@ wd <- getwd()
 
 readOutput <- function(d)
 {
-  return(read.admb(file.path(d,"iscam")));
+	A <- read.admb(file.path(d,"iscam"))
+	B <- read.rep(file.path(d,"milka.rep"))
+	C <- c(A,B)
+	return( C );
 }
 
 mse.dirs <- dir("../DATA",recursive=FALSE,pattern="^mse_",full.names=TRUE)

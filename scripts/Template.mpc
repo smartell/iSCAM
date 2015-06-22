@@ -16,9 +16,9 @@ none
 ## m_nHCR # Harvest Control Rule Type.
 1
 ## B_threshold (Depleletion level)
-0
+0.10
 ## B_limit     (Depletion level)
-0
+0.40
 ## Max_F (Don't allow target F to exceed this value)
 0.2
 ##
