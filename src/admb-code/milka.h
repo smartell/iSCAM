@@ -87,6 +87,7 @@
 		int m_ft_counter;
 
 		ivector m_nGearIndex;
+		ivector m_nCType;
 		ivector m_nCSex;
 		ivector m_nASex;
 		dvector m_nATau;
@@ -217,7 +218,7 @@
 		void conditionReferenceModel();
 		void setRandomVariables(const int &seed);
 		void getReferencePointsAndStockStatus(const int& iyr);
-		void calculateTAC();
+		void calculateTAC(const int& iyr);
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);
 		void calcTotalMortality(const int& iyr);

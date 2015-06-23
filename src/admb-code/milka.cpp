@@ -122,7 +122,7 @@ void OperatingModel::runScenario(const int &seed)
         getReferencePointsAndStockStatus(i);
         if(verbose) cout<<"getReferencePointsAndStockStatus OK"<<endl;
 
-        calculateTAC();
+        calculateTAC(i);
         if(verbose) cout<<"calculateTAC OK"<<endl;
 
         allocateTAC(i);
@@ -268,14 +268,16 @@ void OperatingModel::readMSEcontrols()
     ifs_mpc >> m_maxf;
 
     m_nGearIndex.allocate(1,ngear);
+    m_nCType.allocate(1,ngear);
     m_nCSex.allocate(1,ngear);
     m_nASex.allocate(1,ngear);
     m_nAGopen.allocate(1,ngear,1,narea);
     
     // Controls for sexing catch and comps and fishing in given areas.
-    dmatrix tmp(1,ngear,-7,narea);
+    dmatrix tmp(1,ngear,-8,narea);
     ifs_mpc >> tmp;
-    m_nGearIndex = ivector(column(tmp,-7));
+    m_nGearIndex = ivector(column(tmp,-8));
+    m_nCType      = ivector(column(tmp,-7));
     m_nCSex      = ivector(column(tmp,-6));
     m_nASex      = ivector(column(tmp,-5));
     m_nATau      = column(tmp,-4);
@@ -454,15 +456,16 @@ void OperatingModel::initParameters()
     }
     
     // TODO: allow user to specify observation error
+    // TODO: Also needs to clarify meaning of rho, varphi, sigma and tau.
     // initializing population parameters
     m_dRo        = exp(mv.log_ro);
     m_dBo        = mv.sbo;
     m_dSteepness = mv.steepness;
     m_dM         = exp(mv.m);
-    m_dRho       = mv.rho;    // now autocorrelation
-    m_dVarphi    = mv.varphi; //sqrt(1.0/mv.varphi);
-    m_dSigma     = 0.2 * mv.varphi;//elem_prod(sqrt(m_dRho) , m_dVarphi);
-    m_dTau       = m_dVarphi; //elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
+    m_dRho       = mv.rho;    	 	//autocorrelation
+    m_dVarphi    = mv.varphi; 	 	//sqrt(1.0/mv.varphi);
+    m_dSigma     = 0.2 * mv.varphi; //elem_prod(sqrt(m_dRho) , m_dVarphi);
+    m_dTau       = m_dVarphi; 		//elem_prod(sqrt(1.0-m_dRho) , m_dVarphi);
 
     m_dRbar.allocate(1,n_ag);
     m_dRinit.allocate(1,n_ag);
@@ -770,7 +773,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
  * and the FCEY should be the remaining TAC after bycatch, wastage, and other
  * uses have been subtracted.  i.e. the directed fishery gets the leftovers.
  */
-void OperatingModel::calculateTAC()
+void OperatingModel::calculateTAC(const int& iyr)
 {
     double btmp;
     double sbt;
@@ -822,35 +825,71 @@ void OperatingModel::calculateTAC()
     dvector ba(sage,nage);
     dvector va(sage,nage);
     dvector ca(sage,nage);
+    dvector caw(sage,nage);
     dvector za(sage,nage);
 
-    // Todo: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
+    // TODO: Check this routine below, not sure if it will work for multi-sex,multiarea multifleet.
     // Working here, need to implement the Baranov
     // Catch equation to calculate the m_dTAC for group g.
-    // cout<<"I'm Here "<<endl;
+   
+   	ca.initialize();
+   	caw.initialize();
     ba.initialize();
     m_dTAC.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
     {
         //int f = n_area(ig);
         int g = n_group(ig);
-        //int h = n_sex(ig);
+        int h = n_sex(ig);
 
         va  = exp(m_est_log_sel(ig));
-        // cout<<"And made it to here"<<endl;
+       
         ba  = elem_prod(m_est_N(ig),m_est_wa(ig));
+
 
         for( k = 1; k <= nfleet; k++ )
         {
-            za  = m_est_M(ig) + f_rate(k)*va;
-            ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
+        	switch(m_nCType(nFleetIndex(k)))
+        	{
+        		case 1:
+            	za  = m_est_M(ig) + f_rate(k)*va;
+            	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
+        		m_dTAC(g)(k) = ca;
+        		break;
+
+        		case 2:
+            	za  = m_est_M(ig) + f_rate(k)*va;
+            	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),m_est_N(ig));
+        		m_dTAC(g)(k) = ca;
+        		break;
+
+        		case 3:  // roe fisheries, special case ****UNTESTED****
+					if( h )
+					{
+						double ssb = m_est_N(ig) * m_d3_wt_mat(ig)(iyr);
+						ca        = (1.-exp(-f_rate(k))) * ssb;
+
+					}
+					else if( !h )
+					{
+						for(h=1;h<=nsex;h++)
+						{						
+							double ssb = m_est_N(ig)* m_d3_wt_mat(ig)(iyr);
+							ca        += (1.-exp(-f_rate(k))) * ssb;
+							
+						}
+					}
+					m_dTAC(g)(k) = ca;
+			break;
+        	}
+            
         }
 
-        m_dTAC(g) += sum(ca);
+        
+
+        //m_dTAC(g) += sum(ca);
     }
 
-    // cout<<m_nHCR<<endl;
-    // exit(1);
 }
 
 
@@ -876,7 +915,7 @@ void OperatingModel::allocateTAC(const int& iyr)
                     m_dCatchData(irow,3) = f;
                     m_dCatchData(irow,4) = g;
                     m_dCatchData(irow,5) = h;
-                    m_dCatchData(irow,6) = 1;             //TODO: Fix this catch type
+                    m_dCatchData(irow,6) = m_nCType(nFleetIndex(k));             //TODO: Fix this catch type -  specified by user or inherited by iSCAM
                     m_dCatchData(irow,7) = m_dTAC(g)(k);  // TODO: call a manager!
                 }
                 if(h)
@@ -1039,7 +1078,7 @@ void OperatingModel::implementFisheries(const int &iyr)
                         m_dCatchData(m_irow,3) = f;
                         m_dCatchData(m_irow,4) = g;
                         m_dCatchData(m_irow,5) = hh>0?h:0;
-                        m_dCatchData(m_irow,6) = 1;  //TODO: set type of catch
+                        m_dCatchData(m_irow,6) = 1;  	 //TODO: set type of catch
                         m_dCatchData(m_irow,7) = hh>0?_hCt(h,k):colsum(_hCt)(k);
                         m_dCatchData(m_irow,8) = 0.02;  //TODO: add real log_se for catch obs.
 
