@@ -680,6 +680,9 @@ void OperatingModel::setRandomVariables(const int& seed)
 
     m_delta.allocate(1,ngroup,nyr-sage,m_nPyr);
     m_delta.fill_randn(rng);
+
+    m_psi.allocate(1,ngroup,nyr+1,m_nPyr);
+    m_psi.fill_randn(rng);
     // m_delta = 0;
 
 
@@ -743,8 +746,55 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
 
             //exit(1);
         break;
-
+        
         case 1:
+        	//Btrue*exp(log(se) of stock assessment error ~ 0.1 for now). 
+        	// I’d also add a “Kalman gain” ~ 0.75 to represent the potential auto correlation inassessment errors.
+
+
+        	//aqui
+        	m_est_bo   = m_bo;
+            m_est_fmsy = m_fmsy;      
+            m_est_msy  = m_msy;       
+            m_est_bmsy = m_bmsy; 
+
+            for(int g=1; g<=ngroup;g++)
+            {
+            	m_est_sbtt(g) = m_sbt(iyr)(g) * exp(m_psi(g)(iyr)*0.1);
+            	m_est_btt(g)  = m_bt(iyr)(g) * exp(m_psi(g)(iyr)*0.1);
+            }     
+            
+            
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_N(ig)(sage,nage) = m_N(ig)(iyr)(sage,nage);
+            }
+            
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr)(sage,nage);
+            }       
+
+            for(int ig = 1; ig <= n_ags; ig++ )
+            {
+                m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
+            }       
+           
+
+            // 4darray log_sel(1,ngear,1,n_ags,syr,nyr,sage,nage);
+            for(int k = 1; k <= ngear; k++ )    
+            {
+                for(int ig = 1; ig <= n_ags; ig++ )
+                {
+                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
+
+                }
+            }
+
+
+        break;
+        
+        case 2:
             // read iscam.res file to get this information.
             cifstream ifs("iSCAM.res");
             ifs >> m_est_bo;
@@ -854,13 +904,13 @@ void OperatingModel::calculateTAC(const int& iyr)
         		case 1:
             	za  = m_est_M(ig) + f_rate(k)*va;
             	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
-        		m_dTAC(g)(k) = ca;
+        		m_dTAC(g)(k) += sum(ca);
         		break;
 
         		case 2:
             	za  = m_est_M(ig) + f_rate(k)*va;
             	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),m_est_N(ig));
-        		m_dTAC(g)(k) = ca;
+        		m_dTAC(g)(k) += sum(ca);
         		break;
 
         		case 3:  // roe fisheries, special case ****UNTESTED****
@@ -879,7 +929,7 @@ void OperatingModel::calculateTAC(const int& iyr)
 							
 						}
 					}
-					m_dTAC(g)(k) = ca;
+					m_dTAC(g)(k) += sum(ca);
 			break;
         	}
             
@@ -1632,14 +1682,19 @@ void OperatingModel::runStockAssessment()
         case 0:
             cout<<"Perfect information scenario "<<m_nSeed<<endl;
 
-            #if defined __APPLE__ || defined __linux
-            system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
+            // I'm not sure you need to run iscam
+            //#if defined __APPLE__ || defined __linux
+            //system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50 >/dev/null 2>&1");
             // system("./iscam -ind mseRUN.dat -maxfn 0 -nox -nohess -ainp TRUE.par -phase 50");
-            #endif
+            //#endif
 
         break;
         
-        case 1:        
+        case 1:
+        	 cout<<"running assessment errors scenario"<<endl;
+        break;	 
+
+        case 2:        
             cout<<"running stock assessment"<<endl;
 
             #if defined __APPLE__ || defined __linux
