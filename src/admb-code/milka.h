@@ -182,6 +182,8 @@
 
 		dmatrix m_sbt;
 		dmatrix m_bt;
+		dmatrix m_status;
+
 
 		int      m_nHCR;
 		dmatrix  m_dTAC;
