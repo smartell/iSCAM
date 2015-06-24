@@ -775,8 +775,6 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
         	//Btrue*exp(log(se) of stock assessment error ~ 0.1 for now). 
         	// I’d also add a “Kalman gain” ~ 0.75 to represent the potential auto correlation inassessment errors.
 
-
-        	//aqui
         	m_est_bo   = m_bo;
             m_est_fmsy = m_fmsy;      
             m_est_msy  = m_msy;       
@@ -882,22 +880,22 @@ void OperatingModel::calculateTAC(const int& iyr)
                 //double status = sbt/sbo;
                 f_rate(g) = m_est_fmsy(g);
 
-                cout<<"m_dBthreshold "<<m_dBthreshold<<endl;
-                cout<<"m_dBlimit "<<m_dBlimit<<endl;
-                 cout<<"Status "<<m_status(iyr)(g)<<endl;
+                //cout<<"m_dBthreshold "<<m_dBthreshold<<endl;
+                //cout<<"m_dBlimit "<<m_dBlimit<<endl;
+                //cout<<"Status "<<m_status(iyr)(g)<<endl;
 
                 if( (m_status(iyr)(g) < m_dBthreshold) && ( m_status(iyr)(g) >= m_dBlimit ))
                 {
                     f_rate(g) *= (m_status(iyr)(g)-m_dBlimit)/(m_dBthreshold-m_dBlimit);
-                 	cout<<"na rampa "<<endl;
-                 	cout<<"f_rate "<<f_rate<<endl;
+                 	
+                 	
 
                 }
                 else if(m_status(iyr)(g) < m_dBlimit)
                 {
                     f_rate(g) = 0;
-                    cout<<"fechou "<<endl;
                 }
+                //cout<<"f_rate "<<f_rate<<endl;
 
                 
             break;
@@ -1405,9 +1403,6 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
     // compute spawning biomass at time of spawning.
 	dvector  stmp(sage,nage); stmp.initialize();
-	
-
-	cout<<"cheguei aqui?"<<endl;
 
 	dvector tmp_sbt(1,ngroup);
 	dvector tmp_bt(1,ngroup);
@@ -1420,8 +1415,8 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 	        {
 	            int ig = pntr_ags(f,g,h);
 	            stmp = mfexp(-m_Z(ig)(iyr-sage)*d_iscamCntrl(13));
-	            tmp_sbt(g) += elem_prod(m_N(ig)(iyr-sage),m_d3_wt_mat(ig)(iyr-sage)) * stmp;
-	            tmp_bt(g)  += elem_prod(m_N(ig)(iyr-sage),m_d3_wt_avg(ig)(iyr-sage)) * stmp;                 
+	            tmp_sbt(g) += elem_prod(m_N(ig)(iyr-sage+1),m_d3_wt_mat(ig)(iyr-sage+1)) * stmp;
+	            tmp_bt(g)  += elem_prod(m_N(ig)(iyr-sage+1),m_d3_wt_avg(ig)(iyr-sage+1)) * stmp;                 
 	        }
 	    }
 	}
@@ -1466,7 +1461,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
         // add process errors assuming each area/sex has the same deviation.
         //need to undo this
-        //m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
+        m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
         // COUT(m_dTau);
         //disperse the recruits in each year 
         // assumes all groups disperse the same and prop of groups by area remain const
@@ -1482,7 +1477,6 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
     for(int ig = 1; ig <= n_ags; ig++ )
     {
-
     	int g  = n_group(ig);
         int f  = n_area(ig);
         prop_rec_g(ig)=m_N(ig)(iyr+1,sage)/tmp_rec(f);
@@ -1496,11 +1490,11 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage); 
 
 
-        cout<<"e aqui?"<<endl;
+        
         m_sbt(iyr+1,g) += sum(elem_prod(m_N(ig)(iyr+1),m_d3_wt_mat(ig)(iyr+1)));
 	    m_bt(iyr+1,g)  += sum(elem_prod(m_N(ig)(iyr+1),m_d3_wt_avg(ig)(iyr+1))); 
 
-        cout<<"e agora?"<<endl;
+  
     }
 
 
