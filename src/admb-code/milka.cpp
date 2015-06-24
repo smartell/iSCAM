@@ -520,10 +520,10 @@ void OperatingModel::initMemberVariables()
     m_est_log_sel.allocate(1,n_ags,sage,nage);
 
     //Spawning stock biomass
-    m_sbt.allocate(syr,m_nPyr,1,ngroup);m_sbt.initialize();
+    m_sbt.allocate(syr,m_nPyr+1,1,ngroup);m_sbt.initialize();
     m_sbt.sub(syr,nyr)=(trans(mv.sbt)).sub(syr,nyr);
     //total biomass
-    m_bt.allocate(syr,m_nPyr,1,ngroup);m_bt.initialize();
+    m_bt.allocate(syr,m_nPyr+1,1,ngroup);m_bt.initialize();
     m_bt.sub(syr,nyr)=(trans(mv.bt)).sub(syr,nyr);
 
     m_status.allocate(nyr+1,m_nPyr,1,ngroup);m_status.initialize();
@@ -665,13 +665,25 @@ void OperatingModel::conditionReferenceModel()
             m_N(ig)(i+1,nage)        +=  m_N(ig)(i,nage)*m_S(ig)(i,nage);
 
 
-
-
-
             // average biomass for group in year i
             //bt(g)(i) += N(ig)(i) * d3_wt_avg(ig)(i);
         }
         m_N(ig)(nyr+1,sage) = 1./nsex * mfexp( mv.log_rbar(ih));
+
+        // compute spawning biomass at beggining of the year
+        for(int f=1;f<=narea;f++)
+   		{
+        	for(int h=1;h<=nsex;h++)
+        	{
+            	for(int g = 1; g<=ngroup; g++)
+            	{
+                	int ig = pntr_ags(f,g,h);
+                  
+                	m_sbt(nyr+1,g) += sum(elem_prod(m_N(ig)(nyr+1),m_d3_wt_mat(ig)(nyr+1))); 
+                	m_bt(nyr+1,g)  += sum(elem_prod(m_N(ig)(nyr+1),m_d3_wt_avg(ig)(nyr+1)));   //QUESTION: should this line be += as well?              
+            	}
+        	}
+    	}
 
         // COUT(exp(m_log_rt(ih)(syr+sage,nyr)));
         // exit(1);
@@ -724,22 +736,25 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             m_est_fmsy = m_fmsy;      
             m_est_msy  = m_msy;       
             m_est_bmsy = m_bmsy;     
-            m_est_sbtt = m_sbt(iyr-1)(1,ngroup);
-            m_est_btt  = m_bt(iyr-1)(1,ngroup);
+            m_est_sbtt = m_sbt(iyr)(1,ngroup);
+            cout<<"m_sbt(iyr)(1,ngroup) is"<<m_sbt(iyr)(1,ngroup)<<endl;
+            m_est_btt  = m_bt(iyr)(1,ngroup);
+            cout<<"m_bt(iyr)(1,ngroup) is"<<m_bt(iyr)(1,ngroup)<<endl;
             
+
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_N(ig)(sage,nage) = m_N(ig)(iyr-1)(sage,nage);
+                m_est_N(ig)(sage,nage) = m_N(ig)(iyr)(sage,nage);
             }
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr-1)(sage,nage);
+                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr)(sage,nage);
             }       
 
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_M(ig)(sage,nage) = m_M(ig)(iyr-1)(sage,nage);
+                m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
            
 
@@ -748,7 +763,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
-                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr-1)(sage,nage);
+                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
 
                 }
             }
@@ -769,24 +784,24 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
 
             for(int g=1; g<=ngroup;g++)
             {
-            	m_est_sbtt(g) = m_sbt(iyr-1)(g) * exp(m_psi(g)(iyr-1)*0.1);
-            	m_est_btt(g)  = m_bt(iyr-1)(g) * exp(m_psi(g)(iyr-1)*0.1);
+            	m_est_sbtt(g) = m_sbt(iyr)(g) * exp(m_psi(g)(iyr-1)*0.1);
+            	m_est_btt(g)  = m_bt(iyr)(g) * exp(m_psi(g)(iyr-1)*0.1);
             }     
             
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_N(ig)(sage,nage) = m_N(ig)(iyr-1)(sage,nage);
+                m_est_N(ig)(sage,nage) = m_N(ig)(iyr)(sage,nage);
             }
             
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr-1)(sage,nage);
+                m_est_wa(ig)(sage,nage) = m_d3_wt_avg(ig)(iyr)(sage,nage);
             }       
 
             for(int ig = 1; ig <= n_ags; ig++ )
             {
-                m_est_M(ig)(sage,nage) = m_M(ig)(iyr-1)(sage,nage);
+                m_est_M(ig)(sage,nage) = m_M(ig)(iyr)(sage,nage);
             }       
            
 
@@ -795,7 +810,7 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             {
                 for(int ig = 1; ig <= n_ags; ig++ )
                 {
-                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr-1)(sage,nage);
+                    m_est_log_sel(ig)(sage,nage)= d4_logSel(k)(ig)(iyr)(sage,nage);
 
                 }
             }
@@ -837,7 +852,7 @@ void OperatingModel::calculateTAC(const int& iyr)
     double btmp;
     double sbt;
     double sbo;
-    dvector f_rate(1,nfleet);
+    dmatrix f_rate(1,ngroup,1,nfleet);
     m_dTAC.initialize();
 
     /* HARVEST CONTROL RULES*/
@@ -846,7 +861,7 @@ void OperatingModel::calculateTAC(const int& iyr)
         btmp = m_est_btt(g);
         sbt  = m_est_sbtt(g);
         sbo  = m_est_bo(g);
-        for(int k = 1; k <= nfleet; k++ )
+        for(int k = 1; k <=nfleet; k++ )
         {
             if(m_est_fmsy(g,k) > m_maxf)
             {
@@ -860,27 +875,35 @@ void OperatingModel::calculateTAC(const int& iyr)
         {
             case 1: // Constant harvest rate
                  // m_dTAC(g)  = harvest_rate * btmp;
-                f_rate = m_est_fmsy(g);
+                f_rate(g) = m_est_fmsy(g);
             break; 
 
             case 2: // Bthreshold:Blimit HCR.
                 //double status = sbt/sbo;
-                f_rate = m_est_fmsy(g);
-                if( m_status(iyr)(g) < m_dBthreshold && m_status(iyr)(g) >= m_dBlimit )
+                f_rate(g) = m_est_fmsy(g);
+
+                cout<<"m_dBthreshold "<<m_dBthreshold<<endl;
+                cout<<"m_dBlimit "<<m_dBlimit<<endl;
+                 cout<<"Status "<<m_status(iyr)(g)<<endl;
+
+                if( (m_status(iyr)(g) < m_dBthreshold) && ( m_status(iyr)(g) >= m_dBlimit ))
                 {
-                    f_rate *= (m_status(iyr)(g)-m_dBlimit)/(m_dBthreshold-m_dBlimit);
+                    f_rate(g) *= (m_status(iyr)(g)-m_dBlimit)/(m_dBthreshold-m_dBlimit);
+                 	cout<<"na rampa "<<endl;
+                 	cout<<"f_rate "<<f_rate<<endl;
+
                 }
                 else if(m_status(iyr)(g) < m_dBlimit)
                 {
-                    f_rate = 0;
+                    f_rate(g) = 0;
+                    cout<<"fechou "<<endl;
                 }
 
-                // m_dTAC(g)  = harvest_rate * btmp;
-                // cout<<"Status "<<status<<endl;
-                // cout<<harvest_rate<<endl;
-                // exit(1);
+                
             break;
+
         }
+       
     }
     
     dvector ba(sage,nage);
@@ -894,7 +917,6 @@ void OperatingModel::calculateTAC(const int& iyr)
     // Catch equation to calculate the m_dTAC for group g.
    
    	ca.initialize();
-   	caw.initialize();
     ba.initialize();
     m_dTAC.initialize();
     for(int ig = 1; ig <= n_ags; ig++ )
@@ -913,14 +935,14 @@ void OperatingModel::calculateTAC(const int& iyr)
         	switch(m_nCType(nFleetIndex(k)))
         	{
         		case 1:
-            	za  = m_est_M(ig) + f_rate(k)*va;
-            	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),ba);
+            	za  = m_est_M(ig) + f_rate(g)(k)*va;
+            	ca  = elem_prod(elem_prod(elem_div(f_rate(g)(k)*va,za),1.0-exp(-za)),ba);
         		m_dTAC(g)(k) += sum(ca);
         		break;
 
         		case 2:
-            	za  = m_est_M(ig) + f_rate(k)*va;
-            	ca  = elem_prod(elem_prod(elem_div(f_rate(k)*va,za),1.0-exp(-za)),m_est_N(ig));
+            	za  = m_est_M(ig) + f_rate(g)(k)*va;
+            	ca  = elem_prod(elem_prod(elem_div(f_rate(g)(k)*va,za),1.0-exp(-za)),m_est_N(ig));
         		m_dTAC(g)(k) += sum(ca);
         		break;
 
@@ -928,7 +950,7 @@ void OperatingModel::calculateTAC(const int& iyr)
 					if( h )
 					{
 						double ssb = m_est_N(ig) * m_d3_wt_mat(ig)(iyr);
-						ca        = (1.-exp(-f_rate(k))) * ssb;
+						ca        = (1.-exp(-f_rate(g)(k))) * ssb;
 
 					}
 					else if( !h )
@@ -936,7 +958,7 @@ void OperatingModel::calculateTAC(const int& iyr)
 						for(h=1;h<=nsex;h++)
 						{						
 							double ssb = m_est_N(ig)* m_d3_wt_mat(ig)(iyr);
-							ca        += (1.-exp(-f_rate(k))) * ssb;
+							ca        += (1.-exp(-f_rate(g)(k))) * ssb;
 							
 						}
 					}
@@ -1157,10 +1179,9 @@ void OperatingModel::implementFisheries(const int &iyr)
                 }
             }
 
-        }  // ngroup g
-    } // narea f
-    // cout<<m_dCatchData<<endl;
-    // cout<<"END"<<endl;
+        }  
+    } 
+    
     //cout<<"finished implementing fisheries"<<endl;
 
 }
@@ -1383,22 +1404,29 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 {
 
     // compute spawning biomass at time of spawning.
-    dvector  stmp(sage,nage); stmp.initialize();
+	dvector  stmp(sage,nage); stmp.initialize();
+	
 
-    for(int f=1;f<=narea;f++)
-    {
-        for(int h=1;h<=nsex;h++)
-        {
-            for(int g = 1; g<=ngroup; g++)
-            {
-                int ig = pntr_ags(f,g,h);
-                    
-                stmp      = mfexp(-m_Z(ig)(iyr)*d_iscamCntrl(13));
-                m_sbt(iyr,g) += elem_prod(m_N(ig)(iyr),m_d3_wt_mat(ig)(iyr)) * stmp;
-                m_bt(iyr,g) = elem_prod(m_N(ig)(iyr),m_d3_wt_avg(ig)(iyr)) * stmp;                 
-            }
-        }
-    }
+	cout<<"cheguei aqui?"<<endl;
+
+	dvector tmp_sbt(1,ngroup);
+	dvector tmp_bt(1,ngroup);
+
+	for(int f=1;f<=narea;f++)
+	{
+	    for(int h=1;h<=nsex;h++)
+	    {
+	        for(int g = 1; g<=ngroup; g++)
+	        {
+	            int ig = pntr_ags(f,g,h);
+	            stmp = mfexp(-m_Z(ig)(iyr-sage)*d_iscamCntrl(13));
+	            tmp_sbt(g) += elem_prod(m_N(ig)(iyr-sage),m_d3_wt_mat(ig)(iyr-sage)) * stmp;
+	            tmp_bt(g)  += elem_prod(m_N(ig)(iyr-sage),m_d3_wt_avg(ig)(iyr-sage)) * stmp;                 
+	        }
+	    }
+	}
+
+	
 
     dvector tmp_rec(1,narea);tmp_rec.initialize();
     dvector tmp_rec_dis(1,narea);tmp_rec_dis.initialize();
@@ -1417,7 +1445,7 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         // m_delta is the process error.
         
         double tmp_st;
-        tmp_st = m_sbt(iyr-sage,g);
+        tmp_st = tmp_sbt(g);
 
         switch(m_nRecType)
         {
@@ -1437,7 +1465,8 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         m_N(ig)(iyr+1,sage) = m_N(ig)(iyr+1,sage)/nsex; //* mfexp( mv.log_rbar(ih));
 
         // add process errors assuming each area/sex has the same deviation.
-        m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
+        //need to undo this
+        //m_N(ig)(iyr+1,sage) *= exp( m_dTau(g)*m_delta(g,iyr) - 0.5*square(m_dTau(g)) );
         // COUT(m_dTau);
         //disperse the recruits in each year 
         // assumes all groups disperse the same and prop of groups by area remain const
@@ -1453,6 +1482,8 @@ void OperatingModel::updateReferenceModel(const int& iyr)
 
     for(int ig = 1; ig <= n_ags; ig++ )
     {
+
+    	int g  = n_group(ig);
         int f  = n_area(ig);
         prop_rec_g(ig)=m_N(ig)(iyr+1,sage)/tmp_rec(f);
              
@@ -1463,8 +1494,15 @@ void OperatingModel::updateReferenceModel(const int& iyr)
         m_N(ig)(iyr+1)(sage+1,nage) = ++ elem_prod(m_N(ig)(iyr)(sage,nage-1)
                                                    ,st(sage,nage-1));
         m_N(ig)(iyr+1,nage)        += m_N(ig)(iyr,nage) * st(nage); 
-        
+
+
+        cout<<"e aqui?"<<endl;
+        m_sbt(iyr+1,g) += sum(elem_prod(m_N(ig)(iyr+1),m_d3_wt_mat(ig)(iyr+1)));
+	    m_bt(iyr+1,g)  += sum(elem_prod(m_N(ig)(iyr+1),m_d3_wt_avg(ig)(iyr+1))); 
+
+        cout<<"e agora?"<<endl;
     }
+
 
      //cout<<"finished updatinf ref pop"<<endl;
 }
