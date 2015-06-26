@@ -14,7 +14,7 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 # .PWD        <- "/Users/stevenmartell1/Documents/iSCAM/examples/PacificHake14/R"
-.PWD        <- "/Users/stevenmartell1/Documents/iSCAM-project/src/R"
+.PWD        <- "/Users/catarinawor/Documents/iSCAM/src/R"
 .LIB        <- "../../../src/R/lib/"
 .WIN        <- "../../../src/R/iScamWin2.txt"
 setwd(.PWD)

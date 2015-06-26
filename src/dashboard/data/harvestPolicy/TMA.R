@@ -23,7 +23,7 @@ ghat  <- 1.5
 s1    <- c( 8.0, 3.0)
 s2    <- c( 1.2, 1.2)
 s3    <- c( 0.0, 0.1)
-ng    <- length(s1)
+ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
 
 
@@ -64,9 +64,7 @@ phi.E <- as.double(lx %*% fa)
 
 # 
 # FISHERIES SELECTIVITY
-# 
-
-# 
+#  
 # exponential logistic curve from Grant Thompson.
 # 
 gplogis <- function(x,a,b,g)

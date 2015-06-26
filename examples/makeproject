@@ -13,6 +13,7 @@ mkdir -p $1/R
 
 ## copy R-code directory into ./R/
 cp ../src/R/R4iSCAM.R $1/R
+cp ../src/R/R4Milka.R $1/R
 cp ../src/R/iscamViewTracker.txt $1/R
 cp ../src/R/logo/iscamLogo.gif $1/FIGS
 

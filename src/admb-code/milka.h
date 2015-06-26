@@ -87,6 +87,7 @@
 		int m_ft_counter;
 
 		ivector m_nGearIndex;
+		ivector m_nCType;
 		ivector m_nCSex;
 		ivector m_nASex;
 		dvector m_nATau;
@@ -99,6 +100,7 @@
 		//random variables
 		dmatrix m_epsilon;  /// observation errors
 		dmatrix m_delta;    /// recruitment deviations (process errors)
+		dmatrix m_psi; 		/// assessment error
 		double  m_gamma_r;  /// recruitment autocorrelation.
 		
 		// catch arrays
@@ -159,6 +161,7 @@
 		dvector m_dbeta;
 		dvector m_q;
 		dvector m_bmsy;
+		dvector m_bo;
 		dmatrix m_fmsy;
 		dmatrix m_msy;
 
@@ -179,6 +182,8 @@
 
 		dmatrix m_sbt;
 		dmatrix m_bt;
+		dmatrix m_status;
+
 
 		int      m_nHCR;
 		dmatrix  m_dTAC;
@@ -216,7 +221,7 @@
 		void conditionReferenceModel();
 		void setRandomVariables(const int &seed);
 		void getReferencePointsAndStockStatus(const int& iyr);
-		void calculateTAC();
+		void calculateTAC(const int& iyr);
 		void allocateTAC(const int& iyr);
 		void implementFisheries(const int& iyr);
 		void calcTotalMortality(const int& iyr);

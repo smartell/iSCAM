@@ -3,7 +3,7 @@
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## m_pyr  # Terminal year of projection.
 1982
-## Stock assessment type (0=perfect information, 1= iSCAM)
+## Stock assessment type (0=perfect information, 1= add assessment errors (Walters 2004 - CJFAS 61:1061–1065), 2=iSCAM)
 0
 ## Control file (FileName, or use 'none')
 none
@@ -30,7 +30,10 @@ none
 ## 
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##|   CONTROLS FOR EACH OF THE FISHING FLEETS                                         |##
-##| - INDEX -> index for gear.
+##| - INDEX -> index for gear. 
+##| - TYPE  -> catch type: 1 = catch in weight                                         ##
+##|               		   2 = catch in numbers                                        ##
+##|              		   3 = catch in spawn (roe)                                    ##
 ##| - CSEX  -> flag for sexing catch (0=FALSE, 1=TRUE)
 ##| - ASEX  -> flag for sexing comps (0=FALSE, 1=TRUE)
 ##| - ATAU  -> sampling variance for age comps
@@ -40,8 +43,9 @@ none
 ##| - DM    -> Discard mortality rate (annual instantaneous rate).
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ##                                    		 | AREAS (1 2 3 .... narea)  1 = open, 0 = closed ##
-## INDEX CSEX ASEX ATAU   WSEX  LSLIM  USLIM  DM    | 1                                ##
-	1    0    1     0.2		0   1000   0.15    1 	  1
+## INDEX TYPE CSEX ASEX ATAU  WSEX  LSLIM  USLIM  DM    | 1                                ##
+	1 		1 	0 	1 	 0.2	0   1000   0.15    1 	  1
+
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
 ## END OF FILE MARKER 999
 ## ——————————————————————————————————————————————————————————————————————————————————— ##
