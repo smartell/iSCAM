@@ -145,11 +145,15 @@ cleanmse:
 
 RDATA='source(file.path("..","R","buildRdata.r"))'
 RPLOT='source(file.path("..","R","R4iSCAM.r"))'
+MSEPLOT='source(file.path("..","R","MSE4iSCAM.r"))'
 COLLECTALL='source(file.path("../","R","collectAll.r"))'
 SAVEMSEDF='source(file.path("../","R","saveMSEdataframe.R"))'
 
 rplot: $(CTL).RData
 	-@echo $(RPLOT) | R --vanilla --slave
+
+mseplot: $(CTL).RData
+	-@echo $(MSEPLOT) | R --vanilla --slave
 
 rdata: $(CTL).ctl
 	-@echo $(RDATA) | R --vanilla --slave
@@ -160,7 +164,7 @@ allSims.Rdata: simdone
 MSE.Rdata: 
 	-@echo $(SAVEMSEDF)  | R --vanilla --slave
 
-collect: allSims.Rdata MSE.Rdata
+collect: allSims.Rdata MSE.Rdata mseplot
 
 # target: help - Display callable targets.
 help:

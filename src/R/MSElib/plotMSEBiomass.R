@@ -5,18 +5,19 @@
 
 .MSEplotSpawnBiomass <- function( M )
 {
-	n <- length(M)
+	df <- as.data.frame(M$biomass.df)
+	
 	cat(".plotSpawnBiomass\n")
 
 	
 	if(.OVERLAY)
 	{
-		p <- ggplot(biomass.df,aes(Year,p.Bt0.5,col=Scenario, sixe=Procedure)) + geom_line(width=2)
+		p <- ggplot(df,aes(Year,p.Bt0.5,col=Scenario, sixe=Procedure)) + geom_line(width=2)
 		p <- p +  geom_ribbon(aes(ymax=p.Bt0.975, ymin=p.Bt0.025,fill=Scenario),alpha=0.2)
 	}
 	else
 	{
-		p <- ggplot(biomass.df,aes(Year,p.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
+		p <- ggplot(df,aes(Year,p.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
 		p <- p + geom_ribbon(aes(ymax=p.Bt0.975, ymin=p.Bt0.025,col=Scenario,fill=Scenario),alpha=0.2)
 		p <- p + facet_wrap(~Scenario +Procedure ,scales="free")
 	}
