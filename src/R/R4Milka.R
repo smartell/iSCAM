@@ -40,6 +40,7 @@ M <- mse.data
 
 for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .MSEplotSpawnBiomass( M )
+#.saveImages()
 
 
 
