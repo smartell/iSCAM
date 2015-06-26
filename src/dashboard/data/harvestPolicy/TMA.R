@@ -100,8 +100,14 @@ for(j in 2:A)
 }
 
 
+p0 <- mx/za*oa
+p1 <- fe[1]*va[1,]/za*oa
+p2 <- fe[2]*va[2,]/za*oa
 
+ta <- oa - p0
 
+l1 <- sum(p1)/sum(ta)
+l2 <- sum(p2)/sum(ta)
 
 
 
@@ -180,7 +186,7 @@ equilibriumModel <- function(fe)
 
 	# Jacobian for SPR
 	dspr <- dphi.e / phi.E
-	print(dspr[1]/dspr[2])
+	# print(dspr[1]/dspr[2])
 	# dspr <- matrix(nrow=ng,ncol=ng)
 	# for (k in gear) 
 	# {

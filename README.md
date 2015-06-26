@@ -1,6 +1,14 @@
 
 #  iSCAM 1.6 
 
+# TODO List (Summer 2015)
+- [ ] DEMO (For rapid development of the MSE infrastructure)
+	- [ ] Develop perfect information scenario.
+	- [ ] Added autocorrelated assessment errors.
+- [ ] SPR Calculations
+	- [ ] Break down SPR into proportions associated with each gear. Fa/Za(1-exp(-Za))
+
+
 
 ## What is iSCAM ##
 iSCAM is short for integrated statistical catch age model. The software was orginally developed by Steven Martell at the University of British Columbia, and the project was intiated in the fall of 2010.  The code was originally written for use as a stock assessment model for BC herring stocks.  Since this time the code has evolved substantially, and can now be used to conduct assessments for multiple sexs, one or more stocks, or sub-stocks, and can be spatially explicit.
