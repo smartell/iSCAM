@@ -131,20 +131,20 @@ require(plyr)
 		               ct95 =quantile(value,0.95),
 		               ct975=quantile(value,0.975))
 
-		fn    <- function(X) return(X$value[1:m_nyr])
+		fn    <- function(X) return(X$value)
 
 		m_ct2 <- sapply(ct,fn)
 		colnames(m_ct2) <- paste0("ct",1:length(S[[i]]))
 
 
 		df <- data.frame(Scenario  = lbl[[i]][2],
-		                 Procedure = lbl[[i]][3],
-		        
+		                 Procedure = lbl[[i]][3],		        
 		                 m_ct)
 
 		df2 <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
-		                 Year      = m_Year,
+		                 Year      = df$Year,
+		                 gear = df$gear,
 		                 m_ct2)
 
 		catch.df <- rbind(catch.df,df)
@@ -169,7 +169,7 @@ require(plyr)
 		               dt95 =quantile(sublegal,0.95),
 		               dt975=quantile(sublegal,0.975))
 
-		fn    <- function(X) return(X$sublegal[1:(m_nyr-nyr)])
+		fn    <- function(X) return(X$sublegal)
 
 		m_dt2 <- sapply(dt,fn)
 		colnames(m_dt2) <- paste0("dt",1:length(S[[i]]))
@@ -183,7 +183,7 @@ require(plyr)
 		               wt95 =quantile(waste,0.95),
 		               wt975=quantile(waste,0.975))
 		
-		fn    <- function(X) return(X$waste[1:(m_nyr-nyr)])
+		fn    <- function(X) return(X$waste)
 
 		m_wt2 <- sapply(dt,fn)
 		colnames(m_wt2) <- paste0("wt",1:length(S[[i]]))
@@ -198,21 +198,19 @@ require(plyr)
 		               ef95 =quantile(efficiency,0.95),
 		               ef975=quantile(efficiency,0.975))
 
-		fn    <- function(X) return(X$efficiency[1:(m_nyr-nyr)])
+		fn    <- function(X) return(X$efficiency)
 
 		m_ef2 <- sapply(dt,fn)
 		colnames(m_ef2) <- paste0("eff",1:length(S[[i]]))
-
-		#m_ef2 <- cbind(ldply(dt,data.frame)[,c(1:5,8)],iteration)
-
 
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
 		                 m_dt,m_wt,m_ef)
 
 		df2 <- data.frame(Scenario  = lbl[[i]][2],
-		                 Procedure = lbl[[i]][3],
-		                 Year      = m_Year[(nyr+1):m_nyr],
+		                 Procedure 	= lbl[[i]][3],
+		                 Year      	= df$Year,
+		                 gear 		= df$gear,
 		                 m_dt2,m_wt2,m_ef2)
 
 		sublegal.df <- rbind(sublegal.df,df)
@@ -250,24 +248,30 @@ require(plyr)
 		               AAV95=quantile(AAV,0.95,na.rm=T),
 		               AAV975=quantile(AAV,0.975,na.rm=T))
 
-		m_AAV <- m_AAV[(nyr+1):m_nyr,]
 
 
-		fn    <- function(X) return(X$AAV[(nyr+1):m_nyr])
+		fn    <- function(X) return(X$AAV)
 
 		m_AAV2 <- sapply(ct,fn)
 
 		colnames(m_AAV2) <- paste0("AAV",1:length(S[[i]]))
 
-
+		simyr=Year[length(Year)]
 			
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
 		                 m_AAV)
+
+		
 		df2 <- data.frame(Scenario  = lbl[[i]][2],
-		                 Procedure = lbl[[i]][3],
-		                 Year      = m_Year[(nyr+1):m_nyr],
-		                 m_AAV2)                
+		                 Procedure 	= lbl[[i]][3],
+		                 Year      	= df$Year,
+		                 gear 		= df$gear,
+		                 m_AAV2) 
+
+		df <- data.frame(df[df$Year>simyr,])
+
+		df2 <- data.frame(df2[df2$Year>simyr,])               
 
 
 		AAV.df <- rbind(AAV.df,df)

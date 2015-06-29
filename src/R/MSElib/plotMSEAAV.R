@@ -15,15 +15,18 @@ require(reshape)
 	#if(ci==95){up=df$ct975;low=df$ct025}
 	#if(ci==90){up=df$ct95;low=df$ct05}
 	#if(ci==50){up=df$ct75;low=df$ct25}
+
+	df22<-melt(df2,id=c("Scenario","Procedure","Year"))
 	
 	if(.OVERLAY)
-	{		
-		p <- ggplot(df2,aes(as.factor(Year),AAV,col=Scenario)) + geom_boxplot()
+	{	
+
+		p <- ggplot(df22,aes(as.factor(Year),value,col=Scenario)) + geom_boxplot()
 		p <- p + facet_grid(.~Procedure)
 	}
 	else
 	{
-		p <- ggplot(df2,aes(as.factor(Year),AAV,col=Scenario)) + geom_boxplot()
+		p <- ggplot(df22,aes(as.factor(Year),value,col=Scenario)) + geom_boxplot()
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
