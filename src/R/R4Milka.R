@@ -45,6 +45,7 @@ M <- list(mse.data, rawmse.data)
 for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .MSEplotMilkaSpawnBiomass( M )
 .MSEplotDepletion( M )
+.MSEplotCatch( M )
 #.saveImages()
 
 
