@@ -236,10 +236,21 @@ require(plyr)
 		               AAV95=quantile(AAV,0.95,na.rm=T),
 		               AAV975=quantile(AAV,0.975,na.rm=T))
 
+		m_AAV <- m_AAV[(nyr+1):m_nyr,]
+
 		iteration <-rep(1:length(S[[i]]),each=nrow(ct[[1]]))
-		m_AAV2  <- cbind(ldply(ct,data.frame),iteration)
+		m_AAVtmp  <- cbind(ldply(ct,data.frame),iteration)
 
+		m_AAV2<-NULL
+		for(a in 1:(length(S[[i]])))
+		{
+			tmp <- m_AAVtmp[m_AAVtmp$iteration==a,]
+			tmp <- tmp[((nyr+1):m_nyr),]
+			m_AAV2 <- rbind(m_AAV2,tmp)
 
+		}
+
+		
 		df <- data.frame(Scenario  = lbl[[i]][2],
 		                 Procedure = lbl[[i]][3],
 		                 m_AAV)

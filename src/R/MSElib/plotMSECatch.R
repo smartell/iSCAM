@@ -51,6 +51,6 @@ require(reshape)
 			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
-	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
+	p <- p + labs(x="Year",y=paste("Catch",.UNITS))
 	print(p + .THEME)
 }
