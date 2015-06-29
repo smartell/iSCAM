@@ -52,9 +52,9 @@ require(reshape)
 	
 	cat(".plotSpawnBiomass\n")
 
-	if(ci==95){up=t.Bt0.975;low=t.Bt0.025}
-	if(ci==90){up=t.Bt0.95;low=t.Bt0.05}
-	if(ci==50){up=t.Bt0.75;low=t.Bt0.25}
+	if(ci==95){up=df$t.Bt0.975;low=df$t.Bt0.025}
+	if(ci==90){up=df$t.Bt0.95;low=df$t.Bt0.05}
+	if(ci==50){up=df$t.Bt0.75;low=df$t.Bt0.25}
 	
 	if(.OVERLAY)
 	{
@@ -79,6 +79,16 @@ require(reshape)
 		p <- ggplot(df,aes(Year,m.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
 		p <- p + geom_ribbon(aes(ymax=up, ymin=low,col=Scenario,fill=Scenario),alpha=0.2)
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
+
+		if(no>0)
+			{
+				itx <- sample(1:length(grep("m_sbt",colnames(df2))),no)
+				itxx <- grep("m_sbt",colnames(df2))[itx]
+				new.df <- df2[,c(1:3,itxx)]
+				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
+				
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
