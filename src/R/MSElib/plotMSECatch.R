@@ -19,7 +19,7 @@ require(reshape)
 	if(.OVERLAY)
 	{
 		
-		p <- ggplot(df,aes(Year,ct50,col=Scenario)) + geom_line(width=2)
+		p <- ggplot(df,aes(Year,ct50,col=gear)) + geom_line(width=2)
 		p <- p +  geom_ribbon(aes(ymax=up, ymin=low,fill=Scenario),alpha=0.2)
 		p <- p + facet_grid(.~Procedure)
 
@@ -27,17 +27,17 @@ require(reshape)
 			{
 				itx <- sample(1:length(grep("ct",colnames(df2))),no)
 				itxx <- grep("ct",colnames(df2))[itx]
-				new.df <- df2[,c(1:3,itxx)]
-				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
+				new.df <- df2[,c(1:4,itxx)]
+				new.df <- melt(new.df,id=c("Scenario","Procedure","Year","gear"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col='gear'))
 			}
 
 	}
 	else
 	{
 		p <- ggplot(df,aes(Year,ct50),fill=gear) + geom_line(width=2)
-		p <- p + geom_ribbon(aes(ymax=up, ymin=low,fill=as.factor(gear)),alpha=0.2)
+		p <- p + geom_ribbon(aes(ymax=up, ymin=low,fill=gear),alpha=0.2)
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
 
 		if(no>0)
@@ -45,10 +45,10 @@ require(reshape)
 			
 				itx <- sample(1:length(grep("ct",colnames(df2))),no)
 				itxx <- grep("ct",colnames(df2))[itx]
-				new.df <- df2[,c(1:3,itxx)]
-				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
+				new.df <- df2[,c(1:4,itxx)]
+				new.df <- melt(new.df,id=c("Scenario","Procedure","Year","gear"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col="gear"))
 			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")

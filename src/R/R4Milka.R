@@ -14,7 +14,7 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 # .PWD        needs to be changed when creating a new example
-.PWD        <- "/Users/catarinawor/Documents/iSCAM/examples/DEMO/R"
+.PWD        <- "/Users/catarinawor/Documents/iSCAM/examples/DEMO/FIGS"
 .LIB        <- "../../../src/R/MSElib/"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
@@ -34,7 +34,7 @@ require(ggplot2)
 
 .MODELDIRS   <- "../DATA"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.Rdata",full.name=TRUE)
-for(i in 1:(length(.MODELNAME)))load(.MODELNAME[i])
+for(i in 1:(length(.SuMODELNAME)))load(.MODELNAME[i])
 
 
 
@@ -47,6 +47,7 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .MSEplotDepletion( M )
 .MSEplotCatch( M )
 .MSEplotAAV ( M )
+.MSEplotSubLegal ( M )
 #.saveImages()
 
 
