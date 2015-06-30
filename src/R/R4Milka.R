@@ -34,7 +34,7 @@ require(ggplot2)
 
 .MODELDIRS   <- "../DATA"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.Rdata",full.name=TRUE)
-for(i in 1:(length(.SuMODELNAME)))load(.MODELNAME[i])
+for(i in 1:(length(.MODELNAME)))load(.MODELNAME[i])
 
 
 

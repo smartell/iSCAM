@@ -8,11 +8,14 @@ require(reshape)
 	df <- as.data.frame(M[[1]]$sublegal.df)
 	df2<- as.data.frame(M[[2]]$rawsublegal.df)
 	
-	if(ci==95){up=df$wt975;low=wf$wt025}
+	if(ci==95){up=df$wt975;low=df$wt025}
 	if(ci==90){up=df$wt95;low=df$wt05}
 	if(ci==50){up=df$wt75;low=df$wt25}
 
-	cat(".plotSubLegalCatch\n")
+	cat(".plotWastage\n")
+
+	df<-data.frame(cbind(df,up,low))
+
 
 	
 	if(.OVERLAY)
@@ -56,6 +59,7 @@ require(reshape)
 	
 	p <- p + labs(x="Year",y=paste("Wastage",.UNITS))
 	print(p + .THEME)
+	}
 }
 
 .MSEplotSubLegal <- function(M, no=3, ci=95)
@@ -66,6 +70,9 @@ require(reshape)
 	if(ci==95){up=df$dt975;low=df$dt025}
 	if(ci==90){up=df$dt95;low=df$dt05}
 	if(ci==50){up=df$dt75;low=df$dt25}
+
+	df<-data.frame(cbind(df,up,low))
+
 
 	cat(".plotSubLegalCatch\n")
 
@@ -111,6 +118,7 @@ require(reshape)
 	
 	p <- p + labs(x="Year",y=paste("SubLegal Discards",.UNITS))
 	print(p + .THEME)
+	}
 }
 
 .MSEplotEfficiency <- function(M, no=3, ci=95)
@@ -122,7 +130,10 @@ require(reshape)
 	if(ci==90){up=df$ef95;low=df$ef05}
 	if(ci==50){up=df$ef75;low=df$ef25}
 
-	cat(".plotSubLegalCatch\n")
+	df<-data.frame(cbind(df,up,low))
+
+
+	cat(".plotEfficiency\n")
 
 	
 	if(.OVERLAY)
@@ -166,5 +177,6 @@ require(reshape)
 	
 	p <- p + labs(x="Year",y=paste("Efficiency",.UNITS))
 	print(p + .THEME)
+	}
 }
 

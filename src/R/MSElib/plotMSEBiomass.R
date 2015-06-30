@@ -8,9 +8,11 @@ require(reshape)
 	df <- as.data.frame(M[[1]]$biomass.df)
 	df2<- as.data.frame(M[[2]]$rawbiomass.df)
 	
-	if(ci==95){up=t.Bt0.975;low=t.Bt0.025}
-	if(ci==90){up=t.Bt0.95;low=t.Bt0.05}
-	if(ci==50){up=t.Bt0.75;low=t.Bt0.25}
+	if(ci==95){up=df$p.Bt0.975;low=df$p.Bt0.025}
+	if(ci==90){up=df$p.Bt0.95;low=df$p.Bt0.05}
+	if(ci==50){up=df$p.Bt0.75;low=df$p.Bt0.25}
+
+	df<-data.frame(cbind(df,up,low))
 
 	cat(".plotSpawnBiomass\n")
 
@@ -62,11 +64,15 @@ require(reshape)
 	df <- as.data.frame(M[[1]]$biomass.df)
 	df2<- as.data.frame(M[[2]]$rawbiomass.df)
 	
-	cat(".plotSpawnBiomass\n")
+	cat(".plotTrueSpawnBiomass\n")
 
-	if(ci==95){up=df$t.Bt0.975;low=df$t.Bt0.025}
-	if(ci==90){up=df$t.Bt0.95;low=df$t.Bt0.05}
-	if(ci==50){up=df$t.Bt0.75;low=df$t.Bt0.25}
+
+
+	if(ci==95){up<-df$t.Bt0.975;low<-df$t.Bt0.025}
+	if(ci==90){up<-df$t.Bt0.95;low<-df$t.Bt0.05}
+	if(ci==50){up<-df$t.Bt0.75;low<-df$t.Bt0.25}
+
+	df<-data.frame(cbind(df,up,low))
 	
 	if(.OVERLAY)
 	{
@@ -90,7 +96,7 @@ require(reshape)
 	}
 	else
 	{
-		p <- ggplot(df,aes(Year,m.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
+		p <- ggplot(df,aes(Year,t.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
 		p <- p + geom_ribbon(aes(ymax=up, ymin=low,col=Scenario,fill=Scenario),alpha=0.2)
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
 

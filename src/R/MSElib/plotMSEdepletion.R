@@ -12,6 +12,9 @@
 	if(ci==90){up=df$t.Dt0.95;low=df$t.Dt0.05}
 	if(ci==50){up=df$t.Dt0.75;low=df$t.Dt0.25}
 
+	df<-data.frame(cbind(df,up,low))
+	
+
 	cat(".plotDepletion\n")
 
 	
