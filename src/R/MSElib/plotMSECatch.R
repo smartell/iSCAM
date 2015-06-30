@@ -31,6 +31,7 @@ require(reshape)
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year","gear"))
 				
 				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col='gear'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 
 	}
@@ -49,6 +50,7 @@ require(reshape)
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year","gear"))
 				
 				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col="gear"))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")

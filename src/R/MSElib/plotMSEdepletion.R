@@ -29,7 +29,8 @@
 				new.df <- df2[,c(1:3,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col="Scenario"))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 
 	}
@@ -46,7 +47,8 @@
 				new.df <- df2[,c(1:3,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col='Scenario'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 
 	}
@@ -59,7 +61,3 @@
 
 
 
-eb <- aes(ymin=Dt.lci,ymax=Dt.uci)
-			p <- p + geom_ribbon(eb,alpha=0.15)
-			p <- p + geom_line(data=data(),aes_string(x="Year",y=input$yy),alpha=1)
-			p <- p + ylim(0,1)

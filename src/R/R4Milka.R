@@ -46,8 +46,10 @@ for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
 .MSEplotMilkaSpawnBiomass( M )
 .MSEplotDepletion( M )
 .MSEplotCatch( M )
-.MSEplotAAV ( M )
-.MSEplotSubLegal ( M )
+.MSEplotAAV( M )
+.MSEplotSubLegal( M )
+.MSEplotWastage( M )
+.MSEplotEfficiency( M )
 #.saveImages()
 
 

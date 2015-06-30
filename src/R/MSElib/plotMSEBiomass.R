@@ -29,7 +29,8 @@ require(reshape)
 				new.df <- df2[,c(1:3,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col='Scenario'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 
 	}
@@ -38,6 +39,17 @@ require(reshape)
 		p <- ggplot(df,aes(Year,p.Bt0.5),col=Scenario,fill=Scenario) + geom_line(width=2)
 		p <- p + geom_ribbon(aes(ymax=up, ymin=low,col=Scenario,fill=Scenario),alpha=0.2)
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
+
+		if(no>0)
+			{
+				itx <- sample(1:length(grep("p.Bt",colnames(df2))),no)
+				itxx <- grep("p.Bt",colnames(df2))[itx]
+				new.df <- df2[,c(1:3,itxx)]
+				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
+				
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col='Scenario'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
+			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
 	p <- p + labs(x="Year",y=paste("Spawning biomass",.UNITS))
@@ -70,7 +82,9 @@ require(reshape)
 				new.df <- df2[,c(1:3,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col='Scenario'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
+
 			}
 
 	}
@@ -87,7 +101,8 @@ require(reshape)
 				new.df <- df2[,c(1:3,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',col='variable'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable',col='Scenario'))
+				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 	}
 	# p <- p + geom_line(data=bt,aes(Year,Bo),col="blue")
