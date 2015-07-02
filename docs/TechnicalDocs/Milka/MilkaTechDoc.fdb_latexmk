@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex MilkaTechDoc"] 1431371304 "MilkaTechDoc.aux" "MilkaTechDoc.bbl" "MilkaTechDoc" 1431371306
+["bibtex MilkaTechDoc"] 1431371304 "MilkaTechDoc.aux" "MilkaTechDoc.bbl" "MilkaTechDoc" 1435810535
   "/Users/stevenmartell1/Documents/ARTICLES/Articles-1.bib" 1419009202 358029 544830b2c2e3cfb89dbe25e262010559 ""
   "/usr/local/texlive/2014/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "MilkaTechDoc.aux" 1431371305 2397 d863b7013c5d1f77111e903793752bba ""
+  "MilkaTechDoc.aux" 1435810534 2397 d863b7013c5d1f77111e903793752bba ""
   "MilkaTechDoc.bcf" 0 -1 0 ""
   (generated)
   "MilkaTechDoc.blg"
   "MilkaTechDoc.bbl"
-["pdflatex"] 1431371305 "MilkaTechDoc.tex" "MilkaTechDoc.pdf" "MilkaTechDoc" 1431371306
+["pdflatex"] 1435810534 "MilkaTechDoc.tex" "MilkaTechDoc.pdf" "MilkaTechDoc" 1435810535
   "/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/ifxetex/ifxetex.sty" 1284331290 1458 43ab4710dc82f3edeabecd0d099626b2 ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/gettitlestring.sty" 1303254447 8237 52810bdb4db2270e717422560a104aea ""
@@ -65,18 +65,18 @@
   "/usr/local/texlive/2014/texmf-dist/tex/latex/tools/longtable.sty" 1399675188 11875 98b91a3f62f8b2871fecd2afa02ea4a3 ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/tools/multicol.sty" 1399675188 29193 08a2f6b9e76c544040f9143397c0d6dc ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "Introduction.tex" 1411255593 1437 b24936bbf63139b3c6924e3f9f097793 ""
-  "MilkaTechDoc.aux" 1431371305 2397 d863b7013c5d1f77111e903793752bba ""
-  "MilkaTechDoc.bbl" 1431371305 278 6aca0e20dc80847aee1cba2d207236b7 "bibtex MilkaTechDoc"
-  "MilkaTechDoc.out" 1431371305 595 4377bda4f01dcd5210bcbc6f750a24e7 ""
-  "MilkaTechDoc.tex" 1411255593 2749 c287cdb96eb913275628099877f26cdd ""
-  "MilkaTechDoc.toc" 1431371305 728 9937dcb97b224e0b62e48bcf8eeeb6b4 ""
-  "ModelDescription.tex" 1411255593 4360 8f67717c41bba465d830bab7da1cff01 ""
-  "iphclogo.pdf" 1411255593 49047 25dd13fcba9de98b266b3b6e4b9d760c ""
-  "iscamx.sty" 1411255593 1384 35042e5c7fe5aca4e92fdbb2b75f57f4 ""
+  "Introduction.tex" 1433518953 1437 b24936bbf63139b3c6924e3f9f097793 ""
+  "MilkaTechDoc.aux" 1435810534 2397 d863b7013c5d1f77111e903793752bba ""
+  "MilkaTechDoc.bbl" 1433518953 278 6aca0e20dc80847aee1cba2d207236b7 "bibtex MilkaTechDoc"
+  "MilkaTechDoc.out" 1435810534 595 4377bda4f01dcd5210bcbc6f750a24e7 ""
+  "MilkaTechDoc.tex" 1433518953 2749 c287cdb96eb913275628099877f26cdd ""
+  "MilkaTechDoc.toc" 1435810534 728 9937dcb97b224e0b62e48bcf8eeeb6b4 ""
+  "ModelDescription.tex" 1433518953 4360 8f67717c41bba465d830bab7da1cff01 ""
+  "iphclogo.pdf" 1433518953 49047 25dd13fcba9de98b266b3b6e4b9d760c ""
+  "iscamx.sty" 1433518953 1384 35042e5c7fe5aca4e92fdbb2b75f57f4 ""
   (generated)
   "MilkaTechDoc.pdf"
-  "MilkaTechDoc.log"
   "MilkaTechDoc.out"
   "MilkaTechDoc.toc"
+  "MilkaTechDoc.log"
   "MilkaTechDoc.aux"

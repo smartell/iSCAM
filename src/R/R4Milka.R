@@ -14,7 +14,8 @@
 # | .FIGUREDIR <- Directory for saving figures.
 # | .RFILES    <- List of R functions to source from the lib directory.
 # .PWD        needs to be changed when creating a new example
-.PWD        <- "/Users/catarinawor/Documents/iSCAM/examples/DEMO/FIGS"
+# .PWD        <- "/Users/catarinawor/Documents/iSCAM/examples/DEMO/R"
+.PWD        <- "/Users/stevenmartell1/Documents/iSCAM-project/src/R"
 .LIB        <- "../../../src/R/MSElib/"
 setwd(.PWD)
 .FIGUREDIR  <- "../FIGS/"
