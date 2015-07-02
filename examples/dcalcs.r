@@ -48,6 +48,8 @@ for(i in 2:nage){
 }
 lz[nage]<-lz[nage-1]*(exp(-za[nage-1]))/(1-exp(-za[nage]))
 
+
+
 #expressions
 
 ex_reck<- expression(4*h/(1-h))
@@ -58,11 +60,16 @@ ex_lx_nage<-expression(exp(-m)^(age-1))
 
 ex_za<-expression(m+fe*va1+fe*va2)
 
-#lz expresions
+
+#=========================================================================================================================
+# First derivative of lz
+
+#age 1
 ex_lz_sage<-expression(1)
 D(ex_lz_sage,"fe")
 #0
 
+#age2
 eq_lz2<-paste(ex_lz_sage,expression("*exp(-("),ex_za,expression("))"))
 ex_lz2<- expression(1*exp(-( m + fe * va1 + fe * va2 )))
 D(ex_lz2,"fe")
@@ -72,7 +79,7 @@ D(ex_lz2,"fe")
 #final
 #dz2.df=-(exp(-za1) * (va1a1 + va2a1))
 
-
+#age3
 ex_lz3<- expression( exp(-(m + fe *( va1a1 + va2a1))) *exp(-( m + fe * (va1a2 + va2a2))) )
 D(ex_lz3,"fe")
 #-(	exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
@@ -88,7 +95,7 @@ D(ex_lz3,"fe")
 #final
 #dz3.df = -(lz3 * (va1a2 + va2a2) + (- dz2.df ) * exp(-za2))
 
-
+#age4
 ex_lz4<- expression( exp(-(m + fe *( va1a1 + va2a1))) *exp(-( m + fe * (va1a2 + va2a2))) * exp(-(m + fe *( va1a3 + va2a3))))
 D(ex_lz4,"fe")
 #r output
@@ -120,5 +127,7 @@ D(ex_lz4,"fe")
 #dza.df =  exp(-za-1) *  dza-1.df    -lza        * sum(va-1) 
 #          sa(h)(j-1) * (dlz(k)(j-1) -lz(h)(j-1) *m_Va(h)(k)(j-1))
 
+
+#Still need to calculate + group
 
 
