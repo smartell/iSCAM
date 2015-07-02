@@ -35,12 +35,22 @@ require(ggplot2)
 
 .MODELDIRS   <- "../DATA"
 .MODELNAME   <- list.files(.MODELDIRS,pattern="\\.Rdata",full.name=TRUE)
-load(.MODELNAME)
-M <- mse.data
+for(i in 1:(length(.MODELNAME)))load(.MODELNAME[i])
+
+
+
+M <- list(mse.data, rawmse.data)
+ 
 
 
 for(nm in .RFILES) source(file.path(.LIB, nm), echo=FALSE)
-.MSEplotSpawnBiomass( M )
+.MSEplotMilkaSpawnBiomass( M )
+.MSEplotDepletion( M )
+.MSEplotCatch( M )
+.MSEplotAAV( M )
+.MSEplotSubLegal( M )
+.MSEplotWastage( M )
+.MSEplotEfficiency( M )
 #.saveImages()
 
 

@@ -4079,7 +4079,7 @@ FUNCTION void calcReferencePoints()
 
 		- Mar, 2013.
 		  A major new development here with the use of msy.hpp and a template class for 
-		  calculating MSY-based reference points.  The user can now calculate reference
+		  calculating inclu-based reference points.  The user can now calculate reference
 		  points for each gear based on fixed allocation, and optimum allocations based
 		  on relative differences in selectivities among the gears landing fish. Uses the
 		  name space "rfp".

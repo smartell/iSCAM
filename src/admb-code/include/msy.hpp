@@ -254,7 +254,7 @@ namespace rfp {
 	 * @brief Calculate Fmsy given fixed allocation.
 	 * @details Calculate Fmsy for a given allocation vector ak.
 	 * This function returns a vector fishing mortality rates that
-	 * will maximize the sum of yeilds over all fleets.
+	 * will maximize the sum of yields over all fleets.
 	 * 
 	 * @param fe Fishing mortality rate
 	 * @param ak Allocation to each fleet
@@ -266,23 +266,23 @@ namespace rfp {
 	template<class T, class T1, class T2, class T3>
 	const T1 msy<T,T1,T2,T3>::getFmsy(const T1 &fe, const T1 &ak)
 	{
-		T lb = 1.0e-10;
-		T ub = 5.0e+01;
+		T lb = 1.0e-10;				//set lower bound for fbar
+		T ub = 5.0e+01;				//set upper bound for fbar
 		
-		T fbar  = mean(fe);
-		T1 fk = fe;
-		T1 pk = ak / sum(ak);	//proportion of total catch
-		T1 lambda = pk / mean(pk);
-		m_fe = fe;
-		m_ak = ak;
+		T fbar  = mean(fe);  		// average mortality rate
+		T1 fk = fe; 				// set fk to the Fstarting values
+		T1 pk = ak / sum(ak);	  	// proportion of total catch
+		T1 lambda = pk / mean(pk); 	// allocation of f - multiplies fbar
+		m_fe = fe; 					// set m_fe to initial fe guesses
+		m_ak = ak; 					// set allocation to pre-defined values
 
 		for(int iter = 1; iter <= MAXITER; iter++ )
 		{
-			fk = fbar;
-			calcEquilibrium(fk);
-			lambda = elem_div(pk,m_ye/sum(m_ye));
+			fk = fbar; 								// set all f to fbar
+			calcEquilibrium(fk); 					// see function calcEquilibrium
+			lambda = elem_div(pk,m_ye/sum(m_ye)); 	// Question: why divide pk by the yield proportions?
 
-			fk = fbar * lambda/mean(lambda);
+			fk = fbar * lambda/mean(lambda); 		// vector of allocated f
 			calcEquilibrium(fk);
 
 			// fbar = fbar - m_dYe/m_d2Ye;
@@ -365,18 +365,18 @@ namespace rfp {
 		T phif = 0.0;
 		
 
-		T1 pza(m_sage,m_nage);
-		T1 psa(m_sage,m_nage);
-		T1 poa(m_sage,m_nage);
-		T2  za(1,m_nGrp,m_sage,m_nage);
-		T2  sa(1,m_nGrp,m_sage,m_nage);
-		T2  oa(1,m_nGrp,m_sage,m_nage);
-		T2  lz(1,m_nGrp,m_sage,m_nage);
-		T2  lw(1,m_nGrp,m_sage,m_nage);
+		T1 pza(m_sage,m_nage);				// pre-spawning total mortality
+		T1 psa(m_sage,m_nage); 				// pre-spawning survivorship
+		T1 poa(m_sage,m_nage); 				// Question: What is poa, where is it used?
+		T2  za(1,m_nGrp,m_sage,m_nage); 	// Total mortality at age by group
+		T2  sa(1,m_nGrp,m_sage,m_nage); 	// Survivorship at age by group
+		T2  oa(1,m_nGrp,m_sage,m_nage); 	// 1-sa
+		T2  lz(1,m_nGrp,m_sage,m_nage); 	// Survivorship under fished conditions
+		T2  lw(1,m_nGrp,m_sage,m_nage); 	// pre-spawning survivorship unde fished conditions
 
-		T2   qa(1,m_nGear,m_sage,m_nage);
-		T2  dlz(1,m_nGear,m_sage,m_nage);
-		T2 d2lz(1,m_nGear,m_sage,m_nage);
+		T2   qa(1,m_nGear,m_sage,m_nage); 	// per recruit yield (baranov without f and N)
+		T2  dlz(1,m_nGear,m_sage,m_nage); 	// derivative of lz with respect to f
+		T2 d2lz(1,m_nGear,m_sage,m_nage); 	// second derivative of lz with respect to f
 		T2  dlw(1,m_nGear,m_sage,m_nage);
 		T2 d2lw(1,m_nGear,m_sage,m_nage);
 		dlz.initialize();
@@ -384,53 +384,55 @@ namespace rfp {
 		d2lz.initialize();
 		d2lw.initialize();
 
-		T3   qa_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
-		T3  dlz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
-		T3 d2lz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
-		T3  dlw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
+		T3   qa_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific per recruit yield 
+		T3  dlz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);  	// gear specific derivative of survivorship under fished conditions 
+		T3 d2lz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific second derivative of survivorship under fished conditions
+		T3  dlw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// 
 		T3 d2lw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
 
 		//cout<<m_Va<<endl;
 		for( h = 1; h <= m_nGrp; h++ )
 		{
-			za(h) = m_Ma(h);
+			za(h) = m_Ma(h); 							//set Z to natural mortality
 			for( k = 1; k <= m_nGear; k++ )
 			{
-				za(h) = za(h) + fe(k) * m_Va(h)(k);
+				za(h) = za(h) + fe(k) * m_Va(h)(k); 	// add fishing mortality
 				//cout<<h<<" "<<k<<endl;
 			}
-			sa(h) = exp(-za(h));
-			oa(h) = 1.0 - sa(h);
-			pza   = m_rho*za(h);
+			sa(h) = exp(-za(h));  					// survivorship
+			oa(h) = 1.0 - sa(h); 					
+			pza   = m_rho*za(h); 					// pre-spawning total mortality
 			psa   = exp(-pza);
 			poa   = 1.0 - elem_prod(sa(h),psa);
+			
 			for(k=1;k<=m_nGear;k++)
 			{
-				qa(k)      = elem_div(elem_prod(elem_prod(m_Va(h)(k),m_Wa(h)),oa(h)),za(h));
-				qa_m(h)(k) = qa(k);
+				qa(k)      = elem_div(elem_prod(elem_prod(m_Va(h)(k),m_Wa(h)),oa(h)),za(h)); // per recruit 
+				qa_m(h)(k) = qa(k); 														
 
-				dlw(k,m_sage)      = -psa(m_sage)*m_rho*m_Va(h)(k)(m_sage);
+				dlw(k,m_sage)      = -psa(m_sage)*m_rho*m_Va(h)(k)(m_sage); 				//  derivative of pre-spawning survivorship at sage
 				dlw_m(h,k,m_sage)  = dlw(k,m_sage);
-				d2lw(k,m_sage)     = psa(m_sage)*square(m_rho)*square(m_Va(h)(k)(m_sage));
+				d2lw(k,m_sage)     = psa(m_sage)*square(m_rho)*square(m_Va(h)(k)(m_sage)); 	// second derivative of pre-spawning survivorship at sage
 				d2lw_m(h,k,m_sage) = d2lw(k,m_sage);
 
-				dlz(k,m_sage)      = 0;
+				dlz(k,m_sage)      = 0; 	// set all derivatives and second derivatis lz(sage) to 0
 				dlz_m(h,k,m_sage)  = 0;
 				d2lz(k,m_sage)     = 0;
 				d2lz_m(h,k,m_sage) = 0;
 			}
 
 			// Survivorship
-			lz(h)(m_sage) = 1.0/m_nGrp;
-			lw(h)(m_sage) = 1.0/m_nGrp * psa(m_sage);
+			lz(h)(m_sage) = 1.0/m_nGrp; 				// Why 1/ngroup? Doesn't it mean that all groups contribute equally to the population?	
+			lw(h)(m_sage) = 1.0/m_nGrp * psa(m_sage); 	
 			for( j = m_sage+1; j <= m_nage; j++ )
 			{
 				lz(h,j) = lz(h,j-1) * sa(h,j-1);
 				lw(h,j) = lw(h,j-1) * psa(j);
 				if( j == m_nage )
 				{
+					//plus age
 					lz(h,j) = lz(h,j)/oa(h,j);
-					lw(h,j) = lz(h,j-1)*sa(h,j-1)*psa(j)/oa(h,j);
+					lw(h,j) = lz(h,j-1)*sa(h,j-1)*psa(j)/oa(h,j); //question
 				}
 
 				for( k = 1; k <= m_nGear; k++ )
@@ -495,15 +497,15 @@ namespace rfp {
 		// T1      t1(m_sage,m_nage);  t1.initialize();
 		T1      tj(m_sage,m_nage);  tj.initialize();
 
-		T2   dphiq(1,m_nGear,1,m_nGear);   dphiq.initialize();
+		T2   dphiq(1,m_nGear,1,m_nGear);   dphiq.initialize(); //Question: Why are dphiq and d2phiq matrices? spreadsheet has only vectors 
 		T2  d2phiq(1,m_nGear,1,m_nGear);  d2phiq.initialize();
 
 		for( h = 1; h <= m_nGrp; h++ )
 		{
 			for( k = 1; k <= m_nGear; k++ )
 			{
-				dphif(k)  += dlz_m(h)(k)  * m_Fa(h);
-				d2phif(k) += d2lz_m(h)(k) * m_Fa(h);
+				dphif(k)  += dlz_m(h)(k)  * m_Fa(h); 		// derivative of biomass per recruit
+				d2phif(k) += d2lz_m(h)(k) * m_Fa(h); 		// second derivative of biomass per recruit
 				// dphif(k)   += dlw_m(h)(k)  * m_Fa(h);
 				// d2phif(k)  += d2lw_m(h)(k) * m_Fa(h);
 
@@ -583,7 +585,7 @@ namespace rfp {
 		be   = re * phif;
 		dye  = re*phiq 
 			  + elem_prod(elem_prod(fe,phiq),dre) 
-			  + re*elem_prod(fe,diagonal(dphiq));
+			  + re*elem_prod(fe,diagonal(dphiq));  
 			  
 
 		// cout<<"dye "<<dye<<endl;
@@ -637,7 +639,7 @@ namespace rfp {
 				{
 					d2ye_ak(k)(kk) = m_ak(k)*d2re(kk)*(fe*phiq)
 					               + 2.0*m_ak(k)*dre(kk)*( sum(phiq)+fe*dphiq(kk) ) 
-					               + m_ak(k)*re*( 2.0*sum(diagonal(dphiq))+fe*d2phiq(kk) );
+					               + m_ak(k)*re*( 2.0*sum(diagonal(dphiq))+fe*d2phiq(kk) ); //Question: why use sum of dphiq? Also in the spreadsheet m_ak is not used for the second derivatives
 				}
 
 			}	
