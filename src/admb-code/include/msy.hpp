@@ -387,8 +387,8 @@ namespace rfp {
 		T3   qa_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific per recruit yield 
 		T3  dlz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);  	// gear specific derivative of survivorship under fished conditions 
 		T3 d2lz_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific second derivative of survivorship under fished conditions
-		T3  dlw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// 
-		T3 d2lw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage);
+		T3  dlw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific derivative of pre-spawning survivorship under fished conditions
+		T3 d2lw_m(1,m_nGrp,1,m_nGear,m_sage,m_nage); 	// gear specific second derivative of pre-spawning survivorship under fished conditions
 
 		//cout<<m_Va<<endl;
 		for( h = 1; h <= m_nGrp; h++ )
@@ -399,10 +399,10 @@ namespace rfp {
 				za(h) = za(h) + fe(k) * m_Va(h)(k); 	// add fishing mortality
 				//cout<<h<<" "<<k<<endl;
 			}
-			sa(h) = exp(-za(h));  					// survivorship
+			sa(h) = exp(-za(h));  					// survival
 			oa(h) = 1.0 - sa(h); 					
 			pza   = m_rho*za(h); 					// pre-spawning total mortality
-			psa   = exp(-pza);
+			psa   = exp(-pza); 						// pre-spawning survival
 			poa   = 1.0 - elem_prod(sa(h),psa);
 			
 			for(k=1;k<=m_nGear;k++)
@@ -422,7 +422,7 @@ namespace rfp {
 			}
 
 			// Survivorship
-			lz(h)(m_sage) = 1.0/m_nGrp; 				// Why 1/ngroup? Doesn't it mean that all groups contribute equally to the population?	
+			lz(h)(m_sage) = 1.0/m_nGrp; 				// Question: Why 1/ngroup? Doesn't it mean that all groups contribute equally to the population?	
 			lw(h)(m_sage) = 1.0/m_nGrp * psa(m_sage); 	
 			for( j = m_sage+1; j <= m_nage; j++ )
 			{
@@ -432,13 +432,19 @@ namespace rfp {
 				{
 					//plus age
 					lz(h,j) = lz(h,j)/oa(h,j);
-					lw(h,j) = lz(h,j-1)*sa(h,j-1)*psa(j)/oa(h,j); //question
+					lw(h,j) = lz(h,j-1)*sa(h,j-1)*psa(j)/oa(h,j); //Question: shouldn't it be poa instead of oa?
 				}
 
 				for( k = 1; k <= m_nGear; k++ )
 				{
-					// derivatives for survivorship
+					// derivatives for survivorship 
 					dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
+					// This line might be incorrect - I need to re-check my calcs before changing the code
+					// here is what I think it might be:
+					//  dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
+					
+					
+					
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
 					
 					// derivatives for spawning survivorship
