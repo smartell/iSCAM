@@ -6,49 +6,6 @@
 #|-----------------------------------------------------------------------------------|#
 
 
-#Population Parameters
-ro<-1
-h<-0.75
-m<-0.3
-vbk<-0.2
-
-age<-1:20
-nage<-length(age)
-
-#fisheries parameters
-
-ak<-c(0.4,0.6)
-fe<-c(0.222)
-ah1<-4
-ah2<-7
-
-#newton method parameters
-dh<-0.000001
-
-
-#derived quantities
-
-reck<-4*h/(1-h)
-wa<-(1-exp(-vbk*age))^3
-fa<-c(rep(0,sum(wa<=0.2)),wa[wa>0.2])
-va1<-1/(1+exp(-(age-ah1)/(0.1*ah1)))
-va2<-1/(1+exp(-(age-ah2)/(0.1*ah2)))
-
-za<-m+fe*va1+fe*va2
-sa<-exp(-za)
-oa<-1-sa
-
-
-lx<-exp(-m)^(age-1)
-lx[nage]<-(exp(-m)^(nage-1))/(1-exp(-m)^nage)
-
-lz[age[1]]<-1
-for(i in 2:nage){
-	lz[i]<-lz[i-1]*exp(-za[i-1])
-}
-lz[nage]<-lz[nage-1]*(exp(-za[nage-1]))/(1-exp(-za[nage]))
-
-
 
 #expressions
 
@@ -70,8 +27,7 @@ D(ex_lz_sage,"fe")
 #0
 
 #age2
-eq_lz2<-paste(ex_lz_sage,expression("*exp(-("),ex_za,expression("))"))
-ex_lz2<- expression(1*exp(-( m + fe * va1 + fe * va2 )))
+ex_lz2<- expression(1*exp(-( m + fe * (va1a1  + va2a1 ))))
 D(ex_lz2,"fe")
 #r output
 #dz2.df=-(exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1))
@@ -128,6 +84,232 @@ D(ex_lz4,"fe")
 #          sa(h)(j-1) * (dlz(k)(j-1) -lz(h)(j-1) *m_Va(h)(k)(j-1))
 
 
-#Still need to calculate + group
+
+#plus group - Assuming age4 is max
+ 
+
+
+ex_lzplus<- expression((exp(-(m + fe *( va1a1 + va2a1))) *exp(-( m + fe * (va1a2 + va2a2))) * exp(-(m + fe *( va1a3 + va2a3))))/(1-exp(-(m + fe *( va1a4 + va2a4))))  )
+D(ex_lzplus,"fe")
+
+-((exp(-(m + fe * (va1a1 + va2a1))) * exp(-(m + fe * (va1a2 + 
+    va2a2))) * (exp(-(m + fe * (va1a3 + va2a3))) * (va1a3 + va2a3)) + 
+    (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
+        va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + 
+        va2a1))) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + 
+        va2a2)))) * exp(-(m + fe * (va1a3 + va2a3))))/(1 - exp(-(m + 
+    fe * (va1a4 + va2a4)))) + (exp(-(m + fe * (va1a1 + va2a1))) * 
+    exp(-(m + fe * (va1a2 + va2a2))) * exp(-(m + fe * (va1a3 + 
+    va2a3)))) * (exp(-(m + fe * (va1a4 + va2a4))) * (va1a4 + 
+    va2a4))/(1 - exp(-(m + fe * (va1a4 + va2a4))))^2)
+
+#step2
+
+
+
+-((exp(-z1) * exp(-z2) * (exp(-z3) * (va1a3 + va2a3)) 
+	+ (exp(-z1) * (exp(-z2) * (va1a2 + va2a2)) 
+	+ exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * exp(-z3))/(1 - exp(-z4)) + (exp(-z1) * 
+    exp(-z2) * exp(-z3)) * exp(-z4) * (va1a4 + va2a4)/(1 - exp(-z4))^2)
+
+
+-(
+	(exp(-z1) * exp(-z2) * (exp(-z3) * (va1a3 + va2a3)) 
+	+ (exp(-z1) * (exp(-z2) * (va1a2 + va2a2)) 
+	+ exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * exp(-z3))
+	/(1 - exp(-z4)) 
+	+ exp(-z1) * exp(-z2) * exp(-z3) * exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2)
+
+
+-(
+	(lz4* (va1a3 + va2a3) -dz3.df * exp(-z3))/(1 - exp(-z4)) 	
+	+ exp(-z1) * exp(-z2) * exp(-z3) * exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2)
+
+
+-(
+	-dlz4/(1 - exp(-z4)) 	
+	+ exp(-z1) * exp(-z2) * exp(-z3) * exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2)
+
+-(
+	-dlz4/(1 - exp(-z4)) 	
+	+ lz4 * exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2)
+
+
+	dlz4/(1 - exp(-z4)) 	
+	- lz4 * exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2
+
+#compare to msy.hpp
+dlz4/(1 - exp(-z4)) 	
+	- lz3 * exp(-z3)* exp(-z4) * (va1a4 + va2a4)
+	/(1 - exp(-z4))^2
+
+dlz(k)(j)/oa(h)(j) - 
+lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j)
+						             /square(oa(h)(j));
+
+
+
+ #=========================================================================================================================
+# Second derivative of lz
+
+#age 2
+dz2.df=expression(-(exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1)))
+D(dz2.df,"fe")
+
+#exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (va1a1 + va2a1)
+
+#exp(-z1) * (va1a1 + va2a1) * (va1a1 + va2a1)
+
+
+#age 3
+#dz3.df=expression(-(exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
+#    va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + va2a1))) * 
+#    (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + va2a2)))))
+#
+#D(dz3.df,"fe")
+#
+#exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (exp(-(m + 
+#    fe * (va1a2 + va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * 
+#    (va1a1 + va2a1))) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-(m + 
+#    fe * (va1a2 + va2a2))) + (exp(-(m + fe * (va1a1 + va2a1))) * 
+#    (exp(-(m + fe * (va1a2 + va2a2))) * (va1a2 + va2a2) * (va1a2 + 
+#        va2a2)) + exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + 
+#    va2a1) * (exp(-(m + fe * (va1a2 + va2a2))) * (va1a2 + va2a2)))
+#
+#exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (exp(-(m + fe * (va1a2 + va2a2))) * (va1a2 + va2a2)) 
+#+ exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + va2a2)))
+#+ (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + va2a2))) * (va1a2 + va2a2) * (va1a2 + va2a2)) 
+#	+ exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (exp(-(m + fe * (va1a2 + va2a2))) * (va1a2 + va2a2)))
+# 
+#
+#exp(-z1) * (va1a1 + va2a1) * exp(-z2) * (va1a2 + va2a2) 
+#+ exp(-z1) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-z2)
+#+ exp(-z1) * exp(-z2) * (va1a2 + va2a2) * (va1a2 + va2a2) 
+#+ exp(-z1) * (va1a1 + va2a1) * exp(-z2) * (va1a2 + va2a2)
+#
+#
+#
+#exp(-z1) * (va1a1 + va2a1) * (exp(-z2) * (va1a2 + va2a2)) 
+#+ exp(-z1) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-z2) 
+#+ exp(-z1) * (exp(-z2) * (va1a2 + va2a2) * (va1a2 + va2a2)) 
+#+ exp(-z1) * (va1a1 +  va2a1) * (exp(-z2) * (va1a2 + va2a2))
+#
+#
+#d2lz2 * exp(-z2) 
+#+ exp(-z1) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-z2) 
+#+ exp(-z1) * exp(-z2) * (va1a2 + va2a2) * (va1a2 + va2a2) 
+#+ exp(-z1) * (va1a1 +  va2a1) * exp(-z2) * (va1a2 + va2a2)
+#
+#
+#
+#exp(-z2) *(d2lz2
+#+ exp(-z1) * (va1a1 + va2a1)^2 
+#+ exp(-z1) * (va1a2 + va2a2)^2 
+#+ exp(-z1) * (va1a1 + va2a1) * (va1a2 + va2a2))
+#
+#
+#
+#
+#d2lz3=exp(-z2) *(d2lz2 + exp(-z1) * ((va1a1 + va2a1)^2 + (va1a2 + va2a2)^2 + (va1a1 + va2a1) * (va1a2 + va2a2)))
+#
+#d2lz3= exp(-z2) *d2lz2 
+#	+ exp(-z2) * exp(-z1) * ((va1a1 + va2a1)^2 + (va1a2 + va2a2)^2 + (va1a1 + va2a1) * (va1a2 + va2a2))
+#
+#d2lz3= exp(-z2) *d2lz2 
+#	+ lz3 * ((va1a1 + va2a1)^2 + (va1a2 + va2a2)^2 + (va1a1 + va2a1) * (va1a2 + va2a2))
+#
+#
+#sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
+
+#age 4
+
+#dz4.df=expression(-(exp(-(m + fe * (va1a1 + va2a1))) * exp(-(m + fe * (va1a2 + 
+#   va2a2))) * (exp(-(m + fe * (va1a3 + va2a3))) * (va1a3 + va2a3)) + 
+#   (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
+#       va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + 
+#        va2a1))) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + 
+#       va2a2)))) * exp(-(m + fe * (va1a3 + va2a3)))))
+#
+#D(dz4.df,"fe")
+#
+#
+#(exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
+#    )    va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + va2a1))) * 
+#    (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + va2a2)))) * (exp(-(m + 
+#    fe * (va1a3 + va2a3))) * (va1a3 + va2a3)) + (exp(-(m + fe * 
+#    (va1a1 + va2a1))) * (va1a1 + va2a1) * (exp(-(m + fe * (va1a2 + 
+#    va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + va2a1))) * 
+#    (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + 
+#    va2a2))) + (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + 
+#    fe * (va1a2 + va2a2))) * (va1a2 + va2a2) * (va1a2 + va2a2)) + 
+#    exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + va2a1) * (exp(-(m + 
+#        fe * (va1a2 + va2a2))) * (va1a2 + va2a2)))) * exp(-(m + 
+#    fe * (va1a3 + va2a3))) + (exp(-(m + fe * (va1a1 + va2a1))) * 
+#    exp(-(m + fe * (va1a2 + va2a2))) * (exp(-(m + fe * (va1a3 + 
+#    va2a3))) * (va1a3 + va2a3) * (va1a3 + va2a3)) + (exp(-(m + 
+#    fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + va2a2))) * 
+#    (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + va2a1))) * (va1a1 + 
+#    va2a1) * exp(-(m + fe * (va1a2 + va2a2)))) * (exp(-(m + fe * 
+#    (va1a3 + va2a3))) * (va1a3 + va2a3)))
+#
+#  (exp(-z1) * exp(-z2) * (va1a2 + va2a2) + exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * exp(-z3) * (va1a3 + va2a3) 
+#+ (exp(-z1) * (va1a1 + va2a1) * exp(-z2) * (va1a2 + va2a2) 
+#	+ exp(-z1) * (va1a1 + va2a1) * (va1a1 + va2a1) * exp(-z2)
+#	+ (exp(-z1) * exp(-z2) * (va1a2 + va2a2) * (va1a2 + va2a2) 
+#	+ exp(-z1) * (va1a1 + va2a1) * (exp(-z2) * (va1a2 + va2a2)))) * exp(-z3) 
+#+ exp(-z1) * exp(-z2) * (exp(-z3) * (va1a3 + va2a3) * (va1a3 + va2a3)) 
+#	+ (exp(-z1) * (exp(-z2) * (va1a2 + va2a2)) + exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * exp(-z3) * (va1a3 + va2a3)
+#
+#
+#
+#  (exp(-z1) * exp(-z2) * (va1a2 + va2a2) + exp(-z1) * (va1a1 + va2a1) * exp(-z2))
+#   * exp(-z3) * (va1a3 + va2a3) 
+#+ d2lz3 * exp(-z3) 
+#+ exp(-z1) * exp(-z2) * exp(-z3) * (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (exp(-z1) * (exp(-z2) * (va1a2 + va2a2)) + exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * exp(-z3) * (va1a3 + va2a3)
+#
+#
+# exp(-z3) * (
+# (exp(-z1) * exp(-z2) * (va1a2 + va2a2) + exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * (va1a3 + va2a3) 
+#+ d2lz3 
+#+ exp(-z1) * exp(-z2)  * (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (exp(-z1) * exp(-z2) * (va1a2 + va2a2) + exp(-z1) * (va1a1 + va2a1) * exp(-z2))  * (va1a3 + va2a3))
+#
+#
+#exp(-z3) * ( d2lz3 
+#+ (exp(-z1) * exp(-z2) * (va1a2 + va2a2) 
+#+  exp(-z1) * (va1a1 + va2a1) * exp(-z2)) * (va1a3 + va2a3) 
+#+  exp(-z1) * exp(-z2)  * (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (exp(-z1) * exp(-z2) * (va1a2 + va2a2) + exp(-z1) * (va1a1 + va2a1) * exp(-z2))  * (va1a3 + va2a3))
+#
+#
+#exp(-z3) * ( d2lz3 + exp(-z1) * exp(-z2) *(
+#+ ( (va1a2 + va2a2) +   (va1a1 + va2a1) ) * (va1a3 + va2a3) 
+#+  (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (  (va1a2 + va2a2) +  (va1a1 + va2a1) )  * (va1a3 + va2a3)))
+#
+#
+#exp(-z3) * d2lz3 + exp(-z1) * exp(-z2) * exp(-z3) *(
+#+ ( (va1a2 + va2a2) +   (va1a1 + va2a1) ) * (va1a3 + va2a3) 
+#+  (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (  (va1a2 + va2a2) +  (va1a1 + va2a1) )  * (va1a3 + va2a3)))
+#
+#
+#exp(-z3) * d2lz3 + lz4 *(
+#+ ( (va1a2 + va2a2) +   (va1a1 + va2a1) ) * (va1a3 + va2a3) 
+#+  (va1a3 + va2a3) * (va1a3 + va2a3) 
+#+ (  (va1a2 + va2a2) +  (va1a1 + va2a1) )  * (va1a3 + va2a3)))
+
+#same as msy.cpp
+
+
+#=========================================================================================================================
+# Second derivative of lz -- second derivative
+
 
 

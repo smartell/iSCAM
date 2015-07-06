@@ -444,7 +444,6 @@ namespace rfp {
 					//  dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
 					
 					
-					
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
 					
 					// derivatives for spawning survivorship
@@ -454,7 +453,7 @@ namespace rfp {
 					if( j == m_nage ) // + group derivatives
 					{
 						dlz(k)(j)  = dlz(k)(j)/oa(h)(j) 
-						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j)
+						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j) // when I calculated llz age plus this last sa(h)(j) does not apear
 						             /square(oa(h)(j));
 						
 						dlw(k)(j)  = -lz(h)(j-1)*sa(h)(j-1)*m_rho*m_Va(h)(k)(j)/oa(h)(j)
