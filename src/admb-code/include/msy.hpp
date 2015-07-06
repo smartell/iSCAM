@@ -438,7 +438,9 @@ namespace rfp {
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship 
-					dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
+					// here is what I think it might be:
+					 dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
+					// dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
 					// This line might be incorrect - I need to re-check my calcs before changing the code
 					// here is what I think it might be:
 					//  dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);

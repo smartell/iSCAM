@@ -55,17 +55,17 @@ D(ex_lz3,"fe")
 ex_lz4<- expression( exp(-(m + fe *( va1a1 + va2a1))) *exp(-( m + fe * (va1a2 + va2a2))) * exp(-(m + fe *( va1a3 + va2a3))))
 D(ex_lz4,"fe")
 #r output
-#-(exp(-(m + fe * (va1a1 + va2a1))) * exp(-(m + fe * (va1a2 + 
-#    va2a2))) * (exp(-(m + fe * (va1a3 + va2a3))) * (va1a3 + va2a3)) + 
-#    (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
-#        va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + 
-#        va2a1))) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + 
-#        va2a2)))) * exp(-(m + fe * (va1a3 + va2a3))))
+-(exp(-(m + fe * (va1a1 + va2a1))) * exp(-(m + fe * (va1a2 + 
+    va2a2))) * (exp(-(m + fe * (va1a3 + va2a3))) * (va1a3 + va2a3)) + 
+    (exp(-(m + fe * (va1a1 + va2a1))) * (exp(-(m + fe * (va1a2 + 
+        va2a2))) * (va1a2 + va2a2)) + exp(-(m + fe * (va1a1 + 
+        va2a1))) * (va1a1 + va2a1) * exp(-(m + fe * (va1a2 + 
+        va2a2)))) * exp(-(m + fe * (va1a3 + va2a3))))
 
 #step1
-#-(exp(-za1) * exp(-za2) * (exp(-za3) * (va1a3 + va2a3)) 
-#	+ (exp(-za1) * (exp(-za2) * (va1a2 + va2a2)) 
-#    + exp(-za1) * (va1a1 + va2a1) * exp(-za2)) * exp(-za3))
+-(exp(-za1) * exp(-za2) * (exp(-za3) * (va1a3 + va2a3)) 
+	+ (exp(-za1) * (exp(-za2) * (va1a2 + va2a2)) 
+    + exp(-za1) * (va1a1 + va2a1) * exp(-za2)) * exp(-za3))
 
 
 #step2
