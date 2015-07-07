@@ -160,13 +160,11 @@
 		dvector m_dKappa;
 		dvector m_dbeta;
 		dvector m_q;
-		dvector m_bmsy;
-		dvector m_bo;
-		dmatrix m_fmsy;
-		dmatrix m_msy;
-
-
-
+		
+		dmatrix m_bo;
+		dmatrix m_bmsy;
+		d3_array m_fmsy;
+		d3_array m_msy;
 
 		// Assessment model results
 		dvector m_est_bo;
@@ -233,7 +231,7 @@
 		void writeParameterFile(const int& iyr);
 		void runStockAssessment();
 		void writeSimulationVariables();
-		void calcMSY();
+		void calcMSY(const int& iyr);
 
 		
 	};

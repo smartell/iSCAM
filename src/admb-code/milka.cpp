@@ -119,7 +119,7 @@ void OperatingModel::runScenario(const int &seed)
 
     for(int i = nyr+1; i <= m_nPyr; i++ )
     {
-    	calcMSY();
+    	calcMSY(i);
 
         getReferencePointsAndStockStatus(i);
         if(verbose) cout<<"getReferencePointsAndStockStatus OK"<<endl;
@@ -175,16 +175,8 @@ void OperatingModel::runScenario(const int &seed)
  * 
  * rho is the fraction of mortality that occurs prior to spawning.
  */
-void OperatingModel::calcMSY()
-{
-    m_msy.allocate(1,ngroup,1,nfleet);
-    m_bmsy.allocate(1,ngroup);
-    m_fmsy.allocate(1,ngroup,1,nfleet);
-    m_bo.allocate(1,ngroup);
-    m_msy.initialize();
-    m_fmsy.initialize();
-    m_bmsy.initialize();
-    m_bo.initialize();
+void OperatingModel::calcMSY(const int& iyr)
+{    
 
     /* Fecundity at age and natural mortality*/
     dmatrix fa_bar(1,n_ags,sage,nage);
@@ -225,10 +217,10 @@ void OperatingModel::calcMSY()
         rfp::msy<double,dvector,dmatrix,d3_array>
         cMSY(m_dRo(g),m_dSteepness(g),rho,M_bar,dWt_bar,fa_bar,d_V);
         
-        m_fmsy(g) = cMSY.getFmsy(dftry,d_ak);
-        m_bmsy(g) = cMSY.getBmsy();
-        m_msy(g)  = cMSY.getMsy();
-        m_bo(g)   = cMSY.getBo();
+        m_fmsy(iyr)(g)(1,nfleet) = cMSY.getFmsy(dftry,d_ak);
+        m_bmsy(iyr)(g)           = cMSY.getBmsy();
+        m_msy(iyr)(g)(1,nfleet)  = cMSY.getMsy();
+        m_bo(iyr)(g)             = cMSY.getBo();
 
         //add in get.bo;
         cMSY.print();
@@ -532,6 +524,16 @@ void OperatingModel::initMemberVariables()
 
     m_dTAC.allocate(1,ngroup,1,nfleet);
 
+    //reference points
+    m_msy.allocate(nyr+1,m_nPyr,1,ngroup,1,nfleet);
+    m_bmsy.allocate(nyr+1,m_nPyr,1,ngroup);
+    m_fmsy.allocate(nyr+1,m_nPyr,1,ngroup,1,nfleet);
+    m_bo.allocate(nyr+1,m_nPyr,1,ngroup);
+    m_msy.initialize();
+    m_fmsy.initialize();
+    m_bmsy.initialize();
+    m_bo.initialize();
+
     m_q = mv.q;
 
     // Initialize Mortality arrays from ModelVariables (mv)
@@ -732,10 +734,10 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
             
             // need to calculate reference point using the msy function
 
-            m_est_bo   = m_bo;
-            m_est_fmsy = m_fmsy;      
-            m_est_msy  = m_msy;       
-            m_est_bmsy = m_bmsy;     
+            m_est_bo   = m_bo(iyr);
+            m_est_fmsy = m_fmsy(iyr);      
+            m_est_msy  = m_msy(iyr);       
+            m_est_bmsy = m_bmsy(iyr);     
             m_est_sbtt = m_sbt(iyr)(1,ngroup);
             cout<<"m_sbt(iyr)(1,ngroup) is"<<m_sbt(iyr)(1,ngroup)<<endl;
             m_est_btt  = m_bt(iyr)(1,ngroup);
@@ -775,10 +777,10 @@ void OperatingModel::getReferencePointsAndStockStatus(const int& iyr)
         	//Btrue*exp(log(se) of stock assessment error ~ 0.1 for now). 
         	// I’d also add a “Kalman gain” ~ 0.75 to represent the potential auto correlation inassessment errors.
 
-        	m_est_bo   = m_bo;
-            m_est_fmsy = m_fmsy;      
-            m_est_msy  = m_msy;       
-            m_est_bmsy = m_bmsy; 
+        	m_est_bo   = m_bo(iyr);
+            m_est_fmsy = m_fmsy(iyr);      
+            m_est_msy  = m_msy(iyr);       
+            m_est_bmsy = m_bmsy(iyr); 
 
             for(int g=1; g<=ngroup;g++)
             {
@@ -880,14 +882,15 @@ void OperatingModel::calculateTAC(const int& iyr)
                 //double status = sbt/sbo;
                 f_rate(g) = m_est_fmsy(g);
 
-                //cout<<"m_dBthreshold "<<m_dBthreshold<<endl;
-                //cout<<"m_dBlimit "<<m_dBlimit<<endl;
-                //cout<<"Status "<<m_status(iyr)(g)<<endl;
+                cout<<"m_dBthreshold "<<m_dBthreshold<<endl;
+                cout<<"m_dBlimit "<<m_dBlimit<<endl;
+                cout<<"Status "<<m_status(iyr)(g)<<endl;
 
                 if( (m_status(iyr)(g) < m_dBthreshold) && ( m_status(iyr)(g) >= m_dBlimit ))
                 {
                     f_rate(g) *= (m_status(iyr)(g)-m_dBlimit)/(m_dBthreshold-m_dBlimit);
-                 	
+                 	 
+                     cout<<"f_rate(g) "<<f_rate(g)<<endl;
                  	
 
                 }
@@ -1772,6 +1775,8 @@ void OperatingModel::writeSimulationVariables()
     REPORT(m_SAA_flag);
     REPORT(m_nRecType);
     REPORT(m_dBo);
+    REPORT(m_bmsy);
+    REPORT(m_fmsy);
     REPORT(m_sbt);
     REPORT(m_dCatchData);
     REPORT(m_dSubLegalData);

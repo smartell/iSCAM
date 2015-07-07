@@ -86,9 +86,6 @@ D(ex_lz4,"fe")
 
 
 #plus group - Assuming age4 is max
- 
-
-
 ex_lzplus<- expression((exp(-(m + fe *( va1a1 + va2a1))) *exp(-( m + fe * (va1a2 + va2a2))) * exp(-(m + fe *( va1a3 + va2a3))))/(1-exp(-(m + fe *( va1a4 + va2a4))))  )
 D(ex_lzplus,"fe")
 
