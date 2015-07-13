@@ -438,7 +438,8 @@ namespace rfp {
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship
-					dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
+					// dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
+					dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
 					
 					// derivatives for spawning survivorship
