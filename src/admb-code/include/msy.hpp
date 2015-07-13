@@ -427,35 +427,30 @@ namespace rfp {
 			for( j = m_sage+1; j <= m_nage; j++ )
 			{
 				lz(h,j) = lz(h,j-1) * sa(h,j-1);
-				lw(h,j) = lw(h,j-1) * psa(j);
+				lw(h,j) = lz(h,j) * psa(j); 
+
 				if( j == m_nage )
 				{
 					//plus age
 					lz(h,j) = lz(h,j)/oa(h,j);
-					lw(h,j) = lz(h,j-1)*sa(h,j-1)*psa(j)/oa(h,j); //Question: shouldn't it be poa instead of oa?
+					lw(h,j) = lz(h,j)*psa(j); 
 				}
 
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship 
-					// here is what I think it might be:
-					 dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
-					// dlz(k)(j)  = sa(h)(j-1)*( dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1));
-					// This line might be incorrect - I need to re-check my calcs before changing the code
-					// here is what I think it might be:
-					//  dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);
-					
-					
+					dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);					
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
 					
 					// derivatives for spawning survivorship
+					
 					dlw(k)(j)  = -lz(h)(j)*m_rho*m_Va(h)(k)(j)*psa(j); 
 					d2lw(k)(j) =  lz(h)(j)*square(m_rho)*square(m_Va(h)(k)(j))*psa(j);
 
 					if( j == m_nage ) // + group derivatives
 					{
 						dlz(k)(j)  = dlz(k)(j)/oa(h)(j) 
-						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j) // when I calculated llz age plus this last sa(h)(j) does not apear
+						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j) 
 						             /square(oa(h)(j));
 						
 						dlw(k)(j)  = -lz(h)(j-1)*sa(h)(j-1)*m_rho*m_Va(h)(k)(j)/oa(h)(j)
@@ -484,6 +479,7 @@ namespace rfp {
 					d2lw_m(h,k,j) = d2lw(k)(j);
 				} // m_nGear
 			} // m_nage
+			//exit(1);
 
 			// Spawning biomass per recruit in fished conditions.
 			phif += lz(h) * m_Fa(h);
