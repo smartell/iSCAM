@@ -81,16 +81,20 @@
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 
-\newcommand{\fmsy} {F$_{\rm{\textbf{MSY}}}$}
+% \newcommand{\fmsy} {F$_{\rm{\textbf{MSY}}}$}
+\newcommand{\fmsy}   {$f^*$}
 
-\newcommand{\dye}  { \dfrac{{\partial y_k}}{{\partial f_k}} }%
-\newcommand{\dre}  { \dfrac{{\partial R_e}}{{\partial f_k}} }%
-\newcommand{\dphi} { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
-\newcommand{\dla}  { \dfrac{{\partial l_a}} {{\partial f_k}}}%
-\newcommand{\ddla} { \dfrac{{\partial^2 l_a}} {{\partial f_k}^2} }%
-\newcommand{\ddye} { \dfrac{{\partial^2 y_k}}{{\partial f_k}^2} }%
-\newcommand{\ddre} { \dfrac{{\partial^2 R_e}^2}{{\partial f_k}^2} }%
-\newcommand{\ddphi}{ \dfrac{{\partial^2 \phi_k}^2}{{\partial f_k}^2} }%
+\newcommand{\dye}    { \dfrac{{\partial y_k}}{{\partial f_k}} }%
+\newcommand{\dre}    { \dfrac{{\partial R_e}}{{\partial f_k}} }%
+\newcommand{\dphi}   { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
+\newcommand{\dphie}  { \dfrac{{\partial \phi_e}}{{\partial f_k}} }%
+\newcommand{\ddphie} { \dfrac{{\partial^2 \phi_e}}{{\partial f_k}^2} }%
+\newcommand{\dla}    { \dfrac{{\partial l_a}} {{\partial f_k}}}%
+\newcommand{\ddla}   { \dfrac{{\partial^2 l_a}} {{\partial f_k}^2} }%
+\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k}^2} }%
+\newcommand{\ddre}   { \dfrac{{\partial^2 R_e}}{{\partial f_k}^2} }%
+\newcommand{\ddphi}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_k}^2} }%
+
 
 
 \definecolor{cM1}{rgb}{0.9608,0.4706,0.4392}
@@ -102,11 +106,30 @@
 \begin{document}
  
 \maketitle
- 
-\block{Objective}
-{
-	Deriving fisheries reference points for a single fishery is fairly straight forward, even for complex age- or stage-based models.  The objective of this poster is to show how to derive estimates of optimal fishing mortality rates $F^*$ can be simultaneously derived for each fishery.  There are two distinctly different optimization problems: (1) to maximize yield in each of the fisheries with no allocation arrangement, and (2) to maximize the total yield under a catch sharing plan.
-}
+
+\begin{columns}
+	\column{0.25}
+	\block{Problem}
+	{
+	When there are two or more distinctly different gear types (i.e., hook \& line versus trawl) harvesting the same stock, determining the optimal fishing mortality rates for each gear is largely determined by selectivity.\\
+
+	There are two distinctly different optimization problems: (1) to maximize the total yield across all fisheries, and (2) to maximize the total yield under a allocation agreement or catch shares (Fig. \ref{fig.MSY}).
+	}
+	%%
+	%%
+	\column{0.25}
+	\block{Objective}
+	{
+		The objective of this poster is to show how to derive estimates of optimal fishing mortality rates can be simultaneously derived for each fishery.  
+	}
+	%%
+	% \includegraphics[width=11cm,
+	% 					 trim=0 0 0 0,
+	% 					 clip=true,
+	% 					 keepaspectratio=true]{./figMSY.png}
+	% \caption{}
+	% \end{figure}	
+\end{columns}
 
 % \begin{columns}
 %     \column{0.4}
@@ -130,8 +153,8 @@
 	% 
 	% CATCH EQUATIONS
 	% 
-	\column{0.33}
-	\block{Catch Equation And Finding \fmsy}{
+	\column{0.3}
+	\block{Catch Equation \& Finding $\bm{f^*}$}{
 		Assuming all fisheries and natural mortality operate simultaneously, the equilibrium catch equation for each fleet can be written as a vector
 		\begin{align}
 			%
@@ -148,12 +171,12 @@
 			\mbox{Jacobian} \nonumber \\
 			\ddye &=
 			\begin{cases}
-				f_k \phi \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k \\[2ex]
+				f_k \phi \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k \\[3ex]
 				%
 				f_{k'} \phi \ddre + 2 f_{k'} \dphi \dre + f_{k'} R_e \ddphi & k \neq k'
 			\end{cases} \label{eq.3}
 		\end{align}
-		The Newtons iteration step is given by:
+		The difficulty is in calculating all of the partial derivatives.  We break this down into suvivorship, recruitment, and per-recruit functions. The Newtons iteration step is given by:
 		\begin{align}
 			\vec{f}_{i+1} = \vec{f}_{i} - \dfrac{\partial y}{\partial f}
 			 \left( \dfrac{{\partial y}^2}{{\partial f}^2} \right)^{-1} \label{eq.4}
@@ -166,7 +189,7 @@
 	\note[
 		width=11cm,
 		targetoffsetx=-10.5cm,
-		targetoffsety=-11cm,
+		targetoffsety=-12cm,
 		rotate=00,
 		angle=0,
 		radius=0cm,
@@ -185,10 +208,10 @@
 	% 
 	% SURVIVORSHIP
 	% 
-	\column{0.33}
+	\column{0.25}
 	\block{Survivorship}{
 		The age-specific total mortality rate and survival rate is defined as \[ z_a = M_a + \sum_k f_k v_{k,a}, \quad s_a = \exp(-z_a).\]
-		The survivorship of a chorot is based on the following recurstive function:
+		The survivorship of a cohort is based on the following recurstive function:
 		\begin{align}
 			l_a &= \begin{cases}
 				1,  & a = 1\\[1ex]
@@ -226,16 +249,105 @@
 				+
 				\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
 				      {(1-s_a)^3} & a = A
-				% \dfrac{ {{l}_{a}} {{v}_{k,a}^{2}} }} {{{\left( 1-{{e}^{-m-{{v2}_{a}}\cdot f2-{{v1}_{a}}\cdot f1}}\right) }^{2}}}+\frac{2\cdot {{l}_{a}}\cdot {{v1}_{a}^{2}}\cdot {{e}^{-2\cdot m-2\cdot {{v2}_{a}}\cdot f2-2\cdot {{v1}_{a}}\cdot f1}}}{{{\left( 1-{{e}^{-m-{{v2}_{a}}\cdot f2-{{v1}_{a}}\cdot f1}}\right) }^{3}}}
 			\end{cases} \label{eq.8}
 		\end{align}
 	}
 
+	% 
+	% MATH SYMBOLS USED IN SURVIVORSHIP
+	% 
+	\note[
+		width=11cm,
+		targetoffsetx=-10.5cm,
+		targetoffsety=7cm,
+		rotate=00,
+		angle=0,
+		radius=0cm,
+		connection
+		]
+	{	
+		\textbf{Symbols}\\
+		\begin{tabular}{cl}
+			$M_a$     		& natural mortality.\\
+			$v_{k,a}$  	 	& selectivity for gear $k$.\\
+			$f_k$			& fishing rate for gear $k$.\\
+			$s_a$  			& survival rate at age $a$.\\
+			$l_a $      	& survivorship to age $a$.\\
+		\end{tabular}
+	}
+
+
+	% 
+	% RECRUITMENT
+	% 
+	\column{0.2}
+	\block{Recruitment}{
+		The following assumes that recruitment follows a Beverton-Holt relationship parametrized using the inverse of the spawning potential ratio:
+		\begin{align}
+			R_e &= R_o \frac{(\kappa-\phi_{E}/\phi_{e})}{(\kappa - 1)}\label{eq.9}
+		\end{align}
+		The first and second derivatives, required in \eqref{eq.3} and \eqref{eq.4}, are given by:
+		\begin{align}
+			\dre &= \dphie \cdot \frac{R_o \phi_{E}}{(\kappa -1) \phi_{e}^2} \label{eq.10} \\[3ex]
+			%
+			%
+			\ddre &= \dfrac{R_o \phi_{E}
+			\left[\phi_{e} \cdot \ddphie 
+			- 2 \cdot \left(\dphie\right)^2 \right]}
+			{\phi_e^3 (\kappa -1)}\label{eq.11}
+		\end{align}
+	}
+
+	% 
+	% MATH SYMBOLS USED IN RECRUITMENT
+	% 
+	\note[
+		width=15cm,
+		targetoffsetx=-5cm,
+		targetoffsety=-11cm,
+		rotate=-2
+		]
+	{	
+		\textbf{Symbols}\\
+		\begin{tabular}{cl}
+			$R_e$     		& equilibrium recruitment.\\
+			$R_o$  	 		& unfished recruitment.\\
+			$\kappa$		& recruitment compensation ratio.\\
+			$\phi_{e} $     & spawning biomass per recruit.\\
+			$\phi_{E} $     & unfished spawning biomass per recruit.\\
+		\end{tabular}
+	}
+
+	% \note{Put in a block that contains the order of operations in setting up the algorithm for determining \fmsy}
 
 \end{columns}
-	\block{~}{
-		\includegraphics[width=0.95\linewidth,keepaspectratio=true]{./whiteBoard.png}
+
+\begin{columns}
+	\column{1}
+	\useblockstyle{Minimal}
+	\block{Post-its}{
+		\centering
+		\includegraphics[width=0.30\linewidth,keepaspectratio=true]{./whiteBoard.png}
 	}
+	\useblockstyle{TornOut}
+	%
+	% MSY Figure
+	% 
+	\note[
+		width=14cm,height=14cm,
+		targetoffsetx=-60cm,
+		targetoffsety=+3cm,
+		rotate=05
+		]{
+		%Figure environment does not work
+		\begin{tikzfigure}[Equilibrium yield versus fishing mortality for 2 fishing gears. Which fishery (A or B) catches smaller fish?]
+	 	\label{fig.MSY}
+	 	\includegraphics[width=11cm]{figMSY.png}
+		\end{tikzfigure}
+	}
+
+\end{columns}
+		
 	
 
 \end{document}
