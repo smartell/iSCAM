@@ -39,7 +39,7 @@ mx=m/vbk*(log(t1)-log(t2))
 # MANAGEMENT CONTROLS
 # 
 target_spr     <- 0.40
-fe             <- c(0.15,0.05)
+fe             <- c(0.15,0.02)
 tma_allocation <- c(0.50,0.50)
 slim           <- c(32,580)
 
@@ -56,6 +56,7 @@ for(i in 2:A)
 lx[A] <- lx[A]/(1-exp(-mx[A]))
 va    <- matrix(nrow=ng,ncol=A)
 qa    <- matrix(nrow=ng,ncol=A)
+pa    <- matrix(nrow=ng,ncol=A)
 dlz   <- matrix(nrow=ng,ncol=A)
 phi.E <- as.double(lx %*% fa)
 
@@ -135,7 +136,7 @@ equilibriumModel <- function(fe)
 	for(k in gear)
 	{
 		qa[k,] <- va[k,] * wa * oa / za
-
+		pa[k,] <- fe[k]*va[k,]*(1-exp(-(za-mx))) / (za-mx)
 		dlz[k,1] <- 0
 	}
 
@@ -161,6 +162,8 @@ equilibriumModel <- function(fe)
 	
 
 	# incidence functions
+	# phi.m  <- rowSums(pa); 
+	phi.m  <- as.vector(lz %*% t(pa))
 	phi.e  <- as.double(lz %*% fa)
 	phi.q  <- as.vector(lz %*% t(qa))
 	dphi.e <- as.vector(fa %*% t(dlz))
@@ -221,101 +224,135 @@ equilibriumModel <- function(fe)
 	out <- c("spr"   = spr,
 	         "dspr"  = dspr,
 	         "ypr"   = as.double(ypr),
-	         "yield" = as.double(ye)
+	         "yield" = as.double(ye),
+	         "pmort" = as.vector(phi.m)
 	         )
 	return(out)
 }
 
 
-equilibriumModel(fe)
-fd <- seq(0,0.2,by=0.01)
-fb <- seq(0,0.4,by=0.01)
-fs <- expand.grid(fd,fb)
-names(fs) <- c("F.d","F.b")
+fnB <- function(fe)
+{
+	em  <- as.list(equilibriumModel(fe))
+	spr <- em$spr
 
-s1    <- c( 8.0, 3.0)
-s2    <- c( 1.2, 1.2)
-s3    <- c( 0.0, 0.1)
-EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+	f1  <- (spr - target_spr)^2
+	yk  <- unlist(em[grep("yield",names(em))])
+	pk  <- yk / sum(yk)
+	f2  <- sum((pk-ak)^2)
 
-s1    <- c( 9.0, 3.0)
-s2    <- c( 0.2, 1.2)
-s3    <- c( 0.0, 0.1)
-EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+	f   <- f1 + f2
+	return(f)
+}
 
-s1    <- c( 8.0, 2.0)
-s2    <- c( 1.2, 3.2)
-s3    <- c( 0.0, 0.1)
-EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+fnC <- function(fe)
+{
+	em  <- as.list(equilibriumModel(fe))
+	spr <- em$spr
+	print(spr)
+	f1  <- (spr - target_spr)^2
+	pm  <- unlist(em[grep("pmort",names(em))])
+	pk  <- pm / sum(pm)
+	f2  <- sum((pk-ak)^2)
+
+	f   <- f1 + f2
+	return(f)
+}
+
+
+
+fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
+
+# equilibriumModel(fe)
+# fd <- seq(0,0.2,by=0.01)
+# fb <- seq(0,0.4,by=0.01)
+# fs <- expand.grid(fd,fb)
+# names(fs) <- c("F.d","F.b")
+
+# s1    <- c( 8.0, 3.0)
+# s2    <- c( 1.2, 1.2)
+# s3    <- c( 0.0, 0.1)
+# EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+
+# s1    <- c( 9.0, 3.0)
+# s2    <- c( 0.2, 1.2)
+# s3    <- c( 0.0, 0.1)
+# EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+
+# s1    <- c( 8.0, 2.0)
+# s2    <- c( 1.2, 3.2)
+# s3    <- c( 0.0, 0.1)
+# EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
 
 
 
 
-# 
-# GRAPHICS
-# 
-spr_brk <- seq(0.05,0.50,by=0.05)
-df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
+# # 
+# # GRAPHICS
+# # 
+# spr_brk <- seq(0.05,0.50,by=0.05)
+# df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
 
-p <- ggplot(df)
-p <- p + geom_area(aes(x=age,y=lx*fa),alpha=0.3,fill="black")
-p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
-p <- p + labs(x="Age",y="Spawning biomass per recruit")
-print(p)
-
-# p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
-# p <- p + stat_contour(alpha=0.5,aes(color=..level..))
-# p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
-# p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
+# p <- ggplot(df)
+# p <- p + geom_area(aes(x=age,y=lx*fa),alpha=0.3,fill="black")
+# p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
+# p <- p + labs(x="Age",y="Spawning biomass per recruit")
 # print(p)
 
-p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
-p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
-p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
-p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
-p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
-p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
-print(p)
+# # p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
+# # p <- p + stat_contour(alpha=0.5,aes(color=..level..))
+# # p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
+# # p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
+# # print(p)
 
-# not sure what this is good for.
-br <- seq(2,10,by=1)
-p <- ggplot(EQM) 
-p <- p + stat_contour(aes(F.d,F.b,z=yield1,color =..level..),breaks=br,alpha=0.1)
-p <- p + stat_contour(aes(F.d,F.b,z=yield2,size =..level..),breaks=br,alpha=0.1)
-p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
-p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield1,color=..level..),breaks=br,size=1.5)
-p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield2,size=..level..),breaks=br,alpha=0.5)
-p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
-p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
-# p <- p + stat_contour(breaks=0.35,colour="red")
-p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Removals",size="Bycatch")
-print(p)
+# p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
+# p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
+# p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
+# p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
+# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
+# print(p)
 
-p <- ggplot(EQM)
-p <- p + stat_contour(aes(F.d,F.b,z=yield1+yield2,col=..level..))
-p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
-p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Yield")
-print(p)
+# # not sure what this is good for.
+# br <- seq(2,10,by=1)
+# p <- ggplot(EQM) 
+# p <- p + stat_contour(aes(F.d,F.b,z=yield1,color =..level..),breaks=br,alpha=0.1)
+# p <- p + stat_contour(aes(F.d,F.b,z=yield2,size =..level..),breaks=br,alpha=0.1)
+# p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
+# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield1,color=..level..),breaks=br,size=1.5)
+# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield2,size=..level..),breaks=br,alpha=0.5)
+# p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
+# # p <- p + stat_contour(breaks=0.35,colour="red")
+# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Removals",size="Bycatch")
+# print(p)
 
-# p <- ggplot(EQM,aes(spr,yield1,color=factor(yield2))) + geom_line()
+# p <- ggplot(EQM)
+# p <- p + stat_contour(aes(F.d,F.b,z=yield1+yield2,col=..level..))
+# p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
+# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Yield")
+# print(p)
 
-# v <- ggplot(SPR,aes(Halibut.Fishery,Bycatch.Fishery,z=SPR)) 
-# v <- v + stat_contour(breaks=seq(0.05,0.50,by=0.05))
+# # p <- ggplot(EQM,aes(spr,yield1,color=factor(yield2))) + geom_line()
 
-plot.va <- function()
-{
-	for(k in gear)
-	{
-		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
-	}
-	df  <- data.frame(Age=age,"Directed"=va[1,],"Bycatch"=va[2,])
-	mdf <- melt(df,id.vars="Age")
-	p <- ggplot(mdf) + geom_line(aes(Age,value,col=variable))
-	p <- p + labs(x="Age",y="Selectivity-at-age")
-	print(p)
-}
-m
+# # v <- ggplot(SPR,aes(Halibut.Fishery,Bycatch.Fishery,z=SPR)) 
+# # v <- v + stat_contour(breaks=seq(0.05,0.50,by=0.05))
+
+# plot.va <- function()
+# {
+# 	for(k in gear)
+# 	{
+# 		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
+# 	}
+# 	df  <- data.frame(Age=age,"Directed"=va[1,],"Bycatch"=va[2,])
+# 	mdf <- melt(df,id.vars="Age")
+# 	p <- ggplot(mdf) + geom_line(aes(Age,value,col=variable))
+# 	p <- p + labs(x="Age",y="Selectivity-at-age")
+# 	print(p)
+# }
+# m
 
 
 
