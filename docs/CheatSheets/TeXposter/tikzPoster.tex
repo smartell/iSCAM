@@ -88,6 +88,8 @@
 \newcommand{\dre}    { \dfrac{{\partial R_e}}{{\partial f_k}} }%
 \newcommand{\dphi}   { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
 \newcommand{\dphik}  { \dfrac{{\partial \phi_{k'}}}{{\partial f_k}} }%
+\newcommand{\dqak}   { \dfrac{{\partial q_{k,a}}}{{\partial f_k}} }
+
 \newcommand{\dphie}  { \dfrac{{\partial \phi_e}}{{\partial f_k}} }%
 \newcommand{\ddphie} { \dfrac{{\partial^2 \phi_e}}{{\partial f_k}^2} }%
 \newcommand{\dla}    { \dfrac{{\partial l_a}} {{\partial f_k}}}%
@@ -324,19 +326,37 @@
 			\phi_{e} &= \sum_a l_a w_a m_a \label{eq.12}
 		\end{align}
 		and $\phi_{E}$ is the same as \eqref{eq.12} where survivorship is based only on natural mortality (i.e., $f_k=0, \quad \forall k$).\\
+		The first and second derivatives of $\phi_{e}$ are given by
+
+		\begin{align}
+			\dphie &= \sum_a f_a \cdot \dla  \label{eq.13}
+		\end{align}
+
+		\begin{align}
+			\ddphie &= \sum_a f_a \cdot \ddla  \label{eq.14}
+		\end{align}
 
 		Yield per recruit $\phi_k$ for fishery $k$ is based on the Barnov catch equation:
 		\begin{align}
-			q_{k,a} &= w_a v_a (1-s_a)/ z_a \nonumber \\
-			\phi_k &= \sum_a l_a q_{k,a} \label{eq.13}
+			q_{k,a} &= w_a v_k (1-s_a)/ z_a \nonumber \\
+			\phi_k &= \sum_a l_a q_{k,a} \label{eq.15}
 		\end{align}
 		The derivative of the yield per recruit with respect to $f_k$ is given by
 		\begin{align}
-			\dphi &= 
+			\dphi &=
 		\end{align}
+		Where:
+		\begin{align}
+		\dqak &=
+			\begin{cases}
+				 \dfrac{{v_k}^{2} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k = k \\
+				%
+				\dfrac{{v_k}\cdot v_{k'} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k \neq k'
+			\end{cases}
+		\end{align}
+		
 	}
-	% \note{Put in a block that contains the order of operations in setting up the algorithm for determining \fmsy}
-
+	
 \end{columns}
 
 \begin{columns}
@@ -350,18 +370,18 @@
 	%
 	% MSY Figure
 	% 
-	\note[
-		width=14cm,height=14cm,
-		targetoffsetx=-60cm,
-		targetoffsety=+3cm,
-		rotate=05
-		]{
-		%Figure environment does not work
-		\begin{tikzfigure}[Equilibrium yield versus fishing mortality for 2 fishing gears. Which fishery (A or B) catches smaller fish?]
-	 	\label{fig.MSY}
-	 	\includegraphics[width=11cm]{figMSY.png}
-		\end{tikzfigure}
-	}
+	%\note[
+	%	width=14cm,height=14cm,
+	%	targetoffsetx=-60cm,
+	%	targetoffsety=+3cm,
+	%	rotate=05
+	%	]{
+	%	%Figure environment does not work
+	%	\begin{tikzfigure}[Equilibrium yield versus fishing mortality for 2 fishing gears. Which fishery (A or B) catches smaller fish?]
+	% 	\label{fig.MSY}
+	% 	\includegraphics[width=11cm]{figMSY.png}
+	%	\end{tikzfigure}
+	%}
 
 \end{columns}
 		
