@@ -262,7 +262,7 @@ lines(fe,numddla,  lwd=2, col="mediumorchid3" )
 #testing derivatives
 
 ### two or more fisheries example
-F<-matrix(c(0.2,0.2), ncol=2)
+
 msycalc2<-function(F){
 
 	Ro<-1
@@ -364,22 +364,22 @@ msycalc2<-function(F){
 	
 	dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))
 	dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))
-	dYe.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))
+	dYe.dfe<- NULL
 
 	for(n in 1:ncol(fe)){
 		for(nn in 1:ncol(fe)){
 
 			if(n==nn){
 				dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)
+				dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)
+
 			} else{
-				dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)
-			}
-			
-			-((1-sa)*va[,n]*va[,nn]*wa)/za^2
-			dphiq.dfe[n,nn]<- sum(dla.dfe[,n]*qa[,nn]+ la*(-((1-sa)*va[,n]*va[,nn]*wa)/za^2))
-			dYe.dfe[n,nn]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,nn]+fe[,n]*phiq[,n]*dRe.dfe[,n]
+				dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)
+				dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)
+			}			
 		
 		}
+		dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]
 	}
 	
 	
@@ -402,13 +402,13 @@ msycalc2<-function(F){
 	
 	ddLA.ddfe <- ddla.ddfe[length(ages),] 
 
+	ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )
+								- 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )
+								+ ddLA.ddfe / oa[length(ages)] 
+								+  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))
 	
-	for(n in 1:(ncol(fe))){
-			ddla.ddfe[length(ages),n] <-  LA * (va[length(ages),n])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )
-								- 2 * dLA.dfe[n] * va[length(ages),n] * sa[length(ages)] / ( oa[length(ages)]^2 )
-								+ ddLA.ddfe[n] / oa[length(ages)] 
-								+  2 * LA * (va[length(ages),n])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3)
-		
+
+	for(n in 1:(ncol(fe))){	
 	ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])
 
 	ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))
@@ -427,9 +427,12 @@ msycalc2<-function(F){
 
 			if(n==nn)
 			{
-				ddqa.ddfe[[n]][,nn]<- (2*(1-sa)*va[,n]^3*wa)/za^3
+				ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)
+
+				
 			}else{ 
-				ddqa.ddfe[[n]][,nn]<- (2*(1-sa)*va[,n]*va[,nn]^2*wa)/za^3
+				ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)
+
 			}
 				ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])
 		}
@@ -438,7 +441,12 @@ msycalc2<-function(F){
 	ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))
 	for(n in 1:(ncol(fe))){
 		for(nn in 1:(ncol(fe))){
-			ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]
+			if(n==nn)
+			{
+				ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]
+			}else{
+				ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]
+			}
 		}
 	}
 	return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))
@@ -464,7 +472,7 @@ for( a in 1:nrow(F))
 	result<-msycalc2(F[a,])
 	
 	calcYE[a,]<-result$Ye
-	calcdYE[a,]<-diag(result$dYe.dfe)
+	calcdYE[a,]<-result$dYe.dfe
 	calcddYE[a,]<-diag(result$ddYe.ddfe)
 	
 }
@@ -480,6 +488,10 @@ lines(F[,2],calcddYE[,2],lwd=3,type="l",col="skyblue")
 
 
 
+(cbind(F[,1],calcYE[,1]))[order(F[,1])]
+plot((cbind(F[,1][order(F[,1])],calcYE[,1][order(F[,1])])),lwd=3,type="l")
 
 
+#need a 3d plot in here
 
+?order

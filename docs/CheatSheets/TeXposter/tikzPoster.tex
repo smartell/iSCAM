@@ -86,17 +86,24 @@
 
 \newcommand{\dye}    { \dfrac{{\partial y_k}}{{\partial f_k}} }%
 \newcommand{\dre}    { \dfrac{{\partial R_e}}{{\partial f_k}} }%
+\newcommand{\drep}    { \dfrac{{\partial R_e}}{{\partial f_{k'}}} }%
 \newcommand{\dphi}   { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
-\newcommand{\dphik}  { \dfrac{{\partial \phi_{k'}}}{{\partial f_k}} }%
+\newcommand{\dphip}  { \dfrac{{\partial \phi_{k}}}{{\partial f_{k'}}} }%
 \newcommand{\dqak}   { \dfrac{{\partial q_{k,a}}}{{\partial f_k}} }
-
+\newcommand{\dqakp}   { \dfrac{{\partial q_{k,a}}}{{\partial f_{k'}}} }
 \newcommand{\dphie}  { \dfrac{{\partial \phi_e}}{{\partial f_k}} }%
 \newcommand{\ddphie} { \dfrac{{\partial^2 \phi_e}}{{\partial f_k}^2} }%
 \newcommand{\dla}    { \dfrac{{\partial l_a}} {{\partial f_k}}}%
+\newcommand{\dlap}    { \dfrac{{\partial l_a}} {{\partial f_{k'}}}}%
 \newcommand{\ddla}   { \dfrac{{\partial^2 l_a}} {{\partial f_k}^2} }%
-\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k}^2} }%
+\newcommand{\ddlap}   { \dfrac{{\partial^2 l_a}} {{\partial f_{k'}}^2} }%
+\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k'}^2} }%
 \newcommand{\ddre}   { \dfrac{{\partial^2 R_e}}{{\partial f_k}^2} }%
+\newcommand{\ddrep}   { \dfrac{{\partial^2 R_e}}{{\partial f_{k'}}^2} }%
 \newcommand{\ddphi}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_k}^2} }%
+\newcommand{\ddphip}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_{k'}}^2} }%
+\newcommand{\ddqak}   { \dfrac{{\partial^2 q_{k,a}}}{{\partial f_k}^2} }
+\newcommand{\ddqakp}   { \dfrac{{\partial^2 q_{k,a}}}{{\partial f_{k'}}^2} }
 \newcommand{\ddphik} { \dfrac{{\partial^2 \phi_{k'}}}{{\partial f_k}^2} }%
 
 
@@ -164,14 +171,14 @@
 			%
 			\dye &= R_e \phi_k
 			+ f_k R_e \dphi
-			+ f_k \phi \dre \label{eq.2} \\[1ex] 
+			+ f_k \phi_k \dre \label{eq.2} \\[1ex] 
 			%
 			\mbox{Jacobian} \nonumber \\
 			\ddye &=
 			\begin{cases}
-				f_k \phi \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k \\[3ex]
+				f_k \phi_k \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k' \\[3ex]
 				%
-				f_{k} \phi \ddre + 2 f_{k} \dphik \dre + f_{k} R_e \ddphik & k \neq k'
+				f_{k} \phi_k \ddrep + 2 f_{k} \dphip \drep + f_{k} R_e \ddphip & k \neq k'
 			\end{cases} \label{eq.3}
 		\end{align}
 		The difficulty is in calculating all of the partial derivatives.  We break this down into suvivorship, recruitment, and per-recruit functions. The Newtons iteration step is given by:
@@ -239,14 +246,17 @@
 				{ s_{a-1} }\cdot \left(
 				\dfrac{{\partial^2 l_{a-1}}} {{\partial f_k}^2}
 				+ {{l}_{a-1}} {{v}_{k,a-1}^{2}} 
+				+ 2  \dfrac{{\partial l_{a-1}}} {{\partial f_k}} v_{k,a-1}
 				\right), & 1<a<A\\[3ex]
 				%
 				\dfrac{1}{\left(1-s_a \right)} \cdot
-				\ddla \cdot \dfrac{ {{l}_{a}} {{v1}_{a}^{2}} {{s}_{a}} } 
-				{ (1- s_a) }
-				+
-				\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
-				      {(1-s_a)^3} & a = A
+				\ddla 
+				+ \dfrac{ {{l}_{a}} {{v}_{k,a}^{2}} {{s}_{a}} } 
+				{ (1- s_a)^2 } 
+				+\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
+				      {(1-s_a)^3}
+				- \dfrac{2 \cdot \dfrac{{\partial l_{a}}} {{\partial f_k}} {v}_{k,a} {s}_{a}} {(1-s_a)^2}
+				 & a = A
 			\end{cases} \label{eq.8}
 		\end{align}
 	}
@@ -343,15 +353,39 @@
 		\end{align}
 		The derivative of the yield per recruit with respect to $f_k$ is given by
 		\begin{align}
-			\dphi &=
+		\dphip &=
+			\begin{cases}
+				 \dqak \cdot l_a + \dla \cdot q_{a,k} & k = k'\\
+					%
+				 \dqakp \cdot l_a + \dlap \cdot q_{a,k} & k \neq k'
+			\end{cases}
 		\end{align}
 		Where:
 		\begin{align}
-		\dqak &=
+		\dqakp &=
 			\begin{cases}
-				 \dfrac{{v_k}^{2} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k = k \\
+				 \dfrac{{v_k}^{2} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k = k' \\
 				%
 				\dfrac{{v_k}\cdot v_{k'} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k \neq k'
+			\end{cases}
+		\end{align}
+		And second derivative
+
+		\begin{align}
+		\ddphip &=
+			\begin{cases}
+				 \ddqak \cdot l_a + 2 \cdot \dla \dqak + \ddla \cdot q_{a,k} & k = k'\\
+					%
+				 \ddqakp \cdot l_a + 2 \cdot \dlap \dqakp + \ddlap \cdot q_{a,k} & k \neq k'
+			\end{cases}
+		\end{align}
+		Where:
+		\begin{align}
+		\ddqakp &=
+			\begin{cases}
+				 \dfrac{{v_k}^{3} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) & k = k' \\
+				%
+				\dfrac{{v_k}\cdot v_{k'^2} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) &  k \neq k'
 			\end{cases}
 		\end{align}
 		
