@@ -286,8 +286,8 @@ msycalc2<-function(F){
 	vsd1<-0.5660189
 	va1<-(1/(1+exp(-(ages-v50)/vsd)))
 	
-	a2<-1
-	b2<-3
+	a2<-0.7
+	b2<-7
 	gamma2<-0.5
 	va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))
 
@@ -456,9 +456,6 @@ msycalc2<-function(F){
 F<-matrix(c(0.15,0.2),ncol=2)
 msycalc2(F)
 
-
-fe<-seq(0,1,0.01)
-
 F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))
 
 calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))
@@ -478,20 +475,115 @@ for( a in 1:nrow(F))
 }
 
 
-par(mfrow=c(3,1))
-plot(F[,1],calcYE[,1],lwd=3,type="l")
-lines(F[,2],calcYE[,2],lwd=3,type="l",col="skyblue")
-plot(F[,1],calcdYE[,1],lwd=3,type="l")
-lines(F[,2],calcdYE[,2],lwd=3,type="l",col="skyblue")
-plot(F[,1],calcddYE[,1],lwd=3,type="l")
-lines(F[,2],calcddYE[,2],lwd=3,type="l",col="skyblue")
+
+x <- unique(F[,1])
+y <- unique(F[,2])
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))
+
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))
+
+nrz <- nrow(z)
+ncz <- ncol(z)
+# Create a function interpolating colors in the range of specified colors
+jet.colors <- colorRampPalette( c("blue", "green","red") )
+# Generate the desired number of colors from this palette
+nbcol <- 25
+color <- jet.colors(nbcol)
+# Compute the z-value at the facet centres
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]
+# Recode facet z-values into color indices
+facetcol <- cut(zfacet, nbcol)
+facetcol2 <- cut(zfacet2, nbcol)
+
+par(mfrow=c(1,2))
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")
+
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")
 
 
 
-(cbind(F[,1],calcYE[,1]))[order(F[,1])]
-plot((cbind(F[,1][order(F[,1])],calcYE[,1][order(F[,1])])),lwd=3,type="l")
+zt<-z+z2
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]
+facetcol_t <- cut(zfacet_t, nbcol)
+
+par(mfrow=c(1,1))
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")
+
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])
+Yemax= c(as.vector(F[which(apply(calcYE,1,sum)==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+points(Yemax[1], Yemax[2], col = 2, pch = 16)
 
 
-#need a 3d plot in here
+#===============================================================================================================
+#numerical approximation of derivatives
 
-?order
+
+numdYE<-matrix(NA,ncol=2,nrow=nrow(F))
+calcdYE<-matrix(NA,ncol=2,nrow=nrow(F))
+
+numddYE<-matrix(NA,ncol=4,nrow=nrow(F))
+calcddYE<-matrix(NA,ncol=4,nrow=nrow(F))
+
+calcdla<-NULL
+numdla<-NULL
+calcddla<-NULL
+numddla<-NULL
+
+F<-expand.grid(seq(0,1,0.1),seq(0,1,0.1))
+h<-0.00001
+
+
+for( a in 1:nrow(F))
+{
+	result<-msycalc2(F[a,])
+	
+	calcdYE[a,]<-result$dYe.dfe
+	
+	numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2
+
+	calcddYE[a,]<-as.vector(result$ddYe.ddfe)
+
+	numddYE[a,]<-as.vector((msycalc2(F[a,]+2*h)$Ye - 2*msycalc2(F[a,]+h)$Ye + msycalc2(F[a,])$Ye)/h^2)
+
+	calcdla[a]<-sum(result$dla.dfe)
+
+	numdla[a]<-sum(((msycalc2(F[a,]+h)$la - msycalc2(F[a,])$la)/h + (msycalc2(F[a,])$la - msycalc2(F[a,]-h)$la)/h)/2)
+
+	calcddla[a]<-sum(result$ddla.ddfe)
+
+	numddla[a]<-sum((msycalc2(F[a,]+ h)$la - 2*msycalc2(F[a,])$la + msycalc2(F[a,]-h)$la)/h^2)
+}
+
+par(mfrow=c(3,2))
+plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdYE[,1][order(F[,1])], lwd=2, col="mediumorchid3" )
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")
+plot(F[,2],calcdYE[,2], type="l", lwd=2)
+lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )
+plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numddYE[,1][order(F[,1])],  lwd=2, col="mediumorchid3" )
+plot(F[,2],calcddYE[,2], type="l", lwd=2)
+lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )
+plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numddYE[,3][order(F[,1])],  lwd=2, col="mediumorchid3" )
+plot(F[,2],calcddYE[,4], type="l", lwd=2)
+lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+
+
+par(mfrow=c(2,2))
+plot(F[,1][order(F[,1])],calcdla[order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdla[order(F[,1])], lwd=2, col="mediumorchid3" )
+plot(F[,1][order(F[,1])],calcddla[order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numddla[order(F[,1])],  lwd=2, col="mediumorchid3" )
+
+plot(F[,2],calcdla, type="l", lwd=2)
+lines(F[,2],numdla, lwd=2, col="mediumorchid3" )
+plot(F[,2],calcddla, type="l", lwd=2)
+lines(F[,2],numddla,  lwd=2, col="mediumorchid3" )
+
+
+

@@ -1,4 +1,5 @@
-\documentclass[20pt, a0paper, landscape]{tikzposter}
+\documentclass[20pt, a0paper, landscape,colspace=1cm]{tikzposter}
+
 % \usepackage[utf8]{inputenc}
  
 \title{OPTIMAL FISHING RATES FOR MULTIPLE FLEETS}
@@ -71,6 +72,9 @@
 \def\dof{d.o.f\onedot}
 \def\etal{{et al}\onedot}
 \makeatother
+
+
+
 
 \newcommand{\fspr}{F$_{\rm{SPR=35\%}}$}
 \newcommand{\bspr}{B$_{\rm{SPR=35\%}}$}
@@ -158,7 +162,7 @@
 	% 
 	% CATCH EQUATIONS
 	% 
-	\column{0.3}
+	\column{0.28}
 	\block{Catch Equation \& Finding $\bm{f^*}$}{
 		Assuming all fisheries and natural mortality operate simultaneously, the equilibrium catch equation for each fleet can be written as a vector
 		\begin{align}
@@ -213,7 +217,8 @@
 	% 
 	% SURVIVORSHIP
 	% 
-	\column{0.25}
+	\column{0.27}
+
 	\block{Survivorship}{
 		The age-specific total mortality rate and survival rate is defined as \[ z_a = M_a + \sum_k f_k v_{k,a}, \quad s_a = \exp(-z_a).\]
 		The survivorship of a cohort is based on the following recurstive function:
