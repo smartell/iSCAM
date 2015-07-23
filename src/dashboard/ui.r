@@ -12,13 +12,16 @@ source('helpers.R')
 menu <- sidebarMenu(
   menuItem("Dashboard",tabName="dashboard",icon=icon("dashboard")),
   menuItem("Harvest Policy",tabName="harvest_policy",icon=icon("cog"),
-  	menuSubItem("Equilibrium",tabName="equilibrium",icon=icon("line-chart"))
+    menuSubItem("Equilibrium",tabName="equilibrium",icon=icon("line-chart")),
+  	menuSubItem("Total Mortality",tabName="total_mortality",icon=icon("bar-chart"))
   ),
   menuItem("Code",tabName="code",icon=icon("file-text-o"),
     menuSubItem("ui.R", tabName = "ui", icon = icon("angle-right")),
     menuSubItem("server.R", tabName = "server", icon = icon("angle-right"))
   )
 )
+
+
 
 
 
@@ -41,6 +44,7 @@ body <- dashboardBody(
     		valueBox(uiOutput("byr_ratio"),"Bycatch Yield Ratio",icon=icon("slideshare"))
     	)
     ),
+
     tabItem(tabName="harvest_policy"),
 
 
@@ -50,7 +54,7 @@ body <- dashboardBody(
         box( title="Graphics" ,width=12, status="info", solidHeader=TRUE )
       ),
       fluidRow(
-    	box( width = 12, status = "primary", solidHeader = TRUE, title="Equilibrium Model",
+        box( width = 12, status = "primary", solidHeader = TRUE, title="Equilibrium Model",
     		## -------------- ##
 		    # Equil Interface  #
 		    ## -------------- ##
@@ -58,6 +62,9 @@ body <- dashboardBody(
     	))
     ),
 
+    tabItem(tabName="total_mortality",
+      renderTMA()
+    ),
 
 
 
