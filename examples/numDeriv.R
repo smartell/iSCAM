@@ -475,7 +475,7 @@ for( a in 1:nrow(F))
 	result<-msycalc2(F[a,])
 	
 	calcYE[a,]<-result$Ye
-	calcdYE[a,]<-result$dYe.dfe
+	calcdYE[a,]<-diag(result$dYe.dfe)
 	calcddYE[a,]<-diag(result$ddYe.ddfe)
 	
 }
@@ -609,9 +609,9 @@ lines(F[,1][order(F[,1])],numdla[order(F[,1])], lwd=2, col="mediumorchid3" )
 plot(F[,1][order(F[,1])],calcddla[order(F[,1])], type="l", lwd=2)
 lines(F[,1][order(F[,1])],numddla[order(F[,1])],  lwd=2, col="mediumorchid3" )
 
-par(mfrow=c(1,2))
-plot(F[,1][order(F[,1])],calcdphie[,1][order(F[,1])], type="l", lwd=2)
-lines(F[,1][order(F[,1])],numdphie[,1][order(F[,1])], lwd=2, col="mediumorchid3" )
+par(mfrow=c(1,1))
+plot(F[,1][order(F[,1])],calcdphie[order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdphie[order(F[,1])], lwd=2, col="mediumorchid3" )
 legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")
 
 

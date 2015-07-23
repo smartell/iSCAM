@@ -223,7 +223,7 @@
 	% 
 	% SURVIVORSHIP
 	% 
-	\column{0.27}
+	\column{0.28}
 
 	\block{Survivorship}{
 		The age-specific total mortality rate and survival rate is defined as \[ z_a = M_a + \sum_k f_k v_{k,a}, \quad s_a = \exp(-z_a).\]
@@ -240,12 +240,12 @@
 			\dla &= \begin{cases}
 				0, & a=1\\[1ex]
 				% 
-				s_{a-1} \cdot\left(\dfrac{\partial l_{a-1}}{\partial f_k} - l_{a-1}v_{k,a-1} \right), & 1 < a < A\\[3ex]
+				s_{a-1} \cdot\left(\dfrac{\partial l_{a-1}}{\partial f_k} - l_{a-1}v_{k,a-1} \right),   &1 < a < A \\[3ex]
 				% 
 				\dfrac{1}{\left(1-s_a \right)} \cdot
 				\left[
-					\dfrac{\partial l_{a}}{\partial f_k}
-					 - \dfrac{{{l}_{a}} {{v}_{k,a}} { s_{a}} }
+				{{s}_{a-1}} \cdot \left(\dfrac{\partial l_{a-1}}{\partial f_k}-{{l}_{a-1}} {{v}_{a-1}} \right) 
+				 - \dfrac{{{l}_{a-1}} {{s}_{a-1}}  {{v}_{k,a}} { s_{a}} }
 					{{{\left( 1-{s_{a}}\right) }}}
 					\right], & a = A 
 			\end{cases}\label{eq.7} \\[3ex]
@@ -254,20 +254,22 @@
 			\ddla & = \begin{cases}
 				0, & a = 1\\[1ex]
 				%
-				{ s_{a-1} }\cdot \left(
+				 { s_{a-1} }\cdot \left(
 				\dfrac{{\partial^2 l_{a-1}}} {{\partial f_k}^2}
 				+ {{l}_{a-1}} {{v}_{k,a-1}^{2}} 
 				+ 2  \dfrac{{\partial l_{a-1}}} {{\partial f_k}} v_{k,a-1}
 				\right), & 1<a<A\\[3ex]
 				%
-				\dfrac{1}{\left(1-s_a \right)} \cdot
-				\ddla 
-				+ \dfrac{ {{l}_{a}} {{v}_{k,a}^{2}} {{s}_{a}} } 
-				{ (1- s_a)^2 } 
-				+\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
-				      {(1-s_a)^3}
-				- \dfrac{2 \cdot \dfrac{{\partial l_{a}}} {{\partial f_k}} {v}_{k,a} {s}_{a}} {(1-s_a)^2}
-				 & a = A
+				 \dfrac{1}{\left(1-s_a \right)} \cdot
+				{ s_{a-1} }\cdot \left(\dfrac{{\partial^2 l_{a-1}}} {{\partial f_k}^2} + {{l}_{a-1}} {{v}_{k,a-1}^{2}} 
+				+ 2  \dfrac{{\partial l_{a-1}}} {{\partial f_k}} v_{k,a-1}
+				\right) \\
+				 + \dfrac{ {{l}_{a-1}} {{s}_{a-1}}  {{v}_{k,a}^{2}} {{s}_{a}} } { (1- s_a)^2 } 
+				 +\dfrac{ 2  {{l}_{a-1}}  {{s}_{a-1}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
+				      {(1-s_a)^3} \\
+				- \dfrac{2 \cdot s_{a-1} \cdot\left(\dfrac{\partial l_{a-1}}{\partial f_k} - l_{a-1}v_{k,a-1} \right) \cdot
+				 {v}_{k,a} {s}_{a}} {(1-s_a)^2}  
+				 & a = A 				 
 			\end{cases} \label{eq.8}
 		\end{align}
 	}
@@ -278,7 +280,7 @@
 	\note[
 		width=11cm,
 		targetoffsetx=-10.5cm,
-		targetoffsety=7cm,
+		targetoffsety=12cm,
 		rotate=00,
 		angle=0,
 		radius=0cm,
@@ -340,7 +342,7 @@
 	% 
 	% PER RECRUIT FUNCTIONS
 	% 
-	\column{0.25}
+	\column{0.24}
 	\block{Per Recruit Functions}{
 		The spawning biomass per recruit is the sum of products of survivorship and mature biomass at age:
 		\begin{align}
