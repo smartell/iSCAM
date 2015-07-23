@@ -262,6 +262,8 @@ lines(fe,numddla,  lwd=2, col="mediumorchid3" )
 #testing derivatives
 
 ### two or more fisheries example
+F<-expand.grid(seq(0.1,1,0.01),seq(0.1,1,0.01))
+
 
 msycalc2<-function(F){
 
@@ -270,7 +272,7 @@ msycalc2<-function(F){
 	m<-0.2
 	fe<-F
 
-	ages<-1:30
+	ages<-1:70
 	Winf<-3.165797
 	k<-0.2728831
 	to<- -.7
@@ -284,7 +286,7 @@ msycalc2<-function(F){
 	
 	v501<-2.9485810
 	vsd1<-0.5660189
-	va1<-(1/(1+exp(-(ages-v50)/vsd)))
+	va1<-(1/(1+exp(-(ages-v501)/vsd1)))
 	
 	a2<-0.7
 	b2<-7
@@ -348,6 +350,8 @@ msycalc2<-function(F){
 		}
 	}
 	dLA.dfe<-dla.dfe[length(ages),]
+	#dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - dla.dfe[i-1,]*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2
+	
 	dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2
 	
 	
@@ -364,7 +368,7 @@ msycalc2<-function(F){
 	
 	dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))
 	dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))
-	dYe.dfe<- NULL
+	dYe.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))
 
 	for(n in 1:ncol(fe)){
 		for(nn in 1:ncol(fe)){
@@ -372,14 +376,16 @@ msycalc2<-function(F){
 			if(n==nn){
 				dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)
 				dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)
+				dYe.dfe[n,nn]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,nn]+fe[,n]*phiq[,n]*dRe.dfe[,n]
 
 			} else{
 				dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)
 				dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)
+				dYe.dfe[n,nn]<- fe[,n]*Re*dphiq.dfe[n,nn]+fe[,n]*phiq[,n]*dRe.dfe[,nn]
 			}			
 		
 		}
-		dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]
+		
 	}
 	
 	
@@ -402,16 +408,16 @@ msycalc2<-function(F){
 	
 	ddLA.ddfe <- ddla.ddfe[length(ages),] 
 
-	ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )
-								- 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )
-								+ ddLA.ddfe / oa[length(ages)] 
-								+  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))
-	
-
+	ddla.ddfe[length(ages),] <- (ddLA.ddfe / oa[length(ages)]
+								+ LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )
+								+ 2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /( oa[length(ages)]^3 )
+								- 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 ))
+								 
+								
 	for(n in 1:(ncol(fe))){	
-	ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])
+		ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])
 
-	ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))
+		ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))
 	}					
 	
 
@@ -434,7 +440,7 @@ msycalc2<-function(F){
 				ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)
 
 			}
-				ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])
+				ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,nn]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,nn])
 		}
 	}
 
@@ -449,14 +455,14 @@ msycalc2<-function(F){
 			}
 		}
 	}
-	return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))
+	return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe,phie=phie,dphie.dfe=dphie.dfe,dqa.dfe=dqa.dfe))
 
 }
 
 F<-matrix(c(0.15,0.2),ncol=2)
 msycalc2(F)
 
-F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))
+F<-expand.grid(seq(0.1,1,0.01),seq(0.1,1,0.01))
 
 calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))
 calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))
@@ -521,69 +527,115 @@ points(Yemax[1], Yemax[2], col = 2, pch = 16)
 #===============================================================================================================
 #numerical approximation of derivatives
 
+F<-expand.grid(seq(0.1,1,0.1),seq(0.1,1,0.1))
+h<-0.00001
 
-numdYE<-matrix(NA,ncol=2,nrow=nrow(F))
-calcdYE<-matrix(NA,ncol=2,nrow=nrow(F))
+numdYE1<-matrix(NA,ncol=2,nrow=nrow(F))
+calcdYE1<-matrix(NA,ncol=2,nrow=nrow(F))
 
-numddYE<-matrix(NA,ncol=4,nrow=nrow(F))
-calcddYE<-matrix(NA,ncol=4,nrow=nrow(F))
+numddYE<-matrix(NA,ncol=2,nrow=nrow(F))
+calcddYE<-matrix(NA,ncol=2,nrow=nrow(F))
+
+numdphie<-NULL
+calcdphie<-NULL
 
 calcdla<-NULL
 numdla<-NULL
 calcddla<-NULL
 numddla<-NULL
 
-F<-expand.grid(seq(0,1,0.1),seq(0,1,0.1))
-h<-0.00001
 
-
+#just for the derivatives with respect to f1
 for( a in 1:nrow(F))
 {
 	result<-msycalc2(F[a,])
+
+	F1hp<- F[a,]
+	F1hp[,1] <- F1hp[,1]+h
+
+	F1hm<- F[a,]
+	F1hm[,1] <- F1hm[,1]-h
+
 	
-	calcdYE[a,]<-result$dYe.dfe
+	calcdYE1[a,]<-result$dYe.dfe[,1]
 	
-	numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2
+	#numdYE1[a,]<-((msycalc2(F1hp)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F1hm)$Ye)/h)/2
+	numdYE1[a,]<-(msycalc2(F1hp)$Ye-msycalc2(F1hm)$Ye)/(2*h)
 
-	calcddYE[a,]<-as.vector(result$ddYe.ddfe)
+	calcddYE[a,]<-(result$ddYe.ddfe[,1])
 
-	numddYE[a,]<-as.vector((msycalc2(F[a,]+2*h)$Ye - 2*msycalc2(F[a,]+h)$Ye + msycalc2(F[a,])$Ye)/h^2)
+	numddYE[a,]<- ((msycalc2(F1hp)$Ye - 2*msycalc2(F[a,])$Ye + msycalc2(F1hm)$Ye)/h^2)
 
-	calcdla[a]<-sum(result$dla.dfe)
+	calcdla[a]<-sum(result$dla.dfe[,1])
 
-	numdla[a]<-sum(((msycalc2(F[a,]+h)$la - msycalc2(F[a,])$la)/h + (msycalc2(F[a,])$la - msycalc2(F[a,]-h)$la)/h)/2)
+	numdla[a]<-sum((msycalc2(F1hp)$la  - msycalc2(F1hm)$la)/(2*h))
 
-	calcddla[a]<-sum(result$ddla.ddfe)
+	calcddla[a]<-sum(result$ddla.ddfe[,1])
 
-	numddla[a]<-sum((msycalc2(F[a,]+ h)$la - 2*msycalc2(F[a,])$la + msycalc2(F[a,]-h)$la)/h^2)
+	numddla[a]<-sum((msycalc2(F1hp)$la - 2*msycalc2(F[a,])$la + msycalc2(F1hm)$la)/h^2)
+
+	calcdphie[a]<-result$dphie[,1]
+	
+	numdphie[a]<-(msycalc2(F1hp)$phie-msycalc2(F1hm)$phie)/(2*h)
+
 }
 
-par(mfrow=c(3,2))
-plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)
-lines(F[,1][order(F[,1])],numdYE[,1][order(F[,1])], lwd=2, col="mediumorchid3" )
+par(mfrow=c(2,2))
+plot(F[,1][order(F[,1])],calcdYE1[,1][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdYE1[,1][order(F[,1])], lwd=2, col="mediumorchid3", type="l")
 legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")
-plot(F[,2],calcdYE[,2], type="l", lwd=2)
-lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )
+
+plot(F[,1][order(F[,1])],calcdYE1[,2][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdYE1[,2][order(F[,1])], lwd=2, col="mediumorchid3" )
+#plot(F[,2],calcdYE1[,2], type="l", lwd=2)
+#lines(F[,2],numdYE1[,2], lwd=2, col="mediumorchid3" )
+
+
+
 plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)
 lines(F[,1][order(F[,1])],numddYE[,1][order(F[,1])],  lwd=2, col="mediumorchid3" )
-plot(F[,2],calcddYE[,2], type="l", lwd=2)
-lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )
-plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)
-lines(F[,1][order(F[,1])],numddYE[,3][order(F[,1])],  lwd=2, col="mediumorchid3" )
-plot(F[,2],calcddYE[,4], type="l", lwd=2)
-lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+
+plot(F[,1][order(F[,1])],calcddYE[,2][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numddYE[,2][order(F[,1])],  lwd=2, col="mediumorchid3" )
+
+#plot(F[,2],calcddYE[,2], type="l", lwd=2)
+#lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )
 
 
-par(mfrow=c(2,2))
+
+par(mfrow=c(1,2))
 plot(F[,1][order(F[,1])],calcdla[order(F[,1])], type="l", lwd=2)
 lines(F[,1][order(F[,1])],numdla[order(F[,1])], lwd=2, col="mediumorchid3" )
 plot(F[,1][order(F[,1])],calcddla[order(F[,1])], type="l", lwd=2)
 lines(F[,1][order(F[,1])],numddla[order(F[,1])],  lwd=2, col="mediumorchid3" )
 
-plot(F[,2],calcdla, type="l", lwd=2)
-lines(F[,2],numdla, lwd=2, col="mediumorchid3" )
-plot(F[,2],calcddla, type="l", lwd=2)
-lines(F[,2],numddla,  lwd=2, col="mediumorchid3" )
+par(mfrow=c(1,2))
+plot(F[,1][order(F[,1])],calcdphie[,1][order(F[,1])], type="l", lwd=2)
+lines(F[,1][order(F[,1])],numdphie[,1][order(F[,1])], lwd=2, col="mediumorchid3" )
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")
 
 
+F<-matrix(c(0.15,0.2),ncol=2)
+result<-msycalc2(F)
 
+	F1hp<- F
+	F1hp[,1] <- F1hp[,1]+h
+
+	F1hm<- F
+	F1hm[,1] <- F1hm[,1]-h
+
+
+calcdla<-(result$dla.dfe)
+
+numdla<-((msycalc2(F1hp)$la  - msycalc2(F1hm)$la)/(2*h))
+
+calcddla<-(result$ddla.ddfe)
+
+numddla<-((msycalc2(F1hp)$la - 2*msycalc2(F)$la + msycalc2(F1hm)$la)/h^2)
+
+
+par(mfrow=c(1,1))
+plot(1:70,calcdla[,1], type="l", lwd=2)
+lines(1:70,numdla, lwd=2, col="mediumorchid3" )
+
+rbind()

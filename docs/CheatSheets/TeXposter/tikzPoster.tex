@@ -173,10 +173,16 @@
 		To find the vector of fishing mortality rates that simultaneously maximizes the yield for each fleet we use Newton's method to find the solution to $\dfrac{\partial \vec{y}}{\partial \vec{f}} = 0$.  The first and second derivatives of \eqref{eq.1} for fleet $k$ are given by:
 		\begin{align}
 			%
-			\dye &= R_e \phi_k
-			+ f_k R_e \dphi
-			+ f_k \phi_k \dre \label{eq.2} \\[1ex] 
+			\mbox \nonumber \\
+			\dye &=
+			\begin{cases}
+			 R_e \phi_k + f_k R_e \dphi +  f_k \phi_k \dre & k = k' \\[1ex]
 			%
+			 f_k R_e \dphip + f_k \phi_k \drep  & k \neq k' 
+			\end{cases} \label{eq.2}
+			%
+			\\ \nonumber
+			\\ \nonumber
 			\mbox{Jacobian} \nonumber \\
 			\ddye &=
 			\begin{cases}
