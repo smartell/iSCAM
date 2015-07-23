@@ -43,7 +43,7 @@ renderEquil <- function()
 
 buildEquilibriumGui <- function()
 {
-	print("Start")
+	# print("Start")
 	#includeCSS("styles.css")
 		fluidRow(
 			tags$h4("Equilibrium Model")

@@ -7,9 +7,9 @@
 
 
 library(ggplot2)
+mat <- read.csv("./data/maturity.csv",header=TRUE)
 
-
-A     <- 50				# Plus group Age
+A     <- 25				# Plus group Age
 ro    <- 1.0             # unfished equilibrium recruitment
 h     <- 0.75			# steepness of the B-H SRR
 kappa <- 4.0 * h / (1.0 - h)
@@ -42,13 +42,15 @@ target_spr     <- 0.40
 fe             <- c(0.15,0.02)
 tma_allocation <- c(0.50,0.50)
 slim           <- c(32,580)
+ak             <- tma_allocation
 
 
 # 
 # AGE-SCHEDULE INFORMATION
 # 
 wa    <- winf*(1-exp(-vbk*age))^3
-ma    <- plogis(age,ahat,ghat)
+# ma    <- plogis(age,ahat,ghat)
+ma    <- mat$propmature[-1]
 fa    <- wa * ma
 lx    <- rep(1,length=A)
 for(i in 2:A)
