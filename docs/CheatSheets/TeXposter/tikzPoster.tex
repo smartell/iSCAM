@@ -1,4 +1,5 @@
-\documentclass[20pt, a0paper, landscape]{tikzposter}
+\documentclass[20pt, a0paper, landscape,colspace=1cm]{tikzposter}
+
 % \usepackage[utf8]{inputenc}
  
 \title{OPTIMAL FISHING RATES FOR MULTIPLE FLEETS}
@@ -11,7 +12,7 @@
 
 % Themes
 \usetheme{Default} 
-\usetheme{Rays} 
+%\usetheme{Rays} 
 % \usetheme{Basic} 
 % \usetheme{Simple} 
 % \usetheme{Envelope} 
@@ -72,6 +73,9 @@
 \def\etal{{et al}\onedot}
 \makeatother
 
+
+
+
 \newcommand{\fspr}{F$_{\rm{SPR=35\%}}$}
 \newcommand{\bspr}{B$_{\rm{SPR=35\%}}$}
 \newcommand{\rspr}{R$_{\rm{SPR=35\%}}$}
@@ -86,15 +90,24 @@
 
 \newcommand{\dye}    { \dfrac{{\partial y_k}}{{\partial f_k}} }%
 \newcommand{\dre}    { \dfrac{{\partial R_e}}{{\partial f_k}} }%
+\newcommand{\drep}    { \dfrac{{\partial R_e}}{{\partial f_{k'}}} }%
 \newcommand{\dphi}   { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
-\newcommand{\dphik}  { \dfrac{{\partial \phi_{k'}}}{{\partial f_k}} }%
+\newcommand{\dphip}  { \dfrac{{\partial \phi_{k}}}{{\partial f_{k'}}} }%
+\newcommand{\dqak}   { \dfrac{{\partial q_{k,a}}}{{\partial f_k}} }
+\newcommand{\dqakp}   { \dfrac{{\partial q_{k,a}}}{{\partial f_{k'}}} }
 \newcommand{\dphie}  { \dfrac{{\partial \phi_e}}{{\partial f_k}} }%
 \newcommand{\ddphie} { \dfrac{{\partial^2 \phi_e}}{{\partial f_k}^2} }%
 \newcommand{\dla}    { \dfrac{{\partial l_a}} {{\partial f_k}}}%
+\newcommand{\dlap}    { \dfrac{{\partial l_a}} {{\partial f_{k'}}}}%
 \newcommand{\ddla}   { \dfrac{{\partial^2 l_a}} {{\partial f_k}^2} }%
-\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k}^2} }%
+\newcommand{\ddlap}   { \dfrac{{\partial^2 l_a}} {{\partial f_{k'}}^2} }%
+\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k'}^2} }%
 \newcommand{\ddre}   { \dfrac{{\partial^2 R_e}}{{\partial f_k}^2} }%
+\newcommand{\ddrep}   { \dfrac{{\partial^2 R_e}}{{\partial f_{k'}}^2} }%
 \newcommand{\ddphi}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_k}^2} }%
+\newcommand{\ddphip}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_{k'}}^2} }%
+\newcommand{\ddqak}   { \dfrac{{\partial^2 q_{k,a}}}{{\partial f_k}^2} }
+\newcommand{\ddqakp}   { \dfrac{{\partial^2 q_{k,a}}}{{\partial f_{k'}}^2} }
 \newcommand{\ddphik} { \dfrac{{\partial^2 \phi_{k'}}}{{\partial f_k}^2} }%
 
 
@@ -149,7 +162,7 @@
 	% 
 	% CATCH EQUATIONS
 	% 
-	\column{0.3}
+	\column{0.28}
 	\block{Catch Equation \& Finding $\bm{f^*}$}{
 		Assuming all fisheries and natural mortality operate simultaneously, the equilibrium catch equation for each fleet can be written as a vector
 		\begin{align}
@@ -160,16 +173,22 @@
 		To find the vector of fishing mortality rates that simultaneously maximizes the yield for each fleet we use Newton's method to find the solution to $\dfrac{\partial \vec{y}}{\partial \vec{f}} = 0$.  The first and second derivatives of \eqref{eq.1} for fleet $k$ are given by:
 		\begin{align}
 			%
-			\dye &= R_e \phi_k
-			+ f_k R_e \dphi
-			+ f_k \phi \dre \label{eq.2} \\[1ex] 
+			\mbox \nonumber \\
+			\dye &=
+			\begin{cases}
+			 R_e \phi_k + f_k R_e \dphi +  f_k \phi_k \dre & k = k' \\[1ex]
 			%
+			 f_k R_e \dphip + f_k \phi_k \drep  & k \neq k' 
+			\end{cases} \label{eq.2}
+			%
+			\\ \nonumber
+			\\ \nonumber
 			\mbox{Jacobian} \nonumber \\
 			\ddye &=
 			\begin{cases}
-				f_k \phi \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k \\[3ex]
+				f_k \phi_k \ddre + 2 f_k \dphi \dre + 2 \phi_k \dre + f_k R_e \ddphi + 2 R_e \dphi & k = k' \\[3ex]
 				%
-				f_{k} \phi \ddre + 2 f_{k} \dphik \dre + f_{k} R_e \ddphik & k \neq k'
+				f_{k} \phi_k \ddrep + 2 f_{k} \dphip \drep + f_{k} R_e \ddphip & k \neq k'
 			\end{cases} \label{eq.3}
 		\end{align}
 		The difficulty is in calculating all of the partial derivatives.  We break this down into suvivorship, recruitment, and per-recruit functions. The Newtons iteration step is given by:
@@ -204,7 +223,8 @@
 	% 
 	% SURVIVORSHIP
 	% 
-	\column{0.25}
+	\column{0.27}
+
 	\block{Survivorship}{
 		The age-specific total mortality rate and survival rate is defined as \[ z_a = M_a + \sum_k f_k v_{k,a}, \quad s_a = \exp(-z_a).\]
 		The survivorship of a cohort is based on the following recurstive function:
@@ -237,14 +257,17 @@
 				{ s_{a-1} }\cdot \left(
 				\dfrac{{\partial^2 l_{a-1}}} {{\partial f_k}^2}
 				+ {{l}_{a-1}} {{v}_{k,a-1}^{2}} 
+				+ 2  \dfrac{{\partial l_{a-1}}} {{\partial f_k}} v_{k,a-1}
 				\right), & 1<a<A\\[3ex]
 				%
 				\dfrac{1}{\left(1-s_a \right)} \cdot
-				\ddla \cdot \dfrac{ {{l}_{a}} {{v1}_{a}^{2}} {{s}_{a}} } 
-				{ (1- s_a) }
-				+
-				\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
-				      {(1-s_a)^3} & a = A
+				\ddla 
+				+ \dfrac{ {{l}_{a}} {{v}_{k,a}^{2}} {{s}_{a}} } 
+				{ (1- s_a)^2 } 
+				+\dfrac{ 2  {{l}_{a}}  {{v}_{k,a}^{2}}  {{s}_{a}}^2 } 
+				      {(1-s_a)^3}
+				- \dfrac{2 \cdot \dfrac{{\partial l_{a}}} {{\partial f_k}} {v}_{k,a} {s}_{a}} {(1-s_a)^2}
+				 & a = A
 			\end{cases} \label{eq.8}
 		\end{align}
 	}
@@ -324,19 +347,61 @@
 			\phi_{e} &= \sum_a l_a w_a m_a \label{eq.12}
 		\end{align}
 		and $\phi_{E}$ is the same as \eqref{eq.12} where survivorship is based only on natural mortality (i.e., $f_k=0, \quad \forall k$).\\
+		The first and second derivatives of $\phi_{e}$ are given by
+
+		\begin{align}
+			\dphie &= \sum_a f_a \cdot \dla  \label{eq.13}
+		\end{align}
+
+		\begin{align}
+			\ddphie &= \sum_a f_a \cdot \ddla  \label{eq.14}
+		\end{align}
 
 		Yield per recruit $\phi_k$ for fishery $k$ is based on the Barnov catch equation:
 		\begin{align}
-			q_{k,a} &= w_a v_a (1-s_a)/ z_a \nonumber \\
-			\phi_k &= \sum_a l_a q_{k,a} \label{eq.13}
+			q_{k,a} &= w_a v_k (1-s_a)/ z_a \nonumber \\
+			\phi_k &= \sum_a l_a q_{k,a} \label{eq.15}
 		\end{align}
 		The derivative of the yield per recruit with respect to $f_k$ is given by
 		\begin{align}
-			\dphi &= 
+		\dphip &=
+			\begin{cases}
+				 \dqak \cdot l_a + \dla \cdot q_{a,k} & k = k'\\
+					%
+				 \dqakp \cdot l_a + \dlap \cdot q_{a,k} & k \neq k'
+			\end{cases}
 		\end{align}
-	}
-	% \note{Put in a block that contains the order of operations in setting up the algorithm for determining \fmsy}
+		Where:
+		\begin{align}
+		\dqakp &=
+			\begin{cases}
+				 \dfrac{{v_k}^{2} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k = k' \\
+				%
+				\dfrac{{v_k}\cdot v_{k'} \cdot w_a}{z_a} \cdot \left( s_a- \dfrac{1-s_a}{z_a}\right) & k \neq k'
+			\end{cases}
+		\end{align}
+		And second derivative
 
+		\begin{align}
+		\ddphip &=
+			\begin{cases}
+				 \ddqak \cdot l_a + 2 \cdot \dla \dqak + \ddla \cdot q_{a,k} & k = k'\\
+					%
+				 \ddqakp \cdot l_a + 2 \cdot \dlap \dqakp + \ddlap \cdot q_{a,k} & k \neq k'
+			\end{cases}
+		\end{align}
+		Where:
+		\begin{align}
+		\ddqakp &=
+			\begin{cases}
+				 \dfrac{{v_k}^{3} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) & k = k' \\
+				%
+				\dfrac{{v_k}\cdot v_{k'^2} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) &  k \neq k'
+			\end{cases}
+		\end{align}
+		
+	}
+	
 \end{columns}
 
 \begin{columns}
