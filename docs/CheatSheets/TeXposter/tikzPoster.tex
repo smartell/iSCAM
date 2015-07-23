@@ -1,4 +1,4 @@
-\documentclass[20pt, a0paper, landscape,colspace=1cm]{tikzposter}
+\documentclass[17pt, a0paper, landscape,colspace=1cm]{tikzposter}
 
 % \usepackage[utf8]{inputenc}
  
@@ -12,24 +12,24 @@
 
 % Themes
 \usetheme{Default} 
-%\usetheme{Rays} 
+% \usetheme{Rays} 
 % \usetheme{Basic} 
 % \usetheme{Simple} 
 % \usetheme{Envelope} 
 % \usetheme{Wave} 
 % \usetheme{Board} 
 % \usetheme{Autumn} 
-% \usetheme{Desert} 
+\usetheme{Desert} 
 
 
 % Block styles
 \useblockstyle{Default}
 \useblockstyle{Basic}
-\useblockstyle{Minimal}
-\useblockstyle{Envelope}
-\useblockstyle{Corner}
-\useblockstyle{Slide} 
-\useblockstyle{TornOut}
+% \useblockstyle{Minimal}
+% \useblockstyle{Envelope}
+% \useblockstyle{Corner}
+% \useblockstyle{Slide} 
+% \useblockstyle{TornOut}
 
 % Note styles
 \usenotestyle{Sticky}
@@ -88,7 +88,7 @@
 % \newcommand{\fmsy} {F$_{\rm{\textbf{MSY}}}$}
 \newcommand{\fmsy}   {$f^*$}
 
-\newcommand{\dye}    { \dfrac{{\partial y_k}}{{\partial f_k}} }%
+\newcommand{\dye}    { \dfrac{{\partial y_k}}{{\partial f_{k'}}} }%
 \newcommand{\dre}    { \dfrac{{\partial R_e}}{{\partial f_k}} }%
 \newcommand{\drep}    { \dfrac{{\partial R_e}}{{\partial f_{k'}}} }%
 \newcommand{\dphi}   { \dfrac{{\partial \phi_k}}{{\partial f_k}} }%
@@ -101,7 +101,7 @@
 \newcommand{\dlap}    { \dfrac{{\partial l_a}} {{\partial f_{k'}}}}%
 \newcommand{\ddla}   { \dfrac{{\partial^2 l_a}} {{\partial f_k}^2} }%
 \newcommand{\ddlap}   { \dfrac{{\partial^2 l_a}} {{\partial f_{k'}}^2} }%
-\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_k'}^2} }%
+\newcommand{\ddye}   { \dfrac{{\partial^2 y_k}}{{\partial f_{k'}}^2} }%
 \newcommand{\ddre}   { \dfrac{{\partial^2 R_e}}{{\partial f_k}^2} }%
 \newcommand{\ddrep}   { \dfrac{{\partial^2 R_e}}{{\partial f_{k'}}^2} }%
 \newcommand{\ddphi}  { \dfrac{{\partial^2 \phi_k}}{{\partial f_k}^2} }%
@@ -303,17 +303,17 @@
 	\block{Recruitment}{
 		The following assumes that recruitment follows a Beverton-Holt relationship parametrized using the inverse of the spawning potential ratio:
 		\begin{align}
-			R_e &= R_o \frac{(\kappa-\phi_{E}/\phi_{e})}{(\kappa - 1)}\label{eq.9}
+			R_e &= R_o \frac{(\Omega-\phi_{E}/\phi_{e})}{(\Omega - 1)}\label{eq.9}
 		\end{align}
 		The first and second derivatives, required in \eqref{eq.3} and \eqref{eq.4}, are given by:
 		\begin{align}
-			\dre &= \dphie \cdot \frac{R_o \phi_{E}}{(\kappa -1) \phi_{e}^2} \label{eq.10} \\[3ex]
+			\dre &= \dphie \cdot \frac{R_o \phi_{E}}{(\Omega -1) \phi_{e}^2} \label{eq.10} \\[3ex]
 			%
 			%
 			\ddre &= \dfrac{R_o \phi_{E}
 			\left[\phi_{e} \cdot \ddphie 
 			- 2 \cdot \left(\dphie\right)^2 \right]}
-			{\phi_e^3 (\kappa -1)}\label{eq.11}
+			{\phi_e^3 (\Omega -1)}\label{eq.11}
 		\end{align}
 	}
 
@@ -331,7 +331,7 @@
 		\begin{tabular}{cl}
 			$R_e$     		& equilibrium recruitment.\\
 			$R_o$  	 		& unfished recruitment.\\
-			$\kappa$		& recruitment compensation ratio.\\
+			$\Omega$		& recruitment compensation ratio.\\
 			$\phi_{e} $     & spawning biomass per recruit.\\
 			$\phi_{E} $     & unfished spawning biomass per recruit.\\
 		\end{tabular}
@@ -396,7 +396,7 @@
 			\begin{cases}
 				 \dfrac{{v_k}^{3} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) & k = k' \\
 				%
-				\dfrac{{v_k}\cdot v_{k'^2} \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) &  k \neq k'
+				\dfrac{{v_k}\cdot v_{k'}^2 \cdot w_a}{z_a} \cdot \left( - s_a - 2 \cdot \dfrac{s_a}{z_a}+ 2 \cdot \dfrac{1-s_a}{{z_a}^2}\right) &  k \neq k'
 			\end{cases}
 		\end{align}
 		

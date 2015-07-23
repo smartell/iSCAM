@@ -7,7 +7,15 @@
 
 
 library(ggplot2)
-mat <- read.csv("./data/maturity.csv",header=TRUE)
+matfile <- "data/maturity.csv"
+if(file.exists(matfile))
+{
+	mat <- read.csv(matfile,header=TRUE)
+}
+if(!file.exists(matfile))
+{
+	mat <- read.csv(paste0("../../",matfile),header=TRUE)
+}
 
 A     <- 25				# Plus group Age
 ro    <- 1.0             # unfished equilibrium recruitment
@@ -251,7 +259,7 @@ fnC <- function(fe)
 {
 	em  <- as.list(equilibriumModel(fe))
 	spr <- em$spr
-	print(spr)
+	# print(spr)
 	f1  <- (spr - target_spr)^2
 	pm  <- unlist(em[grep("pmort",names(em))])
 	pk  <- pm / sum(pm)
