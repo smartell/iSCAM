@@ -41,7 +41,7 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName="dashboard",
     	fluidRow(
-    		valueBox(uiOutput("byr_ratio"),"Bycatch Yield Ratio",icon=icon("slideshare"))
+    		valueBoxOutput("mitigationBox")
     	)
     ),
 
