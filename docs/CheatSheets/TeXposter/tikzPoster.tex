@@ -12,14 +12,14 @@
 
 % Themes
 \usetheme{Default} 
-% \usetheme{Rays} 
+ \usetheme{Rays} 
 % \usetheme{Basic} 
 % \usetheme{Simple} 
 % \usetheme{Envelope} 
 % \usetheme{Wave} 
 % \usetheme{Board} 
 % \usetheme{Autumn} 
-\usetheme{Desert} 
+%\usetheme{Desert} 
 
 
 % Block styles
@@ -123,18 +123,20 @@
 \maketitle
 
 \begin{columns}
-	\column{0.25}
+	\column{0.5}
 	\block{Problem}
 	{
+	\LARGE
 	When there are two or more distinctly different gear types (i.e., hook \& line versus trawl) harvesting the same stock, determining the optimal fishing mortality rates for each gear is largely determined by selectivity.\\
 
 	There are two distinctly different optimization problems: (1) to maximize the total yield across all fisheries, and (2) to maximize the total yield under a allocation agreement or catch shares (Fig. \ref{fig.MSY}).
 	}
 	%%
 	%%
-	\column{0.25}
+	\column{0.5}
 	\block{Objective}
 	{
+	\LARGE
 		The objective of this poster is to show how to derive estimates of optimal fishing mortality rates can be simultaneously derived for each fishery.  
 	}
 	%%
@@ -204,7 +206,7 @@
 	\note[
 		width=11cm,
 		targetoffsetx=-10.5cm,
-		targetoffsety=-12cm,
+		targetoffsety=-14cm,
 		rotate=00,
 		angle=0,
 		radius=0cm,
@@ -280,7 +282,7 @@
 	\note[
 		width=11cm,
 		targetoffsetx=-10.5cm,
-		targetoffsety=12cm,
+		targetoffsety=6.5cm,
 		rotate=00,
 		angle=0,
 		radius=0cm,
@@ -411,22 +413,22 @@
 	\useblockstyle{Minimal}
 	\block{Post-its}{
 		\centering
-		\includegraphics[width=0.30\linewidth,keepaspectratio=true]{./whiteBoard.png}
+		\includegraphics[width=0.40\linewidth,keepaspectratio=true,trim=-5cm 0 0 15cm]{./whiteBoard.png}
 	}
 	\useblockstyle{TornOut}
 	%
 	% MSY Figure
 	% 
 	\note[
-		width=14cm,
-		targetoffsetx=-60cm,
-		targetoffsety=+3cm,
+		width=18cm,
+		targetoffsetx=-50cm,
+		targetoffsety=5cm,
 		rotate=05
 		]{
 		%Figure environment does not work
-		\begin{tikzfigure}[Equilibrium yield versus fishing mortality for 2 fishing gears. Which fishery (A or B) catches smaller fish?]
+		\begin{tikzfigure}[\Large Equilibrium yield versus fishing mortality for 2 fishing gears. Which fishery (A or B) catches smaller fish?]
 	 	\label{fig.MSY}
-	 	\includegraphics[width=11cm]{figMSY.png}
+	 	\includegraphics[width=15cm]{figMSY.png}
 		\end{tikzfigure}
 	}
 
