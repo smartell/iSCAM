@@ -30,7 +30,7 @@ body <- dashboardBody(
     	)
     ),
 
-    tabItem(tabName="harvest_policy"),
+    # tabItem(tabName="harvest_policy"),
 
 
 
@@ -48,7 +48,7 @@ body <- dashboardBody(
     ),
 
     tabItem(tabName="total_mortality",
-      renderTMA()
+      buildUItotalMortality()
     ),
 
 

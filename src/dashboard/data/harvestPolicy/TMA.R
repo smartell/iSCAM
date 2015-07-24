@@ -40,7 +40,7 @@ gear  <- 1:ng
 # 
 t1 <- exp(vbk*(age+2))-1
 t2 <- exp(vbk*(age+1))-1
-sa <- (t1/t2)^(-m/k)
+sa <- (t1/t2)^(-m/vbk)
 mx=m/vbk*(log(t1)-log(t2))
 
 # 
@@ -270,9 +270,13 @@ fnC <- function(fe)
 }
 
 
+getFs <- function(TMAParams)
+{
+	fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+	fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
+	return(fitC)
+}
 
-fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
-fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
 
 # equilibriumModel(fe)
 # fd <- seq(0,0.2,by=0.01)

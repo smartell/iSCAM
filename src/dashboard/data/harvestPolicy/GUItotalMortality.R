@@ -1,5 +1,5 @@
 #GUItotalMortality.R
-renderTMA <- function()
+buildUItotalMortality <- function()
 {
 
 	print("renderTMA")
@@ -13,10 +13,15 @@ renderTMA <- function()
 
 			# allocation
 			tableOutput("allocationTable")
+
 	    ),
 
 	    box(title="Selectivity",width=5,status="primary",solidHeader=TRUE,
 	        sliderInput("selexSldr","50% and 95% percentiles",min=0,max=1,value=c(0.3,0.9),step=0.01)
+	    ),
+
+	    box(title="Results",width=5,status="info",solidHeader=TRUE,icon=icon("cog"),
+	        tableOutput("TMAtable")
 	    )
 	)
 
