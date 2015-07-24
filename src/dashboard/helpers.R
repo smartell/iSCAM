@@ -67,3 +67,8 @@ paramNames <- c("size_limit",
                 "linf_dev",
                 "vonk_dev",
                 "maternal_effect")
+
+
+.TMA_PARNAMES <- c("sprTarget")
+
+

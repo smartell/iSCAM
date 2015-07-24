@@ -15,20 +15,60 @@ shinyServer(function(input, output, session){
       print("mitigationBox")
     })
 
-    observe({
-      print("Fleets")
-      if (input$nfleets == 0)
-        return()
-      isolate({
-        output$allocationTable <-renderTable({
-          # num.inputs.col1 <- paste0("<input id='c1n", 1:input$test, "' class='shiny-bound-input' type='number' value='2'>")
-          # num.inputs.col2 <- paste0("<input id='c2n", 1:input$test, "' class='shiny-bound-input' type='number' value='2'>")
-          # data.frame(num.inputs.col1, num.inputs.col2)
-          num.inputs.col1 <- paste0("<input id='c1n", 1:input$nfleets, "' class='shiny-bound-input' type='number' value='2'>")
-          data.frame(num.inputs.col1)
-        }, sanitize.text.function = function(x) x)
+    # observe({
+    #   print("Fleets")
+    #   if (input$nfleets == 0)
+    #     return()
+    #   isolate({
+    #     output$allocationTable <-renderTable({
+    #       # num.inputs.col1 <- paste0("<input id='c1n", 1:input$test, "' class='shiny-bound-input' type='number' value='2'>")
+    #       # num.inputs.col2 <- paste0("<input id='c2n", 1:input$test, "' class='shiny-bound-input' type='number' value='2'>")
+    #       # data.frame(num.inputs.col1, num.inputs.col2)
+    #       num.inputs.col1 <- paste0("<input id='c1n", 1:input$nfleets, "' class='shiny-bound-input' type='number' value='2'>")
+    #       data.frame(num.inputs.col1)
+    #     }, sanitize.text.function = function(x) x)
+    #   })
+    # })
+    
+    ## ------------------------------------------------------------ ##
+    ## TOTAL MORTALITY ALLOCATION (July 24, 2015)
+    ## ------------------------------------------------------------ ##
+    getTMAparams <- function(input)
+    {
+  
+      params <- lapply(.TMA_PARNAMES, function(p) {
+        input[[p]]
       })
+      names(params) <- .TMA_PARNAMES
+      # params <- c(params,prefix=prefix)
+      cat(params)
+      params   
+    }
+
+    getF <- reactive(do.call(getFs,getTMAparams(input)))
+
+    # spr  <- reactiveValues()
+    output$TMAtable <- renderTable({
+      data.frame(spr = input$sprTarget )
     })
+
+    # output$TMAtable <- renderTable({
+    #   print("TMA Table")
+    #   sprTarget = input$sprTarget
+
+    #   # df <- getF()
+    #   dff <-data.frame(a=c(1,2,3,sprTarget))
+    #   return(dff)
+    # })
+
+
+
+
+
+
+
+
+
 
 
 

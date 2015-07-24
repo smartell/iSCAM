@@ -270,9 +270,13 @@ fnC <- function(fe)
 }
 
 
+getFs <- function(TMAParams)
+{
+	fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+	fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
+	return(fitC)
+}
 
-fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
-fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
 
 # equilibriumModel(fe)
 # fd <- seq(0,0.2,by=0.01)
