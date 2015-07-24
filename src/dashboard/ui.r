@@ -8,21 +8,6 @@ if(!require("shinydashboard"))      install.packages("shinydashboard")
 if(!require("dygraphs"))            install.packages("dygraphs")
 source('helpers.R')
 
-# Sidebar Menu
-menu <- sidebarMenu(
-  menuItem("Dashboard",tabName="dashboard",icon=icon("dashboard")),
-  menuItem("Harvest Policy",tabName="harvest_policy",icon=icon("cog"),
-    menuSubItem("Equilibrium",tabName="equilibrium",icon=icon("line-chart")),
-  	menuSubItem("Total Mortality",tabName="total_mortality",icon=icon("bar-chart"))
-  ),
-  menuItem("Code",tabName="code",icon=icon("file-text-o"),
-    menuSubItem("ui.R", tabName = "ui", icon = icon("angle-right")),
-    menuSubItem("server.R", tabName = "server", icon = icon("angle-right"))
-  )
-)
-
-
-
 
 
 
@@ -32,7 +17,7 @@ header <- dashboardHeader(
 )
 
 sidebar <- dashboardSidebar(
-  menu,
+  buildSideBarMenu,
   hr()
 
 )
@@ -92,4 +77,3 @@ ui <- dashboardPage(skin = "yellow",
   body
 )
 
-# shinyApp(ui,server)

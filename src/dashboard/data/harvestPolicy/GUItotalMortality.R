@@ -3,19 +3,23 @@ renderTMA <- function()
 {
 
 	print("renderTMA")
+	fluidRow(
+	    box(title = "Harvest Specification", width = 3, status = "primary", solidHeader = TRUE, 
+	        # nfleets
+	        numericInput("nfleets","No. fleets",1,1,10,1),
 
-    box(title = "Harvest Specification", width = 3, status = "primary", solidHeader = TRUE, 
-        # nfleets
-        numericInput("nfleets","No. fleets",1,1,10,1),
+	        # sprTarget
+			numericInput("sprTarget","Target SPR",0.40,0,1,0.01),
 
-        # sprTarget
-		numericInput("sprTarget","Target SPR",0.40,0,1,0.01),
+			# allocation
+			tableOutput("allocationTable")
+	    ),
 
-		# allocation
-		tableOutput("allocationTable")
+	    box(title="Selectivity",width=5,status="primary",solidHeader=TRUE,
+	        sliderInput("selexSldr","50% and 95% percentiles",min=0,max=1,value=c(0.3,0.9),step=0.01)
+	    )
+	)
 
-
-    )
 }
 
 

@@ -3,7 +3,7 @@ if(!require("shinydashboard"))      install.packages("shinydashboard")
 source('helpers.R')
 server <- 
 shinyServer(function(input, output, session){
-    print(names(input))
+    cat(input$selexSldr)
     # 
     # DASHBOARD OUTPUT
     # 

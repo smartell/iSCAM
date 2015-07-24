@@ -50,6 +50,8 @@ scn <- levels(mse.data$biomass.df$Scenario)
 prc <- levels(mse.data$biomass.df$Procedure)
 #
 # Parameters names required for halitotis.cpp model
+# These are actually the widget inputId that the model 
+# will react to if the user changes it.
 #
 paramNames <- c("size_limit",
                 "discard_mortality_rate",
