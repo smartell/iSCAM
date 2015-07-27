@@ -69,6 +69,6 @@ paramNames <- c("size_limit",
                 "maternal_effect")
 
 
-.TMA_PARNAMES <- c("sprTarget")
+TMA_PARNAMES <- c("sprTarget")
 
 

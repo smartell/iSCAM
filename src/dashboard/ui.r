@@ -24,13 +24,14 @@ sidebar <- dashboardSidebar(
 
 body <- dashboardBody(
   tabItems(
+    
     tabItem(tabName="dashboard",
     	fluidRow(
     		valueBoxOutput("mitigationBox")
     	)
     ),
 
-    # tabItem(tabName="harvest_policy"),
+    tabItem(tabName="harvest_policy"),
 
 
 

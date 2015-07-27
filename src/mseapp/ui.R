@@ -20,7 +20,12 @@ shinyUI(fluidPage(
     ## -------------- ##
     # MSE Interface  #
     ## -------------- ##
-    renderMSE()
+    renderMSE(),
+
+    ## -------------- ##
+    # MSE Interface  #
+    ## -------------- ##
+    renderTMA()
 
 
 )))

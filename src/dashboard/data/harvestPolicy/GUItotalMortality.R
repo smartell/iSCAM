@@ -2,8 +2,8 @@
 buildUItotalMortality <- function()
 {
 
-	print("renderTMA")
-	fluidRow(
+	print("buildUItotalMortality")
+	fluidPage(
 	    box(title = "Harvest Specification", width = 3, status = "primary", solidHeader = TRUE, 
 	        # nfleets
 	        numericInput("nfleets","No. fleets",1,1,10,1),
@@ -16,12 +16,12 @@ buildUItotalMortality <- function()
 
 	    ),
 
-	    box(title="Selectivity",width=5,status="primary",solidHeader=TRUE,
+	    box(title="Selectivity",width=3,status="primary",solidHeader=TRUE,
 	        sliderInput("selexSldr","50% and 95% percentiles",min=0,max=1,value=c(0.3,0.9),step=0.01)
 	    ),
 
-	    box(title="Results",width=5,status="info",solidHeader=TRUE,icon=icon("cog"),
-	        tableOutput("TMAtable")
+	    box(title="Results",width=5,status="primary",solidHeader=TRUE,
+	        dataTableOutput("primary")
 	    )
 	)
 
