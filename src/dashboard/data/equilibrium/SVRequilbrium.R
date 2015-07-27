@@ -1,14 +1,17 @@
 #SVRequilbrium.R
+
+
+
 getParams <- function(prefix,input) {
-      
+      print("Oh boy")
       # input[[paste0(prefix, "_recalc")]]
-  
+
       params <- lapply(paramNames, function(p) {
         input[[paste0(prefix, "_", p)]]
       })
       names(params) <- paramNames
       params <- c(params,prefix=prefix)
-      print(params)
+      # print(params)
       params
     }
 

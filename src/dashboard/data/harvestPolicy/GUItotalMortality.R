@@ -27,7 +27,10 @@ buildUItotalMortality <- function()
 
 }
 
-
+totalMortalityAllocation <-
+	tabItem(tabName="total_mortality",
+      buildUItotalMortality()
+    )
 
 # shiny::runApp(list(
 #   ui = pageWithSidebar(
