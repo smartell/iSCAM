@@ -19,9 +19,14 @@ shinyUI(fluidPage(
             renderEquil(),
 
             ## -------------- ##
-            # MSE Interface  #
+            # MSE Interface    #
             ## -------------- ##
-            renderMSE()
+            renderMSE(),
+
+            ## -------------- ##
+            # MAPS Interface   #
+            ## -------------- ##
+            renderMaps()
         )
     )
 )

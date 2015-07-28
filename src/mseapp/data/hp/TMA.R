@@ -222,11 +222,11 @@ equilibriumModel <- function(fe)
 	# cat("\n ye = ", round(ye,3))
 
 	out <- list("spr"   = spr,
-	         # "dspr"  = dspr,
-	         "ypr"   = as.double(ypr),
-	         "yield" = as.double(ye),
-	         "mpr"   = as.vector(mpr),
-	         "M"     = as.matrix(M)
+	         "fe"       = fe,
+	         "ypr"      = as.double(ypr),
+	         "yield"    = as.double(ye),
+	         "mpr"      = as.vector(mpr),
+	         "M"        = as.matrix(M)
 	         )
 	return(out)
 }
@@ -274,7 +274,10 @@ getFs <- function(TMAParams)
 	runB <- equilibriumModel(fb)
 	runC <- equilibriumModel(fc)
 
-	return(cbind(fb,fc))
+	dfB  <- with(runB,data.frame(method="B",fe,ypr,yield,mpr))
+	dfC  <- with(runC,data.frame(method="C",fe,ypr,yield,mpr))
+	df   <- rbind(dfB,dfC)
+	return(df)
 }
 
 
