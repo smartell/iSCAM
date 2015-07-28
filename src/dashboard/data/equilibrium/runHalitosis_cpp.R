@@ -69,7 +69,7 @@ mp1 <- list(slim=82,
 # |---------------------------------------------------------------------------|
 # | 
 
-
+print("This code was sourced")
 
 equilibrium_model_cpp <- function(size_limit=c(32,100),
                               discard_mortality_rate=0.16,
@@ -91,7 +91,7 @@ equilibrium_model_cpp <- function(size_limit=c(32,100),
 	# -----------------------------------------
 	# Inputs
 	# -----------------------------------------
-
+   print("This function was excuted")
 	# mimumum size limit
 	size.limits = size_limit * 2.54 
 	

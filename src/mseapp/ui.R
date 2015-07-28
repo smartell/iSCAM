@@ -3,32 +3,28 @@
 # ----------------------------------------#
 source("helpers.R")
 shinyUI(fluidPage(
-        navbarPage("IPHC Shiny App (MSEApp)",
-                   id="nav", collapsible=TRUE,
-                   footer=img(src="iphclogo.png",  height = 30, width = 70),
+        navbarPage(
+            "IPHC Shiny App (MSEApp)",
+            id="nav", collapsible=TRUE,
+            footer=img(src="iphclogo.png",height=30,width=70),
 
-    ## -------------- ##
-    # About Interface  #
-    ## -------------- ##
-    renderAbout(),
+            ## -------------- ##
+            # About Interface  #
+            ## -------------- ##
+            renderAbout(),
 
-    ## -------------- ##
-    # Equil Interface  #
-    ## -------------- ##
-    renderEquil(),
+            ## -------------- ##
+            # Equil Interface  #
+            ## -------------- ##
+            renderEquil(),
 
-    ## -------------- ##
-    # MSE Interface  #
-    ## -------------- ##
-    renderMSE(),
-
-    ## -------------- ##
-    # MSE Interface  #
-    ## -------------- ##
-    renderTMA()
-
-
-)))
+            ## -------------- ##
+            # MSE Interface  #
+            ## -------------- ##
+            renderMSE()
+        )
+    )
+)
 
 
 # ui <- dashboardPage(skin="yellow",

@@ -1,19 +1,20 @@
 if(!require("shinydashboard"))      install.packages("shinydashboard")
 # source('./www/globals.R')
 source('helpers.R')
+
+
 server <- 
-shinyServer ( function(input, output, session){
-    cat(input$selexSldr)
+shinyServer(function(input, output, session){
     # 
     # DASHBOARD OUTPUT
     # 
-    #output$mitigationBox <- renderInfoBox({
-    #  infoBox(
-    #    "Mitigation", paste0(25 , input$something, "%"), icon = icon("list"),
-    #    color = "purple"
-    #  )
-    #  print("mitigationBox")
-    #})
+    output$mitigationBox <- renderInfoBox({
+      infoBox(
+        "Mitigation", paste0(25 , input$something, "%"), icon = icon("list"),
+        color = "purple"
+      )
+      print("mitigationBox")
+    })
 
     # observe({
     #   print("Fleets")
@@ -36,16 +37,16 @@ shinyServer ( function(input, output, session){
     getTMAparams <- function(input)
     {
   
-      params <- lapply(TMA_PARNAMES, function(p) {
+      params <- lapply(.TMA_PARNAMES, function(p) {
         input[[p]]
       })
-      names(params) <- TMA_PARNAMES
+      names(params) <- .TMA_PARNAMES
       # params <- c(params,prefix=prefix)
       cat(params)
       params   
     }
 
-    #getF <- reactive(do.call(getFs,getTMAparams(input)))
+    getF <- reactive(do.call(getFs,getTMAparams(input)))
 
     # spr  <- reactiveValues()
     output$TMAtable <- renderTable({
@@ -163,4 +164,3 @@ shinyServer ( function(input, output, session){
       updateNumericInput(session, paste0("B","_","num_bycatch"), value = B_bcm)
     })
 })
-

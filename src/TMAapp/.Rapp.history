@@ -1,0 +1,1989 @@
+z
+F
+x <- F[,1]#
+y <- F[,2]#
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y))
+z[order(F[,1]),]
+F<-expand.grid(seq(0,0.5,0.1),seq(0,0.5,0.1))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}
+F[,1]
+F[,2]
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y),byrow=T)
+x <- F[,1]
+y <- F[,2]
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y),byrow=T)
+z
+calcddYE[,1]
+unique(F[,1])
+unique(F[,2])
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y),byrow=T)
+z
+persp(x=x, y, z, theta = 30, phi = 30, expand = 0.5, col = "lightblue")
+persp(x=x, y, z, theta = 30, phi = 30, expand = 0.5, col = "lightblue",ltheta = 120, shade = 0.75, ticktype = "detailed",#
+      xlab = "X", ylab = "Y", zlab = "Sinc( r )"#
+)
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y),byrow=T)#
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 120, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5)
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 100, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5)
+persp(x=x, y, z, theta = 40, phi = 30, ltheta = 100, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col"skyblue3")
+persp(x=x, y, z, theta = 40, phi = 30, ltheta = 100, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="skyblue3")
+persp(x=x, y, z, theta = 30, phi = 40, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="skyblue3")
+persp(x=x, y, z, theta = 30, phi = 10, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="skyblue3")
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="skyblue3")
+z
+xE <- c(-10,10); xy <- expand.grid(xE, xE)#
+points(trans3d(xy[,1], xy[,2], 6, pmat = res), col = 2, pch = 16)#
+lines (trans3d(x, y = 10, z = 6 + sin(x), pmat = res), col = 3)#
+#
+phi <- seq(0, 2*pi, len = 201)#
+r1 <- 7.725 # radius of 2nd maximum#
+xr <- r1 * cos(phi)#
+yr <- r1 * sin(phi)#
+lines(trans3d(xr,yr, f(xr,yr), res), col = "pink", lwd = 2)#
+## (no hidden lines)
+x <- seq(-10, 10, length= 30)#
+y <- x#
+f <- function(x, y) { r <- sqrt(x^2+y^2); 10 * sin(r)/r }#
+z <- outer(x, y, f)#
+z[is.na(z)] <- 1#
+op <- par(bg = "white")#
+persp(x, y, z, theta = 30, phi = 30, expand = 0.5, col = "lightblue")#
+persp(x, y, z, theta = 30, phi = 30, expand = 0.5, col = "lightblue",#
+      ltheta = 120, shade = 0.75, ticktype = "detailed",#
+      xlab = "X", ylab = "Y", zlab = "Sinc( r )"#
+) -> res#
+round(res, 3)#
+#
+# (2) Add to existing persp plot - using trans3d() :#
+#
+xE <- c(-10,10); xy <- expand.grid(xE, xE)#
+points(trans3d(xy[,1], xy[,2], 6, pmat = res), col = 2, pch = 16)#
+lines (trans3d(x, y = 10, z = 6 + sin(x), pmat = res), col = 3)
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcddYE[,1],nrow=length(x),ncol=length(y),byrow=T)#
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+min(abs(z))
+which(calcddYE[,1]==min(abs(z)))
+F[which(calcddYE[,1]==min(abs(z))),]
+c(F[which(calcddYE[,1]==min(abs(z))),],min(abs(z)))
+c(as.vector(F[which(calcddYE[,1]==min(abs(z))),]),min(abs(z)))
+as.vector(F[which(calcddYE[,1]==min(abs(z))),])
+c(F[which(calcddYE[,1]==min(abs(z))),])
+as.vector(c(F[which(calcddYE[,1]==min(abs(z))),]))
+F[which(calcddYE[,1]==min(abs(z))),1]
+c(F[which(calcddYE[,1]==min(abs(z))),1]#
+,F[which(calcddYE[,1]==min(abs(z))),]#
+,min(abs(z)))
+?value
+F[which(calcddYE[,1]==min(abs(z))),]
+which(F[which(calcddYE[,1]==min(abs(z))),])
+which(calcddYE[,1]==min(abs(z))),]
+which(calcddYE[,1]==min(abs(z)))
+which(F[which(calcddYE[,1]==min(abs(z))),])
+as.vector(F[which(calcddYE[,1]==min(abs(z))),])
+?as.vector
+as.vector(F[which(calcddYE[,1]==min(abs(z))),], mode ="numeric")
+c(as.vector(F[which(calcddYE[,1]==min(abs(z))),], mode ="numeric"),min(abs(z)))
+points(trans3d(dYemin[1], dYemin[2], dYemin[3], pmat = res), col = 2, pch = 16)
+dYemin= c(as.vector(F[which(calcddYE[,1]==min(abs(z))),], mode ="numeric"),min(abs(z)))
+points(trans3d(dYemin[1], dYemin[2], dYemin[3], pmat = res), col = 2, pch = 16)
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y),byrow=T)#
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y),byrow=T)#
+#
+persp(x=x, y, z2, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+persp(x=x, y, z, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+persp(x=x, y, z2, theta = 30, phi = 30, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+persp(x=x, y, z, theta = 30, phi = 10, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+persp(x=x, y, z2, theta = 30, phi = 10, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 30, phi = 15, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 30, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 36, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 70, phi = 40, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+persp(x=x, y, z2, theta = 70, phi = 5, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue")
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+persp(x=x, y, z2, theta = 70, phi = 5, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue",border = NA)
+persp(x=x, y, z2, theta = 70, phi = 10, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue",border = NA)
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe",expand = 0.5, col="lightblue",border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 30, phi = 15, ltheta = 80, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col="lightblue")#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col="lightblue",border = NA)
+z <- 2 * volcano        # Exaggerate the relief#
+x <- 10 * (1:nrow(z))   # 10 meter spacing (S to N)#
+y <- 10 * (1:ncol(z))   # 10 meter spacing (E to W)#
+## Don't draw the grid lines :  border = NA#
+par(bg = "slategray")#
+persp(x, y, z, theta = 135, phi = 30, col = "green3", scale = FALSE,#
+      ltheta = -120, shade = 0.75, border = NA, box = FALSE)
+par(bg = "white")#
+x <- seq(-1.95, 1.95, length = 30)#
+y <- seq(-1.95, 1.95, length = 35)#
+z <- outer(x, y, function(a, b) a*b^2)#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 100#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+persp(x, y, z, col = color[facetcol], phi = 30, theta = -30)
+rz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 100#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 100#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)
+facetcol
+zfacet
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 10#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)
+y
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 10#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 160, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+persp(x=x, y, z2, theta = 115, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+115-180
++360
+115-180+360
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 295, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 205, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 255, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+250+180-360
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0.5, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0.5, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 1, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 1, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 70, phi = 105, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 1, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 1, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 140, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 1, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 1, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 160, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 1, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 1, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 160, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 15, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 160, phi = 180, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 180, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 160, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 180, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 70, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 10#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe1",expand = 0, col=color[facetcol],border = NA)#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = "dYe2",expand = 0, col=color[facetcol],border = NA)
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye2")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye2")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 10#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye21")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye2")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 10#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 50#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+#
+par(mfrow=c(1,1))#
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Ye1")
+?contours
+?contour
+contour(x=x, y, zt, nlevels = 100,main="Total Ye")
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2")
+msycalc2<-function(F){#
+#
+    Ro<-1#
+    kappa<-10#
+    m<-0.2#
+    fe<-F#
+#
+    ages<-1:30#
+    Winf<-3.165797#
+    k<-0.2728831#
+    to<- -.7#
+    wa<-Winf*(1-exp(-k*(ages-to)))^3#
+    f50<-2.0273497#
+    fsd<-0.4020049#
+    fa<-(1/(1+exp(-(ages-f50)/fsd)))*wa#
+    v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    #a2<-1#
+    #b2<-3#
+    #gamma2<-0.5#
+    #va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va2<-va1#
+#
+    va<-cbind(va1,va2)#
+#
+    #matplot(va)    #
+#
+    za <- m#
+    for(n in 1:(ncol(fe))){#
+        za <- za + fe[,n] * va[,n]      #
+    }#
+    sa <- exp(-za)#
+    oa <- 1-sa#
+#
+    la<-NULL#
+    lx<-NULL#
+    la[1]<-1#
+    lx[1]<-1#
+#
+    for(i in 2:(length(ages)))#
+    {#
+        la[i]<- la[i-1]* sa[i-1]#
+        lx[i]<- lx[i-1]* exp(-m)#
+    }#
+#
+    LA<-la[length(ages)]#
+    la[length(ages)]<-la[length(ages)]/(oa[length(ages)])#
+    lx[length(ages)]<-lx[length(ages)]/(1-exp(-m))#
+    phiE<-sum(fa*lx)#
+    phie<-sum(fa*la)#
+    Re<-Ro*(kappa-phiE/phie)/(kappa-1)#
+    qa<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    phiq<-matrix(NA,ncol=ncol(fe))#
+    Ye<-matrix(NA,ncol=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        qa[,n]<- va[,n]*wa*oa/za#
+        phiq[,n]<-sum(la*qa[,n])#
+        Ye[,n]<-fe[,n]*Re*phiq[,n]  #
+    }#
+#
+    #calculate derivatives#
+#
+    #recruitment#
+    dla.dfe<- matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    dla.dfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            dla.dfe[i,n] <- dla.dfe[i-1,n]*sa[i-1] - la[i-1]*va[i-1,n]*sa[i-1]      #
+        }#
+    }#
+    dLA.dfe<-dla.dfe[length(ages),]#
+    dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2#
+    dphie.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    dRe.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    for(n in 1:ncol(fe)){#
+        dphie.dfe[,n]<- sum(fa*dla.dfe[,n])#
+        dRe.dfe[,n]<- (dphie.dfe[,n]*Ro*phiE)/((kappa-1)*phie^2)#
+    }#
+        #incidence functions#
+    dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+    dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    dYe.dfe<- NULL#
+#
+    for(n in 1:ncol(fe)){#
+        for(nn in 1:ncol(fe)){#
+#
+            if(n==nn){#
+                dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)#
+#
+            } else{#
+                dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)#
+            }           #
+        }#
+        dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]#
+    }#
+    #calculate second derivatives#
+#
+    #recruitment#
+#
+    ddla.ddfe<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    ddphie.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+    ddRe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+#
+    ddla.ddfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            ddla.ddfe[i,n] <- (ddla.ddfe[i-1,n] + la[i-1]*va[i-1,n]^2 - 2*dla.dfe[i-1,n]*va[i-1,n])*sa[i-1]     #
+        }#
+    }#
+    ddLA.ddfe <- ddla.ddfe[length(ages),] #
+#
+    ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )#
+                                - 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )#
+                                + ddLA.ddfe / oa[length(ages)] #
+                                +  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))#
+    for(n in 1:(ncol(fe))){ #
+    ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])#
+#
+    ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))#
+    }                   #
+    #incidence functions#
+    ddqa.ddfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+#
+    ddphiq.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+#
+            if(n==nn)#
+            {#
+                ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+            }else{ #
+                ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+#
+            }#
+                ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])#
+        }#
+    }#
+#
+    ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+            if(n==nn)#
+            {#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]#
+            }else{#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]#
+            }#
+        }#
+    }#
+    return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))#
+#
+}#
+#
+F<-matrix(c(0.15,0.2),ncol=2)#
+msycalc2(F)#
+fe<-seq(0,0.5,0.1)#
+#
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2")
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")#
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2")
+v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    a2<-1#
+    b2<-3#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)
+matplot(va)
+a2<-1#
+    b2<-5#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+a2<-1.1#
+    b2<-5#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)
+matplot(va)
+a2<-1.5#
+    b2<-5#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+a2<-0.5#
+    b2<-5#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+a2<-0.5#
+    b2<-6#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)
+a2<-0.5#
+    b2<-6#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+a2<-0.5#
+    b2<-7#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+a2<-0.7#
+    b2<-7#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va)
+msycalc2<-function(F){#
+#
+    Ro<-1#
+    kappa<-10#
+    m<-0.2#
+    fe<-F#
+#
+    ages<-1:30#
+    Winf<-3.165797#
+    k<-0.2728831#
+    to<- -.7#
+    wa<-Winf*(1-exp(-k*(ages-to)))^3#
+    f50<-2.0273497#
+    fsd<-0.4020049#
+    fa<-(1/(1+exp(-(ages-f50)/fsd)))*wa#
+    v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    a2<-0.7#
+    b2<-7#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    matplot(va) #
+#
+    za <- m#
+    for(n in 1:(ncol(fe))){#
+        za <- za + fe[,n] * va[,n]      #
+    }#
+    sa <- exp(-za)#
+    oa <- 1-sa#
+#
+    la<-NULL#
+    lx<-NULL#
+    la[1]<-1#
+    lx[1]<-1#
+#
+    for(i in 2:(length(ages)))#
+    {#
+        la[i]<- la[i-1]* sa[i-1]#
+        lx[i]<- lx[i-1]* exp(-m)#
+    }#
+#
+    LA<-la[length(ages)]#
+    la[length(ages)]<-la[length(ages)]/(oa[length(ages)])#
+    lx[length(ages)]<-lx[length(ages)]/(1-exp(-m))#
+    phiE<-sum(fa*lx)#
+    phie<-sum(fa*la)#
+    Re<-Ro*(kappa-phiE/phie)/(kappa-1)#
+    qa<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    phiq<-matrix(NA,ncol=ncol(fe))#
+    Ye<-matrix(NA,ncol=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        qa[,n]<- va[,n]*wa*oa/za#
+        phiq[,n]<-sum(la*qa[,n])#
+        Ye[,n]<-fe[,n]*Re*phiq[,n]  #
+    }#
+#
+    #calculate derivatives#
+#
+    #recruitment#
+    dla.dfe<- matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    dla.dfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            dla.dfe[i,n] <- dla.dfe[i-1,n]*sa[i-1] - la[i-1]*va[i-1,n]*sa[i-1]      #
+        }#
+    }#
+    dLA.dfe<-dla.dfe[length(ages),]#
+    dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2#
+    dphie.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    dRe.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    for(n in 1:ncol(fe)){#
+        dphie.dfe[,n]<- sum(fa*dla.dfe[,n])#
+        dRe.dfe[,n]<- (dphie.dfe[,n]*Ro*phiE)/((kappa-1)*phie^2)#
+    }#
+        #incidence functions#
+    dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+    dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    dYe.dfe<- NULL#
+#
+    for(n in 1:ncol(fe)){#
+        for(nn in 1:ncol(fe)){#
+#
+            if(n==nn){#
+                dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)#
+#
+            } else{#
+                dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)#
+            }           #
+        }#
+        dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]#
+    }#
+    #calculate second derivatives#
+#
+    #recruitment#
+#
+    ddla.ddfe<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    ddphie.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+    ddRe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+#
+    ddla.ddfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            ddla.ddfe[i,n] <- (ddla.ddfe[i-1,n] + la[i-1]*va[i-1,n]^2 - 2*dla.dfe[i-1,n]*va[i-1,n])*sa[i-1]     #
+        }#
+    }#
+    ddLA.ddfe <- ddla.ddfe[length(ages),] #
+#
+    ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )#
+                                - 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )#
+                                + ddLA.ddfe / oa[length(ages)] #
+                                +  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))#
+    for(n in 1:(ncol(fe))){ #
+    ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])#
+#
+    ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))#
+    }                   #
+    #incidence functions#
+    ddqa.ddfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+#
+    ddphiq.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+#
+            if(n==nn)#
+            {#
+                ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+            }else{ #
+                ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+#
+            }#
+                ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])#
+        }#
+    }#
+#
+    ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+            if(n==nn)#
+            {#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]#
+            }else{#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]#
+            }#
+        }#
+    }#
+    return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))#
+#
+}#
+#
+F<-matrix(c(0.15,0.2),ncol=2)#
+msycalc2(F)#
+fe<-seq(0,0.5,0.1)#
+#
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}#
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")
+msycalc2<-function(F){#
+#
+    Ro<-1#
+    kappa<-10#
+    m<-0.2#
+    fe<-F#
+#
+    ages<-1:30#
+    Winf<-3.165797#
+    k<-0.2728831#
+    to<- -.7#
+    wa<-Winf*(1-exp(-k*(ages-to)))^3#
+    f50<-2.0273497#
+    fsd<-0.4020049#
+    fa<-(1/(1+exp(-(ages-f50)/fsd)))*wa#
+    v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    a2<-0.7#
+    b2<-7#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    #matplot(va)    #
+#
+    za <- m#
+    for(n in 1:(ncol(fe))){#
+        za <- za + fe[,n] * va[,n]      #
+    }#
+    sa <- exp(-za)#
+    oa <- 1-sa#
+#
+    la<-NULL#
+    lx<-NULL#
+    la[1]<-1#
+    lx[1]<-1#
+#
+    for(i in 2:(length(ages)))#
+    {#
+        la[i]<- la[i-1]* sa[i-1]#
+        lx[i]<- lx[i-1]* exp(-m)#
+    }#
+#
+    LA<-la[length(ages)]#
+    la[length(ages)]<-la[length(ages)]/(oa[length(ages)])#
+    lx[length(ages)]<-lx[length(ages)]/(1-exp(-m))#
+    phiE<-sum(fa*lx)#
+    phie<-sum(fa*la)#
+    Re<-Ro*(kappa-phiE/phie)/(kappa-1)#
+    qa<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    phiq<-matrix(NA,ncol=ncol(fe))#
+    Ye<-matrix(NA,ncol=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        qa[,n]<- va[,n]*wa*oa/za#
+        phiq[,n]<-sum(la*qa[,n])#
+        Ye[,n]<-fe[,n]*Re*phiq[,n]  #
+    }#
+#
+    #calculate derivatives#
+#
+    #recruitment#
+    dla.dfe<- matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    dla.dfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            dla.dfe[i,n] <- dla.dfe[i-1,n]*sa[i-1] - la[i-1]*va[i-1,n]*sa[i-1]      #
+        }#
+    }#
+    dLA.dfe<-dla.dfe[length(ages),]#
+    dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2#
+    dphie.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    dRe.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    for(n in 1:ncol(fe)){#
+        dphie.dfe[,n]<- sum(fa*dla.dfe[,n])#
+        dRe.dfe[,n]<- (dphie.dfe[,n]*Ro*phiE)/((kappa-1)*phie^2)#
+    }#
+        #incidence functions#
+    dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+    dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    dYe.dfe<- NULL#
+#
+    for(n in 1:ncol(fe)){#
+        for(nn in 1:ncol(fe)){#
+#
+            if(n==nn){#
+                dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)#
+#
+            } else{#
+                dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)#
+            }           #
+        }#
+        dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]#
+    }#
+    #calculate second derivatives#
+#
+    #recruitment#
+#
+    ddla.ddfe<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    ddphie.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+    ddRe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+#
+    ddla.ddfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            ddla.ddfe[i,n] <- (ddla.ddfe[i-1,n] + la[i-1]*va[i-1,n]^2 - 2*dla.dfe[i-1,n]*va[i-1,n])*sa[i-1]     #
+        }#
+    }#
+    ddLA.ddfe <- ddla.ddfe[length(ages),] #
+#
+    ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )#
+                                - 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )#
+                                + ddLA.ddfe / oa[length(ages)] #
+                                +  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))#
+    for(n in 1:(ncol(fe))){ #
+    ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])#
+#
+    ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))#
+    }                   #
+    #incidence functions#
+    ddqa.ddfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+#
+    ddphiq.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+#
+            if(n==nn)#
+            {#
+                ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+            }else{ #
+                ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+#
+            }#
+                ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])#
+        }#
+    }#
+#
+    ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+            if(n==nn)#
+            {#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]#
+            }else{#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]#
+            }#
+        }#
+    }#
+    return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))#
+#
+}#
+#
+F<-matrix(c(0.15,0.2),ncol=2)#
+msycalc2(F)#
+fe<-seq(0,0.5,0.1)#
+#
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}
+par(mfrow=c(1,1))#
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")#
+#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")#
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+#
+par(mfrow=c(1,1))#
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")#
+#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])
+dYemin= c(as.vector(F[which(calcddYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+points(trans3d(dYemin[1], dYemin[2], dYemin[3], pmat = res), col = 2, pch = 16)
+dYemin= c(as.vector(F[which(calcYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+points(trans3d(dYemin[1], dYemin[2], dYemin[3], pmat = res), col = 2, pch = 16)
+Yemax= c(as.vector(F[which(calcYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+Yemax
+points(trans3d(dYemin[1], dYemin[2], dYemin[3], pmat = res), col = 2, pch = 16)
+points((dYemin[1], dYemin[2],  pmat = res), col = 2, pch = 16)
+points(dYemin[1], dYemin[2], col = 2, pch = 16)
+msycalc2<-function(F){#
+#
+    Ro<-1#
+    kappa<-10#
+    m<-0.2#
+    fe<-F#
+#
+    ages<-1:30#
+    Winf<-3.165797#
+    k<-0.2728831#
+    to<- -.7#
+    wa<-Winf*(1-exp(-k*(ages-to)))^3#
+    f50<-2.0273497#
+    fsd<-0.4020049#
+    fa<-(1/(1+exp(-(ages-f50)/fsd)))*wa#
+    v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    a2<-0.7#
+    b2<-7#
+    gamma2<-0#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    #matplot(va)    #
+#
+    za <- m#
+    for(n in 1:(ncol(fe))){#
+        za <- za + fe[,n] * va[,n]      #
+    }#
+    sa <- exp(-za)#
+    oa <- 1-sa#
+#
+    la<-NULL#
+    lx<-NULL#
+    la[1]<-1#
+    lx[1]<-1#
+#
+    for(i in 2:(length(ages)))#
+    {#
+        la[i]<- la[i-1]* sa[i-1]#
+        lx[i]<- lx[i-1]* exp(-m)#
+    }#
+#
+    LA<-la[length(ages)]#
+    la[length(ages)]<-la[length(ages)]/(oa[length(ages)])#
+    lx[length(ages)]<-lx[length(ages)]/(1-exp(-m))#
+    phiE<-sum(fa*lx)#
+    phie<-sum(fa*la)#
+    Re<-Ro*(kappa-phiE/phie)/(kappa-1)#
+    qa<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    phiq<-matrix(NA,ncol=ncol(fe))#
+    Ye<-matrix(NA,ncol=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        qa[,n]<- va[,n]*wa*oa/za#
+        phiq[,n]<-sum(la*qa[,n])#
+        Ye[,n]<-fe[,n]*Re*phiq[,n]  #
+    }#
+#
+    #calculate derivatives#
+#
+    #recruitment#
+    dla.dfe<- matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    dla.dfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            dla.dfe[i,n] <- dla.dfe[i-1,n]*sa[i-1] - la[i-1]*va[i-1,n]*sa[i-1]      #
+        }#
+    }#
+    dLA.dfe<-dla.dfe[length(ages),]#
+    dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2#
+    dphie.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    dRe.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    for(n in 1:ncol(fe)){#
+        dphie.dfe[,n]<- sum(fa*dla.dfe[,n])#
+        dRe.dfe[,n]<- (dphie.dfe[,n]*Ro*phiE)/((kappa-1)*phie^2)#
+    }#
+        #incidence functions#
+    dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+    dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    dYe.dfe<- NULL#
+#
+    for(n in 1:ncol(fe)){#
+        for(nn in 1:ncol(fe)){#
+#
+            if(n==nn){#
+                dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)#
+#
+            } else{#
+                dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)#
+            }           #
+        }#
+        dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]#
+    }#
+    #calculate second derivatives#
+#
+    #recruitment#
+#
+    ddla.ddfe<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    ddphie.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+    ddRe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+#
+    ddla.ddfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            ddla.ddfe[i,n] <- (ddla.ddfe[i-1,n] + la[i-1]*va[i-1,n]^2 - 2*dla.dfe[i-1,n]*va[i-1,n])*sa[i-1]     #
+        }#
+    }#
+    ddLA.ddfe <- ddla.ddfe[length(ages),] #
+#
+    ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )#
+                                - 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )#
+                                + ddLA.ddfe / oa[length(ages)] #
+                                +  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))#
+    for(n in 1:(ncol(fe))){ #
+    ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])#
+#
+    ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))#
+    }                   #
+    #incidence functions#
+    ddqa.ddfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+#
+    ddphiq.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+#
+            if(n==nn)#
+            {#
+                ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+            }else{ #
+                ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+#
+            }#
+                ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])#
+        }#
+    }#
+#
+    ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+            if(n==nn)#
+            {#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]#
+            }else{#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]#
+            }#
+        }#
+    }#
+    return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))#
+#
+}#
+#
+F<-matrix(c(0.15,0.2),ncol=2)#
+msycalc2(F)#
+fe<-seq(0,0.5,0.1)#
+#
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}#
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")#
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+#
+par(mfrow=c(1,1))#
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")#
+#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])#
+Yemax= c(as.vector(F[which(calcYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))#
+#
+points(dYemin[1], dYemin[2], col = 2, pch = 16)
+points(Yemax[1], dYemax[2], col = 2, pch = 16)
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])#
+Yemax= c(as.vector(F[which(calcYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))#
+points(Yemax[1], Yemax[2], col = 2, pch = 16)
+Yemax[2]
+Yemax= c(as.vector(F[which(calcYE[,1]==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+points(Yemax[1], Yemax[2], col = 2, pch = 16)
+Yemax
+max(abs(zt)
+)
+F[which(calcYE[,1]==max(abs(zt))),]
+F
+[which(calcYE[,1]==max(abs(zt))),]
+which(calcYE[,1]==max(abs(zt)))
+calcYE[,1]
+apply(calcYE,1,sum)
+which(apply(calcYE,1,sum)==max(abs(zt)))
+F[which(apply(calcYE,1,sum)==max(abs(zt))),]
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])#
+Yemax= c(as.vector(F[which(apply(calcYE,1,sum)==max(abs(zt))),], mode ="numeric"),max(abs(zt)))#
+points(Yemax[1], Yemax[2], col = 2, pch = 16)
+msycalc2<-function(F){#
+#
+    Ro<-1#
+    kappa<-10#
+    m<-0.2#
+    fe<-F#
+#
+    ages<-1:30#
+    Winf<-3.165797#
+    k<-0.2728831#
+    to<- -.7#
+    wa<-Winf*(1-exp(-k*(ages-to)))^3#
+    f50<-2.0273497#
+    fsd<-0.4020049#
+    fa<-(1/(1+exp(-(ages-f50)/fsd)))*wa#
+    v501<-2.9485810#
+    vsd1<-0.5660189#
+    va1<-(1/(1+exp(-(ages-v50)/vsd)))#
+    a2<-0.7#
+    b2<-7#
+    gamma2<-0.5#
+    va2<- (1/(1-gamma2))*(((1-gamma2)/gamma2)^gamma2)*(exp(a2*gamma2*(b2-ages))/(1+exp(a2*(b2-ages))))#
+    va<-cbind(va1,va2)#
+#
+    #matplot(va)    #
+#
+    za <- m#
+    for(n in 1:(ncol(fe))){#
+        za <- za + fe[,n] * va[,n]      #
+    }#
+    sa <- exp(-za)#
+    oa <- 1-sa#
+#
+    la<-NULL#
+    lx<-NULL#
+    la[1]<-1#
+    lx[1]<-1#
+#
+    for(i in 2:(length(ages)))#
+    {#
+        la[i]<- la[i-1]* sa[i-1]#
+        lx[i]<- lx[i-1]* exp(-m)#
+    }#
+#
+    LA<-la[length(ages)]#
+    la[length(ages)]<-la[length(ages)]/(oa[length(ages)])#
+    lx[length(ages)]<-lx[length(ages)]/(1-exp(-m))#
+    phiE<-sum(fa*lx)#
+    phie<-sum(fa*la)#
+    Re<-Ro*(kappa-phiE/phie)/(kappa-1)#
+    qa<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    phiq<-matrix(NA,ncol=ncol(fe))#
+    Ye<-matrix(NA,ncol=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        qa[,n]<- va[,n]*wa*oa/za#
+        phiq[,n]<-sum(la*qa[,n])#
+        Ye[,n]<-fe[,n]*Re*phiq[,n]  #
+    }#
+#
+    #calculate derivatives#
+#
+    #recruitment#
+    dla.dfe<- matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    dla.dfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            dla.dfe[i,n] <- dla.dfe[i-1,n]*sa[i-1] - la[i-1]*va[i-1,n]*sa[i-1]      #
+        }#
+    }#
+    dLA.dfe<-dla.dfe[length(ages),]#
+    dla.dfe[length(ages),] <- dLA.dfe/oa[length(ages)] - LA*va[length(ages),]*sa[length(ages)]/(oa[length(ages)])^2#
+    dphie.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    dRe.dfe<- matrix(NA,ncol=ncol(fe),nrow=1)#
+    for(n in 1:ncol(fe)){#
+        dphie.dfe[,n]<- sum(fa*dla.dfe[,n])#
+        dRe.dfe[,n]<- (dphie.dfe[,n]*Ro*phiE)/((kappa-1)*phie^2)#
+    }#
+        #incidence functions#
+    dqa.dfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+    dphiq.dfe<- matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    dYe.dfe<- NULL#
+#
+    for(n in 1:ncol(fe)){#
+        for(nn in 1:ncol(fe)){#
+#
+            if(n==nn){#
+                dqa.dfe[[n]][,nn]<- (va[,n]^2*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,n]+dqa.dfe[[n]][,nn]*la)#
+#
+            } else{#
+                dqa.dfe[[n]][,nn]<- (va[,n]*va[,nn]*wa)/za * (sa-oa/za)#
+                dphiq.dfe[n,nn]<- sum(qa[,n]*dla.dfe[,nn]+dqa.dfe[[n]][,nn]*la)#
+            }           #
+        }#
+        dYe.dfe[n]<-Re*phiq[,n]+fe[,n]*Re*dphiq.dfe[n,n]+fe[,n]*phiq[,n]*dRe.dfe[,n]#
+    }#
+    #calculate second derivatives#
+#
+    #recruitment#
+#
+    ddla.ddfe<-matrix(NA,ncol=ncol(fe),nrow=length(ages))#
+    ddphie.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+    ddRe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=1)#
+#
+    ddla.ddfe[1,]<-0#
+    for(n in 1:(ncol(fe))){#
+        for(i in 2:(length(ages)))#
+        {#
+            ddla.ddfe[i,n] <- (ddla.ddfe[i-1,n] + la[i-1]*va[i-1,n]^2 - 2*dla.dfe[i-1,n]*va[i-1,n])*sa[i-1]     #
+        }#
+    }#
+    ddLA.ddfe <- ddla.ddfe[length(ages),] #
+#
+    ddla.ddfe[length(ages),] <-  (LA * (va[length(ages),])^2 * sa[length(ages)]    / ( oa[length(ages)]^2 )#
+                                - 2 * dLA.dfe * va[length(ages),] * sa[length(ages)] / ( oa[length(ages)]^2 )#
+                                + ddLA.ddfe / oa[length(ages)] #
+                                +  2 * LA * (va[length(ages),])^2 * (sa[length(ages)])^2 /(oa[length(ages)]^3))#
+    for(n in 1:(ncol(fe))){ #
+    ddphie.ddfe[,n]<- sum(fa*ddla.ddfe[,n])#
+#
+    ddRe.ddfe[,n]<- (phie* ddphie.ddfe[,n] - 2*dphie.dfe[,n]^2)*Ro*phiE/(phie^3*(kappa-1))#
+    }                   #
+    #incidence functions#
+    ddqa.ddfe<- list(matrix(NA,ncol=ncol(fe),nrow=length(ages)),matrix(NA,ncol=ncol(fe),nrow=length(ages)))#
+#
+    ddphiq.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+#
+            if(n==nn)#
+            {#
+                ddqa.ddfe[[n]][,nn]<- (va[,n]^3*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+            }else{ #
+                ddqa.ddfe[[n]][,nn]<- (va[,n]*va[,nn]^2*sa*wa/za)*(-sa-2*sa/za+2*oa/za^2)#
+#
+            }#
+                ddphiq.ddfe[n,nn]<- sum(la*ddqa.ddfe[[n]][,nn]+2*dla.dfe[,n]*dqa.dfe[[n]][,nn]+qa[,n]*ddla.ddfe[,n])#
+        }#
+    }#
+#
+    ddYe.ddfe<-matrix(NA,ncol=ncol(fe),nrow=ncol(fe))#
+    for(n in 1:(ncol(fe))){#
+        for(nn in 1:(ncol(fe))){#
+            if(n==nn)#
+            {#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,n]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,n]+2*phiq[,n]*dRe.dfe[,n]+fe[,n]*Re*ddphiq.ddfe[n,nn]+2*Re*dphiq.dfe[n,nn]#
+            }else{#
+                ddYe.ddfe[n,nn]<- fe[,n]*phiq[,n]*ddRe.ddfe[,nn]+2*fe[,n]*dphiq.dfe[n,nn]*dRe.dfe[,nn]+fe[,n]*Re*ddphiq.ddfe[n,nn]#
+            }#
+        }#
+    }#
+    return(list(F=fe,Ye=Ye, dYe.dfe=dYe.dfe,ddYe.ddfe=ddYe.ddfe, la=la, dla.dfe=dla.dfe, ddla.ddfe=ddla.ddfe))#
+#
+}#
+#
+F<-matrix(c(0.15,0.2),ncol=2)#
+msycalc2(F)#
+fe<-seq(0,0.5,0.1)#
+#
+F<-expand.grid(seq(0,1,0.01),seq(0,1,0.01))#
+#
+calcYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=ncol(F),nrow=nrow(F))#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcYE[a,]<-result$Ye#
+    calcdYE[a,]<-result$dYe.dfe#
+    calcddYE[a,]<-diag(result$ddYe.ddfe)#
+}#
+x <- unique(F[,1])#
+y <- unique(F[,2])#
+z <- matrix(calcYE[,1],nrow=length(x),ncol=length(y))#
+#
+z2 <- matrix(calcYE[,2],nrow=length(x),ncol=length(y))#
+#
+nrz <- nrow(z)#
+ncz <- ncol(z)#
+# Create a function interpolating colors in the range of specified colors#
+jet.colors <- colorRampPalette( c("blue", "green","red") )#
+# Generate the desired number of colors from this palette#
+nbcol <- 25#
+color <- jet.colors(nbcol)#
+# Compute the z-value at the facet centres#
+zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]#
+zfacet2 <- z2[-1, -1] + z2[-1, -ncz] + z2[-nrz, -1] + z2[-nrz, -ncz]#
+# Recode facet z-values into color indices#
+facetcol <- cut(zfacet, nbcol)#
+facetcol2 <- cut(zfacet2, nbcol)#
+#
+par(mfrow=c(1,2))#
+persp(x=x, y, z, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol],border = NA,main="Ye1")#
+#
+persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol2],border = NA,main="Ye2")#
+zt<-z+z2#
+zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]#
+facetcol_t <- cut(zfacet_t, nbcol)#
+#
+par(mfrow=c(1,1))#
+persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",#
+      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")#
+#
+contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])#
+Yemax= c(as.vector(F[which(apply(calcYE,1,sum)==max(abs(zt))),], mode ="numeric"),max(abs(zt)))#
+points(Yemax[1], Yemax[2], col = 2, pch = 16)
+msycalc2(F)
+F<-matrix(c(0.15,0.2),ncol=2)
+msycalc2(F)
+nrow(F)
+F<-expand.grid(seq(0,1,0.1),seq(0,1,0.1))
+nrow(F)
+a=1
+result<-msycalc(F[a,])
+F[a,]
+a=3
+result<-msycalc(F[a,])
+result<-msycalc(matrix(F[a,]))
+(matrix(F[a,])
+)
+matrix(F[a,],ncol=2)
+result<-msycalc(matrix(F[a,],ncol=2))
+matrix(F[a,],ncol=2)
+result<-msycalc(matrix(F[a,],ncol=2))
+result<-msycalc2(F[a,])
+result$ddYe.ddfe
+as.vector(result$ddYe.ddfe)
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcdYE[a,]<-result$dYe.dfe#
+    numdYE[a,]<-((msycalc(F[a,]+h)$Ye-msycalc(F[a,])$Ye)/h+ (msycalc(F[a,])$Ye-msycalc(F[a,]-h)$Ye)/h)/2#
+#
+    calcddYE[a,]<-as.vector(result$ddYe.ddfe)#
+#
+    numddYE[a,]<-as.vector((msycalc(fe[a]+2*h)$Ye - 2*msycalc(fe[a]+h)$Ye + msycalc(fe[a])$Ye)/h^2)#
+#
+    calcdla[a]<-sum(result$dla.dfe)#
+#
+    numdla[a]<-sum(((msycalc(fe[a]+h)$la - msycalc(fe[a])$la)/h + (msycalc(fe[a])$la - msycalc(fe[a]-h)$la)/h)/2)#
+#
+    calcddla[a]<-sum(result$ddla.ddfe)#
+#
+    numddla[a]<-sum((msycalc(fe[a]+ h)$la - 2*msycalc(fe[a])$la + msycalc(fe[a]-h)$la)/h^2)#
+}
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcdYE[a,]<-result$dYe.dfe#
+    numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2#
+#
+    calcddYE[a,]<-as.vector(result$ddYe.ddfe)#
+#
+    numddYE[a,]<-as.vector((msycalc2(fe[a]+2*h)$Ye - 2*msycalc2(fe[a]+h)$Ye + msycalc2(fe[a])$Ye)/h^2)#
+#
+    calcdla[a]<-sum(result$dla.dfe)#
+#
+    numdla[a]<-sum(((msycalc2(fe[a]+h)$la - msycalc2(fe[a])$la)/h + (msycalc2(fe[a])$la - msycalc2(fe[a]-h)$la)/h)/2)#
+#
+    calcddla[a]<-sum(result$ddla.ddfe)#
+#
+    numddla[a]<-sum((msycalc2(fe[a]+ h)$la - 2*msycalc2(fe[a])$la + msycalc2(fe[a]-h)$la)/h^2)#
+}
+numdYE<-NULL#
+calcdYE<-matrix(NA,ncol=2,nrow=nrow(F))#
+#
+numddYE<-matrix(NA,ncol=4,nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=4,nrow=nrow(F))#
+#
+calcdla<-NULL#
+numdla<-NULL#
+calcddla<-NULL#
+numddla<-NULL#
+#
+F<-expand.grid(seq(0,1,0.1),seq(0,1,0.1))#
+h<-0.00001#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcdYE[a,]<-result$dYe.dfe#
+    numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2#
+#
+    calcddYE[a,]<-as.vector(result$ddYe.ddfe)#
+#
+    numddYE[a,]<-as.vector((msycalc2(fe[a]+2*h)$Ye - 2*msycalc2(fe[a]+h)$Ye + msycalc2(fe[a])$Ye)/h^2)#
+#
+    calcdla[a]<-sum(result$dla.dfe)#
+#
+    numdla[a]<-sum(((msycalc2(fe[a]+h)$la - msycalc2(fe[a])$la)/h + (msycalc2(fe[a])$la - msycalc2(fe[a]-h)$la)/h)/2)#
+#
+    calcddla[a]<-sum(result$ddla.ddfe)#
+#
+    numddla[a]<-sum((msycalc2(fe[a]+ h)$la - 2*msycalc2(fe[a])$la + msycalc2(fe[a]-h)$la)/h^2)#
+}
+numdYE<-matrix(NA,ncol=2,nrow=nrow(F))#
+calcdYE<-matrix(NA,ncol=2,nrow=nrow(F))#
+#
+numddYE<-matrix(NA,ncol=4,nrow=nrow(F))#
+calcddYE<-matrix(NA,ncol=4,nrow=nrow(F))#
+#
+calcdla<-NULL#
+numdla<-NULL#
+calcddla<-NULL#
+numddla<-NULL#
+#
+F<-expand.grid(seq(0,1,0.1),seq(0,1,0.1))#
+h<-0.00001#
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcdYE[a,]<-result$dYe.dfe#
+    numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2#
+#
+    calcddYE[a,]<-as.vector(result$ddYe.ddfe)#
+#
+    numddYE[a,]<-as.vector((msycalc2(fe[a]+2*h)$Ye - 2*msycalc2(fe[a]+h)$Ye + msycalc2(fe[a])$Ye)/h^2)#
+#
+    calcdla[a]<-sum(result$dla.dfe)#
+#
+    numdla[a]<-sum(((msycalc2(fe[a]+h)$la - msycalc2(fe[a])$la)/h + (msycalc2(fe[a])$la - msycalc2(fe[a]-h)$la)/h)/2)#
+#
+    calcddla[a]<-sum(result$ddla.ddfe)#
+#
+    numddla[a]<-sum((msycalc2(fe[a]+ h)$la - 2*msycalc2(fe[a])$la + msycalc2(fe[a]-h)$la)/h^2)#
+}
+for( a in 1:nrow(F))#
+{#
+    result<-msycalc2(F[a,])#
+    calcdYE[a,]<-result$dYe.dfe#
+    numdYE[a,]<-((msycalc2(F[a,]+h)$Ye-msycalc2(F[a,])$Ye)/h+ (msycalc2(F[a,])$Ye-msycalc2(F[a,]-h)$Ye)/h)/2#
+#
+    calcddYE[a,]<-as.vector(result$ddYe.ddfe)#
+#
+    numddYE[a,]<-as.vector((msycalc2(F[a,]+2*h)$Ye - 2*msycalc2(F[a,]+h)$Ye + msycalc2(F[a,])$Ye)/h^2)#
+#
+    calcdla[a]<-sum(result$dla.dfe)#
+#
+    numdla[a]<-sum(((msycalc2(F[a,]+h)$la - msycalc2(F[a,])$la)/h + (msycalc2(F[a,])$la - msycalc2(F[a,]-h)$la)/h)/2)#
+#
+    calcddla[a]<-sum(result$ddla.ddfe)#
+#
+    numddla[a]<-sum((msycalc2(F[a,]+ h)$la - 2*msycalc2(F[a,])$la + msycalc2(F[a,]-h)$la)/h^2)#
+}
+par(mfrow=c(3,2))#
+plot(fe,calcdYE[1,], type="l", lwd=2)#
+lines(fe,numdYE[1,], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(fe,calcdYE[2,], type="l", lwd=2)#
+lines(fe,numdYE[2,], lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[1,], type="l", lwd=2)#
+lines(fe,numddYE[1,],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[2,], type="l", lwd=2)#
+lines(fe,numddYE[2,],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[3,], type="l", lwd=2)#
+lines(fe,numddYE[3,],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[4,], type="l", lwd=2)#
+lines(fe,numddYE[4,],  lwd=2, col="mediumorchid3" )
+calcdYE[2,]
+par(mfrow=c(3,2))#
+plot(fe,calcdYE[,1], type="l", lwd=2)#
+lines(fe,numdYE[,1], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(fe,calcdYE[,2], type="l", lwd=2)#
+lines(fe,numdYE[,2], lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[,1], type="l", lwd=2)#
+lines(fe,numddYE[,1],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[,2], type="l", lwd=2)#
+lines(fe,numddYE[,2],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[,3], type="l", lwd=2)#
+lines(fe,numddYE[,3],  lwd=2, col="mediumorchid3" )#
+plot(fe,calcddYE[,4], type="l", lwd=2)#
+lines(fe,numddYE[,4],  lwd=2, col="mediumorchid3" )
+calcdYE[,1]
+par(mfrow=c(3,2))#
+plot(F[,1],calcdYE[,1], type="l", lwd=2)#
+lines(F[,1],numdYE[,1], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1],calcddYE[,1], type="l", lwd=2)#
+lines(F[,1],numddYE[,1],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1],calcddYE[,3], type="l", lwd=2)#
+lines(F[,1],numddYE[,3],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+par(mfrow=c(3,2))#
+plot(F[,1],calcdYE[,1], type="l", lwd=2)#
+#lines(F[,1],numdYE[,1], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+#lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1],calcddYE[,1], type="l", lwd=2)#
+#lines(F[,1],numddYE[,1],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+#lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1],calcddYE[,3], type="l", lwd=2)#
+#lines(F[,1],numddYE[,3],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+#lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+F[,1][order(F[,1])]
+par(mfrow=c(3,2))#
+plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)#
+#lines(F[,1],numdYE[,1], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+#lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)#
+#lines(F[,1],numddYE[,1],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+#lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)#
+#lines(F[,1],numddYE[,3],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+#lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+par(mfrow=c(3,2))#
+plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numdYE[,1][order(F[,1])], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,1][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,3][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+par(mfrow=c(1,2))#
+plot(fe,calcdla, type="l", lwd=2)#
+lines(fe,numdla, lwd=2, col="mediumorchid3" )#
+plot(fe,calcddla, type="l", lwd=2)#
+lines(fe,numddla,  lwd=2, col="mediumorchid3" )
+par(mfrow=c(1,2))#
+plot(F[,1],calcdla, type="l", lwd=2)#
+lines(F[,1],numdla, lwd=2, col="mediumorchid3" )#
+plot(F[,1],calcddla, type="l", lwd=2)#
+lines(F[,1],numddla,  lwd=2, col="mediumorchid3" )
+par(mfrow=c(2,2))#
+plot(F[,1][order(F[,1])],calcdla[order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numdla[order(F[,1])], lwd=2, col="mediumorchid3" )#
+plot(F[,1][order(F[,1])],calcddla[order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddla[order(F[,1])],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcdla, type="l", lwd=2)#
+lines(F[,2],numdla, lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddla, type="l", lwd=2)#
+lines(F[,2],numddla,  lwd=2, col="mediumorchid3" )
+par(mfrow=c(3,2))#
+plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numdYE[,1][order(F[,1])], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,1][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,3][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+par(mfrow=c(2,2))#
+plot(F[,1][order(F[,1])],calcdla[order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numdla[order(F[,1])], lwd=2, col="mediumorchid3" )#
+plot(F[,1][order(F[,1])],calcddla[order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddla[order(F[,1])],  lwd=2, col="mediumorchid3" )#
+#
+plot(F[,2],calcdla, type="l", lwd=2)#
+lines(F[,2],numdla, lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddla, type="l", lwd=2)#
+lines(F[,2],numddla,  lwd=2, col="mediumorchid3" )
+par(mfrow=c(3,2))#
+plot(F[,1][order(F[,1])],calcdYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numdYE[,1][order(F[,1])], lwd=2, col="mediumorchid3" )#
+legend("topright", c("derivative", "numerical"),  col = c("black","mediumorchid3") , lwd =2, pch = NULL, bty = "n")#
+plot(F[,2],calcdYE[,2], type="l", lwd=2)#
+lines(F[,2],numdYE[,2], lwd=2, col="mediumorchid3" )#
+plot(F[,1][order(F[,1])],calcddYE[,1][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,1][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,2], type="l", lwd=2)#
+lines(F[,2],numddYE[,2],  lwd=2, col="mediumorchid3" )#
+plot(F[,1][order(F[,1])],calcddYE[,3][order(F[,1])], type="l", lwd=2)#
+lines(F[,1][order(F[,1])],numddYE[,3][order(F[,1])],  lwd=2, col="mediumorchid3" )#
+plot(F[,2],calcddYE[,4], type="l", lwd=2)#
+lines(F[,2],numddYE[,4],  lwd=2, col="mediumorchid3" )
+setwd("/Users/catarinawor/Documents/iSCAM/src/TMAapp")
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+runApp()
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+runApp()
+?numericInput
+source("/Users/catarinawor/Documents/iSCAM/src/TMAapp/ui.R")
+runApp()
+runApp()
+runApp()
+runApp()
+runApp()
+runApp()
+?sidebarPanel
+runApp()
+fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+fitB
+equilibriumModel(fe)
+names(equilibriumModel(fe))
+grep("yield", names(equilibriumModel(fe)))
+equilibriumModel(fe)[grep("yield", names(equilibriumModel(fe)))]
+equilibriumModel(fe)[,grep("yield", names(equilibriumModel(fe)))]
+equilibriumModel(fe)[grep("yield", names(equilibriumModel(fe)))]/sum(equilibriumModel(fe)[grep("yield", names(equilibriumModel(fe)))])
+runApp()
+no_list=list()
+fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
+result<- equilibriumModel(fitC$par)
+result
+y_pos<-grep("yield", names(result))
+y_pos
+y_allocation<-result[y_pos]/result[y_pos]
+y_allocation
+y_pos<-grep("yield", names(result))
+y_allocation<-result[y_pos]/result[y_pos]
+no_list <- list(ypr_allocation=y_allocation)
+no_list
+fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+result<- equilibriumModel(fitB$par)
+m_allocation<-result[m_pos]/result[m_pos]
+m_pos<-grep("pmort", names(result))
+m_allocation<-result[m_pos]/result[m_pos]
+no_list <- list(mpr_allocation=m_allocation)
+no_list
+fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
+fitB
+result
+m_pos
+?renderTable
+runApp()

@@ -12,45 +12,51 @@ source('helpers.R')
 
 
 
+
 header <- dashboardHeader(
   title = "MSAB Dashboard"
 )
 
 sidebar <- dashboardSidebar(
-  buildSideBarMenu,
-  hr()
-
+  buildSideBarMenu
 )
+
+
+dashboard <- 
+tabItem(tabName="dashboard",
+      fluidRow(
+        valueBoxOutput("mitigationBox"),
+        a("Equilibrium App", href= 'http://shiny.iphc.int/sample-apps/mseapp/', target="_blank")
+      )
+    )
+
 
 body <- dashboardBody(
   tabItems(
-    
-    tabItem(tabName="dashboard",
-    	fluidRow(
-    		valueBoxOutput("mitigationBox")
-    	)
-    ),
+    dashboard,
 
-    tabItem(tabName="harvest_policy"),
+    # tabItem(tabName="harvest_policy"),
 
+    totalMortalityAllocation,
 
 
     tabItem(tabName="equilibrium",
-      fluidRow(
-        box( title="Graphics" ,width=12, status="info", solidHeader=TRUE )
-      ),
+      # fluidRow(
+      #   box( title="Graphics" ,width=12, status="info", solidHeader=TRUE )
+      # ),
       fluidRow(
         box( width = 12, status = "primary", solidHeader = TRUE, title="Equilibrium Model",
-    		## -------------- ##
-		    # Equil Interface  #
-		    ## -------------- ##
-		    renderEquil()
-    	))
+        ## -------------- ##
+        # Equil Interface  #
+        ## -------------- ##
+        renderEquil()
+      ))
     ),
 
-    tabItem(tabName="total_mortality",
-      buildUItotalMortality()
-    ),
+
+    # tabItem(tabName="total_mortality",
+    #   buildUItotalMortality()
+    # ),
 
 
 

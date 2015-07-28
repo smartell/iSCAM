@@ -17,7 +17,8 @@ NumericVector gvonb_cpp (NumericVector t, double linf, double vbk, double to, do
 // [[Rcpp::export]]
 NumericVector plogis95_cpp (NumericVector x,double s50, double s95)
 {
-	return ( 1.0/(1.0+exp(-log(19)*(x-s50)/(s95-s50))) );
+	double t1  = -log(19);
+	return ( 1.0/(1.0+exp(t1*(x-s50)/(s95-s50))) );
 }
 
 
