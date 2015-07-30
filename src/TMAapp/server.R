@@ -1,32 +1,60 @@
 # source('./www/globals.R')
-source('helpers.R')
-
-
 
 shinyServer(function(input,output,session){
 
+    
+    
+
+    output$tbl <- renderHtable({
+    	if (is.null(input$tbl)){
+    		rows <- ng
+    		nomes=NULL
+			for (i in 1:ng){
+    			nomes[i]=paste0("fisheries ",i) 
+    		}  
+   		
+    		if(input$Allocation_type=="yield per recruit"){
+
+    			tbl<-data.frame(list(ak=rep(1/ng,ng)))
+      			rownames(tbl) <- nomes		
+			}
+    		if(input$Allocation_type=="mortality per recruit"){
+		
+    			tbl<-data.frame(list(ak=rep(.99/ng,ng)))
+      			rownames(tbl) <- nomes	
+			}      
+      	return(tbl)
+    	}else{
+      
+    		tbl <- input$tbl
+      		return(tbl)
+    	}
+    	print("cheguei aqui")
+    	print(input$tbl)
+	})  
+    
     runTMA <- reactive(do.call(getFdataframe, getArgs(input)))  
 
     output$to_fishSpecs<-renderTable({
         runTMA()
     })
 
-    output$ui <- renderUI({
-        do.call(mainPanel,make_ni(input$Allocation_type))
-    })   
-    
-        
+    getAlloc<-reactive(do.call(make_no,getArgs(input)))
+
+    output$res_alloc <-renderTable({
+        getAlloc()
+    })
 
 })
 # End of shinyServer
 
 
-getFdataframe<- function(sprtarget=0.4){
+getFdataframe<- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(ak=c(0.4,0.6)))){
 
     print("calculating Fdataframe")
 
     target_spr<<- sprtarget
-    #tma_allocation<<-ak
+    ak<<-as.numeric(akdf$ak)
     
     fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
     fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
@@ -39,65 +67,37 @@ getArgs <-function(input){
 
     print("in getargs")
 
-    args <- list(sprtarget=input$ni_sprTarget)
+    args <- list(Alloc_type=input$Allocation_type,sprtarget=input$ni_sprTarget,akdf=input$tbl)
     return(args)
 }
 
 
 
+make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(ak=c(0.5,0.5)))){
 
-make_ni <- function(input){
-
-    ni_list=list()
-    aks=NULL
-    if(input=="yield per recruit"){
-        for (i in 1:ng){
-             id=paste0("ni_ypr_F",i)
-             #aks[i]=id
-             lb=paste0("YPR fisheries ",i)
-             ni_list[[i]]=numericInput(id, lb,value = 0.3, min=0, max=1, step=0.01)
-            if(i==ng){
-                 ni_list[[i]]=numericInput(id, lb,value = (1-0.3*(ng-1)) , min=0, max=1, step=0.01)
-            }
-        }
-    }
-    if(input=="mortality per recruit"){
-        for (i in 1:ng){
-             id=paste0("ni_mpr_F",i)
-             aks[i]=id
-             lb=paste0("MPR fisheries ",i)
-             ni_list[[i]]=numericInput(id, lb,value = 0.2, min=0, max=1)
-             if(i==ng){
-                 ni_list[[i]]=numericInput(id, lb,value = (1-0.2*(ng-1)) , min=0, max=1, step=0.01)
-            }
-        }
-    }
-    return(ni_list)
-}
-
-
-make_no <- function(Alloc_type){
-
+	print("in make_no")
+	print(ak)
     target_spr<<- sprtarget
-    tma_allocation<<-ak
+    ak<<-as.numeric(akdf$ak)
     
     if(Alloc_type=="mortality per recruit"){
 
-        fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
-        result<- equilibriumModel(fitC$par)
-        y_pos<-grep("yield", names(result))
-        y_allocation<-result[y_pos]/sum(result[y_pos])
-        out <- matrix(y_allocation,ncol=1)   
+        fitC  	<- optim(fe,fnC,method="BFGS",hessian=TRUE)
+        result 	<- equilibriumModel(fitC$par)
+        tmp1 	<- grep("yield", names(result))
+        tmp2 	<- result[tmp1]/sum(result[tmp1])
+        out 	<- data.frame(tmp2)   
 
     }
     if(Alloc_type=="yield per recruit"){
         
-        fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
-        result<- equilibriumModel(fitB$par)
-        m_pos<-grep("pmort", names(result))
-        m_allocation<-result[m_pos]/sum(result[m_pos])
-        out <- matrix(m_allocation,ncol=1)
+        fitB 	<- optim(fe,fnB,method="BFGS",hessian=TRUE)
+        result 	<- equilibriumModel(fitB$par)
+        tmp1 	<- grep("pmort", names(result))
+        tmp2 	<- result[tmp1 ]/sum(result[tmp1])
+        out 	<- data.frame(tmp2)
 
     }
-    return(out)
+
+    print(out)
 }

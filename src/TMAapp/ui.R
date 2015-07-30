@@ -4,6 +4,9 @@
 
 source("helpers.R")
 
+library(shiny)
+library(shinyTable)
+
 shinyUI(
     fluidPage(
         sidebarLayout(
@@ -11,7 +14,13 @@ shinyUI(
                 fluidRow( 
                     selectInput("Allocation_type", "Allocation method",c("yield per recruit", "mortality per recruit")),
                     
-                    uiOutput("ui")
+                    wellPanel(
+                                         
+                        #uiOutput("table"),
+
+                        htable("tbl", colHeaders="provided"),
+                    
+                        tableOutput("res_alloc")) 
 
                    
                     )
@@ -24,10 +33,9 @@ shinyUI(
                     ),
 
                     wellPanel("fisheries Specs",
-                        tableOutput("to_fishSpecs")),
+                        tableOutput("to_fishSpecs"))
 
-                    wellPanel("resulting allocation",
-                        tableOutput("res_alloc"))    
+                       
                 )            
             )
         )
