@@ -15,11 +15,10 @@ shinyUI(
                     selectInput("Allocation_type", "Allocation method",c("yield per recruit", "mortality per recruit")),
                     
                     wellPanel(
-                                         
-                        #uiOutput("table"),
-
-                        htable("tbl", colHeaders="provided"),
+                                        
+                        htable("tbl", colHeaders="provided")),
                     
+                    wellPanel(
                         tableOutput("res_alloc")) 
 
                    

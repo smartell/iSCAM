@@ -15,12 +15,12 @@ shinyServer(function(input,output,session){
    		
     		if(input$Allocation_type=="yield per recruit"){
 
-    			tbl<-data.frame(list(ak=rep(1/ng,ng)))
+    			tbl<-data.frame(list(allocation=c(0.3,0.7)))
       			rownames(tbl) <- nomes		
 			}
     		if(input$Allocation_type=="mortality per recruit"){
 		
-    			tbl<-data.frame(list(ak=rep(.99/ng,ng)))
+    			tbl<-data.frame(list(allocation=c(0.6,0.4)))
       			rownames(tbl) <- nomes	
 			}      
       	return(tbl)
@@ -49,12 +49,12 @@ shinyServer(function(input,output,session){
 # End of shinyServer
 
 
-getFdataframe<- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(ak=c(0.4,0.6)))){
+getFdataframe<- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=c(0.4,0.6)))){
 
     print("calculating Fdataframe")
 
     target_spr<<- sprtarget
-    ak<<-as.numeric(akdf$ak)
+    ak<<-as.numeric(akdf$allocation)
     
     fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
     fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
@@ -73,20 +73,20 @@ getArgs <-function(input){
 
 
 
-make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(ak=c(0.5,0.5)))){
+make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=c(0.3,0.7)))){
 
 	print("in make_no")
 	print(ak)
     target_spr<<- sprtarget
-    ak<<-as.numeric(akdf$ak)
+    ak<<-as.numeric(akdf$allocation)
     
     if(Alloc_type=="mortality per recruit"){
 
         fitC  	<- optim(fe,fnC,method="BFGS",hessian=TRUE)
         result 	<- equilibriumModel(fitC$par)
         tmp1 	<- grep("yield", names(result))
-        tmp2 	<- result[tmp1]/sum(result[tmp1])
-        out 	<- data.frame(tmp2)   
+        YPR_allocation 	<- result[tmp1]/sum(result[tmp1])
+        out 	<- data.frame(YPR_allocation)   
 
     }
     if(Alloc_type=="yield per recruit"){
@@ -94,8 +94,8 @@ make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(ak=c(0.5,0.5))
         fitB 	<- optim(fe,fnB,method="BFGS",hessian=TRUE)
         result 	<- equilibriumModel(fitB$par)
         tmp1 	<- grep("pmort", names(result))
-        tmp2 	<- result[tmp1 ]/sum(result[tmp1])
-        out 	<- data.frame(tmp2)
+        MPR_allocation 	<- result[tmp1 ]/sum(result[tmp1])
+        out 	<- data.frame(MPR_allocation)
 
     }
 
