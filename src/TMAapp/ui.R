@@ -12,13 +12,14 @@ shinyUI(
         sidebarLayout(
             sidebarPanel("Total Mortality allocation",
                 fluidRow( 
-                    selectInput("Allocation_type", "Allocation method",c("yield per recruit", "mortality per recruit")),
+                    selectInput("Allocation_type", "Enter Allocation Method:",c("yield per recruit", "mortality per recruit")),
                     
-                    wellPanel(
+                    wellPanel( "Enter Allocation:",
                                         
                         htable("tbl", colHeaders="provided")),
                     
-                    wellPanel(
+                    wellPanel( 
+
                         tableOutput("res_alloc")) 
 
                    
