@@ -2,7 +2,20 @@
 
 shinyServer(function(input,output,session){
 
-    
+    validate <- function(tbl){
+
+        if(sum(as.numeric(tbl$allocation))>1){
+            updateTableStyle(session, "tbl", "invalid", 
+                           1:ng, 1)
+        }else if(sum(as.numeric(tbl$allocation))<1){
+            updateTableStyle(session, "tbl", "warning", 
+                            1:ng, 1)
+        }else{
+            updateTableStyle(session, "tbl", "valid", 
+                            1:ng, 1)
+        }
+
+    }
     
 
     output$tbl <- renderHtable({
@@ -15,22 +28,25 @@ shinyServer(function(input,output,session){
    		
     		if(input$Allocation_type=="yield per recruit"){
 
-    			tbl<-data.frame(list(allocation=c(0.3,0.7)))
+    			tbl<-data.frame(list(allocation=rep(0,ng)))
       			rownames(tbl) <- nomes		
 			}
     		if(input$Allocation_type=="mortality per recruit"){
 		
-    			tbl<-data.frame(list(allocation=c(0.6,0.4)))
+    			tbl<-data.frame(list(allocation=rep(0,ng)))
       			rownames(tbl) <- nomes	
-			}      
+			} 
+        
+        validate(tbl)     
       	return(tbl)
     	}else{
       
     		tbl <- input$tbl
+            validate(tbl)
       		return(tbl)
     	}
-    	print("cheguei aqui")
-    	print(input$tbl)
+    	  
+    	#print(input$tbl)
 	})  
     
     runTMA <- reactive(do.call(getFdataframe, getArgs(input)))  
@@ -49,7 +65,7 @@ shinyServer(function(input,output,session){
 # End of shinyServer
 
 
-getFdataframe<- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=c(0.4,0.6)))){
+getFdataframe<- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=rep(0,ng)))){
 
     print("calculating Fdataframe")
 
@@ -73,10 +89,9 @@ getArgs <-function(input){
 
 
 
-make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=c(0.3,0.7)))){
+make_no <- function(Alloc_type,sprtarget=0.4,akdf=data.frame(list(allocation=rep(0,ng)))){
 
 	print("in make_no")
-	print(ak)
     target_spr<<- sprtarget
     ak<<-as.numeric(akdf$allocation)
     

@@ -367,7 +367,8 @@ namespace rfp {
 
 		T1 pza(m_sage,m_nage);				// pre-spawning total mortality
 		T1 psa(m_sage,m_nage); 				// pre-spawning survivorship
-		T1 poa(m_sage,m_nage); 				// Question: What is poa, where is it used?
+		T1 poa(m_sage,m_nage); 				// Question: What is poa, where is it used?		
+
 		T2  za(1,m_nGrp,m_sage,m_nage); 	// Total mortality at age by group
 		T2  sa(1,m_nGrp,m_sage,m_nage); 	// Survivorship at age by group
 		T2  oa(1,m_nGrp,m_sage,m_nage); 	// 1-sa
@@ -376,6 +377,7 @@ namespace rfp {
 
 		T2   qa(1,m_nGear,m_sage,m_nage); 	// per recruit yield (baranov without f and N)
 		T2  dlz(1,m_nGear,m_sage,m_nage); 	// derivative of lz with respect to f
+		
 		T2 d2lz(1,m_nGear,m_sage,m_nage); 	// second derivative of lz with respect to f
 		T2  dlw(1,m_nGear,m_sage,m_nage);
 		T2 d2lw(1,m_nGear,m_sage,m_nage);
@@ -410,6 +412,7 @@ namespace rfp {
 				qa(k)      = elem_div(elem_prod(elem_prod(m_Va(h)(k),m_Wa(h)),oa(h)),za(h)); // per recruit 
 				qa_m(h)(k) = qa(k); 														
 
+				// the dlw derivatives were not second checked. 
 				dlw(k,m_sage)      = -psa(m_sage)*m_rho*m_Va(h)(k)(m_sage); 				//  derivative of pre-spawning survivorship at sage
 				dlw_m(h,k,m_sage)  = dlw(k,m_sage);
 				d2lw(k,m_sage)     = psa(m_sage)*square(m_rho)*square(m_Va(h)(k)(m_sage)); 	// second derivative of pre-spawning survivorship at sage
@@ -432,14 +435,15 @@ namespace rfp {
 				if( j == m_nage )
 				{
 					//plus age
-					lz(h,j) = lz(h,j)/oa(h,j);
+					lz(h,j) = (lz(h,j-1)* sa(h,j-1))/oa(h,j);
 					lw(h,j) = lz(h,j)*psa(j); 
 				}
 
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship 
-					dlz(k)(j)  = sa(h)(j-1)*(dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1));					
+					dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j)*m_Va(h)(k)(j-1);					
+					
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1))+2*dlz(k)(j-1)*m_Va(h)(k)(j-1));
 					
 					// derivatives for spawning survivorship
@@ -449,9 +453,7 @@ namespace rfp {
 
 					if( j == m_nage ) // + group derivatives
 					{
-						dlz(k)(j)  = (sa(h)(j-1)*(dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1)))/oa(h)(j) 
-						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j) 
-						             /square(oa(h)(j));
+						dlz(k)(j)  = (1/oa(h,j))*(sa(h)(j-1)*(dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1))-lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j)/oa(h,j));
 						
 						dlw(k)(j)  = -lz(h)(j-1)*sa(h)(j-1)*m_rho*m_Va(h)(k)(j)/oa(h)(j)
 									- lz(h)(j-1)*psa(j)*m_Va(h)(k)(j)*sa(h)(j)
@@ -461,13 +463,12 @@ namespace rfp {
 						T V2  	   = m_Va(h)(k)(j);
 						T oa2 	   = oa(h)(j)*oa(h)(j);
 						
-						d2lz(k)(j) = d2lz(k)(j-1)*sa(h)(j-1)/oa(h)(j) 
-									+ 2*dlz(k)(j-1)*sa(h)(j-1)*V1/oa(h)(j) 
-									//+ 2*lz(h)(j-1)*V1*sa(h)(j-1)*V2*sa(h)(j)/oa2
-									//+ 2*lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)*sa(h)(j)
-									///(oa(h)(j)*oa2)
-									//+ lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)/oa2;
-						
+						d2lz(k)(j) = (1/oa(h,j))*sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(V1)+2*dlz(k)(j-1)*V1)
+							+ (lz(h)(j-1)*sa(h)(j-1)*square(V2)*sa(h)(j))/oa2
+							+ (2*lz(h)(j-1)*sa(h)(j-1)*square(V2)*square(sa(h)(j)))/(oa2*oa(h,j))
+							- (2*sa(h)(j-1)*(dlz(k)(j-1)-lz(h)(j-1)*V1)*V2*sa(h)(j))/(oa2);
+
+
 						d2lw(k)(j) = lz(h)(j-1)*square(m_rho)*square(V2)*psa(j)/oa(h)(j)
 									+ 2*lz(h)(j-1)*m_rho*square(V2)*psa(j)*sa(h)(j)/oa2
 									+ 2*lz(h)(j-1)*psa(j)*square(V2)*square(sa(h)(j))
@@ -654,26 +655,26 @@ namespace rfp {
 			// cout<<sum(dye_ak)/sum(diagonal(d2ye_ak))<<endl;
 		}
 
-		// Uncomment for debugging.
-		// cout<<setprecision(8)<<endl;
-		// cout<<"Re     = "<<re<<endl;
-		// cout<<"phie   = "<<m_phie<<endl;
-		// cout<<"phif   = "<<m_phif<<endl;
-		// cout<<"fe     = "<<fe<<endl;
-		// cout<<"dphif  = "<<dphif<<endl;
-		// cout<<"ddphif = "<<d2phif<<endl;  	// minor diff  FIXED
-		// cout<<"ye     = "<<ye<<endl;
-		// cout<<"phiq   = "<<phiq<<endl;
-		// cout<<"dphiq  = "<<dphiq<<endl;   	// Bug: FIXED for ngear > 1
-		// cout<<"d2phiq = "<<d2phiq<<endl;  	// OK
-		// cout<<"dre    = "<<dre<<endl;		// OK
-		// cout<<"dye    = "<<dye<<endl;     	// Bug -> FIXED.
-		// cout<<"Jacobi\n "<<d2ye<<endl;
-		// cout<<"invJ \n  "<<invJ<<endl;
-		// cout<<"fstp   = "<<fstp<<endl;		// Bug -> FIXED.
-		//cout<<"d2lz_m = "<<d2lz_m<<endl;  // plus group is different.
-		//cout<<"Newton step\n"<<fstp<<endl;
-		//cout<<"End of CalcSurvivorship"<<endl;
+		 //Uncomment for debugging.
+		 cout<<setprecision(8)<<endl;
+		 cout<<"Re     = "<<re<<endl;
+		 cout<<"phie   = "<<m_phie<<endl;
+		 cout<<"phif   = "<<m_phif<<endl;
+		 cout<<"fe     = "<<fe<<endl;
+		 cout<<"dphif  = "<<dphif<<endl;
+		 cout<<"ddphif = "<<d2phif<<endl;  	// minor diff  FIXED
+		 cout<<"ye     = "<<ye<<endl;
+		 cout<<"phiq   = "<<phiq<<endl;
+		 cout<<"dphiq  = "<<dphiq<<endl;   	// Bug: FIXED for ngear > 1
+		 cout<<"d2phiq = "<<d2phiq<<endl;  	// OK
+		 cout<<"dre    = "<<dre<<endl;		// OK
+		 cout<<"dye    = "<<dye<<endl;     	// Bug -> FIXED.
+		 cout<<"Jacobi\n "<<d2ye<<endl;
+		 cout<<"invJ \n  "<<invJ<<endl;
+		 cout<<"fstp   = "<<fstp<<endl;		// Bug -> FIXED.
+		cout<<"d2lz_m = "<<d2lz_m<<endl;  // plus group is different.
+		cout<<"Newton step\n"<<fstp<<endl;
+		cout<<"End of CalcSurvivorship"<<endl;
 	}
 
 	/**
