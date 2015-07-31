@@ -511,16 +511,13 @@ persp(x=x, y, z2, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "
 
 
 
-zt<-z+z2
+zt<-log(z+z2)
 zfacet_t <- zt[-1, -1] + zt[-1, -ncz] + zt[-nrz, -1] + zt[-nrz, -ncz]
 facetcol_t <- cut(zfacet_t, nbcol)
 
-par(mfrow=c(1,1))
-persp(x=x, y, zt, theta = 180, phi = 90, ltheta = 70, shade = 0.75, ticktype = "detailed",
-      xlab = "F1", ylab = "F2", zlab = " ",expand = 0, col=color[facetcol_t],border = NA,main="Total Ye")
 
 contour(x, y, zt, nlevels = 10,main="Total Ye",xlab = "F1", ylab = "F2",col=color[facetcol_t])
-Yemax= c(as.vector(F[which(apply(calcYE,1,sum)==max(abs(zt))),], mode ="numeric"),max(abs(zt)))
+Yemax= c(as.vector(F[which(zt==max((zt))),], mode ="numeric"),max(abs(zt)))
 points(Yemax[1], Yemax[2], col = 2, pch = 16)
 
 

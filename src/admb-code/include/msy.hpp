@@ -439,8 +439,8 @@ namespace rfp {
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship 
-					dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1);					
-					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1)));
+					dlz(k)(j)  = sa(h)(j-1)*(dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1));					
+					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1))+2*dlz(k)(j-1)*m_Va(h)(k)(j-1));
 					
 					// derivatives for spawning survivorship
 					
@@ -449,7 +449,7 @@ namespace rfp {
 
 					if( j == m_nage ) // + group derivatives
 					{
-						dlz(k)(j)  = dlz(k)(j)/oa(h)(j) 
+						dlz(k)(j)  = (sa(h)(j-1)*(dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1)))/oa(h)(j) 
 						             - lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j) 
 						             /square(oa(h)(j));
 						
@@ -462,10 +462,11 @@ namespace rfp {
 						T oa2 	   = oa(h)(j)*oa(h)(j);
 						
 						d2lz(k)(j) = d2lz(k)(j-1)*sa(h)(j-1)/oa(h)(j) 
-									+ 2*lz(h)(j-1)*V1*sa(h)(j-1)*V2*sa(h)(j)/oa2
-									+ 2*lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)*sa(h)(j)
-									/(oa(h)(j)*oa2)
-									+ lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)/oa2;
+									+ 2*dlz(k)(j-1)*sa(h)(j-1)*V1/oa(h)(j) 
+									//+ 2*lz(h)(j-1)*V1*sa(h)(j-1)*V2*sa(h)(j)/oa2
+									//+ 2*lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)*sa(h)(j)
+									///(oa(h)(j)*oa2)
+									//+ lz(h)(j-1)*sa(h)(j-1)*V2*V2*sa(h)(j)/oa2;
 						
 						d2lw(k)(j) = lz(h)(j-1)*square(m_rho)*square(V2)*psa(j)/oa(h)(j)
 									+ 2*lz(h)(j-1)*m_rho*square(V2)*psa(j)*sa(h)(j)/oa2
