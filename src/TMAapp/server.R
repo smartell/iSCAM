@@ -5,8 +5,8 @@ shinyServer(function(input,output,session){
     validate <- function(tbl){
 
         if(sum(as.numeric(tbl$allocation))>1){
-            updateTableStyle(session, "tbl", "invalid", 
-                           1:ng, 1)
+            tbl$allocation<-as.numeric(tbl$allocation)/sum(as.numeric(tbl$allocation))
+            #updateTableStyle(session, "tbl", "invalid", 1:ng, 1)
         }else if(sum(as.numeric(tbl$allocation))<1){
             updateTableStyle(session, "tbl", "warning", 
                             1:ng, 1)
