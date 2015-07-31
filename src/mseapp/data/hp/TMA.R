@@ -15,7 +15,7 @@ kappa <- 4.0 * h / (1.0 - h)
 m     <- 0.15			# instantaneous natural mortality rate
 age   <- 1:A
 mx    <- rep(m,length=A)
-linf  <- 100
+linf  <- 120
 winf  <- 50
 vbk   <- 1.5 * m
 ahat  <- 11.5
@@ -24,7 +24,7 @@ ghat  <- 1.5
 # 
 # Selectivity parameters for each gear.
 # 
-s1    <- c( 60.0, 25.0, 45.0)
+s1    <- c( 85.0, 25.0, 45.0)
 s2    <- c( 12.0, 5.50, 11.2)
 s3    <- c( 00.0, 0.10, 0.05)
 
@@ -46,7 +46,7 @@ mx=m/vbk*(log(t1)-log(t2))
 target_spr     <- 0.40
 fe             <- rep(0.01,length=ng)
 tma_allocation <- rep(1/ng,length=ng)
-slim           <- c(82,NA,NA)
+slim           <- c(NA,NA,NA)
 dmr   		   <- c(0.16,0.90,0.2)
 ak             <- tma_allocation
 

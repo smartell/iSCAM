@@ -45,6 +45,7 @@ NumericVector plogis95_cpp (NumericVector x,double s50, double s95)
 
 
 
+
 // Equlibrium Model Class for Age-size-sex structured model.
 class Equilibrium
 {
@@ -110,6 +111,17 @@ public:
 	NumericVector calcPage(NumericVector la, NumericVector sa, NumericVector pl, NumericVector xl);
 
 };
+
+class HarvestPolicy: public Equilibrium
+{
+private:
+
+public:
+	HarvestPolicy();
+	~HarvestPolicy();
+	
+};
+
 
 RCPP_MODULE(equilibrium_module)
 {
