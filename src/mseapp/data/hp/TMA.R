@@ -3,6 +3,9 @@
 # AUTHOR: Steven Martell
 # This is an equilibrium model for allocating the total mortality rate among 
 # one or more fisheries.
+
+# TODO
+# -[ ] Change algorithm to estimate fbar only.
 # --------------------------------------------------------------------------- #
 
 
@@ -44,7 +47,8 @@ mx=m/vbk*(log(t1)-log(t2))
 # MANAGEMENT CONTROLS
 # 
 target_spr     <- 0.40
-fe             <- rep(0.01,length=ng)
+fspr           <- 0.10
+# fe             <- rep(0.01,length=ng)
 tma_allocation <- rep(1/ng,length=ng)
 slim           <- c(NA,NA,NA)
 dmr   		   <- c(0.16,0.90,0.2)
@@ -102,29 +106,29 @@ getSlx <- function(s1,s2,s3)
 # 
 # Survivorship under fished conditions.
 # 
-va <- getSlx(s1,s2,s3)
-za <- mx + colSums(fe*va)
-sa <- exp(-za)
-oa <- 1.0 - sa
-lz <- rep(1,length=A) 
-for(j in 2:A)
-{
-	lz[j] <- lz[j-1] * sa[j-1]	
-	if(j == A)
-	{
-		lz[A] <- lz[A] / (1.0 - sa[A])	
-	} 
-}
+# va <- getSlx(s1,s2,s3)
+# za <- mx + colSums(fe*va)
+# sa <- exp(-za)
+# oa <- 1.0 - sa
+# lz <- rep(1,length=A) 
+# for(j in 2:A)
+# {
+# 	lz[j] <- lz[j-1] * sa[j-1]	
+# 	if(j == A)
+# 	{
+# 		lz[A] <- lz[A] / (1.0 - sa[A])	
+# 	} 
+# }
 
 
-p0 <- mx/za*oa
-p1 <- fe[1]*va[1,]/za*oa
-p2 <- fe[2]*va[2,]/za*oa
+# p0 <- mx/za*oa
+# p1 <- fe[1]*va[1,]/za*oa
+# p2 <- fe[2]*va[2,]/za*oa
 
-ta <- oa - p0
+# ta <- oa - p0
 
-l1 <- sum(p1)/sum(ta)
-l2 <- sum(p2)/sum(ta)
+# l1 <- sum(p1)/sum(ta)
+# l2 <- sum(p2)/sum(ta)
 
 
 
@@ -134,25 +138,42 @@ l2 <- sum(p2)/sum(ta)
 #
 # EQUILIBRIUM MODEL
 # 
-equilibriumModel <- function(fe)
+equilibriumModel <- function(fbar, type="YPR")
 {
+
+	lambda <- rep(1.0,length=length(gear))
+
+
 
 
 	# 
 	# Survivorship under fished conditions.
-	# 
-	va <- getSlx(s1,s2,s3)
-	za <- mx + colSums(fe*va)
-	sa <- exp(-za)
-	oa <- 1.0 - sa
-	lz <- rep(1,length=A) 
-
-	for(k in gear)
+	#
+	for(iter in 1:3)
 	{
-		qa[k,] <- va[k,] * wa * oa / za
-		# pa[k,] <- fe[k]*va[k,]*(1-exp(-(za-mx))) / (za-mx)
-		pa[k,] <- va[k,]*(1-exp(-(za-mx))) / (za-mx)
-		dlz[k,1] <- 0
+		fe <- fbar * lambda
+		va <- getSlx(s1,s2,s3)
+		za <- mx + colSums(fe*va)
+		sa <- exp(-za)
+		oa <- 1.0 - sa
+		lz <- rep(1,length=A) 
+
+		for(k in gear)
+		{
+			qa[k,] <- va[k,] * wa * oa / za		
+			pa[k,] <- va[k,] * oa / za
+			dlz[k,1] <- 0
+		}
+		
+		# 
+		# F multipliers (lambda) based on YPR or MPR
+		# 
+		qp     <- switch(type,YPR = qa, MPR = pa)
+		phi.t  <- as.vector(lz %*% t(qp))
+		lam.t  <- ak / (phi.t/sum(phi.t))
+		lambda <- lam.t / mean(lam.t)
+
+		cat(iter," lambda = ",lambda,"\n")
 	}
 
 	for(j in 2:A)
@@ -232,47 +253,37 @@ equilibriumModel <- function(fe)
 }
 
 
-fnB <- function(log.fe)
+fnB <- function(log.fbar)
 {
-	fe  <- exp(log.fe)
-	em  <- as.list(equilibriumModel(fe))
+	fe  <- exp(log.fbar)
+	em  <- as.list(equilibriumModel(fe,type="YPR"))
 	spr <- em$spr
 
 	f1  <- (spr - target_spr)^2
-	yk  <- unlist(em[grep("yield",names(em))])
-	pk  <- yk / sum(yk)
-	f2  <- sum((pk-ak)^2)
-
-	f   <- f1 + f2
-	return(f)
+	return(f1)
 }
 
-fnC <- function(log.fe)
+fnC <- function(log.fbar)
 {
-	fe  <- exp(log.fe)
-	em  <- as.list(equilibriumModel(fe))
+	fe  <- exp(log.fbar)
+	em  <- as.list(equilibriumModel(fe,type="MPR"))
 	spr <- em$spr
 	
 	f1  <- (spr - target_spr)^2
-	pm  <- unlist(em[grep("mpr",names(em))])
-	pk  <- pm / sum(pm)
-	f2  <- sum((pk-ak)^2)
-
-	f   <- f1 + f2
-	return(f)
+	return(f1)
 }
 
 
 getFs <- function(TMAParams)
 {
-	fitB <- optim(log(fe),fnB,method="BFGS",hessian=TRUE)
-	fitC <- optim(log(fe),fnC,method="BFGS",hessian=TRUE)
+	fitB <- optim(log(fspr),fnB,method="BFGS",hessian=TRUE)
+	fitC <- optim(log(fspr),fnC,method="BFGS",hessian=TRUE)
 	
 	fb   <- exp(fitB$par)
 	fc   <- exp(fitC$par)
 
-	runB <- equilibriumModel(fb)
-	runC <- equilibriumModel(fc)
+	runB <- equilibriumModel(fb,type="YPR")
+	runC <- equilibriumModel(fc,type="MPR")
 
 	dfB  <- with(runB,data.frame(method="B",fe,ypr,yield,mpr))
 	dfC  <- with(runC,data.frame(method="C",fe,ypr,yield,mpr))
