@@ -260,7 +260,6 @@ fnC <- function(fe)
 {
 	em  <- as.list(equilibriumModel(fe))
 	spr <- em$spr
-	 print(ak)
 	f1  <- (spr - target_spr)^2
 	pm  <- unlist(em[grep("pmort",names(em))])
 	pk  <- pm / sum(pm)

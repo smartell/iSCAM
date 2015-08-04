@@ -11,6 +11,7 @@ if(!require("shinyTable"))    install_github("shinyTable", "trestletech")
 
 
 source("data/TMA.R",local=TRUE)
+source("data/TMA_plots.R",local=TRUE)
 
 paramNames <- c("ng")
 

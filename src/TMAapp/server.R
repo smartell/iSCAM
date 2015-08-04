@@ -6,7 +6,7 @@ shinyServer(function(input,output,session){
 
         if(sum(as.numeric(tbl$allocation))>1){
             tbl$allocation<-as.numeric(tbl$allocation)/sum(as.numeric(tbl$allocation))
-            #updateTableStyle(session, "tbl", "invalid", 1:ng, 1)
+            updateTableStyle(session, "tbl", "invalid", 1:ng, 1)
         }else if(sum(as.numeric(tbl$allocation))<1){
             updateTableStyle(session, "tbl", "warning", 
                             1:ng, 1)
@@ -28,15 +28,14 @@ shinyServer(function(input,output,session){
    		
     		if(input$Allocation_type=="yield per recruit"){
 
-    			tbl<-data.frame(list(allocation=rep(0,ng)))
-      			rownames(tbl) <- nomes		
+    			tbl<-data.frame(list(allocation=rep(0,ng)))	
 			}
     		if(input$Allocation_type=="mortality per recruit"){
 		
     			tbl<-data.frame(list(allocation=rep(0,ng)))
-      			rownames(tbl) <- nomes	
-			} 
-        
+			}
+
+        rownames(tbl) <- nomes  
         validate(tbl)     
       	return(tbl)
     	}else{
@@ -46,7 +45,7 @@ shinyServer(function(input,output,session){
       		return(tbl)
     	}
     	  
-    	#print(input$tbl)
+    	print(input$tbl)
 	})  
     
     runTMA <- reactive(do.call(getFdataframe, getArgs(input)))  
@@ -59,6 +58,10 @@ shinyServer(function(input,output,session){
 
     output$res_alloc <-renderTable({
         getAlloc()
+    })
+
+    output$plotTMA <- renderPlot({
+      .plotfs( getArgs(input) )
     })
 
 })
