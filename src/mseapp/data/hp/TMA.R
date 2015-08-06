@@ -149,7 +149,7 @@ equilibriumModel <- function(fbar, type="YPR")
 	# 
 	# Survivorship under fished conditions.
 	#
-	for(iter in 1:3)
+	for(iter in 1:2)
 	{
 		fe <- fbar * lambda
 		va <- getSlx(s1,s2,s3)

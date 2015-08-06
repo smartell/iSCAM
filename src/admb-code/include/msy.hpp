@@ -101,11 +101,16 @@ namespace rfp {
 
 		T2 m_lz;		/// Survivorship under fished conditions
 		T2 m_lx; 		/// Survivorship upder unfished conditions
+
+
 		T2 m_Ma;		/// Natural mortality rate matrix.
 		T2 m_Wa;		/// Weight-at-age matrix.
 		T2 m_Fa;		/// Fecundity-at-age matrix.
 
 		T3 m_Va;		/// Selectivity-at-age.
+		//T3 m_dlz; 		/// first derivative of lz
+		//T3 m_ddlz; 		/// second derivative of lz
+
 
 		void calcPhie();
 		void calcEquilibrium(const T1 &fe);
@@ -199,29 +204,31 @@ namespace rfp {
 	template<class T, class T1, class T2,class T3>
 	void msy<T,T1,T2,T3>::checkDerivatives(const T1& fe)
 	{
-		double hh = 1.0e-9;
+		double hh = 1.0e-5;
 		double r1,r2;
 		dvector y1(1,m_nGear);
 		dvector y2(1,m_nGear);
 		dvector fh(1,m_nGear);
 		dvector q1(1,m_nGear);
 		dvector q2(1,m_nGear);
+		//dmatrix lz1(1,m_nGrp,m_sage,m_nage);
+		//d3_array lz2(1,m_nGear,1,m_nGrp,m_sage,m_nage); 
 
 		calcEquilibrium(fe);
 		y1 = m_ye;
 		r1 = m_re;
 		q1 = m_phiq;
-
+		//lz1 = m_lz;
 		
 		for(int k = 1; k <= m_nGear; k++ )
 		{
-			
 			fh = fe;
 			fh(k) += hh;
 			calcEquilibrium(fh);
 			y2 = (m_ye - y1)/hh;
 			r2 = (m_re - r1)/hh;
 			q2 = (m_phiq - q1)/hh;
+			//lz2(k) = (m_lz - lz1)/hh;
 
 
 			cout<<"|———————————————————————————————————————————————————————|" <<endl;
@@ -243,11 +250,9 @@ namespace rfp {
 					<<q2(k)            <<setw(15)
 					<<m_dphiq(k)       <<setw(15)
 					<<q2(k)-m_dphiq(k) <<endl;
-
-			// cout<<setprecision(10)<<fe<<endl<<fh<<endl<<hh<<endl;
 		}
 		cout<<"|———————————————————————————————————————————————————————|" <<endl;
-
+		//exit(1);
 	}
 
 	/**
@@ -453,7 +458,7 @@ namespace rfp {
 
 					if( j == m_nage ) // + group derivatives
 					{
-						dlz(k)(j)  = (1/oa(h,j))*(sa(h)(j-1)*(dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1))-lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j)/oa(h,j));
+						dlz(k)(j)  = (1/oa(h,j))*(sa(h)(j-1)*(dlz(k)(j-1)-lz(h)(j-1)*m_Va(h)(k)(j-1))-(lz(h)(j-1)*sa(h)(j-1)*m_Va(h)(k)(j)*sa(h)(j))/oa(h,j));
 						
 						dlw(k)(j)  = -lz(h)(j-1)*sa(h)(j-1)*m_rho*m_Va(h)(k)(j)/oa(h)(j)
 									- lz(h)(j-1)*psa(j)*m_Va(h)(k)(j)*sa(h)(j)
@@ -476,6 +481,7 @@ namespace rfp {
 									+ lz(h)(j-1)*psa(j)*square(V2)*sa(h)(j)/oa2;
 					}
 					dlz_m(h,k,j)  =  dlz(k)(j);
+					//m_dlz(h,k,j)  = dlz_m(h,k,j);
 					d2lz_m(h,k,j) = d2lz(k)(j);
 					dlw_m(h,k,j)  =  dlw(k)(j);
 					d2lw_m(h,k,j) = d2lw(k)(j);
@@ -502,11 +508,16 @@ namespace rfp {
 		// T1      t1(m_sage,m_nage);  t1.initialize();
 		T1      tj(m_sage,m_nage);  tj.initialize();
 
-		T2   dphiq(1,m_nGear,1,m_nGear);   dphiq.initialize(); //Question: Why are dphiq and d2phiq matrices? spreadsheet has only vectors 
+		T2   dphiq(1,m_nGear,1,m_nGear);   dphiq.initialize();  
 		T2  d2phiq(1,m_nGear,1,m_nGear);  d2phiq.initialize();
+
+		
 
 		for( h = 1; h <= m_nGrp; h++ )
 		{
+			T3   dqa(1,m_nGear,1,m_nGear,m_nage,m_sage);   dqa.initialize();  
+			T3  d2qa(1,m_nGear,1,m_nGear,m_nage,m_sage);  d2qa.initialize();
+			
 			for( k = 1; k <= m_nGear; k++ )
 			{
 				dphif(k)  += dlz_m(h)(k)  * m_Fa(h); 		// derivative of biomass per recruit
@@ -534,27 +545,50 @@ namespace rfp {
 						// djphiq = wa*oa*va(i)/dlz/za + lz*wa*va(i)*va(j)*sa/za - lz*wa*va(i)*va(j)*oa/za^2
 					}*/
 					// dphiq = wa*oa*va*dlz/za + lz*wa*va*sa/za - lz*wa*va*oa/za^2
+					
 					T1 va2 = elem_prod(m_Va(h)(k),m_Va(h)(kk));
 					T1 t0  = elem_div(oa(h),za(h));
-					T1 t1  = elem_div(elem_prod(elem_prod(lz(h),m_Wa(h)),va2),za(h));
+					T1 t1  = elem_div(elem_prod(va2,m_Wa(h)),za(h));
 					T1 t3  = sa(h)-t0;
-					dphiq(k)(kk)  += qa_m(h)(k)*dlz_m(h)(kk) + t1 * t3;
+					 
+
+					dqa(k)(kk) = elem_prod(t1,t3);
+
+					dphiq(k)(kk)  += qa_m(h)(k)* dlz_m(h)(kk) + dqa(k)(kk) * m_lz(h);
+
 
 					// 2nd derivative for per recruit yield (nasty)
-					T1 t2  = 2. * dlz_m(h)(kk);
-					T1 V2  = elem_prod(m_Va(h)(k),m_Va(h)(kk));
-					T1 t5  = elem_div(elem_prod(m_Wa(h),V2),za(h));
-					T1 t7  = elem_div(m_Va(h)(kk),za(h));
-					T1 t9  = elem_prod(t5,sa(h));
-					T1 t11 = elem_prod(t5,t0);
-					T1 t13 = elem_prod(lz(h),t5);
-					T1 t14 = elem_prod(m_Va(h)(kk),sa(h));
-					T1 t15 = elem_prod(t7,sa(h));
-					T1 t17 = elem_prod(m_Va(h)(kk),t0);
-					T1 t18 = elem_div(t17,za(h));
+					
+					T1 p1  = elem_prod(elem_prod(m_Va(h)(k),m_Va(h)(kk)),m_Va(h)(kk));
+					T1 p2  = elem_div(elem_prod(p1,m_Wa(h)),za(h));
+					T1 p3  = 2. *elem_div(sa(h),za(h));
+					T1 p4  = 2. *elem_div(oa(h),elem_prod(za(h),za(h)));
+					T1 p5  = -sa(h)-p3+p4;
+
+
+
+					d2qa(k)(kk) =  elem_prod(p2,p5);
+
 					d2phiq(k)(kk)  += d2lz_m(h)(kk)*qa_m(h)(k) 
-								+ t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 
-								+ 2.*t13*t18;
+								+ 2.* dlz_m(h)(kk)*dqa(k)(kk) + d2qa(k)(kk) * m_lz(h) ;
+
+
+					//T1 t2  = 2. * dlz_m(h)(kk);
+					//T1 V2  = elem_prod(m_Va(h)(k),m_Va(h)(kk));
+					//T1 t5  = elem_div(elem_prod(m_Wa(h),V2),za(h));
+					//T1 t7  = elem_div(m_Va(h)(kk),za(h));
+					//T1 t9  = elem_prod(t5,sa(h));
+					//T1 t11 = elem_prod(t5,t0);
+					//T1 t13 = elem_prod(lz(h),t5);
+					//T1 t14 = elem_prod(m_Va(h)(kk),sa(h));
+					//T1 t15 = elem_prod(t7,sa(h));
+					//T1 t17 = elem_prod(m_Va(h)(kk),t0);
+					//T1 t18 = elem_div(t17,za(h));
+					
+					//d2phiq(k)(kk)  += d2lz_m(h)(kk)*qa_m(h)(k) 
+					//			+ t2*t9 - t2*t11 - t13*t14 -2.*t13*t15 
+					//			+ 2.*t13*t18;
+
 				} // m_nGear kk loop
 			} // m_nGear k loop
 		} // m_nGrp
@@ -597,16 +631,16 @@ namespace rfp {
 
 		// Jacobian matrix (2nd derivative of the catch equations)
 		// This could be suspect, SM to check, CW to prove me wrong
-		for(j=1; j<=m_nGear; j++)
+		for(k=1; k<=m_nGear; k++)
 		{
-			for(k=1; k<=m_nGear; k++)
+			for(kk=1; kk<=m_nGear; kk++)
 			{
-				d2ye(k)(j) = fe(j)*phiq(j)*d2re(k) 
-				             + 2.*fe(j)*dre(k)*dphiq(j)(k) 
-				             + fe(j)*re*d2phiq(j)(k);
+				d2ye(k)(kk) = fe(k)*phiq(k)*d2re(kk) 
+				             + 2.*fe(k)*dre(kk)*dphiq(k)(kk) 
+				             + fe(k)*re*d2phiq(k)(kk);
 				if(k == j)
 				{
-					d2ye(j)(k) += 2.*dre(j)*phiq(j)+2.*re*dphiq(k)(j);
+					d2ye(k)(kk) += 2.*dre(kk)*phiq(k)+2.*re*dphiq(k)(kk);
 				}
 			} 
 		}
