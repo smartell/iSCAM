@@ -294,7 +294,7 @@ equilibriumModel <- function(theta, type="YPR")
 
 		# Jacobian for yield
 		dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
-		cat(diag(dye),"\n")
+		print(dye)
 		# Mitigation
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -368,8 +368,9 @@ runModel <- function(theta,hp)
 		print(em$spr)
 		return((em$spr - target_spr)^2)
 	}
+	# Perform nonlinear search to find Fspr = spr_target
 	fit <- optim(log(theta$fspr),fn,method="BFGS")
-
+	theta$fspr = exp(fit$par)
 	EM  <- as.list(equilibriumModel(theta,type))
 	return(EM)
 }
