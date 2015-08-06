@@ -24,13 +24,16 @@ vbk   <- 1.5 * m
 ahat  <- 11.5
 ghat  <- 1.5
 
+theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
+              winf=winf,vbk=vbk,ahat=ahat,ghat=ghat)
+
 # 
 # Selectivity parameters for each gear.
 # 
 s1    <- c( 85.0, 25.0, 45.0)
 s2    <- c( 12.0, 5.50, 11.2)
 s3    <- c( 00.0, 0.10, 0.05)
-
+slx   <- list(s1=s1,s2=s2,s3=s3)
 ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
 
@@ -48,12 +51,18 @@ mx=m/vbk*(log(t1)-log(t2))
 # 
 target_spr     <- 0.40
 fspr           <- 0.10
-# fe             <- rep(0.01,length=ng)
 tma_allocation <- rep(1/ng,length=ng)
-slim           <- c(NA,NA,NA)
+slim           <- c(82,NA,82)
 dmr   		   <- c(0.16,0.90,0.2)
 ak             <- tma_allocation
-
+# List object for the default harvest policy inputs.
+hpDefaultInput <- list(allocation = ak,
+                       target_spr = target_spr,
+                       fspr       = fspr,
+                       dmr        = dmr,
+                       sizeLimit  = slim,
+                       type       = "YPR",
+                       slx        = slx)
 
 # 
 # AGE-SCHEDULE INFORMATION
@@ -62,16 +71,50 @@ la    <- linf*(1-exp(-vbk*age))
 wa    <- winf / (linf^3)*la^3
 ma    <- plogis(age,ahat,ghat)
 fa    <- wa * ma
+
+lx    <- rep(1,length=A)
+for(i in 2:A) lx[i] <- lx[i-1] * exp(-mx[i-1])
+lx[A] <- lx[A]/(1-exp(-mx[A]))
+phi.E <- as.double(lx %*% fa)
+
 va    <- matrix(nrow=ng,ncol=A)
 ra    <- matrix(nrow=ng,ncol=A)
 qa    <- matrix(nrow=ng,ncol=A)
 pa    <- matrix(nrow=ng,ncol=A)
 dlz   <- matrix(nrow=ng,ncol=A)
 
-lx    <- rep(1,length=A)
-for(i in 2:A) lx[i] <- lx[i-1] * exp(-mx[i-1])
-lx[A] <- lx[A]/(1-exp(-mx[A]))
-phi.E <- as.double(lx %*% fa)
+getAgeSchedules <- function(theta)
+{
+	with(theta,{
+		# 
+		# AGE-SCHEDULE INFORMATION
+		# 
+		la    <- linf*(1-exp(-vbk*age))
+		wa    <- winf / (linf^3)*la^3
+		ma    <- plogis(age,ahat,ghat)
+		fa    <- wa * ma
+
+		# 
+		# Age-dependent natural mortality (Lorenzen)
+		# 
+		t1 <- exp(vbk*(age+2))-1
+		t2 <- exp(vbk*(age+1))-1
+		sa <- (t1/t2)^(-m/vbk)
+		mx=m/vbk*(log(t1)-log(t2))
+
+
+		lx    <- rep(1,length=A)
+		for(i in 2:A) lx[i] <- lx[i-1] * exp(-mx[i-1])
+		lx[A] <- lx[A]/(1-exp(-mx[A]))
+		phi.E <- as.double(lx %*% fa)
+		
+		ageSc <- list(la=la,wa=wa,ma=ma,fa=fa,lx=lx,mx=mx,phi.E=phi.E)
+		theta <- c(theta,ageSc)
+
+		return(theta)
+	})
+	
+}
 
 
 
@@ -101,6 +144,25 @@ getSlx <- function(s1,s2,s3)
 		va[k,] <- sc*(ra[k,]+(1.0-ra[k,])*dmr[k])
 	}
 	return(va)
+}
+
+getSelex <- function(slxPars)
+{
+	# slxPars = s1,s2,s3,slim,dmr
+	with(slxPars,{
+		ngear <- length(s1)
+		for(k in gear)
+		{
+			# size-based selectivity
+			sc 	   <- gplogis(la,a=s2[k],b=s1[k],g=s3[k])
+			if(!is.na(slim[k]))
+				ra[k,] <- plogis(la,slim[k],1.0)
+			if(is.na(slim[k]))
+				ra[k,] <- 0
+			va[k,] <- sc*(ra[k,]+(1.0-ra[k,])*dmr[k])
+		}
+		return(va)
+	})
 }
 
 # 
@@ -138,118 +200,118 @@ getSlx <- function(s1,s2,s3)
 #
 # EQUILIBRIUM MODEL
 # 
-equilibriumModel <- function(fbar, type="YPR")
+equilibriumModel <- function(theta, type="YPR")
 {
 
-	lambda <- rep(1.0,length=length(gear))
 
 
-
-
-	# 
-	# Survivorship under fished conditions.
-	#
-	for(iter in 1:3)
-	{
-		fe <- fbar * lambda
-		va <- getSlx(s1,s2,s3)
-		za <- mx + colSums(fe*va)
-		sa <- exp(-za)
-		oa <- 1.0 - sa
-		lz <- rep(1,length=A) 
-
-		for(k in gear)
+	with(theta,{
+		# 
+		# Survivorship under fished conditions.
+		#
+		fbar   <- fspr
+		lambda <- rep(1.0,length=length(gear))
+		for(iter in 1:5)
 		{
-			qa[k,] <- va[k,] * wa * oa / za		
-			pa[k,] <- va[k,] * oa / za
-			dlz[k,1] <- 0
+			fe <- fbar * lambda
+			za <- mx + colSums(fe*va)
+			sa <- exp(-za)
+			oa <- 1.0 - sa
+			lz <- rep(1,length=A) 
+
+			for(k in gear)
+			{
+				qa[k,] <- va[k,] * wa * oa / za		
+				pa[k,] <- va[k,] * oa / za
+				dlz[k,1] <- 0
+			}
+			
+			# 
+			# F multipliers (lambda) based on YPR or MPR
+			# 
+			qp     <- switch(type,YPR = qa, MPR = pa)
+			phi.t  <- as.vector(lz %*% t(qp))
+			lam.t  <- ak / (phi.t/sum(phi.t))
+			lambda <- lam.t / mean(lam.t)
+
+			# cat(iter," lambda = ",lambda,"\n")
 		}
-		
-		# 
-		# F multipliers (lambda) based on YPR or MPR
-		# 
-		qp     <- switch(type,YPR = qa, MPR = pa)
-		phi.t  <- as.vector(lz %*% t(qp))
-		lam.t  <- ak / (phi.t/sum(phi.t))
-		lambda <- lam.t / mean(lam.t)
 
-		cat(iter," lambda = ",lambda,"\n")
-	}
-
-	for(j in 2:A)
-	{
-		lz[j] <- lz[j-1] * sa[j-1]	
-		if(j == A)
+		for(j in 2:A)
 		{
-			lz[A] <- lz[A] / (1.0 - sa[A])	
-		} 
-
-		for(k in gear)
-		{
-			dlz[k,j] <- sa[j-1]*(dlz[k,j-1]-lz[j-1]*va[k,j-1])
+			lz[j] <- lz[j-1] * sa[j-1]	
 			if(j == A)
 			{
-				dlz[k,j] <- dlz[k,j]/oa[j] 
-				- lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
+				lz[A] <- lz[A] / (1.0 - sa[A])	
+			} 
+
+			for(k in gear)
+			{
+				dlz[k,j] <- sa[j-1]*(dlz[k,j-1]-lz[j-1]*va[k,j-1])
+				if(j == A)
+				{
+					dlz[k,j] <- dlz[k,j]/oa[j] 
+					- lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
+				}
 			}
 		}
-	}
-	
-	
+		
+		
 
-	# incidence functions
-	phi.m  <- as.vector(lz %*% t(pa))
-	phi.e  <- as.double(lz %*% fa)
-	phi.q  <- as.vector(lz %*% t(qa))
-	dphi.e <- as.vector(fa %*% t(dlz))
-	spr    <- phi.e / phi.E
-	ispr   <- phi.E / phi.e
-	dphi.q <- matrix(nrow=ng,ncol=ng)
-	dre    <- rep(0,length=ng)
-	for (k in gear) 
-	{
-		for(kk in gear)
+		# incidence functions
+		phi.m  <- as.vector(lz %*% t(pa))
+		phi.e  <- as.double(lz %*% fa)
+		phi.q  <- as.vector(lz %*% t(qa))
+		dphi.e <- as.vector(fa %*% t(dlz))
+		spr    <- phi.e / phi.E
+		ispr   <- phi.E / phi.e
+		dphi.q <- matrix(nrow=ng,ncol=ng)
+		dre    <- rep(0,length=ng)
+		for (k in gear) 
 		{
-			va2 <- (va[k,] * va[kk,])
-			t0  <- oa / za
-			t1  <- lz*wa*va2/za
-			t3  <- sa - t0
+			for(kk in gear)
+			{
+				va2 <- (va[k,] * va[kk,])
+				t0  <- oa / za
+				t1  <- lz*wa*va2/za
+				t3  <- sa - t0
 
-			dphi.q[k,kk] <- as.double(qa[k,] %*% dlz[k,] + t1 %*% t3)
+				dphi.q[k,kk] <- as.double(qa[k,] %*% dlz[k,] + t1 %*% t3)
+			}
+			dre[k]  <- ro * phi.E * dphi.e[k] / (phi.e^2 *(kappa-1))
 		}
-		dre[k]  <- ro * phi.E * dphi.e[k] / (phi.e^2 *(kappa-1))
-	}
 
 
-	# equilibrium recruitment
-	re    <- max(0,ro * (kappa - ispr) / (kappa - 1.0))
+		# equilibrium recruitment
+		re    <- max(0,ro * (kappa - ispr) / (kappa - 1.0))
 
-	# mortality per recruit
-	mpr   <- fe * phi.m
+		# mortality per recruit
+		mpr   <- fe * phi.m
 
-	# equilibrium catch
-	ypr   <- fe * phi.q
-	ye    <- re * ypr
+		# equilibrium catch
+		ypr   <- fe * phi.q
+		ye    <- re * ypr
 
-	# Jacobian for yield
-	dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
+		# Jacobian for yield
+		dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
+		cat(diag(dye),"\n")
+		# Mitigation
+		v     <- sqrt(diag(dye))
+		M     <- dye / (v %o% v)
+		
+		# cat("SPR = ",   round(spr,3))
+		# cat("\n Re = ", round(re,3))
+		# cat("\n ye = ", round(ye,3))
 
-	# Mitigation
-	v     <- sqrt(diag(dye))
-	M     <- dye / (v %o% v)
-	
-	# cat("SPR = ",   round(spr,3))
-	# cat("\n Re = ", round(re,3))
-	# cat("\n ye = ", round(ye,3))
-
-	out <- list("spr"   = spr,
-	         "fe"       = fe,
-	         "ypr"      = as.double(ypr),
-	         "yield"    = as.double(ye),
-	         "mpr"      = as.vector(mpr),
-	         "M"        = as.matrix(M)
-	         )
-	return(out)
+		out <- list("spr"   = spr,
+		         "fe"       = fe,
+		         "ypr"      = as.double(ypr),
+		         "yield"    = as.double(ye),
+		         "mpr"      = as.vector(mpr),
+		         "M"        = as.matrix(M)
+		         )
+		return(out)
+	})
 }
 
 
@@ -274,7 +336,8 @@ fnC <- function(log.fbar)
 }
 
 
-getFs <- function(TMAParams)
+
+getFs <- function()
 {
 	fitB <- optim(log(fspr),fnB,method="BFGS",hessian=TRUE)
 	fitC <- optim(log(fspr),fnC,method="BFGS",hessian=TRUE)
@@ -291,6 +354,31 @@ getFs <- function(TMAParams)
 	return(df)
 }
 
+runModel <- function(theta,hp)
+{
+	# Initialize model
+	theta <- getAgeSchedules(theta)
+	theta <- c(theta,list(va=getSelex(hp)),hp)
+	type  <- hp$type
+	
+	fn    <- function(log.fbar)
+	{
+		theta$fspr = exp(log.fbar)
+		em <- as.list(equilibriumModel(theta,type))
+		print(em$spr)
+		return((em$spr - target_spr)^2)
+	}
+	fit <- optim(log(theta$fspr),fn,method="BFGS")
+
+	EM  <- as.list(equilibriumModel(theta,type))
+	return(EM)
+}
+
+
+main <- function()
+{
+	runModel(theta,hpDefaultInput)
+}
 
 # equilibriumModel(fe)
 # fd <- seq(0,0.2,by=0.01)

@@ -5,7 +5,7 @@ renderMaps <- function()
 	)
 }
 
-.AGES = c(10,15,20)
+.AGES = c(5,10,15,20,25)
 .SEXS = list(male="M",female="F")
 buildMapGui <- function()
 {
