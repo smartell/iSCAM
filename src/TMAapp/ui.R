@@ -22,8 +22,7 @@ shinyUI(
 
                         tableOutput("res_alloc")) 
 
-                   
-                    )
+                      )
                  ),
             mainPanel(
 
@@ -33,7 +32,10 @@ shinyUI(
                     ),
 
                     wellPanel("fisheries Specs",
-                        tableOutput("to_fishSpecs"))
+                        tableOutput("to_fishSpecs")),
+
+                    wellPanel(
+                        plotOutput("plotTMA"))
 
                        
                 )            

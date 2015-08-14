@@ -3,37 +3,36 @@
 # AUTHOR: Steven Martell
 # This is an equilibrium model for allocating the total mortality rate among 
 # one or more fisheries.
-# --------------------------------------------------------------------------- #
 
+# TODO
+# -[ ] Change algorithm to estimate fbar only.
+# --------------------------------------------------------------------------- #
 print("loading TMA.r")
 
 library(ggplot2)
-#matfile <- "data/maturity.csv"
-#if(file.exists(matfile))
-#{
-#	mat <- read.csv(matfile,header=TRUE)
-#}
-#if(!file.exists(matfile))
-#{
-#	mat <- read.csv(paste0("../../dashboard/",matfile),header=TRUE)
-#}
 
-A     <- 25						# Plus group Age
-ro    <- 1.0            	 	# unfished equilibrium recruitment
-h     <- 0.75					# steepness of the B-H SRR
-kappa <- 4.0 * h / (1.0 - h) 	# recruitment compensation ratio
-m     <- 0.15					# instantaneous natural mortality rate
+A     <- 25				# Plus group Age
+ro    <- 1.0             # unfished equilibrium recruitment
+h     <- 0.75			# steepness of the B-H SRR
+kappa <- 4.0 * h / (1.0 - h)
+m     <- 0.15			# instantaneous natural mortality rate
 age   <- 1:A
-mx    <- rep(m,length=A) 		# natural mortality at age
-winf  <- 100 					# weight infinity
-vbk   <- 1.5 * m 				
-ahat  <- 11.5 					#
+mx    <- rep(m,length=A)
+linf  <- 120
+winf  <- 50
+vbk   <- 1.5 * m
+ahat  <- 11.5
 ghat  <- 1.5
-s1    <- c( 8.0, 3.0) 			# selectivity parameters 1 
-s2    <- c( 1.2, 1.2) 			# selectivity parameters 2
-s3    <- c( 0.0, 0.1) 			# selectivity parameters 3
-ng    <- length(s1) 		    # number of fleets
-gear  <- 1:ng 					# vector of fleet
+
+# 
+# Selectivity parameters for each gear.
+# 
+s1    <- c( 85.0, 25.0, 45.0)
+s2    <- c( 12.0, 5.50, 11.2)
+s3    <- c( 00.0, 0.10, 0.05)
+
+ng    <- length(s1) 		# number of fleets
+gear  <- 1:ng
 
 
 # 
@@ -48,27 +47,30 @@ mx=m/vbk*(log(t1)-log(t2))
 # MANAGEMENT CONTROLS
 # 
 target_spr     <- 0.40
-fe             <- c(0.15,0.02)
-tma_allocation <- c(0.50,0.50)
-slim           <- c(32,580)
+fspr           <- 0.10
+# fe             <- rep(0.01,length=ng)
+tma_allocation <- rep(1/ng,length=ng)
+slim           <- c(NA,NA,NA)
+dmr   		   <- c(0.16,0.90,0.2)
 ak             <- tma_allocation
 
 
 # 
 # AGE-SCHEDULE INFORMATION
 # 
-wa    <- winf*(1-exp(-vbk*age))^3
+la    <- linf*(1-exp(-vbk*age))
+wa    <- winf / (linf^3)*la^3
 ma    <- plogis(age,ahat,ghat)
-#ma    <- mat$propmature[-1]
 fa    <- wa * ma
-lx    <- rep(1,length=A)
-for(i in 2:A)
-	lx[i] <- lx[i-1] * exp(-mx[i-1])
-lx[A] <- lx[A]/(1-exp(-mx[A]))
 va    <- matrix(nrow=ng,ncol=A)
+ra    <- matrix(nrow=ng,ncol=A)
 qa    <- matrix(nrow=ng,ncol=A)
 pa    <- matrix(nrow=ng,ncol=A)
 dlz   <- matrix(nrow=ng,ncol=A)
+
+lx    <- rep(1,length=A)
+for(i in 2:A) lx[i] <- lx[i-1] * exp(-mx[i-1])
+lx[A] <- lx[A]/(1-exp(-mx[A]))
 phi.E <- as.double(lx %*% fa)
 
 
@@ -86,38 +88,47 @@ gplogis <- function(x,a,b,g)
 	return(s)
 }
 
+getSlx <- function(s1,s2,s3)
+{
+	for(k in gear)
+	{
+		# size-based selectivity
+		sc 	   <- gplogis(la,a=s2[k],b=s1[k],g=s3[k])
+		if(!is.na(slim[k]))
+			ra[k,] <- plogis(la,slim[k],1.0)
+		if(is.na(slim[k]))
+			ra[k,] <- 0
+		va[k,] <- sc*(ra[k,]+(1.0-ra[k,])*dmr[k])
+	}
+	return(va)
+}
+
 # 
 # Survivorship under fished conditions.
 # 
-for(k in gear)
-{
-	va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
-}
-# za <- m + colSums(fe*va)
-za <- mx + colSums(fe*va)
-sa <- exp(-za)
-oa <- 1.0 - sa
-lz <- rep(1,length=A) 
+# va <- getSlx(s1,s2,s3)
+# za <- mx + colSums(fe*va)
+# sa <- exp(-za)
+# oa <- 1.0 - sa
+# lz <- rep(1,length=A) 
+# for(j in 2:A)
+# {
+# 	lz[j] <- lz[j-1] * sa[j-1]	
+# 	if(j == A)
+# 	{
+# 		lz[A] <- lz[A] / (1.0 - sa[A])	
+# 	} 
+# }
 
 
-for(j in 2:A)
-{
-	lz[j] <- lz[j-1] * sa[j-1]	
-	if(j == A)
-	{
-		lz[A] <- lz[A] / (1.0 - sa[A])	
-	} 
-}
+# p0 <- mx/za*oa
+# p1 <- fe[1]*va[1,]/za*oa
+# p2 <- fe[2]*va[2,]/za*oa
 
+# ta <- oa - p0
 
-p0 <- mx/za*oa
-p1 <- fe[1]*va[1,]/za*oa
-p2 <- fe[2]*va[2,]/za*oa
-
-ta <- oa - p0
-
-l1 <- sum(p1)/sum(ta)
-l2 <- sum(p2)/sum(ta)
+# l1 <- sum(p1)/sum(ta)
+# l2 <- sum(p2)/sum(ta)
 
 
 
@@ -127,29 +138,43 @@ l2 <- sum(p2)/sum(ta)
 #
 # EQUILIBRIUM MODEL
 # 
-equilibriumModel <- function(fe)
+equilibriumModel <- function(fbar, type="YPR")
 {
+
+	lambda <- rep(1.0,length=length(gear))
+
 
 
 	# 
 	# Survivorship under fished conditions.
-	# 
-	for(k in gear)
+	#
+	for(iter in 1:2)
 	{
-		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
-	}
-	# za <- m + colSums(fe*va)
-	za <- mx + colSums(fe*va)
-	sa <- exp(-za)
-	oa <- 1.0 - sa
-	lz <- rep(1,length=A) 
+		fe <- fbar * lambda
+		va <- getSlx(s1,s2,s3)
+		za <- mx + colSums(fe*va)
+		sa <- exp(-za)
+		oa <- 1.0 - sa
+		lz <- rep(1,length=A) 
 
-	for(k in gear)
-	{
-		qa[k,] <- va[k,] * wa * oa / za
-		pa[k,] <- fe[k]*va[k,]*(1-exp(-(za-mx))) / (za-mx)
-		dlz[k,1] <- 0
+		for(k in gear)
+		{
+			qa[k,] <- va[k,] * wa * oa / za		
+			pa[k,] <- va[k,] * oa / za
+			dlz[k,1] <- 0
+		}
+		
+		# 
+		# F multipliers (lambda) based on YPR or MPR
+		# 
+		qp     <- switch(type,YPR = qa, MPR = pa)
+		phi.t  <- as.vector(lz %*% t(qp))
+		lam.t  <- ak / (phi.t/sum(phi.t))
+		lambda <- lam.t / mean(lam.t)
+
+		cat(iter," lambda = ",lambda,"\n")
 	}
+	print("cheguei aqui")
 
 	for(j in 2:A)
 	{
@@ -173,7 +198,6 @@ equilibriumModel <- function(fe)
 	
 
 	# incidence functions
-	# phi.m  <- rowSums(pa); 
 	phi.m  <- as.vector(lz %*% t(pa))
 	phi.e  <- as.double(lz %*% fa)
 	phi.q  <- as.vector(lz %*% t(qa))
@@ -196,86 +220,80 @@ equilibriumModel <- function(fe)
 		dre[k]  <- ro * phi.E * dphi.e[k] / (phi.e^2 *(kappa-1))
 	}
 
-	# Jacobian for SPR
-	dspr <- dphi.e / phi.E
-	# print(dspr[1]/dspr[2])
-	# dspr <- matrix(nrow=ng,ncol=ng)
-	# for (k in gear) 
-	# {
-	# 	# for (kk in gear) 
-	# 	# {
-	# 	# 	if(k == kk)
-	# 	# 	{
-	# 	# 		dspr[k,kk] = dphi.e[k] * phi.e
-	# 	# 	}
-	# 	# 	else
-	# 	# 	{
-	# 	# 		dspr[k,kk] = dphi.e[kk]
-	# 	# 	}
-	# 	# }
-	# }
-	# dspr   <-   dspr / phi.E
-	# invJ   <- - solve(dspr)
-	# fstp   <-   (spr*tma_allocation-target_spr) %*% invJ
-	
-	# print(jacobi)
 
 	# equilibrium recruitment
 	re    <- max(0,ro * (kappa - ispr) / (kappa - 1.0))
 
+	# mortality per recruit
+	mpr   <- fe * phi.m
 
 	# equilibrium catch
 	ypr   <- fe * phi.q
 	ye    <- re * ypr
 
+	# Jacobian for yield
+	dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
+
+	# Mitigation
+	v     <- sqrt(diag(dye))
+	M     <- dye / (v %o% v)
+	
 	# cat("SPR = ",   round(spr,3))
 	# cat("\n Re = ", round(re,3))
 	# cat("\n ye = ", round(ye,3))
 
-	out <- c("spr"   = spr,
-	         "dspr"  = dspr,
-	         "ypr"   = as.double(ypr),
-	         "yield" = as.double(ye),
-	         "pmort" = as.vector(phi.m)
+	out <- list("spr"   = spr,
+	         "fe"       = fe,
+	         "ypr"      = as.double(ypr),
+	         "yield"    = as.double(ye),
+	         "mpr"      = as.vector(mpr),
+	         "M"        = as.matrix(M)
 	         )
 	return(out)
 }
+equilibriumModel(fbar=0.1)
 
 
-fnB <- function(fe)
+
+
+
+
+fnB <- function(log.fbar)
 {
-	em  <- as.list(equilibriumModel(fe))
+	fe  <- exp(log.fbar)
+	em  <- as.list(equilibriumModel(fe,type="YPR"))
 	spr <- em$spr
 
 	f1  <- (spr - target_spr)^2
-	yk  <- unlist(em[grep("yield",names(em))])
-	pk  <- yk / sum(yk)
-	f2  <- sum((pk-ak)^2)
-
-	f   <- f1 + f2
-	return(f)
+	return(f1)
 }
 
-fnC <- function(fe)
+fnC <- function(log.fbar)
 {
-	em  <- as.list(equilibriumModel(fe))
+	fe  <- exp(log.fbar)
+	em  <- as.list(equilibriumModel(fe,type="MPR"))
 	spr <- em$spr
-	 print(ak)
+	
 	f1  <- (spr - target_spr)^2
-	pm  <- unlist(em[grep("pmort",names(em))])
-	pk  <- pm / sum(pm)
-	f2  <- sum((pk-ak)^2)
-
-	f   <- f1 + f2
-	return(f)
+	return(f1)
 }
 
 
 getFs <- function(TMAParams)
 {
-	fitB <- optim(fe,fnB,method="BFGS",hessian=TRUE)
-	fitC <- optim(fe,fnC,method="BFGS",hessian=TRUE)
-	return(fitC)
+	fitB <- optim(log(fspr),fnB,method="BFGS",hessian=TRUE)
+	fitC <- optim(log(fspr),fnC,method="BFGS",hessian=TRUE)
+	
+	fb   <- exp(fitB$par)
+	fc   <- exp(fitC$par)
+
+	runB <- equilibriumModel(fb,type="YPR")
+	runC <- equilibriumModel(fc,type="MPR")
+
+	dfB  <- with(runB,data.frame(method="B",fe,ypr,yield,mpr))
+	dfC  <- with(runC,data.frame(method="C",fe,ypr,yield,mpr))
+	df   <- rbind(dfB,dfC)
+	return(df)
 }
 
 
