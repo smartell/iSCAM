@@ -1,4 +1,4 @@
-\documentclass[20pt, a0paper, landscape]{tikzposter}
+\documentclass[25pt, a0paper, landscape]{tikzposter}
 % \usepackage[utf8]{inputenc}
  
 \title{SHARING THE CONSERVATION BURDEN}
@@ -8,6 +8,8 @@
  
 \usepackage{blindtext}
 \usepackage{comment}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
 
 
 % Themes
@@ -112,60 +114,128 @@
 \maketitle
 
 \begin{columns}
-	\column{0.250}
+	\column{0.30}
+	\block{Objectives}{
+		\begin{enumerate}
+			\item Explore options for developing index-based PSC limts.
+			\item Under fixed allocation agreements, explore the conservation incentives for each sector.
+			\item Create the necessary quantitative tools for analyizing harvest policy options for joint managmenet.
+		\end{enumerate}
+	}
+
 	\block{Key Points}{
 		\begin{itemize}
-			\item  New 2016 halibut PSC limit for BSAI is 3,515 mt.
-			\item  2016 limit is a 21\% decrease from previous limit.
-			\item  Under a fixed PSC limit there is no incentive to avoid small halibut.
-			\item  Three options for allowing PSC limits to vary with abundance:
-			\begin{enumerate}
-				\item  allocate a fraction of the annual yield,
-				\item  allocate yield per recruit (YPR), 
-				\item  or, allocate mortality per recruit (MPR) to each sector.
-			\end{enumerate}
-			\item  Allocation based on MPR creates and incentive to avoid small halibut.
-			\item  
+			\item Fixed PSC limits create a perverse conservation incentive.
+			\item NPFMC is interested in developing an indexed based PSC limit.
+			\item Joint management requires an allocation agreement.
+			\item Allocations can be based on yield per recruit (\textbf{YPR}), or mortality per recruit (\textbf{MPR}).
+			\item MPR allocations provide net benefits to all sectors for any given conservation effort.
+			\item YPR allocations provide net benefits only to the sector that participates in the conservation effort.
+			\item Yield equivalence compares the pound for pound loss or gains between two or more sectors.
+			\item Constant exploitation rate policy does not imply the same life-time mortality per recruit (MPR) in each of the regulatory areas.
+			% \item  New 2016 halibut PSC limit for BSAI is 3,515 mt.
+			% \item  2016 limit is a 21\% decrease from previous limit.
+			% \item  Under a fixed PSC limit there is no incentive to avoid small halibut.
+			% \item  Three options for allowing PSC limits to vary with abundance:
+			% \begin{enumerate}
+			% 	\item  allocate a fraction of the annual yield,
+			% 	\item  allocate yield per recruit (YPR), 
+			% 	\item  or, allocate mortality per recruit (MPR) to each sector.
+			% \end{enumerate}
+			% \item  Allocation based on MPR creates and incentive to avoid small halibut.
+			% \item  
 		\end{itemize}
 
 		% The NPFMC recently established new BSAI PSC limits 3,515 mt for Pacific halibut.  This represents a 21\% decrease from the previousl limit of 4,426 mt.  The Council has also requested a discussion paper for its October 2015 meeting exploring ways of indexing BSAI halibut PSC limits to a metric of halibut biomass.  Moving in the direction of jointly managing halibut mortality with variable PSC limits for non-IFQ halibut fisheries will require an allocation agreement between directed and non-directed halibut fisheries.  We propose two options for setting PSC limits: (1) limits based on allocating total catch, and (2) limits based on allocating a proportion of the life-time total mortality rate.  In both options the PSC limits vary in proportion to halibut abundance.  We further demonstrate that option (2) incentivises better resource stewardship where each sector is rewarded with additional catch as efforts are made to reduce the impacts on the Spawning Potential Ratio, or SPR.  We also demonstrate that bycatch mitigation is dynamic and losses to the directed fishery is a function of the relative selectivities, size-at-age, the allocation arrangement, and the harvest policy.  As a consequence, setting PSC limits must jointly address all of these issues.
 	}
 
-	% \column{0.25}
-	\block{Introduction}
-	{
-
-		Annual catch limits for the northeast Pacific halibut fishery are set by the International Pacific Halibut Commission.In Alaska, halibut bycatch mortality is managed under a Prohibited Species Catch (PSC) cap.  Halibut abundance in the Eastern Bering Sea (EBS) is at a record low and the directed fisheries in this region is facing a potential shutdown.  In order to avert the potential crisis, the North Pacific Fisheries Management Council (NPFMC) took final action in June 2015 to reduce the halibut PSC limits by 21\%. 
-
-		Indexing PSC limits to halibut abundance poses several challenges.  First, if the PSC limit is set as a fraction of the available biomass, then a catch sharing plan (allocation) must be specified \emph{a priori}.  The harvest policy for Pacific halibut must reflect this allocation arrangement.  Fisheries reference points (targets, limits, and thresholds), and PSC limits developed in the harvest policy, must also vary with changes in fisheries selectivity, changes in size-at-age, changes in discard mortality rates.
-
-		Mitigation is the process by which the directed fishery catch is reduced to accommodate bycatch fisheries.  Historically, one pound of U26 inch bycatch is approximately equal to one pound of lost yield (O32) in the directed fishery.  This 1:1 ratio was based on an approximation and did not take into consideration the cumulative effects of successive removals and was based on historical size-at-age (coastwide) and historical bycatch selectivities.
+	\block{Perverse Conservation Incentives}{
+		\begin{tikzfigure}[General harvest control rule used for setting ABC and OFLs. Overlaid is the harvest rate calculation necessary for calculating a fixed PSC limit; \textbf{harvest rate increases as abundance decreases}.]
+			\centering
+			% \includegraphics[width=0.45\colwidth]{HCR.png}
+			\includegraphics[width=0.8\colwidth]{HCRwPSCLimit.png}
+		\end{tikzfigure}
 	}
 
-	\block{Methods}
-	{
-		Use an equilibrium model to find a vector of fishing mortality ($\bm{f}$) rates for each sector that satisfies the following objective function:
-		\[
-			0 = \left(\bm{a}-h(\bm{f})\right)^2 
-						+ \left(\mbox{SPR} - \phi(\bm{f})\right)^2
-		\]
-		where $\bm{a}$ is a vector of proportions allocated to each fishery, $h(\bm{f})$ is a function that for the proportion of total yield or total mortality per recruit, SPR is the target spawning potential ratio and $\phi(\bm{f})$ is the SPR as a function of the vector of fishing mortality rates $\bm{f}$.
-	}
-	%%
-	%%
-	% \column{0.25}
-	\block{Objective}
-	{
-		
+	\column{0.30}
+	\block{Joint Management}{
 		\begin{itemize}
-			\item Explore ways to index BSAI halibut PSC limits to a metric of halibut biomass.
-			\item Describe methods for setting PSC limits based on allocating catch to each sector.
-			\item Describe methods for setting PSC limits based on allocating life-time total mortality rate to each sector.
-			% \item Use a simple case study with 3 different gear types (selectivities) to 
+			\item A harvest policy for joint managment requires an allocation agreement.
+			\item 72.6\% of the total removals removed by the commercial fishery which accounts for 35.7\% of the MPR.
+			\item 16.5\% of the total removals in the form of bycatch, accounting for 54.2\% of the MPR.
 		\end{itemize}
-		 
+		\begin{tikzfigure}[Average removals between 1990 and 2014, proportion yield removed, and the precent of the .]
+			\resizebox{\linewidth}{!}{
+				\begin{tabular}{ l|r r r}
+					\hline
+					Sector & Removals (Mlb)  & YPR proportion & MPR proportion \\
+					\hline
+					Commercial & 59730  & 72.6\%& 35.7\%\\
+					Bycatch    & 13298  & 16.5\%& 54.2\%\\
+					Sport      &  8285  & 10.4\%&  9.1\%\\
+					Personal   &  1051  &  1.3\%&  0.8\%\\
+					\hline
+				\end{tabular}
+				\label{table:allocation}
+			}	
+		\end{tikzfigure}
+		% \begin{tikzfigure}[Programming languages ranking in 2015. (*) The different source ]
+		% \resizebox{\linewidth}{!}{
+		% \begin{tabular}{ c c c c c c }
+		% Rank & TIOBE index & RedMonk & GitHub & Combination & Salary (USD) \\
+		% \hline
+		% 1 & C & JavaScript  & JavaScript & Java &  93,991 \\
+		% 2 & Java & Java & Java & JavaScript & 93,142\\
+		% 3 & Objective-C & PHP & Python & PHP & 92,387\\
+		% 4 & C++ & Python & CSS & Python & 96,802\\
+		% 5 & C\# & C\# & PHP & C++ & 94,359\\
+		% 6 & PHP & C++ & Ruby & C  & 91,258\\
+		% 7 & JavaScript & Ruby & C++ & C\# & 92,629\\
+		% 8 & Python & CSS & C & Objective-C & 108,225 *\\
+		% 9 & VisualBasic .NET & C & Shell & Ruby & 109,460 *\\
+		% 10 & VisualBasic & Objective-C & C\# & N/A & N/A \\
+		% \end{tabular}}
+		% \label{table:1}
+		% \end{tikzfigure}
+
 	}
-	%%
+
+
+	% \column{0.25}
+	% \block{Introduction}
+	% {
+
+	% 	Annual catch limits for the northeast Pacific halibut fishery are set by the International Pacific Halibut Commission.In Alaska, halibut bycatch mortality is managed under a Prohibited Species Catch (PSC) cap.  Halibut abundance in the Eastern Bering Sea (EBS) is at a record low and the directed fisheries in this region is facing a potential shutdown.  In order to avert the potential crisis, the North Pacific Fisheries Management Council (NPFMC) took final action in June 2015 to reduce the halibut PSC limits by 21\%. 
+
+	% 	Indexing PSC limits to halibut abundance poses several challenges.  First, if the PSC limit is set as a fraction of the available biomass, then a catch sharing plan (allocation) must be specified \emph{a priori}.  The harvest policy for Pacific halibut must reflect this allocation arrangement.  Fisheries reference points (targets, limits, and thresholds), and PSC limits developed in the harvest policy, must also vary with changes in fisheries selectivity, changes in size-at-age, changes in discard mortality rates.
+
+	% 	Mitigation is the process by which the directed fishery catch is reduced to accommodate bycatch fisheries.  Historically, one pound of U26 inch bycatch is approximately equal to one pound of lost yield (O32) in the directed fishery.  This 1:1 ratio was based on an approximation and did not take into consideration the cumulative effects of successive removals and was based on historical size-at-age (coastwide) and historical bycatch selectivities.
+	% }
+
+	% \block{Methods}
+	% {
+	% 	Use an equilibrium model to find a vector of fishing mortality ($\bm{f}$) rates for each sector that satisfies the following objective function:
+	% 	\[
+	% 		0 = \left(\bm{a}-h(\bm{f})\right)^2 
+	% 					+ \left(\mbox{SPR} - \phi(\bm{f})\right)^2
+	% 	\]
+	% 	where $\bm{a}$ is a vector of proportions allocated to each fishery, $h(\bm{f})$ is a function that for the proportion of total yield or total mortality per recruit, SPR is the target spawning potential ratio and $\phi(\bm{f})$ is the SPR as a function of the vector of fishing mortality rates $\bm{f}$.
+	% }
+	% %%
+	% %%
+	% % \column{0.25}
+	% \block{Objective}
+	% {
+		
+	% 	\begin{itemize}
+	% 		\item Explore ways to index BSAI halibut PSC limits to a metric of halibut biomass.
+	% 		\item Describe methods for setting PSC limits based on allocating catch to each sector.
+	% 		\item Describe methods for setting PSC limits based on allocating life-time total mortality rate to each sector.
+	% 		% \item Use a simple case study with 3 different gear types (selectivities) to 
+	% 	\end{itemize}
+		 
+	% }
+	% %%
 % \end{columns}
 
 % \begin{columns}
@@ -187,45 +257,45 @@
 % \end{columns}
 
 % \begin{columns}
-	\column{0.3}
-	\block{Option (1) catch allocation}{
-		\begin{itemize}
-			\item 
-			This option allocates a proportion of the total catch to each sector.  In this case, the total allowable catch (TAC) in each regulatory area is based on the apportioned biomass and the target harvest rate. Each sector (incl.the PSC limit) would receive a portion of the TAC. 
-			\item
-			Similar arrangements already exist with catch sharing plans, and allocations to the recreational fisheries.
-			\item
-			Under this option, the IPHC would set the PSC limits on an annual basis once the initial allocation has been established.
-		\end{itemize}
-
-	}
 	% \column{0.3}
-	\block{Option (2)  fishing mortality rate allocation}{
-		\begin{itemize}
-			\item 
+	% \block{Option (1) catch allocation}{
+	% 	\begin{itemize}
+	% 		\item 
+	% 		This option allocates a proportion of the total catch to each sector.  In this case, the total allowable catch (TAC) in each regulatory area is based on the apportioned biomass and the target harvest rate. Each sector (incl.the PSC limit) would receive a portion of the TAC. 
+	% 		\item
+	% 		Similar arrangements already exist with catch sharing plans, and allocations to the recreational fisheries.
+	% 		\item
+	% 		Under this option, the IPHC would set the PSC limits on an annual basis once the initial allocation has been established.
+	% 	\end{itemize}
 
-			% This approach also requires an initial allocation agreement, but in this case, what is being allocated is not yield, rather what fraction of the mortality on the spawning potential ratio (SPR) is allocated to each sector.
-		\end{itemize}
-	}
-	\note[]{This is my note}
+	% }
+	% % \column{0.3}
+	% \block{Option (2)  fishing mortality rate allocation}{
+	% 	\begin{itemize}
+	% 		\item 
 
-	\block{Mitigation}{
-	Examination of the partial derivatives show how changes in yield from one fishery affect the changes in yield in another fishery.
+	% 		% This approach also requires an initial allocation agreement, but in this case, what is being allocated is not yield, rather what fraction of the mortality on the spawning potential ratio (SPR) is allocated to each sector.
+	% 	\end{itemize}
+	% }
+	% \note[]{This is my note}
 
-	\[
-	\frac{\partial Y_k}{\partial Y_{\acute{k}}}
-	\]
-	}
+	% \block{Mitigation}{
+	% Examination of the partial derivatives show how changes in yield from one fishery affect the changes in yield in another fishery.
+
+	% \[
+	% \frac{\partial Y_k}{\partial Y_{\acute{k}}}
+	% \]
+	% }
 
 	
-	\column{0.250}
-	\block{Discussion}{
-		There is nothing particular about setting the PSC limits using an abundance based approach versus an SPR-based approach.  It is entirely feasible to determine the proportions for each method that result in the same long term average yield.  What uniquely different between the two approaches is the potential for the SPR-based approach to incentivise behaviour that would maximize the net benefits for all participants in the fishery.  Participants are rewarded for efforts that minimize mortality on the present and future spawning biomass, and by maximizing the yield per recruit,  by recieving a larger portion of the total available surplus.  In contrast, the abundance-based PSC limits has no built in incentive that rewards maximizing the yield per recruit. In fact, if the PSC-limits are in units of weight, then there is an incentive to growth overfish and increase total mortality.  This is also the case for fixed PSC-limits.\\
+	% \column{0.250}
+	% \block{Discussion}{
+	% 	There is nothing particular about setting the PSC limits using an abundance based approach versus an SPR-based approach.  It is entirely feasible to determine the proportions for each method that result in the same long term average yield.  What uniquely different between the two approaches is the potential for the SPR-based approach to incentivise behaviour that would maximize the net benefits for all participants in the fishery.  Participants are rewarded for efforts that minimize mortality on the present and future spawning biomass, and by maximizing the yield per recruit,  by recieving a larger portion of the total available surplus.  In contrast, the abundance-based PSC limits has no built in incentive that rewards maximizing the yield per recruit. In fact, if the PSC-limits are in units of weight, then there is an incentive to growth overfish and increase total mortality.  This is also the case for fixed PSC-limits.\\
 
 
-		In the catch allocation method there is no feedback in the calculations to adjust the PSC limits.  Requires Council intervention to change the PSC limits.  The total mortality rate allocation does have the built in feedback that allows the PSC limits to vary both with abundance and changes in selectivity.
-	}
-	\useblockstyle{Minimal}
+	% 	In the catch allocation method there is no feedback in the calculations to adjust the PSC limits.  Requires Council intervention to change the PSC limits.  The total mortality rate allocation does have the built in feedback that allows the PSC limits to vary both with abundance and changes in selectivity.
+	% }
+	% \useblockstyle{Minimal}
 
 
 \end{columns}

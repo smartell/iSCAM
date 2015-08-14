@@ -8,7 +8,7 @@
 # -[ ] Change algorithm to estimate fbar only.
 # --------------------------------------------------------------------------- #
 
-
+library(plyr)
 library(ggplot2)
 
 A     <- 25				# Plus group Age
@@ -18,9 +18,12 @@ kappa <- 4.0 * h / (1.0 - h)
 m     <- 0.15			# instantaneous natural mortality rate
 age   <- 1:A
 mx    <- rep(m,length=A)
-linf  <- 120
-winf  <- 50
-vbk   <- 1.5 * m
+linf  <- 198.929
+vbk   <- 0.078
+to    <- 0.164
+a     <- 0.00000692
+b     <- 3.24
+winf  <- a*linf^b
 ahat  <- 11.5
 ghat  <- 1.5
 
@@ -30,9 +33,9 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 # 
 # Selectivity parameters for each gear.
 # 
-s1    <- c( 85.0, 25.0, 45.0)
-s2    <- c( 12.0, 5.50, 11.2)
-s3    <- c( 00.0, 0.10, 0.05)
+s1    <- c( 85.0, 25.0, 45.0, 85.0 )
+s2    <- c( 12.0, 5.50, 11.2, 12.0 )
+s3    <- c( 00.0, 0.03, 0.03, 00.0 )
 slx   <- list(s1=s1,s2=s2,s3=s3)
 ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
@@ -49,12 +52,13 @@ mx=m/vbk*(log(t1)-log(t2))
 # 
 # MANAGEMENT CONTROLS
 # 
-target_spr     <- 0.40
-fspr           <- 0.10
-tma_allocation <- rep(1/ng,length=ng)
-slim           <- c(82,NA,82)
-dmr   		   <- c(0.16,0.90,0.2)
-ak             <- tma_allocation
+target_spr <- 0.40
+fspr       <- 0.10
+slim       <- c(82,NA,82,00)
+dmr        <- c(0.16,0.80,0.2,0.00)
+ak         <- c(0.727,0.165,0.104,0.013)
+# ak         <- rep(1/ng,length=ng)
+
 # List object for the default harvest policy inputs.
 hpDefaultInput <- list(allocation = ak,
                        target_spr = target_spr,
@@ -63,6 +67,10 @@ hpDefaultInput <- list(allocation = ak,
                        sizeLimit  = slim,
                        type       = "YPR",
                        slx        = slx)
+
+hpSTQ  <- hpDefaultInput;
+hpMSY  <- hpSTQ; hpMSY$allocation <- c(1,rep(0,length=ng-1))
+
 
 # 
 # AGE-SCHEDULE INFORMATION
@@ -89,8 +97,8 @@ getAgeSchedules <- function(theta)
 		# 
 		# AGE-SCHEDULE INFORMATION
 		# 
-		la    <- linf*(1-exp(-vbk*age))
-		wa    <- winf / (linf^3)*la^3
+		la    <- linf*(1-exp(-vbk*(age+to)))
+		wa    <- a*la^b
 		ma    <- plogis(age,ahat,ghat)
 		fa    <- wa * ma
 
@@ -165,37 +173,6 @@ getSelex <- function(slxPars)
 	})
 }
 
-# 
-# Survivorship under fished conditions.
-# 
-# va <- getSlx(s1,s2,s3)
-# za <- mx + colSums(fe*va)
-# sa <- exp(-za)
-# oa <- 1.0 - sa
-# lz <- rep(1,length=A) 
-# for(j in 2:A)
-# {
-# 	lz[j] <- lz[j-1] * sa[j-1]	
-# 	if(j == A)
-# 	{
-# 		lz[A] <- lz[A] / (1.0 - sa[A])	
-# 	} 
-# }
-
-
-# p0 <- mx/za*oa
-# p1 <- fe[1]*va[1,]/za*oa
-# p2 <- fe[2]*va[2,]/za*oa
-
-# ta <- oa - p0
-
-# l1 <- sum(p1)/sum(ta)
-# l2 <- sum(p2)/sum(ta)
-
-
-
-
-
 
 #
 # EQUILIBRIUM MODEL
@@ -217,7 +194,7 @@ equilibriumModel <- function(theta, type="YPR")
 			za <- mx + colSums(fe*va)
 			sa <- exp(-za)
 			oa <- 1.0 - sa
-			lz <- rep(1,length=A) 
+			
 
 			for(k in gear)
 			{
@@ -226,34 +203,37 @@ equilibriumModel <- function(theta, type="YPR")
 				dlz[k,1] <- 0
 			}
 			
+			lz    <- rep(1,length=A)
+			for(j in 2:A)
+			{
+				lz[j] <- lz[j-1] * sa[j-1]	
+				if(j == A)
+				{
+					lz[A] <- lz[A] / (1.0 - sa[A])	
+				} 
+
+				for(k in gear)
+				{
+					dlz[k,j] <- sa[j-1]*(dlz[k,j-1]-lz[j-1]*va[k,j-1])
+					if(j == A)
+					{
+						dlz[k,j] <- dlz[k,j]/oa[j] 
+						- lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
+					}
+				}
+			}
+
 			# 
 			# F multipliers (lambda) based on YPR or MPR
 			# 
 			qp     <- switch(type,YPR = qa, MPR = pa)
 			phi.t  <- as.vector(lz %*% t(qp))
-			lam.t  <- ak / (phi.t/sum(phi.t))
+			lam.t  <- allocation / (phi.t/sum(phi.t))
 			lambda <- lam.t / mean(lam.t)
 
 			# cat(iter," lambda = ",lambda,"\n")
-		}
+		
 
-		for(j in 2:A)
-		{
-			lz[j] <- lz[j-1] * sa[j-1]	
-			if(j == A)
-			{
-				lz[A] <- lz[A] / (1.0 - sa[A])	
-			} 
-
-			for(k in gear)
-			{
-				dlz[k,j] <- sa[j-1]*(dlz[k,j-1]-lz[j-1]*va[k,j-1])
-				if(j == A)
-				{
-					dlz[k,j] <- dlz[k,j]/oa[j] 
-					- lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
-				}
-			}
 		}
 		
 		
@@ -291,11 +271,11 @@ equilibriumModel <- function(theta, type="YPR")
 		# equilibrium catch
 		ypr   <- fe * phi.q
 		ye    <- re * ypr
-
+		cat("ye ",ye,"\n")
 		# Jacobian for yield
 		dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
-		print(dye)
-		# Mitigation
+		
+		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
 		
@@ -305,8 +285,12 @@ equilibriumModel <- function(theta, type="YPR")
 
 		out <- list("spr"   = spr,
 		         "fe"       = fe,
+		         "gear"     = gear,
+		         "fspr"     = as.double(fbar),
+		         "lambda"   = lambda,
 		         "ypr"      = as.double(ypr),
 		         "yield"    = as.double(ye),
+		         "dye"      = as.vector(diag(dye)),
 		         "mpr"      = as.vector(mpr),
 		         "M"        = as.matrix(M)
 		         )
@@ -315,44 +299,8 @@ equilibriumModel <- function(theta, type="YPR")
 }
 
 
-fnB <- function(log.fbar)
-{
-	fe  <- exp(log.fbar)
-	em  <- as.list(equilibriumModel(fe,type="YPR"))
-	spr <- em$spr
-
-	f1  <- (spr - target_spr)^2
-	return(f1)
-}
-
-fnC <- function(log.fbar)
-{
-	fe  <- exp(log.fbar)
-	em  <- as.list(equilibriumModel(fe,type="MPR"))
-	spr <- em$spr
-	
-	f1  <- (spr - target_spr)^2
-	return(f1)
-}
 
 
-
-getFs <- function()
-{
-	fitB <- optim(log(fspr),fnB,method="BFGS",hessian=TRUE)
-	fitC <- optim(log(fspr),fnC,method="BFGS",hessian=TRUE)
-	
-	fb   <- exp(fitB$par)
-	fc   <- exp(fitC$par)
-
-	runB <- equilibriumModel(fb,type="YPR")
-	runC <- equilibriumModel(fc,type="MPR")
-
-	dfB  <- with(runB,data.frame(method="B",fe,ypr,yield,mpr))
-	dfC  <- with(runC,data.frame(method="C",fe,ypr,yield,mpr))
-	df   <- rbind(dfB,dfC)
-	return(df)
-}
 
 runModel <- function(theta,hp)
 {
@@ -375,109 +323,37 @@ runModel <- function(theta,hp)
 	return(EM)
 }
 
+runProfile <- function(theta,hp)
+{
+	# Initialize model
+	theta <- getAgeSchedules(theta)
+	theta <- c(theta,list(va=getSelex(hp)),hp)
+	type  <- hp$type
+	print(type)
+	fn    <- function(log.fbar)
+	{
+		theta$fspr = exp(log.fbar)
+		em <- as.list(equilibriumModel(theta,type))		
+		return(em)
+	}
+	fbar <- seq(0,0.2,length=50)
+	runs <- lapply(log(fbar),fn)
+	df   <- ldply(runs,data.frame)
+	
+	return(df)
+}
+
 
 main <- function()
 {
-	runModel(theta,hpDefaultInput)
+	rm <- runModel(theta,hpSTQ)
+	df <- runProfile(theta,hpSTQ)
+
+	p  <- ggplot(df,aes(fspr,yield)) + geom_line(aes(col=factor(gear)))
+	print(p)
+	p  <- ggplot(df,aes(spr,fe)) + geom_line(aes(col=factor(gear)))
+	p  <- p + geom_vline(xintercept=target_spr,col="grey")
+	print(p)
 }
 
-# equilibriumModel(fe)
-# fd <- seq(0,0.2,by=0.01)
-# fb <- seq(0,0.4,by=0.01)
-# fs <- expand.grid(fd,fb)
-# names(fs) <- c("F.d","F.b")
-
-# s1    <- c( 8.0, 3.0)
-# s2    <- c( 1.2, 1.2)
-# s3    <- c( 0.0, 0.1)
-# EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
-
-# s1    <- c( 9.0, 3.0)
-# s2    <- c( 0.2, 1.2)
-# s3    <- c( 0.0, 0.1)
-# EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
-
-# s1    <- c( 8.0, 2.0)
-# s2    <- c( 1.2, 3.2)
-# s3    <- c( 0.0, 0.1)
-# EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
-
-
-
-
-
-# # 
-# # GRAPHICS
-# # 
-# spr_brk <- seq(0.05,0.50,by=0.05)
-# df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
-
-# p <- ggplot(df)
-# p <- p + geom_area(aes(x=age,y=lx*fa),alpha=0.3,fill="black")
-# p <- p + geom_area(aes(x=age,y=lz*fa),alpha=0.3,fill="red")
-# p <- p + labs(x="Age",y="Spawning biomass per recruit")
-# print(p)
-
-# # p <- ggplot(EQM,aes(F.d,F.b,z=ypr1/ypr2)) 
-# # p <- p + stat_contour(alpha=0.5,aes(color=..level..))
-# # p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=ypr1/ypr2),breaks=1,color="black")
-# # p <- p + stat_contour(data=EQM,aes(F.d,F.b,z=spr),breaks=0.35,color="red")
-# # print(p)
-
-# p <- ggplot(EQM,aes(F.d,F.b,z=spr)) 
-# p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
-# p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
-# p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
-# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
-# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
-# print(p)
-
-# # not sure what this is good for.
-# br <- seq(2,10,by=1)
-# p <- ggplot(EQM) 
-# p <- p + stat_contour(aes(F.d,F.b,z=yield1,color =..level..),breaks=br,alpha=0.1)
-# p <- p + stat_contour(aes(F.d,F.b,z=yield2,size =..level..),breaks=br,alpha=0.1)
-# p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
-# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield1,color=..level..),breaks=br,size=1.5)
-# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=yield2,size=..level..),breaks=br,alpha=0.5)
-# p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
-# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
-# # p <- p + stat_contour(breaks=0.35,colour="red")
-# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Removals",size="Bycatch")
-# print(p)
-
-# p <- ggplot(EQM)
-# p <- p + stat_contour(aes(F.d,F.b,z=yield1+yield2,col=..level..))
-# p <- p + geom_contour(aes(F.d,F.b,z=spr),breaks=0.35,col="red",alpha=0.5,size=1.5)
-# p <- p + labs(x="Directed fishery F",y="Bycatch F",col="Yield")
-# print(p)
-
-# # p <- ggplot(EQM,aes(spr,yield1,color=factor(yield2))) + geom_line()
-
-# # v <- ggplot(SPR,aes(Halibut.Fishery,Bycatch.Fishery,z=SPR)) 
-# # v <- v + stat_contour(breaks=seq(0.05,0.50,by=0.05))
-
-# plot.va <- function()
-# {
-# 	for(k in gear)
-# 	{
-# 		va[k,] = gplogis(age,a=s2[k],b=s1[k],g=s3[k])
-# 	}
-# 	df  <- data.frame(Age=age,"Directed"=va[1,],"Bycatch"=va[2,])
-# 	mdf <- melt(df,id.vars="Age")
-# 	p <- ggplot(mdf) + geom_line(aes(Age,value,col=variable))
-# 	p <- p + labs(x="Age",y="Selectivity-at-age")
-# 	print(p)
-# }
-# m
-
-
-
-
-
-
-
-
-
-
-
+#
