@@ -271,10 +271,11 @@ equilibriumModel <- function(theta, type="YPR")
 		# equilibrium catch
 		ypr   <- fe * phi.q
 		ye    <- re * ypr
-		cat("ye ",ye,"\n")
-		# Jacobian for yield
-		dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
 		
+		# Jacobian for yield
+		Id    <- diag(1,ng)
+		dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
+		browser()
 		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
