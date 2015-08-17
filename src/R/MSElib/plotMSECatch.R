@@ -33,15 +33,15 @@ require(reshape)
 				new.df <- df2[,c(1:4,itxx)]
 				new.df <- melt(new.df,id=c("Scenario","Procedure","Year","gear"))
 				
-				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col='gear'))
+				p <- p + geom_line(data=new.df,aes_string(x="Year",y='value',linetype='variable', col=as.factor(gear)))
 				p <- p +  scale_linetype_manual(values=c("dashed","dotted","dotdash","longdash","twodash","1F","F1","4C88C488"))
 			}
 
 	}
 	else
 	{
-		p <- ggplot(df,aes(Year,ct50),fill=gear) + geom_line(width=2)
-		p <- p + geom_ribbon(aes(ymax=up, ymin=low,fill=gear),alpha=0.2)
+		p <- ggplot(df,aes(Year,ct50),fill=as.factor(gear)) + geom_line(width=2)
+		p <- p + geom_ribbon(aes(ymax=up, ymin=low,fill=as.factor(gear)),alpha=0.2)
 		p <- p + facet_grid(Scenario~Procedure,scales="free")
 
 		if(no>0)

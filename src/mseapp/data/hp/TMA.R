@@ -291,10 +291,12 @@ equilibriumModel <- function(theta, type="YPR")
 		# equilibrium catch
 		ypr   <- fe * phi.q
 		ye    <- re * ypr
+		dfe   <-matrix(0,ncol=length(lambda),nrow=length(lambda))
+		diag(dfe) <- 1
 
 		# Jacobian for yield
-		dye   <- re * phi.q + fe * phi.q * dre + fe * re * dphi.q
-		print(dye)
+		dye   <- re * phi.q * dfe + fe * phi.q * dre + fe * re * dphi.q
+		print(dye) 
 		# Mitigation
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -308,7 +310,8 @@ equilibriumModel <- function(theta, type="YPR")
 		         "ypr"      = as.double(ypr),
 		         "yield"    = as.double(ye),
 		         "mpr"      = as.vector(mpr),
-		         "M"        = as.matrix(M)
+		         "M"        = as.matrix(M),
+		         "dye" 		= dye
 		         )
 		return(out)
 	})

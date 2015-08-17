@@ -228,8 +228,7 @@ namespace rfp {
 			y2 = (m_ye - y1)/hh;
 			r2 = (m_re - r1)/hh;
 			q2 = (m_phiq - q1)/hh;
-			//lz2(k) = (m_lz - lz1)/hh;
-
+			
 
 			cout<<"|———————————————————————————————————————————————————————|" <<endl;
 			cout<<"| Gear "<<k<<" fe\t"<<fe(k)<<endl;
@@ -417,7 +416,7 @@ namespace rfp {
 				qa(k)      = elem_div(elem_prod(elem_prod(m_Va(h)(k),m_Wa(h)),oa(h)),za(h)); // per recruit 
 				qa_m(h)(k) = qa(k); 														
 
-				// the dlw derivatives were not second checked. 
+				// the dlw derivatives were not throughly checked. 
 				dlw(k,m_sage)      = -psa(m_sage)*m_rho*m_Va(h)(k)(m_sage); 				//  derivative of pre-spawning survivorship at sage
 				dlw_m(h,k,m_sage)  = dlw(k,m_sage);
 				d2lw(k,m_sage)     = psa(m_sage)*square(m_rho)*square(m_Va(h)(k)(m_sage)); 	// second derivative of pre-spawning survivorship at sage
@@ -447,7 +446,7 @@ namespace rfp {
 				for( k = 1; k <= m_nGear; k++ )
 				{
 					// derivatives for survivorship 
-					dlz(k)(j)  = sa(h)(j-1)*dlz(k)(j-1) - lz(h)(j)*m_Va(h)(k)(j-1);					
+					dlz(k)(j)  = sa(h)(j-1)*(dlz(k)(j-1) - lz(h)(j-1)*m_Va(h)(k)(j-1)); 					
 					
 					d2lz(k)(j) = sa(h)(j-1)*(d2lz(k)(j-1)+lz(h)(j-1)*square(m_Va(h)(k)(j-1))+2*dlz(k)(j-1)*m_Va(h)(k)(j-1));
 					

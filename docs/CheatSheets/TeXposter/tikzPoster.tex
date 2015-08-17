@@ -169,10 +169,12 @@
 		Assuming all fisheries and natural mortality operate simultaneously, the equilibrium catch equation for each fleet can be written as a vector
 		\begin{align}
 			%
-			\vec{y} = \vec{f} R_e \vec{\phi}  \label{eq.1}
+			\vec{y} =  \vec{f} R_e \vec{\phi}  \label{eq.1}
 			%
 		\end{align}
-		To find the vector of fishing mortality rates that simultaneously maximizes the yield for each fleet we use Newton's method to find the solution to $\dfrac{\partial \vec{y}}{\partial \vec{f}} = 0$.  The first and second derivatives of \eqref{eq.1} for fleet $k$ are given by:
+		To find the vector of fishing mortality rates that simultaneously maximizes the yield for each fleet we use Newton's method to find the solution to $\dfrac{\partial \vec{y}}{\partial \vec{f}} = 0$. 
+
+		 The first and second derivatives of \eqref{eq.1} for fleet $k$ are given by:
 		\begin{align}
 			%
 			\mbox \nonumber \\
@@ -196,7 +198,7 @@
 		The difficulty is in calculating all of the partial derivatives.  We break this down into suvivorship, recruitment, and per-recruit functions. The Newtons iteration step is given by:
 		\begin{align}
 			\vec{f}_{i+1} = \vec{f}_{i} - \dfrac{\partial y}{\partial f}
-			 \left( \dfrac{{\partial y}^2}{{\partial f}^2} \right)^{-1} \label{eq.4}
+			 \left( \dfrac{{\partial^2 y}}{{\partial f}^2} \right)^{-1} \label{eq.4}
 		\end{align}
 	}% end block.
 
