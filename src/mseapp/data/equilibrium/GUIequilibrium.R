@@ -218,8 +218,6 @@ renderEquilriumInterface <- function()
 		)
 	)
 	  
-	
-
 
 }
 

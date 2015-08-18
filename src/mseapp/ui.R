@@ -26,7 +26,12 @@ shinyUI(fluidPage(
             ## -------------- ##
             # MAPS Interface   #
             ## -------------- ##
-            renderMaps()
+            renderMaps(),
+
+            ## -------------- ##
+            # TMA Interface   #
+            ## -------------- ##
+            renderTMA()
         )
     )
 )

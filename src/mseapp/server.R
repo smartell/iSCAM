@@ -51,21 +51,71 @@ shinyServer(function(input,output,session){
     })
 
 
+    ## ------------------------------------------------------------ ##
+    ## Total mortality allocation (August 17, 2015)
+    ## ------------------------------------------------------------ ##
+
+    #
+    # Allocation Input-output function
+    #
+    validate <- function(tbl){
+
+    		sumAlloc<-as.numeric(tbl$allocation)
+
+    		if(sum(sumAlloc)>1){
+    		    updateTableStyle(session, "tbl", "invalid", 1:ng, 1)        
+    		}else if(sum(sumAlloc)<1){
+    		    updateTableStyle(session, "tbl", "warning", 1:ng, 1)
+    		}else{
+    		    updateTableStyle(session, "tbl", "valid", 1:ng, 1)
+    		}
+
+		}
 
 
 
+    output$tbl <- renderHtable({
+    	if (is.null(input$tbl)){
+    		rows <- ng
+    		nomes=NULL
+			
+			for (i in 1:ng){
+    			nomes[i]=paste0("fisheries ",i) 
+    	}     		
+    	
+    	if(input$Allocation_type=="yield per recruit"){
+					tbl<-data.frame(list(allocation=rep(0,ng)))	
+			}
+    	
+    	if(input$Allocation_type=="mortality per recruit"){
+    			tbl<-data.frame(list(allocation=rep(0,ng)))
+			}
 
+      rownames(tbl) <- nomes  
+      validate(tbl)     
+      return(tbl)
+    	
+    	}else{
+      		tbl <- input$tbl
+          validate(tbl)
+      		return(tbl)
+    	}
+    	  
+    	print(input$tbl)
+	})  
+    
+   
 
+##   output$res_alloc <-renderTable({
+##        getResultAllocation(getArgsTMA(input))
+##        print("hello")
+##   })
+  
+    getAlloc<-reactive(do.call(getResultAllocation,getArgsTMA(input)))
 
-
-
-
-
-
-
-
-
-
+    output$res_alloc <-renderTable({
+        getAlloc()
+    })
 
 
 

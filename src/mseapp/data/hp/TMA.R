@@ -125,8 +125,6 @@ getAgeSchedules <- function(theta)
 }
 
 
-
-
 # 
 # FISHERIES SELECTIVITY
 #  
@@ -235,8 +233,7 @@ equilibriumModel <- function(theta, type="YPR")
 		
 
 		}
-		
-		
+				
 
 		# incidence functions
 		phi.m  <- as.vector(lz %*% t(pa))
@@ -261,26 +258,21 @@ equilibriumModel <- function(theta, type="YPR")
 			dre[k]  <- ro * phi.E * dphi.e[k] / (phi.e^2 *(kappa-1))
 		}
 
-		cat("ispr ",ispr,"\n")
+
 		# equilibrium recruitment
 		re    <- max(0,ro * (kappa - ispr) / (kappa - 1.0))
-		#cat("re ",re,"\n")
+
 		# mortality per recruit
 		mpr   <- fe * phi.m
 
 		# equilibrium catch
 		ypr   <- fe * phi.q
 		ye    <- re * ypr
-		cat("ye ",ye,"\n")
-
-		# identity matrix dfe
-		dfe <- matrix(0, ncol=length(lambda),nrow=length(lambda))
-		diag(dfe) <- 1 
 		
-
 		# Jacobian for yield
-		dye   <- re * phi.q * dfe + fe * phi.q * dre + fe * re * dphi.q
-		
+		Id    <- diag(1,ng)
+		dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
+		#browser()
 		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -303,8 +295,6 @@ equilibriumModel <- function(theta, type="YPR")
 		return(out)
 	})
 }
-
-
 
 
 
