@@ -275,7 +275,7 @@ equilibriumModel <- function(theta, type="YPR")
 		# Jacobian for yield
 		Id    <- diag(1,ng)
 		dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
-		browser()
+		# browser()
 		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -344,7 +344,30 @@ runProfile <- function(theta,hp)
 	return(df)
 }
 
+# .THEME <- theme(
+#     panel.grid.minor = element_blank(), 
+#     panel.grid.major = element_blank(),
+#     panel.background = element_rect(fill="cyan",colour=NA),
+#     plot.background = element_blank()
+#    )
 
+.THEME <- function (base_size = 12, base_family = "") 
+{
+    theme_grey(base_size = base_size, base_family = base_family)%+replace% 
+    theme(axis.text = element_text(size = rel(0.8),colour="white"), 
+          axis.ticks = element_line(colour = "black"), 
+          strip.text = element_text(size = rel(0.9),colour="white"),
+          legend.key = element_rect(colour = NA), 
+          panel.background = element_rect(fill = "black",colour = NA), 
+          panel.border = element_rect(fill = NA,colour = "grey90"), 
+          panel.grid.major = element_line(colour = "grey50",size = 0.2), 
+          panel.grid.minor = element_line(colour = "grey80",size = 0.5), 
+          strip.background = element_rect(fill = "grey80",colour = "grey50", size = 0.2),
+          plot.background  = element_rect(fill = "black")
+          )
+}
+
+.GEAR <- c("Commercial","Bycatch","Sport","Other")
 main <- function()
 {
 	rm <- runModel(theta,hpSTQ)
@@ -355,6 +378,12 @@ main <- function()
 	p  <- ggplot(df,aes(spr,fe)) + geom_line(aes(col=factor(gear)))
 	p  <- p + geom_vline(xintercept=target_spr,col="grey")
 	print(p)
+
+	p  <- ggplot(df,aes(spr,yield)) 
+	p  <- p + geom_line(aes(colour=factor(.GEAR[gear])))
+	p  <- p + labs(x="SPR",y="Yield")
+	print(p + .THEME(28))
+	return (p)
 }
 
 #
