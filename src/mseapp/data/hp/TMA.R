@@ -5,7 +5,7 @@
 # one or more fisheries.
 
 # TODO
-# -[ ] Change algorithm to estimate fbar only.
+# -[X] Change algorithm to estimate fbar only.
 # --------------------------------------------------------------------------- #
 
 library(plyr)
@@ -33,9 +33,14 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 # 
 # Selectivity parameters for each gear.
 # 
-s1    <- c( 85.0, 25.0, 45.0, 85.0 )
-s2    <- c( 12.0, 5.50, 11.2, 12.0 )
-s3    <- c( 00.0, 0.03, 0.03, 00.0 )
+# s1    <- c( 85.0, 25.0, 45.0, 85.0 )
+# s2    <- c( 12.0, 5.50, 11.2, 12.0 )
+# s3    <- c( 00.0, 0.03, 0.03, 00.0 )
+
+s1    <- c(68.326,	38.409,	69.838,69.838)
+s2    <- c(3.338,   4.345,  5.133,5.133)
+s3    <- c(0.000,	0.072,	0.134,0.134)
+
 slx   <- list(s1=s1,s2=s2,s3=s3)
 ng    <- length(s1) 		# number of fleets
 gear  <- 1:ng
@@ -53,7 +58,7 @@ mx=m/vbk*(log(t1)-log(t2))
 # MANAGEMENT CONTROLS
 # 
 target_spr <- 0.40
-fspr       <- 0.10
+fspr       <- 0.05
 slim       <- c(82,NA,82,00)
 dmr        <- c(0.16,0.80,0.2,0.00)
 ak         <- c(0.727,0.165,0.104,0.013)
@@ -267,15 +272,18 @@ equilibriumModel <- function(theta, type="YPR")
 
 		# mortality per recruit
 		mpr   <- fe * phi.m
+		me    <- re * mpr
 
 		# equilibrium catch
 		ypr   <- fe * phi.q
 		ye    <- re * ypr
 		
 		# Jacobian for yield
-		Id    <- diag(1,ng)
-		dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
+		# Id    <- diag(1,ng)
+		# dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
+		dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
 		# browser()
+		
 		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -291,6 +299,7 @@ equilibriumModel <- function(theta, type="YPR")
 		         "lambda"   = lambda,
 		         "ypr"      = as.double(ypr),
 		         "yield"    = as.double(ye),
+		         "mortality"= as.double(me),
 		         "dye"      = as.vector(diag(dye)),
 		         "mpr"      = as.vector(mpr),
 		         "M"        = as.matrix(M)
@@ -330,16 +339,17 @@ runProfile <- function(theta,hp)
 	theta <- getAgeSchedules(theta)
 	theta <- c(theta,list(va=getSelex(hp)),hp)
 	type  <- hp$type
-	print(type)
+	# print(type)
 	fn    <- function(log.fbar)
 	{
 		theta$fspr = exp(log.fbar)
 		em <- as.list(equilibriumModel(theta,type))		
 		return(em)
 	}
-	fbar <- seq(0,0.2,length=50)
+	fbar <- seq(0,0.12,length=50)
 	runs <- lapply(log(fbar),fn)
 	df   <- ldply(runs,data.frame)
+	# print(type)
 	
 	return(df)
 }
@@ -351,20 +361,27 @@ runProfile <- function(theta,hp)
 #     plot.background = element_blank()
 #    )
 
-.THEME <- function (base_size = 12, base_family = "") 
+.THEME <- function (base_size = 12, base_family = "", base_color = "white") 
 {
-    theme_grey(base_size = base_size, base_family = base_family)%+replace% 
-    theme(axis.text = element_text(size = rel(0.8),colour="white"), 
-          axis.ticks = element_line(colour = "black"), 
-          strip.text = element_text(size = rel(0.9),colour="white"),
-          legend.key = element_rect(colour = NA), 
-          panel.background = element_rect(fill = "black",colour = NA), 
-          panel.border = element_rect(fill = NA,colour = "grey90"), 
-          panel.grid.major = element_line(colour = "grey50",size = 0.2), 
-          panel.grid.minor = element_line(colour = "grey80",size = 0.5), 
-          strip.background = element_rect(fill = "grey80",colour = "grey50", size = 0.2),
-          plot.background  = element_rect(fill = "black")
-          )
+	b_clr <- base_color
+    theme_bw(base_size = base_size, base_family = base_family)%+replace% 
+		theme(	axis.text  = element_text(size = rel(0.8),colour="cyan"),
+				axis.title = element_text(size = rel(1.0),colour="white"),
+				axis.ticks = element_line(colour = "white"),
+				strip.text   = element_text(colour = "white"),
+				strip.text.x = element_text(colour = "white"),
+				strip.text.y = element_text(colour = "white"),
+				legend.key        = element_blank(),
+				legend.background = element_blank(),
+				legend.text       = element_text(size = rel(0.8),colour="cyan"),
+				legend.title      = element_text(colour="white"),
+				panel.background  = element_rect(fill = "black",colour = NA), 
+				panel.border      = element_rect(fill = NA,colour = "grey90"), 
+				panel.grid.major  = element_line(colour = "grey40",size = 0.2), 
+				panel.grid.minor  = element_line(colour = "grey10",size = 0.5), 
+				strip.background  = element_rect(fill = "grey80",colour = "grey50", size = 0.2),
+				plot.background   = element_rect(fill = "black")
+		)
 }
 
 .GEAR <- c("Commercial","Bycatch","Sport","Other")
@@ -380,10 +397,34 @@ main <- function()
 	print(p)
 
 	p  <- ggplot(df,aes(spr,yield)) 
-	p  <- p + geom_line(aes(colour=factor(.GEAR[gear])))
-	p  <- p + labs(x="SPR",y="Yield")
-	print(p + .THEME(28))
-	return (p)
+	p  <- p + geom_line(aes(colour=factor(.GEAR[gear])),size=1.5)
+	p  <- p + labs(x="SPR",y="Yield",col="Sector")
+	print(p + .THEME(18) + theme(legend.position = "top"))
+	# return (p)
+
+	p  <- ggplot(df,aes(spr,fe)) 
+	p  <- p + geom_vline(xintercept=target_spr,col="white",size=1.2,alpha=0.8)
+	p  <- p + geom_line(aes(colour=factor(.GEAR[gear])),size=1.5)
+	p  <- p + labs(x="SPR",y="Harvest Rate",col="Sector")
+	print(p + .THEME(18) + theme(legend.position = "top"))
+
+	p  <- ggplot(df,aes(1-spr,mpr)) 
+	p  <- p + geom_vline(xintercept=target_spr,col="white",size=1.2,alpha=0.8)
+	p  <- p + geom_line(aes(colour=factor(.GEAR[gear])),size=1.5)
+	p  <- p + labs(x="Fishing Mortality (F*)",y="Mortality Per Recruit",col="Sector")
+	print(p + .THEME(18) + theme(legend.position = "top"))
+
+	p  <- ggplot(df,aes(fspr,ypr)) 
+	p  <- p + geom_area(aes(fill=factor(.GEAR[gear])),alpha=0.7)
+	p  <- p + geom_vline(xintercept=rm$fspr,col="white",size=1.2,alpha=0.5)
+	p  <- p + labs(x="Fishing Mortality (F*)",y="Yield Per Recruit",fill="Sector")
+	print(p + .THEME(28) + theme(legend.position = "top"))
+
+	p  <- ggplot(df,aes(fspr,mpr)) 
+	p  <- p + geom_area(aes(fill=factor(.GEAR[gear])),alpha=0.7)
+	p  <- p + geom_vline(xintercept=rm$fspr,col="white",size=1.2,alpha=0.5)
+	p  <- p + labs(x="Fishing Mortality (F*)",y="Mortality Per Recruit",fill="Sector")
+	print(p + .THEME(28) + theme(legend.position = "top"))
 }
 
 #
