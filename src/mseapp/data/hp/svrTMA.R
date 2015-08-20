@@ -29,8 +29,7 @@ getResultAllocation <- function(Alloc_type,sprtarget,akdf){
 
 
         hpSTQ$type <<- "YPR"
-        tmp <- runModel(theta,hpSTQ) 
-        print("here?")      
+        tmp <- runModel(theta,hpSTQ)      
         MPR_allocation  <- tmp$mpr/sum(tmp$mpr)
         out <- data.frame(MPR_allocation)
 
