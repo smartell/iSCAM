@@ -283,7 +283,7 @@ equilibriumModel <- function(theta, type="YPR")
 		# dye   <- re * (phi.q * Id) + fe * phi.q * dre + fe * re * dphi.q
 		dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
 		# browser()
-		
+
 		# Yield Equivalence
 		v     <- sqrt(diag(dye))
 		M     <- dye / (v %o% v)
@@ -390,8 +390,9 @@ main <- function()
 	rm <- runModel(theta,hpSTQ)
 	df <- runProfile(theta,hpSTQ)
 
-	p  <- ggplot(df,aes(fspr,yield)) + geom_line(aes(col=factor(gear)))
-	print(p)
+	p  <- ggplot(df,aes(fe,yield)) + geom_line(aes(col=factor(gear)))
+	p  <- p + geom_line(aes(fe,0.1*dye,col=factor(gear)))
+	print(p + facet_wrap(~gear,scales="free"))
 	p  <- ggplot(df,aes(spr,fe)) + geom_line(aes(col=factor(gear)))
 	p  <- p + geom_vline(xintercept=target_spr,col="grey")
 	print(p)
