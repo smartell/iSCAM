@@ -33,13 +33,13 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 # 
 # Selectivity parameters for each gear.
 # 
-# s1    <- c( 85.0, 25.0, 45.0, 85.0 )
-# s2    <- c( 12.0, 5.50, 11.2, 12.0 )
-# s3    <- c( 00.0, 0.03, 0.03, 00.0 )
+s1    <- c( 85.0, 25.0, 45.0, 85.0 )
+s2    <- c( 12.0, 5.50, 11.2, 12.0 )
+s3    <- c( 00.0, 0.03, 0.03, 00.0 )
 
-s1    <- c(68.326,	38.409,	69.838,69.838)
-s2    <- c(3.338,   4.345,  5.133,5.133)
-s3    <- c(0.000,	0.072,	0.134,0.134)
+# s1    <- c(68.326,	38.409,	69.838,69.838)
+# s2    <- c(3.338,   4.345,  5.133,5.133)
+# s3    <- c(0.000,	0.072,	0.134,0.134)
 
 slx   <- list(s1=s1,s2=s2,s3=s3)
 ng    <- length(s1) 		# number of fleets
@@ -62,7 +62,7 @@ fspr       <- 0.05
 slim       <- c(82,NA,82,00)
 dmr        <- c(0.16,0.80,0.2,0.00)
 ak         <- c(0.727,0.165,0.104,0.013)
-# ak         <- rep(1/ng,length=ng)
+ak         <- rep(1/ng,length=ng)
 
 # List object for the default harvest policy inputs.
 hpDefaultInput <- list(allocation = ak,
@@ -257,11 +257,12 @@ equilibriumModel <- function(theta, type="YPR")
 			for(kk in gear)
 			{
 				va2 <- (va[k,] * va[kk,])
-				t0  <- oa / za
-				t1  <- lz*wa*va2/za
-				t3  <- sa - t0
+				# t0  <- oa / za
+				# t1  <- lz*wa*va2/za
+				# t3  <- sa - t0
+				dqa <- va2*wa*sa/za - va2*oa*wa/za^2
 
-				dphi.q[k,kk] <- as.double(qa[k,] %*% dlz[k,] + t1 %*% t3)
+				dphi.q[k,kk] <- as.double(qa[k,] %*% dlz[k,] + lz %*% dqa)
 			}
 			dre[k]  <- ro * phi.E * dphi.e[k] / (phi.e^2 *(kappa-1))
 		}
