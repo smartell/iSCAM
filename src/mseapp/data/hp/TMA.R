@@ -222,8 +222,8 @@ equilibriumModel <- function(theta, type="YPR")
 					dlz[k,j] <- sa[j-1]*(dlz[k,j-1]-lz[j-1]*va[k,j-1])
 					if(j == A)
 					{
-						dlz[k,j] <- dlz[k,j]/oa[j] 
-						- lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
+						dlz[k,j] <- dlz[k,j]/oa[j] -
+						 lz[j-1] * sa[j-1] * va[k,j] * sa[j] / (oa[j])^2
 					}
 				}
 			}

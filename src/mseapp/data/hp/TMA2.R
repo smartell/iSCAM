@@ -195,8 +195,8 @@ eqModel <- function(theta,selex,type="YPR")
 					dlz[,j,k] <- sa[,j-1]*(dlz[,j-1,k]-lz[,j-1]*va[,j-1,k])
 					if(j == A)
 					{
-						dlz[,j,k] <- dlz[,j,k]/oa[,j]
-								     - lz[,j-1]*sa[,j-1]*va[,j,k]*sa[,j]/(oa[,j])^2
+						dlz[,j,k] <- dlz[,j,k]/oa[,j] -
+								      lz[,j-1]*sa[,j-1]*va[,j,k]*sa[,j]/(oa[,j])^2
 					}
 				}
 			}
@@ -234,6 +234,17 @@ eqModel <- function(theta,selex,type="YPR")
 					t3  <- sa[h,] - t0
 					dq  <- as.double(qa[h,,k] %*% dlz[h,,k] + t1 %*% t3)
 					dphi.q[k,kk] <- dphi.q[k,kk] + dq
+					browser()
+
+					va2 <- va[h,,k] * va[h,,kk]
+					t0  <- oa[h,] / za[h,]
+					t1  <- lz[h,] *wa[h,]*va2/za[h,]
+					
+					dqa <- (va2*wa[h,]/za[h,])*(sa[h,] - t0)
+
+					 sum(dqa * lz[h,] + sum(dlz[h,,k] * qa[h,,k])
+					#dphi.q[k,kk] <- #
+					 browser()
 				}
 			}
 		}
@@ -265,6 +276,8 @@ eqModel <- function(theta,selex,type="YPR")
 				}
 			}
 		}
+		print("dye")
+		print(dye)
 		# dye   <- re * as.vector(phi.q %*% diag(1,ngear)) + fe * phi.q * dre + fe * re * dphi.q
 		# dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
 		
@@ -311,5 +324,10 @@ MP2$fstar = MP0$fstar + hh
 
 EM1    <- fn(MP1)
 EM2    <- fn(MP2)
+
+
+theta <- .getAgeSchedules(theta)
+selex <- .getSelectivities(MP1,theta$la)
+EM    <- eqModel(theta,selex)
 
 
