@@ -53,18 +53,18 @@ slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
 
 sel1 <- slx[1,]
 # aYPR -> Yield per recruit allocations.
-aYPR <- c(1.00,0.25,0.25,0.25)
+aYPR <- c(0.70,0.10,0.10,0.10)
 # aMPR -> Mortality per recruit allocations.
 aMPR <- c(0.25,0.25,0.25,0.25)
 
 # MANAGEMENT PROCEDURES
 fstar <- 0.05
 MP0   <- list(fstar=fstar,
-              slx=sel1,
-              pYPR=aYPR[1],
-              pMPR=aMPR[1],
-              slim=slim[1],
-              dmr=dmr[1],
+              slx=slx,
+              pYPR=aYPR,
+              pMPR=aMPR,
+              slim=slim,
+              dmr=dmr,
               type="YPR")
 
 # 
@@ -355,8 +355,8 @@ checkDerivatives <- function(MP)
 }
 
 main <- {
-	# df <- runProfile(MP0)
-	checkDerivatives(MP0)
+	df <- runProfile(MP0)
+	# checkDerivatives(MP0)
 }
 
 
