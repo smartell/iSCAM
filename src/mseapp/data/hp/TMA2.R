@@ -43,7 +43,7 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 # slx3 -> Shape parameter for exponential logistic (0-1, where 0=asymptotic)
 # slim -> minimum size limit for each gear.
 # dmr  -> Discard mortality rates for each gear.
-glbl <- c("Comm.","PSC","Sport","Other")
+glbl <- c("IFQ","PSC","SPT","PER")
 slx1 <- c(68.326,38.409,69.838,69.838)
 slx2 <- c(3.338,4.345,5.133,5.133)
 slx3 <- c(0.000,0.072,0.134,0.134)
@@ -52,7 +52,7 @@ dmr  <- c(0.16,0.80,0.20,0.20)
 slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
 
 # aYPR -> Yield per recruit allocations.
-aYPR <- c(0.20,0.20,0.40,0.20)
+aYPR <- c(0.25,0.25,0.25,0.25)
 # aMPR -> Mortality per recruit allocations.
 aMPR <- c(0.25,0.25,0.25,0.25)
 
@@ -152,13 +152,14 @@ xplogis <- function(x,mu,sd,g)
 # 
 eqModel <- function(theta,selex,type="YPR")
 {
-	lz  <- matrix(1,nrow=H,ncol=A)
-	za  <- matrix(0,nrow=H,ncol=A)
-	qa  <- array(0,dim=c(H,A,ngear))
-	pa  <- array(0,dim=c(H,A,ngear))
-	dlz <- array(0,dim=c(H,A,ngear))
 
 	with(c(theta,selex),{
+		lz  <- matrix(1,nrow=H,ncol=A)
+		za  <- matrix(0,nrow=H,ncol=A)
+		qa  <- array(0,dim=c(H,A,ngear))
+		pa  <- array(0,dim=c(H,A,ngear))
+		dlz <- array(0,dim=c(H,A,ngear))
+
 		# Survivorship under fished conditions at fstar
 		fbar <- fstar
 		lambda <- rep(1.0,length=ngear)
@@ -210,10 +211,10 @@ eqModel <- function(theta,selex,type="YPR")
 				phi.t <- phi.t + as.vector(lz[h,] %*% qp[h,,])
 			}
 			lam.t  <- ak / (phi.t/sum(phi.t))
-			lambda <- lam.t / mean(lam.t)
+			lambda <- lam.t / sum(lam.t)
 			# cat(iter," lambda = ",lambda,"\n")
 		}
-
+		
 		# incidence functions
 		phi.e  <- sum(lz*fa)
 		phi.q  <- phi.m <- dphi.e <- dre <- 0
@@ -234,17 +235,6 @@ eqModel <- function(theta,selex,type="YPR")
 					t3  <- sa[h,] - t0
 					dq  <- as.double(qa[h,,k] %*% dlz[h,,k] + t1 %*% t3)
 					dphi.q[k,kk] <- dphi.q[k,kk] + dq
-					browser()
-
-					va2 <- va[h,,k] * va[h,,kk]
-					t0  <- oa[h,] / za[h,]
-					t1  <- lz[h,] *wa[h,]*va2/za[h,]
-					
-					dqa <- (va2*wa[h,]/za[h,])*(sa[h,] - t0)
-
-					 sum(dqa * lz[h,] + sum(dlz[h,,k] * qa[h,,k])
-					#dphi.q[k,kk] <- #
-					 browser()
 				}
 			}
 		}
@@ -264,32 +254,39 @@ eqModel <- function(theta,selex,type="YPR")
 		me    <- re * mpr
 		
 		# Jacobian for yield
-		dye <- matrix(0,nrow=ngear,ncol=ngear)
-		for(k in 1:ngear)
-		{
-			for(kk in 1:ngear)
-			{
-				dye[k,kk] = fe[k]*re*dphi.q[k,kk] + fe[k]*phi.q[k]*dre[kk]
-				if(k == kk)
-				{
-					dye[k,kk] = dye[k,kk] + re*phi.q[k]
-				}
-			}
-		}
-		print("dye")
-		print(dye)
-		# dye   <- re * as.vector(phi.q %*% diag(1,ngear)) + fe * phi.q * dre + fe * re * dphi.q
+		 dye <- matrix(0,nrow=ngear,ncol=ngear)
+		 for(k in 1:ngear)
+		 {
+		 	for(kk in 1:ngear)
+		 	{
+		 		dye[k,kk] = fe[k]*re*dphi.q[k,kk] + fe[k]*phi.q[k]*dre[kk]
+		 		if(k == kk)
+		 		{
+		 			dye[k,kk] = dye[k,kk] + re*phi.q[k]
+		 		}
+		 	}
+		 }
+		# print(dye)
+		# dye   <- re * as.vector(phi.q * diag(1,ngear)) + fe * phi.q * dre + fe * re * dphi.q
 		# dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
+		
 		
 		# Yield equivalence
 		v  <- sqrt(diag(dye))
 		M  <- dye / (v %o% v)
+		
+		# CW yield equivalence
+
+		#v1 <- matrix(diag(dye),ngear,ngear,byrow=F)
+		#M1 <-  v1/dye
+
 		# print(v %o% v)
 		# print(t(matrix(v,4,4)))
 
-		print(M)
-		cat("ye\n",ye,"\n")
-
+		# print(M)
+		# cat("ye\n",ye,"\n")
+		#print(dye)
+		#browser()
 
 		# Equilibrium Model output
 		out <- list(
@@ -301,33 +298,45 @@ eqModel <- function(theta,selex,type="YPR")
 		            "ypr" = ypr,
 		            "mpr" = mpr,
 		            "dre" = dre,
-		            "dye" = dye
+		            "dye" = as.vector(diag(dye)),
+		            "fstar" = fstar,
+		            "gear" = slx$sector
 		            )
 
 		return(out)
 	})
 }
 
-fn <- function(MP)
+run <- function(MP)
 {
 	theta <- .getAgeSchedules(theta)
-	selex <- .getSelectivities(MP,theta$la)
-	EM    <- eqModel(theta,selex)
+	selex <- .getSelectivities(MP0,theta$la)
+	EM    <- eqModel(theta,selex,type=MP$type)
 	return(EM)
 }
 
+runProfile <- function(MP)
+{
+	fbar <- seq(0,0.32,length=100)
+	fn   <- function(log.fbar)
+	{
+		MP$fstar <- exp(log.fbar)
+		em       <- run(MP)
+		return(em)
+	}
+	runs <- lapply(log(fbar),fn)
+	df   <- ldply(runs,data.frame)
+	return(df)
+}
 
-hh  <- 0.00001
-MP1 <- MP2 <- MP0; 
-MP1$fstar = MP0$fstar - hh
-MP2$fstar = MP0$fstar + hh
-
-EM1    <- fn(MP1)
-EM2    <- fn(MP2)
+main <- {
+	df <- runProfile(MP0)
+}
 
 
-theta <- .getAgeSchedules(theta)
-selex <- .getSelectivities(MP1,theta$la)
-EM    <- eqModel(theta,selex)
-
+p  <- ggplot(df,aes(fe,ye))
+p  <- p + geom_line(aes(col=gear),size=1.3)
+p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
+p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
+print(p+facet_wrap(~gear,scales="free"))
 
