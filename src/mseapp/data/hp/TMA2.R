@@ -58,14 +58,16 @@ aYPR <- c(0.70,0.10,0.10,0.10)
 aMPR <- c(0.25,0.25,0.25,0.25)
 
 # MANAGEMENT PROCEDURES
-fstar <- 0.05
+fstar <- 0.107413
+sprTarget <- 0.45
 MP0   <- list(fstar=fstar,
               slx=slx,
               pYPR=aYPR,
               pMPR=aMPR,
               slim=slim,
               dmr=dmr,
-              type="YPR")
+              sprTarget=sprTarget,
+              type="MPR")
 
 # 
 # AGE SCHEDULE INFORMATION
@@ -171,7 +173,7 @@ eqModel <- function(theta,selex,type="YPR")
 			# browser()
 			for(h in sex)
 			{
-				print(fe)
+				# print(fe)
 				if(dim(va)[3] > 1){
 					fage   <- rowSums(fe*va[h,,])
 				}
@@ -213,7 +215,7 @@ eqModel <- function(theta,selex,type="YPR")
 
 			# Fmultipliers for fstar based on allocations
 			qp    <- switch(type,YPR=qa,MPR=pa)
-			ak    <- switch(type,YPR=pYPR,MPR=pQMPR)
+			ak    <- switch(type,YPR=pYPR,MPR=pMPR)
 			phi.t <- 0
 			for(h in sex)
 			{
@@ -300,9 +302,7 @@ eqModel <- function(theta,selex,type="YPR")
 		            "dre" = dre,
 		            "dye" = as.vector(diag(dye)),
 		            "fstar" = fstar,
-		            "gear" = slx$sector,
-		            "dlz"  = dlz,
-		            "lz"   = lz
+		            "gear" = slx$sector
 		            )
 
 		return(out)
@@ -320,6 +320,20 @@ run <- function(MP)
 	return(EM)
 }
 
+getFspr <- function(MP)
+{
+	fn <- function(log.fspr)
+	{
+		MP$fstar <- exp(log.fspr)
+		spr  	 <- run(MP)$spr
+		ofn   	 <- (spr-MP$sprTarget)^2
+		return(ofn)
+	}	
+	fit <- optim(log(MP$fstar),fn,method="BFGS")
+	print(fit)
+	return(fit)
+}
+
 runProfile <- function(MP)
 {
 	fbar <- seq(0,0.32,length=100)
@@ -333,30 +347,52 @@ runProfile <- function(MP)
 	df   <- ldply(runs,data.frame)
 	p  <- ggplot(df,aes(fe,ye))
 	p  <- p + geom_line(aes(col=gear),size=1.3)
-	p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
-	p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
+	# p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
+	# p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
 	print(p+facet_wrap(~gear,scales="free_x"))
 	return(df)
 }
 
-checkDerivatives <- function(MP)
+yieldEquivalence <- function(MP)
 {
-	hh <- 1e-5
-	mph <- mmh <- MP
-	mph$fstar <- MP$fstar + hh 
-	mmh$fstar <- MP$fstar - hh 
-	ph <- run(mph)
-	mh <- run(mmh)
-	mp <- run(MP)
+	# base   <- run(MP)
+	G    <- length(MP$pYPR)
+	x    <- rep(1,length=G)
+	D    <- rbind(rep(1,length=G),1 - diag(1,G))
 
-	ndlz <- (ph$lz-mh$lz)/(2*hh)
-	matplot(t(ndlz))
-	matlines(t(mp$dlz[,,1]))
+	fn   <- function(x){
+		print(x)
+		if(MP$type=="YPR")
+		{
+			ak      <- x * MP$pYPR
+			MP$pYPR = ak / sum(ak)
+		}
+		if(MP$type=="MPR")
+		{
+			ak      <- x * MP$pMPR
+			MP$pMPR = ak / sum(ak)	
+		}
+		ftmp     <- exp(getFspr(MP)$par)
+		MP$fstar <- ftmp
+		rtmp     <- run(MP)
+		rtmp$x   <- x
+		return(rtmp)
+	}
+	XX <- apply(D,1,fn)
+	df <- ldply(XX,data.frame)
+	Y  <- matrix(df$ye,ncol=G,byrow=TRUE)
+	y  <- Y[1,]
+	M  <- Y[-1,]
+	E  <- t(t(M)/y)
+
 }
 
+
+
 main <- {
+	fspr <- exp(getFspr(MP0)$par)
 	df <- runProfile(MP0)
-	# checkDerivatives(MP0)
+	E  <- yieldEquivalence(MP0)
 }
 
 
