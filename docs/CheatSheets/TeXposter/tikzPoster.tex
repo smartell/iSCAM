@@ -416,13 +416,15 @@
 	% 
 	\column{0.28}
 	\block{Allocation constraints}{
-		In cases where there is an explicit  agreement where each fleek $k$ is allocation a portion of the total catch, solving the system of equations involves finding a single average fishing mortality rate ($f^*$), and using a multiplier to derive $f_k = f^* \lambda_k$. The multiplier has an analytical solution that is based on the relative yield per recruit.
+		In cases where there is a fixed allocation among fleets, solving the system of equations involves finding a single average fishing mortality rate ($f^*$), and using a multiplier to derive $f_k = f^* \lambda_k$. The multiplier has an analytical solution that is based on the relative yield per recruit.
 
 		\begin{align}
 			f_k &= f^* \lambda_k \\
 			\lambda_k &= \dfrac{\Phi a_k}{\phi_k \left( \sum_k \dfrac{a_k \Phi}{\phi_k}\right)}\\ 
 			\mbox{where} \nonumber\\
-			\Phi &= \sum_k \phi_k
+			\Phi &= \sum_k \phi_k\\
+			\mbox{or} \nonumber\\
+			\lambda_k &= ypr/(f^* \phi_k)
 		\end{align}
 	}
 

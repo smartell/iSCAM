@@ -53,22 +53,21 @@ slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
 
 sel1 <- slx[1,]
 # aYPR -> Yield per recruit allocations.
-aYPR <- c(0.50,0.40,0.05,0.05)
+aYPR <- c(0.70,0.10,0.10,0.10)
 # aMPR -> Mortality per recruit allocations.
 aMPR <- c(0.25,0.25,0.25,0.25)
 
 # MANAGEMENT PROCEDURES
-fstar <- 0.05
-target_spr <- 0.40
-
+fstar <- 0.107413
+sprTarget <- 0.45
 MP0   <- list(fstar=fstar,
               slx=slx,
               pYPR=aYPR,
               pMPR=aMPR,
               slim=slim,
               dmr=dmr,
-              type="YPR",
-              target_spr = target_spr)
+              sprTarget=sprTarget,
+              type="MPR")
 
 # 
 # AGE SCHEDULE INFORMATION
@@ -174,7 +173,7 @@ eqModel <- function(theta,selex,type="YPR")
 			# browser()
 			for(h in sex)
 			{
-				#print(fe)
+				# print(fe)
 				if(dim(va)[3] > 1){
 					fage   <- rowSums(fe*va[h,,])
 				}
@@ -216,7 +215,7 @@ eqModel <- function(theta,selex,type="YPR")
 
 			# Fmultipliers for fstar based on allocations
 			qp    <- switch(type,YPR=qa,MPR=pa)
-			ak    <- switch(type,YPR=pYPR,MPR=pQMPR)
+			ak    <- switch(type,YPR=pYPR,MPR=pMPR)
 			phi.t <- 0
 			for(h in sex)
 			{
@@ -303,52 +302,12 @@ eqModel <- function(theta,selex,type="YPR")
 		            "dre" = dre,
 		            "dye" = as.vector(diag(dye)),
 		            "fstar" = fstar,
-		            "gear" = slx$sector,
-		            "dlz"  = dlz,
-		            "lz"   = lz,
-		            "ak"   = ak
-
+		            "gear" = slx$sector
 		            )
 
 		return(out)
 	})
 }
-
-
-runModel <- function(MP)
-{
-	# Initialize model
-	theta <- .getAgeSchedules(theta)
-	selex <- .getSelectivities(MP,theta$la)
-	selex$pYPR <- MP$pYPR
-	selex$pMPR <- MP$pMPR
-	
-	
-	
-	fn    <- function(log.fbar)
-	{
-		MP$fstar = exp(log.fbar)
-		theta <- .getAgeSchedules(theta)
-		selex <- .getSelectivities(MP,theta$la)
-		selex$pYPR <- MP$pYPR
-		selex$pMPR <- MP$pMPR
-		em <- eqModel(theta,selex,type=MP$type)
-		print(em$spr)
-		return((em$spr - MP$target_spr)^2)
-	}
-	# Perform nonlinear search to find Fspr = spr_target
-	
-	fit <- optim(log(MP$fstar),fn,method="BFGS")
-	MP$fstar <- exp(fit$par)
-	theta <- .getAgeSchedules(theta)
-	selex <- .getSelectivities(MP,theta$la)
-	selex$pYPR <- MP$pYPR
-	selex$pMPR <- MP$pMPR
-	
-	EM    <- eqModel(theta,selex,type=MP$type)
-	return(EM)
-}
-
 
 run <- function(MP)
 {
@@ -359,6 +318,20 @@ run <- function(MP)
 	
 	EM    <- eqModel(theta,selex,type=MP$type)
 	return(EM)
+}
+
+getFspr <- function(MP)
+{
+	fn <- function(log.fspr)
+	{
+		MP$fstar <- exp(log.fspr)
+		spr  	 <- run(MP)$spr
+		ofn   	 <- (spr-MP$sprTarget)^2
+		return(ofn)
+	}	
+	fit <- optim(log(MP$fstar),fn,method="BFGS")
+	print(fit)
+	return(fit)
 }
 
 runProfile <- function(MP)
@@ -374,121 +347,52 @@ runProfile <- function(MP)
 	df   <- ldply(runs,data.frame)
 	p  <- ggplot(df,aes(fe,ye))
 	p  <- p + geom_line(aes(col=gear),size=1.3)
-	p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
-	p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
+	# p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
+	# p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
 	print(p+facet_wrap(~gear,scales="free_x"))
 	return(df)
 }
 
-runProfile2 <- function(MP)
+yieldEquivalence <- function(MP)
 {
-	PSCaks<-seq(0.4,0.01,by=-0.01)
-	
+	# base   <- run(MP)
+	G    <- length(MP$pYPR)
+	x    <- rep(1,length=G)
+	D    <- rbind(rep(1,length=G),1 - diag(1,G))
 
-  	if(MP$type=="YPR"){
-  		fn   <- function(PSCak)
+	fn   <- function(x){
+		print(x)
+		if(MP$type=="YPR")
 		{
-  			othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])
-			MP$pYPR[2]<- PSCak
-			MP$pYPR[-2]<- (1-PSCak)*othak
-			
-			
-			
-			em       <- runModel(MP)
-			return(em)
+			ak      <- x * MP$pYPR
+			MP$pYPR = ak / sum(ak)
 		}
-	}else{
-		fn   <- function(PSCak)
+		if(MP$type=="MPR")
 		{
-			othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])
-			MP$pMPR[2]<- PSCak
-			MP$pMPR[-2]<- (1-PSCak)*othak
-			em       <- runModel(MP)
-			return(em)
+			ak      <- x * MP$pMPR
+			MP$pMPR = ak / sum(ak)	
 		}
-	}	
+		ftmp     <- exp(getFspr(MP)$par)
+		MP$fstar <- ftmp
+		rtmp     <- run(MP)
+		rtmp$x   <- x
+		return(rtmp)
+	}
+	XX <- apply(D,1,fn)
+	df <- ldply(XX,data.frame)
+	Y  <- matrix(df$ye,ncol=G,byrow=TRUE)
+	y  <- Y[1,]
+	M  <- Y[-1,]
+	E  <- t(t(M)/y)
 
-  
-	
-
-	
-	
-	runs <- lapply(PSCaks,fn)
-	df   <- ldply(runs,data.frame)
-
-	AK_PSC <- rep(PSCaks, each=length(MP$pYPR))
-	ye_PSC <- rep(df$ye[df$gear=="PSC"], each=length(MP$pYPR))
-	
-	gr<-unique(df$gear)
-	tt_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[2]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]
-	to_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]
-	ye_tot <- rep(tt_ye, each=length(MP$pYPR))
-	ye_oth <- rep(to_ye, each=length(MP$pYPR))
-
-	#mylm<-lm(df$ye[df$gear=="IFQ"]~df$ak[df$gear=="IFQ"])
-	#plot(mylm)
-
-	df1 <- cbind(df,AK_PSC,ye_PSC,ye_tot,ye_oth)
-	df2 <- cbind(AK_PSC,ye_PSC,ye_tot,ye_oth)
-	mdf<-melt(df1)
-
-	p  <- ggplot(df1,aes(ye_PSC,ye_tot))
-	p  <- p + geom_line(aes(col=gear),size=1.3)
-	print(p)
-	
-	p  <- ggplot(mdf,aes(variable,value))
-	p  <- p + geom_line(aes(col=gear),size=1.3)
-	print(p)
-
-	return(df1)
 }
 
-df1<-runProfile2(MP0)
 
-p  <- ggplot(df1,aes(AK_PSC,round(spr,6)))
-p  <- p + geom_line(aes(col=gear),size=1.3)
-print(p)
-
-p  <- ggplot(df1,aes(ye_PSC,ye/ye_PSC))
-p  <- p + geom_line(aes(col=gear),size=1.3)
-print(p)
-
-p  <- ggplot(df1,aes(ye_PSC,ye_oth))
-p  <- p + geom_line(aes(col=gear),size=1.3)
-print(p)
-
-p  <- ggplot(df1,aes(AK_PSC,ypr))
-p  <- p + geom_line(aes(col=gear),size=1.3)
-
-print(p+facet_wrap(~gear,scales="free_x"))
-	
-p  <- ggplot(df1,aes(ye_PSC,ye))
-p  <- p + geom_line(aes(col=gear),size=1.3) 
-print(p)
-print(p+facet_wrap(~gear,scales="fixed"))
-		
-
-
-
-names(df1)
-checkDerivatives <- function(MP)
-{
-	hh <- 1e-5
-	mph <- mmh <- MP
-	mph$fstar <- MP$fstar + hh 
-	mmh$fstar <- MP$fstar - hh 
-	ph <- run(mph)
-	mh <- run(mmh)
-	mp <- run(MP)
-
-	ndlz <- (ph$lz-mh$lz)/(2*hh)
-	matplot(t(ndlz))
-	matlines(t(mp$dlz[,,1]))
-}
 
 main <- {
+	fspr <- exp(getFspr(MP0)$par)
 	df <- runProfile(MP0)
-	# checkDerivatives(MP0)
+	E  <- yieldEquivalence(MP0)
 }
 
 
