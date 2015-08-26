@@ -48,26 +48,27 @@ slx1 <- c(68.326,38.409,69.838,69.838)
 slx2 <- c(3.338,4.345,5.133,5.133)
 slx3 <- c(0.000,0.072,0.134,0.134)
 slim <- c(82,00,82,82)
-dmr  <- c(0.16,0.80,0.20,0.20)
+dmr  <- c(0.16,0.80,0.20,0.00)
 slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
 
 sel1 <- slx[1,]
 # aYPR -> Yield per recruit allocations.
-aYPR <- c(0.70,0.10,0.10,0.10)
+aYPR <- c(0.66,0.18,0.14,0.02)
+# aYPR <- c(0.666541,0.177337,0.134677,0.021445)
 # aMPR -> Mortality per recruit allocations.
-aMPR <- c(0.25,0.25,0.25,0.25)
+aMPR <- c(0.434,0.430,0.120,0.015)
 
 # MANAGEMENT PROCEDURES
 fstar <- 0.107413
 sprTarget <- 0.45
 MP0   <- list(fstar=fstar,
               slx=slx,
-              pYPR=aYPR,
-              pMPR=aMPR,
+              pYPR=aYPR/sum(aYPR),
+              pMPR=aMPR/sum(aMPR),
               slim=slim,
               dmr=dmr,
               sprTarget=sprTarget,
-              type="MPR")
+              type="YPR")
 
 # 
 # AGE SCHEDULE INFORMATION
@@ -166,7 +167,7 @@ eqModel <- function(theta,selex,type="YPR")
 		# Survivorship under fished conditions at fstar
 		fbar <- fstar
 		lambda <- rep(1.0,length=ngear)
-		for(iter in 1:3)
+		for(iter in 1:4)
 		{
 			# total mortality and survival rates
 			fe <- fbar * lambda
@@ -391,6 +392,8 @@ yieldEquivalence <- function(MP)
 
 main <- {
 	fspr <- exp(getFspr(MP0)$par)
+	MP0$fstar = fspr
+	M0 <- run(MP0)
 	df <- runProfile(MP0)
 	E  <- yieldEquivalence(MP0)
 }
