@@ -411,10 +411,28 @@
 \end{columns}
 
 \begin{columns}
-	\column{1}
+	% 
+	% ALLOCATION AGREEMENTS
+	% 
+	\column{0.28}
+	\block{Allocation constraints}{
+		In cases where there is a fixed allocation among fleets, solving the system of equations involves finding a single average fishing mortality rate ($f^*$), and using a multiplier to derive $f_k = f^* \lambda_k$. The multiplier has an analytical solution that is based on the relative yield per recruit.
+
+		\begin{align}
+			f_k &= f^* \lambda_k \\
+			\lambda_k &= \dfrac{\Phi a_k}{\phi_k \left( \sum_k \dfrac{a_k \Phi}{\phi_k}\right)}\\ 
+			\mbox{where} \nonumber\\
+			\Phi &= \sum_k \phi_k\\
+			\mbox{or} \nonumber\\
+			\lambda_k &= ypr/(f^* \phi_k)
+		\end{align}
+	}
+
+
+	\column{0.5}
 	\useblockstyle{Minimal}
 	\block{Post-its}{
-		\centering
+		% \centering
 		\includegraphics[width=0.40\linewidth,keepaspectratio=true,trim=-5cm 0 0 15cm]{./whiteBoard.png}
 	}
 	\useblockstyle{TornOut}
@@ -423,7 +441,7 @@
 	% 
 	\note[
 		width=18cm,
-		targetoffsetx=-50cm,
+		targetoffsetx=-10cm,
 		targetoffsety=5cm,
 		rotate=05
 		]{

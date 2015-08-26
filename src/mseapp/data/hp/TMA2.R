@@ -1,0 +1,399 @@
+# --------------------------------------------------------------------------- #
+# TOTAL MORTALITY ALLOCATION
+# AUTHOR: Steven Martell
+# This is an equilibrium model for allocating the total mortality rate among 
+# one or more fisheries.
+
+# TODO
+# -[X] Change algorithm to estimate fbar only.
+# --------------------------------------------------------------------------- #
+library(plyr)
+library(ggplot2)
+
+# 
+# STOCK PARAMETERS
+# 
+A     <- 30					# Plus group Age
+age   <- 1:A 				# vector of ages
+H     <- 2                  # number of sexes
+sex   <- 1:H 				# vector of sex indexes (F=1,M=2)
+ro    <- 1.0            	# unfished equilibrium recruitment
+h     <- 0.75				# steepness of the B-H SRR
+kappa <- 4.0 * h / (1.0 - h)# recruitmetn compensation
+m     <- c(0.15,0.16)		# sex-specific natural mortality rate
+winf  <- c( 79.1688, 22.9836)
+linf  <- c(150.8458,102.9795)
+vbk	  <- c(  0.0795,  0.0975)
+to	  <- c(  0.5970,  1.2430)
+b	  <- 3.24
+a	  <- 0.00000692
+c     <- c(0,0)				# power parameter for age-dependent M
+
+ahat  <- c(11.589,1000)
+ghat  <- c(1.7732,0.01)
+
+theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
+              winf=winf,vbk=vbk,ahat=ahat,ghat=ghat)
+
+
+# 
+# SELECTIVITY PARAMETERS
+# slx1 -> Length at 50% selectivity.
+# slx2 -> STD in length-at-50% selectivity.
+# slx3 -> Shape parameter for exponential logistic (0-1, where 0=asymptotic)
+# slim -> minimum size limit for each gear.
+# dmr  -> Discard mortality rates for each gear.
+glbl <- c("IFQ","PSC","SPT","PER")
+slx1 <- c(68.326,38.409,69.838,69.838)
+slx2 <- c(3.338,4.345,5.133,5.133)
+slx3 <- c(0.000,0.072,0.134,0.134)
+slim <- c(82,00,82,82)
+dmr  <- c(0.16,0.80,0.20,0.20)
+slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
+
+sel1 <- slx[1,]
+# aYPR -> Yield per recruit allocations.
+aYPR <- c(0.70,0.10,0.10,0.10)
+# aMPR -> Mortality per recruit allocations.
+aMPR <- c(0.25,0.25,0.25,0.25)
+
+# MANAGEMENT PROCEDURES
+fstar <- 0.107413
+sprTarget <- 0.45
+MP0   <- list(fstar=fstar,
+              slx=slx,
+              pYPR=aYPR,
+              pMPR=aMPR,
+              slim=slim,
+              dmr=dmr,
+              sprTarget=sprTarget,
+              type="MPR")
+
+# 
+# AGE SCHEDULE INFORMATION
+# 
+.getAgeSchedules <- function(theta)
+{
+	with(theta,{
+		# Length-at-age, weight-at-age, mature weight-at-age
+		vonb <- function(age,linf,k,to) {return( linf*(1-exp(-k*(age+to))) )}
+		la <- sapply(age,vonb,linf=linf,k=vbk,to=to)
+		wa <- a*la^b
+		ma <- sapply(age,plogis,location=ahat,scale=ghat);  ma[,1:7] <- 0
+		fa <- ma * wa
+
+		# Age-dependent natural mortality (Lorenzen)
+		getM <- function(age,vbk,m,c){
+			t1 <- exp(vbk*(age+2))-1
+			t2 <- exp(vbk*(age+1))-1
+			sa <- (t1/t2)^(-m/vbk)
+			mx=m*((log(t1)-log(t2))/vbk)^c
+			return(mx)
+		}
+		mx <- sapply(age,getM,m=m,vbk=vbk,c=c)
+
+		# Survivorship at unfished conditions
+		lx <- matrix(0,H,A)
+		for(i in age)
+		{
+			if(i == min(age))
+			{
+				lx[,i] <- 1.0/H
+			}
+			else
+			{
+				lx[,i] <- lx[,i-1] * exp(-mx[,i-1])
+			}
+			if(i == A)
+			{
+				lx[,i] <- lx[,i] / (1-exp(-mx[,i]))
+			}
+		}
+		phi.E <- sum(lx*fa)
+
+		# List objects to return
+		ageSc <- list(la=la,wa=wa,ma=ma,fa=fa,lx=lx,mx=mx,phi.E=phi.E)
+		theta <- c(theta,ageSc)
+		return(theta)
+	})
+}
+
+# 
+# GET SELECTIVITIES 
+# mp - a list object representing the procedure
+.getSelectivities <- function(mp,la)
+{
+	
+	with (mp,{
+		ngear <- dim(slx)[1]
+		va <- array(0,dim=c(H,A,ngear))
+		for(k in 1:ngear)
+		for(h in sex)
+		{
+			sc <- xplogis(la[h,],slx1[k],slx2[k],slx3[k])
+			ra <- plogis(la[h,],slim[k],0.1*la[h,])
+			da <- (1-ra)*dmr[k]
+			va[h,,k] <- sc*(ra+da)
+		}
+
+		return(list(ngear=ngear,fstar=fstar,va=va))
+	})
+}
+
+# 
+# EXPONENTIAL LOGISTIC FUNCTION FOR SELECTIVITY
+# 
+xplogis <- function(x,mu,sd,g)
+{
+	s <- (1/(1-g))*((1-g)/g)^g
+	p <- plogis(x,mu,sd)*exp(g*(mu-x)/sd)
+	return(s*p)
+}
+
+# 
+# EQUILIBRIUM MODEL
+# 
+eqModel <- function(theta,selex,type="YPR")
+{
+
+	with(c(theta,selex),{
+		lz  <- matrix(1/H,nrow=H,ncol=A)
+		za  <- matrix(0,nrow=H,ncol=A)
+		qa  <- array(0,dim=c(H,A,ngear))
+		pa  <- array(0,dim=c(H,A,ngear))
+		dlz <- array(0,dim=c(H,A,ngear))
+
+		# Survivorship under fished conditions at fstar
+		fbar <- fstar
+		lambda <- rep(1.0,length=ngear)
+		for(iter in 1:3)
+		{
+			# total mortality and survival rates
+			fe <- fbar * lambda
+			# browser()
+			for(h in sex)
+			{
+				# print(fe)
+				if(dim(va)[3] > 1){
+					fage   <- rowSums(fe*va[h,,])
+				}
+				else if(dim(va)[3] == 1){
+					fage   <- fe * va[h,,]
+				}
+				za[h,] <- mx[h,] + fage
+			}
+			sa <- exp(-za)
+			oa <- 1.0 - sa
+
+			# per recruit yield & numbers for gear k
+			for(k in 1:ngear)
+			{
+				qa[,,k] <- va[,,k] * wa * oa / za
+				pa[,,k] <- va[,,k] * oa / za
+			}
+
+			#  survivorship
+			for(j in 2:A)
+			{
+				lz[,j] <- lz[,j-1] * sa[,j-1]
+				if(j == A)
+				{
+					lz[,j] <- lz[,j] / oa[,j]
+				}
+
+				# partial derivatives
+				for(k in 1:ngear)
+				{
+					dlz[,j,k] <- sa[,j-1]*(dlz[,j-1,k]-lz[,j-1]*va[,j-1,k])
+					if(j == A)
+					{
+						dlz[,j,k] <- dlz[,j,k]/oa[,j] - lz[,j-1]*sa[,j-1]*va[,j,k]*sa[,j]/oa[,j]^2
+					}
+				}
+			}
+
+
+			# Fmultipliers for fstar based on allocations
+			qp    <- switch(type,YPR=qa,MPR=pa)
+			ak    <- switch(type,YPR=pYPR,MPR=pMPR)
+			phi.t <- 0
+			for(h in sex)
+			{
+				phi.t <- phi.t + as.vector(lz[h,] %*% qp[h,,])
+			}
+			
+			
+			lam.t  <- ak / (phi.t/sum(phi.t))
+			lambda <- lam.t / sum(lam.t)
+			# cat(iter," lambda = ",lambda,"\n")
+		}
+
+		# incidence functions
+		phi.e  <- sum(lz*fa)
+		phi.q  <- phi.m <- dphi.e <- dre <- 0
+		dphi.q <- matrix(0,ngear,ngear) 
+		for(h in sex)
+		{
+			dphi.e <- dphi.e + as.vector(fa[h,] %*% dlz[h,,])
+			phi.q <- phi.q + as.vector(lz[h,] %*% qa[h,,])
+			phi.m <- phi.m + as.vector(lz[h,] %*% pa[h,,])
+			# derivatives for yield equivalence
+			for(k in 1:ngear)
+			{
+				for(kk in 1:ngear)
+				{
+					va2 <- va[h,,k] * va[h,,kk]
+					dqa <- va2*wa[h,]*sa[h,]/za[h,] - va2*oa[h,]*wa[h,]/za[h,]^2
+					dpq  <- as.double(qa[h,,k] %*% dlz[h,,k] + lz[h,] %*% dqa)
+					dphi.q[k,kk] <- dphi.q[k,kk] + dpq
+				}
+			}
+		}
+		spr   <- (phi.e/phi.E)
+		ispr  <- (phi.E/phi.e)
+
+		# equilibrium recruitment & sensitivity
+		re    <- max(0,ro*(kappa-ispr)/(kappa-1))
+		dre   <- ro * phi.E * dphi.e / (phi.e^2 * (kappa-1))
+		
+		# yield per recuit and yield
+		ypr   <- fe * phi.q
+		ye    <- re * ypr
+
+		# mortality per recruit and mortality
+		mpr   <- fe * phi.m
+		me    <- re * mpr
+		
+		# Jacobian for yield
+		dye <- matrix(0,nrow=ngear,ncol=ngear)
+		for(k in 1:ngear)
+		{
+			for(kk in 1:ngear)
+			{
+				dye[k,kk] = fe[k]*re*dphi.q[k,kk] + fe[k]*phi.q[k]*dre[kk]
+				if(k == kk)
+				{
+					dye[k,kk] = dye[k,kk] + re*phi.q[k]
+				}
+			}
+		}
+		# dye   <- re * as.vector(phi.q * diag(1,ngear)) + fe * phi.q * dre + fe * re * dphi.q
+		# dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
+		
+		# Yield equivalence
+		v  <- sqrt(diag(dye))
+		M  <- dye / (v %o% v)
+		# print(v %o% v)
+		# print(t(matrix(v,4,4)))
+
+		# print(M)
+		# cat("ye\n",ye,"\n")
+
+
+		# Equilibrium Model output
+		out <- list(
+		            "fe"  = fe,
+		            "ye"  = ye,
+		            "me"  = me,
+		            "re"  = re,
+		            "spr" = spr,
+		            "ypr" = ypr,
+		            "mpr" = mpr,
+		            "dre" = dre,
+		            "dye" = as.vector(diag(dye)),
+		            "fstar" = fstar,
+		            "gear" = slx$sector
+		            )
+
+		return(out)
+	})
+}
+
+run <- function(MP)
+{
+	theta <- .getAgeSchedules(theta)
+	selex <- .getSelectivities(MP,theta$la)
+	selex$pYPR <- MP$pYPR
+	selex$pMPR <- MP$pMPR
+	
+	EM    <- eqModel(theta,selex,type=MP$type)
+	return(EM)
+}
+
+getFspr <- function(MP)
+{
+	fn <- function(log.fspr)
+	{
+		MP$fstar <- exp(log.fspr)
+		spr  	 <- run(MP)$spr
+		ofn   	 <- (spr-MP$sprTarget)^2
+		return(ofn)
+	}	
+	fit <- optim(log(MP$fstar),fn,method="BFGS")
+	print(fit)
+	return(fit)
+}
+
+runProfile <- function(MP)
+{
+	fbar <- seq(0,0.32,length=100)
+	fn   <- function(log.fbar)
+	{
+		MP$fstar <- exp(log.fbar)
+		em       <- run(MP)
+		return(em)
+	}
+	runs <- lapply(log(fbar),fn)
+	df   <- ldply(runs,data.frame)
+	p  <- ggplot(df,aes(fe,ye))
+	p  <- p + geom_line(aes(col=gear),size=1.3)
+	# p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
+	# p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
+	print(p+facet_wrap(~gear,scales="free_x"))
+	return(df)
+}
+
+yieldEquivalence <- function(MP)
+{
+	# base   <- run(MP)
+	G    <- length(MP$pYPR)
+	x    <- rep(1,length=G)
+	D    <- rbind(rep(1,length=G),1 - diag(1,G))
+
+	fn   <- function(x){
+		print(x)
+		if(MP$type=="YPR")
+		{
+			ak      <- x * MP$pYPR
+			MP$pYPR = ak / sum(ak)
+		}
+		if(MP$type=="MPR")
+		{
+			ak      <- x * MP$pMPR
+			MP$pMPR = ak / sum(ak)	
+		}
+		ftmp     <- exp(getFspr(MP)$par)
+		MP$fstar <- ftmp
+		rtmp     <- run(MP)
+		rtmp$x   <- x
+		return(rtmp)
+	}
+	XX <- apply(D,1,fn)
+	df <- ldply(XX,data.frame)
+	Y  <- matrix(df$ye,ncol=G,byrow=TRUE)
+	y  <- Y[1,]
+	M  <- Y[-1,]
+	E  <- t(t(M)/y)
+
+}
+
+
+
+main <- {
+	fspr <- exp(getFspr(MP0)$par)
+	df <- runProfile(MP0)
+	E  <- yieldEquivalence(MP0)
+}
+
+
+
