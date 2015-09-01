@@ -58,17 +58,25 @@ aYPR <- c(0.66,0.18,0.14,0.02)
 # aMPR -> Mortality per recruit allocations.
 aMPR <- c(0.434,0.430,0.120,0.015)
 
+
+# fixed PSC limit for status quo
+pscLimit  = c(NA,NA,NA,NA)
+
 # MANAGEMENT PROCEDURES
 fstar <- 0.107413
 sprTarget <- 0.45
-MP0   <- list(fstar=fstar,
-              slx=slx,
-              pYPR=aYPR/sum(aYPR),
-              pMPR=aMPR/sum(aMPR),
-              slim=slim,
-              dmr=dmr,
-              sprTarget=sprTarget,
-              type="YPR")
+MP0   <- list(	fstar     = fstar,
+				slx       = slx,
+				pYPR      = aYPR/sum(aYPR),
+				pMPR      = aMPR/sum(aMPR),
+				pscLimit  = pscLimit,
+				slim      = slim,
+				dmr       = dmr,
+				sprTarget = sprTarget,
+				type      = "YPR")
+
+MP1 <- MP0
+MP1$pscLimit = c(NA,0.1,NA,NA)
 
 # 
 # AGE SCHEDULE INFORMATION
@@ -335,6 +343,35 @@ getFspr <- function(MP)
 	return(fit)
 }
 
+getFsprPSC <- function(MP)
+{
+	ak    <- MP$pYPR
+	bGear <- !is.na(MP$pscLimit)
+	iGear <- which(!is.na(MP$pscLimit))
+	pk    <- ak[!bGear]/sum(ak[!bGear])
+	
+	fn <- function(phi)
+	{
+		MP$fstar <- exp(phi[1])
+		tmp        <- ak
+		tmp[bGear] <- phi[-1]
+		tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
+
+		# print(tmp)
+		MP$pYPR  <- tmp
+		EM       <- run(MP)
+		spr  	 <- EM$spr
+		psc      <- EM$ye
+		ofn   	 <- (spr-MP$sprTarget)^2 + sum((psc-MP$pscLimit)^2,na.rm=TRUE)
+		
+		return(ofn)
+	}
+	parms <- c(log(MP$fstar),ak[!ig])
+	fit   <- optim(parms,fn,method="BFGS")
+	print(fn(fit$par))
+	return(fit)
+}
+
 runProfile <- function(MP)
 {
 	fbar <- seq(0,0.32,length=100)
@@ -396,7 +433,11 @@ main <- {
 	M0 <- run(MP0)
 	df <- runProfile(MP0)
 	E  <- yieldEquivalence(MP0)
-}
 
+	fspr <- exp(getFsprPSC(MP1)$par[1])
+	MP1$fstar = fspr
+	M1 <- run(MP1)
+
+}
 
 
