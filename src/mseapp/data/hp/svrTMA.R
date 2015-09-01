@@ -3,7 +3,7 @@
 getArgsTMA <- function(input){
 
     print("in getargs")
-    argsTMA <- list(Dist_type=input$Dist_type,sprtarget=input$ni_sprTarget,akdf=input$tbl)
+    argsTMA <- list(Dist_type=input$Dist_type,sprtarget=input$ni_sprTarget,akdf=input$tbl, limPsc=input$pscLim)
     print(argsTMA)
     
     return(argsTMA)
@@ -11,7 +11,7 @@ getArgsTMA <- function(input){
 
 
 
-getResultAllocation <- function(Dist_type,sprtarget,akdf){
+getResultAllocation <- function(Dist_type,sprtarget,akdf,limPsc){
 
     print("in getResultAllocation")
 
@@ -25,6 +25,8 @@ getResultAllocation <- function(Dist_type,sprtarget,akdf){
 
         MP$pMPR<-as.numeric(akdf[,1])
         MP$type<-"MPR"
+
+        #MP$pscLimit  <-c(NA,as.numeric(limPsc),NA,NA)
  
         MP$fstar    <- exp(getFspr(MP)$par)
 
@@ -40,7 +42,9 @@ getResultAllocation <- function(Dist_type,sprtarget,akdf){
         MP$pYPR<-as.numeric(akdf[,1])
         MP$type<-"YPR"
 
-        MP0$fstar  <- exp(getFspr(MP)$par)
+        #MP$pscLimit  <-c(NA,as.numeric(limPsc),NA,NA)
+
+        MP$fstar  <- exp(getFspr(MP)$par)
 
         rtmp     <- run(MP)
         
@@ -48,9 +52,36 @@ getResultAllocation <- function(Dist_type,sprtarget,akdf){
    
     } else if(Dist_type=="fixed PSC"){
 
-        EM<-run(MP0)
+        MP<-MP0
+
+        MP$type<-"YPR"
+
+        MP$pscLimit  <-c(NA,as.numeric(limPsc),NA,NA) 
+
+
+        ak    <- MP$pYPR
+        bGear <- !is.na(MP$pscLimit)
+        iGear <- which(!is.na(MP$pscLimit))
+        pk    <- ak[!bGear]/sum(ak[!bGear])
+
+        fs<-getFsprPSC(MP)
         
-        out <- data.frame(YPR=EM$ypr, MPR=EM$mpr, yield=EM$ye,f=EM$fe) 
+        tmp        <- ak
+        tmp[bGear] <- fs$par[-1]
+        tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
+
+        
+        
+        
+
+        MP$fstar  <- exp(fs$par[1])
+
+        MP$pYPR<- tmp
+
+        rtmp  <- run(MP)
+
+        
+        out <- data.frame(YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe) 
     }
     print(out)
     return(out)

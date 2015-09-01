@@ -373,10 +373,13 @@ getFsprPSC <- function(MP)
 		
 		return(ofn)
 	}
-	parms <- c(log(MP$fstar),ak[!ig])
-	fit   <- optim(parms,fn,method="BFGS")
+	parms <- c(log(MP$fstar),ak[iGear])
+	fit   <- optim(parms,fn,method="BFGS",control = list(maxit=1000))
 	print(fn(fit$par))
 	return(fit)
+
+
+
 }
 
 runProfile <- function(MP)
@@ -441,8 +444,25 @@ main <- function(){
 	df <- runProfile(MP0)
 	E  <- yieldEquivalence(MP0)
 
-	fspr <- exp(getFsprPSC(MP1)$par[1])
+	
+	ak    <- MP1$pYPR
+	bGear <- !is.na(MP1$pscLimit)
+	iGear <- which(!is.na(MP1$pscLimit))
+	pk    <- ak[!bGear]/sum(ak[!bGear])
+
+
+	fs<-getFsprPSC(MP1)
+
+	tmp        <- ak
+	tmp[bGear] <- fs$par[2]
+	tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
+
+
+	
+	fspr <- exp(fs$par[1])
 	MP1$fstar = fspr
+
+	MP1$pYPR<-tmp
 	M1 <- run(MP1)
 
 }

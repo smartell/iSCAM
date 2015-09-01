@@ -39,15 +39,7 @@ buildTMAGui  <- function(){
                         htable("pscLim", colHeaders="provided")
 
                         ),
-                                #,
-    
-                                #column(6,                  
-                                #allocation table
-                                #    "PSC cap:"
-                                           #htable("pscLim", colHeaders="provided")
-                                #)
-                                #PSC limit      
-                            
+                                
                     
                         wellPanel( 
                             tableOutput("res_alloc")

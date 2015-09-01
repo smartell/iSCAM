@@ -87,15 +87,15 @@ shinyServer(function(input,output,session){
     	if (is.null(input$tbl)){
     		
 	   	    if(input$Dist_type=="yield per recruit"){
-			     tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+			     tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
 		    }
       	
     	    else if(input$Dist_type=="mortality per recruit"){
-    	   		tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+    	   		tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
 			}
 
             else if(input$Dist_type=="fixed PSC"){
-                tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+                tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
             }
 
         }else{
@@ -127,8 +127,11 @@ shinyServer(function(input,output,session){
    output$pscLim <- renderHtable({
 
         if (is.null(input$pscLim)){
+            
             pscLim<-data.frame(list(cap=0))
+        
         }else{
+        
             pscLim<-input$pscLim           
         }
 
