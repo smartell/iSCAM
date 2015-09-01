@@ -3,7 +3,7 @@
 getArgsTMA <- function(input){
 
     print("in getargs")
-    argsTMA <- list(Alloc_type=input$Allocation_type,sprtarget=input$ni_sprTarget,akdf=input$tbl)
+    argsTMA <- list(Dist_type=input$Dist_type,sprtarget=input$ni_sprTarget,akdf=input$tbl)
     print(argsTMA)
     
     return(argsTMA)
@@ -11,28 +11,46 @@ getArgsTMA <- function(input){
 
 
 
-getResultAllocation <- function(Alloc_type,sprtarget,akdf){
+getResultAllocation <- function(Dist_type,sprtarget,akdf){
 
     print("in getResultAllocation")
 
-    hpSTQ$target_spr <<- sprtarget
-    hpSTQ$allocation  <<- as.numeric(akdf[,1])
+    MP0$sprTarget <<- sprtarget
+
+    #hpSTQ$allocation  <<- as.numeric(akdf[,1])
         
-    if(Alloc_type=="mortality per recruit"){
+    if(Dist_type=="mortality per recruit"){
 
-        hpSTQ$type<<-"MPR"
-        tmp<-runModel(theta,hpSTQ)
-        YPR_allocation  <- tmp$ypr/sum(tmp$ypr)
-        out <- data.frame(YPR_allocation)   
+        MP<-MP0
+
+        MP$pMPR<-as.numeric(akdf[,1])
+        MP$type<-"MPR"
+ 
+        MP$fstar    <- exp(getFspr(MP)$par)
+
+        rtmp     <- run(MP) 
+        
+        out <- data.frame(YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe) 
+
    
-    }else if(Alloc_type=="yield per recruit"){
+    } else if(Dist_type=="yield per recruit"){
 
+        MP<-MP0
 
-        hpSTQ$type <<- "YPR"
-        tmp <- runModel(theta,hpSTQ)      
-        MPR_allocation  <- tmp$mpr/sum(tmp$mpr)
-        out <- data.frame(MPR_allocation)
+        MP$pYPR<-as.numeric(akdf[,1])
+        MP$type<-"YPR"
 
+        MP0$fstar  <- exp(getFspr(MP)$par)
+
+        rtmp     <- run(MP)
+        
+        out <- data.frame(YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe)   
+   
+    } else if(Dist_type=="fixed PSC"){
+
+        EM<-run(MP0)
+        
+        out <- data.frame(YPR=EM$ypr, MPR=EM$mpr, yield=EM$ye,f=EM$fe) 
     }
     print(out)
     return(out)

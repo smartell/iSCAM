@@ -55,61 +55,87 @@ shinyServer(function(input,output,session){
     ## Total mortality allocation (August 17, 2015)
     ## ------------------------------------------------------------ ##
 
+
     #
     # Allocation Input-output function
     #
     validate <- function(tbl){
 
-    		sumAlloc<-as.numeric(tbl$allocation)
+    		sumAlloc<-as.numeric(tbl[,1])
 
-    		if(sum(sumAlloc)>1){
-    		    updateTableStyle(session, "tbl", "invalid", 1:ng, 1)        
-    		}else if(sum(sumAlloc)<1){
-    		    updateTableStyle(session, "tbl", "warning", 1:ng, 1)
+    		if(sum(sumAlloc)>1.0){
+    		    updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 1) 
+                      
+    		}else if(sum(sumAlloc)<1.0){
+    		    updateTableStyle(session, "tbl", "warning", 1:(length(glbl)), 1)
+                
     		}else{
-    		    updateTableStyle(session, "tbl", "valid", 1:ng, 1)
+    		    updateTableStyle(session, "tbl", "valid", 1:(length(glbl)), 1)
     		}
+
+            if(input$Dist_type=="fixed PSC"){
+                    updateTableStyle(session, "tbl", "invalid", 2, 1)
+            }
 
 		}
 
 
 
+
     output$tbl <- renderHtable({
+
     	if (is.null(input$tbl)){
-    		rows <- ng
-    		nomes=NULL
-			
-			for (i in 1:ng){
-    			nomes[i]=paste0("fisheries ",i) 
-    	}     		
-    	
-    	if(input$Allocation_type=="yield per recruit"){
-					tbl<-data.frame(list(allocation=rep(0,ng)))	
-			}
-    	
-    	if(input$Allocation_type=="mortality per recruit"){
-    			tbl<-data.frame(list(allocation=rep(0,ng)))
+    		
+	   	    if(input$Dist_type=="yield per recruit"){
+			     tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+		    }
+      	
+    	    else if(input$Dist_type=="mortality per recruit"){
+    	   		tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
 			}
 
-      rownames(tbl) <- nomes  
-      validate(tbl)     
-      return(tbl)
-    	
-    	}else{
-      		tbl <- input$tbl
-          validate(tbl)
-      		return(tbl)
-    	}
-    	  
-    	print(input$tbl)
-	})  
+            else if(input$Dist_type=="fixed PSC"){
+                tbl<-data.frame(list(allocation=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+            }
+
+        }else{
+        
+            if(input$Dist_type=="yield per recruit"){
+                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+            }
+        
+            else if(input$Dist_type=="mortality per recruit"){
+                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+            }
+
+            else if(input$Dist_type=="fixed PSC"){ 
+                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
+                tbl[2,]<-0.0
+
+            }
+
+            #tbl <- input$tbl
+            
+        }
+
+    	validate(tbl)
+        return(tbl)
+	 
+      }) 
     
    
+   output$pscLim <- renderHtable({
 
-##   output$res_alloc <-renderTable({
-##        getResultAllocation(getArgsTMA(input))
-##        print("hello")
-##   })
+        if (is.null(input$pscLim)){
+            pscLim<-data.frame(list(cap=0))
+        }else{
+            pscLim<-input$pscLim           
+        }
+
+        return(pscLim)
+     
+      }) 
+
   
     getAlloc<-reactive(do.call(getResultAllocation,getArgsTMA(input)))
 

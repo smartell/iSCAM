@@ -12,30 +12,49 @@ buildTMAGui  <- function(){
 
    fluidPage( 
         sidebarLayout(
-            sidebarPanel("Total Mortality allocation",
+            sidebarPanel("Fisheries footprint",
+
                 fluidRow(
-                    selectInput("Allocation_type", "Enter Allocation Method:",c("yield per recruit", "mortality per recruit")),
                     
-                    wellPanel( "Enter Allocation:",
-                                        
-                        htable("tbl", colHeaders="provided")
-                    ),
-                    
-                    wellPanel( 
-
-                        tableOutput("res_alloc")
-                    ) 
-
-                )
+                    wellPanel( "SPR Target",
+                        numericInput("ni_sprTarget", "Enter SPR target",0.3,0,1,0.1)
+                    )
+                )     
+            
             ),
+            
             mainPanel(
 
+
                 fluidRow(
-                    wellPanel( "Harvest specs",
-                        numericInput("ni_sprTarget", "Enter SPR target",0.4,0,1,0.1)
-                    )
-                )            
-            )
+                    radioButtons("Dist_type", "Enter Distribution Method:",
+                        c("yield per recruit", "mortality per recruit","fixed PSC")),
+                        
+                    wellPanel(                  
+                        #allocation table
+                        "Fisheries footprint",
+                        htable("tbl", colHeaders=c("provided"),rowNames = c("provided")),
+
+                        "PSC cap:",
+                        htable("pscLim", colHeaders="provided")
+
+                        ),
+                                #,
+    
+                                #column(6,                  
+                                #allocation table
+                                #    "PSC cap:"
+                                           #htable("pscLim", colHeaders="provided")
+                                #)
+                                #PSC limit      
+                            
+                    
+                        wellPanel( 
+                            tableOutput("res_alloc")
+                        ) 
+
+                )
+            )           
         )
    ) 
                 
