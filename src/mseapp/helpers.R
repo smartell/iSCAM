@@ -24,7 +24,10 @@ if(!require("shinyTable"))    install_github("shinyTable", "trestletech")
 .UNITS      <- "(Mlb)"
 .LIB        <- "./data"
 .RFILES     <- list.files(.LIB,pattern="\\.[Rr]$",recursive=TRUE,full.names=TRUE)
-for(nm in .RFILES) source(file.path(nm), echo=FALSE, local=TRUE)
+for(nm in .RFILES){
+        print(nm)
+        source(file.path(nm), echo=FALSE, local=TRUE)
+}        
 
 
 #
