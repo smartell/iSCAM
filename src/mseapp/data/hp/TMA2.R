@@ -37,13 +37,20 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 
 
 # 
-# SELECTIVITY PARAMETERS
+# SELECTIVITY PARAMETERS - need to change these to the data given by ian
 # slx1 -> Length at 50% selectivity.
 # slx2 -> STD in length-at-50% selectivity.
 # slx3 -> Shape parameter for exponential logistic (0-1, where 0=asymptotic)
 # slim -> minimum size limit for each gear.
 # dmr  -> Discard mortality rates for each gear.
 glbl <- c("IFQ","PSC","SPT","PER")
+
+#sel from Ian's assessment
+
+
+
+
+
 slx1 <- c(68.326,38.409,69.838,69.838)
 slx2 <- c(3.338,4.345,5.133,5.133)
 slx3 <- c(0.000,0.072,0.134,0.134)
@@ -427,7 +434,7 @@ yieldEquivalence <- function(MP)
 
 
 
-main <- {
+main <- function(){
 	fspr <- exp(getFspr(MP0)$par)
 	MP0$fstar = fspr
 	M0 <- run(MP0)
