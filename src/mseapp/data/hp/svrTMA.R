@@ -33,7 +33,7 @@ getResultAllocation <- function(Dist_type,sprtarget,intbl,limPsc){
 
         rtmp     <- run(MP) 
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe) 
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
 
    
     }else if(Dist_type=="yield per recruit"){
@@ -48,7 +48,7 @@ getResultAllocation <- function(Dist_type,sprtarget,intbl,limPsc){
         
         rtmp     <- run(MP)
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe)   
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe)   
         
     }else if(Dist_type=="fixed PSC"){
 
@@ -87,7 +87,7 @@ getResultAllocation <- function(Dist_type,sprtarget,intbl,limPsc){
 
         
 
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,f=rtmp$fe) 
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
     }
     print(out)
     return(out)
