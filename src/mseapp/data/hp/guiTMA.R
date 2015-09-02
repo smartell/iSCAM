@@ -28,12 +28,12 @@ buildTMAGui  <- function(){
 
                 fluidRow(
                     radioButtons("Dist_type", "Enter Distribution Method:",
-                        c("yield per recruit", "mortality per recruit","fixed PSC")),
+                        c("yield per recruit", "mortality per recruit","fixed PSC"),selected="fixed PSC"),
                         
                     wellPanel(                  
                         #allocation table
                         "Fisheries footprint",
-                        htable("tbl", colHeaders=c("provided"),rowNames = c("provided")),
+                        htable("tbl",clickId="tblClick", colHeaders="provided",rowNames = "provided"),
 
                         "PSC cap:",
                         htable("pscLim", colHeaders="provided")

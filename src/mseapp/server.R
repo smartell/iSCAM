@@ -61,7 +61,7 @@ shinyServer(function(input,output,session){
     #
     validate <- function(tbl){
 
-    		sumAlloc<-as.numeric(tbl[,1])
+    		sumAlloc<-as.numeric(tbl[,"proportion"])
 
     		if(sum(sumAlloc)>1.0){
     		    updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 1) 
@@ -77,45 +77,45 @@ shinyServer(function(input,output,session){
                     updateTableStyle(session, "tbl", "invalid", 2, 1)
             }
 
+            
+
 		}
-
-
 
 
     output$tbl <- renderHtable({
 
-    	if (is.null(input$tbl)){
+    	if(is.null(input$tbl)){
     		
 	   	    if(input$Dist_type=="yield per recruit"){
-			     tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
-		    }
-      	
-    	    else if(input$Dist_type=="mortality per recruit"){
-    	   		tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
-			}
-
-            else if(input$Dist_type=="fixed PSC"){
+			     
+                 tbl<-data.frame(list(proportion=c(0.1,0.2,0.3,0.4)),row.names = c("IFQ","PSC","SPT","PER"))
+		    
+            }else if(input$Dist_type=="mortality per recruit"){
+    	   		
                 tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+			
+            }else if(input$Dist_type=="fixed PSC"){
+                
+                tbl<-data.frame(list(proportion=rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+            
             }
 
         }else{
         
             if(input$Dist_type=="yield per recruit"){
+                 
                  tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
-            }
-        
-            else if(input$Dist_type=="mortality per recruit"){
-                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
-            }
-
-            else if(input$Dist_type=="fixed PSC"){ 
-                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
-                tbl[2,]<-0.0
-
-            }
-
-            #tbl <- input$tbl
             
+            }else if(input$Dist_type=="mortality per recruit"){
+                
+                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+            
+            }else if(input$Dist_type=="fixed PSC"){ 
+                
+                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
+                tbl[2,1]<-0.0
+
+            }           
         }
 
     	validate(tbl)
@@ -128,7 +128,7 @@ shinyServer(function(input,output,session){
 
         if (is.null(input$pscLim)){
             
-            pscLim<-data.frame(list(cap=0))
+            pscLim<-data.frame(list(cap=0.1))
         
         }else{
         
