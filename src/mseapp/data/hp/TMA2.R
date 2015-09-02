@@ -41,15 +41,17 @@ theta <- list(A=A,ro=ro,h=h,kappa=kappa,m=m,age=age,linf=linf,
 # slx1 -> Length at 50% selectivity.
 # slx2 -> STD in length-at-50% selectivity.
 # slx3 -> Shape parameter for exponential logistic (0-1, where 0=asymptotic)
+# slx4 -> asymptote age.
 # slim -> minimum size limit for each gear.
 # dmr  -> Discard mortality rates for each gear.
 glbl <- c("IFQ","PSC","SPT","PER")
 slx1 <- c(68.326,38.409,69.838,69.838)
 slx2 <- c(3.338,4.345,5.133,5.133)
 slx3 <- c(0.000,0.072,0.134,0.134)
+slx4 <- c(30,16,16,16)
 slim <- c(82,00,82,82)
 dmr  <- c(0.16,0.80,0.20,0.00)
-slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3)
+slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3,slx4=slx4)
 
 sel1 <- slx[1,]
 # aYPR -> Yield per recruit allocations.
@@ -60,7 +62,7 @@ aMPR <- c(0.434,0.430,0.120,0.015)
 
 
 # fixed PSC limit for status quo
-pscLimit  = c(NA,NA,NA,NA)
+pscLimit  = c(NA,0.2,NA,NA)
 
 # MANAGEMENT PROCEDURES
 fstar <- 0.107413
@@ -76,7 +78,7 @@ MP0   <- list(	fstar     = fstar,
 				type      = "YPR")
 
 MP1 <- MP0
-MP1$pscLimit = c(NA,0.1,NA,NA)
+MP1$slx$slx3[2] = 0.1
 
 # 
 # AGE SCHEDULE INFORMATION
@@ -139,7 +141,10 @@ MP1$pscLimit = c(NA,0.1,NA,NA)
 		for(k in 1:ngear)
 		for(h in sex)
 		{
-			sc <- xplogis(la[h,],slx1[k],slx2[k],slx3[k])
+
+			sc <- xplogis(la[h,],slx$slx1[k],slx$slx2[k],slx$slx3[k])
+			sc[slx$slx4[k]:A] <- sc[slx$slx4[k]-1]
+
 			ra <- plogis(la[h,],slim[k],0.1*la[h,])
 			da <- (1-ra)*dmr[k]
 			va[h,,k] <- sc*(ra+da)
@@ -264,6 +269,7 @@ eqModel <- function(theta,selex,type="YPR")
 		# equilibrium recruitment & sensitivity
 		re    <- max(0,ro*(kappa-ispr)/(kappa-1))
 		dre   <- ro * phi.E * dphi.e / (phi.e^2 * (kappa-1))
+		be    <- re * phi.e
 		
 		# yield per recuit and yield
 		ypr   <- fe * phi.q
@@ -290,8 +296,8 @@ eqModel <- function(theta,selex,type="YPR")
 		# dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q
 		
 		# Yield equivalence
-		v  <- sqrt(diag(dye))
-		M  <- dye / (v %o% v)
+		# v  <- sqrt(diag(dye))
+		# M  <- dye / (v %o% v)
 		# print(v %o% v)
 		# print(t(matrix(v,4,4)))
 
@@ -304,6 +310,7 @@ eqModel <- function(theta,selex,type="YPR")
 		            "fe"  = fe,
 		            "ye"  = ye,
 		            "me"  = me,
+		            "be"  = be,
 		            "re"  = re,
 		            "spr" = spr,
 		            "ypr" = ypr,
@@ -350,31 +357,45 @@ getFsprPSC <- function(MP)
 	iGear <- which(!is.na(MP$pscLimit))
 	pk    <- ak[!bGear]/sum(ak[!bGear])
 	
-	fn <- function(phi)
+
+	getFootPrint <- function(phi)
 	{
-		MP$fstar <- exp(phi[1])
 		tmp        <- ak
 		tmp[bGear] <- phi[-1]
 		tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
+		return(tmp)
+	}
 
-		# print(tmp)
-		MP$pYPR  <- tmp
+	fn <- function(phi)
+	{
+		MP$fstar <- exp(phi[1])
+		# tmp        <- ak
+		# tmp[bGear] <- phi[-1]
+		# tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
+
+		# add swtich statement here for type of allocation
+		# MP$pYPR  <- tmp
+		MP$pYPR  <- getFootPrint(phi)
+
 		EM       <- run(MP)
 		spr  	 <- EM$spr
 		psc      <- EM$ye
-		ofn   	 <- (spr-MP$sprTarget)^2 + sum((psc-MP$pscLimit)^2,na.rm=TRUE)
+		print(sum(na.omit((psc-MP$pscLimit)^2)))
+		ofn   	 <- (spr-MP$sprTarget)^2 + 10*sum(na.omit((psc-MP$pscLimit)^2))
 		
 		return(ofn)
 	}
-	parms <- c(log(MP$fstar),ak[!ig])
+	parms <- c(log(MP$fstar),ak[iGear])
 	fit   <- optim(parms,fn,method="BFGS")
-	print(fn(fit$par))
-	return(fit)
+	
+	MP$fstar <- exp(fit$par[1])
+	MP$pYPR  <- getFootPrint(fit$par)
+	return(MP)
 }
 
 runProfile <- function(MP)
 {
-	fbar <- seq(0,0.32,length=100)
+	fbar <- seq(0,0.45,length=100)
 	fn   <- function(log.fbar)
 	{
 		MP$fstar <- exp(log.fbar)
@@ -383,11 +404,24 @@ runProfile <- function(MP)
 	}
 	runs <- lapply(log(fbar),fn)
 	df   <- ldply(runs,data.frame)
-	p  <- ggplot(df,aes(fe,ye))
-	p  <- p + geom_line(aes(col=gear),size=1.3)
+	p <- ggplot(df,aes(fstar,ye))
+	p <- p + geom_line(aes(col=gear),size=1.3)
+	p <- p + labs(x="Fishing Rate (F*)",y="Yield",col="Sector")
 	# p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))
 	# p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)
-	print(p+facet_wrap(~gear,scales="free_x"))
+	# print(p+facet_wrap(~gear,scales="free_x"))
+	print(p + theme_minimal(22) + ylim(c(0,1)))
+
+	q <- ggplot(df,aes(fstar,spr)) 
+	q <- q + geom_line(aes(col=gear),size=1.3)
+	q <- q + labs(x="Fishing Rate (F*)",y="Spawning Potential Ratio (SPR)",col="Sector") 
+	print(q + theme_minimal(22) + ylim(c(0,1)))
+
+	r <- ggplot(df,aes(spr,1-exp(-fe))) 
+	r <- r + geom_line(aes(col=gear),size=1.3)
+	r <- r + labs(y="Harvest Rate (f)",x="Spawning Potential Ratio (SPR)",col="Sector") 
+	print(r + theme_minimal(22) + ylim(c(0,0.3)))
+
 	return(df)
 }
 
@@ -434,8 +468,9 @@ main <- {
 	df <- runProfile(MP0)
 	E  <- yieldEquivalence(MP0)
 
-	fspr <- exp(getFsprPSC(MP1)$par[1])
-	MP1$fstar = fspr
+	# fspr <- exp(getFsprPSC(MP1)$par[1])
+	# MP1$fstar = fspr
+	MP1 <- getFsprPSC(MP1)
 	M1 <- run(MP1)
 
 }
