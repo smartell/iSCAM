@@ -1,7 +1,7 @@
 
 ## RENDER TMA USER INTERFACE
 renderTMA <- function(){
-	tabPanel("Total Mortality Allocation",
+	tabPanel("Footprint",
 	   buildTMAGui()
 	)
 }
@@ -17,7 +17,18 @@ buildTMAGui  <- function(){
                 fluidRow(
                     
                     wellPanel( "SPR Target",
-                        numericInput("ni_sprTarget", "Enter SPR target",0.3,0,1,0.1)
+                        numericInput("ni_sprTarget", "Enter SPR target",0.3,0,1,0.1),
+
+                        radioButtons("Dist_type", "Enter Distribution Method:",
+                        c("yield per recruit", "mortality per recruit","fixed PSC"),selected = "yield per recruit")),
+                        
+                    wellPanel(                  
+                        #allocation table
+                        "Cells highlighted in red are ignored by the program",
+                        htable("tbl", colHeaders="provided",rowNames = "provided")
+
+
+                        
                     )
                 )     
             
@@ -27,22 +38,13 @@ buildTMAGui  <- function(){
 
 
                 fluidRow(
-                    radioButtons("Dist_type", "Enter Distribution Method:",
-                        c("yield per recruit", "mortality per recruit","fixed PSC"),selected="fixed PSC"),
-                        
-                    wellPanel(                  
-                        #allocation table
-                        "Fisheries footprint",
-                        htable("tbl",clickId="tblClick", colHeaders="provided",rowNames = "provided"),
-
-                        "PSC cap:",
-                        htable("pscLim", colHeaders="provided")
-
-                        ),
+                    
+                        #actionButton("actionButtonID","apply table edits"),
                                 
                     
                         wellPanel( 
-                            tableOutput("res_alloc")
+                            tableOutput("res_alloc"),
+                            plotOutput("res_plot")
                         ) 
 
                 )
