@@ -23,15 +23,16 @@ shinyUI(fluidPage(
             ## -------------- ##
             renderMSE(),
 
-            ## -------------- ##
-            # TMA Interface    #
-            ## -------------- ##
-            # renderTMA(),
 
             ## -------------- ##
             # MAPS Interface   #
             ## -------------- ##
-            renderMaps()
+            renderMaps(),
+
+            ## -------------- ##
+            # TMA Interface   #
+            ## -------------- ##
+            renderTMA()
         )
     )
 )

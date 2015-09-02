@@ -1,0 +1,799 @@
+em$spr
+MP$fstar = exp(log.fbar)
+MP$fstar = exp(0.05)
+em <- eqModel(theta,selex,type=MP$type)
+print(em$spr)
+return((em$spr - MP$target_spr)^2)
+(em$spr - MP$target_spr)^2
+fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }
+optim(log(MP$fstar),fn,method="BFGS")
+fit
+log(MP$fstar)
+MP$fstar
+fit <- optim((MP$fstar),fn,method="BFGS")
+fit
+exp(fit$par)
+fit$par
+MP$fstar
+fit <- optim(log(MP$fstar),fn,method="BFGS")
+exp(fit$par)
+MP$fstar = exp(log.fbar)
+em
+em <- eqModel(theta,selex,type=MP$type)
+print(em$spr)
+em$spr
+MP$target_spr
+MP$fstar
+MP$fstar<-0.05
+em <- eqModel(theta,selex,type=MP$type)
+print(em$spr)
+fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }
+fit <- optim(log(MP$fstar),fn,method="BFGS")
+eqModel <- function(theta,selex,type="YPR")#
+{#
+#
+    with(c(theta,selex),{#
+        lz  <- matrix(1/H,nrow=H,ncol=A)#
+        za  <- matrix(0,nrow=H,ncol=A)#
+        qa  <- array(0,dim=c(H,A,ngear))#
+        pa  <- array(0,dim=c(H,A,ngear))#
+        dlz <- array(0,dim=c(H,A,ngear))#
+#
+        # Survivorship under fished conditions at fstar#
+        fbar <- fstar#
+        lambda <- rep(1.0,length=ngear)#
+        for(iter in 1:3)#
+        {#
+            # total mortality and survival rates#
+            fe <- fbar * lambda#
+            # browser()#
+            for(h in sex)#
+            {#
+                #print(fe)#
+                if(dim(va)[3] > 1){#
+                    fage   <- rowSums(fe*va[h,,])#
+                }#
+                else if(dim(va)[3] == 1){#
+                    fage   <- fe * va[h,,]#
+                }#
+                za[h,] <- mx[h,] + fage#
+            }#
+            sa <- exp(-za)#
+            oa <- 1.0 - sa#
+#
+            # per recruit yield & numbers for gear k#
+            for(k in 1:ngear)#
+            {#
+                qa[,,k] <- va[,,k] * wa * oa / za#
+                pa[,,k] <- va[,,k] * oa / za#
+            }#
+#
+            #  survivorship#
+            for(j in 2:A)#
+            {#
+                lz[,j] <- lz[,j-1] * sa[,j-1]#
+                if(j == A)#
+                {#
+                    lz[,j] <- lz[,j] / oa[,j]#
+                }#
+#
+                # partial derivatives#
+                for(k in 1:ngear)#
+                {#
+                    dlz[,j,k] <- sa[,j-1]*(dlz[,j-1,k]-lz[,j-1]*va[,j-1,k])#
+                    if(j == A)#
+                    {#
+                        dlz[,j,k] <- dlz[,j,k]/oa[,j] - lz[,j-1]*sa[,j-1]*va[,j,k]*sa[,j]/oa[,j]^2#
+                    }#
+                }#
+            }#
+            # Fmultipliers for fstar based on allocations#
+            qp    <- switch(type,YPR=qa,MPR=pa)#
+            ak    <- switch(type,YPR=pYPR,MPR=pQMPR)#
+            phi.t <- 0#
+            for(h in sex)#
+            {#
+                phi.t <- phi.t + as.vector(lz[h,] %*% qp[h,,])#
+            }#
+            lam.t  <- ak / (phi.t/sum(phi.t))#
+            lambda <- lam.t / sum(lam.t)#
+            # cat(iter," lambda = ",lambda,"\n")#
+        }#
+#
+        # incidence functions#
+        phi.e  <- sum(lz*fa)#
+        phi.q  <- phi.m <- dphi.e <- dre <- 0#
+        dphi.q <- matrix(0,ngear,ngear) #
+        for(h in sex)#
+        {#
+            dphi.e <- dphi.e + as.vector(fa[h,] %*% dlz[h,,])#
+            phi.q <- phi.q + as.vector(lz[h,] %*% qa[h,,])#
+            phi.m <- phi.m + as.vector(lz[h,] %*% pa[h,,])#
+            # derivatives for yield equivalence#
+            for(k in 1:ngear)#
+            {#
+                for(kk in 1:ngear)#
+                {#
+                    va2 <- va[h,,k] * va[h,,kk]#
+                    dqa <- va2*wa[h,]*sa[h,]/za[h,] - va2*oa[h,]*wa[h,]/za[h,]^2#
+                    dpq  <- as.double(qa[h,,k] %*% dlz[h,,k] + lz[h,] %*% dqa)#
+                    dphi.q[k,kk] <- dphi.q[k,kk] + dpq#
+                }#
+            }#
+        }#
+        spr   <- (phi.e/phi.E)#
+        ispr  <- (phi.E/phi.e)#
+#
+        # equilibrium recruitment & sensitivity#
+        re    <- max(0,ro*(kappa-ispr)/(kappa-1))#
+        dre   <- ro * phi.E * dphi.e / (phi.e^2 * (kappa-1))#
+        # yield per recuit and yield#
+        ypr   <- fe * phi.q#
+        ye    <- re * ypr#
+#
+        # mortality per recruit and mortality#
+        mpr   <- fe * phi.m#
+        me    <- re * mpr#
+        # Jacobian for yield#
+        dye <- matrix(0,nrow=ngear,ncol=ngear)#
+        for(k in 1:ngear)#
+        {#
+            for(kk in 1:ngear)#
+            {#
+                dye[k,kk] = fe[k]*re*dphi.q[k,kk] + fe[k]*phi.q[k]*dre[kk]#
+                if(k == kk)#
+                {#
+                    dye[k,kk] = dye[k,kk] + re*phi.q[k]#
+                }#
+            }#
+        }#
+        # dye   <- re * as.vector(phi.q * diag(1,ngear)) + fe * phi.q * dre + fe * re * dphi.q#
+        # dye   <- re * (phi.q) + fe * phi.q * dre + fe * re * dphi.q#
+        # Yield equivalence#
+        v  <- sqrt(diag(dye))#
+        M  <- dye / (v %o% v)#
+        # print(v %o% v)#
+        # print(t(matrix(v,4,4)))#
+#
+        # print(M)#
+        # cat("ye\n",ye,"\n")#
+        # Equilibrium Model output#
+        out <- list(#
+                    "fe"  = fe,#
+                    "ye"  = ye,#
+                    "me"  = me,#
+                    "re"  = re,#
+                    "spr" = spr,#
+                    "ypr" = ypr,#
+                    "mpr" = mpr,#
+                    "dre" = dre,#
+                    "dye" = as.vector(diag(dye)),#
+                    "fstar" = fstar,#
+                    "gear" = slx$sector,#
+                    "dlz"  = dlz,#
+                    "lz"   = lz,#
+                    "ak"   = ak#
+#
+                    )#
+#
+        return(out)#
+    })#
+}
+theta <- .getAgeSchedules(theta)
+selex <- .getSelectivities(MP,theta$la)
+selex$pYPR <- MP$pYPR
+selex$pMPR <- MP$pMPR
+fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }
+fit <- optim(log(MP$fstar),fn,method="BFGS")
+fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        theta <- .getAgeSchedules(theta)#
+        selex <- .getSelectivities(MP,theta$la)#
+        selex$pYPR <- MP$pYPR#
+        selex$pMPR <- MP$pMPR#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }
+fit <- optim(log(MP$fstar),fn,method="BFGS")
+selex <- .getSelectivities(MP,theta$la)
+selex$pYPR <- MP$pYPR
+selex$pMPR <- MP$pMPR
+EM    <- eqModel(theta,selex,type=MP$type)
+EM
+PSCaks<-seq(0.4,0,by=-0.01)
+if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }
+runs <- lapply(PSCaks,fn)
+runModel <- function(MP)#
+{#
+    # Initialize model#
+    theta <- .getAgeSchedules(theta)#
+    selex <- .getSelectivities(MP,theta$la)#
+    selex$pYPR <- MP$pYPR#
+    selex$pMPR <- MP$pMPR#
+    fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        theta <- .getAgeSchedules(theta)#
+        selex <- .getSelectivities(MP,theta$la)#
+        selex$pYPR <- MP$pYPR#
+        selex$pMPR <- MP$pMPR#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }#
+    # Perform nonlinear search to find Fspr = spr_target#
+    fit <- optim(log(MP$fstar),fn,method="BFGS")#
+    MP$fstar <- exp(fit$par)#
+    selex <- .getSelectivities(MP,theta$la)#
+    selex$pYPR <- MP$pYPR#
+    selex$pMPR <- MP$pMPR#
+    EM    <- eqModel(theta,selex,type=MP$type)#
+    return(EM)#
+}
+PSCaks<-seq(0.4,0,by=-0.01)
+if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }
+runs <- lapply(PSCaks,fn)
+df   <- ldply(runs,data.frame)
+df1 <- cbind(df,rn)
+p  <- ggplot(df1,aes(rn,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    p
+AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    df1 <- cbind(df,rn)#
+#
+    p  <- ggplot(df1,aes(rn,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    p
+AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    df1 <- cbind(df,rn)#
+#
+    p  <- ggplot(df1,aes(AK_PSC,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    p
+df$gear[df$ak==0]
+df$gear[1:4]
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA2.R")
+runProfile2()
+runProfile2(MP0)
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA2.R")
+runProfile2(MP0)
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA2.R")
+runProfile2(MP0)
+names(df)
+runProfile2 <- function(MP)#
+{#
+    PSCaks<-seq(0.4,0,by=-0.01)#
+    if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }   #
+    runs <- lapply(PSCaks,fn)#
+    df   <- ldply(runs,data.frame)#
+#
+    AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    df1 <- cbind(df,AK_PSC)#
+#
+    p  <- ggplot(df1,aes(AK_PSC,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)#
+    #p  <- p + geom_vline(aes(xintercept=ak[which.max(ye)],col=gear))#
+    #p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)#
+    #print(p+facet_wrap(~gear,scales="free_x"))#
+    return(df1)#
+}#
+#
+df1<-runProfile2()#
+#
+p  <- ggplot(df,aes(AK_PSC,ypr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+df1<-runProfile2(MP0)#
+#
+p  <- ggplot(df,aes(AK_PSC,ypr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,ypr))
+p  <- p + geom_line(aes(col=gear),size=1.3)
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,mpr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+names(df1)
+p  <- ggplot(df1,aes(AK_PSC,spr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+theta
+.getAgeSchedules(theta)
+runModel <- function(MP)#
+{#
+    # Initialize model#
+    theta <- .getAgeSchedules(theta)#
+    selex <- .getSelectivities(MP,theta$la)#
+    selex$pYPR <- MP$pYPR#
+    selex$pMPR <- MP$pMPR#
+    fn    <- function(log.fbar)#
+    {#
+        MP$fstar = exp(log.fbar)#
+        theta <- .getAgeSchedules(theta)#
+        selex <- .getSelectivities(MP,theta$la)#
+        selex$pYPR <- MP$pYPR#
+        selex$pMPR <- MP$pMPR#
+        em <- eqModel(theta,selex,type=MP$type)#
+        print(em$spr)#
+        return((em$spr - MP$target_spr)^2)#
+    }#
+    # Perform nonlinear search to find Fspr = spr_target#
+    fit <- optim(log(MP$fstar),fn,method="BFGS")#
+    MP$fstar <- exp(fit$par)#
+    theta <- .getAgeSchedules(theta)#
+    selex <- .getSelectivities(MP,theta$la)#
+    selex$pYPR <- MP$pYPR#
+    selex$pMPR <- MP$pMPR#
+    EM    <- eqModel(theta,selex,type=MP$type)#
+    return(EM)#
+}#
+run <- function(MP)#
+{#
+    theta <- .getAgeSchedules(theta)#
+    selex <- .getSelectivities(MP,theta$la)#
+    selex$pYPR <- MP$pYPR#
+    selex$pMPR <- MP$pMPR#
+    EM    <- eqModel(theta,selex,type=MP$type)#
+    return(EM)#
+}#
+#
+runProfile <- function(MP)#
+{#
+    fbar <- seq(0,0.32,length=100)#
+    fn   <- function(log.fbar)#
+    {#
+        MP$fstar <- exp(log.fbar)#
+        em       <- run(MP)#
+        return(em)#
+    }#
+    runs <- lapply(log(fbar),fn)#
+    df   <- ldply(runs,data.frame)#
+    p  <- ggplot(df,aes(fe,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    p  <- p + geom_vline(aes(xintercept=fe[which.max(ye)],col=gear))#
+    p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)#
+    print(p+facet_wrap(~gear,scales="free_x"))#
+    return(df)#
+}#
+#
+runProfile2 <- function(MP)#
+{#
+    PSCaks<-seq(0.4,0,by=-0.01)#
+    if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }   #
+    runs <- lapply(PSCaks,fn)#
+    df   <- ldply(runs,data.frame)#
+#
+    AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    df1 <- cbind(df,AK_PSC)#
+#
+    p  <- ggplot(df1,aes(AK_PSC,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)#
+    #p  <- p + geom_vline(aes(xintercept=ak[which.max(ye)],col=gear))#
+    #p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)#
+    #print(p+facet_wrap(~gear,scales="free_x"))#
+    return(df1)#
+}
+df1<-runProfile2(MP0)
+p  <- ggplot(df1,aes(AK_PSC,spr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,round(spr,2)))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,round(spr,2)))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,round(spr,4)))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,round(spr,6)))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+MP<-MP0
+PSCaks<-seq(0.4,0,by=-0.01)#
+    if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }   #
+    runs <- lapply(PSCaks,fn)#
+    df   <- ldply(runs,data.frame)
+df$ye[df$gear=="PSC"]
+length(MP$pYPR)
+PSCaks
+?lm
+lm(df$ye[df$gear=="PSC"]~PSCaks)
+mylm<-lm(df$ye[df$gear=="PSC"]~PSCaks)
+summary(mylm)
+plot(mylm)
+unique(df$gear)
+mylm<-lm(df$ye[df$gear=="IFQ"]~df$ye[df$gear=="IFQ"])
+mylm<-lm(df$ye[df$gear=="IFQ"]~df$ak[df$gear=="IFQ"])
+plot(mylm)
+ye_PSC <- rep(df$ye[df$gear=="PSC"], each=length(MP$pYPR))
+ye_PSC
+PSCaks<-seq(0.4,0.01,by=-0.01)#
+    if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }   #
+    runs <- lapply(PSCaks,fn)#
+    df   <- ldply(runs,data.frame)#
+#
+    AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    ye_PSC <- rep(df$ye[df$gear=="PSC"], each=length(MP$pYPR))
+ye_PSC
+df1 <- cbind(df,AK_PSC,ye_PSC)
+p  <- ggplot(df1,aes(AK_PSC,ye/ye_PSC))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye/ye_PSC))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+unique(df$gear)
+gr<-unique(df$gear)
+df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[2]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]
+AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    ye_PSC <- rep(df$ye[df$gear=="PSC"], each=length(MP$pYPR))#
+    gr<-unique(df$gear)#
+    tt_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[2]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]#
+    ye_tot <- rep(tt_ye, each=length(MP$pYPR))#
+#
+    #mylm<-lm(df$ye[df$gear=="IFQ"]~df$ak[df$gear=="IFQ"])#
+    plot(mylm)#
+#
+    df1 <- cbind(df,AK_PSC,ye_PSC,ye_tot)
+p  <- ggplot(df1,aes(ye_PSC,ye_tot))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+df$ypr
+p  <- ggplot(df1,aes(AK_PSC,ypr))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    #p  <- p + geom_vline(aes(xintercept=ak[which.max(ye)],col=gear))#
+    #p  <- p + geom_line(aes(fe,dye/30,col=gear),data=df)#
+    print(p+facet_wrap(~gear,scales="free_x"))
+p  <- ggplot(df1,aes(ye_PSC,ye_tot))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p+facet_wrap(~gear,scales="free_x"))
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3) +xlim(0, 1)+ylim(0, 1)#
+print(p+facet_wrap(~gear,scales="fixed"))
+p  <- ggplot(df1,aes(AK_PSC,ypr))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p+facet_wrap(~gear,scales="free_x"))#
+p
+p  <- ggplot(df1,aes(AK_PSC,ye/ye_PSC))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye/ye_PSC))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye/ye_PSC))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(AK_PSC,ye/ye_PSC))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3) +xlim(0, 1)+ylim(0, 1)#
+print(p+facet_wrap(~gear,scales="fixed"))
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3) +xlim(0, 1)+ylim(0, 1)#
+print(p)
+to_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]
+ye_oth <- rep(to_ye, each=length(MP$pYPR))
+df1 <- cbind(df,AK_PSC,ye_PSC,ye_tot,ye_oth)
+p  <- ggplot(df1,aes(ye_PSC,ye_oth))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3) +xlim(0, 1)+ylim(0, 1)#
+print(p)
+tt_ye
+mdf<-melt(df1)
+library(reshape2)
+mdf<-melt(df1)
+mdf
+head(mdf)
+df2 <- cbind(AK_PSC,ye_PSC,ye_tot,ye_oth)
+mdf<-melt(df2)
+head(mdf)
+mdf<-melt(df1)
+df1 <- cbind(df,AK_PSC,ye_PSC,ye_tot,ye_oth)
+mdf<-melt(df1)
+head(mdf)
+p  <- ggplot(mdf,aes(variable,value))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA2.R")
+MP<-MP0
+PSCaks<-seq(0.4,0.01,by=-0.01)#
+    if(MP$type=="YPR"){#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pYPR[-2]/sum(MP$pYPR[-2])#
+            MP$pYPR[2]<- PSCak#
+            MP$pYPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }else{#
+        fn   <- function(PSCak)#
+        {#
+            othak<- MP$pMPR[-2]/sum(MP$pMPR[-2])#
+            MP$pMPR[2]<- PSCak#
+            MP$pMPR[-2]<- (1-PSCak)*othak#
+            em       <- runModel(MP)#
+            return(em)#
+        }#
+    }
+runs <- lapply(PSCaks,fn)#
+    df   <- ldply(runs,data.frame)#
+#
+    AK_PSC <- rep(PSCaks, each=length(MP$pYPR))#
+    ye_PSC <- rep(df$ye[df$gear=="PSC"], each=length(MP$pYPR))#
+    gr<-unique(df$gear)#
+    tt_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[2]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]#
+    to_ye<-df$ye[df$gear==gr[1]]+df$ye[df$gear==gr[3]]+df$ye[df$gear==gr[4]]#
+    ye_tot <- rep(tt_ye, each=length(MP$pYPR))#
+    ye_oth <- rep(to_ye, each=length(MP$pYPR))#
+#
+    #mylm<-lm(df$ye[df$gear=="IFQ"]~df$ak[df$gear=="IFQ"])#
+    #plot(mylm)#
+#
+    df1 <- cbind(df,AK_PSC,ye_PSC,ye_tot,ye_oth)#
+    df2 <- cbind(AK_PSC,ye_PSC,ye_tot,ye_oth)#
+    mdf<-melt(df1)#
+#
+    p  <- ggplot(df1,aes(ye_PSC,ye_tot))#
+    p  <- p + geom_line(aes(col=gear),size=1.3)#
+    print(p)
+p  <- ggplot(df1,aes(AK_PSC,round(spr,6)))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye/ye_PSC))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye_oth))#
+p  <- p + geom_line(aes(col=gear),size=1.3)#
+print(p)
+p  <- ggplot(df1,aes(ye_PSC,ye))#
+p  <- p + geom_line(aes(col=gear),size=1.3) #
+print(p)
+setwd("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp")
+catdat<-read.csv("2014_catch.csv")
+summary(catdat)
+lat<-rep(c(42.5,51,55.5,58,54,52,50,62),3)
+long<-rep(c(-126.5,-131,-137,-145,-157,-167,-175,-168),3)
+df2<-cbind(catdat[catdat$Type=="Catches",],lat,long)
+df2
+xlim <- c(-180,-115)
+setwd("./shapefiles/Reg_Area_shapefiles")
+US2 <-readShapePoly(".","IPHC_RegulatoryAreas_US")
+library(maps)
+library(mapdata)
+library(maptools)  #for shapefiles
+if(!require('maps'))         install.packages('maps')#
+if(!require('mapdata'))         install.packages('mapdata')#
+if(!require('scales'))         install.packages('scales')#
+if(!require('maptools'))         install.packages('maptools')
+library(maps)
+library(mapdata)
+library(maptools)  #for shapefiles
+library(scales)  #for transparency
+setwd("./shapefiles/Reg_Area_shapefiles")
+US2 <-readShapePoly(".","IPHC_RegulatoryAreas_US")
+getwd()
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US")
+CAN2 <-readShapePoly("IPHC_RegulatoryAreas_CAN")
+map("worldHires","Canada", xlim=c(-180,-115),ylim=c(37,68), col="gray90", fill=TRUE)  #plot the region of Canada I want
+map("worldHires","usa", xlim=c(-180,-115),ylim=c(37,68), col="gray95", fill=TRUE, add=TRUE)  #add the adjacent parts of the US; can't forget my homeland
+plot(US2, add=TRUE, xlim=c(-140,-110),ylim=c(48,64), col=alpha("darkgreen", 0.6), border=FALSE)  #plot the species range
+plot(US2, add=TRUE, xlim=c(-140,-110),ylim=c(48,64), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US")
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+?draw.shape
+??draw.shape
+US2
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US")
+CAN2 <-readShapePoly("IPHC_RegulatoryAreas_CAN")
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US.shp")
+CAN2 <-readShapePoly("IPHC_RegulatoryAreas_CAN.shp")
+map("worldHires","Canada", xlim=c(-180,-115),ylim=c(37,68), col="black", fill=TRUE)
+map("worldHires","usa", xlim=c(-180,-115),ylim=c(37,68), col="black", fill=TRUE, add=TRUE)
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col="black", border=TRUE)  #plot the species range
+CAN2
+CAN2 <-readShapePoly("IPHC_RegulatoryAreas_CAN.shp")
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col="black", border=TRUE)
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col="black", lty=2, border=TRUE)
+?readShapePoly
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US.shp", force_ring=TRUE)
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+US2 <-readShapeSpatial("IPHC_RegulatoryAreas_US.shp", force_ring=TRUE)
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col="black", lty=2, border=TRUE)
+CAN2 <-readShapeSpatial("IPHC_RegulatoryAreas_CAN.shp")
+plot(CAN2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col="black", lty=2, border=TRUE)
+US2 <-readShapeSpatial("IPHC_RegulatoryAreas_US.shp",proj4string=CRS("+proj=longlat")))
+polygon(US2)
+US2 <-readShapeSpatial("IPHC_RegulatoryAreas_US.shp",proj4string=CRS("+proj=longlat"))
+polygon(US2)
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US.shp",proj4string=CRS("+proj=longlat"))
+polygon(US2)
+PP=SpatialPolygons2PolySet(US2)
+library(PBSmapping)
+if(!require('PBSmapping'))         install.packages('PBSmapping')
+library(PBSmapping)
+PP=SpatialPolygons2PolySet(US2)
+polygon(US2)
+polygon(PP)
+map("worldHires","Canada", xlim=c(-180,-115),ylim=c(37,68), col="black", fill=F)
+map("worldHires","usa", xlim=c(-180,-115),ylim=c(37,68), col="black", fill=FALSE, add=TRUE)
+polygon(PP)
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+?plot
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), type="l",  col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+US2 <-readShapePoly("IPHC_RegulatoryAreas_US.shp",proj4string=CRS("+proj=longlat"))
+CAN2 <-readShapeSpatial("IPHC_RegulatoryAreas_CAN.shp")
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), type="l",  col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+warnings()
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68), type="b",  col=alpha("darkgreen", 0.6), border=TRUE)  #plot the species range
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68)  col="black", border=TRUE)  #plot the species range
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68)  col="black", border=TRUE)  #plot the species range
+plot(US2, add=TRUE, xlim=c(-180,-115),ylim=c(37,68),  col="black", border=TRUE)  #plot the species range
+readShapePoly
+CAN2 <-readShapeSpatial("IPHC_RegulatoryAreas_CAN.shp")
+plot(CAN2)
+plot(US2,  xlim=c(-180,-115),ylim=c(37,68),  col="black", border=TRUE)  #plot the species range
+plot(US2, ylim=c(37,68),  col="black", border=TRUE)  #plot the species range
+plot(US2,   col="black", border=TRUE)  #plot the species range
+plot(US2,   col="black")  #plot the species range
+plot(US2)  #plot the species range
+plot(US2)  #plot the species range
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA2.R")
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA22.R")
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA22.R")
+main()
+source("/Users/catarinawor/Documents/iSCAM/src/mseapp/data/hp/TMA22.R")
+main

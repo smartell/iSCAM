@@ -12,6 +12,8 @@ if(!require("dplyr"))         install.packages("dplyr")
 if(!require("grid"))          install.packages("grid")
 if(!require("shinydashboard"))install.packages("shinydashboard")
 if(!require("dygraphs"))      install.packages("dygraphs")
+if(!require("devtools"))          install.packages("devtools")
+if(!require("shinyTable"))    install_github("shinyTable", "trestletech")
 
 
 
@@ -68,5 +70,14 @@ paramNames <- c("size_limit",
                 "linf_dev",
                 "vonk_dev",
                 "maternal_effect")
+
+#=================================================================
+#
+
+
+#
+# Parameter names for TMA calculations
+#
+tmaParamNames <- c("ng")
 
 
