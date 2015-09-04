@@ -467,4 +467,8 @@ main <- function(){
 
 }
 
+# notes from meeting
+
+#put a button on shiny app to increase, decrease juvenile mortality
+
 

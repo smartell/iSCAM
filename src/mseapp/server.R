@@ -59,111 +59,207 @@ shinyServer(function(input,output,session){
     #
     # Allocation Input-output function
     #
-    validate <- function(tbl){
+ ##    validate <- function(tbl){
+ ##
+ ##    		sumAlloc<-as.numeric(tbl[,"proportion"])
+ ##
+ ##    		if(sum(sumAlloc)>1.0){
+ ##    		    updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 1) 
+ ##                      
+ ##    		}else if(sum(sumAlloc)<1.0){
+ ##    		    updateTableStyle(session, "tbl", "warning", 1:(length(glbl)), 1)
+ ##                
+ ##    		}else{
+ ##    		    updateTableStyle(session, "tbl", "valid", 1:(length(glbl)), 1)
+ ##    		}
+ ##
+ ##            if(input$Dist_type=="fixed PSC"){
+ ##                    
+ ##                    updateTableStyle(session, "tbl", "invalid", 2, 1)
+ ##                    updateTableStyle(session, "tbl", "valid", 2, 2)
+ ##
+ ##            }else{
+ ##                
+ ##                updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 2)
+ ##            }             
+ ##                
+ ##
+ ##            
+ ##
+ ##		}
+ ##
+ ##
+ ##    cachedTbl <- NULL
+ ##    
+ ##    output$tbl <- renderHtable({
+ ##
+ ##    	if(is.null(input$tbl)){
+ ##
+ ##            tbl<-data.frame(list(proportion=rep(0.0,length(glbl)),cap=rep(0.0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
+ ##
+ ##            cachedTbl <<- tbl  
+ ##
+ ##            validate(tbl)
+ ##            return(tbl)
+ ##     
+ ##        }else{
+ ##
+ ##        
+ ##            if(input$Dist_type=="yield per recruit"){
+ ##                 
+ ##                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+ ##            
+ ##            }else if(input$Dist_type=="mortality per recruit"){
+ ##                
+ ##                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+ ##            
+ ##            }else{ 
+ ##                
+ ##                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
+ ##
+ ##            }  
+ ##
+ ##            # Any non-numeric data should be replaced with the cached data.
+ ##            #tbl[is.na(as.integer(as.character(tbl[,1]))),1] <- 
+ ##            #as.character(cachedTbl[is.na(as.integer(as.character(tbl[,1]))),1])
+ ##   
+ ##            validate(tbl)
+ ##      
+ ##      
+ ##            cachedTbl <<- tbl
+ ##
+ ##            
+ ##            return(tbl)
+ ##              
+ ##        }
+ ##
+ ##    	
+ ##      }) 
+ ##  
+ ##    getAlloc<-reactive(do.call(getResultAllocation,getArgsTMA(input)))
+ ##
+ ##    output$res_alloc <-renderTable({
+ ##        #input$actionButtonID
+ ##        getAlloc()
+ ##
+ ##    })
+ ##
+ ##    output$res_plot <-renderPlot({
+ ##        #input$actionButtonID
+ ##        plotResultAllocation(getAlloc())
+ ##
+ ##    })
+ ##
 
-    		sumAlloc<-as.numeric(tbl[,"proportion"])
+    ## ------------------------------------------------------------ ##
+    ## Total mortality allocation - 2 (Sep 3, 2015)
+    ## ------------------------------------------------------------ ##
 
-    		if(sum(sumAlloc)>1.0){
-    		    updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 1) 
+
+    #
+    # Allocation Input-output function
+    #
+    validate2 <- function(tbl,prefix){
+
+        
+            sumAlloc<-as.numeric(tbl[,"proportion"])
+
+            if(sum(sumAlloc)>1.0){
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", 1:(length(glbl)), 1) 
                       
-    		}else if(sum(sumAlloc)<1.0){
-    		    updateTableStyle(session, "tbl", "warning", 1:(length(glbl)), 1)
+            }else if(sum(sumAlloc)<1.0){
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", 1:(length(glbl)), 1)
                 
-    		}else{
-    		    updateTableStyle(session, "tbl", "valid", 1:(length(glbl)), 1)
-    		}
+            }else{
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 1:(length(glbl)), 1)
+            }
 
-            if(input$Dist_type=="fixed PSC"){
+            if(input[[paste0(prefix,"_","Dist_type")]]=="fixed PSC"){
                     
-                    updateTableStyle(session, "tbl", "invalid", 2, 1)
-                    updateTableStyle(session, "tbl", "valid", 2, 2)
+                    updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 2, 1)
+                    updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 2, 2)
 
             }else{
                 
-                updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 2)
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 1:(length(glbl)), 2)
             }             
                 
-
-            
-
-		}
+    }
 
 
     cachedTbl <- NULL
     
-    output$tbl <- renderHtable({
 
-    	if(is.null(input$tbl)){
+
+    output$A_tbl <- renderHtable({
+        buildOuttbl("A")
+    })
+
+    output$B_tbl <- renderHtable({
+        buildOuttbl("B")
+    })
+
+    buildOuttbl<-function(prefix){
+
+        if(is.null(input[[paste0(prefix,"_","tbl")]])){
 
             tbl<-data.frame(list(proportion=rep(0.0,length(glbl)),cap=rep(0.0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
 
             cachedTbl <<- tbl  
 
-            validate(tbl)
+            validate2(tbl,prefix)
             return(tbl)
      
         }else{
 
         
-            if(input$Dist_type=="yield per recruit"){
+            if(input[[paste0(prefix,"_","Dist_type")]]=="yield per recruit"){
                  
-                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+                 tbl<-data.frame(input[[paste0(prefix,"_","tbl")]],row.names = c("IFQ","PSC","SPT","PER"))
             
-            }else if(input$Dist_type=="mortality per recruit"){
+            }else if(input[[paste0(prefix,"_","Dist_type")]]=="mortality per recruit"){
                 
-                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
+                 tbl<-data.frame(input[[paste0(prefix,"_","tbl")]],row.names = c("IFQ","PSC","SPT","PER"))
             
             }else{ 
                 
-                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
+                tbl<-data.frame(input[[paste0(prefix,"_","tbl")]],row.names = c("IFQ","PSC","SPT","PER") )
 
             }  
 
-            # Any non-numeric data should be replaced with the cached data.
-            #tbl[is.na(as.integer(as.character(tbl[,1]))),1] <- 
-            #as.character(cachedTbl[is.na(as.integer(as.character(tbl[,1]))),1])
-   
-            validate(tbl)
-      
+            
+            validate2(tbl,prefix)
       
             cachedTbl <<- tbl
 
-            
-            return(tbl)
+          return(tbl)
               
         }
 
-    	
-      }) 
-    
-   
-     #   output$pscLim <- renderHtable({
-     #
-     #        if(is.null(input$pscLim)){
-     #            
-     #            pscLim<-data.frame(list(cap=0.1))
-     #        
-     #        }else{
-     #        
-     #            pscLim<-input$pscLim           
-     #        }
-     #
-     #        return(pscLim)
-     #     
-     #      }) 
-
+     }   
+       
   
-    getAlloc<-reactive(do.call(getResultAllocation,getArgsTMA(input)))
+    getAllocA<-reactive(do.call(getResultAllocation2,getArgsTMA2(input,"A")))
+    getAllocB<-reactive(do.call(getResultAllocation2,getArgsTMA2(input,"B")))
+
+    
 
     output$res_alloc <-renderTable({
         #input$actionButtonID
-        getAlloc()
+        #getAllocA()
+        Atab<-getAllocA()
+        Btab<-getAllocB()
 
+        allocTable(Atab,Btab)
     })
+
 
     output$res_plot <-renderPlot({
         #input$actionButtonID
-        plotResultAllocation(getAlloc())
+        Atab<-getAllocA()
+        Btab<-getAllocB()
+        
+        plotResultAllocation2(Atab,Btab)
 
     })
 
