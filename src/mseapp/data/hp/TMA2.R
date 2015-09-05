@@ -28,13 +28,13 @@ vbk	  <- c(  0.0795,  0.0975)
 to	  <- c(  0.5970,  1.2430)
 b	  <- 3.24
 a	  <- 0.00000692
-c     <- c(0,0)				# power parameter for age-dependent M
+c     <- c(0.00,0.00)				# power parameter for age-dependent M
 
 ahat  <- c(11.589,1000)
 ghat  <- c(1.7732,0.01)
 
 theta <- list(A=A,bo=bo,h=h,kappa=kappa,m=m,age=age,linf=linf,
-              winf=winf,vbk=vbk,ahat=ahat,ghat=ghat)
+              winf=winf,vbk=vbk,ahat=ahat,ghat=ghat,c=c)
 
 
 # 
@@ -61,8 +61,8 @@ sel1 <- slx[1,]
 aYPR <- c(0.66,0.18,0.14,0.02)
 # aYPR <- c(0.666541,0.177337,0.134677,0.021445)
 # aMPR -> Mortality per recruit allocations.
-aMPR <- c(0.43443443,0.43043043,0.12012012,0.01501502)
-
+# aMPR <- c(0.43443443,0.43043043,0.12012012,0.01501502)
+aMPR <- c(0.43856475,0.42604559,0.11420931,0.02118035)
 
 # fixed PSC limit for status quo
 pscLimit  = c(NA,7.75,NA,NA)
@@ -80,9 +80,11 @@ MP0   <- list(	fstar     = fstar,
 				sprTarget = sprTarget,
 				type      = "YPR")
 
-MP1 <- MP2 <- AB0 <- MP0
+MP1 <- MP2 <- AB0 <- JRG0 <- JRG1 <- JRG2 <- MP0
 MP1$slx$slx3[2] = 0.1
 MP2$slx$slx3[2] = 0.2
+JRG1$slx$slx3[2] = 0.1
+JRG2$slx$slx3[2] = 0.2
 
 # Abundance based PSC
 AB0$pscLimit = c(NA,NA,NA,NA)
@@ -121,7 +123,7 @@ BB4$type="YPR"
 			return(mx)
 		}
 		mx <- sapply(age,getM,m=m,vbk=vbk,c=c)
-
+		
 		# Survivorship at unfished conditions
 		lx <- matrix(0,H,A)
 		for(i in age)
@@ -542,6 +544,17 @@ main <- {
 	BB4 <- getFstar(BB4)
 	B4  <- run(BB4)	
 
+	theta$c = c(0.8,0.8)
+	JRG0 <- getFstar(JRG0)
+	JG0  <- run(JRG0)
+
+	JRG1 <- getFstar(JRG1)
+	JG1  <- run(JRG1)
+
+	JRG2 <- getFstar(JRG2)
+	JG2  <- run(JRG2)
+
+
 	# PROFILE OVER FSTAR
 	# df <- runProfile(MP0)
 
@@ -550,20 +563,37 @@ main <- {
 }
 
 # FIXED PSC LIMITS
-# cat("\nEquilibrium yield\n")
-# Ye <- print(data.frame(round(cbind(STQ=M0$ye,EX1=M1$ye,EX2=M2$ye)/2.2046,3)))
+cat("\nEquilibrium yield\n")
+Ye <- print(data.frame(round(cbind(STQ=M0$ye,EX1=M1$ye,EX2=M2$ye)/2.2046,3)))
 
-# cat("\nYield Per Recruit\n")
-# YPR <- print(data.frame(round(cbind(STQ=M0$ypr,EX1=M1$ypr,EX2=M2$ypr),3)))
+cat("\nEquilibrium yield Gauvin\n")
+Yeg <- print(data.frame(round(cbind(STQ=JG0$ye,EX1=JG1$ye,EX2=JG2$ye)/2.2046,3)))
 
-# cat("\nMortality Per Recruit\n")
-# MPR <- print(data.frame(round(cbind(STQ=M0$mpr,EX1=M1$mpr,EX2=M2$mpr),3)))
 
-# cat("\nYield Per Recruit Footprint\n")
-# YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
 
-# cat("\nMortality Per Recruit Footprint\n")
-# MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
+cat("\nYield Per Recruit \n")
+YPR <- print(data.frame(round(cbind(STQ=M0$ypr,EX1=M1$ypr,EX2=M2$ypr),3)))
+
+cat("\nYield Per Recruit Gauvin\n")
+YPRg <- print(data.frame(round(cbind(STQ=JG0$ypr,EX1=JG1$ypr,EX2=JG2$ypr),3)))
+
+
+cat("\nMortality Per Recruit\n")
+MPR <- print(data.frame(round(cbind(STQ=M0$mpr,EX1=M1$mpr,EX2=M2$mpr),3)))
+
+cat("\nMortality Per Recruit Gauvin\n")
+MPRg <- print(data.frame(round(cbind(STQ=JG0$mpr,EX1=JG1$mpr,EX2=JG2$mpr),5)))
+
+
+cat("\nYield Per Recruit Footprint\n")
+YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
+
+cat("\nMortality Per Recruit Footprint\n")
+MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
+
+
+cat("\nMortality Per Recruit Footprint Gauvin\n")
+MPRfp <- print(data.frame(round(data.frame(t(t(MPRg)/colSums(MPRg))),3))*100)
 
 
 # INDEX-BASED PSC LIMITS WITH ALLOCATION BASED ON YIELD
@@ -585,22 +615,22 @@ main <- {
 
 
 # INDEX-BASED PSC LIMITS WITH ALLOCATION BASED ON MPR
-cat("\nEquilibrium yield\n")
-Ye <- print(data.frame(round(cbind(YPR=A0$ye,STQ=B0$ye,EX1=B1$ye,EX2=B2$ye)/2.2046,3)))
+# cat("\nEquilibrium yield\n")
+# Ye <- print(data.frame(round(cbind(YPR=A0$ye,STQ=B0$ye,EX1=B1$ye,EX2=B2$ye)/2.2046,3)))
 
-cat("\nYield Per Recruit\n")
-YPR <- print(data.frame(round(cbind(STQ=B0$ypr,EX1=B1$ypr,EX2=B2$ypr),3)))
+# cat("\nYield Per Recruit\n")
+# YPR <- print(data.frame(round(cbind(STQ=B0$ypr,EX1=B1$ypr,EX2=B2$ypr),3)))
 
-cat("\nMortality Per Recruit\n")
-MPR <- print(data.frame(round(cbind(STQ=B0$mpr,EX1=B1$mpr,EX2=B2$mpr),3)))
+# cat("\nMortality Per Recruit\n")
+# MPR <- print(data.frame(round(cbind(STQ=B0$mpr,EX1=B1$mpr,EX2=B2$mpr),3)))
 
-cat("\nYield Per Recruit Footprint\n")
-YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
+# cat("\nYield Per Recruit Footprint\n")
+# YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
 
-cat("\nMortality Per Recruit Footprint\n")
-MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
+# cat("\nMortality Per Recruit Footprint\n")
+# MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
 
-
+# CPUE <-print(round(Ye[,-1]/cbind(B0$fe,B1$fe,B2$fe),3))
 
 
 
