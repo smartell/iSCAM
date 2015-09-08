@@ -27,7 +27,7 @@ vbk	  <- c(  0.0795,  0.0975)
 to	  <- c(  0.5970,  1.2430)
 b	  <- 3.24
 a	  <- 0.00000692
-c     <- c(0,0)				# power parameter for age-dependent M
+cm     <- c(0,0)				# power parameter for age-dependent M
 
 ahat  <- c(11.589,1000)
 ghat  <- c(1.7732,0.01)
@@ -99,14 +99,14 @@ MP1$pscLimit = c(NA,0.1,NA,NA)
 		fa <- ma * wa
 
 		# Age-dependent natural mortality (Lorenzen)
-		getM <- function(age,vbk,m,c){
+		getM <- function(age,vbk,m,cm){
 			t1 <- exp(vbk*(age+2))-1
 			t2 <- exp(vbk*(age+1))-1
 			sa <- (t1/t2)^(-m/vbk)
-			mx=m*((log(t1)-log(t2))/vbk)^c
+			mx=m*((log(t1)-log(t2))/vbk)^cm
 			return(mx)
 		}
-		mx <- sapply(age,getM,m=m,vbk=vbk,c=c)
+		mx <- sapply(age,getM,m=m,vbk=vbk,cm=cm)
 
 		# Survivorship at unfished conditions
 		lx <- matrix(0,H,A)

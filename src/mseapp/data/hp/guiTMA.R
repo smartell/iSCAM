@@ -16,10 +16,7 @@ buildTMAGui  <- function(){
 
             #buildTMAInterface()   
              wellPanel( 
-            buildTMAinpProc(),
-            tags$span(style="color:red", "Proportion column should add up to 1, otherwise the column will be highlighted in yellow"),
-            tags$br(),
-            tags$span(style="color:red", "Cells highlighted in red are ignored by the program")
+            buildTMAinpProc()    
             )
             ),
             
@@ -59,7 +56,16 @@ buildTMAInputs<-function(prefix){
                     wellPanel(                  
                         #allocation table
 
-                        htable(paste0(prefix,"_","tbl"), colHeaders="provided",rowNames = "provided")
+                        htable(paste0(prefix,"_","tbl"), colHeaders="provided",rowNames = "provided"),
+                        tags$span(style="color:red", "Proportion column should add up to 1, otherwise the column will be highlighted in yellow"),
+                        tags$br(),
+                        tags$span(style="color:red", "Cells highlighted in red are ignored by the program")
+                        
+                    ),
+
+                    wellPanel(                  
+
+                        checkboxInput(paste0(prefix,"_","ck_mortRate"), "High Juvenile Mortality", FALSE)
                         
                     )
                 )     
