@@ -65,7 +65,7 @@ buildTMAInputs<-function(prefix){
 
                         #checkboxInput(paste0(prefix,"_","ck_mortRate"), "High Juvenile Mortality", FALSE)
 
-                        sliderInput(paste0(prefix,"_","sl_mortRate"), "Juvenile Mortality", -1.0,1.0,0.0,0.25)
+                        sliderInput(paste0(prefix,"_","sl_mortRate"), "Juvenile Mortality", -1.0,1.0,0.0,0.05)
                         
                     )
                 )     

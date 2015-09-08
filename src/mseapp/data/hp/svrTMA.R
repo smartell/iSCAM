@@ -65,32 +65,16 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate){
         MP$type<-"YPR"
         MP$pYPR<-as.numeric(intbl$proportion)
 
-        print(MP$pscLimit)
-        print(intbl$cap[which(intbl$cap>0.0)])
+        
         
         MP$pscLimit[which(intbl$cap>0.0)] <- as.numeric(intbl$cap[which(intbl$cap>0.0)])
 
         MP$pscLimit<-as.numeric(MP$pscLimit)
         print(as.numeric(MP$pscLimit))
 
-
-        ak    <- MP$pYPR
-        bGear <- !is.na(MP$pscLimit)
-        iGear <- which(!is.na(MP$pscLimit))
-        pk    <- ak[!bGear]/sum(ak[!bGear])
-
         fs<-getFsprPSC(MP)
         
-        tmp        <- ak
-        tmp[bGear] <- fs$par[-1]
-        tmp[!bGear]<- (1-sum(tmp[bGear]))*pk
-
-        
-        MP$fstar  <- exp(fs$par[1])
-
-        MP$pYPR<- tmp
-
-        rtmp  <- run(MP)
+        rtmp  <- run(fs)
 
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
     
