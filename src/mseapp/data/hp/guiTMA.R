@@ -55,7 +55,7 @@ buildTMAInputs<-function(prefix){
                         #allocation table
 
                         htable(paste0(prefix,"_","tbl"), colHeaders="provided",rowNames = "provided"),
-                        tags$span(style="color:red", "Proportion column should add up to 1, otherwise the column will be highlighted in yellow."),
+                        tags$span(style="color:red", "Proportion column should add up to 1."),
                         tags$br(),
                         tags$span(style="color:red", "Cells highlighted in red are ignored by the program.")
                         
@@ -65,7 +65,11 @@ buildTMAInputs<-function(prefix){
 
                         #checkboxInput(paste0(prefix,"_","ck_mortRate"), "High Juvenile Mortality", FALSE)
 
-                        sliderInput(paste0(prefix,"_","sl_mortRate"), "Juvenile Mortality", -1.0,1.0,0.0,0.05)
+                        sliderInput(paste0(prefix,"_","sl_mortRate"), "Juvenile Mortality", -1.0,1.0,0.0,0.1),
+
+                        radioButtons(paste0(prefix,"_","Excluder"), "Excluder Option:",
+                        c("no excluder", "moderate excluder","intensive excluder"),selected = "no excluder")
+                        
                         
                     )
                 )     

@@ -6,7 +6,7 @@ getArgsTMA2 <- function(input, prefix){
 
     print("in getargs")
 
-    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]])
+    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
     print(argsTMA)
 
     
@@ -15,13 +15,22 @@ getArgsTMA2 <- function(input, prefix){
 
 
 
-getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate){
+getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_excluder){
 
     #Dist_type,sprtarget,intbl,limPsc
     print("in getResultAllocation2")
 
     cm<<-rep(sl_mortRate,2)
 
+    if(rb_excluder=="no excluder"){
+        MP0$slx$slx3[2] = 0.072
+        print("banana")
+    }else if(rb_excluder=="moderate excluder"){
+        MP0$slx$slx3[2] = 0.1
+        print("sardinha")
+    }else{
+        MP0$slx$slx3[2] = 0.2
+    }
 
     MP0$sprTarget <<- sprtarget
 
