@@ -6,7 +6,7 @@ getArgsTMA2 <- function(input, prefix){
 
     print("in getargs")
 
-    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],ck_mortRate=input[[paste0(prefix,"_","ck_mortRate")]])
+    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]])
     print(argsTMA)
 
     
@@ -15,16 +15,12 @@ getArgsTMA2 <- function(input, prefix){
 
 
 
-getResultAllocation2 <- function(Dist_type,sprtarget,intbl,ck_mortRate){
+getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate){
 
     #Dist_type,sprtarget,intbl,limPsc
     print("in getResultAllocation2")
 
-    if(ck_mortRate==TRUE){
-        cm<<-c(0.1,0.1)
-    }else{
-        cm<<-c(0.0,0.0)
-    }
+    cm<<-rep(sl_mortRate,2)
 
 
     MP0$sprTarget <<- sprtarget

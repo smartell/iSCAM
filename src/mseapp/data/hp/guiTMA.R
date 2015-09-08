@@ -42,8 +42,6 @@ buildTMAGui  <- function(){
 
 
 
-
-
 buildTMAInputs<-function(prefix){
     fluidRow(
                     
@@ -57,15 +55,17 @@ buildTMAInputs<-function(prefix){
                         #allocation table
 
                         htable(paste0(prefix,"_","tbl"), colHeaders="provided",rowNames = "provided"),
-                        tags$span(style="color:red", "Proportion column should add up to 1, otherwise the column will be highlighted in yellow"),
+                        tags$span(style="color:red", "Proportion column should add up to 1, otherwise the column will be highlighted in yellow."),
                         tags$br(),
-                        tags$span(style="color:red", "Cells highlighted in red are ignored by the program")
+                        tags$span(style="color:red", "Cells highlighted in red are ignored by the program.")
                         
                     ),
 
                     wellPanel(                  
 
-                        checkboxInput(paste0(prefix,"_","ck_mortRate"), "High Juvenile Mortality", FALSE)
+                        #checkboxInput(paste0(prefix,"_","ck_mortRate"), "High Juvenile Mortality", FALSE)
+
+                        sliderInput(paste0(prefix,"_","sl_mortRate"), "Juvenile Mortality", -1.0,1.0,0.0,0.25)
                         
                     )
                 )     
