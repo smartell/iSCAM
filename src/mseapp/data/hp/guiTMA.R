@@ -55,10 +55,11 @@ buildTMAInputs<-function(prefix){
                         #allocation table
 
                         htable(paste0(prefix,"_","tbl"), colHeaders="provided",rowNames = "provided"),
-                        tags$span(style="color:red", "Proportion column should add up to 1."),
-                        tags$br(),
-                        tags$span(style="color:red", "Cells highlighted in red are ignored by the program.")
-                        
+                        tags$li("Proportion column should add up to 1."),
+                        #tags$span(style="color:red", "Proportion column should add up to 1."),
+                      
+                        tags$li("Red cells are ignored by the program.")
+                       
                     ),
 
                     wellPanel(                  

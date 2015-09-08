@@ -24,10 +24,9 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
 
     if(rb_excluder=="no excluder"){
         MP0$slx$slx3[2] = 0.072
-        print("banana")
+        
     }else if(rb_excluder=="moderate excluder"){
         MP0$slx$slx3[2] = 0.1
-        print("sardinha")
     }else{
         MP0$slx$slx3[2] = 0.2
     }
@@ -45,11 +44,11 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
         MP$pMPR<-as.numeric(intbl$proportion)
         MP$type<-"MPR"
  
-        tmpfs<-getFspr(MP)$par        
-        MP$fstar  <- exp(tmpfs)
-
-        rtmp     <- run(MP) 
+        MP<-getFspr(MP) 
+        print("cheguei aqui")      
         
+        rtmp     <- run(MP) 
+        print("e aqui?")   
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
 
    
@@ -60,10 +59,8 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
         MP$pYPR<-as.numeric(intbl$proportion)
         MP$type<-"YPR"
        
-        tmpfs<-getFspr(MP)$par
-        MP$fstar  <- exp(tmpfs)
-        
-        rtmp     <- run(MP)
+        MP<-getFspr(MP)               
+        rtmp     <- run(MP) 
         
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe)   
         
