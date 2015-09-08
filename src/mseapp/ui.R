@@ -23,7 +23,6 @@ shinyUI(fluidPage(
             ## -------------- ##
             renderMSE(),
 
-
             ## -------------- ##
             # MAPS Interface   #
             ## -------------- ##
