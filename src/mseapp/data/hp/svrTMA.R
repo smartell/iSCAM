@@ -6,7 +6,9 @@ getArgsTMA2 <- function(input, prefix){
 
     print("in getargs")
 
-    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_sizLim=input[[paste0(prefix,"_","sl_sizeLim")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
+    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],intbl=input[[paste0(prefix,"_","tbl")]],
+        sl_sizLim=input[[paste0(prefix,"_","sl_sizeLim")]],sl_50sel=input[[paste0(prefix,"_","sl_50sel")]],
+        sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
     
     print(argsTMA)
     
@@ -22,7 +24,7 @@ getArgsTMA2 <- function(input, prefix){
 
 
 
-getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_excluder){
+getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_50sel,sl_mortRate,rb_excluder){
 
     
     print("in getResultAllocation2")
@@ -30,8 +32,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_exclud
     MP0$slim<<-c(sl_sizLim[1]/0.393701,00,sl_sizLim[1]/0.393701,00)
     MP0$ulim<<-c(sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701)
 
-    print(MP0$slim)
-    print(MP0$ulim)
+    MP0$slx$slx1[1]<<- sl_50sel
     
 
     cm<<-rep(sl_mortRate,2)
@@ -64,7 +65,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_exclud
                    
         rtmp     <- run(MP) 
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100) 
         return(out)
    
     }else if(Dist_type=="yield per recruit"){
@@ -77,7 +78,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_exclud
         MP<-getFspr(MP)               
         rtmp     <- run(MP) 
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe)   
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100)   
         return(out)
         
     }else if(Dist_type=="fixed PSC"){
@@ -97,7 +98,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_exclud
         print("allons'y")        
         rtmp  <- run(fs)
 
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100) 
         
         return(out)
 

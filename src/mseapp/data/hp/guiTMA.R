@@ -61,8 +61,9 @@ buildTMAInputs<-function(prefix){
 
                 wellPanel("Directed fisheries controls",                  
 
-                    sliderInput(paste0(prefix,"_","sl_sizeLim"), "Size Limits (in)", 2,100,c(32,100),2)
+                    sliderInput(paste0(prefix,"_","sl_sizeLim"), "Size Limits (in)", 2,100,c(32,100),2),
 
+                    sliderInput(paste0(prefix,"_","sl_50sel"), "50% selectivity size (in)", 10,80,26.5,0.5)
                     #radioButtons(paste0(prefix,"_","Excluder"), "Excluder Option:",
                     #c("no excluder", "moderate excluder","intensive excluder"),selected = "no excluder")                        
                         

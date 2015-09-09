@@ -169,7 +169,6 @@ MP0   <- list(	fstar     = fstar,
 			sc <- xplogis(la[h,],slx$slx1[k],slx$slx2[k],slx$slx3[k])
 			sc[slx$slx4[k]:A] <- sc[slx$slx4[k]-1]
 
-			#ra <- plogis(la[h,],slim[k],0.1*la[h,])
 			ra <- plogis(la[h,],slim[k],0.1*la[h,])- plogis(la[h,],ulim[k],0.1*la[h,])
 			da <- (1-ra)*dmr[k]
 			va[h,,k] <- sc*(ra+da)
