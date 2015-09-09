@@ -65,7 +65,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_50sel,sl_mortRate,
                    
         rtmp     <- run(MP) 
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100) 
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,CPUE=rtmp$ye/rtmp$fe) 
         return(out)
    
     }else if(Dist_type=="yield per recruit"){
@@ -78,7 +78,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_50sel,sl_mortRate,
         MP<-getFspr(MP)               
         rtmp     <- run(MP) 
         
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100)   
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,CPUE=rtmp$ye/rtmp$fe)   
         return(out)
         
     }else if(Dist_type=="fixed PSC"){
@@ -98,7 +98,8 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_50sel,sl_mortRate,
         print("allons'y")        
         rtmp  <- run(fs)
 
-        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe*100) 
+        #need to replace effort for CPUE
+        out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,CPUE=rtmp$ye/rtmp$fe) 
         
         return(out)
 
@@ -109,7 +110,7 @@ getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_50sel,sl_mortRate,
 
 allocTable<-function(A,B){
 
-        nomes<-c("YPR", "MPR", "yield", "effort")
+        nomes<-c("YPR", "MPR", "yield", "CPUE")
         mps<-c(" A"," B")
 
         nomes1<-NULL
