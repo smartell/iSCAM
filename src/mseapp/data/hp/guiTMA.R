@@ -49,7 +49,7 @@ buildTMAInputs<-function(prefix){
                         numericInput(paste0(prefix,"_","ni_sprTarget"), "Enter SPR target",0.3,0,1,0.1),
 
                         radioButtons(paste0(prefix,"_","Dist_type"), "Enter Distribution Method:",
-                        c("yield per recruit", "mortality per recruit","fixed PSC"),selected = "yield per recruit")),
+                        c("yield per recruit", "mortality per recruit","fixed PSC"),selected = "fixed PSC")),
                         
                     wellPanel(                  
                         #allocation table

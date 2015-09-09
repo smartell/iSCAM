@@ -6,16 +6,23 @@ getArgsTMA2 <- function(input, prefix){
 
     print("in getargs")
 
-    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
+    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],ni_sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
+    
     print(argsTMA)
-
+    
+    if(is.null(argsTMA$intbl)){
+        
+        argsTMA$intbl<-data.frame(list(proportion=c(0.80,0.0,0.17,0.03),cap=c(0.0,7.75,0.0,0.0)),row.names = c("IFQ","PSC","SPT","PER"))
+        print(prefix)
+        print(argsTMA$intbl)
+    }
     
     return(argsTMA)
 }
 
 
 
-getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_excluder){
+getResultAllocation2 <- function(Dist_type,ni_sprtarget,intbl,sl_mortRate,rb_excluder){
 
     #Dist_type,sprtarget,intbl,limPsc
     print("in getResultAllocation2")
@@ -23,15 +30,18 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
     cm<<-rep(sl_mortRate,2)
 
     if(rb_excluder=="no excluder"){
-        MP0$slx$slx3[2] = 0.072
+        MP0$slx$slx3[2] <<- 0.072
         
     }else if(rb_excluder=="moderate excluder"){
-        MP0$slx$slx3[2] = 0.1
+        
+        MP0$slx$slx3[2] <<- 0.1
+    
     }else{
-        MP0$slx$slx3[2] = 0.2
+        
+        MP0$slx$slx3[2] <<- 0.2
     }
 
-    MP0$sprTarget <<- sprtarget
+    MP0$sprTarget <<- ni_sprtarget
 
     #if(is.null(akdf)){
     #    akdf<-data.frame(proportion=list(rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
@@ -45,12 +55,11 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
         MP$type<-"MPR"
  
         MP<-getFspr(MP) 
-        print("cheguei aqui")      
-        
+                   
         rtmp     <- run(MP) 
-        print("e aqui?")   
+        
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
-
+        return(out)
    
     }else if(Dist_type=="yield per recruit"){
 
@@ -63,6 +72,7 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
         rtmp     <- run(MP) 
         
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe)   
+        return(out)
         
     }else if(Dist_type=="fixed PSC"){
 
@@ -70,23 +80,21 @@ getResultAllocation2 <- function(Dist_type,sprtarget,intbl,sl_mortRate,rb_exclud
 
         MP$type<-"YPR"
         MP$pYPR<-as.numeric(intbl$proportion)
-
-        
-        
+       
         MP$pscLimit[which(intbl$cap>0.0)] <- as.numeric(intbl$cap[which(intbl$cap>0.0)])
 
         MP$pscLimit<-as.numeric(MP$pscLimit)
-        print(as.numeric(MP$pscLimit))
-
-        fs<-getFsprPSC(MP)
-        
+    
+        fs<-getFsprPSC(MP)        
         rtmp  <- run(fs)
 
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
-    
+        
+        return(out)
+
     }
     print(out)
-    return(out)
+    #return(out)
 }
 
 allocTable<-function(A,B){
@@ -100,9 +108,11 @@ allocTable<-function(A,B){
             nomes1<-c(nomes1,tmp)
         }
 
-        A<-round(A[,-1],2)
-        B<-round(B[,-1],2)
+        #A<-round(A[,-1],2)
+        #B<-round(B[,-1],2)
         
+        A<-A[,-1]
+        B<-B[,-1]
 
         sector=c("IFQ","PSC","SPT","PER")
 

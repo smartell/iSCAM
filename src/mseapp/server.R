@@ -162,52 +162,56 @@ shinyServer(function(input,output,session){
     validate2 <- function(tbl,prefix){
 
         
-            sumAlloc<-as.numeric(tbl[,"proportion"])
-
-            if(sum(sumAlloc)>1.0){
-                updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", 1:(length(glbl)), 1) 
-                      
-            }else if(sum(sumAlloc)<1.0){
-                updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", 1:(length(glbl)), 1)
-                
-            }else{
-                updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 1:(length(glbl)), 1)
-            }
+            
 
             if(input[[paste0(prefix,"_","Dist_type")]]=="fixed PSC"){
+
+                vld<-c(1,3,4)
+                sumAlloc<-as.numeric(tbl[vld,"proportion"])
                     
-                    updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 2, 1)
-                    updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 2, 2)
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 2, 1)
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 2, 2)
 
             }else{
-                
+
+                vld<-1:4
+                sumAlloc<-as.numeric(tbl[,"proportion"])
                 updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 1:(length(glbl)), 2)
-            }             
+            }   
+
+
+            if(sum(sumAlloc)!=1.0){
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", vld, 1) 
+            }else{
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", vld, 1)
+            }
+
+            
+                
+                      
                 
     }
 
 
-    cachedTbl <- NULL
     
 
 
     output$A_tbl <- renderHtable({
-        buildOuttbl("A")
+        do.call(buildOuttbl,list(prefix="A"))
     })
 
     output$B_tbl <- renderHtable({
-        buildOuttbl("B")
+        do.call(buildOuttbl,list(prefix="B"))
     })
 
     buildOuttbl<-function(prefix){
 
         if(is.null(input[[paste0(prefix,"_","tbl")]])){
 
-            tbl<-data.frame(list(proportion=rep(0.0,length(glbl)),cap=rep(0.0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
-
-            cachedTbl <<- tbl  
+            tbl<-data.frame(list(proportion=c(0.80,0.00,0.17,0.03),cap=c(0.00,7.75,0.00,0.00)),row.names = c("IFQ","PSC","SPT","PER"))
 
             validate2(tbl,prefix)
+            
             return(tbl)
      
         }else{
@@ -230,8 +234,6 @@ shinyServer(function(input,output,session){
             
             validate2(tbl,prefix)
       
-            cachedTbl <<- tbl
-
           return(tbl)
               
         }
@@ -245,8 +247,7 @@ shinyServer(function(input,output,session){
     
 
     output$res_alloc <-renderTable({
-        #input$actionButtonID
-        #getAllocA()
+        
         Atab<-getAllocA()
         Btab<-getAllocB()
 
@@ -255,7 +256,7 @@ shinyServer(function(input,output,session){
 
 
     output$res_plot <-renderPlot({
-        #input$actionButtonID
+        
         Atab<-getAllocA()
         Btab<-getAllocB()
         
