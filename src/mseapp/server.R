@@ -51,105 +51,6 @@ shinyServer(function(input,output,session){
     })
 
 
-    ## ------------------------------------------------------------ ##
-    ## Total mortality allocation (August 17, 2015)
-    ## ------------------------------------------------------------ ##
-
-
-    #
-    # Allocation Input-output function
-    #
- ##    validate <- function(tbl){
- ##
- ##    		sumAlloc<-as.numeric(tbl[,"proportion"])
- ##
- ##    		if(sum(sumAlloc)>1.0){
- ##    		    updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 1) 
- ##                      
- ##    		}else if(sum(sumAlloc)<1.0){
- ##    		    updateTableStyle(session, "tbl", "warning", 1:(length(glbl)), 1)
- ##                
- ##    		}else{
- ##    		    updateTableStyle(session, "tbl", "valid", 1:(length(glbl)), 1)
- ##    		}
- ##
- ##            if(input$Dist_type=="fixed PSC"){
- ##                    
- ##                    updateTableStyle(session, "tbl", "invalid", 2, 1)
- ##                    updateTableStyle(session, "tbl", "valid", 2, 2)
- ##
- ##            }else{
- ##                
- ##                updateTableStyle(session, "tbl", "invalid", 1:(length(glbl)), 2)
- ##            }             
- ##                
- ##
- ##            
- ##
- ##		}
- ##
- ##
- ##    cachedTbl <- NULL
- ##    
- ##    output$tbl <- renderHtable({
- ##
- ##    	if(is.null(input$tbl)){
- ##
- ##            tbl<-data.frame(list(proportion=rep(0.0,length(glbl)),cap=rep(0.0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
- ##
- ##            cachedTbl <<- tbl  
- ##
- ##            validate(tbl)
- ##            return(tbl)
- ##     
- ##        }else{
- ##
- ##        
- ##            if(input$Dist_type=="yield per recruit"){
- ##                 
- ##                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
- ##            
- ##            }else if(input$Dist_type=="mortality per recruit"){
- ##                
- ##                 tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER"))
- ##            
- ##            }else{ 
- ##                
- ##                tbl<-data.frame(input$tbl,row.names = c("IFQ","PSC","SPT","PER") )
- ##
- ##            }  
- ##
- ##            # Any non-numeric data should be replaced with the cached data.
- ##            #tbl[is.na(as.integer(as.character(tbl[,1]))),1] <- 
- ##            #as.character(cachedTbl[is.na(as.integer(as.character(tbl[,1]))),1])
- ##   
- ##            validate(tbl)
- ##      
- ##      
- ##            cachedTbl <<- tbl
- ##
- ##            
- ##            return(tbl)
- ##              
- ##        }
- ##
- ##    	
- ##      }) 
- ##  
- ##    getAlloc<-reactive(do.call(getResultAllocation,getArgsTMA(input)))
- ##
- ##    output$res_alloc <-renderTable({
- ##        #input$actionButtonID
- ##        getAlloc()
- ##
- ##    })
- ##
- ##    output$res_plot <-renderPlot({
- ##        #input$actionButtonID
- ##        plotResultAllocation(getAlloc())
- ##
- ##    })
- ##
 
     ## ------------------------------------------------------------ ##
     ## Total mortality allocation - 2 (Sep 3, 2015)
@@ -159,10 +60,7 @@ shinyServer(function(input,output,session){
     #
     # Allocation Input-output function
     #
-    validate2 <- function(tbl,prefix){
-
-        
-            
+    validate <- function(tbl,prefix){           
 
             if(input[[paste0(prefix,"_","Dist_type")]]=="fixed PSC"){
 
@@ -184,16 +82,10 @@ shinyServer(function(input,output,session){
                 updateTableStyle(session, paste0(prefix,"_","tbl"), "warning", vld, 1) 
             }else{
                 updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", vld, 1)
-            }
-
-            
-                
-                      
-                
+            }              
+                                      
     }
 
-
-    
 
 
     output$A_tbl <- renderHtable({
@@ -210,7 +102,7 @@ shinyServer(function(input,output,session){
 
             tbl<-data.frame(list(proportion=c(0.80,0.00,0.17,0.03),cap=c(0.00,7.75,0.00,0.00)),row.names = c("IFQ","PSC","SPT","PER"))
 
-            validate2(tbl,prefix)
+            validate(tbl,prefix)
             
             return(tbl)
      
@@ -232,7 +124,7 @@ shinyServer(function(input,output,session){
             }  
 
             
-            validate2(tbl,prefix)
+            validate(tbl,prefix)
       
           return(tbl)
               

@@ -53,6 +53,7 @@ slx2 <- c(3.338,4.345,5.133,5.133)
 slx3 <- c(0.000,0.072,0.134,0.134)
 slx4 <- c(30,16,16,16)
 slim <- c(82,00,82,00)
+ulim <- c(254,254,254,254)
 dmr  <- c(0.16,0.80,0.20,0.00)
 slx  <- data.frame(sector=glbl,slx1=slx1,slx2=slx2,slx3=slx3,slx4=slx4)
 
@@ -76,6 +77,7 @@ MP0   <- list(	fstar     = fstar,
 				pMPR      = aMPR/sum(aMPR),
 				pscLimit  = pscLimit,
 				slim      = slim,
+				ulim      = ulim,
 				dmr       = dmr,
 				sprTarget = sprTarget,
 				type      = "YPR")
@@ -167,8 +169,8 @@ MP0   <- list(	fstar     = fstar,
 			sc <- xplogis(la[h,],slx$slx1[k],slx$slx2[k],slx$slx3[k])
 			sc[slx$slx4[k]:A] <- sc[slx$slx4[k]-1]
 
-			ra <- plogis(la[h,],slim[k],0.1*la[h,])
-			#ra <- plogis(la[h,],slim[k],0.1*la[h,])- plogis(la[h,],ulim[k],0.1*la[h,])
+			#ra <- plogis(la[h,],slim[k],0.1*la[h,])
+			ra <- plogis(la[h,],slim[k],0.1*la[h,])- plogis(la[h,],ulim[k],0.1*la[h,])
 			da <- (1-ra)*dmr[k]
 			va[h,,k] <- sc*(ra+da)
 		}
@@ -528,7 +530,7 @@ yieldEquivalence <- function(MP)
 ##	M2  <- run(MP2)
 ##
 ##	# Index-based PSC limit STQ
-##	AB0 <- getFstar(AB0)
+##	ABO
 ##	A0  <- run(AB0)
 ##	AB1 <- getFstar(AB1)
 ##	A1  <- run(AB1)

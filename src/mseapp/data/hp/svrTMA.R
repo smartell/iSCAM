@@ -6,7 +6,7 @@ getArgsTMA2 <- function(input, prefix){
 
     print("in getargs")
 
-    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],ni_sprtarget=input[[paste0(prefix,"_","ni_sprTarget")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
+    argsTMA <- list(Dist_type=input[[paste0(prefix,"_","Dist_type")]],intbl=input[[paste0(prefix,"_","tbl")]],sl_sizLim=input[[paste0(prefix,"_","sl_sizeLim")]],sl_mortRate=input[[paste0(prefix,"_","sl_mortRate")]],rb_excluder=input[[paste0(prefix,"_","Excluder")]])
     
     print(argsTMA)
     
@@ -22,10 +22,17 @@ getArgsTMA2 <- function(input, prefix){
 
 
 
-getResultAllocation2 <- function(Dist_type,ni_sprtarget,intbl,sl_mortRate,rb_excluder){
+getResultAllocation2 <- function(Dist_type,intbl,sl_sizLim,sl_mortRate,rb_excluder){
 
-    #Dist_type,sprtarget,intbl,limPsc
+    
     print("in getResultAllocation2")
+
+    MP0$slim<<-c(sl_sizLim[1]/0.393701,00,sl_sizLim[1]/0.393701,00)
+    MP0$ulim<<-c(sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701,sl_sizLim[2]/0.393701)
+
+    print(MP0$slim)
+    print(MP0$ulim)
+    
 
     cm<<-rep(sl_mortRate,2)
 
@@ -41,7 +48,6 @@ getResultAllocation2 <- function(Dist_type,ni_sprtarget,intbl,sl_mortRate,rb_exc
         MP0$slx$slx3[2] <<- 0.2
     }
 
-    MP0$sprTarget <<- ni_sprtarget
 
     #if(is.null(akdf)){
     #    akdf<-data.frame(proportion=list(rep(0,length(glbl))),row.names = c("IFQ","PSC","SPT","PER"))
@@ -84,8 +90,11 @@ getResultAllocation2 <- function(Dist_type,ni_sprtarget,intbl,sl_mortRate,rb_exc
         MP$pscLimit[which(intbl$cap>0.0)] <- as.numeric(intbl$cap[which(intbl$cap>0.0)])
 
         MP$pscLimit<-as.numeric(MP$pscLimit)
-    
-        fs<-getFsprPSC(MP)        
+        
+        print("fantastic")
+        print(MP)
+        fs<-getFsprPSC(MP)
+        print("allons'y")        
         rtmp  <- run(fs)
 
         out <- data.frame(sector=c("IFQ","PSC","SPT","PER"),YPR=rtmp$ypr, MPR=rtmp$mpr, yield=rtmp$ye,effort=rtmp$fe) 
