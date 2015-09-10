@@ -69,6 +69,7 @@ shinyServer(function(input,output,session){
                     
                 updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", 2, 1)
                 updateTableStyle(session, paste0(prefix,"_","tbl"), "valid", 2, 2)
+                updateTableStyle(session, paste0(prefix,"_","tbl"), "invalid", c(1,3,4), 2)
 
             }else{
 
