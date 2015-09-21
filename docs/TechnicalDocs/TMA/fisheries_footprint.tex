@@ -138,7 +138,7 @@ $\lambda_{k}$ 		& gear-specific fishing mortality rate allocation\\
 
 
 
-\begin{table}[h!]
+\begin{table}[h]
 \centering
 \caption{Equilibrium population dynamics model required for fisheries footprint calculation}\label{tab:equilibrium_model} 
 \tableEq
@@ -188,18 +188,17 @@ The allocation parameter ($\lambda_k$) can be calculated by three alternative me
 	\large
     \begin{align}
     \hline
-    	\mbox{f Allocation} \nonumber \\
+    	\mbox{f Allocation:} \nonumber \\
 		        	f_{k} &=  f^{\star} \cdot \lambda_{k}  \label{T3.13}\\ 
 		\hline        	
-		\mbox{Yield Allocation} \nonumber \\
+		\mbox{Yield Allocation:} \nonumber \\
 					\lambda_k &= \dfrac{a_k}{{\phi_q}_k / \sum_k {\phi_q}_k } \label{T3.1}\\[1ex]
 		\hline 
-		\mbox{Mortality Allocation} \nonumber \\
+		\mbox{Mortality Allocation:} \nonumber \\
 					\lambda_k &= \dfrac{a_k}{{\phi_m}_k / \sum_k {\phi_m}_k } \label{T3.2}\\[1ex]
 		\hline 
-		\mbox{Spawning Potential Ratio} \nonumber \\
+		\mbox{Spawning Potential Ratio:} \nonumber \\
 					SPR &= \dfrac{\phi_{e}}{\phi_{0}} \label{T3.3}\\[1ex]
-\hline
 \hline \hline \nonumber   
    \end{align}
 \end{table}
@@ -212,6 +211,7 @@ In order to determine the target $F^{\star}$ one need a previously determined ta
 \begin{algorithm} 
 \caption{Calculate $F^{\star}$}
 \begin{algorithmic} 
+\large
 \STATE 1 - $F^{\star} \leftarrow F^{\star}_{guess}$
 \STATE 2 - calculate $SPR$ with the equilibrium model
 \STATE 3 - obj function $\leftarrow (SPR-SPR_{target})^2$
@@ -236,6 +236,8 @@ The algorithm for calculating $F^{\star}$ has to be modified when one a fixed yi
 \STATE 8 - minimize the objective function by changing $F^{\star} and a_k[bgear] $
 \end{algorithmic}
 \end{algorithm}   
+
+
 
 
 \end{document}
