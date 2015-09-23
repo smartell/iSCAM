@@ -1337,12 +1337,8 @@ DATA_SECTION
 	init_number 		m_stdev;
 	init_int 			m_nNodes;
 	init_ivector m_nodeyear(1,m_nNodes);
+
 	
-
-
-
-
-
 	// |---------------------------------------------------------------------------------|
 	// | PRIOR FOR RELATIVE ABUNDANCE DATA
 	// |---------------------------------------------------------------------------------|
@@ -1443,6 +1439,7 @@ DATA_SECTION
 
 	!! nyr = nyr - retro_yrs;
 	LOC_CALCS
+
 		if(retro_yrs)
 		{
 			if(pf_cntrl(2)>nyr) pf_cntrl(2) = nyr;
@@ -1472,6 +1469,7 @@ DATA_SECTION
 				if( iyr <= nyr ) n_naa(k)++;
 			}
 		}
+
 	END_CALCS
 
 	// |---------------------------------------------------------------------------------|
@@ -1487,6 +1485,7 @@ DATA_SECTION
 
 	!! syr = syr + (int)d_iscamCntrl(14);
 	LOC_CALCS
+
 		//sel_blocks(1,ngear,1,n_sel_blocks);
 		for(int k = 1; k <= ngear; k++ )
 		{
@@ -1501,7 +1500,6 @@ DATA_SECTION
 		{
 			if( dCatchData(i)(1) < syr ) ft_count --;
 		}
-
 		// Prospective counter for n_A_nobs
 		n_saa.initialize();
 		n_saa = 1;
@@ -1513,6 +1511,7 @@ DATA_SECTION
 				if( iyr < syr ) n_saa(k)++;
 			}
 		}
+		
 
 		for( k = 1; k <= nItNobs; k++ )
 		{
@@ -1522,7 +1521,6 @@ DATA_SECTION
 			}
 		}
 	END_CALCS
-
 
 	LOC_CALCS
 		// Determine number of parameters for natural mortality rate.
@@ -1586,6 +1584,7 @@ PARAMETER_SECTION
 	// | theta[7] -> vartheta
 	// |
 	init_bounded_vector_vector theta(1,npar,1,ipar_vector,theta_lb,theta_ub,theta_phz);
+
 	
 	// |---------------------------------------------------------------------------------|
 	// | SELECTIVITY PARAMETERS
@@ -1879,7 +1878,6 @@ PARAMETER_SECTION
 	sdreport_vector sd_depletion(1,ngroup);	
 	sdreport_matrix sd_log_sbt(1,ngroup,syr,nyr+1);
 	
-	
 
 
 PRELIMINARY_CALCS_SECTION
@@ -1957,6 +1955,7 @@ PROCEDURE_SECTION
 	calcStockRecruitment();
 	
 	calcObjectiveFunction();
+
 
 	if(sd_phase())
 	{
@@ -2965,6 +2964,7 @@ FUNCTION calcTotalCatch
 		l    = dCatchData(ii,6);
 		d_ct = dCatchData(ii,7);
 		d_sd = dCatchData(ii,8);// * d_ct;  this is SE(logspace)
+
   		
   		// | trap for retro year
   		if( i<syr ) continue;
@@ -3044,6 +3044,7 @@ FUNCTION calcTotalCatch
 		eta(ii) = (log(d_ct) - log(ct(ii)) + 0.5*square(d_sd)) / (d_sd);
 	}
 	if(verbose)cout<<"**** Ok after calcTotalCatch ****"<<endl;
+
   }
 
 
@@ -4617,6 +4618,7 @@ FUNCTION void simulationModel(const long& seed)
 	double age_tau = value(sig(1));
 	
 	calcComposition();
+
 	for(kk=1;kk<=nAgears;kk++)
 	{
 		aa = n_A_sage(kk);
