@@ -366,6 +366,7 @@ plotSelex <- function()
 	S1    <- .getSelectivities(MP1,theta$la)$va[1,,2]
 	S2    <- .getSelectivities(MP2,theta$la)$va[1,,2]
 	df <- cbind(1:A,S0,S1,S2)
+	print(df)
 }
 
 
@@ -544,15 +545,15 @@ main <- {
 	BB4 <- getFstar(BB4)
 	B4  <- run(BB4)	
 
-	theta$c = c(0.8,0.8)
-	JRG0 <- getFstar(JRG0)
-	JG0  <- run(JRG0)
+	# theta$c = c(0.1,0.1)
+	# JRG0 <- getFstar(JRG0)
+	# JG0  <- run(JRG0)
 
-	JRG1 <- getFstar(JRG1)
-	JG1  <- run(JRG1)
+	# JRG1 <- getFstar(JRG1)
+	# JG1  <- run(JRG1)
 
-	JRG2 <- getFstar(JRG2)
-	JG2  <- run(JRG2)
+	# JRG2 <- getFstar(JRG2)
+	# JG2  <- run(JRG2)
 
 
 	# PROFILE OVER FSTAR
@@ -566,23 +567,27 @@ main <- {
 cat("\nEquilibrium yield\n")
 Ye <- print(data.frame(round(cbind(STQ=M0$ye,EX1=M1$ye,EX2=M2$ye)/2.2046,3)))
 
-cat("\nEquilibrium yield Gauvin\n")
-Yeg <- print(data.frame(round(cbind(STQ=JG0$ye,EX1=JG1$ye,EX2=JG2$ye)/2.2046,3)))
+cat("\nEquilibrium yield numbers\n")
+Me <- print(data.frame(round(cbind(STQ=M0$me,EX1=M1$me,EX2=M2$me),3)))
+
+
+# cat("\nEquilibrium yield Gauvin\n")
+# Yeg <- print(data.frame(round(cbind(STQ=JG0$ye,EX1=JG1$ye,EX2=JG2$ye)/2.2046,3)))
 
 
 
 cat("\nYield Per Recruit \n")
 YPR <- print(data.frame(round(cbind(STQ=M0$ypr,EX1=M1$ypr,EX2=M2$ypr),3)))
 
-cat("\nYield Per Recruit Gauvin\n")
-YPRg <- print(data.frame(round(cbind(STQ=JG0$ypr,EX1=JG1$ypr,EX2=JG2$ypr),3)))
+# cat("\nYield Per Recruit Gauvin\n")
+# YPRg <- print(data.frame(round(cbind(STQ=JG0$ypr,EX1=JG1$ypr,EX2=JG2$ypr),3)))
 
 
 cat("\nMortality Per Recruit\n")
 MPR <- print(data.frame(round(cbind(STQ=M0$mpr,EX1=M1$mpr,EX2=M2$mpr),3)))
 
-cat("\nMortality Per Recruit Gauvin\n")
-MPRg <- print(data.frame(round(cbind(STQ=JG0$mpr,EX1=JG1$mpr,EX2=JG2$mpr),5)))
+# cat("\nMortality Per Recruit Gauvin\n")
+# MPRg <- print(data.frame(round(cbind(STQ=JG0$mpr,EX1=JG1$mpr,EX2=JG2$mpr),5)))
 
 
 cat("\nYield Per Recruit Footprint\n")
@@ -592,25 +597,25 @@ cat("\nMortality Per Recruit Footprint\n")
 MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
 
 
-cat("\nMortality Per Recruit Footprint Gauvin\n")
-MPRfp <- print(data.frame(round(data.frame(t(t(MPRg)/colSums(MPRg))),3))*100)
+# cat("\nMortality Per Recruit Footprint Gauvin\n")
+# MPRfp <- print(data.frame(round(data.frame(t(t(MPRg)/colSums(MPRg))),3))*100)
 
 
 # INDEX-BASED PSC LIMITS WITH ALLOCATION BASED ON YIELD
-# cat("\nEquilibrium yield\n")
-# Ye <- print(data.frame(round(cbind(STQ=A0$ye,EX1=A1$ye,EX2=A2$ye)/2.2046,3)))
+cat("\nEquilibrium yield\n")
+Ye <- print(data.frame(round(cbind(STQ=A0$ye,EX1=A1$ye,EX2=A2$ye)/2.2046,3)))
 
-# cat("\nYield Per Recruit\n")
-# YPR <- print(data.frame(round(cbind(STQ=A0$ypr,EX1=A1$ypr,EX2=A2$ypr),3)))
+cat("\nYield Per Recruit\n")
+YPR <- print(data.frame(round(cbind(STQ=A0$ypr,EX1=A1$ypr,EX2=A2$ypr),3)))
 
-# cat("\nMortality Per Recruit\n")
-# MPR <- print(data.frame(round(cbind(STQ=A0$mpr,EX1=A1$mpr,EX2=A2$mpr),3)))
+cat("\nMortality Per Recruit\n")
+MPR <- print(data.frame(round(cbind(STQ=A0$mpr,EX1=A1$mpr,EX2=A2$mpr),3)))
 
-# cat("\nYield Per Recruit Footprint\n")
-# YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
+cat("\nYield Per Recruit Footprint\n")
+YPRfp <- print(data.frame(round(data.frame(t(t(YPR)/colSums(YPR))),3))*100)
 
-# cat("\nMortality Per Recruit Footprint\n")
-# MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
+cat("\nMortality Per Recruit Footprint\n")
+MPRfp <- print(data.frame(round(data.frame(t(t(MPR)/colSums(MPR))),3))*100)
 
 
 

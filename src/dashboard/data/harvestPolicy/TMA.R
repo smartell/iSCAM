@@ -278,26 +278,26 @@ getFs <- function(TMAParams)
 }
 
 
-# equilibriumModel(fe)
-# fd <- seq(0,0.2,by=0.01)
-# fb <- seq(0,0.4,by=0.01)
-# fs <- expand.grid(fd,fb)
-# names(fs) <- c("F.d","F.b")
+equilibriumModel(fe)
+fd <- seq(0,0.2,by=0.01)
+fb <- seq(0,0.4,by=0.01)
+fs <- expand.grid(fd,fb)
+names(fs) <- c("F.d","F.b")
 
-# s1    <- c( 8.0, 3.0)
-# s2    <- c( 1.2, 1.2)
-# s3    <- c( 0.0, 0.1)
-# EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+s1    <- c( 8.0, 3.0)
+s2    <- c( 1.2, 1.2)
+s3    <- c( 0.0, 0.1)
+EQM <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
-# s1    <- c( 9.0, 3.0)
-# s2    <- c( 0.2, 1.2)
-# s3    <- c( 0.0, 0.1)
-# EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+s1    <- c( 9.0, 3.0)
+s2    <- c( 0.2, 1.2)
+s3    <- c( 0.0, 0.1)
+EQF <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
-# s1    <- c( 8.0, 2.0)
-# s2    <- c( 1.2, 3.2)
-# s3    <- c( 0.0, 0.1)
-# EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
+s1    <- c( 8.0, 2.0)
+s2    <- c( 1.2, 3.2)
+s3    <- c( 0.0, 0.1)
+EQB <- as.data.frame(cbind(fs,t(apply(fs,1,equilibriumModel))))
 
 
 
@@ -306,8 +306,8 @@ getFs <- function(TMAParams)
 # # 
 # # GRAPHICS
 # # 
-# spr_brk <- seq(0.05,0.50,by=0.05)
-# df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
+spr_brk <- seq(0.05,0.50,by=0.05)
+df <- data.frame(age=age,lx=lx,lz=lz,fa=fa)
 
 # p <- ggplot(df)
 # p <- p + geom_area(aes(x=age,y=lx*fa),alpha=0.3,fill="black")
@@ -328,6 +328,17 @@ getFs <- function(TMAParams)
 # p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
 # p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
 # print(p)
+
+# 
+p <- ggplot(EQM,aes(ypr1,ypr2,z=spr)) 
+p <- p + stat_contour(breaks=spr_brk,alpha=0.5,aes(color=..level..))
+p <- p + stat_contour(breaks=0.35,colour="red",size=1.5,alpha=0.5)
+# p <- p + stat_contour(data=EQF,aes(F.d,F.b,z=spr),breaks=0.35,colour="green",size=1.5,alpha=0.5)
+# p <- p + stat_contour(data=EQB,aes(F.d,F.b,z=spr),breaks=0.35,colour="orange",size=1.5,alpha=0.5)
+p <- p + labs(x="Directed fishery F",y="Bycatch F",col="SPR")
+print(p)
+
+
 
 # # not sure what this is good for.
 # br <- seq(2,10,by=1)
