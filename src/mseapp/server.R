@@ -234,7 +234,7 @@ shinyServer(function(input,output,session){
     # BYCATCH
     observe({
       A_dmr = input$A_bycatch_dmr
-      B_dmr = input$A_bycatch_dmr
+      B_dmr = input$B_bycatch_dmr
       print(A_dmr)
       A_bycatch = input$A_num_bycatch_total
       B_bycatch = input$B_num_bycatch_total
